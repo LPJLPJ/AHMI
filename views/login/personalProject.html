@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>个人空间</title>
-    <link rel="stylesheet" href="/public/login/assets/css/personalProject.css" type="text/css" />
+
     <link rel="stylesheet" href="/public/font/iconfont/iconfont.css" type="text/css" />
     <link href="/public/login/assets/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/public/login/assets/css/personalProject.css" type="text/css" />
     <script src="/public/login/assets/js/jquery-1.10.2.js"></script>
     <script src="/public/login/assets/js/bootstrap.js"></script>
     <script src="/public/login/assets/js/personalProject.js"></script>
@@ -14,7 +15,7 @@
     <div class="header">
         <div class="header_main">
             <div class="header_main_logo"><a href="../index.html">
-                <img src="../images/Grgc/logo.png" />
+                <img src="/public/login/images/Grgc/logo.png" />
             </a></div>
             <div class="nav">
                 <ul>
@@ -26,13 +27,17 @@
                     <li><%= username %></li>
                 </ul>
             </div>
-            <div id="user-icon" class="right">
-                <a ><img src="../images/Grgc/Fruit.png" /></a>
+            <div id="user-icon"   class="dropdown right">
+                <a data-toggle="dropdown"><img src="/public/login/images/Grgc/Fruit.png" /></a>
 
-                <div id="user-icon-menu" class="menu">
-                    <a href="/private/info">个人信息</a>
-                    <a href="/user/logout">退出</a>
-                </div>
+                <!--<div id="user-icon-menu" class="menu">-->
+                    <!--<a href="/private/info">个人信息</a>-->
+                    <!--<a href="/user/logout">退出</a>-->
+                <!--</div>-->
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="/private/info">个人信息</a></li>
+                    <li><a href="/user/logout">退出</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -63,22 +68,35 @@
                         </div>
                         <div class="modal-body">
                             <div class="job">
-                                <input type="text" placeholder="项目名称" class="modal_input" />
+                                <span class="modal-label col-lg-2">名称</span><input id="basicinfo-title" type="text" placeholder="项目名称" class="modal_input col-lg-10" />
                             </div>
-                            <div class="des">
-                                <textarea placeholder="项目描述" class="modal_text"></textarea>
+                            <div class="job">
+                                <span class="modal-label col-lg-2">作者</span><input id="basicinfo-author" type="text" placeholder="" class="modal_input col-lg-10" />
                             </div>
+                            <div class="job">
+                                <span class="modal-label col-lg-2">分辨率</span>
+                                <select id="basicinfo-resolution" class="col-lg-10 modal_input" value="">
+
+                                    <option value="1280*800">1280 * 800</option>
+                                    <option value="1920*1080">1280 * 1080</option>
+                                    <option value="1000*600">1000 * 600</option>
+                                    <option value="800*600">800 * 600</option>
+                                </select>
+                            </div>
+                            <!--<div class="des">-->
+                                <!--<textarea placeholder="项目描述" class="modal_text"></textarea>-->
+                            <!--</div>-->
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">创建项目</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button id="modal-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建项目</button>
+                            <button id="modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <ul>
-                <li>
+            <ul class="projectlist" id="projectlist">
+                <li id="addproject" class="addproject">
                     <a href="#">
                         <div class="img1 btn btn-primary btn-lg"  data-toggle="modal" data-target="#myModal">
                             <i class="iconfont">&#xe606;</i>
@@ -88,62 +106,27 @@
                 </li>
 
 
-                <%= projectIds[0] %>
-
-                <li>
+                <% for(var i=0;i<projects.length;i++){ %>
+                <li data-project="<%= JSON.stringify(projects[i]) %>"  class="projectpanel">
                          <div class="img">
                              <i class="iconfont">&#xe607;</i>
-                             <a href="#"><img src="../images/Grgc/pro_1.png"></a>
-                             <div class="img_bot">
-                                 <div class="img_bg"></div>
-                                 <div class="img_bot_test">
-                                     <a href="#">编辑</a>
-                                     <a href="#">预览</a>
-                                 </div>
-                             </div>
+                             <a href="#"><img src="/public/login/images/Grgc/pro_1.png"></a>
+                             <!--<div class="img_bot">-->
+                                 <!--<div class="img_bg">haha</div>-->
+                                 <!--<div class="img_bot_test">-->
+                                     <!--<a href="#">编辑</a>-->
+                                     <!--<a href="#">预览</a>-->
+                                 <!--</div>-->
+                             <!--</div>-->
                          </div>
 
-                     <p class="text">
-                         <span>项目一</span>
-                         <span class="day">3.02</span>
-                     </p>
-                 </li>              
-                 <!-- <li>
-                     <div class="img">
-                         <i class="iconfont">&#xe607;</i>
-                         <a href="#"><img src="../images/Grgc/pro_1.png"></a>
-                         <div class="img_bot">
-                             <div class="img_bg"></div>
-                             <div class="img_bot_test">
-                                 <a href="#">编辑</a>
-                                 <a href="#">预览</a>
-                             </div>
-                         </div>
-                     </div>
-
-                     <p class="text">
-                         <span>项目一</span>
-                         <span class="day">3.02</span>
-                     </p>
+                         <p class="text projectinfo" data-toggle="modal" data-target="#myModal">
+                             <span><%= projects[i].name %></span>
+                             <span class="day"><%= projects[i].lastModified %></span>
+                         </p>
                  </li>
-                 <li>
-                     <div class="img">
-                             <i class="iconfont" id="iconfont">&#xe607;</i>
-                             <a href="#"><img src="../images/Grgc/pro_2.png"></a>
-                             <div class="img_bot">
-                                 <div class="img_bg"></div>
-                                 <div class="img_bot_test">
-                                     <a href="#">编辑</a>
-                                     <a href="#">预览</a>
-                                 </div>
-                             </div>
-                     </div>
+                <% } %>
 
-                     <p class="text">
-                         <span>项目二</span>
-                         <span class="day">3.02</span>
-                     </p>
-                 </li>-->
             </ul>
         </div>
     </div>

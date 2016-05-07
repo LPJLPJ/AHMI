@@ -12,7 +12,24 @@ module.exports = function (req, res) {
 				console.log('user', user);
 				res.render('login/personalProject.html',{
 					username:user.accountName,
-					projectIds:['project1','project2','project3']
+					projects:[
+                        {
+                            id:'project1',
+                            name:'project1',
+                            thumbnail:'t1.png',
+                            resolution:'800*600',
+                            lastModified:'date1',
+                            createdAt:'date2'
+                        },
+                        {
+                            id:'project2',
+                            name:'project2',
+                            thumbnail:'t2.png',
+                            resolution:'1280*800',
+                            lastModified:'date1',
+                            createdAt:'date2'
+                        }
+                    ]
 				})
 			}
 		})
