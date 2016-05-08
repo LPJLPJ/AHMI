@@ -8,6 +8,8 @@ var getCaptcha = require('./getCaptcha')
 var getUsers = require('./getUsers')
 var route_space = require('./route_space')
 var routeValidate = require('./routeValidate')
+//projects
+var projectInfo = require('./projectinfo')
 
 router.route('/userlist')
 .get(function(req, res){
@@ -55,6 +57,15 @@ router.route('/utils/checkusername')
 
 router.route('/utils/checkmail')
 .post(routeValidate.checkmail)
+
+
+//projects
+
+router.route('/project/:id/basicinfo')
+    .post(projectInfo.updateProject)
+
+router.route('/project/create')
+    .post(projectInfo.createProject)
 
 
 module.exports = router

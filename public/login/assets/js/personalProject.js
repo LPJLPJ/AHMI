@@ -23,28 +23,83 @@ $(function(){
             title.val(project.name)
             resolution.val(project.resolution)
 
-            //ok press
-            $('#modal-ok').on('click', function (e) {
-                if (project.name != title.val() || project.resolution != resolution.val()){
-                    //changed
-                    project.name = title.val()
-                    project.resolution = resolution.val()
-                    $.ajax({
-                        type:'POST',
-                        url:'/project/'+project.id+'/basicinfo',
-                        data:project,
-                        success: function (data, status, xhr) {
-                            //update success
-                        },
-                        error: function (err, status, xhr) {
-                            //update error
-                            alert('修改失败')
-                        }
-                    })
-                }
-            })
 
 
         }
     })
+
+
+
+
+
+    $('#addproject').on('click', function (e) {
+        $('#modal-ok').html('创建')
+
+    })
+
+    $('#modal-ok').on('click',changeProject);
+
+    function changeProject(e){
+        var op = $('#modal-ok').val()
+        if (op == '确认'){
+            updateProject(e)
+        }else{
+            createProject(e)
+        }
+    }
+    function createProject(e) {
+        console.log('create')
+        var project = {}
+        var title = $('#basicinfo-title')
+        var author = $('#basicinfo-author')
+        var resolution = $('#basicinfo-resolution')
+        if (title.val()!=''&&resolution.val()!=''){
+            //create
+            project.name = title.val()
+            project.resolution = resolution.val()
+
+            $.ajax({
+                type:'POST',
+                url:'/project/create',
+                data:project,
+                success: function (data, status, xhr) {
+                    var newProject = JSON.parse(data)
+                    addNewProject(newProject)
+                },
+                error: function (err, status, xhr) {
+                    console.log(err)
+                }
+            })
+        }
+
+    }
+
+    function updateProject(e) {
+        if (project.name != title.val() || project.resolution != resolution.val()){
+            //changed
+            project.name = title.val()
+            project.resolution = resolution.val()
+            $.ajax({
+                type:'POST',
+                url:'/project/'+project._id+'/basicinfo',
+                data:project,
+                success: function (data, status, xhr) {
+                    //update success
+                    console.log('success',data)
+                },
+                error: function (err, status, xhr) {
+                    //update error
+                    console.log('err',err)
+                    alert('修改失败')
+                }
+            })
+        }
+    }
+
+
+    function addNewProject(newProject){
+        var html = new EJS({url:'/public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
+        console.log(html)
+        $('#addproject').after(html)
+    }
 })
