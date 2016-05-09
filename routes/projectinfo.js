@@ -36,6 +36,23 @@ projectRoute.getProjectById = function (req, res) {
 
 }
 
+projectRoute.getProjectContent = function (req, res) {
+    var projectId = req.params.id
+    console.log('projectId: ',projectId)
+    if (projectId && projectId!=''){
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                console.log(err)
+                errHandler(res,500,'error')
+            }
+            //console.log(project)
+            res.end(JSON.stringify(project))
+        })
+    }else{
+        errHandler(res,500,'error')
+    }
+}
+
 projectRoute.createProject = function (req, res) {
     console.log('======')
     console.log(req.session.user)
