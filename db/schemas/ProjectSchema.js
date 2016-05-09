@@ -50,6 +50,11 @@ ProjectSchema.statics = {
             .find({userId:_userId})
             .sort('lastModifiedTime')
             .exec(cb)
+    },
+    deleteById: function (_projectId, cb) {
+        return this
+            .remove({_id:_projectId})
+            .exec(cb)
     }
 
 }

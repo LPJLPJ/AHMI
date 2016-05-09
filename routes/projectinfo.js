@@ -5,6 +5,7 @@ var ProjectModel = require('../db/models/ProjectModel')
 var UserModel = require('../db/models/UserModel')
 var projectRoute = {}
 var _ = require('lodash')
+var errHandler = require('../utils/errHandler')
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -76,6 +77,7 @@ projectRoute.createProject = function (req, res) {
     }
 }
 
+
 projectRoute.updateProject = function (req,res) {
     var newProject = req.body
     if (newProject.id){
@@ -112,7 +114,19 @@ projectRoute.updateProject = function (req,res) {
 }
 
 projectRoute.deleteProject = function (req, res) {
-
+    var projectId = req.body.projectId;
+    console.log(projectId)
+    if (projectId){
+        //exitst
+        ProjectModel.deleteById(projectId, function (err) {
+            if (err){
+                errHandler(res,500,'delete error')
+            }
+            res.end('ok')
+        })
+    }else{
+        errHandler(res,500,'invalid project id')
+    }
 }
 
 module.exports = projectRoute

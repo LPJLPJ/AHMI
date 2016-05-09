@@ -66,6 +66,7 @@ router.route('/project/:id/basicinfo')
 
 router.route('/project/create')
     .post(projectInfo.createProject)
-
+router.route('/project/delete')
+    .post(projectInfo.deleteProject)
 
 module.exports = router

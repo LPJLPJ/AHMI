@@ -8,6 +8,7 @@ $(function(){
  //        $(".menu").stop().animate({"height":"0px"})
  //    })
     $('.projectpanel').on('click', function (e) {
+        var curPanel = $(this)
         var project = $(this).attr('data-project')
         project = JSON.parse(project)
         var curNodeName = e.target.nodeName
@@ -22,12 +23,38 @@ $(function(){
             var resolution = $('#basicinfo-resolution')
             title.val(project.name)
             resolution.val(project.resolution)
+        }else if (curNodeName == 'I'){
+            //delete
+            console.log('delete')
+            $.ajax({
+                type:'POST',
+                url:'/project/delete',
+                data:{projectId:project._id},
+                success:function (data, status, xhr){
+                    //delete ok
+                    console.log(data)
+                    curPanel.remove()
 
-
-
+                },
+                error: function (err, status, xhr) {
+                    console.log(err)
+                    alert('删除失败')
+                }
+            })
         }
     })
 
+    $('.projectpanel').hover(function (e) {
+        var icon = $(this).find('.projectdelete')
+        if (icon){
+            icon.css('display','block')
+        }
+    }, function (e) {
+        var icon = $(this).find('.projectdelete')
+        if (icon){
+            icon.css('display','none')
+        }
+    })
 
 
 
