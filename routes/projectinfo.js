@@ -80,7 +80,7 @@ projectRoute.createProject = function (req, res) {
 
 projectRoute.updateProject = function (req,res) {
     var newProject = req.body
-    if (newProject.id){
+    if (newProject._id){
         ProjectModel.findById(newProject._id, function (err, project) {
             if (err) {
                 //err

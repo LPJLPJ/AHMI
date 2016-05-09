@@ -7,13 +7,20 @@ $(function(){
  //    },function(){
  //        $(".menu").stop().animate({"height":"0px"})
  //    })
+    var curSelectedPanel = null;
+
     $('.projectpanel').on('click', function (e) {
         var curPanel = $(this)
+        curSelectedPanel = curPanel
+
+
         var project = $(this).attr('data-project')
         project = JSON.parse(project)
         var curNodeName = e.target.nodeName
         if (curNodeName == 'IMG'){
             //img
+            //open in new window
+            
         }else if (curNodeName == 'SPAN'){
             //span
             //show modal
@@ -25,22 +32,12 @@ $(function(){
             resolution.val(project.resolution)
         }else if (curNodeName == 'I'){
             //delete
-            console.log('delete')
-            $.ajax({
-                type:'POST',
-                url:'/project/delete',
-                data:{projectId:project._id},
-                success:function (data, status, xhr){
-                    //delete ok
-                    console.log(data)
-                    curPanel.remove()
+            if(confirm('确认删除?')){
+                deleteProject(project,curPanel)
+            }else{
 
-                },
-                error: function (err, status, xhr) {
-                    console.log(err)
-                    alert('删除失败')
-                }
-            })
+            }
+
         }
     })
 
@@ -67,7 +64,8 @@ $(function(){
     $('#modal-ok').on('click',changeProject);
 
     function changeProject(e){
-        var op = $('#modal-ok').val()
+        var op = $('#modal-ok').html()
+        console.log(op)
         if (op == '确认'){
             updateProject(e)
         }else{
@@ -101,7 +99,34 @@ $(function(){
 
     }
 
+
+    function deleteProject(project,curPanel){
+        console.log('delete')
+        $.ajax({
+            type:'POST',
+            url:'/project/delete',
+            data:{projectId:project._id},
+            success:function (data, status, xhr){
+                //delete ok
+                console.log(data)
+                curPanel.remove()
+
+            },
+            error: function (err, status, xhr) {
+                console.log(err)
+                alert('删除失败')
+            }
+        })
+    }
+
     function updateProject(e) {
+        var curPanel = curSelectedPanel
+        var project = curPanel.attr('data-project')
+        project = JSON.parse(project)
+        console.log(project)
+        var title = $('#basicinfo-title')
+        var author = $('#basicinfo-author')
+        var resolution = $('#basicinfo-resolution')
         if (project.name != title.val() || project.resolution != resolution.val()){
             //changed
             project.name = title.val()
@@ -113,6 +138,10 @@ $(function(){
                 success: function (data, status, xhr) {
                     //update success
                     console.log('success',data)
+                    //update panel
+                    var html = new EJS({url:'/public/login/assets/views/projectpanel.ejs'}).render({project:project});
+
+                    curPanel.replaceWith(html)
                 },
                 error: function (err, status, xhr) {
                     //update error
