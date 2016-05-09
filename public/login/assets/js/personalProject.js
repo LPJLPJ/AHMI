@@ -9,7 +9,8 @@ $(function(){
  //    })
     var curSelectedPanel = null;
 
-    $('.projectpanel').on('click', function (e) {
+    $('#projectlist')
+        .on('click','.projectpanel', function (e) {
         var curPanel = $(this)
         curSelectedPanel = curPanel
 
@@ -20,7 +21,7 @@ $(function(){
         if (curNodeName == 'IMG'){
             //img
             //open in new window
-            
+            window.open('/project/'+project._id)
         }else if (curNodeName == 'SPAN'){
             //span
             //show modal
@@ -41,17 +42,21 @@ $(function(){
         }
     })
 
-    $('.projectpanel').hover(function (e) {
+    $('#projectlist').on('mouseenter','.projectpanel',function (e) {
+        console.log('hover',e)
+        console.log($(this))
         var icon = $(this).find('.projectdelete')
+        console.log((icon))
         if (icon){
             icon.css('display','block')
         }
-    }, function (e) {
-        var icon = $(this).find('.projectdelete')
-        if (icon){
-            icon.css('display','none')
-        }
     })
+        .on('mouseleave','.projectpanel',function (e) {
+            var icon = $(this).find('.projectdelete')
+            if (icon){
+                icon.css('display','none')
+            }
+        })
 
 
 
@@ -154,6 +159,7 @@ $(function(){
 
 
     function addNewProject(newProject){
+        console.log(newProject)
         var html = new EJS({url:'/public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
         console.log(html)
         $('#addproject').after(html)

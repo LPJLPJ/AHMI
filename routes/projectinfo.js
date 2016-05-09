@@ -16,14 +16,24 @@ projectRoute.getAllProjects=function(req, res){
     })
 }
 
+
 projectRoute.getProjectById = function (req, res) {
-    ProjectModel.findById(function (err, project) {
-        if (err) {
-            console.log(err)
-            res.end(err)
-        }
-        res.end(project)
-    })
+    console.log('get project by id')
+    var projectId = req.params.id
+    console.log(projectId)
+    if (projectId && projectId!=''){
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                console.log(err)
+                errHandler(res,500,'error')
+            }
+            console.log(project)
+            res.render('ide/index.html')
+        })
+    }else{
+        errHandler(res,500,'error')
+    }
+
 }
 
 projectRoute.createProject = function (req, res) {

@@ -64,6 +64,11 @@ router.route('/utils/checkmail')
 router.route('/project/:id/basicinfo')
     .post(projectInfo.updateProject)
 
+router.route('/project/:id')
+    .get(projectInfo.getProjectById)
+
+//router.route('/project/:id/content')
+
 router.route('/project/create')
     .post(projectInfo.createProject)
 router.route('/project/delete')
