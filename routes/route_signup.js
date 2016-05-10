@@ -13,7 +13,7 @@ signup.post = function(req, res){
 	console.log(userInfo);
 	if (userInfo.username && userInfo.mail && userInfo.password && userInfo.captcha) {
 		//compare captcha
-		if (userInfo.captcha == req.session.captcha.text) {
+		if (req.session.captcha&&(userInfo.captcha == req.session.captcha.text)) {
 			//valid
 			UserModel.findByName(userInfo.username,function(err , user){
 				if (err) {

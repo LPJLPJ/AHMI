@@ -10,6 +10,7 @@ var route_space = require('./route_space')
 var routeValidate = require('./routeValidate')
 //projects
 var projectInfo = require('./projectinfo')
+var generateProject = require('./generateProject')
 
 router.route('/userlist')
 .get(function(req, res){
@@ -38,6 +39,9 @@ router.route('/private/space')
 
 router.route('/api/upload')
 .post(uploadFile)
+
+router.route('/api/generateproject')
+    .post(generateProject)
 
 
 router.route('/captcha')

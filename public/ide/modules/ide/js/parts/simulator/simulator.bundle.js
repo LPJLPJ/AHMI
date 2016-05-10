@@ -19774,55 +19774,59 @@
 			// var basicUrl = '/ahmi/public/html/AHMIDesigner/static/modules/ide/'
 			// console.log('basicUrl',basicUrl);
 			//default resources
-			var digits = '0123456789';
-			var defaultDigitsImages = digits.split('').map(function (digit) {
-				return {
-					id: digit + '.png',
-					name: '' + digit,
-					type: 'image/png'
-				};
-			});
+			// var digits = '0123456789';
+			// var defaultDigitsImages = digits.split('').map(function(digit){
+			// 	return {
+			// 		id:digit+'.png',
+			// 		name:''+digit,
+			// 		type:'image/png'
+			// 	}
+			// })
 			// var allResourceList= data.resourceList.concat(defaultDigitsImages);
 			var allResourceList = data.resourceList;
 			var num = allResourceList.length;
-			// console.log(allResourceList);
-			allResourceList.map(function (resource) {
-				var newResource = {};
-				switch (resource.type.split('/')[0]) {
-					case 'image':
-						var newImg = new Image();
-						// newImg.src = basicUrl+resource.id;
-						newImg.src = basicUrl + resource.id;
-						newImg.onload = function () {
-							num = num - 1;
-							if (num == 0) {
-								callBack(data);
+			console.log('resourceList ', allResourceList);
+			if (num > 0) {
+				allResourceList.map(function (resource) {
+					var newResource = {};
+					switch (resource.type.split('/')[0]) {
+						case 'image':
+							var newImg = new Image();
+							// newImg.src = basicUrl+resource.id;
+							newImg.src = basicUrl + resource.id;
+							newImg.onload = function () {
+								num = num - 1;
+								if (num == 0) {
+									callBack(data);
+								};
 							};
-						};
-						newResource.content = newImg;
-						break;
-					default:
-						var newImg = new Image();
-						newImg.src = basicUrl + resource.id;
+							newResource.content = newImg;
+							break;
+						default:
+							var newImg = new Image();
+							newImg.src = basicUrl + resource.id;
 
-						newImg.onload = function () {
-							num = num - 1;
-							if (num == 0) {
-								callBack(data);
+							newImg.onload = function () {
+								num = num - 1;
+								if (num == 0) {
+									callBack(data);
+								};
 							};
-						};
 
-						newResource.content = newImg;
-						break;
+							newResource.content = newImg;
+							break;
 
-				}
-				newResource.id = resource.id;
-				newResource.name = resource.name;
-				newResource.type = resource.type;
-				resourceList.push(newResource);
+					}
+					newResource.id = resource.id;
+					newResource.name = resource.name;
+					newResource.type = resource.type;
+					resourceList.push(newResource);
 
-				//imageList[image] = new Image('./public/media/images/'+image);
-			}.bind(this));
+					//imageList[image] = new Image('./public/media/images/'+image);
+				}.bind(this));
+			} else {
+				callBack(data);
+			}
 
 			this.setState({ resourceList: resourceList }, function () {
 				var imageList = this.state.resourceList.filter(function (resource, index) {
@@ -19867,10 +19871,18 @@
 
 			if (project.pageList && project.pageList.length > 0) {
 				//curPageIdx
-				var curPageIdx;
+				var curPageIdx = 0;
+
 				var curPageIdxTag = this.findTagByName(project.tag);
-				if (!curPageIdxTag) {
-					curPageIdxTag.value = 1;
+				console.log(_.cloneDeep(curPageIdxTag));
+				if (curPageIdxTag == null) {
+					curPageIdxTag = {
+						name: '当前页面序号',
+						register: true,
+						writeOrRead: 'true',
+						indexOfRegister: -1,
+						value: 1
+					};
 				}
 				curPageIdx = curPageIdxTag.value;
 				if (curPageIdx > 0 && curPageIdx <= project.pageList.length) {
@@ -20373,6 +20385,8 @@
 		},
 		drawBgImg: function (x, y, w, h, imageName, ctx) {
 			//console.log('x: '+x+' y: '+y+' w: '+w+' h: '+h);
+			var imageName = this.getImageName(imageName);
+			console.log('draw bgimg ', imageName);
 			var offcanvas, offctx;
 			if (!ctx) {
 				offcanvas = this.refs.offcanvas;
@@ -20389,6 +20403,10 @@
 					break;
 				}
 			};
+		},
+		getImageName: function (imageName) {
+			var names = imageName.split('/');
+			return names[names.length - 1];
 		},
 		inRect: function (x, y, target, type) {
 			if (type && type == 'widget') {

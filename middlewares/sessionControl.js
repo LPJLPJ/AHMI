@@ -1,6 +1,6 @@
 var needAuth = require('../utils/needAuth')
 module.exports = function userControl(req, res, next){
-	console.log(req.session.user);
+	console.log(req.session);
 	if (!req.session.user){
 		if (!needAuth(req.url)){
 			next()

@@ -16,13 +16,13 @@ login.post = function(req, res){
 	var captchaText = req.body.captcha
 
 
-
+    console.log(req.session.captcha,captchaText)
 
 	//varify captcha
-	var sessionCaptchaText = req.session.captcha.text
+	//var sessionCaptchaText = req.session.captcha.text
 	// console.log(sessionCaptchaText,req.session);
-	if (sessionCaptchaText == captchaText) {
-		// console.log('captcha valid');
+	if (req.session.captcha&&(captchaText == req.session.captcha.text)) {
+		 console.log('captcha valid');
 		UserModel.findByName(username,function(err, user){
 			if (err) {res.end(err)}
 			if (user) {

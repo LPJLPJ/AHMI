@@ -44,9 +44,12 @@ app.use(CookieParser())
 app.use(Session({
 	resave:false,
 	saveUninitialized:false,
+    cookie:{maxAge:3000000},
 	secret:'ahmi',
 	store:new MongoStore({
-		url:'mongodb://localhost/ahmi'
+		url:'mongodb://localhost/ahmi',
+        ttl:20000,
+        autoRemove: 'native'
 	})
 }))
 
