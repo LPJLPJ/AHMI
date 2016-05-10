@@ -1,0 +1,46 @@
+/**
+ * Created by shenaolin on 16/3/4.
+ */
+ideServices.
+    service('Type', function () {
+        var MyPage = this.MyPage = 'MyPage';
+        var MyLayer = this.MyLayer = 'MyLayer';
+        var MyLayerGroup = this.MyLayerGroup = 'group';
+        var MySubLayer = this.MySubLayer = 'MySubLayer';
+        var MyWidgetGroup = this.MyWidgetGroup = 'group';
+        var MySlide = this.MySlide = 'MySlide';
+        var MyButton = this.MyButton = 'MyButton';
+        var MyButtonGroup = this.MyButtonGroup = "MyButtonGroup";
+        var MyNumber = this.MyNumber = 'MyNumber';
+        var MyProgress = this.MyProgress = 'MyProgress';
+        var MyDashboard = this.MyDashboard = 'MyDashboard';
+        var MyGroup = this.MyGroup = 'group';
+        var MyLayerArray = this.MyLayerArray = 'MyLayerArray';
+        var MyWidgetArray = this.MyWidgetArray = 'MyWidgetArray';
+
+        var MyKnob = this.Myknob = 'MyKnob';
+        var MyTextArea = this.MyTextArea = 'MyTextArea';
+
+
+
+    this.getFabWidgetByName= function (_typeStr) {
+        switch (_typeStr){
+            case MySlide:return fabric.MySlide;
+            default:return null
+        }
+    };
+
+    this.isWidget= function (_typeStr) {
+        if (_typeStr==this.MySlide||_typeStr==this.MyButton||
+            _typeStr==this.MyProgress||_typeStr==this.MyNumber||_typeStr==this.MyButtonGroup||_typeStr == this.MyDashboard||
+            _typeStr==this.Myknob||_typeStr==this.MyTextArea){
+            return true;
+        }
+        return false
+    };
+
+
+
+
+
+});

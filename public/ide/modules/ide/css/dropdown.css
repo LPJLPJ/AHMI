@@ -1,0 +1,9 @@
+.dropdown-menu-item-widget{
+    display:inline-block;
+    width:30%;
+    text-align: center;
+}
+
+.icon-widget{
+    font-size: 1.6em;
+}

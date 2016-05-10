@@ -21,7 +21,7 @@ $(function(){
         if (curNodeName == 'IMG'){
             //img
             //open in new window
-            window.open('/project/'+project._id)
+            window.open('/project/'+project._id+'/editor')
         }else if (curNodeName == 'SPAN'){
             //span
             //show modal
@@ -40,7 +40,7 @@ $(function(){
             }
 
         }
-    })
+    });
 
     $('#projectlist').on('mouseenter','.projectpanel',function (e) {
         console.log('hover',e)
