@@ -70,7 +70,7 @@ ideServices
         this.getDefaultSubLayer = function () {
             var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',1.0)"}';
             return {
-                url: 'blank.png',
+                url: '/public/images/blank.png',
                 id: Math.random().toString(36).substr(2),
                 proJsonStr: jsonStr,
                 widgets: [],

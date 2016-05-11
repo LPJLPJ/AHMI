@@ -9,7 +9,7 @@ ideServices
          * 空白Layer的URL
          * @type {string}
          */
-        this.BLANK_LAYER_URL='blank.png';
+        this.BLANK_LAYER_URL='/public/images/blank.png';
 
 
         this.getRandomImageURL= function () {
