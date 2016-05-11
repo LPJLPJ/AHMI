@@ -5,6 +5,8 @@ var ProjectModel = require('../db/models/ProjectModel')
 var UserModel = require('../db/models/UserModel')
 var projectRoute = {}
 var _ = require('lodash')
+var fs = require('fs')
+var path = require('path')
 var errHandler = require('../utils/errHandler')
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
@@ -69,35 +71,28 @@ projectRoute.createProject = function (req, res) {
                 console.log('project save error')
                 res.status(500).end()
             }
-            res.end(JSON.stringify(newProject))
-            //save to user
-            //var projectId = newProject._id
-            //console.log(projectId)
-            //UserModel.findById(req.session.user.id, function (err, user) {
-            //    if (err){
-            //        console.log('user find error')
-            //        res.status(500).end()
-            //    }
-            //    if (user){
-            //        //update user
-            //        //console.log(user.projectIds)
-            //        user.projectIds.push(projectId)
-            //        //console.log(user.projectIds)
-            //        user.save(function (err) {
-            //            if (err){
-            //                console.log('project save to user error')
-            //                res.status(500).end()
-            //            }
-            //            //console.log(user.projectIds)
-            //            //res.send('ok')
-            //            res.send(JSON.stringify(newProject))
-            //            res.end()
-            //        })
-            //    }else{
-            //        //user error
-            //        res.status(500).end()
-            //    }
-            //})
+            //create project directory
+            var targetDir = path.join(__dirname,'../projects/',String(newProject._id))
+            fs.stat(targetDir, function (err, stats) {
+                if (stats&&stats.isDirectory&&stats.isDirectory()){
+                    //exists
+                }else{
+                    //create new directory
+                    console.log('create new directory')
+                    fs.mkdir(targetDir, function (err) {
+                        if (err){
+                            console.log('mk error')
+                            errHandler(res, 500,'mkdir error')
+                        }else{
+                            console.log('ok')
+                            res.end(JSON.stringify(newProject))
+                        }
+
+                    })
+                }
+            })
+
+
         })
     }else{
         res.status(500).end()

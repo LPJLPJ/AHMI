@@ -38,7 +38,7 @@ router.route('/private/space')
 .get(route_space)
 
 router.route('/api/upload')
-.post(uploadFile)
+.post(uploadFile.uploadTest)
 
 router.route('/api/generateproject')
     .post(generateProject)
@@ -70,6 +70,9 @@ router.route('/project/:id/basicinfo')
 
 router.route('/project/:id/editor')
     .get(projectInfo.getProjectById)
+
+router.route('/project/:id/upload')
+    .post(uploadFile.uploadProjectFile)
 
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent)

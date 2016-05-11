@@ -514,7 +514,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 console.log(file);
                 Upload.upload({
                     //url:baseUrl+'/resource',
-                    url:'/api/upload',
+                    //url:'/api/upload',
+                    url:'/project/'+window.localStorage.getItem('projectId')+'/upload',
                      data:{file:file,name:translatedFile.id}
                     //data:{file:file},
                     //params:{
