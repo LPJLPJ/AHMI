@@ -91,4 +91,7 @@ router.route('/project/:id/upload')
 router.route('/project/:id/delete')
     .post(uploadFile.deleteProjectFile)
 
+router.route('/project/:id/resources/:rid')
+    .get(uploadFile.getProjectFile)
+
 module.exports = router

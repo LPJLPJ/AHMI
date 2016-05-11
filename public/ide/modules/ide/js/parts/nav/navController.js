@@ -107,9 +107,12 @@
         function saveProject(){
             ProjectService.getProjectTo($scope);
             $scope.project.resourceList = ResourceService.getAllResource()
+
             $scope.project.customTags = TagService.getAllCustomTags()
             $scope.project.timerTags = TagService.getAllTimerTags()
             $scope.project.timers = TimerService.getTimerNum()
+
+            console.log($scope.project)
             $http({
                 method:'PUT',
                 url:'/project/'+window.localStorage.getItem('projectId')+'/save',

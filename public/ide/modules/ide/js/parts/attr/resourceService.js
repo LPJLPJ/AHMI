@@ -273,7 +273,7 @@ ideServices
             }
         ];
         //var  files= []
-        var resourceUrl = "/public/images/";
+        var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
 
         this.getAllResource = function () {
             
@@ -287,12 +287,14 @@ ideServices
             
         };
 
-        this.syncFiles = function () {
-            var scope={};
-            ProjectService.getProjectTo(scope);
+        this.setFiles=function (_files) {
+            files=_files||[];
+        }
 
-            files = scope.project.resourceList;
-
+        this.syncFiles = function (_files) {
+            files = _files||[]
+            console.log(_files)
+            console.log(files)
         }
 
         this.getAllImages = function(){

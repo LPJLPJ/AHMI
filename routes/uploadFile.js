@@ -127,3 +127,18 @@ module.exports.deleteProjectFile = function (req, res) {
     }
 
 }
+
+
+module.exports.getProjectFile = function (req, res) {
+    console.log('getting')
+    var projectId = req.params.id
+    var fileId = req.params.rid;
+    if (projectId!=''&&fileId!=''){
+        //valid
+        res.sendFile(path.join(__dirname,'../projects/',String(projectId),'/resources/',String(fileId)), function (err) {
+            console.log(err)
+        })
+    }else{
+        errHandler(res,500,'invalid resource url')
+    }
+}

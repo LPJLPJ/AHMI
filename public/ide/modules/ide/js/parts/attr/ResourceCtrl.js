@@ -14,7 +14,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     });
 
     function initUserInterface(){
-        ResourceService.syncFiles()
+        //ResourceService.syncFiles()
     }
 
 

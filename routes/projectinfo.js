@@ -48,7 +48,7 @@ projectRoute.getProjectContent = function (req, res) {
                 errHandler(res,500,'error')
             }
             //console.log(project)
-            res.end(JSON.stringify(project))
+            res.end(project.content)
         })
     }else{
         errHandler(res,500,'error')

@@ -9,7 +9,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
-                                    TemplateProvider,ResourceService) {
+                                    TemplateProvider,ResourceService,TagService,TimerService) {
 
     $scope.ide={
         loaded:false    //页面是否渲染完成
@@ -42,31 +42,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         }
         console.log(id)
         window.localStorage.setItem('projectId',id);
-        //$http({
-        //    method:'GET',
-        //    url:baseUrl+'/project/'+id+'/content'
-        //}).success(function (data) {
-        //    console.log(data)
-        //    data = GlobalService.getBlankProject()
-        //    console.log(data)
-        //    //if (data){
-        //    //    var globalProject=data;
-        //    //    TemplateProvider.saveProjectFromGlobal(globalProject);
-        //    //    ProjectService.saveProjectFromGlobal(globalProject, function () {
-        //    //        $scope.$broadcast('GlobalProjectReceived');
-        //    //
-        //    //    });
-        //    //}else{
-        //    //
-        //    //    console.log('获取信息失败');
-        //    //
-        //    //    readCache();
-        //    //}
-        //    //readCache()
-        //}).error(function (err) {
-        //    console.log(err)
-        //    readCache()
-        //})
+
 
         $http({
             method:'GET',
@@ -74,17 +50,20 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         }).success(function (data) {
 
             if (data){
+                //console.log(data)
 
                 //var globalProject = GlobalService.getBlankProject()
-                //console.log(globalProject)
-                //
-                //TemplateProvider.saveProjectFromGlobal(globalProject);
-                //ProjectService.saveProjectFromGlobal(globalProject, function () {
-                //    $scope.$broadcast('GlobalProjectReceived');
-                //
-                //});
+                var globalProject = data
+                console.log('globalProject',globalProject)
 
-                readCache();
+                TemplateProvider.saveProjectFromGlobal(globalProject);
+                ProjectService.saveProjectFromGlobal(globalProject, function () {
+                    syncServices(globalProject)
+                    $scope.$broadcast('GlobalProjectReceived');
+
+                });
+
+                //readCache();
             }else{
                 console.log('获取信息失败');
 
@@ -300,6 +279,10 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             console.log('项目已自动缓存');
             ProjectService.getProjectTo($scope);
             $scope.project.resourceList = ResourceService.getAllResource()
+            $scope.project.customTags = TagService.getAllCustomTags()
+            $scope.project.timerTags = TagService.getAllTimerTags()
+            $scope.project.timers = TimerService.getTimerNum()
+            //$scope.project.resourceList = ResourceService.getAllResource()
             var pid=window.localStorage.getItem('editPid');
             window.localStorage.setItem('projectCache'+pid,JSON.stringify($scope.project));
         },5*60*1000);
@@ -323,7 +306,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             globalProject = GlobalService.getBlankProject()
             TemplateProvider.saveProjectFromGlobal(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
-                ResourceService.syncFiles()
+                ResourceService.syncFiles(globalProject)
                 $scope.$broadcast('GlobalProjectReceived');
 
             });
@@ -332,6 +315,15 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             toastr.info('获取项目失败')
         }
 
+    }
+
+    function syncServices(globalProject){
+        console.log(globalProject)
+        ResourceService.syncFiles(globalProject.resourceList)
+        //tags tbc
+        TagService.syncCustomTags(globalProject.customTags)
+        TagService.syncTimerTags(globalProject.timerTags)
+        TimerService.setTimerNum(globalProject.timers)
     }
 
 
