@@ -74,6 +74,9 @@ router.route('/project/:id/editor')
 router.route('/project/:id/upload')
     .post(uploadFile.uploadProjectFile)
 
+router.route('/project/:id/delete')
+    .post(uploadFile.deleteProjectFile)
+
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent)
 

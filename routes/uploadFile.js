@@ -102,3 +102,28 @@ module.exports.uploadProjectFile = function (req, res) {
         errHandler(res, 500, 'invalid projectid')
     }
 }
+
+
+module.exports.deleteProjectFile = function (req, res) {
+    var projectId = req.params.id;
+    var fileId = req.body.fileId;
+    if (projectId!=''&&fileId!=''){
+        //valid fileid
+        var url = path.join(__dirname,'../projects/',String(projectId),fileId);
+        fs.stat(url, function (err, stats) {
+            if (stats&&stats.isFile&&stats.isFile()){
+                fs.unlink(url, function (err) {
+                    if (err){
+                        errHandler(res,500,'delete error')
+                    }else{
+                        res.end('ok')
+                    }
+                })
+            }
+        })
+
+    }else{
+        errHandler(res,500,'file error')
+    }
+
+}

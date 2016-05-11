@@ -144,7 +144,20 @@ projectRoute.deleteProject = function (req, res) {
             if (err){
                 errHandler(res,500,'delete error')
             }
-            res.end('ok')
+            //delete directory
+            var targetDir = path.join(__dirname,'../projects/',String(projectId))
+            fs.stat(targetDir, function (err, stats) {
+                if (stats&&stats.isDirectory&&stats.isDirectory()){
+                    //exists
+                    //delete
+                    fs.rm(targetDir, function () {
+                        res.end('ok')
+                    })
+                }else{
+                    res.end('ok')
+                }
+            })
+
         })
     }else{
         errHandler(res,500,'invalid project id')
