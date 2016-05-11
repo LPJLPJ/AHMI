@@ -65,9 +65,18 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
                 //readCache();
             }else{
-                console.log('获取信息失败');
+                //console.log('获取信息失败');
+                //
+                //readCache();
+                globalProject = GlobalService.getBlankProject()
+                console.log('globalProject',globalProject)
 
-                readCache();
+                TemplateProvider.saveProjectFromGlobal(globalProject);
+                ProjectService.saveProjectFromGlobal(globalProject, function () {
+                    syncServices(globalProject)
+                    $scope.$broadcast('GlobalProjectReceived');
+
+                });
             }
         }).error(function (msg) {
             console.log(msg);

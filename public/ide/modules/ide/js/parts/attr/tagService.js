@@ -48,14 +48,17 @@ ideServices
         this.syncAllTags = function (_tagList) {
             var _tags = []
             var _timerTags = []
-            for (var i = 0; i<_tagList.length;i++){
-                if (_tagList[i].name.indexOf('Sys')==0){
-                    //timertag
-                    _timerTags.push(_tagList[i])
-                }else{
-                    _tags.push(_tagList[i])
+            if (_tagList){
+                for (var i = 0; i<_tagList.length;i++){
+                    if (_tagList[i].name.indexOf('Sys')==0){
+                        //timertag
+                        _timerTags.push(_tagList[i])
+                    }else{
+                        _tags.push(_tagList[i])
+                    }
                 }
             }
+
             tags = _tags
             timerTags = _timerTags
 
@@ -63,11 +66,11 @@ ideServices
 
 
         this.syncCustomTags = function (_customTags) {
-            tags = _customTags
+            tags = _customTags||[]
         }
 
         this.syncTimerTags = function (_timerTags) {
-            timerTags = _timerTags
+            timerTags = _timerTags||[]
         }
 
         this.getAllTagsName=function(){
