@@ -8,6 +8,7 @@ var _ = require('lodash')
 var fs = require('fs')
 var path = require('path')
 var errHandler = require('../utils/errHandler')
+var defaultProject = require('../utils/defaultProject')
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -63,6 +64,10 @@ projectRoute.createProject = function (req, res) {
     console.log(req.body)
     console.log('*******')
     var data = _.cloneDeep(req.body)
+    //default content
+    //var defaultProjectData = defaultProject.getDefaultProject(data.resolution)
+    //data.content = JSON.stringify(defaultProjectData)
+
     if (req.session.user){
         //user exists
         data.userId = req.session.user.id
@@ -86,7 +91,9 @@ projectRoute.createProject = function (req, res) {
                             errHandler(res, 500,'mkdir error')
                         }else{
                             console.log('ok')
-                            res.end(JSON.stringify(newProject))
+                            var newProjectInfo = _.cloneDeep(newProject)
+                            delete newProjectInfo.content;
+                            res.end(JSON.stringify(newProjectInfo))
                         }
 
                     })

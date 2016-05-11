@@ -49,6 +49,9 @@ angular.module('GlobalModule',[])
                     height:400,
                 },
                 resourceList:[],
+                customTags:[],
+                timerTags:[],
+                timers:0,
 
                 pages:[firstPage]
 
