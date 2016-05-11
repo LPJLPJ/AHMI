@@ -469,7 +469,7 @@
                             <span class="my-attr-title dengPage-title">背景图片</span>
 
                             <select class="form-control my-attr-number-input form-control dengPage-input" ng-model="component.page.selectImage" ng-change="component.page.enterImage($event)">
-                                <option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}</option>
+                                <option ng-repeat="image in component.images" value="{{component.baseUrl+image.id}}">{{image.name}}</option>
 
 
                             </select>
@@ -567,7 +567,7 @@
                             <span class="my-attr-title">图片</span>
 
                             <select class="my-attr-number-input form-control" ng-model="component.subLayer.selectImage" ng-change="component.subLayer.enterImage($event)">
-                                <option ng-repeat="image in component.images" value="{{image.id}}">{{image.name}}</option>
+                                <option ng-repeat="image in component.images" value="{{component.baseUrl+image.id}}">{{image.name}}</option>
 
                             </select>
                         </div>
@@ -1353,14 +1353,14 @@
                                     <td>{{$index+1}}</td>
                                     <td><input class="form-control" type="text" ng-model="slice.name" /> </td>
                                     <!--image-->
-                                    <td><select class="form-control" ng-model="slice.imgSrc" ng-options="image.id as image.name for image in images " >
+                                    <td><select class="form-control" ng-model="slice.imgSrc" ng-options="(basicUrl+image.id) as image.name for image in images " >
                                         <option value="">---</option>
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"  ng-model="slice.color" /></td>
                                     <td >
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
-                                        <img  ng-src="{{basicUrl + (slice.imgSrc||'blank.png')}}"  width="100px" height="100px" />
+                                        <img  ng-src="{{ slice.imgSrc||basicUrl+'blank.png'}}"  width="100px" height="100px" />
                                         </div>
                                     </td>
                                     <td><span  ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span></td>
@@ -1525,7 +1525,7 @@
                         </thead>
                         <tbody>
                         <tr class="img-info" ng-repeat="file in component.top.files">
-                            <td><img width="40px" height="40px" ng-src="{{component.top.basicUrl+file.src}}" /></td>
+                            <td><img width="40px" height="40px" ng-src="{{component.top.basicUrl+file.id}}" /></td>
                             <td >
                                 <input  class="img-name" type='text' style="width: 80px;border: 0;" ng-model="file.name" >
                                 <span>{{file.type}}</span>

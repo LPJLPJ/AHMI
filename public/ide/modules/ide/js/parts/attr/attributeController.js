@@ -190,6 +190,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             name:'空白',
         }
         $timeout(function () {
+            $scope.component.baseUrl = ResourceService.getResourceUrl()
             $scope.component.images=ResourceService.getAllImages();
             $scope.component.images.unshift(blankImage);
         })
