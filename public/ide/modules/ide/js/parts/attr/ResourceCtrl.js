@@ -74,9 +74,9 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
 
     function deleteFile(index){
-        var requiredResourceNames=ProjectService.getRequiredResourceNames();
-        console.log(requiredResourceNames);
-        return;
+        //var requiredResourceNames=ProjectService.getRequiredResourceNames();
+        //console.log(requiredResourceNames);
+        //return;
         ResourceService.deleteFileById($scope.component.top.files[index].id, function () {
             $scope.component.top.files = ResourceService.getAllImages();
         }.bind(this));

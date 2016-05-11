@@ -164,4 +164,34 @@ projectRoute.deleteProject = function (req, res) {
     }
 }
 
+projectRoute.saveProject = function (req, res) {
+    console.log('saving project')
+    var projectId = req.params.id;
+    if (projectId!=""){
+        ProjectModel.findById(projectId, function (err, project) {
+            if (err){
+                errHandler(res,500,'project error')
+            }else{
+                var curProjectContent = req.body.project
+                if (curProjectContent!=''){
+                    project.content = JSON.stringify(curProjectContent)
+                    project.save(function (err) {
+                        if (err){
+                            console.log(err)
+                            errHandler(res, 500, 'project resave error')
+                        }else{
+                            res.end('ok')
+                        }
+                    })
+                }else{
+                    errHandler(res,500,'project save error')
+                }
+            }
+
+        })
+    }else{
+        errHandler(res,500,'projectId error')
+    }
+}
+
 module.exports = projectRoute

@@ -75,25 +75,47 @@
         }
 
 
-        function saveProject() {
-            ProjectService.getProjectTo($scope);
+        //function saveProject() {
+        //    ProjectService.getProjectTo($scope);
+        //
+        //    console.log($scope.project);
+        //    console.log(window.localStorage.getItem('editPid'));
+        //    //ProjectService.saveCurrentProject();
+        //    $http({
+        //        method:'PUT',
+        //        url:baseUrl+'/project',
+        //        data:{
+        //            project:{
+        //                data:$scope.project,
+        //                editTime:new Date()
+        //            }
+        //
+        //        },
+        //        params:{
+        //            token:window.localStorage.getItem('token'),
+        //            pid:window.localStorage.getItem('editPid')
+        //        }
+        //
+        //    }).success(function (t) {
+        //        toastr.info('保存成功');
+        //        console.log(t);
+        //    }).error(function (err) {
+        //        console.log(err);
+        //    })
+        //}
 
-            console.log($scope.project);
-            console.log(window.localStorage.getItem('editPid'));
-            //ProjectService.saveCurrentProject();
+        function saveProject(){
+            ProjectService.getProjectTo($scope);
+            $scope.project.resourceList = ResourceService.getAllResource()
+            $scope.project.customTags = TagService.getAllCustomTags()
+            $scope.project.timerTags = TagService.getAllTimerTags()
+            $scope.project.timers = TimerService.getTimerNum()
             $http({
                 method:'PUT',
-                url:baseUrl+'/project',
+                url:'/project/'+window.localStorage.getItem('projectId')+'/save',
                 data:{
-                    project:{
-                        data:$scope.project,
-                        editTime:new Date()
-                    }
+                    project:$scope.project
 
-                },
-                params:{
-                    token:window.localStorage.getItem('token'),
-                    pid:window.localStorage.getItem('editPid')
                 }
 
             }).success(function (t) {
@@ -103,7 +125,6 @@
                 console.log(err);
             })
         }
-
         /**
          * 改变nav
          * @param index nav序号

@@ -71,18 +71,24 @@ router.route('/project/:id/basicinfo')
 router.route('/project/:id/editor')
     .get(projectInfo.getProjectById)
 
-router.route('/project/:id/upload')
-    .post(uploadFile.uploadProjectFile)
-
-router.route('/project/:id/delete')
-    .post(uploadFile.deleteProjectFile)
-
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent)
+
+router.route('/project/:id/save')
+    .put(projectInfo.saveProject)
+
+
 
 router.route('/project/create')
     .post(projectInfo.createProject)
 router.route('/project/delete')
     .post(projectInfo.deleteProject)
+
+//project file
+router.route('/project/:id/upload')
+    .post(uploadFile.uploadProjectFile)
+
+router.route('/project/:id/delete')
+    .post(uploadFile.deleteProjectFile)
 
 module.exports = router
