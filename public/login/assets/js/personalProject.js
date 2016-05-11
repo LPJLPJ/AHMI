@@ -43,10 +43,10 @@ $(function(){
     });
 
     $('#projectlist').on('mouseenter','.projectpanel',function (e) {
-        console.log('hover',e)
-        console.log($(this))
+        //console.log('hover',e)
+        //console.log($(this))
         var icon = $(this).find('.projectdelete')
-        console.log((icon))
+        //console.log((icon))
         if (icon){
             icon.css('display','block')
         }

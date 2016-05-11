@@ -150,7 +150,7 @@ projectRoute.deleteProject = function (req, res) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //exists
                     //delete
-                    fs.rm(targetDir, function () {
+                    fs.rmdir(targetDir, function () {
                         res.end('ok')
                     })
                 }else{

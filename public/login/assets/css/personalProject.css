@@ -280,3 +280,7 @@ body{
     resize:vertical;
     /*line-height: 1.3em;*/
 }
+
+.projectinfo span{
+    overflow: hidden;
+}
