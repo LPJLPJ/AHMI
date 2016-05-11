@@ -79,7 +79,6 @@
             ProjectService.getProjectTo($scope);
 
             console.log($scope.project);
-            console.log(window.localStorage.getItem('editPid'));
             //ProjectService.saveCurrentProject();
             $http({
                 method:'PUT',
@@ -92,8 +91,8 @@
 
                 },
                 params:{
-                    token:window.localStorage.getItem('token'),
-                    pid:window.localStorage.getItem('editPid')
+                    token:TOKEN,
+                    pid:PID
                 }
 
             }).success(function (t) {
@@ -206,6 +205,12 @@
             else if(_index==10){
                 newWidget=TemplateProvider.getDefaultTextArea();
             }
+            else if(_index==16){
+                newWidget=TemplateProvider.getDefaultNum();
+            }
+            else if(_index==5){
+                newWidget=TemplateProvider.getDefaultOscilloscope();
+            }
             else {
                 return;
             }
@@ -305,15 +310,13 @@
             console.log($scope.project);
             window.projectData = _.cloneDeep($scope.project);
 
-
-
-            $http.post('/api/generateproject',$scope.project).success(function (data) {
-                console.log('success');
-                console.log(data);
-            }).error(function (err) {
-                console.log('error');
-                console.log(err);
-            });
+            //$http.post('http://localhost:3000/api/angularproject',$scope.project).success(function (data) {
+            //    console.log('success');
+            //    console.log(data);
+            //}).error(function (err) {
+            //    console.log('error');
+            //    console.log(err);
+            //});
         }
 
         function play(){
