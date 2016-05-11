@@ -10,6 +10,7 @@ ideServices
                                          GlobalService,
                                          Preference,
                                          TemplateProvider,
+                                         //ResourceService,
                                          ViewService,
                                          Type) {
 
@@ -303,7 +304,7 @@ ideServices
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
-                    console.log(level.texList);
+                   // console.log(level.texList);
                     self.backgroundColor=level.texList[0].slices[0].color;
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
@@ -326,6 +327,19 @@ ideServices
                     }else {
                         self.progressImageElement=null;
                     }
+
+                    //判断是否有第三层光标
+                    if(level.texList[2]){
+                        console.log('设置了光标');
+                        self.cursorColor=level.texList[2].slices[0].color;
+                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                            self.cursorImageElement=new Image();
+                            self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
+                            self.cursorImageElement.onload=(function(){
+
+                            }).bind(this);
+                        }
+                    }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -340,11 +354,20 @@ ideServices
                     subLayerNode.renderAll();
                     _callback&&_callback();
                 });
+
+                this.on('changeAttributeCursor',function(arg){
+                    self.backgroundColor=arg.backgroundColor;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                });
+
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+
+                //console.log('看看光标值',getCurrentSelectObject());
 
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
@@ -413,9 +436,129 @@ ideServices
         fabric.MyProgress.async = true;
 
 
+        //**oscilloscope**//
+        fabric.MyOscilloscope = fabric.util.createClass(fabric.Object, {
+            type: Type.MyOscilloscope,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
+                }
+
+                this.oscilloscopeColor=level.texList[1].slices[0].color;
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    this.oscilloscopeImageElement=new Image();
+                    this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.oscilloscopeImageElement.onload = (function () {
+
+                    }).bind(this);
+                }else {
+                    this.oscilloscopeImageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    // console.log(level.texList);
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                        self.backgroundImageElement=new Image();
+                        self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                        self.backgroundImageElement.onload = (function () {
+
+                        }).bind(this);
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
+                    
+                    self.oscilloscopeColor=level.texList[1].slices[0].color;
+                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+
+                        self.oscilloscopeImageElement=new Image();
+                        self.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                        self.oscilloscopeImageElement.onload = (function () {
+
+                        }).bind(this);
+                    }else {
+                        self.oscilloscopeImageElement=null;
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -this.width / 2,
+                    -this.height / 2,
+                    this.width,
+                    this.height
+                );
+
+                //示波器背景
+                if (this.backgroundImageElement){
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                //示波器渲染纹理
+                if(this.oscilloscopeColor){
+                    ctx.fillStyle=this.oscilloscopeColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this. width,
+                        this.height
+                    );
+                }
+                if(this.oscilloscopeImageElement){
+                    ctx.drawImage(this.oscilloscopeImageElement,-this.width/2,-this.height/2,this.width,this.height);
+                }
+
+            }
+        });
+        fabric.MyOscilloscope.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyOscilloscope(level, option));
+        }
+        fabric.MyOscilloscope.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement:this.backgroundImageElement,
+                    oscilloscopeImageElement:this.oscilloscopeImageElement,
+
+                    backgroundColor:this.backgroundColor,
+                    oscilloscopeColor:this.oscilloscopeColor,
+
+                });
+            }
+        })(fabric.MyOscilloscope.prototype.toObject);
+        fabric.MyOscilloscope.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyOscilloscope(level, object));
+        };
+        fabric.MyOscilloscope.async = true;
 
         //**** Dashboard ****//
-
         fabric.MyDashboard = fabric.util.createClass(fabric.Object, {
             type: Type.MyDashboard,
             initialize: function (level, options) {
@@ -459,7 +602,7 @@ ideServices
 
                 this.on('changeDashboardValue', function (arg) {
                     self.value=arg.value;
-                    console.log('changeDashboardValue',self.value);
+                    //console.log('changeDashboardValue',self.value);
                     var _callback=arg.callback;
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -482,10 +625,16 @@ ideServices
                     _callback&&_callback();
                 });
 
+                //change dashboard mode
+                this.on('changeDashboardMode',function(arg){
+                    self.backgroundColor=arg.backgroundColor;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                });
+
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
-                    console.log(level.texList);
                     self.backgroundColor=level.texList[0].slices[0].color;
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
@@ -508,6 +657,21 @@ ideServices
                     }else {
                         self.pointerImageElement=null;
                     }
+
+                    //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
+                    if(level.texList[2]){
+                        self.lightBandColor=level.texList[2].slices[0].color;
+                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                            self.lightBandImageElement=new Image();
+                            self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
+                            self.lightBandImageElement.onload = (function () {
+
+                            }).bind(this);
+                        }else {
+                            self.lightBandImageElement = null;
+                        }
+                    }
+
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -889,7 +1053,7 @@ ideServices
                         this.fire('image:loaded');
                     }).bind(this);
                 }else {
-                    this.normalImageElement=null;
+                    this.backgroundImageElement=null;
                 }
 
                 this.on('changeTex', function (arg) {
@@ -897,20 +1061,20 @@ ideServices
                     var _callback=arg.callback;
 
                     var tex=level.texList[0];
-                    self.normalColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc!='') {
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
                         var currentImageElement=new Image();
                         currentImageElement.src=tex.slices[0].imgSrc;
                         currentImageElement.onload = (function () {
                         }).bind(this);
-                        self.normalImageElement=currentImageElement;
+                        self.backgroundImageElement=currentImageElement;
                     }else {
-                        self.normalImageElement=null;
+                        self.backgroundImageElement=null;
                     }
-
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
+
                 });
 
                 this.on('changeTextContent', function (arg) {
@@ -934,8 +1098,13 @@ ideServices
                         self.fontItalic=arg.fontItalic;
                     }
 
-                    var _callback=arg.callback;
+                    //重新设置canvas的宽高
+                    if(self.fontSize&&self.text){
+                        self.setWidth(self.fontSize*(self.text.length+1));
+                        self.setHeight(self.fontSize*2);
+                    }
 
+                    var _callback=arg.callback;
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -950,23 +1119,21 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                //console.log(this);
-                //console.log(this.width);
                 ctx.fillStyle=this.fontColor;
                 ctx.save();
-                ctx.fillStyle=this.normalColor;
+                ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
                     -(this.height / 2) ,
                     this.width,
                     this.height);
 
-                if (this.normalImageElement){
-                    ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                if (this.backgroundImageElement){
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
 
                 ctx.restore();
-                var subLayerNode=CanvasService.getSubLayerNode();
+                //var subLayerNode=CanvasService.getSubLayerNode();
 
                 if(this.text){
                     var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
@@ -975,7 +1142,6 @@ ideServices
                     ctx.font=fontString;
                     ctx.textAlign='center';
                     ctx.fillText(this.text,0,this.fontSize/4);
-
                 }
             }
         });
@@ -985,8 +1151,8 @@ ideServices
         fabric.MyTextArea.prototype.toObject = (function (toObject){
             return function () {
                 return fabric.util.object.extend(toObject.call(this), {
-                    normalImageElement: this.normalImageElement,
-                    normalColor: this.normalColor
+                    backgroundImageElement: this.backgroundImageElement,
+                    backgroundColor: this.backgroundColor
                 });
             }
         })(fabric.MyTextArea.prototype.toObject);
@@ -995,6 +1161,197 @@ ideServices
             callback&&callback(new fabric.MyTextArea(level,object));
         };
         fabric.MyTextArea.async = true;
+
+        fabric.MyNum = fabric.util.createClass(fabric.Object,{
+            type: Type.MyNum,
+            initialize: function (level, options) {
+                var self=this;
+                var ctrlOptions={
+                    bl:true,
+                    br:true,
+                    mb:false,
+                    ml:false,
+                    mr:false,
+                    mt:false,
+                    tl:true,
+                    tr:true
+                };
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+
+                this.numValue=level.info.numValue;
+                this.numFamily=level.info.numFamily;
+                this.numSize=level.info.numSize;
+                this.numColor=level.info.numColor;
+                this.numBold=level.info.numBold;
+                this.numItalic=level.info.numItalic;
+                //下面位数字模式属性
+                this.numOfDigits=level.info.numOfDigits;
+                this.decimalCount=level.info.decimalCount;
+                this.symbolMode=level.info.symbolMode;
+                this.frontZeroMode=level.info.frontZeroMode;
+                //设置canvas的宽度和高度
+                if(this.numOfDigits&&this.numSize){
+                    this.setWidth((this.numOfDigits+1)*this.numSize);
+                    this.setHeight(this.numSize*1.5);
+                }
+
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.backgroundImageElement=currentImageElement;
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+
+                this.on('changeNumContent', function (arg) {
+                    //console.log('enter on changeTextContent');
+                    if(arg.numValue){
+                        self.numValue=arg.numValue;
+                    }
+                    if(arg.numFamily){
+                        self.numFamily=arg.numFamily;
+                    }
+                    if(arg.numSize){
+                        self.numSize=arg.numSize;
+                    }
+                    if(arg.numBold){
+                        self.numBold=arg.numBold;
+                    }
+                    if(arg.numItalic){
+                        self.numItalic=arg.numItalic;
+                    }
+                    if(arg.numOfDigits){
+                        self.numOfDigits=arg.numOfDigits;
+                    }
+                    if(arg.decimalCount||arg.decimalCount==0){
+                        self.decimalCount=arg.decimalCount;
+                    }
+                    if(arg.symbolMode){
+                        self.symbolMode=arg.symbolMode;
+                    }
+                    if(arg.frontZeroMode){
+                        self.frontZeroMode=arg.frontZeroMode;
+                    }
+
+                    //设置canvas宽高
+                    if(self.numOfDigits&&self.numSize){
+                        self.setWidth(self.numOfDigits*self.numSize);
+                        self.setHeight(self.numSize*1.5);
+                    }
+
+                    var _callback=arg.callback;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                var offCanvas = CanvasService.getOffCanvas();
+                console.log(this);
+                console.log(offCanvas);
+                offCanvas.width = this.width;
+                offCanvas.height = this.height;
+                var offCtx = offCanvas.getContext('2d');
+                offCtx.clearRect(0,0,this.width,this.height);
+
+
+
+
+                offCtx.fillStyle=this.backgroundColor;
+                offCtx.fillRect(0,0,this.width,this.height);
+                if (this.backgroundImageElement) {
+                    offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
+                }
+
+                //在数字框里展示数字预览效果
+                if(this.numValue) {
+                    //offCtx.save();
+                    offCtx.globalCompositeOperation = "destination-in";
+                    //offCtx.scale(1/this.scaleX,1/this.scaleY);
+                    var numString = this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
+                    //offCtx.fillStyle = this.numColor;
+                    offCtx.font = numString;
+                    offCtx.textAlign = 'center';
+
+                    var tempNumValue= _.cloneDeep(this.numValue);
+                    //配置小数位数
+                    if(this.decimalCount){
+                        tempNumValue= tempNumValue+".";
+                        for(var i=0;i<this.decimalCount;i++){
+                            tempNumValue=tempNumValue+'0';
+                        };
+                    }
+                    //配置前导0模式
+                    if(this.frontZeroMode=='1'){
+                        for(var i=0;i<(this.numOfDigits-this.decimalCount-1);i++){
+                            tempNumValue='0'+tempNumValue;
+                        }
+                    }
+                    //配置正负号
+                    if(this.symbolMode=='1'){
+                        tempNumValue='+'+tempNumValue;
+                    }
+                    offCtx.fillText(tempNumValue, this.width/2, this.height/2+this.numSize/4);
+                    //offCtx.restore();
+                }
+
+                ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
+                //console.log(ctx);
+
+            }
+        });
+        fabric.MyNum.fromLevel = function(level,callback,option){
+            callback && callback(new fabric.MyNum(level, option));
+        };
+        fabric.MyNum.prototype.toObject = (function (toObject){
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement: this.backgroundImageElement,
+                    backgroundColor: this.backgroundColor
+                });
+            }
+        })(fabric.MyNum.prototype.toObject);
+        fabric.MyNum.fromObject = function(object,callback){
+            var level=_self.getLevelById(object.id);
+            callback&&callback(new fabric.MyNum(level,object));
+        };
+        fabric.MyNum.async = true;
 
 
 
@@ -1701,11 +2058,6 @@ ideServices
 
             });
             return level;
-        };
-
-        var getResourceList=this.getResourceList=function () {
-
-            return project.resourceList;
         }
 
         var getCurrentWidget=this.getCurrentWidget= function (_currentSubLayer) {
@@ -1730,7 +2082,7 @@ ideServices
         }
 
         /**
-         * 找到画布对应的Fabric对象
+         * 找到Layer对应的Fabric对象
          * @returns {null}
          * @param _id
          * @param _isSubLayer
@@ -1755,37 +2107,6 @@ ideServices
             return fobj;
         };
 
-        /**
-         * 搜寻所有被项目引用过的图片资源名
-         * 用于删除资源时判断  该资源是否可以被删除
-         * @type {getRequiredResourceNames}
-         */
-        var getRequiredResourceNames=this.getRequiredResourceNames=function () {
-            var names=[];
-            _.forEach(project.pages,function (page) {
-                if (page.backgroundImage){
-                    names.push(page.backgroundImage);
-                }
-                _.forEach(page.layers,function (layer) {
-                    _.forEach(layer.subLayers,function (subLayer) {
-                        if (subLayer.backgroundImage){
-                            names.push(subLayer.backgroundImage);
-                        }
-                        _.forEach(subLayer.widgets,function (widget) {
-                            _.forEach(widget.texList,function (tex) {
-                                _.forEach(tex.slices,function (slice) {
-                                    if (slice.imgSrc){
-                                        names.push(slice.imgSrc);
-
-                                    }
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-            return names;
-        }
 
         /**
          * Page之间的切换
@@ -1824,7 +2145,7 @@ ideServices
                         currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
 
-                        currentPage.url=pageNode.toDataURL({format:'jpeg'});
+                        currentPage.url=pageNode.toDataURL();
                         _self.OnPageSelected(_pageIndex,_successCallback,true);
 
                     })
@@ -2041,8 +2362,7 @@ ideServices
 
                 }, initiator);
 
-            }
-            else if (_newWidget.type==Type.MyProgress){
+            }else if (_newWidget.type==Type.MyProgress){
 
                 if (_newWidget.backgroundImg==''){
                     _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
@@ -2062,6 +2382,7 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
+                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2071,8 +2392,7 @@ ideServices
                 },initiator);
 
 
-            }
-            else if(_newWidget.type==Type.MyDashboard){
+            }else if(_newWidget.type==Type.MyDashboard){
                 if (_newWidget.backgroundImg==''){
                     _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
                 }
@@ -2100,8 +2420,7 @@ ideServices
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator);
 
-            }
-            else if (_newWidget.type==Type.MyButton){
+            }else if (_newWidget.type==Type.MyButton){
 
                 fabric.MyButton.fromLevel(_newWidget, function (fabWidget) {
                     _self.currentFabWidgetIdList=[fabWidget.id];
@@ -2113,6 +2432,7 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
+                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2122,8 +2442,7 @@ ideServices
                 },initiator);
 
 
-            }
-            else  if (_newWidget.type==Type.MyButtonGroup){
+            }else  if (_newWidget.type==Type.MyButtonGroup){
                 fabric.MyButtonGroup.fromLevel(_newWidget, function (fabWidget) {
                     _self.currentFabWidgetIdList=[fabWidget.id];
 
@@ -2131,6 +2450,7 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
+                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2138,8 +2458,7 @@ ideServices
 
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator);
-            } 
-            else if(_newWidget.type==Type.MyNumber){
+            } else if(_newWidget.type==Type.MyNumber){
                 fabric.MyNumber.fromLevel(_newWidget, function (fabWidget) {
 
                     _self.currentFabWidgetIdList=[fabWidget.id];
@@ -2162,6 +2481,7 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2456,6 +2776,7 @@ ideServices
                     onComplete: function () {
                         subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
+                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback);
@@ -2863,6 +3184,7 @@ ideServices
 
                 var currentSubLayer=_self.getCurrentSubLayer();
                 if (currentSubLayer){
+                    console.log('-');
 
                     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
 
@@ -2888,6 +3210,7 @@ ideServices
             var currentSubLayer=_self.getCurrentSubLayer();
             if (currentSubLayer){
                 var subLayerNode=CanvasService.getSubLayerNode();
+                console.log('-');
 
                 //currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
             }
@@ -3036,7 +3359,7 @@ ideServices
                 pageNode.deactivateAll();
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                currentPage.url=pageNode.toDataURL({format:'jpeg'});
+                currentPage.url=pageNode.toDataURL();
 
                 _successCallback && _successCallback();
             }else {
@@ -3049,7 +3372,7 @@ ideServices
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
                     currentPage.mode=0;
-                    currentPage.url=pageNode.toDataURL({format:'jpeg'});
+                    currentPage.url=pageNode.toDataURL();
 
                     _successCallback && _successCallback();
                 });
@@ -3172,14 +3495,8 @@ ideServices
             var currentPageIndex=_.indexOf(project.pages,currentPage);
             var currentLayer=_self.getLevelById(_layerId);
             var layerIndex=_.indexOf(currentPage.layers,currentLayer);
+            var subLayerIndex=_.indexOf(currentLayer.subLayers,currentLayer.showSubLayer);
 
-            var subLayerIndex=-1;
-
-            _.forEach(currentLayer.subLayers,function (_subLayer, _index) {
-                if (_subLayer.id==currentLayer.showSubLayer.id){
-                    subLayerIndex=_index;
-                }
-            })
             console.log(currentPageIndex+'/'+layerIndex+'/'+subLayerIndex);
             _self.OnPageSelected(currentPageIndex,function () {
                 _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback,true);
@@ -3247,7 +3564,7 @@ ideServices
                 currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                currentPage.url=pageNode.toDataURL({format:'jpeg'});
+                currentPage.url=pageNode.toDataURL();
                 _successCallback && _successCallback();
             }else {
                 _backToPage(currentPage, function () {
@@ -3258,7 +3575,7 @@ ideServices
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                     currentPage.mode=0;
-                    currentPage.url=pageNode.toDataURL({format:'jpeg'});
+                    currentPage.url=pageNode.toDataURL();
                     _successCallback && _successCallback();
 
                 });
@@ -3296,7 +3613,7 @@ ideServices
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
-                currentPage.url=pageNode.toDataURL({format:'jpeg'});
+                currentPage.url=pageNode.toDataURL();
                 _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
                     _successCallback&&_successCallback(currentFabLayer)
                 });
@@ -3317,7 +3634,7 @@ ideServices
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
                     currentPage.mode=0;
-                    currentPage.url=pageNode.toDataURL({format:'jpeg'});
+                    currentPage.url=pageNode.toDataURL();
 
                     _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
                         _successCallback&&_successCallback(currentFabLayer)
@@ -3418,6 +3735,7 @@ ideServices
 
                 subLayerNode.deactivateAll();
                 subLayerNode.renderAll();
+                console.log('-');
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
@@ -3428,6 +3746,9 @@ ideServices
             }
             else {
 
+                console.log(subLayerNode.toJSON());
+
+
                 subLayerNode.clear();
                 subLayerNode.setBackgroundImage(null, function () {
                     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
@@ -3437,6 +3758,8 @@ ideServices
 
                         subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
+                        console.log('-');
+
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
                         currentPage.mode=1;
@@ -3485,9 +3808,11 @@ ideServices
 
                             subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
+                        console.log('-');
+
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                        currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                        currentSubLayer.url=subLayerNode.toDataURL();
                         renderingSubLayer=false;
 
                         _successCallback && _successCallback();
@@ -3514,8 +3839,10 @@ ideServices
 
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
+                            console.log('-');
+
                             currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                            currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+                            currentSubLayer.url = subLayerNode.toDataURL();
 
                             renderingSubLayer = false;
                             _successCallback && _successCallback();
@@ -3556,7 +3883,7 @@ ideServices
 
                             _widget.selected=true;
                             _widget.current=true;
-                            _widget.url=_target.toDataURL({format:'png'});
+                            _widget.url=_target.toDataURL();
 
                             _subLayer.current=true;
                             _subLayer.currentFabWidget= _.cloneDeep(_target);
@@ -3640,6 +3967,7 @@ ideServices
                 var currentFabWidget= currentSubLayer.currentFabWidget;
                 subLayerNode.setActive(currentFabWidget);
                 currentSubLayer.currentFabWidget= _.cloneDeep(currentFabWidget);
+                console.log('-');
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                 subLayerNode.renderAll();
@@ -3648,6 +3976,7 @@ ideServices
             }else {
                 subLayerNode.clear();
                 subLayerNode.setBackgroundImage(null, function () {
+                    console.log(currentSubLayer.proJsonStr);
 
                     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
                         //subLayerNode.setWidth(currentLayer.info.width);
@@ -3662,6 +3991,7 @@ ideServices
                         var currentFabWidget= currentSubLayer.currentFabWidget;
                         subLayerNode.setActive(currentFabWidget);
                         currentSubLayer.currentFabWidget=_.cloneDeep(currentFabWidget);
+                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         subLayerNode.renderAll();
@@ -3695,11 +4025,11 @@ ideServices
                 subLayerNode.setActive(currentFabWidget);
                 currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
                 subLayerNode.renderAll();
-
+                console.log('-');
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                currentSubLayer.url=subLayerNode.toDataURL();
                 _successCallback && _successCallback();
             }else {
                 subLayerNode.clear();
@@ -3715,10 +4045,11 @@ ideServices
                         currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
                         subLayerNode.renderAll();
                         currentPage.mode=1;
+                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                        currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                        currentSubLayer.url=subLayerNode.toDataURL();
                         _successCallback && _successCallback();
                     });
 
@@ -3797,7 +4128,7 @@ ideServices
             var currentPage=_self.getCurrentPage();
             $timeout(function () {
 
-                currentPage.url = pageNode.toDataURL({format:'jpeg'});
+                currentPage.url = pageNode.toDataURL();
                 _callback && _callback();
             })
         };
@@ -3808,7 +4139,7 @@ ideServices
                 console.warn('当前Layer为空');
                 return;
             }
-            getCurrentLayer().url = subLayerNode.toDataURL({format:'png'});
+            getCurrentLayer().url = subLayerNode.toDataURL();
         };
 
         this.ChangeAttributeName= function (_option, _successCallback) {
@@ -3843,6 +4174,7 @@ ideServices
                     subLayerNode.setBackgroundColor(_option.color, function () {
                         subLayerNode.renderAll();
                         currentSubLayer.backgroundColor=_option.color;
+                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         var currentPageIndex= _.indexOf(project.pages, _self.getCurrentPage());
@@ -3889,6 +4221,7 @@ ideServices
                     subLayerNode.setBackgroundImage(_option.image, function () {
                         subLayerNode.renderAll();
                         currentSubLayer.backgroundImage=_option.image;
+                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         var currentLayerIndex= _.indexOf(_self.getCurrentPage().layers, currentLayer);
@@ -4002,6 +4335,7 @@ ideServices
 
 
 
+
         this.ChangeAttributeDashboardValue= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
             var value=_option.value;
@@ -4078,12 +4412,11 @@ ideServices
             var selectObj=_self.getCurrentSelectObject();
             var fabTextObj=getFabricObject(selectObj.level.id,true);
             var arg={
-                level:selectObj.level,
                 scaleX:fabTextObj.getScaleX(),
                 scaleY:fabTextObj.getScaleY(),
                 callback:function () {
                     var currentWidget=selectObj.level;
-                    OnWidgetSelected(currentWidget,_successCallback);
+                    OnWidgetSelected(currentWidget,_successCallback);//模拟点击此控件，用来更新canvas的宽和高
                 }
             };
 
@@ -4132,7 +4465,10 @@ ideServices
             var arg={
                 scaleX:fabNumObj.getScaleX(),
                 scaleY:fabNumObj.getScaleY(),
-                callback:_successCallback
+                callback:function(){
+                    var currentWidget = selectObj.level;
+                    OnWidgetSelected(currentWidget,_successCallback);//模拟点击事件，更新canvas的宽和高。
+                }
             };
 
             //下面是数字字体属性，如字体，字体大小，粗体，斜体
@@ -4200,10 +4536,18 @@ ideServices
             _successCallback&&_successCallback();
         };
 
-        //改变示波器的一些属性，如波形颜色
+        //改变示波器的一些属性，如波形颜色,光标序号，光标值
         this.ChangeAttributeOscilloscope = function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
-            selectObje.level.info.oscColor=_option.oscColor;
+            if(_option.oscColor){
+                selectObje.level.info.oscColor=_option.oscColor;
+            }
+            if(_option.cursorId!=undefined){
+                selectObj.level.info.cursorId=_option.cursorId;
+            }
+            if(_option.cursorValue!=undefined){
+                selectObj.level.info.cursorValue=_option.cursorValue;
+            }
             _successCallback&&_successCallback();
         }
 
@@ -4413,7 +4757,8 @@ ideServices
 
                 }
 
-               subLayerNode.renderAll();
+                subLayerNode.renderAll();
+                console.log('-');
 
                 currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                 _self.OnWidgetSelected(currentWidget, function () {
@@ -4440,6 +4785,7 @@ ideServices
 
                 if (getCurrentSubLayer()){
                     var currentSubLayer=getCurrentSubLayer();
+                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
 
@@ -4590,6 +4936,8 @@ ideServices
                     }
 
                 }
+                console.log(pageNode.toJSON());
+
 
             }
             else if (Type.isWidget(object.type)){
@@ -4633,6 +4981,8 @@ ideServices
                     console.log('下移至'+currentWidget.zIndex);
 
                 }
+                console.log(subLayerNode.toJSON());
+
             }
 
             _successCallback&&_successCallback(currentOperate);
@@ -4695,6 +5045,7 @@ ideServices
                     currentWidget.info.height = _option.height;
                 }
                 subLayerNode.renderAll();
+                console.log('-');
 
                 currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                 OnWidgetSelected(currentWidget, function () {
@@ -4922,6 +5273,7 @@ ideServices
             var pageNode=CanvasService.getPageNode();
 
             if (currentSubLayer){
+                console.log('-');
                 currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
 
             }
@@ -4959,7 +5311,7 @@ ideServices
             subLayerNode.deactivateAll();
             subLayerNode.renderAll();
 
-            currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+            currentSubLayer.url=subLayerNode.toDataURL();
 
             _.forEach(pageNode.getObjects(), function (_fabLayer) {
                 _fabLayer.fire('OnRenderUrl')

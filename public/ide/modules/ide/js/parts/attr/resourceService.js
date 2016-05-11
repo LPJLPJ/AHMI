@@ -273,7 +273,7 @@ ideServices
             }
         ];
         //var  files= []
-        var resourceUrl = "/public/images/";
+        var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
 
         this.getAllResource = function () {
             

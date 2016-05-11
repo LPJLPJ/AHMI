@@ -463,7 +463,7 @@ ideServices
                 frontZeroMode:'0',//前导0模式标志，0：无前导0模式，1：有前导0模式
                 symbolMode:'0',//符号模式标志，1：无符号位，1：有符号位
                 decimalCount:0,//保留的小数位数
-                numOfDigits:8,//数字的位数，最小1，最大未定
+                numOfDigits:4,//数字的位数，最小1，最大未定
 
                 arrange:true,         //true:横向 false:竖向
                 numValue:'1',
