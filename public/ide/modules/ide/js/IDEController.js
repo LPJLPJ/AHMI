@@ -303,10 +303,11 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             console.log(project)
             var globalProject=project;
             //console.log(globalProject);
-            globalProject = GlobalService.getBlankProject()
+            //globalProject = GlobalService.getBlankProject()
             TemplateProvider.saveProjectFromGlobal(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
-                ResourceService.syncFiles(globalProject)
+                //ResourceService.syncFiles(globalProject)
+                syncServices(globalProject)
                 $scope.$broadcast('GlobalProjectReceived');
 
             });

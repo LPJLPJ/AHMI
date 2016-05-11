@@ -62,6 +62,9 @@ projectRoute.createProject = function (req, res) {
     console.log(req.body)
     console.log('*******')
     var data = _.cloneDeep(req.body)
+    //default content
+
+
     if (req.session.user){
         //user exists
         data.userId = req.session.user.id
