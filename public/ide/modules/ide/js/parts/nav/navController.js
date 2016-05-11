@@ -230,6 +230,12 @@
             else if(_index==10){
                 newWidget=TemplateProvider.getDefaultTextArea();
             }
+            else if(_index==16){
+                newWidget=TemplateProvider.getDefaultNum();
+            }
+            else if(_index==5){
+                newWidget=TemplateProvider.getDefaultOscilloscope();
+            }
             else {
                 return;
             }
@@ -328,8 +334,6 @@
 
             console.log($scope.project);
             window.projectData = _.cloneDeep($scope.project);
-
-
 
             $http.post('/api/generateproject',$scope.project).success(function (data) {
                 console.log('success');

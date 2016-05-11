@@ -16,9 +16,14 @@
         $scope.$on('GlobalProjectReceived', function () {
 
             initProject();
+            initOffCanvas();//初始化offCanvas
             $scope.$emit('LoadUp');
 
         });
+
+        function initOffCanvas(){
+            CanvasService.setOffCanvas(document.getElementById('offCanvas'))
+        }
 
 
         function initUserInterface(){

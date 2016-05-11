@@ -25,16 +25,18 @@ ide.controller('ProjectFileCtrl', function ($scope,$timeout,
 	}
 	function initProject() {
 		$scope.animationsEnabled = true;
-		$scope.open = function (size) {
+		$scope.open = function (isRecent) {
 			var modalInstance = $uibModal.open({
 				animation: $scope.animationsEnabled,
 				templateUrl: 'projectFile.html',
 				controller: 'ProjectFileInstanceCtrl',
-				size: size,
 				resolve: {
 					items: function () {
 						return $scope.items;
-					}
+					},
+                    isRecent:function () {
+                        return isRecent;
+                    }
 				}
 			});
 		modalInstance.result.then(function (selectedItem) {
@@ -45,9 +47,11 @@ ide.controller('ProjectFileCtrl', function ($scope,$timeout,
 		};
 	}
 })
-	.controller('ProjectFileInstanceCtrl',  function ($scope, $uibModalInstance, items, $timeout) {
+	.controller('ProjectFileInstanceCtrl',  function ($scope, ProjectService,ProjectFileManage,$uibModalInstance, items,isRecent, $timeout) {
 
+		console.log('打开项目');
 		$scope.items = items;
+        console.log(isRecent);
 		$scope.selected = {
 			item: null
 		};
@@ -64,17 +68,39 @@ ide.controller('ProjectFileCtrl', function ($scope,$timeout,
 			$scope.isStartDownloaded = false;
 			$scope.downloading.item=null;
 		};
-		$timeout(function(){
-			$scope.itemsGetted = true;
-		}, 2);
+
+
+        var request=isRecent?ProjectFileManage.getRecentProjectFile:ProjectFileManage.getAllProjectFile;
+        request(function (result) {
+            $timeout(function () {
+                $scope.items=isRecent?result.recentProjects:result.projects;
+                $scope.itemsGetted = true;
+            })
+        },function (err) {
+            $scope.itemsGetted = true;
+            toastr.warning('获取数据失败')
+
+        })
 
 		$scope.ok = function () {
+
 			//$uibModalInstance.close($scope.selected.item);
-			console.log($scope.downloading.item);
-			console.log($scope.isStartDownloaded);
-			$scope.downloading.item = $scope.selected.item;
-			$scope.isStartDownloaded = true;
-		};
+			// console.log($scope.downloading.item);
+			// console.log($scope.isStartDownloaded);
+			// $scope.downloading.item = $scope.selected.item;
+			// $scope.isStartDownloaded = true;
+            ProjectService.getProjectTo($scope);
+            var pid=PID;
+            window.localStorage.setItem('projectCache'+pid,JSON.stringify($scope.project));
+            console.log('项目已自动缓存');
+            console.log($scope.selected.item);
+            ideScope.$broadcast('ReOpenProject',$scope.selected.item.pid);
+
+
+            $uibModalInstance.dismiss('cancel');
+
+
+        };
 
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');

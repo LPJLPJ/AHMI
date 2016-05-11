@@ -18,8 +18,10 @@ ideServices.
         var MyLayerArray = this.MyLayerArray = 'MyLayerArray';
         var MyWidgetArray = this.MyWidgetArray = 'MyWidgetArray';
 
-        var MyKnob = this.Myknob = 'MyKnob';
+        var MyKnob = this.MyKnob = 'MyKnob';
         var MyTextArea = this.MyTextArea = 'MyTextArea';
+        var MyNum = this.MyNum = 'MyNum';
+        var MyOscilloscope=this.MyOscilloscope='MyOscilloscope';
 
 
 
@@ -33,7 +35,7 @@ ideServices.
     this.isWidget= function (_typeStr) {
         if (_typeStr==this.MySlide||_typeStr==this.MyButton||
             _typeStr==this.MyProgress||_typeStr==this.MyNumber||_typeStr==this.MyButtonGroup||_typeStr == this.MyDashboard||
-            _typeStr==this.Myknob||_typeStr==this.MyTextArea){
+            _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope){
             return true;
         }
         return false

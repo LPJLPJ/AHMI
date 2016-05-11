@@ -14,8 +14,9 @@ ide.controller('addWidgetController',['$scope', function ($scope) {
         {name:"按钮",icon:"&#xe636;"},
         {name:"旋钮",icon:"&#xe628;"},
         {name:"滑块",icon:"&#xe62e;"},
-        {name:"下拉菜单",icon:"&#xe637;"},
-        {name:"触发器",icon:"&#xe634;"}
+        {name:"按钮组",icon:"&#xe637;"},
+        {name:"触发器",icon:"&#xe634;"},
+        {name:"数字",icon:"&#xe631;"}
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;
