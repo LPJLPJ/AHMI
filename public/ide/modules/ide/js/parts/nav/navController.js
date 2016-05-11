@@ -310,6 +310,14 @@
             console.log($scope.project);
             window.projectData = _.cloneDeep($scope.project);
 
+            $http.post('/api/generateproject',$scope.project).success(function (data) {
+                console.log('success');
+                console.log(data);
+            }).error(function (err) {
+                console.log('error');
+                console.log(err);
+            });
+
             //$http.post('http://localhost:3000/api/angularproject',$scope.project).success(function (data) {
             //    console.log('success');
             //    console.log(data);

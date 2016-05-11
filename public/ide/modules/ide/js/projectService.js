@@ -1014,14 +1014,14 @@ ideServices
             initialize: function (level, options) {
                 var self=this;
                 var ctrlOptions={
-                    bl:false,
-                    br:false,
-                    mb:true,
+                    bl:true,
+                    br:true,
+                    mb:false,
                     ml:true,
                     mr:true,
-                    mt:true,
-                    tl:false,
-                    tr:false
+                    mt:false,
+                    tl:true,
+                    tr:true
                 };
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
@@ -1100,7 +1100,7 @@ ideServices
 
                     //重新设置canvas的宽高
                     if(self.fontSize&&self.text){
-                        self.setWidth(self.fontSize*(self.text.length+1));
+                        self.setWidth(self.fontSize*(self.text.length));
                         self.setHeight(self.fontSize*2);
                     }
 
@@ -1283,8 +1283,6 @@ ideServices
             },
             _render: function (ctx) {
                 var offCanvas = CanvasService.getOffCanvas();
-                console.log(this);
-                console.log(offCanvas);
                 offCanvas.width = this.width;
                 offCanvas.height = this.height;
                 var offCtx = offCanvas.getContext('2d');
