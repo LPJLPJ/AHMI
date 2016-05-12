@@ -52,6 +52,7 @@ projectRoute.getProjectContent = function (req, res) {
             res.end(project.content)
         })
     }else{
+        console.log(projectId)
         errHandler(res,500,'error')
     }
 }
