@@ -21,9 +21,8 @@ projectRoute.getAllProjects=function(req, res){
 
 
 projectRoute.getProjectById = function (req, res) {
-    console.log('get project by id')
     var projectId = req.params.id
-    console.log(projectId)
+
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -41,7 +40,6 @@ projectRoute.getProjectById = function (req, res) {
 
 projectRoute.getProjectContent = function (req, res) {
     var projectId = req.params.id
-    console.log('projectId: ',projectId)
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -58,15 +56,7 @@ projectRoute.getProjectContent = function (req, res) {
 }
 
 projectRoute.createProject = function (req, res) {
-    console.log('======')
-    console.log(req.session.user)
-    console.log(req.params)
-    console.log(req.body)
-    console.log('*******')
     var data = _.cloneDeep(req.body)
-    //default content
-    //var defaultProjectData = defaultProject.getDefaultProject(data.resolution)
-    //data.content = JSON.stringify(defaultProjectData)
 
     if (req.session.user){
         //user exists

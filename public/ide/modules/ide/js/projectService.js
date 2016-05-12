@@ -208,9 +208,10 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
-        fabric.MyLayer.prototype.renderUrlInPage= function (self) {
+        fabric.MyLayer.prototype.renderUrlInPage= function () {
 
 
+            var self=this;
             var currentLayer=getLevelById(self.id);
             var backgroundImg = new Image();
 
@@ -5314,7 +5315,10 @@ ideServices
             _.forEach(pageNode.getObjects(), function (_fabLayer) {
                 _fabLayer.fire('OnRenderUrl')
             });
-            _successCallback&&_successCallback();
+            $timeout(function () {
+                _successCallback&&_successCallback();
+
+            },200);
 
 
         }
