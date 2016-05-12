@@ -26,7 +26,7 @@ body{
 .container-fluid ul.my-nav-tabs {
     padding-left: 20px;
     height: 30px;
-    background:#4084f6;
+    background:#1c2B4B;
     border-bottom: none;
 }
 .my-nav-tabs>li{
@@ -43,14 +43,14 @@ body{
     text-align: center;
 }
 .my-nav-tabs>li>a:focus, .my-nav-tabs>li>a:hover{
-    background:#4084f6;
+    background:#3c4b6b;
     color: #fafafa;
     border: none;
 
 }
 
 .my-nav-tabs>li.active>a, .my-nav-tabs>li.active>a:focus, .my-nav-tabs>li.active>a:hover{
-    color: #4084f6;
+    color: #1C2B4B;
     background-color: #fff;
     border: 0;
 }
@@ -67,7 +67,7 @@ body{
 
 }
 .my-tool-content.my-tool-show{
-    height: 100px;
+    height: 60px;
     border-bottom: 1px solid #E9EBED;
 
 }
@@ -85,7 +85,7 @@ body{
 .my-tool-content-item .my-cmd-item{
     cursor: pointer;
     padding: 5px;
-    color:#4084f6;
+    color: #1C2B4B;
 
     width: 6%;
 
@@ -429,7 +429,7 @@ body{
 }
 .my-panel-title{
     height: 33px;
-    background: #4084f6;
+    background: #1C2B4B;
     color: #fff;
     padding-left: 20px;
     line-height: 33px;
@@ -475,8 +475,8 @@ body{
 
 }
 .my-levels-title.selected{
-    color: #4084f6;
-    border: 3px solid #4084f6;
+    color: #1C2B4B;
+    border: 3px solid #1C2B4B;
     background: rgba(64, 132, 246, 0.1);
     border-radius: 10px;
 }
@@ -484,7 +484,7 @@ body{
     cursor: pointer;
 }
 .my-object-label.selected{
-    color: #4084f6;
+    color: #1C2B4B;
 }
 .my-layers-panel .iconfont{
     cursor: pointer;
