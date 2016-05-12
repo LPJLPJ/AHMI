@@ -12,7 +12,8 @@ $(function(){
 			wrong:'验证码错误'
 		},
 		general:{
-			wrong:'账户错误'
+			wrong:'账户错误',
+            verify:'账户没有验证,请进入邮箱验证'
 		}
 	}
 	var formVerify = {
@@ -60,6 +61,7 @@ $(function(){
 		if (value.length>0) {
 			//ok
 			formVerify.password = true
+            $('#password-verify').html('')
 			checkSubmit()
 		}else{
 			formVerify.password = false
@@ -117,13 +119,20 @@ $(function(){
 					break
 					case 'captcha invalid':
 					$('#captcha-verify').html(ErrMessages.captcha.wrong)
-					$('#captcha-img').attr('src','/captcha')
+
 					break
+                    case 'not verified':
+                        //not verified
+                    $('#captcha-verify').html(ErrMessages.general.verify)
+                        break
 				}
+                $('#captcha-img').attr('src','/captcha')
 			},
 			error:function(err, status, xhr){
 				console.log(err);
 				$('#captcha-verify').html(ErrMessages.general.wrong)
+                $('#captcha-img').attr('src','/captcha')
+
 			}
 
 		})

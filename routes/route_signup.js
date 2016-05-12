@@ -1,6 +1,7 @@
 var UserModel = require('../db/models/UserModel')
 var path = require('path')
 var signup = {}
+var mailServiece = require('../utils/mailService')
 signup.get = function(req ,res){
 	// res.sendFile(path.join(__dirname,'..','client','signup.html'))
 	res.render('login/register.html',{
@@ -18,7 +19,7 @@ signup.post = function(req, res){
 			UserModel.findByName(userInfo.username,function(err , user){
 				if (err) {
 					console.log(err);
-					res.end('error')
+					return res.end('error')
 				}
 				if (user) {
 					//duplicated name
@@ -30,7 +31,7 @@ signup.post = function(req, res){
 					UserModel.findByMail(userInfo.mail,function(err, user){
 						if (err) {
 							console.log(err);
-							res.end('error')
+							return res.end('error')
 						}
 						if (user){
 							res.end('duplicate')
@@ -39,8 +40,14 @@ signup.post = function(req, res){
 							newUser.save(function(err){
 								if (err) {
 									console.log(err);
-									res.end('error')
+									return res.end('error')
 								}
+                                //send mail
+                                mailServiece.sendVerifyMail(newUser.email, function (err, info) {
+                                    if (err){
+                                        console.log('mail err',err)
+                                    }
+                                })
 								res.end('new')
 								// res.redirect('/user/login')
 							})

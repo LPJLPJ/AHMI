@@ -5,7 +5,7 @@ var UserSchema = new mongoose.Schema({
 	accountName:{unique:true,type:String},
     email:{unique:true,type:String},
 	password:String,
-	verified:Boolean,
+	verified:{type:Boolean,default:false},
 	companyId:String,
 	projectIds:[String],
 	templateIds:[String],

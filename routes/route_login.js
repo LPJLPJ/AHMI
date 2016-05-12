@@ -33,11 +33,14 @@ login.post = function(req, res){
 	if (req.session.captcha&&(captchaText == req.session.captcha.text)) {
 		 console.log('captcha valid');
 		UserModel.findByName(username,function(err, user){
-			if (err) {res.end(err)}
+			if (err) { return res.end(err)}
 			if (user) {
+                if (!user.verified){
+                    return res.end('not verified')
+                }
 				user.comparePassword(password,function(err, isMatch){
 					if (err) {
-						res.end(err)
+						return res.end(err)
 					}
 					if (isMatch) {
 						console.log('login success');
@@ -51,10 +54,6 @@ login.post = function(req, res){
 					}
 				})
 			}else{
-
-
-
-
 
 
 				res.end('no user')

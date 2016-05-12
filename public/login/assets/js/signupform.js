@@ -251,10 +251,12 @@ function init(){
 
 					break;
 				}
+                captchaImg.src = '/captcha'
 				submit.disabled = false
 			},
 			error:function(err, textStatus, xhr){
 				console.log(err);
+                captchaImg.src = '/captcha'
 				submit.disabled = false
 			}
 		})
