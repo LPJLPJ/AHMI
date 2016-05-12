@@ -42,6 +42,7 @@ $(function(){
 		if (value.length>0) {
 			//ok
 			formVerify.username = true
+            $('#username-verify').html('')
 			checkSubmit()
 		}else{
 			formVerify.username = false
@@ -80,6 +81,7 @@ $(function(){
 		if (value.length>0) {
 			//ok
 			formVerify.captcha = true
+            $('#captcha-verify').html('')
 			checkSubmit()
 		}else{
 			formVerify.captcha = false
@@ -127,11 +129,13 @@ $(function(){
                         break
 				}
                 $('#captcha-img').attr('src','/captcha')
+                $(this).attr('disabled',true)
 			},
 			error:function(err, status, xhr){
 				console.log(err);
 				$('#captcha-verify').html(ErrMessages.general.wrong)
                 $('#captcha-img').attr('src','/captcha')
+                $(this).attr('disabled',true)
 
 			}
 

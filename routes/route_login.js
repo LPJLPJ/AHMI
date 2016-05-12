@@ -16,7 +16,7 @@ login.get = function(req, res){
 }
 
 login.post = function(req, res){
-	//console.log(req.body);
+	console.log(req.body);
 	//console.log(req.session);
 
 
@@ -50,6 +50,7 @@ login.post = function(req, res){
 						}
 						res.end('ok')
 					}else{
+                        console.log('not match')
 						res.end('not match')
 					}
 				})

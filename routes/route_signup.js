@@ -36,6 +36,7 @@ signup.post = function(req, res){
 						if (user){
 							res.end('duplicate')
 						}else{
+
 							var newUser = new UserModel({accountName:userInfo.username,password:userInfo.password,email:userInfo.mail})
 							newUser.save(function(err){
 								if (err) {
@@ -43,7 +44,7 @@ signup.post = function(req, res){
 									return res.end('error')
 								}
                                 //send mail
-                                mailServiece.sendVerifyMail(newUser.email, function (err, info) {
+                                mailServiece.sendVerifyMail(newUser.email,newUser._id, function (err, info) {
                                     if (err){
                                         console.log('mail err',err)
                                     }

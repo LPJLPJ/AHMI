@@ -15,6 +15,7 @@ var generateProject = require('./generateProject')
 
 //mail
 var sendMail = require('./sendMail')
+var userVerify = require('./userVerify')
 
 router.route('/userlist')
 .get(function(req, res){
@@ -98,13 +99,16 @@ router.route('/project/:id/delete')
 router.route('/project/:id/resources/:rid')
     .get(uploadFile.getProjectFile)
 
-router.route('/mail/sendverifymail')
-    .get(sendMail.sendVerifyMail)
+//router.route('/mail/sendverifymail')
+//    .get(sendMail.sendVerifyMail)
+//
+//router.route('/mail/sendpasswordmail')
+//    .get(sendMail.sendPasswordMail)
+//
+//router.route('/mail/test')
+//    .get(sendMail.sendTestMail)
 
-router.route('/mail/sendpasswordmail')
-    .get(sendMail.sendPasswordMail)
-
-router.route('/mail/test')
-    .get(sendMail.sendTestMail)
+router.route('/user/verify')
+    .get(userVerify.verify)
 
 module.exports = router

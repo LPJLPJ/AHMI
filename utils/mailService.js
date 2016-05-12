@@ -28,7 +28,7 @@ mailService.sendTestMail = function (to) {
 }
 
 mailService.sendVerifyMailExample = function (to, id) {
-    var url = 'http://localhost:3000/verify?id='+id;
+    var url = 'http://localhost:3000/user/verify?id='+id;
     return {
         from: '"Graphichina" <zeyu.cheng@graphichina.com>', // sender address
         to: to, // list of receivers
@@ -39,7 +39,7 @@ mailService.sendVerifyMailExample = function (to, id) {
 }
 
 mailService.sendPasswordMailExample = function (to, key, timeTag) {
-    var url = 'http://localhost:3000/findpassword?mail='+to+'&key='+key+'&time='+timeTag;
+    var url = 'http://localhost:3000/user/findpassword?mail='+to+'&key='+key+'&time='+timeTag;
     return {
         from: '"Graphichina" <zeyu.cheng@graphichina.com>', // sender address
         to: to, // list of receivers
@@ -59,10 +59,15 @@ mailService.sendVerifyMail = function (to, id, cb) {
 mailService.sendPasswordMail = function (to ,cb) {
     var timeTag = Date.now();
     var key = ''
-    bcrypt.hash(to,timeTag,function(err, hash){
-        if (err) {return cb(err)}
-        key = hash
-        mailService.transporter.sendMail(mailService.sendPasswordMailExample(to,key,timeTag),cb);
+
+
+    bcrypt.genSalt(SALT_FACTOR,function(err, salt){
+        if (err) return cb(err)
+        bcrypt.hash(to,salt,function(err, hash){
+            if (err) {return cb(err)}
+            key = hash
+            mailService.transporter.sendMail(mailService.sendPasswordMailExample(to,key,timeTag),cb);
+        })
     })
 
 }
