@@ -48,12 +48,12 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             method:'GET',
             url:baseUrl+'/project/'+id+'/content'
         }).success(function (data) {
-
-            if (data){
+            console.log(data)
+            if (data.content){
                 //console.log(data)
 
                 //var globalProject = GlobalService.getBlankProject()
-                var globalProject = data
+                var globalProject = data.content
                 console.log('globalProject',globalProject)
 
                 TemplateProvider.saveProjectFromGlobal(globalProject);
@@ -69,6 +69,18 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 //
                 //readCache();
                 globalProject = GlobalService.getBlankProject()
+                //change resolution
+                var resolution = data.resolution.split('*').map(function (r) {
+                    return Number(r)
+                })
+                globalProject.initSize = {
+                    width : resolution[0],
+                    height :resolution[1]
+                }
+                globalProject.currentSize = {
+                    width : resolution[0],
+                    height :resolution[1]
+                }
                 console.log('globalProject',globalProject)
 
                 TemplateProvider.saveProjectFromGlobal(globalProject);

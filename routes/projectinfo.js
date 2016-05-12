@@ -49,7 +49,7 @@ projectRoute.getProjectContent = function (req, res) {
                 errHandler(res,500,'error')
             }
             //console.log(project)
-            res.end(project.content)
+            res.end(JSON.stringify(project))
         })
     }else{
         console.log(projectId)
