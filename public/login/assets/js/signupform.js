@@ -244,8 +244,11 @@ function init(){
 					case 'new':
 					//success
 					console.log('new');
-					captchaVerify.innerHTML = ''
-					window.location.href='/user/login'
+					captchaVerify.innerHTML = '注册成功, 请进入邮箱进行确认!'
+                        setTimeout(function () {
+                            window.location.href='/user/login'
+                        },2000)
+
 					break;
 				}
 				submit.disabled = false

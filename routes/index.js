@@ -12,6 +12,10 @@ var routeValidate = require('./routeValidate')
 var projectInfo = require('./projectinfo')
 var generateProject = require('./generateProject')
 
+
+//mail
+var sendMail = require('./sendMail')
+
 router.route('/userlist')
 .get(function(req, res){
 	res.render('client/index.html')
@@ -93,5 +97,14 @@ router.route('/project/:id/delete')
 
 router.route('/project/:id/resources/:rid')
     .get(uploadFile.getProjectFile)
+
+router.route('/mail/sendverifymail')
+    .get(sendMail.sendVerifyMail)
+
+router.route('/mail/sendpasswordmail')
+    .get(sendMail.sendPasswordMail)
+
+router.route('/mail/test')
+    .get(sendMail.sendTestMail)
 
 module.exports = router

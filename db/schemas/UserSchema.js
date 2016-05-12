@@ -3,8 +3,9 @@ var bcrypt = require('bcrypt')
 var SALT_FACTOR = 10
 var UserSchema = new mongoose.Schema({
 	accountName:{unique:true,type:String},
+    email:{unique:true,type:String},
 	password:String,
-	email:{unique:true,type:String},
+	verified:Boolean,
 	companyId:String,
 	projectIds:[String],
 	templateIds:[String],

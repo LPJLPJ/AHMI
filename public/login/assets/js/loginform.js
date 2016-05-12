@@ -36,9 +36,8 @@ $(function(){
 		$('#username-verify').html('')
 		submit.disabled = true
 	})
-	.on('blur',function(){
+	.on('keyup',function(){
 		var value = $(this).val()
-		console.log(value);
 		if (value.length>0) {
 			//ok
 			formVerify.username = true
@@ -56,7 +55,7 @@ $(function(){
 		submit.disabled = true
 
 	})
-	.on('blur',function(){
+	.on('keyup',function(){
 		var value = $(this).val()
 		if (value.length>0) {
 			//ok
@@ -74,7 +73,7 @@ $(function(){
 		$('#captcha-verify').html('')
 		submit.disabled = true
 	})
-	.on('blur',function(){
+	.on('keyup',function(){
 		var value = $(this).val()
 		if (value.length>0) {
 			//ok
@@ -108,7 +107,7 @@ $(function(){
 				switch (data){
 					case 'ok':
 					console.log('ok');
-					window.location.href='/'
+					window.location.href='/private/space'
 					break
 					case 'not match':
 					$('#captcha-verify').html(ErrMessages.general.wrong)
