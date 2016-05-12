@@ -17,6 +17,10 @@ var generateProject = require('./generateProject')
 var sendMail = require('./sendMail')
 var userVerify = require('./userVerify')
 
+
+//password
+var findPassword = require('./findPassword')
+
 router.route('/userlist')
 .get(function(req, res){
 	res.render('client/index.html')
@@ -110,5 +114,11 @@ router.route('/project/:id/resources/:rid')
 
 router.route('/user/verify')
     .get(userVerify.verify)
+
+
+//password
+router.route('/user/forgetpassword')
+    .get(findPassword.getFindPasswordPage)
+    .post(findPassword.postMail)
 
 module.exports = router
