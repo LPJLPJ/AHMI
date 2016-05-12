@@ -3,20 +3,29 @@ var path = require('path')
 var login = {}
 login.get = function(req, res){
 	//
-	res.render('login/login.html',{
-		title:'登录'
-	})
+    console.log('login user',req.session.user)
+    if (req.session.user){
+        res.redirect('/private/space')
+
+    }else{
+        res.render('login/login.html',{
+            title:'登录'
+        })
+    }
+
 }
 
 login.post = function(req, res){
-	console.log(req.body);
-	console.log(req.session);
+	//console.log(req.body);
+	//console.log(req.session);
+
+
 	var username = req.body.username
 	var password = req.body.password
 	var captchaText = req.body.captcha
 
 
-    console.log(req.session.captcha,captchaText)
+    //console.log(req.session.captcha,captchaText)
 
 	//varify captcha
 	//var sessionCaptchaText = req.session.captcha.text

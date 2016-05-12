@@ -19,6 +19,7 @@
     "express-session": "^1.13.0",
     "formidable": "^1.0.17",
     "lodash": "^4.11.2",
-    "mongoose": "^4.4.13"
+    "mongoose": "^4.4.13",
+    "nodemailer": "^2.4.0"
   }
 }
