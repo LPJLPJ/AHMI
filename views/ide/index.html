@@ -469,7 +469,7 @@
                             <span class="my-attr-title dengPage-title">背景图片</span>
 
                             <select class="form-control my-attr-number-input form-control dengPage-input" ng-model="component.page.selectImage" ng-change="component.page.enterImage($event)">
-                                <option ng-repeat="image in component.images" value="{{component.baseUrl+image.id}}">{{image.name}}</option>
+                                <option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}</option>
 
 
                             </select>
@@ -567,7 +567,7 @@
                             <span class="my-attr-title">图片</span>
 
                             <select class="my-attr-number-input form-control" ng-model="component.subLayer.selectImage" ng-change="component.subLayer.enterImage($event)">
-                                <option ng-repeat="image in component.images" value="{{component.baseUrl+image.id}}">{{image.name}}</option>
+                                <option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}</option>
 
                             </select>
                         </div>

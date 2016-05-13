@@ -8,7 +8,7 @@ var ProjectSchema = new mongoose.Schema({
     userId:mongoose.Schema.Types.ObjectId,
     author:String,
     resolution:String,
-    content:String,
+    content:{type:String},
     createTime:{type:Date,default:Date.now},
     lastModifiedTIme:{type:Date,default:Date.now}
 })

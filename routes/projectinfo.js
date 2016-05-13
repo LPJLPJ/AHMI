@@ -29,7 +29,7 @@ projectRoute.getProjectById = function (req, res) {
                 console.log(err)
                 errHandler(res,500,'error')
             }
-            console.log(project)
+            //console.log(project)
             res.render('ide/index.html')
         })
     }else{
@@ -50,7 +50,7 @@ projectRoute.getProjectContent = function (req, res) {
             res.end(JSON.stringify(project))
         })
     }else{
-        console.log(projectId)
+        //console.log(projectId)
         errHandler(res,500,'error')
     }
 }

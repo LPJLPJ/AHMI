@@ -4,275 +4,8 @@
 ideServices
     .service('ResourceService', function (ProjectService) {
 
-        var files = [
-            {
-                id:'blank.png',
-                name:'blank',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo0.jpg',
-                name:'demo0',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo1.jpg',
-                name:'demo1',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo2.jpg',
-                name:'demo2',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo3.jpg',
-                name:'demo3',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo4.jpg',
-                name:'demo4',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo5.jpg',
-                name:'demo5',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo6.jpg',
-                name:'demo6',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo7.jpg',
-                name:'demo7',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo8.jpg',
-                name:'demo8',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo9.jpg',
-                name:'demo9',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo10.jpg',
-                name:'demo10',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo11.jpg',
-                name:'demo11',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo12.jpg',
-                name:'demo12',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo13.jpg',
-                name:'demo13',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo14.jpg',
-                name:'demo14',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo15.jpg',
-                name:'demo15',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo16.jpg',
-                name:'demo16',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo17.jpg',
-                name:'demo17',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo18.jpg',
-                name:'demo18',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo19.jpg',
-                name:'demo19',
-                type:'image/jpeg',
-                size:'2345678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'demo20.png',
-                name:'demo20',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'0.png',
-                name:'0',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'1.png',
-                name:'1',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'2.png',
-                name:'2',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'3.png',
-                name:'3',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'4.png',
-                name:'4',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'5.png',
-                name:'5',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'6.png',
-                name:'6',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'7.png',
-                name:'7',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'8.png',
-                name:'8',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'9.png',
-                name:'9',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'add.png',
-                name:'add',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'sub.png',
-                name:'sub',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'mul.png',
-                name:'mul',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'div.png',
-                name:'div',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'equal.png',
-                name:'equal',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            },
-            {
-                id:'dot.png',
-                name:'dot',
-                type:'image/png',
-                size:'2145678',
-                lastModifiedDate: 'Wed Dec 31 2014 21:56:26 GMT+0800 (CST)'
-            }
-        ];
-        //var  files= []
+
+        var  files= []
         var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
 
         this.getAllResource = function () {
@@ -293,8 +26,6 @@ ideServices
 
         this.syncFiles = function (_files) {
             files = _files||[]
-            console.log(_files)
-            console.log(files)
         }
 
         this.getAllImages = function(){
@@ -340,9 +71,9 @@ ideServices
         this.deleteFileByIndex = function (index, successCb, failCb) {
             var success = false;
             if ((index >= 0) && (index <= files.length - 1)) {
-                console.log(index);
+                //console.log(index);
                 files.splice(index, 1);
-                console.log(files.length);
+                //console.log(files.length);
                 success = true;
             } else {
                 success = false;
@@ -397,9 +128,6 @@ ideServices
     })
     .factory('uploadingService', ['$http', function ($http) {
     var doRequest = function (fileData, apiUrl,params) {
-        console.log('uploading service');
-        console.log(fileData);
-        console.log(apiUrl);
         return $http({
             method: 'POST',
             data: fileData,
@@ -449,6 +177,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
         template:"<input type='file' ngf-select='uploadFiles($files)' accept='image/png,image/jpeg' ngf-multiple='true' />",
         replace:'true',
         link: function (scope, element, attributes) {
+            var baseUrl = ResourceService.getResourceUrl()
 
             scope.uploadFiles = function (files) {
                 if (files && files.length){
@@ -562,7 +291,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 _.extend(newSelectFile,uploadingFile);
                 newSelectFile.id  = fileName;
                 newSelectFile.name = fileNameArray.slice(0,-1).join('');
-
+                newSelectFile.src = baseUrl+newSelectFile.id
+                //console.log(newSelectFile)
 
                 return newSelectFile;
             }

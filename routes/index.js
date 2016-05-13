@@ -51,8 +51,8 @@ router.route('/private')
 router.route('/private/space')
 .get(route_space)
 
-router.route('/private/info')
-    .get(route_personalInfo)
+//router.route('/private/info')
+//    .get(route_personalInfo)
 
 
 router.route('/api')
