@@ -46,7 +46,7 @@ router.route('/user/logout')
 .get(route_login.logout)
 
 
-router.route('/private')
+router.route('/private/*')
     .all(sessionTouch)
 router.route('/private/space')
 .get(route_space)
@@ -55,7 +55,7 @@ router.route('/private/space')
 //    .get(route_personalInfo)
 
 
-router.route('/api')
+router.route('/api/*')
     .all(sessionTouch)
 
 router.route('/api/upload')
@@ -86,7 +86,7 @@ router.route('/utils/checkmail')
 
 //projects
 
-router.route('/project')
+router.route('/project/*')
     .all(sessionTouch)
 
 router.route('/project/:id/basicinfo')
