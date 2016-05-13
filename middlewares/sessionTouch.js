@@ -4,6 +4,6 @@
 
 module.exports = function (req, res, next) {
     req.session.touch()
-    console.log('touch',req.session)
+    //console.log('touch',req.session)
     next()
 }
