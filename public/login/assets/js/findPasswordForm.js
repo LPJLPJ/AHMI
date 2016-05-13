@@ -41,6 +41,10 @@ $(function () {
         }
     })
 
+    $('#change-captcha').on('click', function () {
+        $('#captcha-img').attr('src','/captcha')
+    })
+
     $('#submit').on('click', function () {
         $('#submit').attr('disabled',true)
         if ($('#mail').val()!==''&&$('#captcha-input').val()!=''){
@@ -72,11 +76,13 @@ $(function () {
                             break;
 
                     }
-                    $('#captcha-img').src='/captcha'
+                    $('#captcha-img').attr('src','/captcha')
                     $('#submit').attr('disabled',false)
                 }
             })
 
+        }else{
+            $('#submit').attr('disabled',false)
         }
     })
 

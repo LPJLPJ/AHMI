@@ -121,4 +121,8 @@ router.route('/user/forgetpassword')
     .get(findPassword.getFindPasswordPage)
     .post(findPassword.postMail)
 
+router.route('/user/findpassword')
+    .get(findPassword.getResetPasswordPage)
+    .post(findPassword.resetPassword)
+
 module.exports = router
