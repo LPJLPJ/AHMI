@@ -83,10 +83,10 @@ $(function(){
         var title = $('#basicinfo-title')
         var author = $('#basicinfo-author')
         var resolution = $('#basicinfo-resolution')
-        if (title.val()!=''&&resolution.val()!=''){
+        if (title.val().trim()!=''&&resolution.val().trim()!=''){
             //create
-            project.name = title.val()
-            project.resolution = resolution.val()
+            project.name = title.val().trim()
+            project.resolution = resolution.val().trim()
 
             $.ajax({
                 type:'POST',
@@ -132,10 +132,10 @@ $(function(){
         var title = $('#basicinfo-title')
         var author = $('#basicinfo-author')
         var resolution = $('#basicinfo-resolution')
-        if (project.name != title.val() || project.resolution != resolution.val()){
+        if (project.name != title.val().trim() || project.resolution != resolution.val().trim()){
             //changed
-            project.name = title.val()
-            project.resolution = resolution.val()
+            project.name = title.val().trim()
+            project.resolution = resolution.val().trim()
             $.ajax({
                 type:'POST',
                 url:'/project/'+project._id+'/basicinfo',

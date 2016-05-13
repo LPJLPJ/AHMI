@@ -12,6 +12,8 @@ var routeValidate = require('./routeValidate')
 var projectInfo = require('./projectinfo')
 var generateProject = require('./generateProject')
 
+//sessionTouch
+var sessionTouch = require('../middlewares/sessionTouch')
 
 //mail
 var sendMail = require('./sendMail')
@@ -43,8 +45,18 @@ router.route('/user/login')
 router.route('/user/logout')
 .get(route_login.logout)
 
+
+router.route('/private')
+    .all(sessionTouch)
 router.route('/private/space')
 .get(route_space)
+
+router.route('/private/info')
+    .get(route_personalInfo)
+
+
+router.route('/api')
+    .all(sessionTouch)
 
 router.route('/api/upload')
 .post(uploadFile.uploadTest)
@@ -73,6 +85,9 @@ router.route('/utils/checkmail')
 
 
 //projects
+
+router.route('/project')
+    .all(sessionTouch)
 
 router.route('/project/:id/basicinfo')
     .post(projectInfo.updateProject)
