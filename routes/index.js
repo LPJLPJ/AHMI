@@ -103,8 +103,8 @@ router.route('/project/:id/delete')
 router.route('/project/:id/resources/:rid')
     .get(uploadFile.getProjectFile)
 
-//router.route('/mail/sendverifymail')
-//    .get(sendMail.sendVerifyMail)
+router.route('/mail/sendverifymail')
+    .get(sendMail.sendVerifyMail)
 //
 //router.route('/mail/sendpasswordmail')
 //    .get(sendMail.sendPasswordMail)

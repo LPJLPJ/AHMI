@@ -75,7 +75,12 @@ UserSchema.statics = {
 		return this
 		.findOne({email:email})
 		.exec(cb)
-	}
+	},
+    findByMailOrName: function (_mail,_name, cb) {
+        return this
+            .findOne({"$or":[{email:_mail},{accountName:_name}]})
+            .exec(cb)
+    }
 
 }
 

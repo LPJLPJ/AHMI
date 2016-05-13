@@ -32,7 +32,7 @@ login.post = function(req, res){
 	// console.log(sessionCaptchaText,req.session);
 	if (req.session.captcha&&(captchaText == req.session.captcha.text)) {
 		 console.log('captcha valid');
-		UserModel.findByName(username,function(err, user){
+		UserModel.findByMailOrName(username,username,function(err, user){
 			if (err) { return res.end(err)}
 			if (user) {
                 if (!user.verified){
@@ -43,14 +43,12 @@ login.post = function(req, res){
 						return res.end(err)
 					}
 					if (isMatch) {
-						console.log('login success');
 						req.session.user = {
 							id:user._id,
 							username:username
 						}
 						res.end('ok')
 					}else{
-                        console.log('not match')
 						res.end('not match')
 					}
 				})

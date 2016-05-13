@@ -90,6 +90,7 @@ findPassword.resetPassword = function (req, res) {
                             }else{
                                 if (user){
                                     user.password = newPassword;
+                                    console.log('newpass',newPassword)
                                     bcrypt.genSalt(SALT_FACTOR,function(err, salt){
                                         if (err) return errHandler(res,500,'password change error')
                                         bcrypt.hash(user.password,salt,function(err, hash){

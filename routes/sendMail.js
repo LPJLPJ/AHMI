@@ -19,14 +19,30 @@ module.exports.sendTestMail = function (req, res) {
 
 
 module.exports.sendVerifyMail = function (req, res) {
-    var timeTag = Date.now();
-    mailService.transporter.sendMail(mailService.sendVerifyMail('940476656@qq.com','heheeh',timeTag), function(error, info){
-        if(error){
-            console.log(error);
-            errHandler(res,500,'send mail error')
-        }
-        res.end('Message sent: ' + info.response);
-    });
+    var username = req.body.username;
+    if (username!=""){
+        UserModel.findByMailOrName(username, username, function (err, user) {
+            if (err){
+                errHandler(res, 500, 'error')
+            }else{
+                if (user){
+                    mailService.sendVerifyMail(user.email,user._id, function (err,info) {
+                        if (err){
+                            errHandler(res, 500, 'mail send error')
+                        }else{
+                            res.end('ok')
+                        }
+                    })
+                }else{
+                    errHandler(res, 500, 'user not found')
+                }
+            }
+        })
+    }else{
+        errHandler(res,500,'error')
+    }
+
+
 }
 
 

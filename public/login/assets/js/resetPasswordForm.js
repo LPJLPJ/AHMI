@@ -89,12 +89,14 @@ $(function () {
                 type:'POST',
                 url:window.location.href,
                 data:{
-                    password:passwordVal,
+                    password: $.md5(passwordVal),
                     captcha:captchaVal
                 },
                 success: function (data, status, xhr) {
                     $('#captcha-verify').html(successMessages.general.ok)
-
+                    setTimeout(function () {
+                        window.location.href = '/user/login'
+                    },2000)
 
                     $('#submit').attr('disabled',false)
                 },
@@ -111,7 +113,7 @@ $(function () {
                         default:
                             $('#captcha-verify').html(errMessages.general.error)
                             setTimeout(function () {
-                                //window.location.href = '/user/forgetpassword'
+                                window.location.href = '/user/forgetpassword'
                             },2000)
                             break;
 

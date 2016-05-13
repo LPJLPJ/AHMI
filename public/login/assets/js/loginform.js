@@ -13,7 +13,7 @@ $(function(){
 		},
 		general:{
 			wrong:'账户错误',
-            verify:'账户没有验证,请进入邮箱验证'
+            verify:'<a id="resend">账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>'
 		}
 	}
 	var formVerify = {
@@ -129,18 +129,38 @@ $(function(){
                         break
 				}
                 $('#captcha-img').attr('src','/captcha')
-                $(this).attr('disabled',true)
+                $(this).attr('disabled',false)
 			},
 			error:function(err, status, xhr){
 				console.log(err);
 				$('#captcha-verify').html(ErrMessages.general.wrong)
                 $('#captcha-img').attr('src','/captcha')
-                $(this).attr('disabled',true)
+                $(this).attr('disabled',false)
 
 			}
 
 		})
 	})
+
+
+    $('#resend').on('click', function () {
+        var username = $('#username').val()
+        if (username!=''){
+            $.ajax({
+                type:'POST',
+                url:'/mail/sendverifymail',
+                data:{
+                    username:username
+                },
+                success:function(data, status, xhr){
+                    $('captcha-verify').html('已发送验证邮件, 请查收')
+                },
+                error: function (err, status, xhr) {
+                    $('#captcha-verify').html(ErrMessages.general.verify)
+                }
+            })
+        }
+    })
 
 	function checkSubmit(){
 		var submit = document.getElementById('submit')
