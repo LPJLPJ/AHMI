@@ -9,7 +9,7 @@ ideServices
         var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
 
         this.getAllResource = function () {
-            
+
             //var scope=null;
             //ProjectService.getProjectTo(scope);
             //
@@ -17,7 +17,7 @@ ideServices
             //
             //return scope.project.resourceList;
             return files
-            
+
         };
 
         this.setFiles=function (_files) {
@@ -37,8 +37,8 @@ ideServices
                     return false;
                 }
             });
-           // console.log(files);
-           // console.log(images);
+            // console.log(files);
+            // console.log(images);
             return images;
         };
 
@@ -94,7 +94,7 @@ ideServices
         this.deleteFileById = function (id, successCb, failCb) {
 
             //TODO:删除资源
-            
+
             var success = false;
             for(var index=0;index<files.length;index++){
                 if(files[index].id==id){
@@ -127,49 +127,49 @@ ideServices
 
     })
     .factory('uploadingService', ['$http', function ($http) {
-    var doRequest = function (fileData, apiUrl,params) {
-        return $http({
-            method: 'POST',
-            data: fileData,
-            url: apiUrl,
-            params:params,
-            headers: {
-                "Content-Type": undefined
-            }
+        var doRequest = function (fileData, apiUrl,params) {
+            return $http({
+                method: 'POST',
+                data: fileData,
+                url: apiUrl,
+                params:params,
+                headers: {
+                    "Content-Type": undefined
+                }
 
-        });
-    };
-    return {
-        upload: function (fileData, apiUrl) {
-            return doRequest(fileData, apiUrl);
-        }
-    };
-}])
+            });
+        };
+        return {
+            upload: function (fileData, apiUrl) {
+                return doRequest(fileData, apiUrl);
+            }
+        };
+    }])
     .factory('idService', [function () {
-    var generateIdFromNameAndDate = function (name, date) {
-        var str = '';
-        for (var i = 0; i < name.length; i++) {
-            str += parseInt(name.charCodeAt(0), 10).toString(16);
-        }
-        return str + date.toLocalString();
-    };
-    var generateIdFromName = function (name) {
-        var str = '';
-        for (var i = 0; i < name.length; i++) {
-            str += parseInt(name.charCodeAt(i), 10).toString(16);
-        }
-        return str;
-    };
-    return {
-        generateId: function (name, date) {
-            if (date) {
-                return generateIdFromNameAndDate(name, date);
-            } else {
-                return generateIdFromName(name);
+        var generateIdFromNameAndDate = function (name, date) {
+            var str = '';
+            for (var i = 0; i < name.length; i++) {
+                str += parseInt(name.charCodeAt(0), 10).toString(16);
+            }
+            return str + date.toLocalString();
+        };
+        var generateIdFromName = function (name) {
+            var str = '';
+            for (var i = 0; i < name.length; i++) {
+                str += parseInt(name.charCodeAt(i), 10).toString(16);
+            }
+            return str;
+        };
+        return {
+            generateId: function (name, date) {
+                if (date) {
+                    return generateIdFromNameAndDate(name, date);
+                } else {
+                    return generateIdFromName(name);
+                }
             }
         }
-    }
-}]);
+    }]);
 
 ideServices.directive("filereadform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
     return {
@@ -219,7 +219,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                             }
                         }
                         //update
-                        //scope.component.top.files = ResourceService.getAllImages();
+                        scope.component.top.files = ResourceService.getAllImages();
                         scope.$emit('ResourceUpdate');
                     }
                 }
@@ -247,7 +247,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     //url:baseUrl+'/resource',
                     //url:'/api/upload',
                     url:'/project/'+window.localStorage.getItem('projectId')+'/upload',
-                     data:{file:file,name:translatedFile.id}
+                    data:{file:file,name:translatedFile.id}
                     //data:{file:file},
                     //params:{
                     //    token:window.localStorage.getItem('token'),

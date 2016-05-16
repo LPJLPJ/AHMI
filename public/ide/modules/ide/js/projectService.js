@@ -2,6 +2,7 @@
  * Created by shenaolin on 16/2/26.
  */
 
+    var projectRecord=[];
 var ideServices = angular.module('IDEServices', ['ngFileUpload']);
 ideServices
 //IDE界面共享整个项目资源
@@ -10,13 +11,11 @@ ideServices
                                          GlobalService,
                                          Preference,
                                          TemplateProvider,
-                                         //ResourceService,
                                          ViewService,
                                          Type) {
 
 
         var _self=this;
-
 
         fabric.Object.prototype.toObject = (function (toObject) {
             return function () {
@@ -186,8 +185,13 @@ ideServices
 
             this.initPosition={};
 
+            if (layer.showSubLayer.url ==''){
+                backgroundImg.src =TemplateProvider.getDefaultSubLayer().url;
+            }else{
+                backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
+            }
 
-            backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
+
             backgroundImg.onload = (function () {
                 this.width = layerWidth;
                 this.height = layerHeight;
@@ -208,10 +212,9 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
-        fabric.MyLayer.prototype.renderUrlInPage= function () {
+        fabric.MyLayer.prototype.renderUrlInPage= function (self) {
 
 
-            var self=this;
             var currentLayer=getLevelById(self.id);
             var backgroundImg = new Image();
 
@@ -305,7 +308,7 @@ ideServices
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
-                   // console.log(level.texList);
+                    console.log(level.texList);
                     self.backgroundColor=level.texList[0].slices[0].color;
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
@@ -328,19 +331,6 @@ ideServices
                     }else {
                         self.progressImageElement=null;
                     }
-
-                    //判断是否有第三层光标
-                    if(level.texList[2]){
-                        console.log('设置了光标');
-                        self.cursorColor=level.texList[2].slices[0].color;
-                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                            self.cursorImageElement=new Image();
-                            self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
-                            self.cursorImageElement.onload=(function(){
-
-                            }).bind(this);
-                        }
-                    }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -355,20 +345,11 @@ ideServices
                     subLayerNode.renderAll();
                     _callback&&_callback();
                 });
-
-                this.on('changeAttributeCursor',function(arg){
-                    self.backgroundColor=arg.backgroundColor;
-                    var subLayerNode = CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                });
-
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-
-                //console.log('看看光标值',getCurrentSelectObject());
 
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
@@ -437,129 +418,9 @@ ideServices
         fabric.MyProgress.async = true;
 
 
-        //**oscilloscope**//
-        fabric.MyOscilloscope = fabric.util.createClass(fabric.Object, {
-            type: Type.MyOscilloscope,
-            initialize: function (level, options) {
-                var self=this;
-                this.callSuper('initialize',options);
-                this.lockRotation=true;
-                this.hasRotatingPoint=false;
-
-                this.backgroundColor=level.texList[0].slices[0].color;
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
-
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.backgroundImageElement=null;
-                }
-
-                this.oscilloscopeColor=level.texList[1].slices[0].color;
-                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                    this.oscilloscopeImageElement=new Image();
-                    this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
-                    this.oscilloscopeImageElement.onload = (function () {
-
-                    }).bind(this);
-                }else {
-                    this.oscilloscopeImageElement=null;
-                }
-
-                this.on('changeTex', function (arg) {
-                    var level=arg.level;
-                    var _callback=arg.callback;
-                    // console.log(level.texList);
-                    self.backgroundColor=level.texList[0].slices[0].color;
-                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                        self.backgroundImageElement=new Image();
-                        self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                        self.backgroundImageElement.onload = (function () {
-
-                        }).bind(this);
-                    }else {
-                        self.backgroundImageElement=null;
-                    }
-                    
-                    self.oscilloscopeColor=level.texList[1].slices[0].color;
-                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-
-                        self.oscilloscopeImageElement=new Image();
-                        self.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
-                        self.oscilloscopeImageElement.onload = (function () {
-
-                        }).bind(this);
-                    }else {
-                        self.oscilloscopeImageElement=null;
-                    }
-
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-
-                });
-
-
-            },
-            toObject: function () {
-                return fabric.util.object.extend(this.callSuper('toObject'));
-            },
-            _render: function (ctx) {
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -this.width / 2,
-                    -this.height / 2,
-                    this.width,
-                    this.height
-                );
-
-                //示波器背景
-                if (this.backgroundImageElement){
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                }
-                //示波器渲染纹理
-                if(this.oscilloscopeColor){
-                    ctx.fillStyle=this.oscilloscopeColor;
-                    ctx.fillRect(
-                        -this.width / 2,
-                        -this.height / 2,
-                        this. width,
-                        this.height
-                    );
-                }
-                if(this.oscilloscopeImageElement){
-                    ctx.drawImage(this.oscilloscopeImageElement,-this.width/2,-this.height/2,this.width,this.height);
-                }
-
-            }
-        });
-        fabric.MyOscilloscope.fromLevel= function (level, callback,option) {
-            callback && callback(new fabric.MyOscilloscope(level, option));
-        }
-        fabric.MyOscilloscope.prototype.toObject = (function (toObject) {
-            return function () {
-                return fabric.util.object.extend(toObject.call(this), {
-                    backgroundImageElement:this.backgroundImageElement,
-                    oscilloscopeImageElement:this.oscilloscopeImageElement,
-
-                    backgroundColor:this.backgroundColor,
-                    oscilloscopeColor:this.oscilloscopeColor,
-
-                });
-            }
-        })(fabric.MyOscilloscope.prototype.toObject);
-        fabric.MyOscilloscope.fromObject = function (object, callback) {
-            var level=_self.getLevelById(object.id);
-            callback && callback(new fabric.MyOscilloscope(level, object));
-        };
-        fabric.MyOscilloscope.async = true;
 
         //**** Dashboard ****//
+
         fabric.MyDashboard = fabric.util.createClass(fabric.Object, {
             type: Type.MyDashboard,
             initialize: function (level, options) {
@@ -603,7 +464,7 @@ ideServices
 
                 this.on('changeDashboardValue', function (arg) {
                     self.value=arg.value;
-                    //console.log('changeDashboardValue',self.value);
+                    console.log('changeDashboardValue',self.value);
                     var _callback=arg.callback;
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -626,16 +487,10 @@ ideServices
                     _callback&&_callback();
                 });
 
-                //change dashboard mode
-                this.on('changeDashboardMode',function(arg){
-                    self.backgroundColor=arg.backgroundColor;
-                    var subLayerNode = CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                });
-
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
+                    console.log(level.texList);
                     self.backgroundColor=level.texList[0].slices[0].color;
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
@@ -658,21 +513,6 @@ ideServices
                     }else {
                         self.pointerImageElement=null;
                     }
-
-                    //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
-                    if(level.texList[2]){
-                        self.lightBandColor=level.texList[2].slices[0].color;
-                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                            self.lightBandImageElement=new Image();
-                            self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
-                            self.lightBandImageElement.onload = (function () {
-
-                            }).bind(this);
-                        }else {
-                            self.lightBandImageElement = null;
-                        }
-                    }
-
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -702,16 +542,10 @@ ideServices
                     this.height
                 );
                 if (this.backgroundImageElement){
-                    //console.log('bg',this.width,this.height);
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
 
                 }
 
-
-                if(this.lightBandImageElement){
-                    console.log('draw lightBand');
-                    ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
-                }
                 //pointer
 
                 //ctx.fillStyle=this.pointerColor;
@@ -727,13 +561,18 @@ ideServices
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
-                    ctx.rotate((this.value-45)*Math.PI/180);
+
                     //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
                     ctx.drawImage(this.pointerImageElement, -pointerImgWidth, -pointerImgHeight,pointerImgWidth,pointerImgHeight);
 
                 }
+
+
+
+
             }
         });
+
         fabric.MyDashboard.fromLevel= function (level, callback,option) {
             callback && callback(new fabric.MyDashboard(level, option));
         }
@@ -756,177 +595,6 @@ ideServices
             callback && callback(new fabric.MyDashboard(level, object));
         };
         fabric.MyDashboard.async = true;
-
-
-        fabric.MyKnob = fabric.util.createClass(fabric.Object, {
-            type: Type.MyKnob,
-            initialize: function (level, options) {
-                var self=this;
-                this.callSuper('initialize',options);
-                this.lockRotation=true;
-                this.hasRotatingPoint=false;
-                this.value=level.info.value;
-                this.knobSize = level.info.knobSize;
-
-
-                this.backgroundColor=level.texList[0].slices[0].color;
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
-
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.backgroundImageElement=null;
-                }
-
-                this.knobColor=level.texList[1].slices[0].color;
-                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-
-                    this.knobImageElement=new Image();
-                    this.knobImageElement.src=level.texList[1].slices[0].imgSrc;
-                    this.knobImageElement.onload = (function () {
-
-                    }).bind(this);
-                }else {
-                    this.knobImageElement=null;
-                }
-
-
-
-
-
-                this.on('changeKnobValue', function (arg) {
-                    self.value=arg.value;
-                    //console.log('changeDashboardValue',self.value);
-                    var _callback=arg.callback;
-
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-                });
-
-
-                //changeDashboardPointerLength
-
-                this.on('changeKnobSize', function (arg) {
-                    self.knobSize=arg.knobSize;
-                    self.scaleX = arg.scaleX;
-                    self.scaleY = arg.scaleY;
-                    //console.log('change pointer',self.pointerLength,level);
-                    var _callback=arg.callback;
-
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-                });
-
-
-                this.on('changeTex', function (arg) {
-                    var level=arg.level;
-                    var _callback=arg.callback;
-                    self.backgroundColor=level.texList[0].slices[0].color;
-                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                        self.backgroundImageElement=new Image();
-                        self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                        self.backgroundImageElement.onload = (function () {
-
-                        }).bind(this);
-                    }else {
-                        self.backgroundImageElement=null;
-                    }
-
-                    self.knobColor=level.texList[1].slices[0].color;
-                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                        self.knobImageElement=new Image();
-                        self.knobImageElement.src=level.texList[1].slices[0].imgSrc;
-                        self.knobImageElement.onload = (function () {
-
-                        }).bind(this);
-                    }else {
-                        self.knobImageElement=null;
-                    }
-
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-                    _callback&&_callback();
-
-                });
-
-                //this.on('changeArrange', function (arg) {
-                //    self.arrange=arg.arrange;
-                //    var _callback=arg.callback;
-                //
-                //    var subLayerNode=CanvasService.getSubLayerNode();
-                //    subLayerNode.renderAll();
-                //    _callback&&_callback();
-                //});
-            },
-            toObject: function () {
-                return fabric.util.object.extend(this.callSuper('toObject'));
-            },
-            _render: function (ctx) {
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -this.width / 2,
-                    -this.height / 2,
-                    this.width,
-                    this.height
-                );
-                if (this.backgroundImageElement){
-                    //console.log('bg',this.width,this.height);
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
-                }
-
-                //pointer
-
-                //ctx.fillStyle=this.pointerColor;
-                //ctx.fillRect(
-                //    -this.width / 2,
-                //    -this.height / 2,
-                //    this.width,
-                //    this.height
-                //);
-                if (this.knobImageElement){
-                    //console.log('draw knob',this.knobImageElement)
-                    var sqrt2 = Math.sqrt(2);
-                    var knobImgWidth = this.knobSize/sqrt2/this.scaleX;
-                    var knobImgHeight = this.knobSize/sqrt2/this.scaleY;
-
-                    ctx.rotate((this.value)*Math.PI/180);
-                    //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
-                    ctx.drawImage(this.knobImageElement, -knobImgWidth/2, -knobImgHeight/2,knobImgWidth,knobImgHeight);
-
-                }
-            }
-        });
-        fabric.MyKnob.fromLevel= function (level, callback,option) {
-            callback && callback(new fabric.MyKnob(level, option));
-        }
-        fabric.MyKnob.prototype.toObject = (function (toObject) {
-            return function () {
-                return fabric.util.object.extend(toObject.call(this), {
-                    backgroundImageElement:this.backgroundImageElement,
-                    knobImageElement:this.knobImageElement,
-
-                    backgroundColor:this.backgroundColor,
-                    knobColor:this.knobColor,
-
-                    value:this.value
-
-                });
-            }
-        })(fabric.MyKnob.prototype.toObject);
-        fabric.MyKnob.fromObject = function (object, callback) {
-            var level=_self.getLevelById(object.id);
-            callback && callback(new fabric.MyKnob(level, object));
-        };
-        fabric.MyKnob.async = true;
 
 
         fabric.MyButton = fabric.util.createClass(fabric.Object, {
@@ -1015,20 +683,20 @@ ideServices
             initialize: function (level, options) {
                 var self=this;
                 var ctrlOptions={
-                    bl:true,
-                    br:true,
-                    mb:false,
+                    bl:false,
+                    br:false,
+                    mb:true,
                     ml:true,
                     mr:true,
-                    mt:false,
-                    tl:true,
-                    tr:true
+                    mt:true,
+                    tl:false,
+                    tr:false
                 };
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
                 this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
                 this.hasRotatingPoint=false;
-                this.backgroundColor=level.texList[0].slices[0].color;
+                this.normalColor=level.texList[0].slices[0].color;
 
                 this.text=level.info.text;
                 this.fontFamily=level.info.fontFamily;
@@ -1038,23 +706,19 @@ ideServices
                 this.fontItalic=level.info.fontItalic;
                 this.fontUnderline=level.info.fontUnderline;
 
-                //设置宽高
-                if(this.text&&this.fontSize){
-                    this.setWidth(this.fontSize*(this.text.length+1));
-                    this.setHeight(this.fontSize*2);
-                }
+
 
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
+                    this.normalImageElement=new Image();
+                    this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.normalImageElement.onload = (function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
                     }).bind(this);
                 }else {
-                    this.backgroundImageElement=null;
+                    this.normalImageElement=null;
                 }
 
                 this.on('changeTex', function (arg) {
@@ -1062,20 +726,20 @@ ideServices
                     var _callback=arg.callback;
 
                     var tex=level.texList[0];
-                    self.backgroundColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
+                    self.normalColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc!='') {
                         var currentImageElement=new Image();
                         currentImageElement.src=tex.slices[0].imgSrc;
                         currentImageElement.onload = (function () {
                         }).bind(this);
-                        self.backgroundImageElement=currentImageElement;
+                        self.normalImageElement=currentImageElement;
                     }else {
-                        self.backgroundImageElement=null;
+                        self.normalImageElement=null;
                     }
+
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
-
                 });
 
                 this.on('changeTextContent', function (arg) {
@@ -1099,13 +763,11 @@ ideServices
                         self.fontItalic=arg.fontItalic;
                     }
 
-                    //重新设置canvas的宽高
-                    if(self.fontSize&&self.text){
-                        self.setWidth(self.fontSize*(self.text.length));
-                        self.setHeight(self.fontSize*2);
-                    }
-
+                    self.setWidth(self.fontSize*self.text.length);
+                    arg.level.width=self.getWidth();
+                    
                     var _callback=arg.callback;
+
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -1120,21 +782,23 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                //console.log(this);
+                //console.log(this.width);
                 ctx.fillStyle=this.fontColor;
                 ctx.save();
-                ctx.fillStyle=this.backgroundColor;
+                ctx.fillStyle=this.normalColor;
                 ctx.fillRect(
                     -(this.width / 2),
                     -(this.height / 2) ,
                     this.width,
                     this.height);
 
-                if (this.backgroundImageElement){
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                if (this.normalImageElement){
+                    ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
 
                 ctx.restore();
-                //var subLayerNode=CanvasService.getSubLayerNode();
+                var subLayerNode=CanvasService.getSubLayerNode();
 
                 if(this.text){
                     var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
@@ -1143,6 +807,7 @@ ideServices
                     ctx.font=fontString;
                     ctx.textAlign='center';
                     ctx.fillText(this.text,0,this.fontSize/4);
+
                 }
             }
         });
@@ -1152,8 +817,8 @@ ideServices
         fabric.MyTextArea.prototype.toObject = (function (toObject){
             return function () {
                 return fabric.util.object.extend(toObject.call(this), {
-                    backgroundImageElement: this.backgroundImageElement,
-                    backgroundColor: this.backgroundColor
+                    normalImageElement: this.normalImageElement,
+                    normalColor: this.normalColor
                 });
             }
         })(fabric.MyTextArea.prototype.toObject);
@@ -1162,195 +827,6 @@ ideServices
             callback&&callback(new fabric.MyTextArea(level,object));
         };
         fabric.MyTextArea.async = true;
-
-        fabric.MyNum = fabric.util.createClass(fabric.Object,{
-            type: Type.MyNum,
-            initialize: function (level, options) {
-                var self=this;
-                var ctrlOptions={
-                    bl:true,
-                    br:true,
-                    mb:false,
-                    ml:false,
-                    mr:false,
-                    mt:false,
-                    tl:true,
-                    tr:true
-                };
-                this.callSuper('initialize',options);
-                this.lockRotation=true;
-                this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
-                this.hasRotatingPoint=false;
-                this.backgroundColor=level.texList[0].slices[0].color;
-
-                this.numValue=level.info.numValue;
-                this.numFamily=level.info.numFamily;
-                this.numSize=level.info.numSize;
-                this.numColor=level.info.numColor;
-                this.numBold=level.info.numBold;
-                this.numItalic=level.info.numItalic;
-                //下面位数字模式属性
-                this.numOfDigits=level.info.numOfDigits;
-                this.decimalCount=level.info.decimalCount;
-                this.symbolMode=level.info.symbolMode;
-                this.frontZeroMode=level.info.frontZeroMode;
-                //设置canvas的宽度和高度
-                if(this.numOfDigits&&this.numSize){
-                    this.setWidth((this.numOfDigits+1)*this.numSize);
-                    this.setHeight(this.numSize*1.5);
-                }
-
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.backgroundImageElement=null;
-                }
-
-                this.on('changeTex', function (arg) {
-                    var level=arg.level;
-                    var _callback=arg.callback;
-
-                    var tex=level.texList[0];
-                    self.backgroundColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                        var currentImageElement=new Image();
-                        currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
-                        self.backgroundImageElement=currentImageElement;
-                    }else {
-                        self.backgroundImageElement=null;
-                    }
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-
-                });
-
-                this.on('changeNumContent', function (arg) {
-                    //console.log('enter on changeTextContent');
-                    if(arg.numValue){
-                        self.numValue=arg.numValue;
-                    }
-                    if(arg.numFamily){
-                        self.numFamily=arg.numFamily;
-                    }
-                    if(arg.numSize){
-                        self.numSize=arg.numSize;
-                    }
-                    if(arg.numBold){
-                        self.numBold=arg.numBold;
-                    }
-                    if(arg.numItalic){
-                        self.numItalic=arg.numItalic;
-                    }
-                    if(arg.numOfDigits){
-                        self.numOfDigits=arg.numOfDigits;
-                    }
-                    if(arg.decimalCount||arg.decimalCount==0){
-                        self.decimalCount=arg.decimalCount;
-                    }
-                    if(arg.symbolMode){
-                        self.symbolMode=arg.symbolMode;
-                    }
-                    if(arg.frontZeroMode){
-                        self.frontZeroMode=arg.frontZeroMode;
-                    }
-
-                    //设置canvas宽高
-                    if(self.numOfDigits&&self.numSize){
-                        self.setWidth(self.numOfDigits*self.numSize);
-                        self.setHeight(self.numSize*1.5);
-                    }
-
-                    var _callback=arg.callback;
-                    var subLayerNode = CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-                });
-
-
-
-
-            },
-            toObject: function () {
-                return fabric.util.object.extend(this.callSuper('toObject'));
-            },
-            _render: function (ctx) {
-                var offCanvas = CanvasService.getOffCanvas();
-                offCanvas.width = this.width;
-                offCanvas.height = this.height;
-                var offCtx = offCanvas.getContext('2d');
-                offCtx.clearRect(0,0,this.width,this.height);
-
-
-
-
-                offCtx.fillStyle=this.backgroundColor;
-                offCtx.fillRect(0,0,this.width,this.height);
-                if (this.backgroundImageElement) {
-                    offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
-                }
-
-                //在数字框里展示数字预览效果
-                if(this.numValue) {
-                    //offCtx.save();
-                    offCtx.globalCompositeOperation = "destination-in";
-                    //offCtx.scale(1/this.scaleX,1/this.scaleY);
-                    var numString = this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
-                    //offCtx.fillStyle = this.numColor;
-                    offCtx.font = numString;
-                    offCtx.textAlign = 'center';
-
-                    var tempNumValue= _.cloneDeep(this.numValue);
-                    //配置小数位数
-                    if(this.decimalCount){
-                        tempNumValue= tempNumValue+".";
-                        for(var i=0;i<this.decimalCount;i++){
-                            tempNumValue=tempNumValue+'0';
-                        };
-                    }
-                    //配置前导0模式
-                    if(this.frontZeroMode=='1'){
-                        for(var i=0;i<(this.numOfDigits-this.decimalCount-1);i++){
-                            tempNumValue='0'+tempNumValue;
-                        }
-                    }
-                    //配置正负号
-                    if(this.symbolMode=='1'){
-                        tempNumValue='+'+tempNumValue;
-                    }
-                    offCtx.fillText(tempNumValue, this.width/2, this.height/2+this.numSize/4);
-                    //offCtx.restore();
-                }
-
-                ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
-                //console.log(ctx);
-
-            }
-        });
-        fabric.MyNum.fromLevel = function(level,callback,option){
-            callback && callback(new fabric.MyNum(level, option));
-        };
-        fabric.MyNum.prototype.toObject = (function (toObject){
-            return function () {
-                return fabric.util.object.extend(toObject.call(this), {
-                    backgroundImageElement: this.backgroundImageElement,
-                    backgroundColor: this.backgroundColor
-                });
-            }
-        })(fabric.MyNum.prototype.toObject);
-        fabric.MyNum.fromObject = function(object,callback){
-            var level=_self.getLevelById(object.id);
-            callback&&callback(new fabric.MyNum(level,object));
-        };
-        fabric.MyNum.async = true;
 
 
 
@@ -1960,7 +1436,31 @@ ideServices
          */
         this.saveProjectFromGlobal = function (_globalProject,_successCallback) {
             project = _globalProject;
-            _self.changeCurrentPageIndex(0,_successCallback);
+
+            _.forEach(project.pages,function (_page) {
+                _.forEach(_page.layers,function (_layer) {
+                    _.forEach(_layer.subLayers,function (_subLayer) {
+                        if (_subLayer.id==_layer.showSubLayer.id){
+                            _layer.showSubLayer=_subLayer;
+                        }
+                    })
+                })
+            });
+            var pageCount=project.pages.length;
+            openAllPage(0,_successCallback);
+            //
+
+
+            function openAllPage(_index, _successCallback) {
+                if (_index==pageCount){
+                    _self.changeCurrentPageIndex(0,_successCallback);
+                }else{
+                    _self.changeCurrentPageIndex(_index,function () {
+                        openAllPage(_index+1,_successCallback);
+
+                    },true);
+                }
+            }
         };
 
 
@@ -2057,6 +1557,11 @@ ideServices
 
             });
             return level;
+        };
+
+        var getResourceList=this.getResourceList=function () {
+
+            return project.resourceList;
         }
 
         var getCurrentWidget=this.getCurrentWidget= function (_currentSubLayer) {
@@ -2081,7 +1586,7 @@ ideServices
         }
 
         /**
-         * 找到Layer对应的Fabric对象
+         * 找到画布对应的Fabric对象
          * @returns {null}
          * @param _id
          * @param _isSubLayer
@@ -2106,21 +1611,86 @@ ideServices
             return fobj;
         };
 
+        /**
+         * 搜寻所有被项目引用过的图片资源名
+         * 用于删除资源时判断  该资源是否可以被删除
+         * @type {getRequiredResourceNames}
+         */
+        var getRequiredResourceNames=this.getRequiredResourceNames=function () {
+            var names=[];
+            _.forEach(project.pages,function (page) {
+                if (page.backgroundImage){
+                    names.push(page.backgroundImage);
+                }
+                _.forEach(page.layers,function (layer) {
+                    _.forEach(layer.subLayers,function (subLayer) {
+                        if (subLayer.backgroundImage){
+                            names.push(subLayer.backgroundImage);
+                        }
+                        _.forEach(subLayer.widgets,function (widget) {
+                            _.forEach(widget.texList,function (tex) {
+                                _.forEach(tex.slices,function (slice) {
+                                    if (slice.imgSrc){
+                                        names.push(slice.imgSrc);
+
+                                    }
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+            return names;
+        }
 
         /**
          * Page之间的切换
          * @param _pageIndex
          * @param _successCallback
          */
-        this.changeCurrentPageIndex = function (_pageIndex, _successCallback) {
-            if (_pageIndex>=0){
+        this.changeCurrentPageIndex = function (_pageIndex, _successCallback,isInit) {
+            if (isInit){
+                console.log('初始化页面');
+                intoNewPage();
+
+            }
+            else if (_pageIndex>=0){
 
                 var  oldPage=_self.getCurrentPage();
                 if (oldPage){
-                    var oldPageIndex= _.indexOf(project.pages,oldPage);
-                    _self.OnPageSelected(oldPageIndex,intoNewPage,true);
+                    var oldPageIndex=-1;
+                    _.forEach(project.pages, function (__page,__pageIndex) {
+
+                        if (__page.id==oldPage.id){
+                            oldPageIndex=__pageIndex;
+                        }
+                    })
+                    console.log(oldPageIndex+'/'+_pageIndex);
+                    if (oldPageIndex!=_pageIndex){
+                        console.log('页面间切换');
+                        if (oldPage.mode==1){
+                            _self.OnPageSelected(oldPageIndex,intoNewPage,true);
+
+                        }else{
+                            _self.OnPageSelected(_pageIndex,function(){
+                                _successCallback&&_successCallback(true);
+                            });
+                        }
+
+                    }else{
+                        console.log('相同页面点击');
+
+                            _self.OnPageSelected(_pageIndex,function(){
+                                _successCallback&&_successCallback(true);
+                            },isInit);
+
+
+
+                    }
                 }else {
+                    console.log('异常情况');
                     intoNewPage();
+
                 }
 
             }
@@ -2134,22 +1704,52 @@ ideServices
                 }
 
                 OnPageClicked(_pageIndex);
+
+                var pageCount=currentPage.layers.length;
+
                 pageNode.setBackgroundImage(null, function () {
                     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
                         //pageNode.setWidth(project.currentSize.width);
                         //pageNode.setHeight(project.currentSize.height);
-                        _self.ScaleCanvas('page');
+                        if (isInit){
+                            console.log('更新layer');
+                            updateLayerImage(0,function () {
+                                _self.ScaleCanvas('page');
 
-                        pageNode.renderAll();
-                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                                pageNode.renderAll();
 
 
-                        currentPage.url=pageNode.toDataURL();
-                        _self.OnPageSelected(_pageIndex,_successCallback,true);
+                                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                _self.OnPageSelected(_pageIndex,_successCallback,true);
+                            })
+
+                        }else{
+                            console.log('不更新layer');
+                            _self.ScaleCanvas('page');
+
+                            pageNode.renderAll();
+
+
+                            currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                            _self.OnPageSelected(_pageIndex,_successCallback);
+                        }
+
 
                     })
 
                 });
+
+                function updateLayerImage(_index,_successCallback) {
+                    if (_index==pageCount){
+                        _successCallback&&_successCallback();
+                    }else {
+                        var layer=currentPage.layers[_index];
+
+                        _self.SyncSubLayerImage(layer,layer.showSubLayer,function () {
+                            updateLayerImage(_index+1,_successCallback);
+                        })
+                    }
+                }
             }
         }
 
@@ -2160,7 +1760,7 @@ ideServices
             }
             var subLayerNode=CanvasService.getSubLayerNode();
             var currentLayer=getCurrentLayer();
-            var layerIndex= _.indexOf(_self.getCurrentPage().layers,currentLayer);
+            var layerIndex= _indexById(_self.getCurrentPage().layers,currentLayer);
             var currentSubLayer=currentLayer.subLayers[_subLayerIndex];
             if (!currentSubLayer){
                 console.warn('找不到SubLayer');
@@ -2236,7 +1836,7 @@ ideServices
             setRendering(true);
 
             var newPage = _.cloneDeep(_newPage);
-            var currentPageIndex= _.indexOf(project.pages,_self.getCurrentPage());
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
             var newPageIndex=-1;
             if (currentPageIndex == project.pages.length - 1) {
                 project.pages.push(newPage);
@@ -2287,18 +1887,13 @@ ideServices
             _newLayer.info.height=fabLayer.getHeight();
 
 
-            currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
             currentPage.currentFabLayer=fabLayer;
+            pageNode.renderAll.bind(pageNode)();
 
-            pageNode.setBackgroundImage(null, function () {
-                pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                    pageNode.renderAll.bind(pageNode)();
+            _self.currentFabLayerIdList=[];
+            _self.currentFabLayerIdList.push(_newLayer.id);
+            _self.OnLayerSelected(_newLayer,_successCallback);
 
-                    _self.currentFabLayerIdList=[];
-                    _self.currentFabLayerIdList.push(_newLayer.id);
-                    _self.OnLayerSelected(_newLayer,_successCallback);
-                })
-            });
 
         };
 
@@ -2306,7 +1901,7 @@ ideServices
 
             var newSubLayer = _.cloneDeep(_newSubLayer);
             var currentLayer=getCurrentLayer();
-            var currentLayerIndex= _.indexOf(_self.getCurrentPage().layers,currentLayer);
+            var currentLayerIndex= _indexById(_self.getCurrentPage().layers,currentLayer);
             currentLayer.subLayers.push(newSubLayer);
             var newSubLayerIndex=currentLayer.subLayers.length - 1;
 
@@ -2361,7 +1956,8 @@ ideServices
 
                 }, initiator);
 
-            }else if (_newWidget.type==Type.MyProgress){
+            }
+            else if (_newWidget.type==Type.MyProgress){
 
                 if (_newWidget.backgroundImg==''){
                     _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
@@ -2381,7 +1977,6 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
-                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2391,7 +1986,8 @@ ideServices
                 },initiator);
 
 
-            }else if(_newWidget.type==Type.MyDashboard){
+            }
+            else if(_newWidget.type==Type.MyDashboard){
                 if (_newWidget.backgroundImg==''){
                     _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
                 }
@@ -2419,7 +2015,8 @@ ideServices
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator);
 
-            }else if (_newWidget.type==Type.MyButton){
+            }
+            else if (_newWidget.type==Type.MyButton){
 
                 fabric.MyButton.fromLevel(_newWidget, function (fabWidget) {
                     _self.currentFabWidgetIdList=[fabWidget.id];
@@ -2431,7 +2028,6 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
-                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2441,7 +2037,8 @@ ideServices
                 },initiator);
 
 
-            }else  if (_newWidget.type==Type.MyButtonGroup){
+            }
+            else  if (_newWidget.type==Type.MyButtonGroup){
                 fabric.MyButtonGroup.fromLevel(_newWidget, function (fabWidget) {
                     _self.currentFabWidgetIdList=[fabWidget.id];
 
@@ -2449,7 +2046,6 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
-                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2457,7 +2053,8 @@ ideServices
 
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator);
-            } else if(_newWidget.type==Type.MyNumber){
+            } 
+            else if(_newWidget.type==Type.MyNumber){
                 fabric.MyNumber.fromLevel(_newWidget, function (fabWidget) {
 
                     _self.currentFabWidgetIdList=[fabWidget.id];
@@ -2480,7 +2077,6 @@ ideServices
                     subLayerNode.renderAll.bind(subLayerNode)();
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
-                    //console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.widgets.push(_newWidget);
@@ -2489,81 +2085,6 @@ ideServices
                     OnWidgetSelected(_newWidget,_successCallback);
 
                 }, initiator);
-            } else if(_newWidget.type == Type.MyNum){
-                fabric.MyNum.fromLevel(_newWidget, function (fabWidget) {
-                    _self.currentFabWidgetIdList=[fabWidget.id];
-
-                    subLayerNode.add(fabWidget);
-                    subLayerNode.renderAll();
-
-                    subLayerNode.renderAll.bind(subLayerNode)();
-                    _newWidget.info.width=fabWidget.getWidth();
-                    _newWidget.info.height=fabWidget.getHeight();
-                    //console.log('-');
-
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
-                },initiator);
-            }else if(_newWidget.type==Type.MyKnob){
-                if (_newWidget.backgroundImg==''){
-                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
-                }
-                if (_newWidget.knobImg==''){
-                    _newWidget.knobImg=Preference.BLANK_LAYER_URL;
-                }
-                fabric.MyKnob.fromLevel(_newWidget, function (fabWidget) {
-                    _self.currentFabWidgetIdList=[fabWidget.id];
-
-                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
-                    fabWidget.knobUrl=_newWidget.KnobImg;
-
-                    subLayerNode.add(fabWidget);
-                    subLayerNode.renderAll();
-
-                    subLayerNode.renderAll.bind(subLayerNode)();
-                    _newWidget.info.width=fabWidget.getWidth();
-                    _newWidget.info.height=fabWidget.getHeight();
-                    //console.log('-');
-
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
-                },initiator);
-            }else if(_newWidget.type==Type.MyOscilloscope){
-
-                if (_newWidget.backgroundImg==''){
-                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
-                }
-                if (_newWidget.oscillationImg==''){
-                    _newWidget.oscillationImg=Preference.BLANK_LAYER_URL;
-                }
-                fabric.MyOscilloscope.fromLevel(_newWidget, function (fabWidget) {
-                    _self.currentFabWidgetIdList=[fabWidget.id];
-
-                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
-                    fabWidget.oscillationImg=_newWidget.oscillationImg;
-
-                    subLayerNode.add(fabWidget);
-                    subLayerNode.renderAll();
-
-                    subLayerNode.renderAll.bind(subLayerNode)();
-                    _newWidget.info.width=fabWidget.getWidth();
-                    _newWidget.info.height=fabWidget.getHeight();
-                    //console.log('-');
-
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
-                },initiator);
-
-
             }
 
 
@@ -2649,7 +2170,7 @@ ideServices
         this.DeleteActiveLayers = function (_successCallback) {
             var pageNode = CanvasService.getPageNode();
             var currentPage=_self.getCurrentPage();
-            var currentPageIndex= _.indexOf(project.pages,currentPage);
+            var currentPageIndex= _indexById(project.pages,currentPage);
             var activeGroup = pageNode.getActiveGroup();
             var activeObject = pageNode.getActiveObject();
 
@@ -2666,7 +2187,7 @@ ideServices
                     onComplete: function () {
                         pageNode.deactivateAll();
                         pageNode.renderAll();
-                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+
                         _self.OnPageSelected(currentPageIndex,_successCallback);
                     }
                 });
@@ -2708,7 +2229,7 @@ ideServices
         this.DeleteCurrentSubLayer= function (_successCallback) {
             var currentLayer= _self.getCurrentLayer();
             var currentSubLayer=_self.getCurrentSubLayer();
-            var currentPageIndex= _.indexOf(project.pages,_self.getCurrentPage());
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
             var currentSubLayerIndex=-1;
             _.forEach(currentLayer.subLayers, function (_subLayer,_subLayerIndex) {
                 if (_subLayer.id==currentSubLayer.id){
@@ -2757,8 +2278,8 @@ ideServices
             var currentSubLayer=_self.getCurrentSubLayer();
             var currentPage= _self.getCurrentPage();
             var currentLayer= _self.getCurrentLayer();
-            var layerIndex= _.indexOf(currentPage.layers,currentLayer);
-            var subLayerIndex= _.indexOf(currentLayer.subLayers,currentSubLayer);
+            var layerIndex= _indexById(currentPage.layers,currentLayer);
+            var subLayerIndex= _indexById(currentLayer.subLayers,currentSubLayer);
             var activeGroup = subLayerNode.getActiveGroup();
             var activeObject = subLayerNode.getActiveObject();
 
@@ -2775,7 +2296,6 @@ ideServices
                     onComplete: function () {
                         subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
-                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback);
@@ -2931,7 +2451,7 @@ ideServices
         }
 
         this.CopyLayerGroup= function (_groupTarget, _successCallback) {
-            var pageIndex= _.indexOf(project.pages,_self.getCurrentPage());
+            var pageIndex= _indexById(project.pages,_self.getCurrentPage());
             var groupCopy= _.cloneDeep(_groupTarget);
 
             _self.OnPageSelected(pageIndex, function () {
@@ -2968,8 +2488,8 @@ ideServices
         };
 
         this.CopyWidgetGroup= function (_groupTarget, _successCallback) {
-            var layerIndex= _.indexOf(_self.getCurrentPage().layers,_self.getCurrentLayer());
-            var subLayerIndex= _.indexOf(_self.getCurrentLayer().subLayers,_self.getCurrentSubLayer());
+            var layerIndex= _indexById(_self.getCurrentPage().layers,_self.getCurrentLayer());
+            var subLayerIndex= _indexById(_self.getCurrentLayer().subLayers,_self.getCurrentSubLayer());
             var groupCopy= _.cloneDeep(_groupTarget);
             _self.OnSubLayerSelected(layerIndex,subLayerIndex, function () {
                 var widgets=_self.getCurrentSubLayer().widgets;
@@ -3180,10 +2700,10 @@ ideServices
                 }
                 currentPage.proJsonStr =
                     JSON.stringify(CanvasService.getPageNode().toJSON());
+                console.log(currentPage.proJsonStr);
 
                 var currentSubLayer=_self.getCurrentSubLayer();
                 if (currentSubLayer){
-                    console.log('-');
 
                     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
 
@@ -3205,11 +2725,12 @@ ideServices
 
             var currentPage=_self.getCurrentPage();
             var pageNode=CanvasService.getPageNode();
-            currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+            //currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+            //console.log(currentPage.proJsonStr);
+
             var currentSubLayer=_self.getCurrentSubLayer();
             if (currentSubLayer){
                 var subLayerNode=CanvasService.getSubLayerNode();
-                console.log('-');
 
                 //currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
             }
@@ -3230,9 +2751,6 @@ ideServices
                         return;
                     }
                     if (_page.currentFabLayer&&_page.currentFabLayer.type!=Type.MyLayer){
-
-
-
                         _self.OnLayerGroupSelected(_createGroup(_page.currentFabLayer),_successCallback,true);
                         return;
                     }
@@ -3270,6 +2788,8 @@ ideServices
                     })
                 }
             });
+
+
 
         };
 
@@ -3346,10 +2866,15 @@ ideServices
             }
 
             var editInSamePage=false;
-            if (_self.getCurrentPage()&&_self.getCurrentPage().id==currentPage.id){
+            if (!_self.getCurrentPage()){
+                editInSamePage=true;
+
+            }
+            else if (_self.getCurrentPage()&&_self.getCurrentPage().id==currentPage.id){
                 editInSamePage=true;
             }
             var pageNode = CanvasService.getPageNode();
+
 
 
             if (currentPage.mode==0&&editInSamePage&&!forceReload){
@@ -3358,10 +2883,12 @@ ideServices
                 pageNode.deactivateAll();
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                currentPage.url=pageNode.toDataURL();
+                console.log(currentPage.proJsonStr);
+
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
                 _successCallback && _successCallback();
-            }else {
+            }else if (currentPage.mode==1){
 
                 _backToPage(currentPage, function () {
                     _self.OnPageClicked(pageIndex,null,skipClean);
@@ -3369,11 +2896,33 @@ ideServices
                     pageNode.deactivateAll();
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    console.log(currentPage.proJsonStr);
+
 
                     currentPage.mode=0;
-                    currentPage.url=pageNode.toDataURL();
+                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
                     _successCallback && _successCallback();
+                });
+            }else{
+                pageNode.setBackgroundImage(null, function () {
+                    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                        _self.OnPageClicked(pageIndex,null,skipClean);
+
+                        pageNode.deactivateAll();
+                        pageNode.renderAll();
+                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                        console.log(currentPage.proJsonStr);
+
+
+                        currentPage.mode=0;
+                        currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+
+                        _successCallback && _successCallback();
+
+
+                    });
+
                 });
             }
 
@@ -3448,14 +2997,14 @@ ideServices
             var pageNode=CanvasService.getPageNode();
 
 
-            var currentPageIndex= _.indexOf(project.pages,_self.getCurrentPage());
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
 
             if (currentFabLayerIdList.length>1){
                 _self.OnPageSelected(currentPageIndex, function () {
 
                     var fabLayerList=[];
                     pageNode.forEachObject(function (fabLayer) {
-                        if (_.indexOf(currentFabLayerIdList,fabLayer.id)>=0){
+                        if (_indexById(currentFabLayerIdList,fabLayer.id)>=0){
                             fabLayerList.push(fabLayer);
                         }
                     })
@@ -3491,11 +3040,17 @@ ideServices
         this.OnLayerDoubleClicked=function(_layerId,_successCallback){
 
             var currentPage=_self.getCurrentPage();
-            var currentPageIndex=_.indexOf(project.pages,currentPage);
+            var currentPageIndex=_indexById(project.pages,currentPage);
             var currentLayer=_self.getLevelById(_layerId);
-            var layerIndex=_.indexOf(currentPage.layers,currentLayer);
-            var subLayerIndex=_.indexOf(currentLayer.subLayers,currentLayer.showSubLayer);
+            var layerIndex=_indexById(currentPage.layers,currentLayer);
 
+            var subLayerIndex=-1;
+
+            _.forEach(currentLayer.subLayers,function (_subLayer, _index) {
+                if (_subLayer.id==currentLayer.showSubLayer.id){
+                    subLayerIndex=_index;
+                }
+            })
             console.log(currentPageIndex+'/'+layerIndex+'/'+subLayerIndex);
             _self.OnPageSelected(currentPageIndex,function () {
                 _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback,true);
@@ -3506,15 +3061,15 @@ ideServices
             var currentFabWidgetIdList=_self.currentFabWidgetIdList;
             var subLayerNode=CanvasService.getSubLayerNode();
 
-            var layerIndex= _.indexOf(_self.getCurrentPage().layers,_self.getCurrentLayer());
-            var subLayerIndex= _.indexOf(_self.getCurrentLayer().subLayers,_self.getCurrentSubLayer());
+            var layerIndex= _indexById(_self.getCurrentPage().layers,_self.getCurrentLayer());
+            var subLayerIndex= _indexById(_self.getCurrentLayer().subLayers,_self.getCurrentSubLayer());
 
             if (currentFabWidgetIdList.length>1){
                 _self.OnSubLayerSelected(layerIndex,subLayerIndex, function () {
 
                     var fabWidgetList=[];
                     subLayerNode.forEachObject(function (fabWidget) {
-                        if (_.indexOf(currentFabWidgetIdList,fabWidget.id)>=0){
+                        if (_indexById(currentFabWidgetIdList,fabWidget.id)>=0){
                             fabWidgetList.push(fabWidget);
                         }
                     })
@@ -3563,7 +3118,9 @@ ideServices
                 currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                currentPage.url=pageNode.toDataURL();
+                console.log(currentPage.proJsonStr);
+
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                 _successCallback && _successCallback();
             }else {
                 _backToPage(currentPage, function () {
@@ -3573,8 +3130,10 @@ ideServices
                     currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    console.log(currentPage.proJsonStr);
+
                     currentPage.mode=0;
-                    currentPage.url=pageNode.toDataURL();
+                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                     _successCallback && _successCallback();
 
                 });
@@ -3601,18 +3160,21 @@ ideServices
             var pageNode = CanvasService.getPageNode();
 
             if (currentPage.mode==0&&!forceReload){
-                currentPage.currentFabLayer=_fabLayer?_fabLayer:getFabricObject(_layer.id);
-                var currentFabLayer=currentPage.currentFabLayer;
+
                 pageNode.deactivateAll();
                 pageNode.renderAll();
+
+                currentPage.currentFabLayer=_fabLayer?_fabLayer:getFabricObject(_layer.id);
+                var currentFabLayer=currentPage.currentFabLayer;
 
                 pageNode.setActive(currentFabLayer);
 
                 currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                console.log(currentPage.proJsonStr);
 
-                currentPage.url=pageNode.toDataURL();
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                 _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
                     _successCallback&&_successCallback(currentFabLayer)
                 });
@@ -3633,7 +3195,7 @@ ideServices
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
                     currentPage.mode=0;
-                    currentPage.url=pageNode.toDataURL();
+                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
                     _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
                         _successCallback&&_successCallback(currentFabLayer)
@@ -3734,7 +3296,6 @@ ideServices
 
                 subLayerNode.deactivateAll();
                 subLayerNode.renderAll();
-                console.log('-');
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
@@ -3745,9 +3306,6 @@ ideServices
             }
             else {
 
-                console.log(subLayerNode.toJSON());
-
-
                 subLayerNode.clear();
                 subLayerNode.setBackgroundImage(null, function () {
                     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
@@ -3757,8 +3315,6 @@ ideServices
 
                         subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
-                        console.log('-');
-
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
                         currentPage.mode=1;
@@ -3807,11 +3363,9 @@ ideServices
 
                             subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
-                        console.log('-');
-
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                        currentSubLayer.url=subLayerNode.toDataURL();
+                        currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                         renderingSubLayer=false;
 
                         _successCallback && _successCallback();
@@ -3838,10 +3392,8 @@ ideServices
 
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
-                            console.log('-');
-
                             currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                            currentSubLayer.url = subLayerNode.toDataURL();
+                            currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
 
                             renderingSubLayer = false;
                             _successCallback && _successCallback();
@@ -3882,7 +3434,6 @@ ideServices
 
                             _widget.selected=true;
                             _widget.current=true;
-                            _widget.url=_target.toDataURL();
 
                             _subLayer.current=true;
                             _subLayer.currentFabWidget= _.cloneDeep(_target);
@@ -3966,7 +3517,6 @@ ideServices
                 var currentFabWidget= currentSubLayer.currentFabWidget;
                 subLayerNode.setActive(currentFabWidget);
                 currentSubLayer.currentFabWidget= _.cloneDeep(currentFabWidget);
-                console.log('-');
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                 subLayerNode.renderAll();
@@ -3975,7 +3525,6 @@ ideServices
             }else {
                 subLayerNode.clear();
                 subLayerNode.setBackgroundImage(null, function () {
-                    console.log(currentSubLayer.proJsonStr);
 
                     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
                         //subLayerNode.setWidth(currentLayer.info.width);
@@ -3990,7 +3539,6 @@ ideServices
                         var currentFabWidget= currentSubLayer.currentFabWidget;
                         subLayerNode.setActive(currentFabWidget);
                         currentSubLayer.currentFabWidget=_.cloneDeep(currentFabWidget);
-                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         subLayerNode.renderAll();
@@ -4024,11 +3572,11 @@ ideServices
                 subLayerNode.setActive(currentFabWidget);
                 currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
                 subLayerNode.renderAll();
-                console.log('-');
+
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                currentSubLayer.url=subLayerNode.toDataURL();
+                currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                 _successCallback && _successCallback();
             }else {
                 subLayerNode.clear();
@@ -4044,11 +3592,10 @@ ideServices
                         currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
                         subLayerNode.renderAll();
                         currentPage.mode=1;
-                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                        currentSubLayer.url=subLayerNode.toDataURL();
+                        currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                         _successCallback && _successCallback();
                     });
 
@@ -4127,7 +3674,7 @@ ideServices
             var currentPage=_self.getCurrentPage();
             $timeout(function () {
 
-                currentPage.url = pageNode.toDataURL();
+                currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                 _callback && _callback();
             })
         };
@@ -4138,7 +3685,7 @@ ideServices
                 console.warn('当前Layer为空');
                 return;
             }
-            getCurrentLayer().url = subLayerNode.toDataURL();
+            getCurrentLayer().url = subLayerNode.toDataURL({format:'png'});
         };
 
         this.ChangeAttributeName= function (_option, _successCallback) {
@@ -4159,7 +3706,9 @@ ideServices
                         pageNode.renderAll();
                         currentPage.backgroundColor=_option.color;
                         currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                        var currentPageIndex= _.indexOf(project.pages, currentPage);
+                        console.log(currentPage.proJsonStr);
+
+                        var currentPageIndex= _indexById(project.pages, currentPage);
                         _self.OnPageSelected(currentPageIndex, function () {
                             _successCallback&&_successCallback(currentOperate);
                         });
@@ -4173,12 +3722,11 @@ ideServices
                     subLayerNode.setBackgroundColor(_option.color, function () {
                         subLayerNode.renderAll();
                         currentSubLayer.backgroundColor=_option.color;
-                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                        var currentPageIndex= _.indexOf(project.pages, _self.getCurrentPage());
+                        var currentPageIndex= _indexById(project.pages, _self.getCurrentPage());
 
-                        var currentSubLayerIndex= _.indexOf(project.pages[currentPageIndex].subLayers, currentSubLayer);
+                        var currentSubLayerIndex= _indexById(project.pages[currentPageIndex].subLayers, currentSubLayer);
                         _self.OnSubLayerSelected(currentPageIndex,currentSubLayerIndex, function () {
                             _successCallback&&_successCallback(currentOperate);
                         });
@@ -4200,7 +3748,9 @@ ideServices
                         pageNode.renderAll();
                         currentPage.backgroundImage=_option.image;
                         currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                        var currentPageIndex= _.indexOf(project.pages, currentPage);
+                            console.log(currentPage.proJsonStr);
+
+                            var currentPageIndex= _indexById(project.pages, currentPage);
                         _self.OnPageSelected(currentPageIndex, function () {
                             _successCallback&&_successCallback(currentOperate);
                         });
@@ -4220,12 +3770,11 @@ ideServices
                     subLayerNode.setBackgroundImage(_option.image, function () {
                         subLayerNode.renderAll();
                         currentSubLayer.backgroundImage=_option.image;
-                        console.log('-');
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                        var currentLayerIndex= _.indexOf(_self.getCurrentPage().layers, currentLayer);
+                        var currentLayerIndex= _indexById(_self.getCurrentPage().layers, currentLayer);
 
-                        var currentSubLayerIndex= _.indexOf(currentLayer.subLayers, currentSubLayer);
+                        var currentSubLayerIndex= _indexById(currentLayer.subLayers, currentSubLayer);
                         _self.OnSubLayerSelected(currentLayerIndex,currentSubLayerIndex, function () {
                             _successCallback&&_successCallback(currentOperate);
                         });
@@ -4259,7 +3808,7 @@ ideServices
             var arg={
                 progress:progress,
                 callback:_successCallback
-            };
+            }
             selectObj.target.fire('changeProgressValue',arg);
 
 
@@ -4270,67 +3819,10 @@ ideServices
             var arg={
                 arrange:_option.arrange,
                 callback:_successCallback
-            };
+            }
             selectObj.target.fire('changeArrange',arg);
 
-        };
-
-        //改变所选进度条的光标模式
-        this.ChangeAttributeCursor = function(_option,_successCallback){
-            var selectObj=_self.getCurrentSelectObject();
-            selectObj.level.info.cursor=_option.cursor;
-            if(_option.cursor=='0'){
-                selectObj.level.texList=[{
-                    currentSliceIdx:0,
-                    name:'进度条',
-                    slices:[{
-                        color:'rgb(120,120,120)',
-                        imgSrc:'',
-                        name:'进度条'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'进度条底纹',
-                    slices:[{
-                        color:'rgb(120,120,120)',
-                        imgSrc:'',
-                        name:'进度条底纹'
-                    }]
-                }]
-            }
-            if(_option.cursor=='1'){
-                selectObj.level.texList=[{
-                    currentSliceIdx:0,
-                    name:'进度条',
-                    slices:[{
-                        color:'rgb(120,120,120)',
-                        imgSrc:'',
-                        name:'进度条'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'进度条底纹',
-                    slices:[{
-                        color:'rgb(120,120,120)',
-                        imgSrc:'',
-                        name:'进度条底纹'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'光标纹理',
-                    slices:[{
-                        color:'rgb(120,120,120)',
-                        imgSrc:'',
-                        name:'光标纹理'
-                    }]
-                }]
-            }
-            arg={
-                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
-            };
-            _successCallback&&_successCallback();
-            selectObj.target.fire('changeAttributeCursor',arg);
-        };
+        }
 
 
 
@@ -4372,50 +3864,16 @@ ideServices
 
         };
 
-        this.ChangeAttributeKnobSize = function(_option,_successCallback){
-            var selectObj=_self.getCurrentSelectObject();
-            var value=_option.knobSize;
-
-            var fabDashboardObj = getFabricObject(selectObj.level.id,true);
-            //console.log(fabDashboardObj,fabDashboardObj.getWidth(),fabDashboardObj.getHeight(),fabDashboardObj.getScaleX(),fabDashboardObj.getScaleY());
-
-            selectObj.level.info.knobSize=value;
-
-            var arg={
-                knobSize:value,
-                scaleX:fabDashboardObj.getScaleX(),
-                scaleY:fabDashboardObj.getScaleY(),
-                callback:_successCallback
-            }
-
-            selectObj.target.fire('changeKnobSize',arg);
-        };
-
-        this.ChangeAttributeKnobValue= function (_option, _successCallback) {
-            var selectObj=_self.getCurrentSelectObject();
-            var value=_option.value;
-
-
-            selectObj.level.info.value=_option.value;
-
-            var arg={
-                value:value,
-                callback:_successCallback
-            }
-            selectObj.target.fire('changeKnobValue',arg);
-
-
-        };
-
         this.ChangeAttributeTextContent = function (_option,_successCallback) {
             var selectObj=_self.getCurrentSelectObject();
             var fabTextObj=getFabricObject(selectObj.level.id,true);
             var arg={
+                level:selectObj.level,
                 scaleX:fabTextObj.getScaleX(),
                 scaleY:fabTextObj.getScaleY(),
                 callback:function () {
                     var currentWidget=selectObj.level;
-                    OnWidgetSelected(currentWidget,_successCallback);//模拟点击此控件，用来更新canvas的宽和高
+                    OnWidgetSelected(currentWidget,_successCallback);
                 }
             };
 
@@ -4455,187 +3913,15 @@ ideServices
             }
 
             selectObj.target.fire('changeTextContent',arg);
-        };
+        }
 
-        //改变如下数字属性，需要重新渲染预览界面
-        this.ChangeAttributeNumContent = function(_option,_successCallback){
-            var selectObj=_self.getCurrentSelectObject();
-            var fabNumObj=getFabricObject(selectObj.level.id,true);
-            var arg={
-                scaleX:fabNumObj.getScaleX(),
-                scaleY:fabNumObj.getScaleY(),
-                callback:function(){
-                    var currentWidget = selectObj.level;
-                    OnWidgetSelected(currentWidget,_successCallback);//模拟点击事件，更新canvas的宽和高。
-                }
-            };
-
-            //下面是数字字体属性，如字体，字体大小，粗体，斜体
-            if(_option.numFamily){
-                var tempNumFamily=_option.numFamily;
-                selectObj.level.info.numFamily=tempNumFamily;
-                arg.numFamily=tempNumFamily;
-            }
-            if(_option.numSize){
-                var tempNumSize=_option.numSize;
-                selectObj.level.info.numSize=tempNumSize;
-                arg.numSize=tempNumSize;
-            }
-            if(_option.numBold){
-                var tempNumBold=_option.numBold;
-                var tempBoldBtnToggle=_option.boldBtnToggle;
-                selectObj.level.info.numBold=tempNumBold;
-                selectObj.level.info.boldBtnToggle=tempBoldBtnToggle;
-                arg.numBold=tempNumBold;
-            }
-            if(_option.numItalic){
-                var tempNumItalic=_option.numItalic;
-                var tempItalicBtnToggle=_option.italicBtnToggle;
-                selectObj.level.info.numItalic=tempNumItalic;
-                selectObj.level.info.italicBtnToggle=tempItalicBtnToggle;
-                arg.numItalic=tempNumItalic;
-            }
-
-            //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式
-            if(_option.numOfDigits){
-                var tempNumOfDigits=_option.numOfDigits;
-                selectObj.level.info.numOfDigits=tempNumOfDigits;
-                arg.numOfDigits=tempNumOfDigits;
-            }
-            if(_option.decimalCount||(_option.decimalCount==0)){
-                var tempDecimalCount=_option.decimalCount;
-                selectObj.level.info.decimalCount=tempDecimalCount;
-                arg.decimalCount=tempDecimalCount;
-            }
-            if(_option.symbolMode){
-                var tempSymbolMode=_option.symbolMode;
-                selectObj.level.info.symbolMode=tempSymbolMode;
-                arg.symbolMode=tempSymbolMode;
-            }
-            if(_option.frontZeroMode){
-                var tempFrontZeroMode=_option.frontZeroMode;
-                selectObj.level.info.frontZeroMode=tempFrontZeroMode;
-                arg.frontZeroMode=tempFrontZeroMode;
-            }
-            selectObj.target.fire('changeNumContent',arg);
-        };
-        //如下属性改变，但是不用重新渲染界面，包括切换模式
-        this.ChangeAttributeOfNum=function(_option,_successCallback){
-            var selectObj=_self.getCurrentSelectObject();
-            selectObj.level.info.numModeId=_option.numModeId;
-            _successCallback&&_successCallback();
-            //console.log('displayModel',selectObj.level.info.numModeId);
-
-        };
-
-        //改变按钮模式
         this.ChangeAttributeButtonModeId= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.buttonModeId=_option.buttonModeId;
             _successCallback&&_successCallback();
-        };
 
-        //改变示波器的一些属性，如波形颜色,光标序号，光标值
-        this.ChangeAttributeOscilloscope = function(_option,_successCallback){
-            var selectObj=_self.getCurrentSelectObject();
-            if(_option.oscColor){
-                selectObje.level.info.oscColor=_option.oscColor;
-            }
-            if(_option.cursorId!=undefined){
-                selectObj.level.info.cursorId=_option.cursorId;
-            }
-            if(_option.cursorValue!=undefined){
-                selectObj.level.info.cursorValue=_option.cursorValue;
-            }
-            _successCallback&&_successCallback();
         }
 
-        //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
-        this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
-            var selectObj = _self.getCurrentSelectObject();
-            selectObj.level.dashboardModeId = _option.dashboardModeId;
-            if(selectObj.level.dashboardModeId=='0')
-            {
-                selectObj.level.texList=[
-                    {
-                        currentSliceIdx:0,
-                        name:'仪表盘背景',
-                        slices:[{
-                                color:'rgba(120,120,120,1)',
-                                imgSrc:'',
-                                name:'仪表盘背景'
-                            }]
-                    },
-                    {
-                        currentSliceIdx:0,
-                        name:'仪表盘指针',
-                        slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
-                        name:'仪表盘指针'
-                            }]
-                    }
-                ]
-            }else if(selectObj.level.dashboardModeId=='1'){
-                selectObj.level.texList=[
-                    {
-                        currentSliceIdx:0,
-                        name:'仪表盘背景',
-                        slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
-                            name:'仪表盘背景'
-                        }]
-                    },
-                    {
-                        currentSliceIdx:0,
-                        name:'仪表盘指针',
-                        slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
-                            name:'仪表盘指针'
-                        }]
-                    },
-                    //{
-                    //    currentSliceIdx:0,
-                    //    name:'掩膜纹理',
-                    //    slices:[{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第一象限掩膜'
-                    //    },{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第二象限掩膜'
-                    //    },{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第三象限掩膜'
-                    //    },{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第四象限掩膜'
-                    //    }]
-                    //},
-                    {
-                        currentSliceIdx:0,
-                        name:'光带效果',
-                        slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
-                            name:'光带效果'
-                        }]
-
-                    }
-                ]
-            }
-            //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
-            arg={
-                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
-            };
-            _successCallback&&_successCallback();
-            selectObj.target.fire('changeDashboardMode',arg);
-        };
         this.ChangeAttributeInterval= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.info.interval=_option.interval;
@@ -4724,6 +4010,8 @@ ideServices
 
                 pageNode.renderAll();
                 currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                console.log(currentPage.proJsonStr);
+
                 _self.OnLayerSelected(currentLayer, function () {
                     _successCallback && _successCallback(currentOperate);
 
@@ -4756,8 +4044,7 @@ ideServices
 
                 }
 
-                subLayerNode.renderAll();
-                console.log('-');
+               subLayerNode.renderAll();
 
                 currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                 _self.OnWidgetSelected(currentWidget, function () {
@@ -4784,12 +4071,14 @@ ideServices
 
                 if (getCurrentSubLayer()){
                     var currentSubLayer=getCurrentSubLayer();
-                    console.log('-');
 
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
 
+
                 }else {
                     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                    console.log(currentPage.proJsonStr);
+
                 }
                 subLayerNode.renderAll();
                 pageNode.renderAll();
@@ -4935,8 +4224,6 @@ ideServices
                     }
 
                 }
-                console.log(pageNode.toJSON());
-
 
             }
             else if (Type.isWidget(object.type)){
@@ -4980,8 +4267,6 @@ ideServices
                     console.log('下移至'+currentWidget.zIndex);
 
                 }
-                console.log(subLayerNode.toJSON());
-
             }
 
             _successCallback&&_successCallback(currentOperate);
@@ -5016,6 +4301,8 @@ ideServices
                 }
                 pageNode.renderAll();
                 currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                console.log(currentPage.proJsonStr);
+
                 var layer = getCurrentLayer();
                 _self.OnLayerSelected(layer, function () {
                     _successCallback && _successCallback(currentOperate);
@@ -5044,7 +4331,6 @@ ideServices
                     currentWidget.info.height = _option.height;
                 }
                 subLayerNode.renderAll();
-                console.log('-');
 
                 currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                 OnWidgetSelected(currentWidget, function () {
@@ -5116,7 +4402,7 @@ ideServices
             }
 
             //如果在当前Page内部搜索,则不必先切换Page
-            var currentPageIndex= _.indexOf(project.pages,_self.getCurrentPage());
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
             _.forEach(project.pages, function (_page,_pageIndex) {
                 if (_page.id==_result.id&&_result.type==Type.MyPage){
                     _self.changeCurrentPageIndex(_pageIndex,_successCallback);
@@ -5272,7 +4558,6 @@ ideServices
             var pageNode=CanvasService.getPageNode();
 
             if (currentSubLayer){
-                console.log('-');
                 currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
 
             }
@@ -5290,6 +4575,20 @@ ideServices
 
             });
         };
+
+
+        var _indexById= function (_array, _item) {
+            var index=-1;
+            if (!_array){
+                return index;
+            }
+            _.forEach(_array, function (__item,_index) {
+                if (__item.id==_item.id){
+                    index=_index;
+                }
+            })
+            return index;
+        }
 
         /**
          * 辅助函数
@@ -5310,15 +4609,12 @@ ideServices
             subLayerNode.deactivateAll();
             subLayerNode.renderAll();
 
-            currentSubLayer.url=subLayerNode.toDataURL();
+            currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
 
             _.forEach(pageNode.getObjects(), function (_fabLayer) {
                 _fabLayer.fire('OnRenderUrl')
             });
-            $timeout(function () {
-                _successCallback&&_successCallback();
-
-            },200);
+            _successCallback&&_successCallback();
 
 
         }

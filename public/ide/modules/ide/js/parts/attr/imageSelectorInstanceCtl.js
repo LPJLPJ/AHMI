@@ -3,6 +3,10 @@
  */
 ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalInstance,Type, ResourceService,widgetInfo,TexService) {
 
+
+    $scope.images = ResourceService.getAllImages();
+    $scope.basicUrl = ResourceService.getResourceUrl();
+
     //edit by lixiang
     $scope.$on('colorpicker-submit', function (e,op) {
         enterColor(op);
@@ -14,8 +18,7 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
         cloneSlice();
     });
 
-    $scope.images = ResourceService.getAllImages();
-    $scope.basicUrl = ResourceService.getResourceUrl();
+
 
     $scope.canAddNewSlice = false;
     $scope.sliceNum = 0;

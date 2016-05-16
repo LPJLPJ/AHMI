@@ -24,17 +24,6 @@ ideServices
         }
 
 
-        //offcanvas
-        var offCanvas = null;
-        this.setOffCanvas = function (_offCanvas) {
-            offCanvas = _offCanvas
-
-        }
-        this.getOffCanvas = function () {
-            return offCanvas
-        }
-
-
 
 
     })

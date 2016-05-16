@@ -62,11 +62,11 @@ ide.controller('ThumbCtrl', function ($scope, $timeout,
             function (e) {
                 selectThumb($scope.project.pages[e.source.index]);
             },
-            function (e, oldOperate) {
+            function (e,oldOperate) {
+                selectThumb($scope.project.pages[e.dest.index],function(){
+                    $scope.$emit('ChangeCurrentPage',oldOperate)
+                });
 
-                selectThumb($scope.project.pages[e.dest.index]);
-
-                $scope.$emit('ChangeCurrentPage',oldOperate)
             }
         );
         $scope.$on('PageNodeChanged', function () {
@@ -76,6 +76,10 @@ ide.controller('ThumbCtrl', function ($scope, $timeout,
         $scope.$on('ToolShowChanged', function (event, toolShow) {
             $scope.component.out.toolShow=toolShow;
         });
+
+        $scope.$on('ProjectUpdated', function () {
+            ProjectService.getProjectTo($scope);
+        })
     }
 
 
@@ -97,7 +101,6 @@ ide.controller('ThumbCtrl', function ($scope, $timeout,
         $timeout(function () {
             ProjectService.DeletePageByIndex(_index, function () {
                 $scope.$emit('SwitchCurrentPage', oldOperate, function () {
-
                 });
 
             });
@@ -177,13 +180,22 @@ ide.controller('ThumbCtrl', function ($scope, $timeout,
     }
 
     function selectThumb(page) {
+        if (!page||!page.id){
+            return;
+        }
         $timeout(function () {
             for (var i=0;i<$scope.project.pages.length;i++){
 
                 if ($scope.project.pages[i].id
                     ==page.id){
-                    ProjectService.changeCurrentPageIndex(i, function () {
-                        $scope.$emit('SwitchCurrentPage');
+                    ProjectService.changeCurrentPageIndex(i, function (keepInSamePage) {
+                        if (!keepInSamePage){
+                            $scope.$emit('SwitchCurrentPage');
+
+                        }else{
+                            $scope.$emit('ChangeCurrentPage',null, function () {
+                            });
+                        }
 
                     });
                     break;

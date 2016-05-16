@@ -29,22 +29,6 @@ ideServices
 
         };
 
-        //返回所有的自定义tags
-        this.getAllCustomTags=function(){
-            return tags;
-        };
-
-        //返回所有的timerTags
-        this.getAllTimerTags=function(){
-            return timerTags;
-        };
-
-        //返回所有的tags，包括自定义tags和timerTags
-        this.getAllTags=function(){
-
-            return tags.concat(timerTags);
-        };
-
         this.syncAllTags = function (_tagList) {
             var _tags = []
             var _timerTags = []
@@ -72,6 +56,22 @@ ideServices
         this.syncTimerTags = function (_timerTags) {
             timerTags = _timerTags||[]
         }
+
+        //返回所有的自定义tags
+        this.getAllCustomTags=function(){
+            return tags;
+        };
+
+        //返回所有的timerTags
+        this.getAllTimerTags=function(){
+            return timerTags;
+        };
+
+        //返回所有的tags，包括自定义tags和timerTags
+        this.getAllTags=function(){
+
+            return tags.concat(timerTags);
+        };
 
         this.getAllTagsName=function(){
             var temptags=tags.concat(timerTags);

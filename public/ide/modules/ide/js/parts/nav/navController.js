@@ -75,59 +75,147 @@
         }
 
 
-        //function saveProject() {
-        //    ProjectService.getProjectTo($scope);
-        //
-        //    console.log($scope.project);
-        //    console.log(window.localStorage.getItem('editPid'));
-        //    //ProjectService.saveCurrentProject();
-        //    $http({
-        //        method:'PUT',
-        //        url:baseUrl+'/project',
-        //        data:{
-        //            project:{
-        //                data:$scope.project,
-        //                editTime:new Date()
-        //            }
-        //
-        //        },
-        //        params:{
-        //            token:window.localStorage.getItem('token'),
-        //            pid:window.localStorage.getItem('editPid')
-        //        }
-        //
-        //    }).success(function (t) {
-        //        toastr.info('保存成功');
-        //        console.log(t);
-        //    }).error(function (err) {
-        //        console.log(err);
-        //    })
-        //}
-
-        function saveProject(){
+        function saveProject() {
             ProjectService.getProjectTo($scope);
             $scope.project.resourceList = ResourceService.getAllResource()
 
             $scope.project.customTags = TagService.getAllCustomTags()
             $scope.project.timerTags = TagService.getAllTimerTags()
             $scope.project.timers = TimerService.getTimerNum()
-
             console.log($scope.project)
-            $http({
-                method:'PUT',
-                url:'/project/'+window.localStorage.getItem('projectId')+'/save',
-                data:{
-                    project:$scope.project
 
-                }
+            var projectClone=ProjectService.SaveCurrentOperate();
 
-            }).success(function (t) {
-                toastr.info('保存成功');
-                console.log(t);
-            }).error(function (err) {
-                console.log(err);
-            })
+
+            ProjectService.changeCurrentPageIndex(0,
+
+                function () {
+                    var currentProject= _.cloneDeep($scope.project);
+                    var thumb=_.cloneDeep(currentProject.pages[0].url);
+
+
+                    _.forEach(currentProject.pages,function (_page) {
+                    _page.url='';
+                    _.forEach(_page.layers,function (_layer) {
+                        _layer.url='';
+                        _layer.showSubLayer.url='';
+                        _.forEach(_layer.subLayers,function (_subLayer) {
+                            _subLayer.url='';
+                        })
+
+                    })
+                    })
+                    console.log(JSON.stringify(currentProject));
+
+                    if (isOffline){
+                        return;
+                    }
+
+                    uploadThumb(0, function () {
+                        $http({
+                            method:'PUT',
+                            //url:baseUrl+'/project',
+                            //data:{
+                            //    project:{
+                            //        data:currentProject
+                            //    }
+                            //
+                            //
+                            //},
+                            //params:{
+                            //    token:TOKEN,
+                            //    pid:PID
+                            //}
+                            url:'/project/'+window.localStorage.getItem('projectId')+'/save',
+                            data:{
+                                project:currentProject
+
+                            }
+
+                        })
+                            .success(function (t) {
+                                console.log(t)
+                                if (t=='ok'){
+                                    toastr.info('保存成功');
+                                    $timeout(function () {
+
+                                        ProjectService.LoadCurrentOperate(projectClone, function () {
+                                            $scope.$emit('UpdateProject');
+                                        });
+
+                                    })
+                                }else{
+                                    toastr.warning('保存失败')
+                                    console.log('保存失败');
+                                    $timeout(function () {
+
+                                        ProjectService.LoadCurrentOperate(projectClone, function () {
+                                            $scope.$emit('UpdateProject');
+                                        });
+
+                                    })
+                                }
+
+
+
+
+                            })
+                            .error(function (err) {
+                                console.log(err);
+                                toastr.warning('保存失败');
+                                console.log('保存失败');
+                                $timeout(function () {
+
+                                    ProjectService.LoadCurrentOperate(projectClone, function () {
+                                        $scope.$emit('UpdateProject');
+                                    });
+
+                                })
+
+                            });
+                    })
+
+
+
+
+                    function uploadThumb(_index,_callback){
+                        var isLast=(_index==Math.ceil(thumb.length/MAX_DATA_LENGTH));
+                        //$http({
+                        //    method:'POST',
+                        //    url:baseUrl+'/thumb',
+                        //    data:{
+                        //        thumb:thumb.substr(_index*MAX_DATA_LENGTH,MAX_DATA_LENGTH),
+                        //        append:!isLast
+                        //    },
+                        //    params:{
+                        //        token:TOKEN,
+                        //        pid:PID
+                        //    }
+                        //
+                        //})
+                        //    .success(function(r){
+                        //        console.log(r);
+                        //        if (isLast){
+                        //            _callback&&_callback();
+                        //        }else{
+                        //            uploadThumb(_index+1,_callback);
+                        //        }
+                        //    })
+                        //    .error(function (err) {
+                        //        console.log(err);
+                        //        toastr.warning('上传失败');
+                        //    })
+                        _callback && _callback()
+                    }
+            });
+
+
+
+
+
+
         }
+
         /**
          * 改变nav
          * @param index nav序号
@@ -230,12 +318,6 @@
             else if(_index==10){
                 newWidget=TemplateProvider.getDefaultTextArea();
             }
-            else if(_index==16){
-                newWidget=TemplateProvider.getDefaultNum();
-            }
-            else if(_index==5){
-                newWidget=TemplateProvider.getDefaultOscilloscope();
-            }
             else {
                 return;
             }
@@ -295,7 +377,10 @@
             var oldOperate=ProjectService.SaveCurrentOperate();
 
             NavService.DoPaste(function () {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
+                $timeout(function(){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
 
             })
 
@@ -307,7 +392,10 @@
             var oldOperate=ProjectService.SaveCurrentOperate();
 
             NavService.DoDelete(function () {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
+                $timeout(function(){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
 
             })
         }
@@ -335,13 +423,13 @@
             console.log($scope.project);
             window.projectData = _.cloneDeep($scope.project);
 
-            $http.post('/api/generateproject',$scope.project).success(function (data) {
-                console.log('success');
-                console.log(data);
-            }).error(function (err) {
-                console.log('error');
-                console.log(err);
-            });
+            //$http.post('http://localhost:3000/api/angularproject',$scope.project).success(function (data) {
+            //    console.log('success');
+            //    console.log(data);
+            //}).error(function (err) {
+            //    console.log('error');
+            //    console.log(err);
+            //});
         }
 
         function play(){

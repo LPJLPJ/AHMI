@@ -16,14 +16,9 @@
         $scope.$on('GlobalProjectReceived', function () {
 
             initProject();
-            initOffCanvas();//初始化offCanvas
             $scope.$emit('LoadUp');
 
         });
-
-        function initOffCanvas(){
-            CanvasService.setOffCanvas(document.getElementById('offCanvas'))
-        }
 
 
         function initUserInterface(){
@@ -348,6 +343,10 @@
 
         function selectLayer(event){
 
+            if (layerDoubleClicking){
+                console.log('双击中');
+                return;
+            }
             var _target=event.target;
 
             ProjectService.OnLayerClicked(_target, function () {
@@ -465,12 +464,20 @@
             });
         }
 
+        var layerDoubleClicking=false;
         /**
          * 双击layer
          * @param _target
          */
         function doubleClickLayer(_target) {
+            layerDoubleClicking=true;
+
+
             ProjectService.OnLayerDoubleClicked(_target.id,function () {
+                $timeout(function () {
+                    layerDoubleClicking=false;
+
+                },100);
                 //更新缩略图
                 $scope.$emit('ChangeCurrentPage');
 
@@ -533,6 +540,10 @@
         }
         function releaseLayer(event){
 
+            if (layerDoubleClicking){
+                console.log('双击中');
+                return;
+            }
             var isDbClick=false;    //这次点击是否是双击
 
             if (!pageMouseUpTime){

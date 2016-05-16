@@ -19793,7 +19793,7 @@
 						case 'image':
 							var newImg = new Image();
 							// newImg.src = basicUrl+resource.id;
-							newImg.src = basicUrl + resource.id;
+							newImg.src = resource.src;
 							newImg.onload = function () {
 								num = num - 1;
 								if (num == 0) {

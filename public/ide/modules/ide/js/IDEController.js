@@ -3,29 +3,57 @@
  */
 var ide=angular.module('ide',['ui.bootstrap.contextMenu','colorpicker.module','btford.modal','ui.bootstrap','ngAnimate','GlobalModule','ui.tree','IDEServices']);
 
-//var baseUrl='http://192.168.199.183:5001';
-var baseUrl = 'http://localhost:3000'
+var baseUrl='';
+
+var PID='';
+var TOKEN='';
+
+var MAX_DATA_LENGTH=100000;
+
+var ideScope;
+var isOffline
 ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
-                                    TemplateProvider,ResourceService,TagService,TimerService) {
+                                    ResourceService,
+                                    TagService,
+                                    TemplateProvider,TimerService) {
 
+    ideScope=$scope;
     $scope.ide={
         loaded:false    //页面是否渲染完成
     };
 
     var loadStep=0;     //加载到了第几步,共8步
 
+    
 
+
+    //var params=getUrlParams();
+    //PID=params.pid;
+    //
+    //TOKEN=window.localStorage.getItem('token');
+    //
+    //var offLine=params.offline;
+    //
+    //isOffline=offLine;
+    //if (offLine){
+    //    toastr.info('离线测试');
+    //}
+    //else if (!PID||!TOKEN){
+    //    console.log(getUrlParams());
+    //    $interval(function () {
+    //        toastr.warning('无法识别的项目');
+    //    },2000);
+    //    return;
+    //}
 
     //receiveGlobalProject();
     readProjectData()
-
     listenChange();
 
     loadPreference();
-
 
     function readProjectData(){
         var url = window.location.href
@@ -53,7 +81,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 //console.log(data)
 
                 //var globalProject = GlobalService.getBlankProject()
-                var globalProject = data.content
+                var globalProject = JSON.parse(data.content)
                 console.log('globalProject',globalProject)
 
                 TemplateProvider.saveProjectFromGlobal(globalProject);
@@ -111,15 +139,26 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         })
     }
 
+
+    function getUrlParams() {
+        var result = {};
+        var params = (window.location.search.split('?')[1] || '').split('&');
+        for(var param in params) {
+            if (params.hasOwnProperty(param)) {
+                var paramParts = params[param].split('=');
+                result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
+            }
+        }
+        console.log(result);
+        return result;
+    }
+
     function reLogin(_callback,_errCallback) {
         $http({
-                method:'POST',
-                url:baseUrl+'/login',
-                data:{
-                    user: {
-                        username:'sa1',
-                        password:'123456'
-                    }
+                method:'GET',
+                url:baseUrl+'/refreshToken',
+                params:{
+                    token:TOKEN
                 }
             }
         ).success(function (result) {
@@ -127,42 +166,90 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             if (result.status!='success'){
                 return;
             }
-            var token=result.token;
+            console.log(result);
+            var token=result.newToken;
             window.localStorage.setItem('token',token);
-            var pid=result.user.projects[0].pid;
-            window.localStorage.setItem('editPid',pid);
+            TOKEN=token;
+            console.log(TOKEN);
+            //
+            // var pid=result.user.projects[0].pid;
+            // PID=pid;
 
             _callback&&_callback(result);
         }).error(function (err) {
             _errCallback&&_errCallback(err);
         });
-    }
-    /**
-     * 接收打开的项目并且通知其他controller获取
-     */
-    function receiveGlobalProject(){
-        reLogin(function (result) {
+    };
+
+    function receiveProject(pid) {
+
+        var globalProject={};
+        if (!pid){
+            $timeout(function () {
+                toastr.info('加载离线项目');
+                globalProject=GlobalService.getBlankProject();
+                TemplateProvider.saveProjectFromGlobal(globalProject);
+                ProjectService.saveProjectFromGlobal(globalProject, function () {
+                    PID=pid;
+
+                    //TODO:初始化资源,tags
+
+                    syncServices(globalProject);
+
+                    $scope.$broadcast('GlobalProjectReceived');
+
+                });
+            })
+
+            return;
+        }
+        console.log(TOKEN);
+
+        var globalProjectString='';
+        getProjectData();
+
+
+        
+        function getProjectData(_dataIndex) {
             $http({
                 method:'GET',
-                url:+'/projectData',
+                url:baseUrl+'/project',
                 params:{
-                    token:window.localStorage.getItem('token'),
-                    pid:window.localStorage.getItem('editPid')
+                    token:TOKEN,
+                    pid:pid
+
                 }
             }).success(function (r) {
-                var data=r.data;
 
-                if (data){
-                    var globalProject=JSON.parse(data);
-                    globalProject = GlobalService.getBlankProject()
-                    console.log(globalProject)
+                console.log(r);
 
-                    TemplateProvider.saveProjectFromGlobal(globalProject);
-                    ProjectService.saveProjectFromGlobal(globalProject, function () {
-                        $scope.$broadcast('GlobalProjectReceived');
+                var status=r.status;
+                if (status=='success')
+                {
+                    globalProject=r.project.data;
 
-                    });
-                }else{
+                    if (globalProject){
+
+                        TemplateProvider.saveProjectFromGlobal(globalProject);
+                        ProjectService.saveProjectFromGlobal(globalProject, function () {
+                            PID = pid;
+
+                            //TODO:初始化资源,tags
+
+                            syncServices(globalProject)
+
+                            $scope.$broadcast('GlobalProjectReceived');
+                        });
+
+                    }else{
+                        console.log('获取信息失败');
+
+                        readCache();
+                    }
+
+
+                }
+                else{
                     console.log('获取信息失败');
 
                     readCache();
@@ -172,11 +259,27 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 readCache();
 
             })
-        },function (err) {
-            console.log(err);
-            readCache();
+        }
+    }
+    /**
+     * 接收打开的项目并且通知其他controller获取
+     */
+    function receiveGlobalProject(){
+        if(offLine){
+            receiveProject();
 
-        })
+        }else {
+            reLogin(function () {
+                var pid=PID;
+                receiveProject(pid);
+            },function (err) {
+                console.log(err);
+                readCache();
+
+            })
+        }
+
+
 
         // $timeout(function () {
         //     //TODO:以后按照需要选择
@@ -189,26 +292,19 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         // },1000);
 
         //当其他Controller渲染各自作用域后,传来一个事件,用来驱动loadStep
-        //$scope.$on('LoadUp', function () {
-        //
-        //    loadStep++;
-        //    if (loadStep==8){
-        //        //到达第8步,加载完成
-        //        $timeout(function () {
-        //            $scope.ide.loaded=true;
-        //
-        //            intervalSave();
-        //
-        //        },2000)
-        //    }
-        //})
+        $scope.$on('LoadUp', function () {
 
-        $timeout(function () {
-            $scope.ide.loaded=true;
+            loadStep++;
+            if (loadStep==8){
+                //到达第8步,加载完成
+                $timeout(function () {
+                    $scope.ide.loaded=true;
 
-            //intervalSave();
+                    intervalSave();
 
-        },2000)
+                },2000)
+            }
+        })
 
     }
 
@@ -261,7 +357,11 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
         $scope.$on('changeCanvasScale', function (event,scaleMode) {
             $scope.$broadcast('CanvasScaleChanged',scaleMode);
-        })
+        });
+
+        $scope.$on('UpdateProject', function (event) {
+            $scope.$broadcast('ProjectUpdated');
+        });
 
 
 
@@ -285,10 +385,22 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         $scope.$on('ResourceUpdate',function(){
             $scope.$broadcast('AttributeChanged');
             $scope.$broadcast('ResourceChanged');
-        })
+        });
+
+        $scope.$on('ReOpenProject',reOpenProject);
 
     }
 
+    function reOpenProject(event,pid) {
+        $scope.ide.loaded=false;
+
+        loadStep=0;     //加载到了第几步,共8步
+
+        receiveProject(pid);
+
+
+
+    }
     function loadPreference(){
         fabric.FX_DURATION=Preference.FX_DURATION;
     }
@@ -303,8 +415,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             $scope.project.customTags = TagService.getAllCustomTags()
             $scope.project.timerTags = TagService.getAllTimerTags()
             $scope.project.timers = TimerService.getTimerNum()
-            //$scope.project.resourceList = ResourceService.getAllResource()
-            var pid=window.localStorage.getItem('editPid');
+            var pid=PID;
+            console.log($scope.project)
             window.localStorage.setItem('projectCache'+pid,JSON.stringify($scope.project));
         },5*60*1000);
 
@@ -319,28 +431,25 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     function readCache() {
         try{
             console.log('读取缓存');
-            var pid=window.localStorage.getItem('editPid');
+            var pid=PID;
             var project=JSON.parse(window.localStorage.getItem('projectCache'+pid));
-            console.log(project)
             var globalProject=project;
-            //console.log(globalProject);
-            //globalProject = GlobalService.getBlankProject()
+            console.log(globalProject);
             TemplateProvider.saveProjectFromGlobal(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
-                //ResourceService.syncFiles(globalProject)
                 syncServices(globalProject)
                 $scope.$broadcast('GlobalProjectReceived');
 
             });
         }catch (e){
-            console.log(e)
             toastr.info('获取项目失败')
         }
 
     }
 
+    //sync services like resource service and tag service
+
     function syncServices(globalProject){
-        console.log(globalProject)
         ResourceService.syncFiles(globalProject.resourceList)
         //tags tbc
         TagService.syncCustomTags(globalProject.customTags)

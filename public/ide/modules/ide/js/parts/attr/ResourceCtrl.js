@@ -14,9 +14,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     });
 
     function initUserInterface(){
-        //ResourceService.syncFiles()
-    }
 
+    }
 
     function initProject(){
         $scope.component={
@@ -33,17 +32,15 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             }
 
         };
+        ProjectService.getProjectTo($scope);
+
+        $scope.component.top.resources=$scope.project.resourceList;
+
         $scope.component.top.basicUrl = ResourceService.getResourceUrl();
-        //ResourceService.syncFiles()
         $scope.component.top.files = ResourceService.getAllImages();
 
-        ProjectService.getProjectTo($scope);
-        $scope.component.top.resources=$scope.project.resources;
 
-
-        $scope.$on('ResourceUpdate', function () {
-            $scope.component.top.files = ResourceService.getAllImages();
-        })
+        
         
         /**
          * 删除资源按钮的弹窗
@@ -74,13 +71,20 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
 
     function deleteFile(index){
-        //var requiredResourceNames=ProjectService.getRequiredResourceNames();
-        //console.log(requiredResourceNames);
-        //return;
+        var requiredResourceNames=ProjectService.getRequiredResourceNames();
+        console.log(requiredResourceNames);
+
+        for (var i=0;i<requiredResourceNames.length;i++){
+            if ($scope.component.top.files[index].src==requiredResourceNames[i]){
+                toastr.warning('该资源已经被使用');
+                return;
+            }
+        }
         ResourceService.deleteFileById($scope.component.top.files[index].id, function () {
             $scope.component.top.files = ResourceService.getAllImages();
         }.bind(this));
-        console.log($scope.component.top.files);
+        
+
     }
 
 
