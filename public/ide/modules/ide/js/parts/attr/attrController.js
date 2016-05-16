@@ -29,7 +29,7 @@ ide.controller('AttrCtrl', function ($scope,$timeout,
                 navs: [{name: '属性'}
                     , {name: '资源'},
                     {name:'变量'},
-                    {name:'字符'}],
+                    {name:'字体'}],
                 changeNav: changeNav,
 
             },

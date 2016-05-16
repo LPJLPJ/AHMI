@@ -69,6 +69,11 @@
 
         function initProject(){
             ProjectService.getProjectTo($scope);
+            $scope.project.resourceList = ResourceService.getAllResource()
+
+            $scope.project.customTags = TagService.getAllCustomTags()
+            $scope.project.timerTags = TagService.getAllTimerTags()
+            $scope.project.timers = TimerService.getTimerNum()
 
             $scope.$on('NavStatusChanged', onNavStatusChanged);
 
@@ -77,12 +82,7 @@
 
         function saveProject() {
             ProjectService.getProjectTo($scope);
-            $scope.project.resourceList = ResourceService.getAllResource()
 
-            $scope.project.customTags = TagService.getAllCustomTags()
-            $scope.project.timerTags = TagService.getAllTimerTags()
-            $scope.project.timers = TimerService.getTimerNum()
-            console.log($scope.project)
 
             var projectClone=ProjectService.SaveCurrentOperate();
 
@@ -107,9 +107,9 @@
                     })
                     console.log(JSON.stringify(currentProject));
 
-                    if (isOffline){
-                        return;
-                    }
+                    //if (isOffline){
+                    //    return;
+                    //}
 
                     uploadThumb(0, function () {
                         $http({
@@ -134,7 +134,6 @@
 
                         })
                             .success(function (t) {
-                                console.log(t)
                                 if (t=='ok'){
                                     toastr.info('保存成功');
                                     $timeout(function () {
@@ -156,6 +155,7 @@
                                     })
                                 }
 
+                                console.log(t);
 
 
 
@@ -179,7 +179,7 @@
 
 
                     function uploadThumb(_index,_callback){
-                        var isLast=(_index==Math.ceil(thumb.length/MAX_DATA_LENGTH));
+                        //var isLast=(_index==Math.ceil(thumb.length/MAX_DATA_LENGTH));
                         //$http({
                         //    method:'POST',
                         //    url:baseUrl+'/thumb',
@@ -205,7 +205,7 @@
                         //        console.log(err);
                         //        toastr.warning('上传失败');
                         //    })
-                        _callback && _callback()
+                        _callback&&_callback()
                     }
             });
 
@@ -317,6 +317,12 @@
             }
             else if(_index==10){
                 newWidget=TemplateProvider.getDefaultTextArea();
+            }
+            else if(_index==16){
+                newWidget=TemplateProvider.getDefaultNum();
+            }
+            else if(_index==5){
+                newWidget=TemplateProvider.getDefaultOscilloscope();
             }
             else {
                 return;

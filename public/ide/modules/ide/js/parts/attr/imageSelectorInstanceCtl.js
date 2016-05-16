@@ -35,6 +35,15 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
         case Type.MyNumber:
             initConfigure(false,13,widgetInfo.tex);
             break;
+        case Type.MyDashboard:
+            initConfigure(false,2,widgetInfo.tex);
+            break;
+        case Type.MyTextArea:
+            initConfigure(false,2,widgetInfo.tex);
+            break;
+        case Type.MyNum:
+            initConfigure(false,2,widgetInfo.tex);
+            break;
         default:
             initConfigure(true,1,widgetInfo.tex);
             break;

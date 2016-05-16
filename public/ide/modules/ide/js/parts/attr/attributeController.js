@@ -70,11 +70,18 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterBottomImage:enterBottomImage,
                 enterProgressImage:enterProgressImage,
                 enterProgressValue:enterProgressValue,
-                enterArrange:enterArrange
+                enterArrange:enterArrange,
+                enterCursor:enterCursor,
             },
             dashboard:{
+                //dashboardModeId:'0',
+                dashboardModes:[
+                    {id:'0',name:'简单模式'},
+                    {id:'1',name:'复杂模式'}
+                ],
                 backgroundImage:'blank.png',
                 pointerImg:'blank.png',
+                enterDashboardMode:enterDashboardMode,
                 enterDashboardValue:enterDashboardValue,
                 enterPointerLength:enterPointerLength
             },
@@ -89,6 +96,45 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 selectCharacterSetByIndex:selectCharacterSetByIndex,
                 addCharacterSet:addCharacterSet,
                 deleteCharacterSetByIndex:deleteCharacterSetByIndex
+            },
+            num:{
+                numModeId:'0',//代表切换模式。0:普通模式 1:动画模式
+                numModes:[
+                    {id:'0',name:'普通模式'},
+                    {id:'1',name:'动画模式'}
+                ],
+                symbolMode:'0',
+                symbolModes:[
+                    {id:'0',name:'无符号模式'},
+                    {id:'1',name:'有符号模式'}
+                ],
+                frontZeroMode:'0',
+                frontZeroModes:[
+                    {id:'0',name:'无前导0模式'},
+                    {id:'1',name:'有前导0模式'}
+                ],
+                changeNumFamily:changeNumFamily,
+                setBoldNum:setBoldNum,
+                setItalicNum:setItalicNum,
+                changeNumSize:changeNumSize,
+                changeNumOfDigits:changeNumOfDigits,
+                changeDecimalCount:changeDecimalCount,
+                enterNumMode:enterNumMode,
+                enterSymbolMode:enterSymbolMode,
+                enterFrontZeroMode:enterFrontZeroMode,
+            },
+
+            //旋钮
+            knob:{
+                backgroundImage:'blank.png',
+                knobImg:'blank.png',
+                enterKnobSize:enterKnobSize,
+                enterKnobValue:enterKnobValue,
+            },
+
+            //示波器
+            oscilloscope:{
+                changeOscColor:changeOscColor,
             },
 
             enterName:enterName,
@@ -131,7 +177,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
         //edit by lixiang
         $scope.$on('changeFontFamily',function(e,op){
-            console.log('keke2');
             console.log(op);
             enterFontStyle(op);
         });
@@ -193,6 +238,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 case Type.MyProgress:
                     //Progress的方向
                     $scope.component.progress.arrangeModel=$scope.component.object.level.info.arrange;
+                    //Progress的光标
+                    $scope.component.progress.cursor = $scope.component.object.level.info.cursor;
 
                     //调整背景图
                     if ($scope.component.object.level.backgroundImg==''){
@@ -209,6 +256,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
                     break;
                 case Type.MyDashboard:
+                    $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
                     if ($scope.component.object.level.backgroundImg==''){
                         $scope.component.dashboard.backgroundImage='blank.png';
                     }else {
@@ -222,6 +270,19 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     }
                     break;
                 case Type.MyTextArea:
+                    break;
+                case Type.MyKnob:
+                    if ($scope.component.object.level.backgroundImg==''){
+                        $scope.component.knob.backgroundImage='blank.png';
+                    }else {
+                        $scope.component.knob.backgroundImage=$scope.component.object.level.backgroundImg;
+                    }
+                    if ($scope.component.object.level.knobImg==''){
+
+                        $scope.component.dashboard.knobImg='blank.png';
+                    }else {
+                        $scope.component.dashboard.knobImg=$scope.component.object.level.knobImg;
+                    }
                     break;
 
                 case Type.MyButton:
@@ -245,8 +306,15 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
                     break;
 
-
                 case Type.MyNumber:
+                    break;
+
+                case Type.MyNum:
+                    $scope.component.num.numModeId=$scope.component.object.level.info.numModeId;
+                    $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
+                    $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
+                    break;
+                case Type.MyOscilloscope:
                     break;
             }
 
@@ -591,6 +659,27 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
 
     /**
+     * 设置进度条是否具有光标
+     */
+    function enterCursor(){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectCursor=null;
+        if(selectObj.type==Type.MyProgress){
+            selectCursor=$scope.component.progress.cursor;
+        }else{
+            return;
+        }
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        var option={
+            cursor:selectCursor
+        };
+        ProjectService.ChangeAttributeCursor(option, function () {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+
+        })
+    }
+
+    /**
      * 改变排列方向属性
      * 只对progress和buttonGroup有效
      */
@@ -687,6 +776,26 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             })
 
         }
+    }
+
+    function enterDashboardMode(e){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectDashboardMode=null;
+        if (selectObj.type==Type.MyDashboard){
+            selectDashboardMode=$scope.component.dashboard.dashboardModeId;
+
+        }else {
+            return;
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+
+        var option={
+            dashboardModeId:selectDashboardMode
+        };
+        ProjectService.ChangeAttributeDashboardModeId(option, function () {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
     function enterMinValue(e){
@@ -1053,6 +1162,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         //console.log(selectCharacterSet);
         if(selectCharacterSet){
             //$scope.component.object.level.info.text=selectCharacterSet.text;
+            //$scope.component.object.level.info.fontName=selectCharacterSet.fontName;
+
             $scope.component.object.level.info.fontFamily=selectCharacterSet.fontFamily;
             $scope.component.object.level.info.fontSize=selectCharacterSet.fontSize;
             $scope.component.object.level.info.fontColor=selectCharacterSet.fontColor;
@@ -1099,6 +1210,270 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         characterSetService.deleteCharacterSetByIndex(index);
     }
 
+    //下面是数字框的方法
+    function changeNumFamily(){
+        if($scope.component.object.level.info.numFamily==initObject.level.info.numFamily) {
+            return;
+        }
+        var option = {
+            numFamily:$scope.component.object.level.info.numFamily
+        };
 
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+
+    function setBoldNum(){
+        $scope.component.object.level.info.boldBtnToggle=!$scope.component.object.level.info.boldBtnToggle;
+
+        if($scope.component.object.level.info.boldBtnToggle){
+            $scope.component.object.level.info.numBold="bold";
+            var option = {
+                numBold: $scope.component.object.level.info.numBold,
+                boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
+            }
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }else{
+            $scope.component.object.level.info.numBold="100";
+            var option = {
+                numBold: $scope.component.object.level.info.numBold,
+                boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+
+    function setItalicNum(){
+        $scope.component.object.level.info.italicBtnToggle=!$scope.component.object.level.info.italicBtnToggle;
+        if($scope.component.object.level.info.italicBtnToggle){
+            $scope.component.object.level.info.numItalic="italic";
+            var option={
+                numItalic:$scope.component.object.level.info.numItalic,
+                italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
+            }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }else{
+            $scope.component.object.level.info.numItalic=" ";
+            var option={
+                numItalic:$scope.component.object.level.info.numItalic,
+                italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+
+    function changeNumSize(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.numSize==initObject.level.info.numSize) {
+                return;
+            }
+            var option = {
+                numSize:$scope.component.object.level.info.numSize
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function changeNumOfDigits(e){
+        if(e.keyCode==13){
+            //console.log('enter numOfDigits');
+            if($scope.component.object.level.info.numOfDigits==initObject.level.info.numOfDigits){
+                return;
+            }
+            if($scope.component.object.level.info.numOfDigits<1||$scope.component.object.level.info.numOfDigits>16){
+                toastr.warning('超出范围');
+                return;
+            }
+            var option={
+                numOfDigits:$scope.component.object.level.info.numOfDigits
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function changeDecimalCount(e){
+        if(e.keyCode==13){
+            console.log('enter decimalCount');
+            if($scope.component.object.level.info.decimalCount==initObject.level.info.decimalCount){
+                return;
+            }
+            //判断小数的位数是否小于0，或者是否大于字符数
+            if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>$scope.component.object.level.info.numOfDigits-1)){
+                toastr.warning('超出范围');
+                return;
+            }
+            var option={
+                decimalCount:$scope.component.object.level.info.decimalCount,
+            }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function enterNumMode(){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectNumMode=null;
+        if (selectObj.type==Type.MyNum){
+            selectNumMode=$scope.component.num.numModeId;
+
+        }else {
+            return;
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+
+        var option={
+            numModeId:selectNumMode
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeOfNum(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+
+    function enterSymbolMode(){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectSymbolMode=null;
+        if (selectObj.type==Type.MyNum){
+            selectSymbolMode=$scope.component.num.symbolMode;
+
+        }else {
+            return;
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+
+        var option={
+            symbolMode:selectSymbolMode,
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function enterFrontZeroMode(){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectFrontZeroMode=null;
+        //console.log('当前值',$scope.component.num.frontZeroMode);
+        if (selectObj.type==Type.MyNum){
+            selectFrontZeroMode=$scope.component.num.frontZeroMode;
+
+        }else {
+            return;
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+
+        var option={
+            frontZeroMode:selectFrontZeroMode,
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+
+
+    function enterKnobSize(e){
+        if (e.keyCode==13){
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.knobSize))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.knobSize==initObject.level.info.knobSize){
+                return;
+            }
+
+
+            var option={
+                knobSize:$scope.component.object.level.info.knobSize
+            };
+            //console.log(option);
+
+            ProjectService.ChangeAttributeKnobSize(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+
+            })
+
+        }
+    }
+    function enterKnobValue(e){
+        if (e.keyCode==13){
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.value))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.value==initObject.level.info.value){
+                return;
+            }
+
+            //判断是否在范围内
+            if ($scope.component.object.level.info.value<$scope.component.object.level.info.minValue
+                ||$scope.component.object.level.info.value>$scope.component.object.level.info.maxValue){
+                toastr.warning('超出范围');
+
+                restore();
+                return;
+            }
+            var option={
+                value:$scope.component.object.level.info.value
+            };
+
+            //console.log('change attribute dashboard value',option)
+
+            ProjectService.ChangeAttributeKnobValue(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+
+            })
+
+        }
+    }
+
+    function changeOscColor(){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.oscColor==initObject.level.info.oscColor) {
+                return;
+            }
+            var option = {
+                oscColor:$scope.component.object.level.info.oscColor,
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscope(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
 
 });

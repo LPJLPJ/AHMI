@@ -49,11 +49,26 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     //    return;
     //}
 
-    //receiveGlobalProject();
     readProjectData()
+    //receiveGlobalProject();
+
     listenChange();
 
     loadPreference();
+
+
+    function getUrlParams() {
+        var result = {};
+        var params = (window.location.search.split('?')[1] || '').split('&');
+        for(var param in params) {
+            if (params.hasOwnProperty(param)) {
+                var paramParts = params[param].split('=');
+                result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
+            }
+        }
+        console.log(result);
+        return result;
+    }
 
     function readProjectData(){
         var url = window.location.href
@@ -137,20 +152,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 },2000)
             }
         })
-    }
-
-
-    function getUrlParams() {
-        var result = {};
-        var params = (window.location.search.split('?')[1] || '').split('&');
-        for(var param in params) {
-            if (params.hasOwnProperty(param)) {
-                var paramParts = params[param].split('=');
-                result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
-            }
-        }
-        console.log(result);
-        return result;
     }
 
     function reLogin(_callback,_errCallback) {

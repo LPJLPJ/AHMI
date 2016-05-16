@@ -185,8 +185,8 @@ ideServices
 
             this.initPosition={};
 
-            if (layer.showSubLayer.url ==''){
-                backgroundImg.src =TemplateProvider.getDefaultSubLayer().url;
+            if (layer.showSubLayer.url==''){
+                backgroundImg.src = TemplateProvider.getDefaultSubLayer().url;
             }else{
                 backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
             }
@@ -308,7 +308,7 @@ ideServices
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
-                    console.log(level.texList);
+                    //console.log(level.texList);
                     self.backgroundColor=level.texList[0].slices[0].color;
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
@@ -331,6 +331,19 @@ ideServices
                     }else {
                         self.progressImageElement=null;
                     }
+
+                    //判断是否有第三层光标
+                    if(level.texList[2]){
+                        console.log('设置了光标');
+                        self.cursorColor=level.texList[2].slices[0].color;
+                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                            self.cursorImageElement=new Image();
+                            self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
+                            self.cursorImageElement.onload=(function(){
+
+                            }).bind(this);
+                        }
+                    }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -345,6 +358,13 @@ ideServices
                     subLayerNode.renderAll();
                     _callback&&_callback();
                 });
+
+                this.on('changeAttributeCursor',function(arg){
+                    self.backgroundColor=arg.backgroundColor;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                });
+
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
@@ -418,9 +438,116 @@ ideServices
         fabric.MyProgress.async = true;
 
 
+        //**oscilloscope**//
+        fabric.MyOscilloscope = fabric.util.createClass(fabric.Object, {
+            type: Type.MyOscilloscope,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
+                }
+
+                this.oscilloscopeColor=level.texList[1].slices[0].color;
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+
+                    this.oscilloscopeElement=new Image();
+                    this.oscilloscopeElement.src=level.texList[1].slices[0].imgSrc;
+                    this.oscilloscopeElement.onload = (function () {
+
+                    }).bind(this);
+                }else {
+                    this.oscilloscopeImageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    // console.log(level.texList);
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                        self.backgroundImageElement=new Image();
+                        self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                        self.backgroundImageElement.onload = (function () {
+
+                        }).bind(this);
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
+
+                    self.oscilloscopeColor=level.texList[1].slices[0].color;
+                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+
+                        self.oscilloscopeImageElement=new Image();
+                        self.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                        self.oscilloscopeImageElement.onload = (function () {
+
+                        }).bind(this);
+                    }else {
+                        self.oscilloscopeImageElement=null;
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -this.width / 2,
+                    -this.height / 2,
+                    this.width,
+                    this.height
+                );
+                if (this.backgroundImageElement){
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                }
+
+            }
+        });
+        fabric.MyOscilloscope.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyOscilloscope(level, option));
+        }
+        fabric.MyOscilloscope.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement:this.backgroundImageElement,
+                    oscilloscopeImageElement:this.oscilloscopeImageElement,
+
+                    backgroundColor:this.backgroundColor,
+                    oscilloscopeColor:this.oscilloscopeColor,
+
+                });
+            }
+        })(fabric.MyOscilloscope.prototype.toObject);
+        fabric.MyOscilloscope.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyOscilloscope(level, object));
+        };
+        fabric.MyOscilloscope.async = true;
 
         //**** Dashboard ****//
-
         fabric.MyDashboard = fabric.util.createClass(fabric.Object, {
             type: Type.MyDashboard,
             initialize: function (level, options) {
@@ -464,7 +591,7 @@ ideServices
 
                 this.on('changeDashboardValue', function (arg) {
                     self.value=arg.value;
-                    console.log('changeDashboardValue',self.value);
+                    //console.log('changeDashboardValue',self.value);
                     var _callback=arg.callback;
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -487,10 +614,16 @@ ideServices
                     _callback&&_callback();
                 });
 
+                //change dashboard mode
+                this.on('changeDashboardMode',function(arg){
+                    self.backgroundColor=arg.backgroundColor;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                });
+
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
-                    console.log(level.texList);
                     self.backgroundColor=level.texList[0].slices[0].color;
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
@@ -513,6 +646,21 @@ ideServices
                     }else {
                         self.pointerImageElement=null;
                     }
+
+                    //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
+                    if(level.texList[2]){
+                        self.lightBandColor=level.texList[2].slices[0].color;
+                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                            self.lightBandImageElement=new Image();
+                            self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
+                            self.lightBandImageElement.onload = (function () {
+
+                            }).bind(this);
+                        }else {
+                            self.lightBandImageElement = null;
+                        }
+                    }
+
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -542,10 +690,16 @@ ideServices
                     this.height
                 );
                 if (this.backgroundImageElement){
+                    //console.log('bg',this.width,this.height);
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
 
                 }
 
+
+                if(this.lightBandImageElement){
+                    console.log('draw lightBand');
+                    ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
+                }
                 //pointer
 
                 //ctx.fillStyle=this.pointerColor;
@@ -561,7 +715,7 @@ ideServices
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
-
+                    ctx.rotate((this.value-45)*Math.PI/180);
                     //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
                     ctx.drawImage(this.pointerImageElement, -pointerImgWidth, -pointerImgHeight,pointerImgWidth,pointerImgHeight);
 
@@ -572,7 +726,6 @@ ideServices
 
             }
         });
-
         fabric.MyDashboard.fromLevel= function (level, callback,option) {
             callback && callback(new fabric.MyDashboard(level, option));
         }
@@ -595,6 +748,177 @@ ideServices
             callback && callback(new fabric.MyDashboard(level, object));
         };
         fabric.MyDashboard.async = true;
+
+
+        fabric.MyKnob = fabric.util.createClass(fabric.Object, {
+            type: Type.MyKnob,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.value=level.info.value;
+                this.knobSize = level.info.knobSize;
+
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
+                }
+
+                this.knobColor=level.texList[1].slices[0].color;
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+
+                    this.knobImageElement=new Image();
+                    this.knobImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.knobImageElement.onload = (function () {
+
+                    }).bind(this);
+                }else {
+                    this.knobImageElement=null;
+                }
+
+
+
+
+
+                this.on('changeKnobValue', function (arg) {
+                    self.value=arg.value;
+                    //console.log('changeDashboardValue',self.value);
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+                //changeDashboardPointerLength
+
+                this.on('changeKnobSize', function (arg) {
+                    self.knobSize=arg.knobSize;
+                    self.scaleX = arg.scaleX;
+                    self.scaleY = arg.scaleY;
+                    //console.log('change pointer',self.pointerLength,level);
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                        self.backgroundImageElement=new Image();
+                        self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                        self.backgroundImageElement.onload = (function () {
+
+                        }).bind(this);
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
+
+                    self.knobColor=level.texList[1].slices[0].color;
+                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                        self.knobImageElement=new Image();
+                        self.knobImageElement.src=level.texList[1].slices[0].imgSrc;
+                        self.knobImageElement.onload = (function () {
+
+                        }).bind(this);
+                    }else {
+                        self.knobImageElement=null;
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                    _callback&&_callback();
+
+                });
+
+                //this.on('changeArrange', function (arg) {
+                //    self.arrange=arg.arrange;
+                //    var _callback=arg.callback;
+                //
+                //    var subLayerNode=CanvasService.getSubLayerNode();
+                //    subLayerNode.renderAll();
+                //    _callback&&_callback();
+                //});
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -this.width / 2,
+                    -this.height / 2,
+                    this.width,
+                    this.height
+                );
+                if (this.backgroundImageElement){
+                    //console.log('bg',this.width,this.height);
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                }
+
+                //pointer
+
+                //ctx.fillStyle=this.pointerColor;
+                //ctx.fillRect(
+                //    -this.width / 2,
+                //    -this.height / 2,
+                //    this.width,
+                //    this.height
+                //);
+                if (this.knobImageElement){
+                    //console.log('draw knob',this.knobImageElement)
+                    var sqrt2 = Math.sqrt(2);
+                    var knobImgWidth = this.knobSize/sqrt2/this.scaleX;
+                    var knobImgHeight = this.knobSize/sqrt2/this.scaleY;
+
+                    ctx.rotate((this.value)*Math.PI/180);
+                    //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
+                    ctx.drawImage(this.knobImageElement, -knobImgWidth/2, -knobImgHeight/2,knobImgWidth,knobImgHeight);
+
+                }
+            }
+        });
+        fabric.MyKnob.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyKnob(level, option));
+        }
+        fabric.MyKnob.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement:this.backgroundImageElement,
+                    knobImageElement:this.knobImageElement,
+
+                    backgroundColor:this.backgroundColor,
+                    knobColor:this.knobColor,
+
+                    value:this.value
+
+                });
+            }
+        })(fabric.MyKnob.prototype.toObject);
+        fabric.MyKnob.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyKnob(level, object));
+        };
+        fabric.MyKnob.async = true;
 
 
         fabric.MyButton = fabric.util.createClass(fabric.Object, {
@@ -696,7 +1020,7 @@ ideServices
                 this.lockRotation=true;
                 this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
                 this.hasRotatingPoint=false;
-                this.normalColor=level.texList[0].slices[0].color;
+                this.backgroundColor=level.texList[0].slices[0].color;
 
                 this.text=level.info.text;
                 this.fontFamily=level.info.fontFamily;
@@ -706,19 +1030,23 @@ ideServices
                 this.fontItalic=level.info.fontItalic;
                 this.fontUnderline=level.info.fontUnderline;
 
-
+                //设置宽高
+                if(this.text&&this.fontSize){
+                    this.setWidth(this.fontSize*(this.text.length+1));
+                    this.setHeight(this.fontSize*2);
+                }
 
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.normalImageElement=new Image();
-                    this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.normalImageElement.onload = (function () {
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
                     }).bind(this);
                 }else {
-                    this.normalImageElement=null;
+                    this.backgroundImageElement=null;
                 }
 
                 this.on('changeTex', function (arg) {
@@ -726,20 +1054,20 @@ ideServices
                     var _callback=arg.callback;
 
                     var tex=level.texList[0];
-                    self.normalColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc!='') {
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
                         var currentImageElement=new Image();
                         currentImageElement.src=tex.slices[0].imgSrc;
                         currentImageElement.onload = (function () {
                         }).bind(this);
-                        self.normalImageElement=currentImageElement;
+                        self.backgroundImageElement=currentImageElement;
                     }else {
-                        self.normalImageElement=null;
+                        self.backgroundImageElement=null;
                     }
-
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
+
                 });
 
                 this.on('changeTextContent', function (arg) {
@@ -763,11 +1091,13 @@ ideServices
                         self.fontItalic=arg.fontItalic;
                     }
 
-                    self.setWidth(self.fontSize*self.text.length);
-                    arg.level.width=self.getWidth();
-                    
-                    var _callback=arg.callback;
+                    //重新设置canvas的宽高
+                    if(self.fontSize&&self.text){
+                        self.setWidth(self.fontSize*(self.text.length+1));
+                        self.setHeight(self.fontSize*2);
+                    }
 
+                    var _callback=arg.callback;
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -782,23 +1112,21 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                //console.log(this);
-                //console.log(this.width);
                 ctx.fillStyle=this.fontColor;
                 ctx.save();
-                ctx.fillStyle=this.normalColor;
+                ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
                     -(this.height / 2) ,
                     this.width,
                     this.height);
 
-                if (this.normalImageElement){
-                    ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                if (this.backgroundImageElement){
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
 
                 ctx.restore();
-                var subLayerNode=CanvasService.getSubLayerNode();
+                //var subLayerNode=CanvasService.getSubLayerNode();
 
                 if(this.text){
                     var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
@@ -817,8 +1145,8 @@ ideServices
         fabric.MyTextArea.prototype.toObject = (function (toObject){
             return function () {
                 return fabric.util.object.extend(toObject.call(this), {
-                    normalImageElement: this.normalImageElement,
-                    normalColor: this.normalColor
+                    backgroundImageElement: this.backgroundImageElement,
+                    backgroundColor: this.backgroundColor
                 });
             }
         })(fabric.MyTextArea.prototype.toObject);
@@ -827,6 +1155,197 @@ ideServices
             callback&&callback(new fabric.MyTextArea(level,object));
         };
         fabric.MyTextArea.async = true;
+
+        fabric.MyNum = fabric.util.createClass(fabric.Object,{
+            type: Type.MyNum,
+            initialize: function (level, options) {
+                var self=this;
+                var ctrlOptions={
+                    bl:true,
+                    br:true,
+                    mb:false,
+                    ml:false,
+                    mr:false,
+                    mt:false,
+                    tl:true,
+                    tr:true
+                };
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+
+                this.numValue=level.info.numValue;
+                this.numFamily=level.info.numFamily;
+                this.numSize=level.info.numSize;
+                this.numColor=level.info.numColor;
+                this.numBold=level.info.numBold;
+                this.numItalic=level.info.numItalic;
+                //下面位数字模式属性
+                this.numOfDigits=level.info.numOfDigits;
+                this.decimalCount=level.info.decimalCount;
+                this.symbolMode=level.info.symbolMode;
+                this.frontZeroMode=level.info.frontZeroMode;
+                //设置canvas的宽度和高度
+                if(this.numOfDigits&&this.numSize){
+                    this.setWidth((this.numOfDigits+1)*this.numSize);
+                    this.setHeight(this.numSize*1.5);
+                }
+
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.backgroundImageElement=currentImageElement;
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+
+                this.on('changeNumContent', function (arg) {
+                    //console.log('enter on changeTextContent');
+                    if(arg.numValue){
+                        self.numValue=arg.numValue;
+                    }
+                    if(arg.numFamily){
+                        self.numFamily=arg.numFamily;
+                    }
+                    if(arg.numSize){
+                        self.numSize=arg.numSize;
+                    }
+                    if(arg.numBold){
+                        self.numBold=arg.numBold;
+                    }
+                    if(arg.numItalic){
+                        self.numItalic=arg.numItalic;
+                    }
+                    if(arg.numOfDigits){
+                        self.numOfDigits=arg.numOfDigits;
+                    }
+                    if(arg.decimalCount||arg.decimalCount==0){
+                        self.decimalCount=arg.decimalCount;
+                    }
+                    if(arg.symbolMode){
+                        self.symbolMode=arg.symbolMode;
+                    }
+                    if(arg.frontZeroMode){
+                        self.frontZeroMode=arg.frontZeroMode;
+                    }
+
+                    //设置宽高
+                    if(self.numOfDigits&&self.numSize){
+                        self.setWidth(self.numOfDigits*self.numSize);
+                        self.setHeight(self.numSize*1.5);
+                    }
+
+                    var _callback=arg.callback;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                var offCanvas = CanvasService.getOffCanvas();
+
+                offCanvas.width = this.width;
+                offCanvas.height = this.height;
+                //获取offCanvas
+                var offCtx = offCanvas.getContext('2d');
+                offCtx.clearRect(0,0,this.width,this.height);
+
+
+
+
+                offCtx.fillStyle=this.backgroundColor;
+                offCtx.fillRect(0,0,this.width,this.height);
+                if (this.backgroundImageElement) {
+                    offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
+                }
+
+                //在数字框里展示数字预览效果
+                if(this.numValue) {
+                    //offCtx.save();
+                    offCtx.globalCompositeOperation = "destination-in";
+                    //offCtx.scale(1/this.scaleX,1/this.scaleY);
+                    var numString = this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
+                    //offCtx.fillStyle = this.numColor;
+                    offCtx.font = numString;
+                    offCtx.textAlign = 'center';
+
+                    var tempNumValue= _.cloneDeep(this.numValue);
+                    //配置小数位数
+                    if(this.decimalCount){
+                        tempNumValue= tempNumValue+".";
+                        for(var i=0;i<this.decimalCount;i++){
+                            tempNumValue=tempNumValue+'0';
+                        };
+                    }
+                    //配置前导0模式
+                    if(this.frontZeroMode=='1'){
+                        for(var i=0;i<(this.numOfDigits-this.decimalCount-1);i++){
+                            tempNumValue='0'+tempNumValue;
+                        }
+                    }
+                    //配置正负号
+                    if(this.symbolMode=='1'){
+                        tempNumValue='+'+tempNumValue;
+                    }
+                    offCtx.fillText(tempNumValue, this.width/2, this.height/2+this.numSize/4);
+                    //offCtx.restore();
+                }
+
+                ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
+                //console.log(ctx);
+
+            }
+        });
+        fabric.MyNum.fromLevel = function(level,callback,option){
+            callback && callback(new fabric.MyNum(level, option));
+        };
+        fabric.MyNum.prototype.toObject = (function (toObject){
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement: this.backgroundImageElement,
+                    backgroundColor: this.backgroundColor
+                });
+            }
+        })(fabric.MyNum.prototype.toObject);
+        fabric.MyNum.fromObject = function(object,callback){
+            var level=_self.getLevelById(object.id);
+            callback&&callback(new fabric.MyNum(level,object));
+        };
+        fabric.MyNum.async = true;
 
 
 
@@ -2085,6 +2604,81 @@ ideServices
                     OnWidgetSelected(_newWidget,_successCallback);
 
                 }, initiator);
+            } else if(_newWidget.type == Type.MyNum){
+                fabric.MyNum.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
+            }else if(_newWidget.type==Type.MyKnob){
+                if (_newWidget.backgroundImg==''){
+                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
+                }
+                if (_newWidget.knobImg==''){
+                    _newWidget.knobImg=Preference.BLANK_LAYER_URL;
+                }
+                fabric.MyKnob.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
+                    fabWidget.knobUrl=_newWidget.KnobImg;
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
+            }else if(_newWidget.type==Type.MyOscilloscope){
+
+                if (_newWidget.backgroundImg==''){
+                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
+                }
+                if (_newWidget.oscillationImg==''){
+                    _newWidget.oscillationImg=Preference.BLANK_LAYER_URL;
+                }
+                fabric.MyOscilloscope.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
+                    fabWidget.oscillationImg=_newWidget.oscillationImg;
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
+
+
             }
 
 
@@ -3808,7 +4402,7 @@ ideServices
             var arg={
                 progress:progress,
                 callback:_successCallback
-            }
+            };
             selectObj.target.fire('changeProgressValue',arg);
 
 
@@ -3819,10 +4413,67 @@ ideServices
             var arg={
                 arrange:_option.arrange,
                 callback:_successCallback
-            }
+            };
             selectObj.target.fire('changeArrange',arg);
 
-        }
+        };
+
+        //改变所选进度条的光标模式
+        this.ChangeAttributeCursor = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.cursor=_option.cursor;
+            if(_option.cursor=='0'){
+                selectObj.level.texList=[{
+                    currentSliceIdx:0,
+                    name:'进度条',
+                    slices:[{
+                        color:'rgb(120,120,120)',
+                        imgSrc:'',
+                        name:'进度条'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'进度条底纹',
+                    slices:[{
+                        color:'rgb(120,120,120)',
+                        imgSrc:'',
+                        name:'进度条底纹'
+                    }]
+                }]
+            }
+            if(_option.cursor=='1'){
+                selectObj.level.texList=[{
+                    currentSliceIdx:0,
+                    name:'进度条',
+                    slices:[{
+                        color:'rgb(120,120,120)',
+                        imgSrc:'',
+                        name:'进度条'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'进度条底纹',
+                    slices:[{
+                        color:'rgb(120,120,120)',
+                        imgSrc:'',
+                        name:'进度条底纹'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'光标纹理',
+                    slices:[{
+                        color:'rgb(120,120,120)',
+                        imgSrc:'',
+                        name:'光标纹理'
+                    }]
+                }]
+            }
+            arg={
+                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
+            };
+            _successCallback&&_successCallback();
+            selectObj.target.fire('changeAttributeCursor',arg);
+        };
 
 
 
@@ -3860,6 +4511,41 @@ ideServices
             }
 
             selectObj.target.fire('changeDashboardPointerLength',arg);
+
+
+        };
+
+        this.ChangeAttributeKnobSize = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var value=_option.knobSize;
+
+            var fabDashboardObj = getFabricObject(selectObj.level.id,true);
+            //console.log(fabDashboardObj,fabDashboardObj.getWidth(),fabDashboardObj.getHeight(),fabDashboardObj.getScaleX(),fabDashboardObj.getScaleY());
+
+            selectObj.level.info.knobSize=value;
+
+            var arg={
+                knobSize:value,
+                scaleX:fabDashboardObj.getScaleX(),
+                scaleY:fabDashboardObj.getScaleY(),
+                callback:_successCallback
+            }
+
+            selectObj.target.fire('changeKnobSize',arg);
+        };
+
+        this.ChangeAttributeKnobValue= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            var value=_option.value;
+
+
+            selectObj.level.info.value=_option.value;
+
+            var arg={
+                value:value,
+                callback:_successCallback
+            }
+            selectObj.target.fire('changeKnobValue',arg);
 
 
         };
@@ -3913,15 +4599,176 @@ ideServices
             }
 
             selectObj.target.fire('changeTextContent',arg);
-        }
+        };
 
+        //改变如下数字属性，需要重新渲染预览界面
+        this.ChangeAttributeNumContent = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var fabNumObj=getFabricObject(selectObj.level.id,true);
+            var arg={
+                scaleX:fabNumObj.getScaleX(),
+                scaleY:fabNumObj.getScaleY(),
+                callback:_successCallback
+            };
+
+            //下面是数字字体属性，如字体，字体大小，粗体，斜体
+            if(_option.numFamily){
+                var tempNumFamily=_option.numFamily;
+                selectObj.level.info.numFamily=tempNumFamily;
+                arg.numFamily=tempNumFamily;
+            }
+            if(_option.numSize){
+                var tempNumSize=_option.numSize;
+                selectObj.level.info.numSize=tempNumSize;
+                arg.numSize=tempNumSize;
+            }
+            if(_option.numBold){
+                var tempNumBold=_option.numBold;
+                var tempBoldBtnToggle=_option.boldBtnToggle;
+                selectObj.level.info.numBold=tempNumBold;
+                selectObj.level.info.boldBtnToggle=tempBoldBtnToggle;
+                arg.numBold=tempNumBold;
+            }
+            if(_option.numItalic){
+                var tempNumItalic=_option.numItalic;
+                var tempItalicBtnToggle=_option.italicBtnToggle;
+                selectObj.level.info.numItalic=tempNumItalic;
+                selectObj.level.info.italicBtnToggle=tempItalicBtnToggle;
+                arg.numItalic=tempNumItalic;
+            }
+
+            //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式
+            if(_option.numOfDigits){
+                var tempNumOfDigits=_option.numOfDigits;
+                selectObj.level.info.numOfDigits=tempNumOfDigits;
+                arg.numOfDigits=tempNumOfDigits;
+            }
+            if(_option.decimalCount||(_option.decimalCount==0)){
+                var tempDecimalCount=_option.decimalCount;
+                selectObj.level.info.decimalCount=tempDecimalCount;
+                arg.decimalCount=tempDecimalCount;
+            }
+            if(_option.symbolMode){
+                var tempSymbolMode=_option.symbolMode;
+                selectObj.level.info.symbolMode=tempSymbolMode;
+                arg.symbolMode=tempSymbolMode;
+            }
+            if(_option.frontZeroMode){
+                var tempFrontZeroMode=_option.frontZeroMode;
+                selectObj.level.info.frontZeroMode=tempFrontZeroMode;
+                arg.frontZeroMode=tempFrontZeroMode;
+            }
+            selectObj.target.fire('changeNumContent',arg);
+        };
+        //如下属性改变，但是不用重新渲染界面，包括切换模式
+        this.ChangeAttributeOfNum=function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.numModeId=_option.numModeId;
+            _successCallback&&_successCallback();
+            //console.log('displayModel',selectObj.level.info.numModeId);
+
+        };
+
+        //改变按钮模式
         this.ChangeAttributeButtonModeId= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.buttonModeId=_option.buttonModeId;
             _successCallback&&_successCallback();
+        };
 
+        //改变示波器的一些属性，如波形颜色
+        this.ChangeAttributeOscilloscope = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            selectObje.level.info.oscColor=_option.oscColor;
+            _successCallback&&_successCallback();
         }
 
+        //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
+        this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.dashboardModeId = _option.dashboardModeId;
+            if(selectObj.level.dashboardModeId=='0')
+            {
+                selectObj.level.texList=[
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘背景',
+                        slices:[{
+                                color:'rgba(120,120,120,1)',
+                                imgSrc:'',
+                                name:'仪表盘背景'
+                            }]
+                    },
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘指针',
+                        slices:[{
+                            color:'rgba(120,120,120,1)',
+                            imgSrc:'',
+                        name:'仪表盘指针'
+                            }]
+                    }
+                ]
+            }else if(selectObj.level.dashboardModeId=='1'){
+                selectObj.level.texList=[
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘背景',
+                        slices:[{
+                            color:'rgba(120,120,120,1)',
+                            imgSrc:'',
+                            name:'仪表盘背景'
+                        }]
+                    },
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘指针',
+                        slices:[{
+                            color:'rgba(120,120,120,1)',
+                            imgSrc:'',
+                            name:'仪表盘指针'
+                        }]
+                    },
+                    //{
+                    //    currentSliceIdx:0,
+                    //    name:'掩膜纹理',
+                    //    slices:[{
+                    //        color:'rgba(120,120,120,1)',
+                    //        imgSrc:'',
+                    //        name:'第一象限掩膜'
+                    //    },{
+                    //        color:'rgba(120,120,120,1)',
+                    //        imgSrc:'',
+                    //        name:'第二象限掩膜'
+                    //    },{
+                    //        color:'rgba(120,120,120,1)',
+                    //        imgSrc:'',
+                    //        name:'第三象限掩膜'
+                    //    },{
+                    //        color:'rgba(120,120,120,1)',
+                    //        imgSrc:'',
+                    //        name:'第四象限掩膜'
+                    //    }]
+                    //},
+                    {
+                        currentSliceIdx:0,
+                        name:'光带效果',
+                        slices:[{
+                            color:'rgba(120,120,120,1)',
+                            imgSrc:'',
+                            name:'光带效果'
+                        }]
+
+                    }
+                ]
+            }
+            //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
+            arg={
+                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
+            };
+            _successCallback&&_successCallback();
+            selectObj.target.fire('changeDashboardMode',arg);
+        };
         this.ChangeAttributeInterval= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.info.interval=_option.interval;

@@ -28,7 +28,7 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
             enableInput:enableInput,
             disableInput:disableInput,
             allCharacters:[],
-
+            selectCharacterByIndex:selectCharacterByIndex,
         };
     }
 
@@ -60,5 +60,9 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
         }
     }
 
+    function selectCharacterByIndex(index){
+        console.log('hh');
+        $scope.componentOfChar.character=characterSetService.selectCharacterByIndex(index);
+    }
 
 });
