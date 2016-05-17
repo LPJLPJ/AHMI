@@ -20236,6 +20236,13 @@
 				return curVal;
 			}
 		},
+		multiDigits: function (digit, num) {
+			var result = '';
+			for (var i = 0; i < num; i++) {
+				result += String(digit);
+			}
+			return result;
+		},
 		changeNumDigits: function (originalNum, digits, appendNum, beforeOrFalse) {
 			var originalNum = String(parseInt(originalNum));
 			var originalLength = originalNum.length;
@@ -20247,9 +20254,9 @@
 				//append
 				if (beforeOrFalse) {
 					//append front
-					resultNum = String(appendNum) * (digits - originalLength) + originalNum;
+					resultNum = this.multiDigits(appendNum, digits - originalLength) + originalNum;
 				} else {
-					resultNum = originalNum + String(appendNum) * (digits - originalLength);
+					resultNum = originalNum + this.multiDigits(appendNum, digits - originalLength);
 				}
 			} else {
 				resultNum = originalNum;
@@ -20321,6 +20328,9 @@
 			}
 		},
 		drawNum: function (curX, curY, widget, options) {
+			console.log(widget.info);
+			var offcanvas = this.refs.offcanvas;
+			var offctx = offcanvas.getContext('2d');
 			//get current value
 			var curValue = this.getValueByTagName(widget.tag);
 			var minValue = widget.info.minValue;
@@ -20340,7 +20350,7 @@
 			//size
 			var curWidth = widget.info.width;
 			var curHeight = widget.info.height;
-
+			console.log(curValue);
 			if (curValue != undefined && curValue != null) {
 				//offCtx.save();
 				//handle action before
@@ -20352,7 +20362,6 @@
 				var tempCtx = tempcanvas.getContext('2d');
 				tempCtx.clearRect(0, 0, curWidth, curHeight);
 				tempCtx.save();
-				tempCtx.globalCompositeOperation = "destination-in";
 				//offCtx.scale(1/this.scaleX,1/this.scaleY);
 				var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
 				//offCtx.fillStyle = this.numColor;
@@ -20402,7 +20411,10 @@
 				//drawbackground
 				var bgTex = widget.texList[0].slices[0];
 				this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
-				tempCtx.fillText(tempNumValue, 0, this.height / 2 + this.numSize / 4);
+				tempCtx.globalCompositeOperation = "destination-in";
+				console.log(tempNumValue);
+				tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 + numSize / 4);
+				// tempCtx.fillText(tempNumValue,0,)
 				tempCtx.restore();
 				offctx.drawImage(tempcanvas, curX, curY, curWidth, curHeight);
 				//offCtx.restore();
@@ -20598,6 +20610,7 @@
 			return null;
 		},
 		inRect: function (x, y, target, type) {
+			// console.log(x, y, target, type);
 			if (type && type == 'widget') {
 				if (x >= target.info.left && x <= target.info.left + target.info.width && y >= target.info.top && y <= target.info.top + target.info.height) {
 					return true;
@@ -20693,14 +20706,19 @@
 			}
 		},
 		handlePress: function (e) {
-			var x = Math.round(e.pageX - e.target.offsetLeft);
-			var y = Math.round(e.pageY - e.target.offsetTop);
+			// console.log(e);
+			// console.log(e.target.scrollLeft,e.targetTag.scrollTop);
+			var clientRect = e.target.getBoundingClientRect();
+			var x = Math.round(e.pageX - clientRect.left);
+			var y = Math.round(e.pageY - clientRect.top);
+			// console.log(x, y)
 			this.mouseState.state = 'press';
 			this.mouseState.position.x = x;
 			this.mouseState.position.y = y;
 
 			var targets = this.findClickTargets(x, y);
 			this.simulator.currentPressedTargets = targets;
+			// console.log(targets);
 			for (var i = 0; i < targets.length; i++) {
 				if (targets[i].type == 'widget') {
 					this.handleWidgetPress(targets[i], _.cloneDeep(this.mouseState));
@@ -20925,13 +20943,13 @@
 
 			return React.createElement(
 				'div',
-				{ className: 'simulator center-block', onMouseDown: this.handlePress, onMouseUp: this.handleRelease },
+				{ className: 'simulator' },
 				React.createElement(
 					'div',
-					{ className: 'canvas-wrapper col-md-9' },
+					{ className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseUp: this.handleRelease },
 					React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
 					React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
-					React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
+					React.createElement('canvas', { ref: 'tempcanvas', className: 'simulator-tempcanvas' })
 				),
 				React.createElement(TagList, { tagList: tagList, updateTag: this.updateTag })
 			);

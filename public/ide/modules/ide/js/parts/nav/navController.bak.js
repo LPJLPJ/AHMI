@@ -59,10 +59,7 @@
                     generateDataFile:generateDataFile,
                     play:play,
                     closeSimulator:closeSimulator,
-                    saveProject:saveProject,
-                    showLeft:showLeft,
-                    showRight:showRight,
-                    showBottom:showBottom
+                    saveProject:saveProject
                 },
                 simulator:{
                     show:false
@@ -70,16 +67,6 @@
             };
         }
 
-
-        function showLeft(){
-            $scope.$emit('ChangeShownArea',0);
-        }
-        function showRight(){
-            $scope.$emit('ChangeShownArea',1);
-        }
-        function showBottom(){
-            $scope.$emit('ChangeShownArea',2);
-        }
         function initProject(){
             ProjectService.getProjectTo($scope);
             $scope.project.resourceList = ResourceService.getAllResource()
@@ -108,15 +95,15 @@
 
 
                     _.forEach(currentProject.pages,function (_page) {
-                        _page.url='';
-                        _.forEach(_page.layers,function (_layer) {
-                            _layer.url='';
-                            _layer.showSubLayer.url='';
-                            _.forEach(_layer.subLayers,function (_subLayer) {
-                                _subLayer.url='';
-                            })
-
+                    _page.url='';
+                    _.forEach(_page.layers,function (_layer) {
+                        _layer.url='';
+                        _layer.showSubLayer.url='';
+                        _.forEach(_layer.subLayers,function (_subLayer) {
+                            _subLayer.url='';
                         })
+
+                    })
                     })
                     console.log(JSON.stringify(currentProject));
 
@@ -220,7 +207,8 @@
                         //    })
                         _callback&&_callback()
                     }
-                });
+            });
+
 
 
 

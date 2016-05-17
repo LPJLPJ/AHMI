@@ -11,6 +11,7 @@
     <!--<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
     <!--<script src="lib/underscore-min.js"></script>-->
     <!--测试环境-->
+    <link href="/public/images/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" href="../../public/ide/lib/bootstrap-3.3.5-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/bootstrap-3.3.5-dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-ui-tree/angular-ui-tree.css">
@@ -36,7 +37,7 @@
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
     <script src="../../public/ide/lib/angular-modal/modal.js"></script>
 
-    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
+    <link rel="stylesheet" href="/public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/style.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/dropmenu.css">
@@ -123,8 +124,7 @@
 
 </div>
 
-<div class="container-fluid" tabindex="-1" ng-controller="ContainerCtl" ng-keydown="handleKeyDown($event)" ng-keyup="handleKeyUp($event)"
-        ng-class="{'my-left-show':leftShown,'my-left-hide':!leftShown,'my-right-show':rightShown,'my-right-hide':!rightShown}">
+<div class="container-fluid" tabindex="-1" ng-controller="ContainerCtl" ng-keydown="handleKeyDown($event)" ng-keyup="handleKeyUp($event)">
 <!--<div class="container-fluid" >-->
 
     <div ng-controller="NavCtrl">
@@ -314,8 +314,10 @@
             <div id = "simulator-wrapper" style="" ng-show="component.simulator.show" >
                 <div class="navbar navbar-default">
                     <div class="collapse navbar-collapse">
+                        <div class="nav navbar-nav">
+                             <button id="play" type="button" class=" btn btn-default navbar-btn" >运行</button>
+                        </div>
                         <div class="nav navbar-nav navbar-right">
-                            <button id="play" type="button" class=" btn btn-default navbar-btn" >运行</button>
                             <button id="close" type="button" class=" btn btn-default navbar-btn" ng-click="component.tool.closeSimulator()">关闭</button>
                         </div>
                     </div>
@@ -355,9 +357,9 @@
                 <a ng-click="component.tool.clearAll()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe627;</span><span class="caption">清除</span></a>
             </div>
             <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==4">
-                <a ng-click="component.tool.showLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe644;</span><span class="caption"></span></a>
-                <a ng-click="component.tool.showRight()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe643;</span><span class="caption"></span></a>
-                <a ng-click="component.tool.showBottom()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe619;</span><span class="caption"></span></a>
+                <a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe644;</span><span class="caption"></span></a>
+                <a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe643;</span><span class="caption"></span></a>
+                <a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe619;</span><span class="caption"></span></a>
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
                     <div  class="input-group" style="top: 13px;">
@@ -374,15 +376,12 @@
 
             </div>
             <div class="my-tool-content-item" ng-show="component.nav.currentNav==5">
-                <a ng-click="" class="my-cmd-item" ng-class="" href="/AHMIDesigner/static/modules/ide/html/display.html" target="display_window"><span class="iconfont icon">&#xe63d;</span><span class="caption">演示</span></a>
-                <a ng-click="" class="my-cmd-item" ng-class="" href="/AHMIDesigner/static/modules/ide/html/contactUs.html" target="contactUs_window"><span class="iconfont icon">&#xe63f;</span><span class="caption">联系我们</span></a>
-                <a ng-click="" class="my-cmd-item" ng-class="" href="/AHMIDesigner/static/modules/ide/html/about.html" target="about_window"><span class="iconfont icon">&#xe63e;</span><span class="caption">关于</span></a>
+                <a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe63d;</span><span class="caption">演示</span></a>
+                <a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe63f;</span><span class="caption">联系我们</span></a>
+                <a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe63e;</span><span class="caption">关于</span></a>
             </div>
         </div>
-    </div><div class="my-pages"  ng-controller="ThumbCtrl"
-
-               ng-class="{'my-tool-show':component.out.toolShow}"
-        >
+    </div><div class="my-pages"  ng-controller="ThumbCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" >
         <div class="my-add-page">
             <i class="iconfont" ng-click="component.addPage()">&#xe604;</i>
         </div>
@@ -405,7 +404,7 @@
             </ol>
         </div>
     </div><div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container"  >
-        <div class="my-stage" ng-show="status.editPage">
+            <div class="my-stage" ng-show="status.editPage">
             <table width="100%" height="100%">
                 <tr>
                     <td align="center" valign="middle">
@@ -441,9 +440,7 @@
         </div>
 
 
-    </div><div class="my-attribute" ng-controller="AttrCtrl"
-               ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'my-tool-show':component.out.toolShow}"
-        >
+    </div><div class="my-attribute" ng-controller="AttrCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]">
         <div class="my-top-panel">
             <ul class="attribute-nav nav nav-tabs my-nav-tabs ">
 
@@ -488,7 +485,7 @@
                         </div>
 
                     </div>
-                    <div ng-show="component.object.type=='MyLayer'" >
+                    <div ng-show="component.object.type=='MyLayer'">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="form-control my-attr-number-input form-control"
@@ -624,11 +621,11 @@
                                ng-keypress="component.enterHeight($event)"
                                type="number">
                     </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">纹理</span>
-                            <p ng-repeat="subSlide in component.object.level.subSlides">{{subSlide.name}}</p>
-                            <p><button class="btn btn-default" style="padding: 2px 8px;" ng-click="component.slide.addSubSlide()">新建纹理</button></p>
-                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">纹理</span>-->
+                            <!--<p ng-repeat="subSlide in component.object.level.subSlides">{{subSlide.name}}</p>-->
+                            <!--<p><button class="btn btn-default" style="padding: 2px 8px;" ng-click="component.slide.addSubSlide()">新建纹理</button></p>-->
+                        <!--</div>-->
                     </div>
 
                     <div ng-show="component.object.type=='MyButton'">
@@ -1365,14 +1362,14 @@
                                     <td>{{$index+1}}</td>
                                     <td><input class="form-control" type="text" ng-model="slice.name" /> </td>
                                     <!--image-->
-                                    <td><select class="form-control" ng-model="slice.imgSrc" ng-options="image.src as image.name for image in images " >
+                                    <td><select class="form-control" ng-model="slice.imgSrc" ng-options="(basicUrl+image.id) as image.name for image in images " >
                                         <option value="">---</option>
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"  ng-model="slice.color" /></td>
                                     <td >
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
-                                        <img  ng-src="{{slice.imgSrc||'/public/images/blank.png'}}"  width="100px" height="100px" />
+                                        <img  ng-src="{{ slice.imgSrc||basicUrl+'blank.png'}}"  width="100px" height="100px" />
                                         </div>
                                     </td>
                                     <td><span  ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span></td>
@@ -1409,7 +1406,7 @@
                     <div class="glyphicon" style="display: block" ng-click="collapse($event)" ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"></div>
                     <ul uib-collapse="status.collapsed " class = "dengPage-Actionlist">
                         <li ng-repeat="action in actions" ng-click="openPanel($index)">
-                            <span>{{action.title}}</span><i class="iconfont" ng-click="deleteAction($index)">&#xe627;</i>
+                            <span>{{action.title}}</span> <img src="../../public/ide/modules/ide/img-web/icon_close.png" ng-click="deleteAction($index)">
                         </li>
                     </ul>
 
@@ -1537,7 +1534,7 @@
                         </thead>
                         <tbody>
                         <tr class="img-info" ng-repeat="file in component.top.files">
-                            <td><img width="40px" height="40px" ng-src="{{file.src}}" /></td>
+                            <td><img width="40px" height="40px" ng-src="{{component.top.basicUrl+file.id}}" /></td>
                             <td >
                                 <input  class="img-name" type='text' style="width: 80px;border: 0;" ng-model="file.name" >
                                 <span>{{file.type}}</span>
@@ -1643,7 +1640,6 @@
                             </tr>
                             <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr" ng-class="{'selected':selected==$id}">
                                 <td ng-click="openPanel($index,'timer')">{{timerTags.name}}</td>
-                                <td><img class="icon-close"></td>
                             </tr>
                         </table>
                     </div>
@@ -1839,8 +1835,6 @@
 
 <script language="javascript">
     for(i in document.images)document.images[i].ondragstart=imgdragstart;
-
-
     </script>
 <script type="text/javascript" src="../../public/ide/modules/ide/js/parts/simulator/simulator.bundle.js">
 

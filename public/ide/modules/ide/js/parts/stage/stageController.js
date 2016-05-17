@@ -12,11 +12,10 @@
 
         initUserInterface();
 
-
+        initOffCanvas()
         $scope.$on('GlobalProjectReceived', function () {
 
             initProject();
-            initOffCanvas()
             $scope.$emit('LoadUp');
 
         });

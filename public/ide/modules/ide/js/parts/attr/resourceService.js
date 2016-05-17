@@ -6,8 +6,8 @@ ideServices
 
 
         var  files= []
-        var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
-
+        //var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
+        var resourceUrl = ''
         this.getAllResource = function () {
 
             //var scope=null;
@@ -240,13 +240,14 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100)+'%';
 
                 }
-
+                console.log(ResourceService.getResourceUrl().split('/'))
+                //console.log('/project/'+ResourceService.getResourceUrl().split('/')[1]+'/upload')
 
                 console.log(file);
                 Upload.upload({
                     //url:baseUrl+'/resource',
                     //url:'/api/upload',
-                    url:'/project/'+window.localStorage.getItem('projectId')+'/upload',
+                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/upload',
                     data:{file:file,name:translatedFile.id}
                     //data:{file:file},
                     //params:{

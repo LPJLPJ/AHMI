@@ -49,22 +49,12 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     //    return;
     //}
 
-    initUI();
-
     readProjectData()
-
     //receiveGlobalProject();
 
     listenChange();
 
     loadPreference();
-
-    function initUI(){
-        $scope.leftShown=true;
-        $scope.rightShown=true;
-        $scope.bottomShown=true;
-    }
-
 
 
     function getUrlParams() {
@@ -79,7 +69,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         console.log(result);
         return result;
     }
-
 
     function readProjectData(){
         var url = window.location.href
@@ -418,16 +407,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
         $scope.$on('ReOpenProject',reOpenProject);
 
-
-        $scope.$on('ChangeShownArea', function (event, _op) {
-            console.log(_op);
-            switch (_op){
-                case 0:$scope.leftShown=!$scope.leftShown;break;
-                case 1:$scope.rightShown=!$scope.rightShown;break;
-                case 2:$scope.bottomShown =!$scope.bottomShown;break;
-
-            }
-        })
     }
 
     function reOpenProject(event,pid) {

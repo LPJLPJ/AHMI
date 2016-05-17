@@ -186,7 +186,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 	function updateImageList(){
         var blankImage={
             id:'blank.png',
-            src:'blank.png',
+            src:'/public/images/blank.png',
             name:'空白',
         }
         $timeout(function () {

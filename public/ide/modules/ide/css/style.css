@@ -557,6 +557,10 @@ body{
     background-color: white;
 }
 
+.tag-table-wrapper>table>tbody>tr>td>input{
+    width: 60px;
+}
+
 #simulator-container{
 
 }
