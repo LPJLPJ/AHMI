@@ -312,8 +312,16 @@
             </div>
 
             <div id = "simulator-wrapper" style="" ng-show="component.simulator.show" >
-                <button id="play" type="button" class="btn-default btn">Play</button>
-                <button id="close" type="button" class="btn-default btn" ng-click="component.tool.closeSimulator()">Close</button>
+                <div class="navbar navbar-default">
+                    <div class="collapse navbar-collapse">
+                        <div class="nav navbar-nav">
+                             <button id="play" type="button" class=" btn btn-default navbar-btn" >运行</button>
+                        </div>
+                        <div class="nav navbar-nav navbar-right">
+                            <button id="close" type="button" class=" btn btn-default navbar-btn" ng-click="component.tool.closeSimulator()">关闭</button>
+                        </div>
+                    </div>
+                </div>
                 <div id="simulator-container" >
                 </div>
             </div>

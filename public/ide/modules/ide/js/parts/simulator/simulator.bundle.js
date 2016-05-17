@@ -19676,6 +19676,7 @@
 	var $ = __webpack_require__(160);
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
+	var LoadState = __webpack_require__(164);
 	var defaultState = {
 		loadDone: false,
 		curPageIdx: 0,
@@ -19686,32 +19687,21 @@
 		currentPressedTargets: []
 
 	};
+
+	var defaultSimulator = {
+		project: {},
+		curPageIdx: 0,
+		scale: 1.0,
+		tagList: [],
+		resourceList: [],
+		imageList: [],
+		timerList: [],
+		currentPressedTargets: [],
+		totalResourceNum: 0
+	};
 	module.exports = React.createClass({
 		displayName: 'exports',
 
-		getInitialState: function () {
-			var curState = _.cloneDeep(defaultState);
-			curState.project = _.cloneDeep(this.props.projectData) || {};
-			return curState;
-		},
-		load: function () {
-			var url = '/api/angularproject';
-			$.ajax({
-				url: url,
-				dataType: 'json',
-				cache: true,
-				success: function (data) {
-					console.log(data);
-					this.setState({ project: data, loadDone: true });
-					// this.parseProject();
-					this.initCanvas(data, this.draw);
-					// this.draw(data);
-				}.bind(this),
-				error: function (xhr, status, err) {
-					console.error(url, status, err.toString());
-				}.bind(this)
-			});
-		},
 		initCanvas: function (data, callBack) {
 			this.mouseState = {
 				state: 'release',
@@ -19746,16 +19736,16 @@
 				value: 0
 			};
 
-			//console.log(data);
 			data.tagList.push(curPageTag);
 			data.tag = '当前页面序号';
+			this.simulator.tagList = data.tagList;
+			console.log('tagList loaded', data.tagList);
 
 			//initialize timer
-			var timerList = this.state.timerList;
+			var timerList = this.simulator.timerList;
 			// var postfix = ['Start','Stop','Step','Interval','CurVal','Mode'];
 			for (var i = 0; i < parseInt(data.timers); i++) {
 				var newTimer = {};
-
 				newTimer['timerID'] = 0;
 				newTimer['SysTmr_' + i + '_Start'] = 0;
 				newTimer['SysTmr_' + i + '_Stop'] = 0;
@@ -19765,104 +19755,97 @@
 				newTimer['SysTmr_' + i + '_Mode'] = 0;
 				timerList.push(newTimer);
 			}
-			this.setState({ tagList: data.tagList, timerList: timerList });
+
+			this.simulator.timerList = timerList;
+			console.log('timerList loaded', timerList);
 
 			//loading resources
 			var resourceList = [];
-
+			var imageList = [];
+			var allResources = data.resourceList || [];
+			this.simulator.resourceList = resourceList;
+			this.simulator.imageList = imageList;
 			var basicUrl = data.basicUrl;
-			// var basicUrl = '/ahmi/public/html/AHMIDesigner/static/modules/ide/'
-			// console.log('basicUrl',basicUrl);
-			//default resources
-			// var digits = '0123456789';
-			// var defaultDigitsImages = digits.split('').map(function(digit){
-			// 	return {
-			// 		id:digit+'.png',
-			// 		name:''+digit,
-			// 		type:'image/png'
-			// 	}
-			// })
-			// var allResourceList= data.resourceList.concat(defaultDigitsImages);
-			var allResourceList = data.resourceList;
-			var num = allResourceList.length;
-			console.log('resourceList ', allResourceList);
+			var num = allResources.length;
+			this.simulator.totalResourceNum = num;
 			if (num > 0) {
-				allResourceList.map(function (resource) {
+				allResources.map(function (resource) {
 					var newResource = {};
-					switch (resource.type.split('/')[0]) {
-						case 'image':
-							var newImg = new Image();
-							// newImg.src = basicUrl+resource.id;
-							newImg.src = resource.src;
-							newImg.onload = function () {
-								num = num - 1;
-								if (num == 0) {
-									callBack(data);
-								};
-							};
-							newResource.content = newImg;
-							break;
-						default:
-							var newImg = new Image();
-							newImg.src = basicUrl + resource.id;
-
-							newImg.onload = function () {
-								num = num - 1;
-								if (num == 0) {
-									callBack(data);
-								};
-							};
-
-							newResource.content = newImg;
-							break;
-
-					}
 					newResource.id = resource.id;
 					newResource.name = resource.name;
 					newResource.type = resource.type;
-					resourceList.push(newResource);
+					switch (resource.type.split('/')[0]) {
+						case 'image':
+							var newImg = new Image();
+							newImg.src = resource.src;
+							newImg.onload = function () {
+								num = num - 1;
+								//update loading progress
+								this.drawLoadingProgress(this.simulator.totalResourceNum, num, true, projectWidth, projectHeight);
+								if (num == 0) {
+									callBack(data);
+								};
+							}.bind(this);
+							newResource.content = newImg;
+							imageList.push(newResource);
+							break;
+						default:
+							num = num - 1;
+							this.drawLoadingProgress(this.simulator.totalResourceNum, num, true);
 
-					//imageList[image] = new Image('./public/media/images/'+image);
+							//update loading progress
+							break;
+
+					}
+
+					resourceList.push(newResource);
 				}.bind(this));
 			} else {
 				callBack(data);
 			}
-
-			this.setState({ resourceList: resourceList }, function () {
-				var imageList = this.state.resourceList.filter(function (resource, index) {
-					return resource.type.split('/')[0] == 'image';
-				});
-				this.setState({ imageList: imageList });
-			}.bind(this));
 		},
 		initProject: function () {
 
-			if (this.state.project && this.state.project.size) {
-				this.initCanvas(this.state.project, this.draw);
+			if (this.simulator && this.simulator.project && this.simulator.project.size) {
+				this.initCanvas(this.simulator.project, this.draw);
 			} else {
 				this.draw();
 			}
 		},
 		componentDidMount: function () {
 			//this.load();
+			this.simulator = _.cloneDeep(defaultSimulator);
+			this.simulator.project = _.cloneDeep(this.props.projectData);
+			console.log('receive new project data', this.simulator.project);
+
 			this.initProject();
 		},
 		componentWillReceiveProps: function (newProps) {
-			var curState = this.state;
-			curState = _.cloneDeep(defaultState);
-			curState.project = _.cloneDeep(newProps.projectData);
-			//console.log(curState);
-			this.setState(curState, this.initProject);
+			this.simulator = _.cloneDeep(defaultSimulator);
+			this.simulator.project = _.cloneDeep(newProps.projectData);
+			this.initProject();
+			console.log('receive new project data', this.simulator.project);
+		},
+		drawLoadingProgress: function (total, currentValue, countDown, projectWidth, projectHeight) {
+			var progress = '0.0%';
+			if (countDown && countDown == true) {
+				progress = '' + (total - currentValue) * 100.0 / total + '%';
+			} else {
+				progress = '' + currentValue * 100.0 / total + '%';
+			}
+			var canvas = this.refs.canvas;
+			var ctx = canvas.getContext('2d');
+			ctx.font = "italic bold 48px serif";
+			ctx.fillStyle = "white";
+			ctx.fillText("加载中... " + progress, 0.5 * projectWidth, 0.5 * projectHeight);
 		},
 		draw: function (_project, options) {
 			var project;
 			if (_project) {
 				project = _project;
 			} else {
-				project = this.state.project;
+				project = this.simulator.project;
 			}
-			//timers
-			// this.handleTimers();
 
 			var offcanvas = this.refs.offcanvas;
 			var offctx = offcanvas.getContext('2d');
@@ -19874,7 +19857,7 @@
 				var curPageIdx = 0;
 
 				var curPageIdxTag = this.findTagByName(project.tag);
-				console.log(_.cloneDeep(curPageIdxTag));
+
 				if (curPageIdxTag == null) {
 					curPageIdxTag = {
 						name: '当前页面序号',
@@ -19891,8 +19874,21 @@
 					curPageIdx = 0;
 				}
 
+				//handle unload
+				for (var i = 0; i < project.pageList.length; i++) {
+					if (project.pageList[i].state && project.pageList[i].state == LoadState.loaded) {
+						if (i != curPageIdx) {
+							//handle unload
+							this.handleTargetAction(project.pageList[i], 'Unload');
+							break;
+						}
+					}
+				}
+
 				var page = project.pageList[curPageIdx];
+
 				this.drawPage(page, options);
+
 				//update
 				ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 				ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
@@ -19912,6 +19908,13 @@
 			return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
 		},
 		drawPage: function (page, options) {
+			//will load
+			if (!page.state || page.state == LoadState.notLoad) {
+				page.state = LoadState.willLoad;
+				//generate load trigger
+				this.handleTargetAction(page, 'Load');
+			}
+			page.state = LoadState.loading;
 
 			var offcanvas = this.refs.offcanvas;
 			var offctx = offcanvas.getContext('2d');
@@ -19930,16 +19933,11 @@
 				};
 			};
 
-			//handle page onload
-			if (!page.loaded || page.loaded == false) {
-				//not loaded
-				page.loaded = true;
-				this.handleTargetAction(page, 'Load');
-			}
+			page.state = LoadState.loaded;
 		},
 		handleTimers: function (num) {
 
-			var timerList = this.state.timerList;
+			var timerList = this.simulator.timerList;
 			var timer = timerList[num];
 			//update timer
 			var postfix = ['Start', 'Stop', 'Step', 'Interval', 'CurVal', 'Mode'];
@@ -19956,10 +19954,7 @@
 				clearInterval(timer.timerID);
 				timer.timerID = 0;
 				this.startNewTimer(timer, num, true);
-				// this.setState({timer:timer});
 			};
-
-			this.setState({ timer: timer });
 		},
 		startNewTimer: function (timer, num, cont) {
 			if ((timer['SysTmr_' + num + '_Mode'] & 1) == 1) {
@@ -19976,7 +19971,7 @@
 					targetTag.value = startValue;
 				}
 
-				this.setState({ targetTag: targetTag }, this.draw);
+				this.draw();
 
 				var direction = timer['SysTmr_' + num + '_Start'] - timer['SysTmr_' + num + '_Stop'];
 
@@ -19992,7 +19987,7 @@
 								clearInterval(timer.timerID);
 								timer.timerID = 0;
 							} else {
-								this.setState({ targetTag: targetTag }, this.draw);
+								this.draw();
 							}
 						};
 					} else {
@@ -20003,7 +19998,7 @@
 								clearInterval(timer.timerID);
 								timer.timerID = 0;
 							} else {
-								this.setState({ targetTag: targetTag }, this.draw);
+								this.draw();
 							}
 						};
 					}
@@ -20011,31 +20006,41 @@
 			};
 		},
 		drawCanvas: function (canvasData, options) {
-			// console.log('drawing canvas',canvasData);
+			//draw
 			var subCanvasList = canvasData.subCanvasList || [];
 			var canvasTag = this.findTagByName(canvasData.tag && canvasData.tag.name);
 			var nextSubCanvasIdx = canvasTag && canvasTag.value || 0;
-			//handle unload subcanvas
-			if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
-				//unload lastsubcanvas
-				this.handleTargetAction(canvasData, 'Unload');
-			}
 			canvasData.curSubCanvasIdx = nextSubCanvasIdx;
-			var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
-			// console.log(subCanvas);
+			//handle unload subcanvas
+			// if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
+			// 	//unload lastsubcanvas
+			// 	this.handleTargetAction(canvasData,'Unload');
+			// }
+			// canvasData.curSubCanvasIdx = nextSubCanvasIdx;
+			// var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+			for (var i = 0; i < subCanvasList.length; i++) {
+				if (subCanvasList[i].state && subCanvasList[i].state == LoadState.loaded) {
+					if (nextSubCanvasIdx - 1 != i) {
+						//another sc loaded
+						//unload sc of i
+						this.handleTargetAction(subCanvasList[i], 'Unload');
+						break;
+					}
+				}
+			}
+			var subCanvas = subCanvasList[nextSubCanvasIdx];
 			if (subCanvas) {
 				this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
-				//process canvas action
-
-				if (canvasData.loaded || canvasData.loaded == false) {
-					//handle canvas action
-					this.handleTargetAction(canvasData, 'Load');
-				}
 			};
-			// console.log('canvas drew');
 		},
 		drawSubCanvas: function (subCanvas, x, y, w, h, options) {
-			// console.log('drawing subCanvas',subCanvas);
+			if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
+				subCanvas.state = LoadState.willLoad;
+				//generate load trigger
+				this.handleTargetAction(subCanvas, 'Load');
+			}
+			subCanvas.state = LoadState.loading;
+
 			var offcanvas = this.refs.offcanvas;
 			var offctx = offcanvas.getContext('2d');
 			this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
@@ -20047,7 +20052,7 @@
 					this.drawWidget(widgetList[i], x, y, options);
 				};
 			};
-			// console.log('drew subCanvas');
+			subCanvas.state = LoadState.loaded;
 		},
 		drawWidget: function (widget, sx, sy, options) {
 			// console.log('drawing widget',widget);
@@ -20068,11 +20073,9 @@
 					this.drawButtonGroup(curX, curY, widget, options);
 					break;
 				case 'MyNumber':
-
 					this.drawNumber(curX, curY, widget, options);
 					break;
 				case 'MyProgress':
-
 					//draw progressbar
 					this.drawProgress(curX, curY, widget, options);
 					break;
@@ -20080,8 +20083,6 @@
 					this.drawDashboard(curX, curY, widget, options);
 					break;
 			}
-
-			// console.log('drew widget');
 		},
 		drawSlide: function (curX, curY, widget, options) {
 			var slideSlices = widget.texList[0].slices;
@@ -20092,7 +20093,6 @@
 				var width = widget.info.width;
 				var height = widget.info.height;
 				this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
-				//handle action
 			}
 		},
 		drawButton: function (curX, curY, widget, options) {
@@ -20120,6 +20120,7 @@
 					} else {
 						this.drawBg(curX, curY, width, height, tex.slices[1].imgSrc, tex.slices[1].color);
 					}
+					break;
 			}
 		},
 		drawButtonGroup: function (curX, curY, widget, options) {
@@ -20297,9 +20298,7 @@
 			var width = widget.info.width;
 			var height = widget.info.height;
 			if (widget.texList) {
-				//background
-				var bgTex = widget.texList[0].slices[0];
-				this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+
 				//pointer
 				var minArc = widget.info.minValue;
 				var maxArc = widget.info.maxValue;
@@ -20318,11 +20317,62 @@
 					curArc = minArc;
 				}
 				// console.log(curArc,widget.oldValue);
-				//draw arc
-				this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc - 45, widget.texList[1].slices[0].imgSrc);
+				var arcPhase = 45;
+				if (widget.dashboardModeId == '0') {
+					//simple mode
+					//background
+					var bgTex = widget.texList[0].slices[0];
+					this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+					//draw pointer
+					this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase, widget.texList[1].slices[0].imgSrc);
+					//draw circle
+					// var circleTex = widget.texList[2].slices[0]
+					// this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+				} else {
+						// complex mode
+						//background
+						var bgTex = widget.texList[0].slices[0];
+						this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+						//draw light strip
+						var lightStripTex = widget.texList[2].slices[0];
+						this.drawLightStrip(curX, curY, width, height, minArc + 90, curArc + 90, widget.texList[2].slices[0].imgSrc);
+						//draw pointer
+						this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase, widget.texList[1].slices[0].imgSrc);
+
+						//draw circle
+						// var circleTex = widget.texList[3].slices[0]
+						// this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+					}
 
 				this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 				widget.oldValue = curArc;
+			}
+		},
+		drawLightStrip: function (curX, curY, width, height, minArc, curArc, image) {
+			//clip a fan shape
+			// console.log(minArc, curArc);
+			if (Math.abs(curArc - minArc) > 360) {
+				//no need to clip
+				this.drawBg(curX, curY, width, height, image, null);
+			} else {
+				//clip
+				var offcanvas = this.refs.offcanvas;
+				var offctx = offcanvas.getContext('2d');
+				offctx.save();
+				offctx.beginPath();
+				offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
+				offctx.save();
+				offctx.translate(curX + 0.5 * width, curY + 0.5 * height);
+				offctx.rotate(Math.PI * minArc / 180);
+				offctx.lineTo(0.5 * width, 0);
+				offctx.restore();
+				offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, false);
+
+				offctx.lineTo(curX + 0.5 * width, curY + 0.5 * height);
+
+				offctx.clip();
+				this.drawBg(curX, curY, width, height, image, null);
+				offctx.restore();
 			}
 		},
 		handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
@@ -20345,18 +20395,19 @@
 			}
 		},
 		drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, image) {
+			image = this.getImageName(image);
 			if (image && image != '') {
 				var offcanvas = this.refs.offcanvas;
 				var offctx = offcanvas.getContext('2d');
 				offctx.save();
 				offctx.translate(x + 0.5 * w, y + 0.5 * h);
 				offctx.rotate(Math.PI * arc / 180);
-				var imageList = this.state.imageList;
+				var imageList = this.simulator.imageList;
 				for (var i = 0; i < imageList.length; i++) {
 					if (imageList[i].id == image) {
 						// console.log(image);
 						// offctx.drawImage(imageList[i].content,0,0,w,h,x,y,w,h);
-						offctx.drawImage(imageList[i].content, -elemWidth, -elemHeight, elemWidth, elemHeight);
+						offctx.drawImage(imageList[i].content, -0, 0, elemWidth, elemHeight);
 						// offctx.drawImage(imageList[i].content,x,y,w,h)
 						break;
 					}
@@ -20378,7 +20429,7 @@
 			}
 
 			//console.log(color);
-			if (color != '') {
+			if (color && color != '') {
 				offctx.fillStyle = color;
 				offctx.fillRect(x, y, w, h);
 			};
@@ -20386,7 +20437,6 @@
 		drawBgImg: function (x, y, w, h, imageName, ctx) {
 			//console.log('x: '+x+' y: '+y+' w: '+w+' h: '+h);
 			var imageName = this.getImageName(imageName);
-			console.log('draw bgimg ', imageName);
 			var offcanvas, offctx;
 			if (!ctx) {
 				offcanvas = this.refs.offcanvas;
@@ -20394,7 +20444,7 @@
 			} else {
 				offctx = ctx;
 			}
-			var imageList = this.state.imageList;
+			var imageList = this.simulator.imageList;
 			for (var i = 0; i < imageList.length; i++) {
 				if (imageList[i].id == imageName) {
 
@@ -20405,8 +20455,22 @@
 			};
 		},
 		getImageName: function (imageName) {
-			var names = imageName.split('/');
-			return names[names.length - 1];
+			if (imageName && typeof imageName === 'string') {
+				var names = imageName.split('/');
+				return names[names.length - 1];
+			} else {
+				return '';
+			}
+		},
+		getImage: function (imageName) {
+			var name = this.getImageName(imageName);
+			var imageList = this.simulator.imageList || [];
+			for (var i = 0; i < imageList.length; i++) {
+				if (imageList[i].id == name) {
+					return imageList[i];
+				}
+			}
+			return null;
 		},
 		inRect: function (x, y, target, type) {
 			if (type && type == 'widget') {
@@ -20424,10 +20488,10 @@
 			}
 		},
 		findClickTargets: function (x, y) {
-			var project = this.state.project;
+			var project = this.simulator.project;
 			var targets = [];
 			if (project.pageList && project.pageList.length) {
-				var page = project.pageList[this.state.curPageIdx];
+				var page = project.pageList[this.simulator.curPageIdx];
 				if (page) {
 					targets.push(page);
 					//if canvas clicked
@@ -20511,10 +20575,7 @@
 			this.mouseState.position.y = y;
 
 			var targets = this.findClickTargets(x, y);
-			var currentPressedTargets = this.state.currentPressedTargets;
-			currentPressedTargets = targets;
-			this.setState({ currentPressedTargets: currentPressedTargets });
-
+			this.simulator.currentPressedTargets = targets;
 			for (var i = 0; i < targets.length; i++) {
 				if (targets[i].type == 'widget') {
 					this.handleWidgetPress(targets[i], _.cloneDeep(this.mouseState));
@@ -20552,7 +20613,7 @@
 
 					if (targetTag && targetTag.name != '') {
 						targetTag.value = parseInt(curButtonIdx);
-						this.setState({ targetTag: targetTag });
+
 						needRedraw = true;
 					};
 					break;
@@ -20571,12 +20632,13 @@
 			this.mouseState.position.x = x;
 			this.mouseState.position.y = y;
 
-			var pressedTargets = this.state.currentPressedTargets;
-			this.setState({ currentPressedTargets: [] });
+			var pressedTargets = this.simulator.currentPressedTargets;
+
 			for (var i = 0; i < pressedTargets.length; i++) {
 				this.handleElementRelease(pressedTargets[i], _.cloneDeep(this.mouseState));
 				this.handleTargetAction(pressedTargets[i], 'Release');
 			}
+			this.simulator.currentPressedTargets = [];
 		},
 		handleElementRelease: function (elem, mouseState) {
 			var needRedraw = false;
@@ -20628,7 +20690,7 @@
 			}
 		},
 		findTagByName: function (tag) {
-			var tagList = this.state.tagList;
+			var tagList = this.simulator.tagList;
 			// console.log(tag);
 			if (tag && tag != "") {
 
@@ -20637,8 +20699,6 @@
 						return tagList[i];
 					}
 				};
-
-				// var timerList = this.state.timerList;
 			}
 
 			return null;
@@ -20648,7 +20708,7 @@
 			if (tag && tag != "") {
 				tag = JSON.parse(tag);
 
-				var tagList = this.state.tagList;
+				var tagList = this.simulator.tagList;
 				for (var i = 0; i < tagList.length; i++) {
 					if (tagList[i].name == tag.name) {
 						return tagList[i];
@@ -20679,17 +20739,8 @@
 			timerFlag = this.timerFlag(param1);
 			switch (op) {
 				case 'GOTO':
-					//var pageList = this.state.project.pageList;
-					//if (pageList) {
-					//	if (param2>=1 && param2 <=pageList.length) {
-					//		pageList[this.state.curPageIdx].loaded = false;
-					//		//handle unload
-					//
-					//		///
-					//		this.setState({pageList:pageList,curPageIdx:param2-1},this.draw);
-					//	};
-					//};
-					var project = this.state.project;
+
+					var project = this.simulator.project;
 					var curPageTag = this.findTagByName(project.tag);
 
 					if (curPageTag && curPageTag.value > 0 && curPageTag.value <= project.pageList.length) {
@@ -20700,7 +20751,7 @@
 						this.handleTargetAction(lastPage, 'Unload');
 					}
 					curPageTag.value = param2;
-					this.setState({ pageList: project.pageList, curPageTag: curPageTag }, this.draw);
+					this.draw();
 					break;
 				case 'INC':
 
@@ -20708,14 +20759,14 @@
 
 					if (targetTag.name != '') {
 						targetTag.value += parseInt(param2);
-						this.setState({ targetTag: targetTag }, this.draw);
+						this.draw();
 					};
 					break;
 				case 'DEC':
 					var targetTag = this.findTagByName(param1);
 					if (targetTag.name != '') {
 						targetTag.value -= parseInt(param2);
-						this.setState({ targetTag: targetTag }, this.draw);
+						this.draw();
 					};
 					break;
 				case 'SET':
@@ -20724,7 +20775,7 @@
 
 					if (targetTag.name != '') {
 						targetTag.value = parseInt(param2);
-						this.setState({ targetTag: targetTag }, this.draw);
+						this.draw();
 					};
 					break;
 
@@ -20735,19 +20786,27 @@
 			};
 		},
 		updateTag: function (curTagIdx, value) {
-			var tagList = this.state.tagList;
+			var tagList = this.simulator.tagList;
 			if (curTagIdx >= 0 && curTagIdx < tagList.length) {
 				tagList[curTagIdx].value = value;
-				this.setState({ tagList: tagList }, this.draw);
+				this.draw();
 			}
 		},
 		render: function () {
-			var tagList = _.cloneDeep(this.state.tagList);
+			var tagList = [];
+			if (this.simulator && this.simulator.tagList) {
+				tagList = _.cloneDeep(this.simulator.tagList);
+			}
+
 			return React.createElement(
 				'div',
-				{ className: 'simulator', onMouseDown: this.handlePress, onMouseUp: this.handleRelease },
-				React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
-				React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
+				{ className: 'simulator center-block', onMouseDown: this.handlePress, onMouseUp: this.handleRelease },
+				React.createElement(
+					'div',
+					{ className: 'canvas-wrapper col-md-9' },
+					React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
+					React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' })
+				),
 				React.createElement(TagList, { tagList: tagList, updateTag: this.updateTag })
 			);
 		}
@@ -45141,7 +45200,7 @@
 
 			return React.createElement(
 				'div',
-				{ className: 'tag-table-wrapper' },
+				{ className: 'tag-table-wrapper col-md-3' },
 				React.createElement(
 					'table',
 					{ className: 'tag-table table table-responsive' },
@@ -45201,6 +45260,20 @@
 			);
 		}
 	});
+
+/***/ },
+/* 164 */
+/***/ function(module, exports) {
+
+	var state = {
+		notLoad: 'notLoad',
+		willLoad: 'willLoad',
+		loading: 'loading',
+		loaded: 'loaded',
+		willUnload: 'willUnload',
+		unloading: 'unloading'
+	};
+	module.exports = state;
 
 /***/ }
 /******/ ]);

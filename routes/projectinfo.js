@@ -65,7 +65,7 @@ projectRoute.createProject = function (req, res) {
         newProject.save(function (err) {
             if (err){
                 console.log('project save error')
-                res.status(500).end()
+                res.status(500).end('save error')
             }
             //create project directory
             var targetDir = path.join(__dirname,'../projects/',String(newProject._id))
@@ -93,7 +93,7 @@ projectRoute.createProject = function (req, res) {
 
         })
     }else{
-        res.status(500).end()
+        res.status(500).end('not login')
     }
 }
 
