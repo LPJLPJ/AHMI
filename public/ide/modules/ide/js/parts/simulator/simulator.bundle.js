@@ -19900,8 +19900,10 @@
 			var curTag = this.findTagByName(name);
 			if (curTag && curTag.value != undefined) {
 				return curTag.value;
-			} else {
+			} else if (defaultValue) {
 				return defaultValue;
+			} else {
+				return null;
 			}
 		},
 		compareZIndex: function (canvasA, canvasB) {
@@ -20082,6 +20084,9 @@
 				case 'MyDashboard':
 					this.drawDashboard(curX, curY, widget, options);
 					break;
+				case 'MyNum':
+					this.drawNum(curX, curY, widget, options);
+					break;
 			}
 		},
 		drawSlide: function (curX, curY, widget, options) {
@@ -20222,6 +20227,35 @@
 				}
 			};
 		},
+		limitValueBetween: function (curVal, minVal, maxVal) {
+			if (curVal < minVal) {
+				return minVal;
+			} else if (curVal > maxVal) {
+				return maxVal;
+			} else {
+				return curVal;
+			}
+		},
+		changeNumDigits: function (originalNum, digits, appendNum, beforeOrFalse) {
+			var originalNum = String(parseInt(originalNum));
+			var originalLength = originalNum.length;
+			var resultNum = '';
+			if (originalLength > digits) {
+				//cut front
+				resultNum = originalNum.slice(originalLength - digits - 1, -1);
+			} else if (originalLength < digits) {
+				//append
+				if (beforeOrFalse) {
+					//append front
+					resultNum = String(appendNum) * (digits - originalLength) + originalNum;
+				} else {
+					resultNum = originalNum + String(appendNum) * (digits - originalLength);
+				}
+			} else {
+				resultNum = originalNum;
+			}
+			return resultNum;
+		},
 		drawNumber: function (curX, curY, widget, options) {
 			// console.log(widget);
 			var needDrawNumber = false;
@@ -20284,6 +20318,97 @@
 					//handle min overflow
 					this.handleTargetAction(widget, 'MinOverflow');
 				}
+			}
+		},
+		drawNum: function (curX, curY, widget, options) {
+			//get current value
+			var curValue = this.getValueByTagName(widget.tag);
+			var minValue = widget.info.minValue;
+			var maxValue = widget.info.maxValue;
+			var lowAlarmValue = widget.info.lowAlarmValue;
+			var highAlarmValue = widget.info.highAlarmValue;
+			var numModeId = widget.info.numModeId;
+			var frontZeroMode = widget.info.frontZeroMode;
+			var symbolMode = widget.info.symbolMode;
+			var decimalCount = widget.info.decimalCount || 0;
+			var numOfDigits = widget.info.numOfDigits;
+			var numFamily = widget.info.numFamily;
+			var numSize = widget.info.numSize;
+			var numColor = widget.info.numColor;
+			var numBold = widget.info.numBold;
+			var numItalic = widget.info.numItalic;
+			//size
+			var curWidth = widget.info.width;
+			var curHeight = widget.info.height;
+
+			if (curValue != undefined && curValue != null) {
+				//offCtx.save();
+				//handle action before
+
+				curValue = this.limitValueBetween(curValue, minValue, maxValue);
+				var tempcanvas = this.refs.tempcanvas;
+				tempcanvas.width = curWidth;
+				tempcanvas.height = curHeight;
+				var tempCtx = tempcanvas.getContext('2d');
+				tempCtx.clearRect(0, 0, curWidth, curHeight);
+				tempCtx.save();
+				tempCtx.globalCompositeOperation = "destination-in";
+				//offCtx.scale(1/this.scaleX,1/this.scaleY);
+				var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
+				//offCtx.fillStyle = this.numColor;
+				tempCtx.font = numString;
+				tempCtx.textAlign = 'center';
+
+				var tempNumValue = String(curValue);
+				//配置小数位数
+				if (parseInt(decimalCount) > 0) {
+					tempNumValuePair = tempNumValue.split('.');
+					if (tempNumValuePair.length > 1) {
+						//has original fraction
+						tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempNumValuePair[1], decimalCount, 0, false);
+					} else {
+						//only int
+						tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits('', decimalCount, 0, false);
+					}
+				}
+				if (numOfDigits) {
+					//配置前导0模式
+					var intPart = tempNumValue.split('.')[0];
+					var intDigits = numOfDigits - decimalCount;
+					if (frontZeroMode == '1') {
+						intPart = this.changeNumDigits(intPart, intDigits, 0, true);
+					} else {
+						intPart = this.changeNumDigits(intPart, intDigits, ' ', true);
+					}
+					if (tempNumValue.split('.').length > 1) {
+						tempNumValue = intPart + '.' + tempNumValue[1];
+					} else {
+						tempNumValue = intPart;
+					}
+				}
+
+				//配置正负号
+				if (symbolMode == '1') {
+					var value = parseFloat(tempNumValue);
+					var symbol = '';
+					if (value > 0) {
+						symbol = '+';
+					} else if (value < 0) {
+						symbol = '-';
+					}
+					tempNumValue = symbol + tempNumValue;
+				}
+
+				//drawbackground
+				var bgTex = widget.texList[0].slices[0];
+				this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
+				tempCtx.fillText(tempNumValue, 0, this.height / 2 + this.numSize / 4);
+				tempCtx.restore();
+				offctx.drawImage(tempcanvas, curX, curY, curWidth, curHeight);
+				//offCtx.restore();
+				//handle action
+				this.handleAlarmAction(Number(curValue), widget, lowAlarmValue, highAlarmValue);
+				widget.oldValue = Number(curValue);
 			}
 		},
 		drawDigit: function (digit, widget, originX, originY, width, height) {
@@ -20805,7 +20930,8 @@
 					'div',
 					{ className: 'canvas-wrapper col-md-9' },
 					React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
-					React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' })
+					React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
+					React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
 				),
 				React.createElement(TagList, { tagList: tagList, updateTag: this.updateTag })
 			);
@@ -45206,30 +45332,30 @@
 					{ className: 'tag-table table table-responsive' },
 					React.createElement(
 						'thead',
-						null,
+						{ className: 'tag-table-header' },
 						React.createElement(
 							'tr',
-							null,
+							{ className: 'tag-table-row' },
 							React.createElement(
 								'td',
-								null,
+								{ className: 'tag-table-col' },
 								'名称'
 							),
 							React.createElement(
 								'td',
-								null,
+								{ className: 'tag-table-col' },
 								'寄存器号'
 							),
 							React.createElement(
 								'td',
-								null,
+								{ className: 'tag-table-col' },
 								'值'
 							)
 						)
 					),
 					React.createElement(
 						'tbody',
-						null,
+						{ className: 'tag-table-body' },
 						this.state.tagList.map(function (tag, index) {
 							if (tag.register) {
 								var disabled = !(tag.writeOrRead == 'true');
@@ -45239,17 +45365,17 @@
 									{ key: index, className: 'tag-table-row' },
 									React.createElement(
 										'td',
-										null,
+										{ className: 'tag-table-col' },
 										tag.name
 									),
 									React.createElement(
 										'td',
-										null,
+										{ className: 'tag-table-col' },
 										tag.indexOfRegister
 									),
 									React.createElement(
 										'td',
-										null,
+										{ className: 'tag-table-col' },
 										React.createElement('input', { className: 'value', name: tag.name, type: 'text', disabled: disabled, value: tag.value, onFocus: this.handleValueInputFocus, onBlur: this.handleValueInputBlur, onKeyDown: this.handleValueInputEnter, onChange: this.handleValueInputChange })
 									)
 								);

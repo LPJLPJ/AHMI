@@ -245,6 +245,10 @@ ide.
                 case Type.MyButtonGroup:
                 case Type.MyLayer:
                 case Type.MyPage:
+                case Type.MyNum:
+                case Type.MyKnob:
+                case Type.MyOscilloscope:
+                case Type.MyTextArea:
                     $scope.showTagPanel = true;
                     break;
                 default:
