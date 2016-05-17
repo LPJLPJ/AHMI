@@ -617,6 +617,11 @@ ideServices
                 //change dashboard mode
                 this.on('changeDashboardMode',function(arg){
                     self.backgroundColor=arg.backgroundColor;
+                    //若改变模式，重置已经画好的仪表盘控件
+                    self.backgroundImageElement=null;
+                    self.pointerImageElement=null;
+                    self.lightBandImageElement=null;
+
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                 });
@@ -643,8 +648,6 @@ ideServices
                         self.pointerImageElement.onload = (function () {
 
                         }).bind(this);
-                    }else {
-                        self.pointerImageElement=null;
                     }
 
                     //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
@@ -698,7 +701,18 @@ ideServices
 
                 if(this.lightBandImageElement){
                     console.log('draw lightBand');
-                    ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
+                    //ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
+                    ctx.save();
+                    ctx.beginPath();
+                    var radius=Math.min(this.width,this.height)/2;
+                    ctx.moveTo(0,0);
+                    ctx.arc(0,0,radius,0.5*Math.PI,(this.value+90)*Math.PI/180);
+                    ctx.closePath();
+                    ctx.clip();
+
+                    ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                    ctx.restore();
                 }
                 //pointer
 
@@ -715,7 +729,7 @@ ideServices
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
-                    ctx.rotate((this.value-45)*Math.PI/180);
+                    ctx.rotate((this.value-135)*Math.PI/180);
                     //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
                     ctx.drawImage(this.pointerImageElement, -pointerImgWidth, -pointerImgHeight,pointerImgWidth,pointerImgHeight);
 
@@ -4764,7 +4778,7 @@ ideServices
             }
             //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
             arg={
-                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
+                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
             };
             _successCallback&&_successCallback();
             selectObj.target.fire('changeDashboardMode',arg);

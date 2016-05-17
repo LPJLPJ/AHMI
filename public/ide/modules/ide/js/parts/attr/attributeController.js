@@ -825,7 +825,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
-            }else {
+            }else if($scope.component.object.level.type==Type.MyDashboard){
+                if($scope.component.object.level.info.minValue>$scope.component.object.level.info.value){
+                    toastr.warning('不能比当前值大');
+                    restore();
+                    return;
+                }
+            } else {
                 //默认是数字框
                 if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
 

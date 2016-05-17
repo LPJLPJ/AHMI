@@ -386,9 +386,9 @@ ideServices
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
-                minValue:-90,maxValue:270,
-                lowAlarmValue:-90,highAlarmValue:270,
-                value:-45,
+                minValue:0,maxValue:360,
+                lowAlarmValue:0,highAlarmValue:360,
+                value:45,
                 pointerLength:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
             };
             return {
