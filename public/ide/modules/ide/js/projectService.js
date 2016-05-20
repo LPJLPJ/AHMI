@@ -186,11 +186,10 @@ ideServices
             this.initPosition={};
 
             if (layer.showSubLayer.url==''){
-                backgroundImg.src = TemplateProvider.getDefaultSubLayer().url;
+                backgroundImg.src=TemplateProvider.getDefaultSubLayer().url
             }else{
                 backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
             }
-
 
             backgroundImg.onload = (function () {
                 this.width = layerWidth;
@@ -621,7 +620,6 @@ ideServices
                     self.backgroundImageElement=null;
                     self.pointerImageElement=null;
                     self.lightBandImageElement=null;
-
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                 });
@@ -648,6 +646,8 @@ ideServices
                         self.pointerImageElement.onload = (function () {
 
                         }).bind(this);
+                    }else {
+                        self.pointerImageElement=null;
                     }
 
                     //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
@@ -700,8 +700,6 @@ ideServices
 
 
                 if(this.lightBandImageElement){
-                    console.log('draw lightBand');
-                    //ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
                     ctx.save();
                     ctx.beginPath();
                     var radius=Math.min(this.width,this.height)/2;
@@ -4778,7 +4776,7 @@ ideServices
             }
             //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
             arg={
-                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
+                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
             };
             _successCallback&&_successCallback();
             selectObj.target.fire('changeDashboardMode',arg);

@@ -284,3 +284,7 @@ body{
 .projectinfo span{
     overflow: hidden;
 }
+
+.header_main_logo a img{
+    max-height:40px;
+}

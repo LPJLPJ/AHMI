@@ -151,7 +151,7 @@ ideServices
             for (var i = 0; i < name.length; i++) {
                 str += parseInt(name.charCodeAt(0), 10).toString(16);
             }
-            return str + date.toLocalString();
+            return str + String(date);
         };
         var generateIdFromName = function (name) {
             var str = '';
@@ -174,7 +174,7 @@ ideServices
 ideServices.directive("filereadform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
     return {
         restrict:'AE',
-        template:"<input type='file' ngf-select='uploadFiles($files)' accept='image/png,image/jpeg' ngf-multiple='true' />",
+        template:"<input type='file' ngf-select='uploadFiles($files)' accept='image/*' ngf-multiple='true' />",
         replace:'true',
         link: function (scope, element, attributes) {
             var baseUrl = ResourceService.getResourceUrl()
@@ -284,7 +284,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 var fileNameArray = uploadingFile.name.split('.');//从.后缀开始分割我一个字符串数组，数组的第一个元素是名字，第二个元素是后缀名。
 
                 //生成唯一识别码，作为fileName。
-                var fileName = idService.generateId(uploadingFile.name)+'.'+fileNameArray[fileNameArray.length-1];
+                var fileName = idService.generateId(uploadingFile.name,Date.now())+'.'+fileNameArray[fileNameArray.length-1];
                 var fd = new FormData();
                 fd.append('file',uploadingFile);
                 fd.append('name',fileName);

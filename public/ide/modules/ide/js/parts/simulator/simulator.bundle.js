@@ -19702,6 +19702,9 @@
 	module.exports = React.createClass({
 		displayName: 'exports',
 
+		getInitialState: function () {
+			return _.cloneDeep(defaultSimulator);
+		},
 		initCanvas: function (data, callBack) {
 			this.mouseState = {
 				state: 'release',
@@ -19738,11 +19741,12 @@
 
 			data.tagList.push(curPageTag);
 			data.tag = '当前页面序号';
-			this.simulator.tagList = data.tagList;
+			// this.state.tagList = data.tagList
+			this.setState({ tagList: data.tagList });
 			console.log('tagList loaded', data.tagList);
 
 			//initialize timer
-			var timerList = this.simulator.timerList;
+			var timerList = this.state.timerList;
 			// var postfix = ['Start','Stop','Step','Interval','CurVal','Mode'];
 			for (var i = 0; i < parseInt(data.timers); i++) {
 				var newTimer = {};
@@ -19756,18 +19760,18 @@
 				timerList.push(newTimer);
 			}
 
-			this.simulator.timerList = timerList;
+			this.state.timerList = timerList;
 			console.log('timerList loaded', timerList);
 
 			//loading resources
 			var resourceList = [];
 			var imageList = [];
 			var allResources = data.resourceList || [];
-			this.simulator.resourceList = resourceList;
-			this.simulator.imageList = imageList;
+			this.state.resourceList = resourceList;
+			this.state.imageList = imageList;
 			var basicUrl = data.basicUrl;
 			var num = allResources.length;
-			this.simulator.totalResourceNum = num;
+			this.state.totalResourceNum = num;
 			if (num > 0) {
 				allResources.map(function (resource) {
 					var newResource = {};
@@ -19781,7 +19785,7 @@
 							newImg.onload = function () {
 								num = num - 1;
 								//update loading progress
-								this.drawLoadingProgress(this.simulator.totalResourceNum, num, true, projectWidth, projectHeight);
+								this.drawLoadingProgress(this.state.totalResourceNum, num, true, projectWidth, projectHeight);
 								if (num == 0) {
 									callBack(data);
 								};
@@ -19791,7 +19795,7 @@
 							break;
 						default:
 							num = num - 1;
-							this.drawLoadingProgress(this.simulator.totalResourceNum, num, true);
+							this.drawLoadingProgress(this.state.totalResourceNum, num, true);
 
 							//update loading progress
 							break;
@@ -19806,25 +19810,25 @@
 		},
 		initProject: function () {
 
-			if (this.simulator && this.simulator.project && this.simulator.project.size) {
-				this.initCanvas(this.simulator.project, this.draw);
+			if (this.state.project && this.state.project.size) {
+				this.initCanvas(this.state.project, this.draw);
 			} else {
 				this.draw();
 			}
 		},
 		componentDidMount: function () {
 			//this.load();
-			this.simulator = _.cloneDeep(defaultSimulator);
-			this.simulator.project = _.cloneDeep(this.props.projectData);
-			console.log('receive new project data', this.simulator.project);
+			this.state = _.cloneDeep(defaultSimulator);
+			this.state.project = _.cloneDeep(this.props.projectData);
+			console.log('receive new project data', this.state.project);
 
 			this.initProject();
 		},
 		componentWillReceiveProps: function (newProps) {
-			this.simulator = _.cloneDeep(defaultSimulator);
-			this.simulator.project = _.cloneDeep(newProps.projectData);
+			this.state = _.cloneDeep(defaultSimulator);
+			this.state.project = _.cloneDeep(newProps.projectData);
 			this.initProject();
-			console.log('receive new project data', this.simulator.project);
+			console.log('receive new project data', this.state.project);
 		},
 		drawLoadingProgress: function (total, currentValue, countDown, projectWidth, projectHeight) {
 			var progress = '0.0%';
@@ -19844,7 +19848,7 @@
 			if (_project) {
 				project = _project;
 			} else {
-				project = this.simulator.project;
+				project = this.state.project;
 			}
 
 			var offcanvas = this.refs.offcanvas;
@@ -19886,6 +19890,7 @@
 				}
 
 				var page = project.pageList[curPageIdx];
+				this.state.curPageIdx = curPageIdx;
 
 				this.drawPage(page, options);
 
@@ -19939,7 +19944,7 @@
 		},
 		handleTimers: function (num) {
 
-			var timerList = this.simulator.timerList;
+			var timerList = this.state.timerList;
 			var timer = timerList[num];
 			//update timer
 			var postfix = ['Start', 'Stop', 'Step', 'Interval', 'CurVal', 'Mode'];
@@ -19967,10 +19972,12 @@
 				var startValue = timer['SysTmr_' + num + '_Start'];
 				if (cont) {
 					if (targetTag.value > startValue) {
-						targetTag.value = startValue;
+						// targetTag.value = startValue;
+						this.setTagByTag(targetTag, startValue);
 					};
 				} else {
-					targetTag.value = startValue;
+					// targetTag.value = startValue;
+					this.setTagByTag(targetTag, startValue);
 				}
 
 				this.draw();
@@ -20275,7 +20282,8 @@
 					var numberTag = this.findTagByName(widget.tag);
 
 					if (numberTag) {
-						numberTag.value = widget.info.initValue;
+						// numberTag.value = widget.info.initValue
+						this.setTagByTag(numberTag, widget.info.initValue);
 					};
 				}
 			} else {
@@ -20328,7 +20336,7 @@
 			}
 		},
 		drawNum: function (curX, curY, widget, options) {
-			console.log(widget.info);
+			// console.log(widget.info);
 			var offcanvas = this.refs.offcanvas;
 			var offctx = offcanvas.getContext('2d');
 			//get current value
@@ -20350,78 +20358,133 @@
 			//size
 			var curWidth = widget.info.width;
 			var curHeight = widget.info.height;
+
+			var tempcanvas = this.refs.tempcanvas;
+			tempcanvas.width = curWidth;
+			tempcanvas.height = curHeight;
+			var tempCtx = tempcanvas.getContext('2d');
+			tempCtx.clearRect(0, 0, curWidth, curHeight);
+			//offCtx.scale(1/this.scaleX,1/this.scaleY);
+			var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
+			//offCtx.fillStyle = this.numColor;
+			tempCtx.font = numString;
+			tempCtx.textAlign = 'center';
 			console.log(curValue);
+
+			widget.oldValue = widget.oldValue || 0;
+
 			if (curValue != undefined && curValue != null) {
 				//offCtx.save();
 				//handle action before
-
 				curValue = this.limitValueBetween(curValue, minValue, maxValue);
-				var tempcanvas = this.refs.tempcanvas;
-				tempcanvas.width = curWidth;
-				tempcanvas.height = curHeight;
-				var tempCtx = tempcanvas.getContext('2d');
-				tempCtx.clearRect(0, 0, curWidth, curHeight);
-				tempCtx.save();
-				//offCtx.scale(1/this.scaleX,1/this.scaleY);
-				var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
-				//offCtx.fillStyle = this.numColor;
-				tempCtx.font = numString;
-				tempCtx.textAlign = 'center';
+				if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
 
-				var tempNumValue = String(curValue);
-				//配置小数位数
-				if (parseInt(decimalCount) > 0) {
-					tempNumValuePair = tempNumValue.split('.');
-					if (tempNumValuePair.length > 1) {
-						//has original fraction
-						tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempNumValuePair[1], decimalCount, 0, false);
-					} else {
-						//only int
-						tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits('', decimalCount, 0, false);
+					var tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+
+					//drawbackground
+					var bgTex = widget.texList[0].slices[0];
+					// this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
+					// tempCtx.globalCompositeOperation = "destination-in";
+					// console.log(tempNumValue);
+					// tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
+					// // tempCtx.fillText(tempNumValue,0,)
+					// tempCtx.restore()
+					this.drawStyleString(tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx);
+					offctx.drawImage(tempcanvas, curX, curY, curWidth, curHeight);
+					//offCtx.restore();
+
+					//handle action
+					this.handleAlarmAction(Number(curValue), widget, lowAlarmValue, highAlarmValue);
+					widget.oldValue = Number(curValue);
+				} else {
+					//animate number
+
+					//drawbackground
+					var bgTex = widget.texList[0].slices[0];
+					var totalFrameNum = 10;
+					// //draw
+					var tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+					this.drawStyleString(tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx);
+					var oldHeight = (totalFrameNum - widget.curFrameNum) * 1.0 / totalFrameNum * curHeight;
+					offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
+
+					var tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+					this.drawStyleString(tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx);
+					var oldHeight = widget.curFrameNum * 1.0 / totalFrameNum * curHeight;
+					offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
+
+					// var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
+
+					if (widget.animateTimerId == undefined || widget.animateTimerId == 0) {
+						widget.animateTimerId = setInterval(function () {
+							if (widget.curFrameNum != undefined) {
+								widget.curFrameNum += 1;
+							} else {
+								widget.curFrameNum = 1;
+							}
+							if (widget.curFrameNum > totalFrameNum - 1) {
+								clearInterval(widget.animateTimerId);
+								widget.animateTimerId = 0;
+								widget.curFrameNum = 0;
+								widget.oldValue = curValue;
+							}
+							this.draw();
+						}.bind(this), 16);
 					}
 				}
-				if (numOfDigits) {
-					//配置前导0模式
-					var intPart = tempNumValue.split('.')[0];
-					var intDigits = numOfDigits - decimalCount;
-					if (frontZeroMode == '1') {
-						intPart = this.changeNumDigits(intPart, intDigits, 0, true);
-					} else {
-						intPart = this.changeNumDigits(intPart, intDigits, ' ', true);
-					}
-					if (tempNumValue.split('.').length > 1) {
-						tempNumValue = intPart + '.' + tempNumValue[1];
-					} else {
-						tempNumValue = intPart;
-					}
-				}
-
-				//配置正负号
-				if (symbolMode == '1') {
-					var value = parseFloat(tempNumValue);
-					var symbol = '';
-					if (value > 0) {
-						symbol = '+';
-					} else if (value < 0) {
-						symbol = '-';
-					}
-					tempNumValue = symbol + tempNumValue;
-				}
-
-				//drawbackground
-				var bgTex = widget.texList[0].slices[0];
-				this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
-				tempCtx.globalCompositeOperation = "destination-in";
-				console.log(tempNumValue);
-				tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 + numSize / 4);
-				// tempCtx.fillText(tempNumValue,0,)
-				tempCtx.restore();
-				offctx.drawImage(tempcanvas, curX, curY, curWidth, curHeight);
-				//offCtx.restore();
-				//handle action
-				this.handleAlarmAction(Number(curValue), widget, lowAlarmValue, highAlarmValue);
-				widget.oldValue = Number(curValue);
 			}
+		},
+		drawStyleString: function (tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx) {
+			tempCtx.clearRect(0, 0, curWidth, curHeight);
+			tempCtx.save();
+			this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
+			tempCtx.globalCompositeOperation = "destination-in";
+			console.log(tempNumValue);
+			tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 + numSize / 4);
+			// tempCtx.fillText(tempNumValue,0,)
+			tempCtx.restore();
+		},
+		generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
+			var tempNumValue = String(curValue);
+			//配置小数位数
+			if (parseInt(decimalCount) > 0) {
+				tempNumValuePair = tempNumValue.split('.');
+				if (tempNumValuePair.length > 1) {
+					//has original fraction
+					tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempNumValuePair[1], decimalCount, 0, false);
+				} else {
+					//only int
+					tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits('', decimalCount, 0, false);
+				}
+			}
+			if (numOfDigits) {
+				//配置前导0模式
+				var intPart = tempNumValue.split('.')[0];
+				var intDigits = numOfDigits - decimalCount;
+				if (frontZeroMode == '1') {
+					intPart = this.changeNumDigits(intPart, intDigits, 0, true);
+				} else {
+					intPart = this.changeNumDigits(intPart, intDigits, ' ', true);
+				}
+				if (tempNumValue.split('.').length > 1) {
+					tempNumValue = intPart + '.' + tempNumValue[1];
+				} else {
+					tempNumValue = intPart;
+				}
+			}
+
+			//配置正负号
+			if (symbolMode == '1') {
+				var value = parseFloat(tempNumValue);
+				var symbol = '';
+				if (value > 0) {
+					symbol = '+';
+				} else if (value < 0) {
+					symbol = '-';
+				}
+				tempNumValue = symbol + tempNumValue;
+			}
+			return tempNumValue;
 		},
 		drawDigit: function (digit, widget, originX, originY, width, height) {
 
@@ -20539,7 +20602,7 @@
 				offctx.save();
 				offctx.translate(x + 0.5 * w, y + 0.5 * h);
 				offctx.rotate(Math.PI * arc / 180);
-				var imageList = this.simulator.imageList;
+				var imageList = this.state.imageList;
 				for (var i = 0; i < imageList.length; i++) {
 					if (imageList[i].id == image) {
 						// console.log(image);
@@ -20581,7 +20644,7 @@
 			} else {
 				offctx = ctx;
 			}
-			var imageList = this.simulator.imageList;
+			var imageList = this.state.imageList;
 			for (var i = 0; i < imageList.length; i++) {
 				if (imageList[i].id == imageName) {
 
@@ -20601,7 +20664,7 @@
 		},
 		getImage: function (imageName) {
 			var name = this.getImageName(imageName);
-			var imageList = this.simulator.imageList || [];
+			var imageList = this.state.imageList || [];
 			for (var i = 0; i < imageList.length; i++) {
 				if (imageList[i].id == name) {
 					return imageList[i];
@@ -20626,10 +20689,10 @@
 			}
 		},
 		findClickTargets: function (x, y) {
-			var project = this.simulator.project;
+			var project = this.state.project;
 			var targets = [];
 			if (project.pageList && project.pageList.length) {
-				var page = project.pageList[this.simulator.curPageIdx];
+				var page = project.pageList[this.state.curPageIdx];
 				if (page) {
 					targets.push(page);
 					//if canvas clicked
@@ -20717,7 +20780,7 @@
 			this.mouseState.position.y = y;
 
 			var targets = this.findClickTargets(x, y);
-			this.simulator.currentPressedTargets = targets;
+			this.state.currentPressedTargets = targets;
 			// console.log(targets);
 			for (var i = 0; i < targets.length; i++) {
 				if (targets[i].type == 'widget') {
@@ -20743,7 +20806,8 @@
 							var targetTag = this.findTagByName(widget.tag);
 							if (targetTag) {
 								targetTag.value = parseInt(targetTag.value);
-								targetTag.value = targetTag.value > 0 ? 0 : 1;
+								// targetTag.value = targetTag.value > 0 ? 0 : 1;
+								this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
 							}
 						}
 					widget.mouseState = mouseState;
@@ -20755,7 +20819,8 @@
 					var targetTag = this.findTagByName(widget.tag);
 
 					if (targetTag && targetTag.name != '') {
-						targetTag.value = parseInt(curButtonIdx);
+						// targetTag.value = parseInt(curButtonIdx);
+						this.setTagByTag(targetTag, parseInt(curButtonIdx));
 
 						needRedraw = true;
 					};
@@ -20775,13 +20840,13 @@
 			this.mouseState.position.x = x;
 			this.mouseState.position.y = y;
 
-			var pressedTargets = this.simulator.currentPressedTargets;
+			var pressedTargets = this.state.currentPressedTargets;
 
 			for (var i = 0; i < pressedTargets.length; i++) {
 				this.handleElementRelease(pressedTargets[i], _.cloneDeep(this.mouseState));
 				this.handleTargetAction(pressedTargets[i], 'Release');
 			}
-			this.simulator.currentPressedTargets = [];
+			this.state.currentPressedTargets = [];
 		},
 		handleElementRelease: function (elem, mouseState) {
 			var needRedraw = false;
@@ -20833,7 +20898,7 @@
 			}
 		},
 		findTagByName: function (tag) {
-			var tagList = this.simulator.tagList;
+			var tagList = this.state.tagList;
 			// console.log(tag);
 			if (tag && tag != "") {
 
@@ -20851,7 +20916,7 @@
 			if (tag && tag != "") {
 				tag = JSON.parse(tag);
 
-				var tagList = this.simulator.tagList;
+				var tagList = this.state.tagList;
 				for (var i = 0; i < tagList.length; i++) {
 					if (tagList[i].name == tag.name) {
 						return tagList[i];
@@ -20860,6 +20925,19 @@
 			}
 
 			return null;
+		},
+		setTagByName: function (name, value) {
+			var tag = this.findTagByName(name);
+			if (tag) {
+				tag.value = value;
+				this.setState({ tag: tag });
+			}
+		},
+		setTagByTag: function (tag, value) {
+			if (tag) {
+				tag.value = value;
+				this.setState({ tag: tag });
+			}
 		},
 		timerFlag: function (param) {
 			if (param.search(/SysTmr_(\d+)_\w+/) != -1) {
@@ -20883,32 +20961,41 @@
 			switch (op) {
 				case 'GOTO':
 
-					var project = this.simulator.project;
+					var project = this.state.project;
 					var curPageTag = this.findTagByName(project.tag);
 
-					if (curPageTag && curPageTag.value > 0 && curPageTag.value <= project.pageList.length) {
-						//param2 valid
-						var lastPage = project.pageList[curPageTag.value - 1];
-						lastPage.loaded = false;
-						//handle unload
-						this.handleTargetAction(lastPage, 'Unload');
+					// if (curPageTag && curPageTag.value > 0 && curPageTag.value <= project.pageList.length) {
+					//     //param2 valid
+					//     var lastPage = project.pageList[curPageTag.value - 1];
+					//     lastPage.loaded = false;
+					//     //handle unload
+					//     this.handleTargetAction(lastPage, 'Unload');
+
+					// }
+					if (curPageTag) {
+						if (param2 > 0 && param2 <= project.pageList.length) {
+							// curPageTag.value = param2;
+							this.setTagByTag(curPageTag, param2);
+							this.draw();
+						}
 					}
-					curPageTag.value = param2;
-					this.draw();
+
 					break;
 				case 'INC':
 
 					var targetTag = this.findTagByName(param1);
 
-					if (targetTag.name != '') {
-						targetTag.value += parseInt(param2);
+					if (targetTag) {
+						var nextValue = targetTag.value + Number(param2);
+						this.setTagByTag(targetTag, nextValue);
 						this.draw();
 					};
 					break;
 				case 'DEC':
 					var targetTag = this.findTagByName(param1);
-					if (targetTag.name != '') {
-						targetTag.value -= parseInt(param2);
+					if (targetTag) {
+						var nextValue = targetTag.value - Number(param2);
+						this.setTagByTag(targetTag, nextValue);
 						this.draw();
 					};
 					break;
@@ -20916,8 +21003,9 @@
 
 					var targetTag = this.findTagByName(param1);
 
-					if (targetTag.name != '') {
-						targetTag.value = parseInt(param2);
+					if (targetTag) {
+						// targetTag.value = parseInt(param2);
+						this.setTagByTag(targetTag, Number(param2));
 						this.draw();
 					};
 					break;
@@ -20929,17 +21017,14 @@
 			};
 		},
 		updateTag: function (curTagIdx, value) {
-			var tagList = this.simulator.tagList;
+			var tagList = this.state.tagList;
 			if (curTagIdx >= 0 && curTagIdx < tagList.length) {
-				tagList[curTagIdx].value = value;
+				// tagList[curTagIdx].value = value;
+				this.setTagByTag(tagList[curTagIdx], value);
 				this.draw();
 			}
 		},
 		render: function () {
-			var tagList = [];
-			if (this.simulator && this.simulator.tagList) {
-				tagList = _.cloneDeep(this.simulator.tagList);
-			}
 
 			return React.createElement(
 				'div',
@@ -20949,9 +21034,9 @@
 					{ className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseUp: this.handleRelease },
 					React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
 					React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
-					React.createElement('canvas', { ref: 'tempcanvas', className: 'simulator-tempcanvas' })
+					React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
 				),
-				React.createElement(TagList, { tagList: tagList, updateTag: this.updateTag })
+				React.createElement(TagList, { tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag })
 			);
 		}
 	});
