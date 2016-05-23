@@ -140,4 +140,9 @@ router.route('/user/findpassword')
     .get(findPassword.getResetPasswordPage)
     .post(findPassword.resetPassword)
 
+router.route('*')
+    .all(function (req,res,next) {
+        res.render('login/404.html');
+    })
+
 module.exports = router

@@ -1,6 +1,7 @@
 var UserModel = require('../db/models/UserModel')
 var ProjectModel = require('../db/models/ProjectModel')
 var path = require('path')
+var _ = require('lodash')
 module.exports = function (req, res) {
 	var _user = req.session.user
 	if (_user && _user.username && _user.id) {
@@ -9,9 +10,17 @@ module.exports = function (req, res) {
                 console.log(err)
                 res.status(500).end()
             }
+            var processedProjects = _.cloneDeep(projects).map(function (project) {
+                var info = {}
+                info._id = project._id;
+                info.userId = project.userId;
+                info.resolution = project.resolution
+                info.name = project.name;
+                return info
+            })
             res.render('login/personalProject.html',{
                                        username:_user.username,
-                                       projects:projects
+                                       projects:processedProjects
                                    })
 
         })

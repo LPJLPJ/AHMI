@@ -1,3 +1,5 @@
+var http = require('http');
+var https = require('https');
 var express = require('express')
 var bodyParser = require('body-parser')
 var ejs = require('ejs')
@@ -33,6 +35,15 @@ app.set('port',process.env.PORT||3000)
 app.set('views',path.join(__dirname,'views'))
 app.engine('.html',ejs.__express)
 app.set('view engine','html')
+
+app.use(function (req, res, next) {
+    if (!req.secure){
+        return res.redirect('https://' + req.hostname + req.url);
+    }else{
+        next()
+    }
+
+})
 
 app.use(CookieParser())
 // app.use(Session({
@@ -100,11 +111,25 @@ app.post('/delete-user',function(req, res){
 })
 
 
+//handle error and 404
 
-
-app.listen(app.get('port'),function(){
-	console.log('Listening on: '+app.get('port'));
+app.use(function (err,req,res,next) {
+    console.log(arguments)
+    next()
 })
+
+//app.listen(app.get('port'),function(){
+//	console.log('Listening on: '+app.get('port'));
+//})
+
+var privateKey = fs.readFileSync('./credentials/privatekey.key');
+var certificate = fs.readFileSync('./credentials/certificate.key');
+var options = {
+    key:privateKey,
+    cert:certificate
+}
+http.createServer(app).listen(app.get('port'));
+https.createServer(options,app).listen(443);
 
 
 
