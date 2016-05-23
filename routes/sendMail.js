@@ -28,8 +28,10 @@ module.exports.sendVerifyMail = function (req, res) {
                 if (user){
                     mailService.sendVerifyMail(user.email,user._id, function (err,info) {
                         if (err){
+                            //console.log(err)
                             errHandler(res, 500, 'mail send error')
                         }else{
+                            //console.log('send ok')
                             res.end('ok')
                         }
                     })

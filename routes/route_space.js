@@ -24,55 +24,8 @@ module.exports = function (req, res) {
                                    })
 
         })
-		//UserModel.findById(_user.id,function(err, user){
-		//	if (err) {
-		//		console.log(err);
-		//		res.end('error')
-		//	}
-		//	if (user) {
-		//		console.log('user', user);
-         //       //find all projects
-         //       var projectIds = user.projectIds
-         //       console.log('projectIds',projectIds)
-         //       //var projects = projectIds.map(function (projectId) {
-         //       //    ProjectModel.findById(projectId, function (err, project) {
-         //       //        if (err) {
-         //       //            console.log('find project error')
-         //       //            return {name:'a'};
-         //       //        }else{
-         //       //            return project
-         //       //        }
-         //       //
-         //       //    })
-         //       //})
-        //
-         //       var projects = []
-         //       var num = projectIds.length;
-        //
-         //       for (var i = 0;i<projectIds.length;i++){
-         //           ProjectModel.findById(projectIds[i], function (err, project) {
-         //               if (err) {
-         //                   console.log('find project error')
-         //               }else{
-         //                   projects.push(project)
-         //               }
-         //               num = num -1
-         //               if (num == 0){
-         //                   res.render('login/personalProject.html',{
-         //                       username:user.accountName,
-         //                       projects:projects
-         //                   })
-         //               }
-        //
-        //
-        //
-         //           })
-         //       }
-        //
-		//	}
-		//})
+
 	}else{
-		console.log('user not valid');
 		res.end('user not valid')
 		res.redirect('/user/login')
 	}

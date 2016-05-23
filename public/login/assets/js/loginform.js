@@ -13,138 +13,142 @@ $(function(){
 		},
 		general:{
 			wrong:'账户错误',
-            verify:'<a id="resend">账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>'
+            verify:'<a id="resend">账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>',
+            verifyErr:'邮箱不存在'
 		}
-	}
+	};
 	var formVerify = {
 		username:false,
 		password:false,
 		captcha:false,
-	}
+	};
 
-	var submit = document.getElementById('submit')
+	var submit = document.getElementById('submit');
 
 
-	$('#captcha-img').attr('src','/captcha') 
+	$('#captcha-img').attr('src','/captcha');
 
 	$('#login-form').on('focus',function(){
 		$('#captcha-verify').html('')
-	})
+	});
 
 	$('#username')
 	.on('focus',function(){
-		formVerify.username = false
-		$('#username-verify').html('')
+		formVerify.username = false;
+		$('#username-verify').html('');
 		submit.disabled = true
 	})
 	.on('keyup',function(){
-		var value = $(this).val()
+		var value = $(this).val();
 		if (value.length>0) {
 			//ok
-			formVerify.username = true
-            $('#username-verify').html('')
+			formVerify.username = true;
+            $('#username-verify').html('');
 			checkSubmit()
 		}else{
-			formVerify.username = false
+			formVerify.username = false;
 			$('#username-verify').html(ErrMessages.username.empty)
 		}
-	})
+	});
 
 	$('#password')
 	.on('focus',function(){
-		formVerify.password = false
-		$('#password-verify').html('')
+		formVerify.password = false;
+		$('#password-verify').html('');
 		submit.disabled = true
 
 	})
 	.on('keyup',function(){
-		var value = $(this).val()
+		var value = $(this).val();
 		if (value.length>0) {
 			//ok
-			formVerify.password = true
-            $('#password-verify').html('')
+			formVerify.password = true;
+            $('#password-verify').html('');
 			checkSubmit()
 		}else{
-			formVerify.password = false
+			formVerify.password = false;
 			$('#password-verify').html(ErrMessages.password.empty)
 		}
-	})
+	});
 
 	$('#captcha-input')
 	.on('focus',function(){
-		formVerify.captcha = false
-		$('#captcha-verify').html('')
+		formVerify.captcha = false;
+		$('#captcha-verify').html('');
 		submit.disabled = true
 	})
 	.on('keyup',function(){
-		var value = $(this).val()
+		var value = $(this).val();
 		if (value.length>0) {
 			//ok
-			formVerify.captcha = true
-            $('#captcha-verify').html('')
+			formVerify.captcha = true;
+            $('#captcha-verify').html('');
 			checkSubmit()
 		}else{
-			formVerify.captcha = false
+			formVerify.captcha = false;
 			$('#captcha-verify').html(ErrMessages.captcha.empty)
 		}
-	})
+	});
 
 	$('#change-captcha').on('click',function(){
 		$('#captcha-img').attr('src','/captcha') 
-	})
+	});
 
 	$('#submit').on('click',function(){
 		var userInfo = {
 			username:$('#username').val(),
 			password:$.md5($('#password').val()),
 			captcha:$('#captcha-input').val()
-		}
-		console.log('submit', userInfo);
-		$(this).attr('disabled',true)
+		};
+		$(this).attr('disabled',true);
 		$.ajax({
 			type:'POST',
-			url:'/user/login',
+			url:'/user/loginAPI',
 			data:userInfo,
 			success:function(data, status, xhr){
-				console.log(data);
-				console.log(xhr);
-				switch (data){
-					case 'ok':
-					console.log('ok');
-					window.location.href='/private/space'
-					break
-					case 'not match':
-					$('#captcha-verify').html(ErrMessages.general.wrong)
-					break
-					case 'no user':
-					$('#captcha-verify').html(ErrMessages.general.wrong)
-					break
-					case 'captcha invalid':
-					$('#captcha-verify').html(ErrMessages.captcha.wrong)
+                console.log(data)
+				if (data == 'ok'){
+                    window.location.href='/private/space';
+                    return;
+                }
 
-					break
-                    case 'not verified':
-                        //not verified
-                    $('#captcha-verify').html(ErrMessages.general.verify)
-                        break
-				}
-                $('#captcha-img').attr('src','/captcha')
-                $(this).attr('disabled',false)
+                $('#captcha-img').attr('src','/captcha');
+                $('#submit').attr('disabled',false)
 			},
 			error:function(err, status, xhr){
-				console.log(err);
-				$('#captcha-verify').html(ErrMessages.general.wrong)
-                $('#captcha-img').attr('src','/captcha')
-                $(this).attr('disabled',false)
+                var errMsg = err.responseJSON.errMsg;
+                switch (errMsg){
+                    case 'not match':
+                        $('#captcha-verify').html(ErrMessages.general.wrong);
+                        break;
+                    case 'no user':
+                        $('#captcha-verify').html(ErrMessages.general.wrong);
+                        break;
+                    case 'captcha invalid':
+                        $('#captcha-verify').html(ErrMessages.captcha.wrong);
+
+                        break;
+                    case 'not verified':
+                        //not verified
+                        $('#captcha-verify').html(ErrMessages.general.verify);
+                        break;
+                    default:
+                        $('#captcha-verify').html(ErrMessages.general.wrong);
+                        break;
+
+                }
+
+                $('#captcha-img').attr('src','/captcha');
+                $('#submit').attr('disabled',false)
 
 			}
 
 		})
-	})
+	});
 
 
-    $('#resend').on('click', function () {
-        var username = $('#username').val()
+    $('#captcha-verify').on('click','#resend', function () {
+        var username = $('#username').val();
         if (username!=''){
             $.ajax({
                 type:'POST',
@@ -156,15 +160,26 @@ $(function(){
                     $('captcha-verify').html('已发送验证邮件, 请查收')
                 },
                 error: function (err, status, xhr) {
-                    $('#captcha-verify').html(ErrMessages.general.verify)
+                    var errMsg = err.responseJSON.errMsg;
+                    var captchaVerify = $('#captcha-verify')
+                    switch (errMsg){
+                        case 'mail send error':
+                            captchaVerify.html(ErrMessages.general.verifyErr)
+                            break;
+                        default:
+                            captchaVerify.html(ErrMessages.general.wrong)
+                            break;
+
+                    }
+
                 }
             })
         }
-    })
+    });
 
 	function checkSubmit(){
-		var submit = document.getElementById('submit')
-		var checkResult = true
+		var submit = document.getElementById('submit');
+		var checkResult = true;
 		for (var key in formVerify){
 			checkResult = formVerify[key] && checkResult
 		}
@@ -178,4 +193,4 @@ $(function(){
 
 
 
-})
+});

@@ -12,8 +12,7 @@ var defaultProject = require('../utils/defaultProject')
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
-            console.log(err)
-            res.end(err)
+            errHandler(res,500,err)
         }
         res.end(projects)
     })
@@ -26,7 +25,6 @@ projectRoute.getProjectById = function (req, res) {
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
-                console.log(err)
                 errHandler(res,500,'error')
             }
             //console.log(project)
@@ -163,7 +161,6 @@ projectRoute.deleteProject = function (req, res) {
 }
 
 projectRoute.saveProject = function (req, res) {
-    console.log('saving project')
     var projectId = req.params.id;
     if (projectId!=""){
         ProjectModel.findById(projectId, function (err, project) {

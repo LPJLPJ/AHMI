@@ -8,6 +8,9 @@ var path = require('path')
 var mongoose = require('mongoose')
 var UserModel = require('./db/models/UserModel')
 
+//logger
+var logger = require('morgan');
+
 //Captcha
 var CaptchaGenerator = require('./utils/CaptchaGenerator')
 //Session
@@ -36,6 +39,8 @@ app.set('views',path.join(__dirname,'views'))
 app.engine('.html',ejs.__express)
 app.set('view engine','html')
 
+//app.use(logger(':method :url :response-time'));
+
 app.use(function (req, res, next) {
     if (!req.secure){
         return res.redirect('https://' + req.hostname + req.url);
@@ -45,24 +50,24 @@ app.use(function (req, res, next) {
 
 })
 
-app.use(CookieParser())
-// app.use(Session({
-// 	resave:true,
-// 	saveUninitialized:false,
-// 	secret:'ahmi'
-// }))
 
+//cookie
+app.use(CookieParser());
+
+//session
 app.use(Session({
 	resave:false,
 	saveUninitialized:false,
-    cookie:{maxAge:24*60*60*1000},
+    cookie:{
+        maxAge:24*60*60*1000 //a day
+    },
 	secret:'ahmi',
 	store:new MongoStore({
 		url:'mongodb://localhost/ahmi',
         ttl:20000,
         autoRemove: 'native'
 	})
-}))
+}));
 
 
 // parse application/x-www-form-urlencoded 
@@ -71,57 +76,19 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json 
 app.use(bodyParser.json())
 
+//public
 app.use('/public',express.static('public'))
-//router
 
+//session control
 app.use(sessionControl)
 
+
+//router
 app.use(router)
 
 
 
-
-app.post('/delete-user',function(req, res){
-	UserModel.findByName(req.body.username,function(err , user){
-		if (err) {
-			console.log(err);
-			res.end('error')
-		}
-		if (user) {
-			//duplicated name
-			user.remove(function(err,user){
-				if (err) {
-					console.log(err);
-					res.end('error')
-				}
-
-			})
-
-		}
-		UserModel.fetch(function(err, users){
-			if (err) {
-				console.log(err);
-				res.end('error')
-			}
-			res.end(JSON.stringify(users))
-		})
-		
-
-	})
-})
-
-
-//handle error and 404
-
-app.use(function (err,req,res,next) {
-    console.log(arguments)
-    next()
-})
-
-//app.listen(app.get('port'),function(){
-//	console.log('Listening on: '+app.get('port'));
-//})
-
+//https
 var privateKey = fs.readFileSync('./credentials/privatekey.key');
 var certificate = fs.readFileSync('./credentials/certificate.key');
 var options = {

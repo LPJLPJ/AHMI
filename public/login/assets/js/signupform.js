@@ -227,35 +227,35 @@ function init(){
 		submit.disabled = true;
 		$.ajax({
 			type:'POST',
-			url:'/user/signup',
+			url:'/user/signupapi',
 			data:userInfo,
 			success:function(data, textStatus, xhr){
-				switch (data){
-					case 'error':
-					captchaVerify.innerHTML = ErrMessages.general.wrong
-					break;
-					case 'captcha error':
-					captchaVerify.innerHTML = ErrMessages.captcha.wrong
-					captchaImg.src='/captcha'
-					break;
-					case 'duplicate':
-					captchaVerify.innerHTML = ErrMessages.general.wrong
-					break;
-					case 'new':
-					//success
-					console.log('new');
-					captchaVerify.innerHTML = '注册成功, 请进入邮箱进行确认!'
-                        setTimeout(function () {
-                            window.location.href='/user/login'
-                        },2000)
-
-					break;
-				}
+                //console.log(data);
+                captchaVerify.innerHTML = '注册成功, 请进入邮箱进行确认!';
+                setTimeout(function () {
+                    window.location.href='/user/login'
+                },2000);
                 captchaImg.src = '/captcha'
 				submit.disabled = false
 			},
 			error:function(err, textStatus, xhr){
-				console.log(err);
+                //console.log(err)
+				switch (err.responseJSON.errMsg){
+                    case 'error':
+                        captchaVerify.innerHTML = ErrMessages.general.wrong
+                        break;
+                    case 'captcha error':
+                        captchaVerify.innerHTML = ErrMessages.captcha.wrong
+                        captchaImg.src='/captcha'
+                        break;
+                    case 'duplicate':
+                        captchaVerify.innerHTML = ErrMessages.general.wrong
+                        break;
+                    default:
+                        captchaVerify.innerHTML = err.responseJSON.errMsg;
+                        break;
+
+                }
                 captchaImg.src = '/captcha'
 				submit.disabled = false
 			}

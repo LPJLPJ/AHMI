@@ -3,11 +3,13 @@
  */
 
 module.exports = function (res, code, message) {
+    console.log('error', message)
     res.status(code)
     if (message){
-        res.end(message)
+        res.send({errMsg:message})
+        res.end()
     }else{
         res.end()
     }
-    return
+    return;
 }
