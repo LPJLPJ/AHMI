@@ -1397,7 +1397,7 @@
                                     <td><input class="form-control" colorpicker="rgba" type="text"  ng-model="slice.color" /></td>
                                     <td >
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
-                                        <img  ng-src="{{basicUrl + (slice.imgSrc||'blank.png')}}"  width="100px" height="100px" />
+                                        <img  ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}"  width="100px" height="100px" />
                                         </div>
                                     </td>
                                     <td><span  ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span></td>

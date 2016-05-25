@@ -8,9 +8,10 @@ var ProjectSchema = new mongoose.Schema({
     userId:mongoose.Schema.Types.ObjectId,
     author:String,
     resolution:String,
+    thumbnail:String,
     content:{type:String},
     createTime:{type:Date,default:Date.now},
-    lastModifiedTIme:{type:Date,default:Date.now}
+    lastModifiedTime:{type:Date,default:Date.now}
 })
 
 ProjectSchema.pre('save',function(next){
@@ -18,7 +19,7 @@ ProjectSchema.pre('save',function(next){
     if (this.isNew){
         this.createTime = Date.now()
     }else{
-        this.lastModifiedTIme = Date.now()
+        this.lastModifiedTime = Date.now()
     }
 
     next()

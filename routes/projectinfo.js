@@ -9,6 +9,7 @@ var fs = require('fs')
 var path = require('path')
 var errHandler = require('../utils/errHandler')
 var defaultProject = require('../utils/defaultProject')
+var nodejszip = require('nodejs-zip');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -168,7 +169,7 @@ projectRoute.saveProject = function (req, res) {
                 errHandler(res,500,'project error')
             }else{
                 var curProjectContent = req.body.project
-                if (curProjectContent!=''){
+                if (curProjectContent){
                     project.content = JSON.stringify(curProjectContent)
                     project.save(function (err) {
                         if (err){
@@ -189,4 +190,63 @@ projectRoute.saveProject = function (req, res) {
     }
 }
 
-module.exports = projectRoute
+projectRoute.saveThumbnail = function (req, res) {
+    var projectId = req.params.id;
+    if (projectId!=""){
+        ProjectModel.findById(projectId, function (err, project) {
+            if (err){
+                errHandler(res,500,'project error')
+            }else{
+                var thumbnail = req.body.thumbnail;
+                if (thumbnail){
+                    project.thumbnail = thumbnail;
+                    //console.log('thumbnail',thumbnail)
+                    project.save(function (err) {
+                        if (err){
+                            errHandler(res, 500, 'project resave error')
+                        }else{
+                            res.end('ok')
+                        }
+                    })
+                }else{
+                    errHandler(res,500,'project save error')
+                }
+            }
+
+        })
+    }else{
+        errHandler(res,500,'projectId error');
+    }
+}
+
+
+projectRoute.generateProject = function (req, res) {
+    var projectId = req.params.id;
+    var dataStructure = req.body.dataStructure;
+    if (projectId!=""){
+        var ProjectBaseUrl = path.join(__dirname,'../projects',String(projectId));
+        var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
+        fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+            if (err){
+                errHandler(res,500,'write file error');
+            }else{
+                //write ok
+                var zip = new nodejszip();
+                var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                zip.compress(DistUrl,SrcUrl,['-rj'], function (err) {
+                    if (err){
+                        errHandler(res,500,err);
+                    }else{
+                        res.end('ok');
+                    }
+                })
+            }
+        })
+
+    }else{
+        errHandler(res,500,'projectId error');
+    }
+}
+
+module.exports = projectRoute;
