@@ -584,6 +584,20 @@ ideServices
                     this.pointerImageElement=null;
                 }
 
+                //初始化光带
+                if(level.texList[2]){
+                    //this.lightBandColor=level.texList[2].slices[0].color;
+                    if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                        this.lightBandImageElement =new Image();
+                        this.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
+                        this.lightBandImageElement.onload = (function(){
+
+                        }).bind(this);
+                    }else{
+                        this.lightBandImageElement=null;
+                    }
+                }
+
 
 
 
@@ -652,7 +666,7 @@ ideServices
 
                     //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
                     if(level.texList[2]){
-                        self.lightBandColor=level.texList[2].slices[0].color;
+                        //self.lightBandColor=level.texList[2].slices[0].color;
                         if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
                             self.lightBandImageElement=new Image();
                             self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
