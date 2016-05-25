@@ -238,9 +238,36 @@ projectRoute.generateProject = function (req, res) {
                     if (err){
                         errHandler(res,500,err);
                     }else{
-                        res.end('ok');
+                        //res.status(200).send('ok')
+                        //res.download(DistUrl,'file.zip', function (err) {
+                        //    if (err){
+                        //        errHandler(res,500,err);
+                        //    }else{
+                        //        console.log('ok')
+                        //    }
+                        //})
+                        res.end('ok')
+                        //res.sendFile(DistUrl)
                     }
                 })
+            }
+        })
+
+    }else{
+        errHandler(res,500,'projectId error');
+    }
+}
+
+projectRoute.downloadProject = function (req, res) {
+    var projectId = req.params.id;
+    if (projectId!=""){
+        var ProjectBaseUrl = path.join(__dirname,'../projects',String(projectId));
+        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+        res.download(DistUrl,'file.zip', function (err) {
+            if (err){
+                errHandler(res,500,err);
+            }else{
+                //res.end('ok');
             }
         })
 

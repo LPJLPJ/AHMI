@@ -405,8 +405,15 @@
                     }
                 })
                 .success(function (data,status,xhr) {
-                    console.log(data)
-                    toastr.info('生成成功')
+                    if (data == 'ok'){
+                        toastr.info('生成成功')
+                        //download
+                        window.location.href = '/project/'+$scope.project.projectId+'/download'
+                    }else{
+                        console.log(data);
+                        toastr.info('生成失败')
+                    }
+
                 })
                 .error(function (err,status,xhr) {
                     console.log(err)
