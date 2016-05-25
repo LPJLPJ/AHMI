@@ -19839,6 +19839,7 @@
 			}
 			var canvas = this.refs.canvas;
 			var ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, projectWidth, projectHeight);
 			ctx.font = "italic bold 48px serif";
 			ctx.fillStyle = "white";
 			ctx.fillText("加载中... " + progress, 0.5 * projectWidth, 0.5 * projectHeight);
@@ -20377,7 +20378,7 @@
 				//offCtx.save();
 				//handle action before
 				curValue = this.limitValueBetween(curValue, minValue, maxValue);
-				if (numModeId == '0' || numModeId == '1' && widget.oldValue && widget.oldValue == curValue) {
+				if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
 
 					var tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 
@@ -20579,18 +20580,19 @@
 			//handle action
 			if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
 				//enter high alarm
+				widget.oldValue = curValue;
 
 				this.handleTargetAction(widget, 'EnterHighAlarm');
 			} else if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
 				//leave high alarm
-
+				widget.oldValue = curValue;
 				this.handleTargetAction(widget, 'LeaveHighAlarm');
 			} else if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
 				//leave low alarm
-
+				widget.oldValue = curValue;
 				this.handleTargetAction(widget, 'LeaveLowAlarm');
 			} else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
-
+				widget.oldValue = curValue;
 				this.handleTargetAction(widget, 'EnterLowAlarm');
 			}
 		},
