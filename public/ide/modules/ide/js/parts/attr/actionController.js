@@ -59,7 +59,8 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             case Type.MyButtonGroup:
             case Type.MyLayer:
             case Type.MyPage:
-
+            case Type.MyNum:
+            case Type.MyImage:
                 $scope.showActionPanel = true;
                 break;
             default:

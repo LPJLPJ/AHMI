@@ -50,6 +50,9 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
         case Type.MyKnob:
             initConfigure(false,2,widgetInfo.tex);
             break;
+        case Type.MyImage:
+            initConfigure(false,2,widgetInfo.tex);
+            break;
         default:
             initConfigure(true,1,widgetInfo.tex);
             break;

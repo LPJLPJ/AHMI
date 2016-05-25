@@ -977,7 +977,7 @@ ideServices
                     var _callback=arg.callback;
 
                     var tex=level.texList[0];
-                    self.backggroundColor=tex.slices[0].color;
+                    self.backgroundColor=tex.slices[0].color;
                     if (tex.slices[0].imgSrc!='') {
                         var currentImageElement=new Image();
                         currentImageElement.src=tex.slices[0].imgSrc;
@@ -1001,7 +1001,7 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.backggroundColor;
+                ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
                     -(this.height / 2) ,
@@ -2831,9 +2831,6 @@ ideServices
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator)
             }else if(_newWidget.type==Type.MyImage){
-                if (_newWidget.backgroundImg==''){
-                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
-                }
                 fabric.MyImage.fromLevel(_newWidget,function(fabWidget){
                     _self.currentFabWidgetIdList=[fabWidget.id];
 
@@ -2852,7 +2849,7 @@ ideServices
 
 
                     OnWidgetSelected(_newWidget,_successCallback);
-                })
+                },initiator);
             }
 
 
