@@ -227,6 +227,7 @@ ideServices
 
                 arrange:true,         //true:横向 false:竖向
                 text:'文本',
+                fontName:'正文',
                 fontFamily:'Arial',
                 fontSize:15,
                 fontColor:'rgba(0,0,0,1)',
@@ -465,9 +466,10 @@ ideServices
                 symbolMode:'0',//符号模式标志，1：无符号位，1：有符号位
                 decimalCount:0,//保留的小数位数
                 numOfDigits:8,//数字的位数，最小1，最大未定
+                align:'center',//数字对齐方式
 
                 arrange:true,         //true:横向 false:竖向
-                numValue:'1',
+                numValue:1,
                 numFamily:'Arial',
                 numSize:15,
                 numColor:'rgba(0,0,0,1)',

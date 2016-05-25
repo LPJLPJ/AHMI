@@ -3,7 +3,7 @@
  * 控制navbar按钮的状态
  */
 ideServices.
-    service('NavService', function (CanvasService, ProjectService, OperateQueService, Type) {
+    service('NavService', function (CanvasService, ProjectService, OperateQueService, Type,$timeout) {
     var _self=this;
 
     /**
@@ -126,22 +126,43 @@ ideServices.
             console.warn('不可删除');
         }
     };
+
+    var undoing=false;
     this.DoUndo= function (_callback) {
         if(!_self.getOperateQueStatus().undoEnable){
             return;
         }
+        if (undoing){
+            console.log('正在撤销...');
+            return;
+        }
+        undoing=true;
         OperateQueService.undo(function () {
+            undoing=false;
             _callback&&_callback();
         })
+        $timeout(function () {
+            undoing=false;
+        },800);
     };
 
+        var redoing=false;
     this.DoRedo= function (_callback) {
         if(!_self.getOperateQueStatus().redoEnable){
             return;
         }
+        if (redoing){
+            console.log('正在重做');
+            return;
+        }
+        redoing=true;
         OperateQueService.redo(function () {
+            redoing=false;
             _callback&&_callback();
-        })
+        });
+        $timeout(function () {
+            redoing=false;
+        },800);
     };
 
 

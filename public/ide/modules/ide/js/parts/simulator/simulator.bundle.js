@@ -20377,7 +20377,7 @@
 				//offCtx.save();
 				//handle action before
 				curValue = this.limitValueBetween(curValue, minValue, maxValue);
-				if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
+				if (numModeId == '0' || numModeId == '1' && widget.oldValue && widget.oldValue == curValue) {
 
 					var tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 

@@ -52,6 +52,9 @@
     padding-left: 10px;
     padding-top: 3px;
     padding-bottom: 3px;
+
+    /*edit by lixang*/
+    border-radius: 4px;
 }
 .tex-container li div{
     width: 60%;
@@ -126,7 +129,7 @@
     border-color: lightgrey;
     background-color: white;
     max-height: 180px;
-    overflow: scroll;
+    overflow: auto;
     list-style: none;
     padding-left: 0px;
 }
@@ -219,7 +222,7 @@
 
 .dengModel-body .dengModal-table-display{
     max-height: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
     margin-bottom: 0px;
 }
 .dengModel-body .add-option{
@@ -347,7 +350,7 @@
 
 .deng-attr-item .listTable-container{
     max-height: 280px;
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -485,7 +488,7 @@
 }
 .deng-bg-table {
     max-height: 534px;
-    overflow: scroll;
+    overflow: auto;
 }
 .deng-bg-table thead tr td{
     font-size: 12px;

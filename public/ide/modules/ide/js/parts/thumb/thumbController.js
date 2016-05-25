@@ -189,11 +189,15 @@ ide.controller('ThumbCtrl', function ($scope, $timeout,
                 if ($scope.project.pages[i].id
                     ==page.id){
                     ProjectService.changeCurrentPageIndex(i, function (keepInSamePage) {
+                        var oldOperate=ProjectService.SaveCurrentOperate();
+
                         if (!keepInSamePage){
+
                             $scope.$emit('SwitchCurrentPage');
 
+
                         }else{
-                            $scope.$emit('ChangeCurrentPage',null, function () {
+                            $scope.$emit('ChangeCurrentPage',oldOperate, function () {
                             });
                         }
 

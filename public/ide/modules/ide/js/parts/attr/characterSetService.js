@@ -51,6 +51,16 @@ ideServices
             return _.cloneDeep(characterSet[index]);
         };
 
+        this.selectCharacterByName=function(name){
+            var character=null;
+            for(var i=0;i<characterSet.length;i++){
+                if(characterSet[i].fontName==name){
+                    character= _.cloneDeep(characterSet[i]);
+                }
+            }
+            return character;
+        };
+
         this.addCharacterSet=function(customCharacterSet){
             var temp=customCharacterSet;
             characterSet.push(temp);
@@ -62,5 +72,6 @@ ideServices
                 cb && cb();
             }
         }
+
 
     });

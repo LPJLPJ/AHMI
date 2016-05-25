@@ -70,16 +70,6 @@
             };
         }
 
-
-        function showLeft(){
-            $scope.$emit('ChangeShownArea',0);
-        }
-        function showRight(){
-            $scope.$emit('ChangeShownArea',1);
-        }
-        function showBottom(){
-            $scope.$emit('ChangeShownArea',2);
-        }
         function initProject(){
             ProjectService.getProjectTo($scope);
             $scope.project.resourceList = ResourceService.getAllResource()
@@ -93,6 +83,15 @@
         }
 
 
+        function showLeft(){
+            $scope.$emit('ChangeShownArea',0);
+        }
+        function showRight(){
+            $scope.$emit('ChangeShownArea',1);
+        }
+        function showBottom(){
+            $scope.$emit('ChangeShownArea',2);
+        }
         function saveProject() {
             ProjectService.getProjectTo($scope);
 
@@ -108,15 +107,15 @@
 
 
                     _.forEach(currentProject.pages,function (_page) {
-                        _page.url='';
-                        _.forEach(_page.layers,function (_layer) {
-                            _layer.url='';
-                            _layer.showSubLayer.url='';
-                            _.forEach(_layer.subLayers,function (_subLayer) {
-                                _subLayer.url='';
-                            })
-
+                    _page.url='';
+                    _.forEach(_page.layers,function (_layer) {
+                        _layer.url='';
+                        _layer.showSubLayer.url='';
+                        _.forEach(_layer.subLayers,function (_subLayer) {
+                            _subLayer.url='';
                         })
+
+                    })
                     })
                     console.log(JSON.stringify(currentProject));
 
@@ -136,7 +135,8 @@
                             //
                             //},
                             //params:{
-                            //    token:TOKEN,
+                            //    token:window.localStorage.getItem('token'),
+                            //
                             //    pid:PID
                             //}
                             url:'/project/'+currentProject.projectId+'/save',
@@ -201,7 +201,8 @@
                         //        append:!isLast
                         //    },
                         //    params:{
-                        //        token:TOKEN,
+                        //        token:window.localStorage.getItem('token'),
+                        //
                         //        pid:PID
                         //    }
                         //
@@ -218,9 +219,10 @@
                         //        console.log(err);
                         //        toastr.warning('上传失败');
                         //    })
-                        _callback&&_callback()
+                        _callback && _callback();
                     }
-                });
+            });
+
 
 
 
@@ -241,6 +243,7 @@
                 $scope.component.tool.toolShow=!$scope.component.tool.toolShow;
             }
             $scope.$emit('ChangeToolShow',$scope.component.tool.toolShow);
+            $scope.$broadcast('ChangeToolShow',$scope.component.tool.toolShow);
         }
 
         function onNavStatusChanged(){
@@ -295,7 +298,6 @@
                 $timeout(function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
                 })
-
             });
 
 
@@ -317,20 +319,21 @@
                 newWidget=TemplateProvider.getDefaultProgress();
             }else if(_index==4){
                 newWidget = TemplateProvider.getDefaultDashboard();
-            }else if (_index==11){
+            }else if (_index==10){
 
                 newWidget=TemplateProvider.getDefaultButton();
-            }else if (_index==9){
-                newWidget=TemplateProvider.getDefaultNumber();
-            }else if (_index==14){
+            }
+            //else if (_index==9){
+            //    newWidget=TemplateProvider.getDefaultNumber();}
+            else if (_index==13){
                 newWidget=TemplateProvider.getDefaultButtonGroup();
-            }else if(_index==12){
+            }else if(_index==11){
                 newWidget=TemplateProvider.getDefaultKnob();
             }
-            else if(_index==10){
+            else if(_index==9){
                 newWidget=TemplateProvider.getDefaultTextArea();
             }
-            else if(_index==16){
+            else if(_index==15){
                 newWidget=TemplateProvider.getDefaultNum();
             }
             else if(_index==5){
@@ -351,6 +354,7 @@
          * 撤销
          */
         function undo(){
+
             NavService.DoUndo(function () {
                 $scope.$emit('Undo');
 

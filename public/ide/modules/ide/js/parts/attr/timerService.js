@@ -5,7 +5,7 @@ ideServices
     .service('TimerService',function(){
     var timerNum=0;
     this.setTimerNum=function(num){
-        console.log("set num success!");
+        //console.log("set num success!");
         timerNum=num;
     };
     this.getTimerNum=function(){

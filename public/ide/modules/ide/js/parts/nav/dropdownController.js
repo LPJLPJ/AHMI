@@ -9,7 +9,7 @@ ide.controller('addWidgetController',['$scope', function ($scope) {
         {name:"色块",icon:"&#xe629;"},
         {name:"动画",icon:"&#xe633;"},
         {name:"消息",icon:"&#xe62c;"},
-        {name:"数字框",icon:"&#xe631;"},
+        //{name:"数字框",icon:"&#xe631;"},
         {name:"文本框",icon:"&#xe62f;"},
         {name:"按钮",icon:"&#xe636;"},
         {name:"旋钮",icon:"&#xe628;"},

@@ -66,14 +66,15 @@ ide.controller('AttrCtrl', function ($scope,$timeout,
         })
     }
 
-    function selectPage(){
+    function selectPage(_pageId){
 
         var pageIndex=-1;
         _.forEach($scope.project.pages,function(page,index){
-            if (page.id==ProjectService.getCurrentPage().id){
+            if (page.id==_pageId){
                 pageIndex=index;
             }
         });
+        logs.push('选择了第'+pageIndex+'个页面');
         ProjectService.OnPageSelected(pageIndex,function () {
             $scope.$emit('ChangeCurrentPage',null, function () {
             });

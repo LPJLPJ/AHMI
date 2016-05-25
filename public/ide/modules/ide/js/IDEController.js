@@ -11,7 +11,10 @@ var TOKEN='';
 var MAX_DATA_LENGTH=100000;
 
 var ideScope;
-var isOffline
+var isOffline;
+
+
+var logs=[];
 ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
@@ -51,7 +54,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     initUI();
 
-    readProjectData()
+    readProjectData();
 
     //receiveGlobalProject();
 
@@ -63,21 +66,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         $scope.leftShown=true;
         $scope.rightShown=true;
         $scope.bottomShown=true;
-    }
-
-
-
-    function getUrlParams() {
-        var result = {};
-        var params = (window.location.search.split('?')[1] || '').split('&');
-        for(var param in params) {
-            if (params.hasOwnProperty(param)) {
-                var paramParts = params[param].split('=');
-                result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
-            }
-        }
-        console.log(result);
-        return result;
     }
 
 
@@ -182,12 +170,26 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         })
     }
 
+
+    function getUrlParams() {
+        var result = {};
+        var params = (window.location.search.split('?')[1] || '').split('&');
+        for(var param in params) {
+            if (params.hasOwnProperty(param)) {
+                var paramParts = params[param].split('=');
+                result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
+            }
+        }
+        console.log(result);
+        return result;
+    }
+
     function reLogin(_callback,_errCallback) {
         $http({
                 method:'GET',
                 url:baseUrl+'/refreshToken',
                 params:{
-                    token:TOKEN
+                    token:window.localStorage.getItem('token')
                 }
             }
         ).success(function (result) {
@@ -230,6 +232,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 });
             })
 
+            logs.push('打开本地项目');
             return;
         }
         console.log(TOKEN);
@@ -244,7 +247,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 method:'GET',
                 url:baseUrl+'/project',
                 params:{
-                    token:TOKEN,
+                    token:window.localStorage.getItem('token'),
+
                     pid:pid
 
                 }
@@ -265,9 +269,11 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
                             //TODO:初始化资源,tags
 
-                            syncServices(globalProject)
+                            syncServices(globalProject);
 
                             $scope.$broadcast('GlobalProjectReceived');
+                            logs.push('从服务器获取项目');
+
                         });
 
                     }else{
@@ -361,8 +367,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             $scope.$broadcast('AttributeChanged');
         })
 
-        $scope.$on('SwitchCurrentPage', function (event,callback) {
-            $scope.$broadcast('PageChangedSwitched',callback);
+        $scope.$on('SwitchCurrentPage', function (event,oldOperate,callback) {
+            $scope.$broadcast('PageChangedSwitched',oldOperate,callback);
             $scope.$broadcast('NavStatusChanged');
             $scope.$broadcast('AttributeChanged');
 

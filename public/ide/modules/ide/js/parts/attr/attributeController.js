@@ -16,6 +16,14 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 		initProject();
 
 	});
+
+    //edit by lixiang for select of textArea show or hide
+    $scope.$on('ToolShowChanged', function (event, toolShow) {
+        //console.log('keke',toolShow);
+        $scope.component.textArea.toolShow=toolShow;
+    });
+
+
 	function initUserInterface(){
 		$scope.component={
 			type:'',
@@ -94,6 +102,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 setUnderlineFont:setUnderlineFont,
                 setItalicFont:setItalicFont,
                 selectCharacterSetByIndex:selectCharacterSetByIndex,
+                selectCharacterSetByName:selectCharacterSetByName,
                 addCharacterSet:addCharacterSet,
                 deleteCharacterSetByIndex:deleteCharacterSetByIndex
             },
@@ -122,6 +131,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterNumMode:enterNumMode,
                 enterSymbolMode:enterSymbolMode,
                 enterFrontZeroMode:enterFrontZeroMode,
+
+                enterNumValue:enterNumValue,
+                changeNumAlign:changeNumAlign
             },
 
             //旋钮
@@ -177,7 +189,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
         //edit by lixiang
         $scope.$on('changeFontFamily',function(e,op){
-            console.log(op);
+            //console.log(op);
             enterFontStyle(op);
         });
 
@@ -187,7 +199,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         var blankImage={
             id:'blank.png',
             src:'/public/images/blank.png',
-            name:'空白',
+            name:'空白'
         }
         $timeout(function () {
             $scope.component.images=ResourceService.getAllImages();
@@ -1170,6 +1182,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             //$scope.component.object.level.info.text=selectCharacterSet.text;
             //$scope.component.object.level.info.fontName=selectCharacterSet.fontName;
 
+            $scope.component.object.level.info.fontName=selectCharacterSet.fontName;
             $scope.component.object.level.info.fontFamily=selectCharacterSet.fontFamily;
             $scope.component.object.level.info.fontSize=selectCharacterSet.fontSize;
             $scope.component.object.level.info.fontColor=selectCharacterSet.fontColor;
@@ -1180,6 +1193,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
             var option={
                 text:$scope.component.object.level.info.text,
+                fontName:$scope.component.object.level.info.fontName,
                 fontFamily:$scope.component.object.level.info.fontFamily,
                 fontSize: $scope.component.object.level.info.fontSize,
                 fontColor: $scope.component.object.level.info.fontColor,
@@ -1192,8 +1206,44 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
         }
+    }
 
+    function selectCharacterSetByName(name){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        if (selectObj.type==Type.MyTextArea){
+            var selectCharacterSet = characterSetService.selectCharacterByName(name);
+            //console.log(selectCharacterSet);
+            if(selectCharacterSet){
+                //$scope.component.object.level.info.text=selectCharacterSet.text;
+                //$scope.component.object.level.info.fontName=selectCharacterSet.fontName;
 
+                $scope.component.object.level.info.fontName=selectCharacterSet.fontName;
+                $scope.component.object.level.info.fontFamily=selectCharacterSet.fontFamily;
+                $scope.component.object.level.info.fontSize=selectCharacterSet.fontSize;
+                $scope.component.object.level.info.fontColor=selectCharacterSet.fontColor;
+                $scope.component.object.level.info.fontBold=selectCharacterSet.fontBold;
+                $scope.component.object.level.info.fontItalic=selectCharacterSet.fontItalic;
+                $scope.component.object.level.info.boldBtnToggle=selectCharacterSet.boldBtnToggle;
+                $scope.component.object.level.info.italicBtnToggle=selectCharacterSet.italicBtnToggle;
+
+                var option={
+                    text:$scope.component.object.level.info.text,
+                    fontName:$scope.component.object.level.info.fontName,
+                    fontFamily:$scope.component.object.level.info.fontFamily,
+                    fontSize: $scope.component.object.level.info.fontSize,
+                    fontColor: $scope.component.object.level.info.fontColor,
+                    fontBold:$scope.component.object.level.info.fontBold,
+                    fontItalic: $scope.component.object.level.info.fontItalic,
+                    boldBtnToggle:$scope.component.object.level.info.boldBtnToggle,
+                    italicBtnToggle:$scope.component.object.level.info.italicBtnToggle
+                }
+                ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
+            }
+        }else{
+            return;
+        }
     }
 
     function addCharacterSet(){
@@ -1309,6 +1359,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 toastr.warning('超出范围');
                 return;
             }
+            var length=$scope.component.object.level.info.numValue.toString().length+$scope.component.object.level.info.decimalCount;
+            if($scope.component.object.level.info.numOfDigits<=$scope.component.object.level.info.decimalCount||$scope.component.object.level.info.numOfDigits<length){
+                toastr.warning('超出范围');
+                return;
+            }
             var option={
                 numOfDigits:$scope.component.object.level.info.numOfDigits
             };
@@ -1401,6 +1456,64 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         var oldOperate=ProjectService.SaveCurrentOperate();
         ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+
+    function enterNumValue(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.numValue==initObject.level.info.numValue){
+                return;
+            }
+            if($scope.component.object.level.info.numValue<$scope.component.object.level.info.minValue||$scope.component.object.level.info.numValue>$scope.component.object.level.info.maxValue||isNaN($scope.component.object.level.info.numValue)){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            //判断输入的数字的小数位数是否超出
+            var tempNumStr = $scope.component.object.level.info.numValue.toString();
+            if(tempNumStr.indexOf('.')!=-1){
+                var tempDecimal = tempNumStr.split(".")[1];
+                //console.log('tempDecimal',tempDecimal);
+                if(tempDecimal.length>$scope.component.object.level.info.decimalCount){
+                    toastr.warning('小数位数超出');
+                    restore();
+                    return;
+                }
+            }
+
+            //判断输入的数字是否小于可以显示的最大值(4位数字，不大于10000)
+            var tempNumOfDigits = $scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.decimalCount;
+            var maxValue = Math.pow(10,tempNumOfDigits);
+            //console.log('maxValue',maxValue);
+            if($scope.component.object.level.info.numValue<maxValue){
+
+                var option={
+                    numValue:$scope.component.object.level.info.numValue,
+                };
+
+                ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
+            }else{
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+
+
+        }
+    }
+
+    function changeNumAlign(){
+        if($scope.component.object.level.info.align==initObject.level.info.align){
+            return;
+        }
+        var option={
+            align:$scope.component.object.level.info.align,
+        }
+        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+
         })
     }
 

@@ -163,9 +163,9 @@
                 <a ng-controller="ProjectFileCtrl" ng-click="open(1)" class="my-cmd-item" data-toggle="modal" data-target="#projectFileModal">
                     <span class="iconfont icon">&#xe610;</span><span class="caption">打开最近</span>
                 </a>
-                <a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#projectFileModal">
-                    <span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>
-                </a>
+                <!--<a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#projectFileModal">-->
+                    <!--<span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>-->
+                <!--</a>-->
                 <a ng-click="component.tool.generateDataFile()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe60f;</span><span class="caption">生成</span></a>
             </div>
             <div class="my-tool-content-item" ng-show="component.nav.currentNav==1">
@@ -236,53 +236,53 @@
 
                 </a>
 
-                <a ng-controller="TemplateFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#templateFileModal">
-                    <span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>
-                    <script type="text/ng-template" id="templateFile.html">
-                        <div class="modal-header">
-                            <button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" >打开模板</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div >
-                                <!--<div class="sk-rect-grid" ng-show="!itemsGetted">-->
-                                    <!--<div class="sk-rect sk-rect1"></div>-->
-                                    <!--<div class="sk-rect sk-rect2"></div>-->
-                                    <!--<div class="sk-rect sk-rect3"></div>-->
-                                    <!--<div class="sk-rect sk-rect4"></div>-->
-                                    <!--<div class="sk-rect sk-rect5"></div>-->
-                                    <!--<div class="sk-rect sk-rect6"></div>-->
-                                    <!--<div class="sk-rect sk-rect7"></div>-->
-                                    <!--<div class="sk-rect sk-rect8"></div>-->
-                                    <!--<div class="sk-rect sk-rect9"></div>-->
+                <!--<a ng-controller="TemplateFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#templateFileModal">-->
+                    <!--<span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>-->
+                    <!--<script type="text/ng-template" id="templateFile.html">-->
+                        <!--<div class="modal-header">-->
+                            <!--<button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>-->
+                            <!--<h4 class="modal-title" >打开模板</h4>-->
+                        <!--</div>-->
+                        <!--<div class="modal-body">-->
+                            <!--<div >-->
+                                <!--&lt;!&ndash;<div class="sk-rect-grid" ng-show="!itemsGetted">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect1"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect2"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect3"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect4"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect5"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect6"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect7"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect8"></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="sk-rect sk-rect9"></div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--<div ng-show="itemsGetted">-->
+                                    <!--<div ng-repeat="item in items" style="display: inline-block" >-->
+                                        <!--<div ng-class="{'modal-selected-bg':item == selected.item }" style="position: relative;height: 150px;width: 130px">-->
+                                            <!--<div  href="#" ng-click="changeState(item)" class="modal-project-div" >-->
+                                                <!--<img ng-src="{{item}}" class="modal-project-img" ng-class="{'modal-downloading-alpha':downloading.item==item}">-->
+                                                <!--<uib-progressbar ng-show="isStartDownloaded && downloading.item==item" class="modal-project-progressbar"  max="downloadProgress.max" value="downloadProgress.value">-->
+                                                    <!--<span style="color:white; white-space:nowrap;position: absolute">{{downloadProgress.value}} / {{downloadProgress.max}}</span>-->
+                                                <!--</uib-progressbar>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+
+                                        <!--<p style="padding-left: 50%">{{item[0]}}</p>-->
+                                    <!--</div>-->
+
+                                    <!--<br>-->
+                                    <!--Selection: {{selected.item}}-->
                                 <!--</div>-->
-                                <div ng-show="itemsGetted">
-                                    <div ng-repeat="item in items" style="display: inline-block" >
-                                        <div ng-class="{'modal-selected-bg':item == selected.item }" style="position: relative;height: 150px;width: 130px">
-                                            <div  href="#" ng-click="changeState(item)" class="modal-project-div" >
-                                                <img ng-src="{{item}}" class="modal-project-img" ng-class="{'modal-downloading-alpha':downloading.item==item}">
-                                                <uib-progressbar ng-show="isStartDownloaded && downloading.item==item" class="modal-project-progressbar"  max="downloadProgress.max" value="downloadProgress.value">
-                                                    <span style="color:white; white-space:nowrap;position: absolute">{{downloadProgress.value}} / {{downloadProgress.max}}</span>
-                                                </uib-progressbar>
-                                            </div>
-                                        </div>
+                            <!--</div>-->
 
-                                        <p style="padding-left: 50%">{{item[0]}}</p>
-                                    </div>
+                        <!--</div>-->
+                        <!--<div class="modal-footer">-->
+                            <!--<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>-->
+                            <!--<button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>-->
+                        <!--</div>-->
+                    <!--</script>-->
 
-                                    <br>
-                                    Selection: {{selected.item}}
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-                            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-                        </div>
-                    </script>
-
-                </a>
+                <!--</a>-->
 
                 <a ng-click="component.tool.copy()" class="my-cmd-item" ng-class="{false:'inactive'}[component.tool.copyStatus]"><span class="iconfont icon">&#xe621;</span><span class="caption">拷贝</span></a>
                 <a ng-click="component.tool.cut()" class="my-cmd-item" ng-class="{false:'inactive'}[component.tool.copyStatus]"><span class="iconfont icon">&#xe624;</span><span class="caption">剪切</span></a>
@@ -353,6 +353,25 @@
                 <!--</a>-->
 
                 <a ng-click="component.tool.clearAll()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe627;</span><span class="caption">清除</span></a>
+            </div>
+            <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==3" >
+                <div ng-controller="AttributeCtrl">
+                    <div ng-controller="characterSetCtrl">
+                        <a class="my-cmd-item">
+                            <div class="input-group" style="top:13px;">
+                            <span class="input-group-btn">
+                                <select class="view-select btn btn-default"
+                                        ng-options="character.fontName as character.fontName for character in componentOfChar.allCharacters"
+                                        ng-model="component.object.level.info.fontName"
+                                        ng-change="component.textArea.selectCharacterSetByName(component.object.level.info.fontName)"
+                                        ng-show="component.textArea.toolShow">
+                                    <option value="">选择您的字体</option>
+                                </select>
+                            </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==4">
                 <a ng-click="component.tool.showLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe644;</span><span class="caption"></span></a>
@@ -1216,7 +1235,12 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span>画布中预览您的数字框显示效果</span>
+                            <span class="my-attr-title">数字值</span>
+                            <input class="my-attr-number-input form-control"
+                                    type="number"
+                                    ng-model="component.object.level.info.numValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.num.enterNumValue($event)">
                         </div>
 
                     </div>
@@ -1372,7 +1396,7 @@
                                     <td><input class="form-control" colorpicker="rgba" type="text"  ng-model="slice.color" /></td>
                                     <td >
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
-                                        <img  ng-src="{{slice.imgSrc||'/public/images/blank.png'}}"  width="100px" height="100px" />
+                                        <img  ng-src="{{basicUrl + (slice.imgSrc||'blank.png')}}"  width="100px" height="100px" />
                                         </div>
                                     </td>
                                     <td><span  ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span></td>
@@ -1691,32 +1715,32 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title dengpage-title">字体</span>
+                            <!--<span class="my-attr-title dengpage-title">字体</span>-->
 
-                            <select class="form-control"
-                                    ng-model="component.object.level.info.fontFamily"
-                                    ng-change="component.textArea.changeFontFamily()">
-                                <option value="Arial" ng-selected="true">宋体</option>
-                                <option value="times">Times</option>
-                            </select>
+                            <!--<select class="form-control"-->
+                                    <!--ng-model="component.object.level.info.fontFamily"-->
+                                    <!--ng-change="component.textArea.changeFontFamily()">-->
+                                <!--<option value="Arial" ng-selected="true">宋体</option>-->
+                                <!--<option value="times">Times</option>-->
+                            <!--</select>-->
 
-                            <button ng-click="component.textArea.setBoldFont()"
-                                    ng-class="{true:'btn btn-default active',false:'btn btn-default '}[component.object.level.info.boldBtnToggle]">
-                                <span class="iconfont icon">&#xe618;</span></button>
-                            <!--<button ng-click="component.textArea.setUnderlineFont()" ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.underlineBtnToggle]" disabled="disabled" ><span class="iconfont icon">&#xe642;</span></button>-->
-                            <button ng-click="component.textArea.setItalicFont()"
-                                    ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.italicBtnToggle]">
-                                <span class="iconfont icon">&#xe641;</span></button>
+                            <!--<button ng-click="component.textArea.setBoldFont()"-->
+                                    <!--ng-class="{true:'btn btn-default active',false:'btn btn-default '}[component.object.level.info.boldBtnToggle]">-->
+                                <!--<span class="iconfont icon">&#xe618;</span></button>-->
+                            <!--&lt;!&ndash;<button ng-click="component.textArea.setUnderlineFont()" ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.underlineBtnToggle]" disabled="disabled" ><span class="iconfont icon">&#xe642;</span></button>&ndash;&gt;-->
+                            <!--<button ng-click="component.textArea.setItalicFont()"-->
+                                    <!--ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.italicBtnToggle]">-->
+                                <!--<span class="iconfont icon">&#xe641;</span></button>-->
 
-                            <br><br>
-                            <span class="my-attr-title dengPage-title">字体大小</span>
-                            <input class="dengpage-input"
-                                   ng-model="component.object.level.info.fontSize"
-                                   type="number"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.textArea.changeFontSize($event)">
+                            <!--<br><br>-->
+                            <!--<span class="my-attr-title dengPage-title">字体大小</span>-->
+                            <!--<input class="dengpage-input"-->
+                                   <!--ng-model="component.object.level.info.fontSize"-->
+                                   <!--type="number"-->
+                                   <!--ng-blur="component.restore()"-->
+                                   <!--ng-keypress="component.textArea.changeFontSize($event)">-->
 
-                            <br>
+                            <!--<br>-->
                             <span class="my-attr-title dengpage-title">字体颜色</span>
                             <input colorpicker="rgba"
                                    ng-model="component.object.level.info.fontColor"
@@ -1747,6 +1771,15 @@
                                 <span class="iconfont icon">&#xe641;</span></button>
 
                             <br><br>
+                            <span class="my-attr-title dengPage-title">对齐方式</span>
+                            <select class="form-control"
+                                    ng-model="component.object.level.info.align"
+                                    ng-change="component.num.changeNumAlign()">
+                                <option value="center" ng-selected="true">居中</option>
+                                <option value="left">右对齐</option>
+                                <option value="right">左对齐</option>
+                            </select>
+
                             <span class="my-attr-title dengPage-title">字体大小</span>
                             <input class="dengpage-input"
                                    ng-model="component.object.level.info.numSize"

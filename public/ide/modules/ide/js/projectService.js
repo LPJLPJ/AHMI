@@ -185,12 +185,12 @@ ideServices
 
             this.initPosition={};
 
+
             if (layer.showSubLayer.url==''){
                 backgroundImg.src=TemplateProvider.getDefaultSubLayer().url
             }else{
                 backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
             }
-
             backgroundImg.onload = (function () {
                 this.width = layerWidth;
                 this.height = layerHeight;
@@ -234,7 +234,7 @@ ideServices
             self.initPosition.top = _.cloneDeep(self.getTop());
             var pageNode=CanvasService.getPageNode();
             pageNode.renderAll();
-        }
+        };
         fabric.MyLayer.prototype.toObject = (function (toObject) {
             return function () {
 
@@ -415,7 +415,7 @@ ideServices
         });
         fabric.MyProgress.fromLevel= function (level, callback,option) {
             callback && callback(new fabric.MyProgress(level, option));
-        }
+        };
         fabric.MyProgress.prototype.toObject = (function (toObject) {
             return function () {
                 return fabric.util.object.extend(toObject.call(this), {
@@ -700,13 +700,18 @@ ideServices
 
 
                 if(this.lightBandImageElement){
+                    //console.log('draw lightBand');
+                    //ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
                     ctx.save();
                     ctx.beginPath();
-                    var radius=Math.min(this.width,this.height)/2;
+                    var radius=Math.max(this.width,this.height)/2;
                     ctx.moveTo(0,0);
                     ctx.arc(0,0,radius,0.5*Math.PI,(this.value+90)*Math.PI/180);
                     ctx.closePath();
                     ctx.clip();
+
+                    //ctx.scale(1/this.scaleX,1/this.scaleY);
+                    //var edgeLength = Math.min(this.width,this.height);
 
                     ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
 
@@ -727,9 +732,9 @@ ideServices
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
-                    ctx.rotate((this.value-135)*Math.PI/180);
+                    ctx.rotate((this.value+45)*Math.PI/180);
                     //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
-                    ctx.drawImage(this.pointerImageElement, -pointerImgWidth, -pointerImgHeight,pointerImgWidth,pointerImgHeight);
+                    ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
 
                 }
 
@@ -1173,14 +1178,14 @@ ideServices
             initialize: function (level, options) {
                 var self=this;
                 var ctrlOptions={
-                    bl:true,
-                    br:true,
+                    bl:false,
+                    br:false,
                     mb:false,
                     ml:false,
                     mr:false,
                     mt:false,
-                    tl:true,
-                    tr:true
+                    tl:false,
+                    tr:false
                 };
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
@@ -1194,6 +1199,7 @@ ideServices
                 this.numColor=level.info.numColor;
                 this.numBold=level.info.numBold;
                 this.numItalic=level.info.numItalic;
+                this.align=level.info.align;
                 //下面位数字模式属性
                 this.numOfDigits=level.info.numOfDigits;
                 this.decimalCount=level.info.decimalCount;
@@ -1267,6 +1273,12 @@ ideServices
                     if(arg.frontZeroMode){
                         self.frontZeroMode=arg.frontZeroMode;
                     }
+                    if(arg.numValue){
+                        self.numValue=arg.numValue;
+                    }
+                    if(arg.align){
+                        self.align=arg.align;
+                    }
 
                     //设置宽高
                     if(self.numOfDigits&&self.numSize){
@@ -1308,35 +1320,70 @@ ideServices
                 //在数字框里展示数字预览效果
                 if(this.numValue) {
                     //offCtx.save();
+
                     offCtx.globalCompositeOperation = "destination-in";
                     //offCtx.scale(1/this.scaleX,1/this.scaleY);
                     var numString = this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
                     //offCtx.fillStyle = this.numColor;
                     offCtx.font = numString;
-                    offCtx.textAlign = 'center';
+                    offCtx.textAlign = this.align;
 
-                    var tempNumValue= _.cloneDeep(this.numValue);
+
+                    var tempNumValue= this.numValue.toString();
+                    var i=0;
                     //配置小数位数
                     if(this.decimalCount){
-                        tempNumValue= tempNumValue+".";
-                        for(var i=0;i<this.decimalCount;i++){
-                            tempNumValue=tempNumValue+'0';
-                        };
+                        if(tempNumValue.indexOf('.')!=-1){
+                            //console.log('输入有小数')
+                            var tempDecimalCount=tempNumValue.split('.')[1];
+                            for(i=0;i<this.decimalCount-tempDecimalCount.length;i++){
+                                tempNumValue=tempNumValue+'0';
+                            }
+                        }else{
+                            //console.log('输入无小数')
+                            tempNumValue= tempNumValue+".";
+                            for(i=0;i<this.decimalCount;i++){
+                                tempNumValue=tempNumValue+'0';
+                            };
+                        }
+
                     }
                     //配置前导0模式
                     if(this.frontZeroMode=='1'){
-                        for(var i=0;i<(this.numOfDigits-this.decimalCount-1);i++){
-                            tempNumValue='0'+tempNumValue;
+                        //console.log('minus',this.numOfDigits-tempNumValue.length);
+                        var minus=this.numOfDigits-tempNumValue.length;
+                        console.log('minus',minus);
+                        if(this.decimalCount){
+                            for(i=0;i<minus+1;i++){
+                                tempNumValue='0'+tempNumValue;
+                            }
+                        }else{
+                            for(i=0;i<minus;i++){
+                                //console.log(i);
+                                tempNumValue='0'+tempNumValue;
+                            }
                         }
+
                     }
                     //配置正负号
                     if(this.symbolMode=='1'){
                         tempNumValue='+'+tempNumValue;
                     }
-                    offCtx.fillText(tempNumValue, this.width/2, this.height/2+this.numSize/4);
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
+                    if(this.align=='center'){
+                        offCtx.fillText(tempNumValue, this.width/2, this.height/2+this.numSize/4);
+
+                    }else if(this.align=='left') {
+                        //实际显示是右对齐
+                        offCtx.fillText(tempNumValue, 0, this.height / 2 + this.numSize / 4);
+                    }else if(this.align=='right'){
+                        //实际显示是左对齐
+                        offCtx.fillText(tempNumValue,this.width,this.height/2+this.numSize/4);
+                    }
                     //offCtx.restore();
                 }
-
+                ctx.scale(1/this.scaleX,1/this.scaleY);
                 ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
                 //console.log(ctx);
 
@@ -3344,7 +3391,7 @@ ideServices
 
         };
 
-        this.LoadCurrentOperate = function (_operate, _successCallback) {
+        this.LoadCurrentOperate = function (_operate, _successCallback,_errCallback) {
             project=_operate;
 
             _cleanPageHashKey();
@@ -3353,7 +3400,7 @@ ideServices
             _.forEach(project.pages, function (_page,_pageIndex) {
                 if (_page.current){
                     if (_page.selected){
-                        _self.OnPageSelected(_pageIndex,_successCallback,true);
+                        _self.OnPageSelected(_pageIndex,_successCallback,true,false,_errCallback);
                         return;
                     }
                     if (_page.currentFabLayer&&_page.currentFabLayer.type!=Type.MyLayer){
@@ -3458,7 +3505,7 @@ ideServices
          * @param skipClean 跳过[清理选中的缓存]
          * @constructor
          */
-        this.OnPageSelected= function (pageIndex,_successCallback,forceReload,skipClean) {
+        this.OnPageSelected= function (pageIndex,_successCallback,forceReload,skipClean,_errCallback) {
             //除了当前的Page,取消所有Page,Layer,SubLayer,Widget的current
 
             //如果当前在编辑Page,需要使所有Layer失焦,如果在编辑SubLayer,需要重新loadFromJSON
@@ -3489,7 +3536,6 @@ ideServices
                 pageNode.deactivateAll();
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                console.log(currentPage.proJsonStr);
 
                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
@@ -3518,7 +3564,6 @@ ideServices
                         pageNode.deactivateAll();
                         pageNode.renderAll();
                         currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                        console.log(currentPage.proJsonStr);
 
 
                         currentPage.mode=0;
@@ -3866,17 +3911,25 @@ ideServices
             //除了当前的SubLayer,取消所有Page,Layer,SubLayer,Widget的current
             var currentPage=_self.getCurrentPage();
 
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
 
             //如果当前正在编辑subLayer,需要保存之前的subLayer再跳转
             if (currentPage.mode==1){
                 _leaveFromSubLayer(_self.getCurrentSubLayer());
             }
-            var currentLayer=currentPage.layers[layerIndex];
-            var currentSubLayer=currentLayer.subLayers[subLayerIndex];
-            if (!currentPage){
-                console.warn('找不到Page');
-                return;
+            try{
+                var currentLayer=currentPage.layers[layerIndex];
+
+            }catch(e){
+                console.log(e);
             }
+
+
+            var currentSubLayer=currentLayer.subLayers[subLayerIndex];
+
 
             if (!currentSubLayer){
                 console.warn('找不到SubLayer');
@@ -4609,6 +4662,10 @@ ideServices
                 selectObj.level.info.italicBtnToggle=tempItalicBtnToggle;
                 arg.fontItalic=tempFontItalic;
             }
+            if(_option.fontName){
+                var tempFontName = _option.fontName;
+                selectObj.level.info.fontName=tempFontName;
+            }
 
             selectObj.target.fire('changeTextContent',arg);
         };
@@ -4669,6 +4726,18 @@ ideServices
                 var tempFrontZeroMode=_option.frontZeroMode;
                 selectObj.level.info.frontZeroMode=tempFrontZeroMode;
                 arg.frontZeroMode=tempFrontZeroMode;
+            }
+
+            //下面是数字数值
+            if(_option.numValue){
+                var tempNumValue = _option.numValue;
+                selectObj.level.info.numValue=tempNumValue;
+                arg.numValue=tempNumValue;
+            }
+            if(_option.align){
+                var tempAlign = _option.align;
+                selectObj.level.info.align=tempAlign;
+                arg.align=tempAlign;
             }
             selectObj.target.fire('changeNumContent',arg);
         };

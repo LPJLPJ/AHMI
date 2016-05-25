@@ -374,6 +374,7 @@ body{
 }
 .container-fluid.my-right-hide .my-attribute{
     width: 0;
+    padding: 0;
 }
 
 .my-attribute.my-bottom-hide .my-top-panel{
