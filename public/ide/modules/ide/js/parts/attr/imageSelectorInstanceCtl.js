@@ -44,6 +44,12 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
         case Type.MyNum:
             initConfigure(false,2,widgetInfo.tex);
             break;
+        case Type.MyOscilloscope:
+            initConfigure(false,2,widgetInfo.tex);
+            break;
+        case Type.MyKnob:
+            initConfigure(false,2,widgetInfo.tex);
+            break;
         default:
             initConfigure(true,1,widgetInfo.tex);
             break;
