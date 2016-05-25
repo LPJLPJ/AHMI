@@ -9,6 +9,7 @@ var fs = require('fs')
 var path = require('path')
 var errHandler = require('../utils/errHandler')
 var defaultProject = require('../utils/defaultProject')
+var nodejszip = require('nodejs-zip');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -218,4 +219,34 @@ projectRoute.saveThumbnail = function (req, res) {
     }
 }
 
-module.exports = projectRoute
+
+projectRoute.generateProject = function (req, res) {
+    var projectId = req.params.id;
+    var dataStructure = req.body.dataStructure;
+    if (projectId!=""){
+        var ProjectBaseUrl = path.join(__dirname,'../projects',String(projectId));
+        var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
+        fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+            if (err){
+                errHandler(res,500,'write file error');
+            }else{
+                //write ok
+                var zip = new nodejszip();
+                var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                zip.compress(DistUrl,SrcUrl,['-rj'], function (err) {
+                    if (err){
+                        errHandler(res,500,err);
+                    }else{
+                        res.end('ok');
+                    }
+                })
+            }
+        })
+
+    }else{
+        errHandler(res,500,'projectId error');
+    }
+}
+
+module.exports = projectRoute;

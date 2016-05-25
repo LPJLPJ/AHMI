@@ -122,8 +122,8 @@ router.route('/project/:id/save')
 router.route('/project/:id/thumbnail')
     .post(projectInfo.saveThumbnail);
 
-//router.route('/project/:id/generate')
-//    .get(projectInfo.generateProject);
+router.route('/project/:id/generate')
+    .post(projectInfo.generateProject);
 
 
 
@@ -194,9 +194,9 @@ router.route('/delete-user')
     })
 });
 
-router.route('*')
-    .all(function (req,res,next) {
-        res.render('login/404.html');
-    });
+//router.route('*')
+//    .all(function (req,res,next) {
+//        res.render('login/404.html');
+//    });
 
 module.exports = router;

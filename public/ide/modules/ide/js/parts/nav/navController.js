@@ -92,7 +92,7 @@
         function showBottom(){
             $scope.$emit('ChangeShownArea',2);
         }
-        function saveProject() {
+        function saveProject(_saveCb) {
             ProjectService.getProjectTo($scope);
 
 
@@ -104,9 +104,7 @@
                 function () {
                     var currentProject= _.cloneDeep($scope.project);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
-                    console.log(thumb)
-
-
+                    //console.log(thumb)
                     _.forEach(currentProject.pages,function (_page) {
                     _page.url='';
                     _.forEach(_page.layers,function (_layer) {
@@ -141,6 +139,7 @@
 
                                     ProjectService.LoadCurrentOperate(projectClone, function () {
                                         $scope.$emit('UpdateProject');
+                                        _saveCb && _saveCb();
                                     });
 
                                 })
@@ -165,11 +164,7 @@
                             })
 
                         });
-                    })
-
-
-
-
+                    });
                     function uploadThumb(thumb,_callback){
                         $http({
                             method:'POST',
@@ -398,19 +393,38 @@
         /**
          * 生成符合格式的数据结构
          */
+        
         function generateDataFile(){
+            generateData();
+            saveProject(function () {
+                $http({
+                    method:'POST',
+                    url:'/project/'+$scope.project.projectId+'/generate',
+                    data:{
+                        dataStructure:window.projectData
+                    }
+                })
+                .success(function (data,status,xhr) {
+                    console.log(data)
+                    toastr.info('生成成功')
+                })
+                .error(function (err,status,xhr) {
+                    console.log(err)
+                    toastr.info('生成失败')
+                })
+            })
+        }
+        
+        function generateData(){
             var temp = {};
             ProjectService.getProjectTo(temp);
-            console.log(temp);
-            $scope.project = ProjectTransformService.transDataFile(_.clone(temp.project));
-            $scope.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
-            $scope.project.basicUrl = ResourceService.getResourceUrl();
+            temp.project = ProjectTransformService.transDataFile(temp.project);
+            temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
+            temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
-            $scope.project.tagList = TagService.getAllTags();
-            $scope.project.timers = TimerService.getTimerNum();
-
-            console.log($scope.project);
-            window.projectData = _.cloneDeep($scope.project);
+            temp.project.tagList = TagService.getAllTags();
+            temp.project.timers = TimerService.getTimerNum();
+            window.projectData = _.cloneDeep(temp.project);
 
             //$http.post('http://localhost:3000/api/angularproject',$scope.project).success(function (data) {
             //    console.log('success');
@@ -422,7 +436,7 @@
         }
 
         function play(){
-            generateDataFile();
+            generateData();
             $scope.component.simulator.show = true;
 
         }
