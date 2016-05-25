@@ -168,7 +168,7 @@ projectRoute.saveProject = function (req, res) {
                 errHandler(res,500,'project error')
             }else{
                 var curProjectContent = req.body.project
-                if (curProjectContent!=''){
+                if (curProjectContent){
                     project.content = JSON.stringify(curProjectContent)
                     project.save(function (err) {
                         if (err){
@@ -186,6 +186,35 @@ projectRoute.saveProject = function (req, res) {
         })
     }else{
         errHandler(res,500,'projectId error')
+    }
+}
+
+projectRoute.saveThumbnail = function (req, res) {
+    var projectId = req.params.id;
+    if (projectId!=""){
+        ProjectModel.findById(projectId, function (err, project) {
+            if (err){
+                errHandler(res,500,'project error')
+            }else{
+                var thumbnail = req.body.thumbnail;
+                if (thumbnail){
+                    project.thumbnail = thumbnail;
+                    //console.log('thumbnail',thumbnail)
+                    project.save(function (err) {
+                        if (err){
+                            errHandler(res, 500, 'project resave error')
+                        }else{
+                            res.end('ok')
+                        }
+                    })
+                }else{
+                    errHandler(res,500,'project save error')
+                }
+            }
+
+        })
+    }else{
+        errHandler(res,500,'projectId error');
     }
 }
 

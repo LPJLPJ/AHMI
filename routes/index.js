@@ -118,6 +118,10 @@ router.route('/project/:id/content')
 router.route('/project/:id/save')
     .put(projectInfo.saveProject);
 
+
+router.route('/project/:id/thumbnail')
+    .post(projectInfo.saveThumbnail);
+
 //router.route('/project/:id/generate')
 //    .get(projectInfo.generateProject);
 

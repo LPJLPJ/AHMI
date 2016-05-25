@@ -104,6 +104,7 @@
                 function () {
                     var currentProject= _.cloneDeep($scope.project);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
+                    console.log(thumb)
 
 
                     _.forEach(currentProject.pages,function (_page) {
@@ -117,28 +118,15 @@
 
                     })
                     })
-                    console.log(JSON.stringify(currentProject));
+                    //console.log(JSON.stringify(currentProject));
 
                     //if (isOffline){
                     //    return;
                     //}
 
-                    uploadThumb(0, function () {
+                    uploadThumb(thumb, function () {
                         $http({
                             method:'PUT',
-                            //url:baseUrl+'/project',
-                            //data:{
-                            //    project:{
-                            //        data:currentProject
-                            //    }
-                            //
-                            //
-                            //},
-                            //params:{
-                            //    token:window.localStorage.getItem('token'),
-                            //
-                            //    pid:PID
-                            //}
                             url:'/project/'+currentProject.projectId+'/save',
                             data:{
                                 project:currentProject
@@ -146,37 +134,9 @@
                             }
 
                         })
-                            .success(function (t) {
-                                if (t=='ok'){
-                                    toastr.info('保存成功');
-                                    $timeout(function () {
-
-                                        ProjectService.LoadCurrentOperate(projectClone, function () {
-                                            $scope.$emit('UpdateProject');
-                                        });
-
-                                    })
-                                }else{
-                                    toastr.warning('保存失败')
-                                    console.log('保存失败');
-                                    $timeout(function () {
-
-                                        ProjectService.LoadCurrentOperate(projectClone, function () {
-                                            $scope.$emit('UpdateProject');
-                                        });
-
-                                    })
-                                }
-
-                                console.log(t);
-
-
-
-                            })
-                            .error(function (err) {
-                                console.log(err);
-                                toastr.warning('保存失败');
-                                console.log('保存失败');
+                        .success(function (t) {
+                            if (t=='ok'){
+                                toastr.info('保存成功');
                                 $timeout(function () {
 
                                     ProjectService.LoadCurrentOperate(projectClone, function () {
@@ -184,42 +144,49 @@
                                     });
 
                                 })
+                            }else{
+                                toastr.warning('保存失败')
+                                $timeout(function () {
 
-                            });
+                                    ProjectService.LoadCurrentOperate(projectClone, function () {
+                                        $scope.$emit('UpdateProject');
+                                    });
+
+                                })
+                            }
+                        })
+                        .error(function (err) {
+                            console.log(err);
+                            toastr.warning('保存失败');
+                            $timeout(function () {
+                                ProjectService.LoadCurrentOperate(projectClone, function () {
+                                    $scope.$emit('UpdateProject');
+                                });
+                            })
+
+                        });
                     })
 
 
 
 
-                    function uploadThumb(_index,_callback){
-                        //var isLast=(_index==Math.ceil(thumb.length/MAX_DATA_LENGTH));
-                        //$http({
-                        //    method:'POST',
-                        //    url:baseUrl+'/thumb',
-                        //    data:{
-                        //        thumb:thumb.substr(_index*MAX_DATA_LENGTH,MAX_DATA_LENGTH),
-                        //        append:!isLast
-                        //    },
-                        //    params:{
-                        //        token:window.localStorage.getItem('token'),
-                        //
-                        //        pid:PID
-                        //    }
-                        //
-                        //})
-                        //    .success(function(r){
-                        //        console.log(r);
-                        //        if (isLast){
-                        //            _callback&&_callback();
-                        //        }else{
-                        //            uploadThumb(_index+1,_callback);
-                        //        }
-                        //    })
-                        //    .error(function (err) {
-                        //        console.log(err);
-                        //        toastr.warning('上传失败');
-                        //    })
-                        _callback && _callback();
+                    function uploadThumb(thumb,_callback){
+                        $http({
+                            method:'POST',
+                            url:'/project/'+currentProject.projectId+'/thumbnail',
+                            data:{
+                                thumbnail:thumb
+                            }
+                        })
+                        .success(function(r){
+                            console.log(r);
+                            _callback&&_callback();
+                        })
+                        .error(function (err) {
+                            console.log(err);
+                            toastr.warning('上传失败');
+                        })
+                        //_callback && _callback();
                     }
             });
 

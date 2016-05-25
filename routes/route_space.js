@@ -16,7 +16,12 @@ module.exports = function (req, res) {
                 info.userId = project.userId;
                 info.resolution = project.resolution
                 info.name = project.name;
-                return info
+                info.lastModifiedTime = project.lastModifiedTime;
+                var thumbnail = project.thumbnail;
+                return {
+                    projectInfo: info,
+                    thumbnail:thumbnail
+                }
             })
             res.render('login/personalProject.html',{
                                        username:_user.username,
