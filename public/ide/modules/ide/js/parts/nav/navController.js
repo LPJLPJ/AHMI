@@ -300,6 +300,8 @@
             }
             else if(_index==5){
                 newWidget=TemplateProvider.getDefaultOscilloscope();
+            }else if(_index==0){
+                newWidget=TemplateProvider.getDefaultImage();
             }
             else {
                 return;

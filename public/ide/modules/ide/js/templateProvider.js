@@ -107,6 +107,35 @@ ideServices
         this.getDefaultWidget = function () {
             return this.getDefaultSlide();
         };
+
+        this.getDefaultImage = function(){
+             var subLayerNode = CanvasService.getSubLayerNode();
+            var info = {
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom())/4,
+                height:(subLayerNode.getHeight()/subLayerNode.getZoom())/4,
+                left:0,top:0,
+                originX:'center',originY:'center',
+            };
+            return{
+                id:Math.random().toString(36).substr(2),
+                info:info,
+                name:'NewImage',
+                type:Type.MyImage,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    name:'纹理',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'图片'
+                    }]
+                }]
+            }
+        };
+
         this.getDefaultSlide = function () {
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
