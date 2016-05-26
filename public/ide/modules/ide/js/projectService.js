@@ -555,6 +555,7 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.value=level.info.value;
+                this.minValue=level.info.minValue;
                 this.pointerLength = level.info.pointerLength;
           
 
@@ -603,7 +604,12 @@ ideServices
 
 
                 this.on('changeDashboardValue', function (arg) {
-                    self.value=arg.value;
+                    if(arg.value){
+                        self.value=arg.value;
+                    }
+                    if(arg.minValue){
+                        self.minValue=arg.minValue
+                    }
                     //console.log('changeDashboardValue',self.value);
                     var _callback=arg.callback;
 
@@ -717,10 +723,39 @@ ideServices
                     //console.log('draw lightBand');
                     //ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
                     ctx.save();
+                    //ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.beginPath();
                     var radius=Math.max(this.width,this.height)/2;
                     ctx.moveTo(0,0);
-                    ctx.arc(0,0,radius,0.5*Math.PI,(this.value+90)*Math.PI/180);
+                    //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
+                    var angle=null;
+                    var minAngle=null;
+                    if(this.value>=0&&this.value<=90){
+                        angle = Math.atan(Math.tan(this.value*Math.PI/180)*(this.scaleY/this.scaleX));
+                        minAngle=Math.atan(Math.tan(this.minValue*Math.PI/180)*(this.scaleY/this.scaleX));
+                    }else if(this.value>90&&this.value<=180){
+                        angle = Math.atan(Math.tan((this.value-90)*Math.PI/180)*(this.scaleX/this.scaleY));
+                        minAngle=Math.atan(Math.tan((this.minValue-90)*Math.PI/180)*(this.scaleX/this.scaleY));
+                        angle+=Math.PI/2;
+                        minAngle+=Math.PI/2;
+                    }else if(this.value>180&&this.value<=270){
+                        angle = Math.atan(Math.tan((this.value-180)*Math.PI/180)*(this.scaleY/this.scaleX));
+                        minAngle=Math.atan(Math.tan((this.minValue-180)*Math.PI/180)*(this.scaleY/this.scaleX));
+                        angle+=Math.PI;
+                        minAngle+=Math.PI;
+                    }else if(this.value>270&&this.value<=360){
+                        angle = Math.atan(Math.tan((this.value-270)*Math.PI/180)*(this.scaleX/this.scaleY));
+                        minAngle=Math.atan(Math.tan((this.minValue-270)*Math.PI/180)*(this.scaleX/this.scaleY));
+                        angle+=Math.PI*3/2;
+                        minAngle+=Math.PI*3/2;
+                    }else{
+                        this.value=this.value-360;
+                        this.minValue=this.minValue-360;
+                    }
+                    //console.log('keke',this.scaleY/this.scaleX);
+                    //ctx.arc(0,0,radius,0.5*Math.PI,(this.value+90)*Math.PI/180);
+                    console.log('keke',minAngle);
+                    ctx.arc(0,0,radius,minAngle+Math.PI/2,angle+Math.PI/2);
                     ctx.closePath();
                     ctx.clip();
 
@@ -751,9 +786,6 @@ ideServices
                     ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
 
                 }
-
-
-
 
             }
         });
@@ -5186,6 +5218,13 @@ ideServices
                         callback:_successCallback
                     }
                     selectObj.target.fire('changeProgressValue',arg);
+                }
+                if(selectObj.type==Type.MyDashboard){
+                    var arg={
+                        minValue:_option.minValue,
+                        callback:_successCallback
+                    }
+                    selectObj.target.fire('changeDashboardValue',arg);
                 }
             }
             if (_option.highAlarmValue){

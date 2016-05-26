@@ -736,7 +736,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
             //判断是否在范围内
             if ($scope.component.object.level.info.value<$scope.component.object.level.info.minValue
-                ||$scope.component.object.level.info.value>$scope.component.object.level.info.maxValue){
+                ||$scope.component.object.level.info.value>$scope.component.object.level.info.maxValue||$scope.component.object.level.info.value<0){
                 toastr.warning('超出范围');
 
                 restore();
