@@ -604,10 +604,10 @@ ideServices
 
 
                 this.on('changeDashboardValue', function (arg) {
-                    if(arg.value){
+                    if(arg.value||arg.value==0){
                         self.value=arg.value;
                     }
-                    if(arg.minValue){
+                    if(arg.minValue||arg.minValue==0){
                         self.minValue=arg.minValue
                     }
                     //console.log('changeDashboardValue',self.value);
@@ -690,7 +690,7 @@ ideServices
                     _callback&&_callback();
 
                 });
-                
+
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
@@ -5154,7 +5154,7 @@ ideServices
                 }
 
             }
-            if (_option.minValue){
+            if (_option.minValue||_option.minValue==0){
                 selectObj.level.info.minValue=_option.minValue;
 
                 if(selectObj.type==Type.MyProgress){
