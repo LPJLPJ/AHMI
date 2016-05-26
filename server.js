@@ -96,7 +96,7 @@ var options = {
     cert:certificate
 }
 http.createServer(app).listen(app.get('port'));
-https.createServer(options,app).listen(443);
+//https.createServer(options,app).listen(443);
 
 
 
