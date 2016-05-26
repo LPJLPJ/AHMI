@@ -21,12 +21,16 @@ var sessionControl = require('./middlewares/sessionControl')
 
 //init projects
 var projectUrl = path.join(__dirname,'projects')
-var projectDir = fs.statSync(projectUrl)
-if (projectDir && projectDir.isDirectory()){
-
-}else{
+try {
+    var projectDir = fs.statSync(projectUrl)
+    if (!projectDir.isDirectory()){
+        fs.mkdirSync(projectUrl);
+    }
+}catch (err){
     fs.mkdirSync(projectUrl);
 }
+
+
 
 
 //router
