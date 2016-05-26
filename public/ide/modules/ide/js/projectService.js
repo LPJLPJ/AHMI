@@ -555,6 +555,7 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.value=level.info.value;
+                this.minValue=level.info.minValue;
                 this.pointerLength = level.info.pointerLength;
           
 
@@ -603,7 +604,12 @@ ideServices
 
 
                 this.on('changeDashboardValue', function (arg) {
-                    self.value=arg.value;
+                    if(arg.value||arg.value==0){
+                        self.value=arg.value;
+                    }
+                    if(arg.minValue||arg.minValue==0){
+                        self.minValue=arg.minValue
+                    }
                     //console.log('changeDashboardValue',self.value);
                     var _callback=arg.callback;
 
@@ -685,14 +691,6 @@ ideServices
 
                 });
 
-                //this.on('changeArrange', function (arg) {
-                //    self.arrange=arg.arrange;
-                //    var _callback=arg.callback;
-                //
-                //    var subLayerNode=CanvasService.getSubLayerNode();
-                //    subLayerNode.renderAll();
-                //    _callback&&_callback();
-                //});
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
@@ -707,53 +705,34 @@ ideServices
                     this.height
                 );
                 if (this.backgroundImageElement){
-                    //console.log('bg',this.width,this.height);
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
                 }
 
 
                 if(this.lightBandImageElement){
-                    //console.log('draw lightBand');
-                    //ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
                     ctx.save();
                     ctx.beginPath();
                     var radius=Math.max(this.width,this.height)/2;
                     ctx.moveTo(0,0);
-                    ctx.arc(0,0,radius,0.5*Math.PI,(this.value+90)*Math.PI/180);
+                    //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
+                    var angle=translateAngle(this.value,this.scaleX,this.scaleY);
+                    var minAngle=translateAngle(this.minValue,this.scaleX,this.scaleY);
+                    ctx.arc(0,0,radius,minAngle+Math.PI/2,angle+Math.PI/2);
                     ctx.closePath();
                     ctx.clip();
-
-                    //ctx.scale(1/this.scaleX,1/this.scaleY);
-                    //var edgeLength = Math.min(this.width,this.height);
-
                     ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
 
                     ctx.restore();
                 }
-                //pointer
-
-                //ctx.fillStyle=this.pointerColor;
-                //ctx.fillRect(
-                //    -this.width / 2,
-                //    -this.height / 2,
-                //    this.width,
-                //    this.height
-                //);
                 if (this.pointerImageElement){
-                    //console.log('draw pointer',this.pointerImageElement)
                     var sqrt2 = Math.sqrt(2);
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
                     ctx.rotate((this.value+45)*Math.PI/180);
-                    //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
                     ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
 
                 }
-
-
-
 
             }
         });
@@ -5175,7 +5154,7 @@ ideServices
                 }
 
             }
-            if (_option.minValue){
+            if (_option.minValue||_option.minValue==0){
                 selectObj.level.info.minValue=_option.minValue;
 
                 if(selectObj.type==Type.MyProgress){
@@ -5186,6 +5165,13 @@ ideServices
                         callback:_successCallback
                     }
                     selectObj.target.fire('changeProgressValue',arg);
+                }
+                if(selectObj.type==Type.MyDashboard){
+                    var arg={
+                        minValue:_option.minValue,
+                        callback:_successCallback
+                    }
+                    selectObj.target.fire('changeDashboardValue',arg);
                 }
             }
             if (_option.highAlarmValue){
@@ -5678,4 +5664,29 @@ ideServices
         var OnPageClicked=this.OnPageClicked;
         var OnSubLayerClicked=this.OnSubLayerClicked;
         var SaveCurrentOperate=this.SaveCurrentOperate;
+
+
+        /**
+         * 用于将仪表盘中的角度转换，矫正变形偏差
+         * @param value
+         * @param scaleX
+         * @param scaleY
+         * @returns {*}
+         */
+        function translateAngle(value,scaleX,scaleY){
+            var tempAngle=null;
+            if(value>=0&&value<=90){
+                tempAngle = Math.atan(Math.tan(value*Math.PI/180)*(scaleY/scaleX));
+            }else if(value>90&&value<=180){
+                tempAngle = Math.atan(Math.tan((value-90)*Math.PI/180)*(scaleX/scaleY));
+                tempAngle+=Math.PI/2;
+            }else if(value>180&&value<=270){
+                tempAngle = Math.atan(Math.tan((value-180)*Math.PI/180)*(scaleY/scaleX));
+                tempAngle+=Math.PI;
+            }else if(value>270&&value<=360){
+                tempAngle = Math.atan(Math.tan((value-270)*Math.PI/180)*(scaleX/scaleY));
+                tempAngle+=Math.PI*3/2;
+            }
+            return tempAngle;
+        }
     });
