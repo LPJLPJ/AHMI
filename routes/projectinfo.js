@@ -228,7 +228,7 @@ projectRoute.generateProject = function (req, res) {
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
         fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
             if (err){
-                errHandler(res,500,'write file error');
+                errHandler(res,500,err);
             }else{
                 //write ok
                 var zip = new nodejszip();
