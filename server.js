@@ -41,14 +41,14 @@ app.set('view engine','html')
 
 //app.use(logger(':method :url :response-time'));
 
-app.use(function (req, res, next) {
-    if (!req.secure){
-        return res.redirect('https://' + req.hostname + req.url);
-    }else{
-        next()
-    }
-
-})
+//app.use(function (req, res, next) {
+//    if (!req.secure){
+//        return res.redirect('https://' + req.hostname + req.url);
+//    }else{
+//        next()
+//    }
+//
+//})
 
 
 //cookie
