@@ -87,7 +87,7 @@ module.exports.uploadProjectFile = function (req, res) {
             }else{
                 fs.mkdir(form.uploadDir, function (err) {
                     if (err){
-                        errHandler(res,500,'mkdir error')
+                        errHandler(res,500,err)
                     }else{
                         console.log('mkdir',form.uploadDir)
                         form.parse(req)

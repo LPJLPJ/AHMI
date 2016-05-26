@@ -10,6 +10,7 @@ var path = require('path')
 var errHandler = require('../utils/errHandler')
 var defaultProject = require('../utils/defaultProject')
 var nodejszip = require('nodejs-zip');
+var mkdir = require('mkdir-p');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -67,19 +68,23 @@ projectRoute.createProject = function (req, res) {
                 res.status(500).end('save error')
             }
             //create project directory
-            var targetDir = path.join(__dirname,'../projects/',String(newProject._id))
+            var targetDir = path.join(__dirname,'../projects/',String(newProject._id),'resources')
             fs.stat(targetDir, function (err, stats) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //exists
+                    var newProjectInfo = _.cloneDeep(newProject)
+                    delete newProjectInfo.content;
+                    res.end(JSON.stringify(newProjectInfo))
                 }else{
                     //create new directory
                     console.log('create new directory')
-                    fs.mkdir(targetDir, function (err) {
+                    mkdir(targetDir, function (err) {
                         if (err){
                             console.log('mk error')
                             errHandler(res, 500,'mkdir error')
                         }else{
                             console.log('ok')
+                            //create resources
                             var newProjectInfo = _.cloneDeep(newProject)
                             delete newProjectInfo.content;
                             res.end(JSON.stringify(newProjectInfo))
