@@ -19,6 +19,16 @@ var MongoStore = require('connect-mongo')(Session)
 var CookieParser = require('cookie-parser')
 var sessionControl = require('./middlewares/sessionControl')
 
+//init projects
+var projectUrl = path.join(__dirname,'projects')
+var projectDir = fs.statSync(projectUrl)
+if (projectDir && projectDir.isDirectory()){
+
+}else{
+    fs.mkdirSync(projectUrl);
+}
+
+
 //router
 var router = require('./routes/index')
 
