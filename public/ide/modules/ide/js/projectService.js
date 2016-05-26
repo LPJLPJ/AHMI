@@ -690,15 +690,7 @@ ideServices
                     _callback&&_callback();
 
                 });
-
-                //this.on('changeArrange', function (arg) {
-                //    self.arrange=arg.arrange;
-                //    var _callback=arg.callback;
-                //
-                //    var subLayerNode=CanvasService.getSubLayerNode();
-                //    subLayerNode.renderAll();
-                //    _callback&&_callback();
-                //});
+                
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
@@ -713,76 +705,31 @@ ideServices
                     this.height
                 );
                 if (this.backgroundImageElement){
-                    //console.log('bg',this.width,this.height);
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
                 }
 
 
                 if(this.lightBandImageElement){
-                    //console.log('draw lightBand');
-                    //ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height)
                     ctx.save();
-                    //ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.beginPath();
                     var radius=Math.max(this.width,this.height)/2;
                     ctx.moveTo(0,0);
                     //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                    var angle=null;
-                    var minAngle=null;
-                    if(this.value>=0&&this.value<=90){
-                        angle = Math.atan(Math.tan(this.value*Math.PI/180)*(this.scaleY/this.scaleX));
-                        minAngle=Math.atan(Math.tan(this.minValue*Math.PI/180)*(this.scaleY/this.scaleX));
-                    }else if(this.value>90&&this.value<=180){
-                        angle = Math.atan(Math.tan((this.value-90)*Math.PI/180)*(this.scaleX/this.scaleY));
-                        minAngle=Math.atan(Math.tan((this.minValue-90)*Math.PI/180)*(this.scaleX/this.scaleY));
-                        angle+=Math.PI/2;
-                        minAngle+=Math.PI/2;
-                    }else if(this.value>180&&this.value<=270){
-                        angle = Math.atan(Math.tan((this.value-180)*Math.PI/180)*(this.scaleY/this.scaleX));
-                        minAngle=Math.atan(Math.tan((this.minValue-180)*Math.PI/180)*(this.scaleY/this.scaleX));
-                        angle+=Math.PI;
-                        minAngle+=Math.PI;
-                    }else if(this.value>270&&this.value<=360){
-                        angle = Math.atan(Math.tan((this.value-270)*Math.PI/180)*(this.scaleX/this.scaleY));
-                        minAngle=Math.atan(Math.tan((this.minValue-270)*Math.PI/180)*(this.scaleX/this.scaleY));
-                        angle+=Math.PI*3/2;
-                        minAngle+=Math.PI*3/2;
-                    }else{
-                        this.value=this.value-360;
-                        this.minValue=this.minValue-360;
-                    }
-                    //console.log('keke',this.scaleY/this.scaleX);
-                    //ctx.arc(0,0,radius,0.5*Math.PI,(this.value+90)*Math.PI/180);
-                    console.log('keke',minAngle);
+                    var angle=translateAngle(this.value,this.scaleX,this.scaleY);
+                    var minAngle=translateAngle(this.minValue,this.scaleX,this.scaleY);
                     ctx.arc(0,0,radius,minAngle+Math.PI/2,angle+Math.PI/2);
                     ctx.closePath();
                     ctx.clip();
-
-                    //ctx.scale(1/this.scaleX,1/this.scaleY);
-                    //var edgeLength = Math.min(this.width,this.height);
-
                     ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
 
                     ctx.restore();
                 }
-                //pointer
-
-                //ctx.fillStyle=this.pointerColor;
-                //ctx.fillRect(
-                //    -this.width / 2,
-                //    -this.height / 2,
-                //    this.width,
-                //    this.height
-                //);
                 if (this.pointerImageElement){
-                    //console.log('draw pointer',this.pointerImageElement)
                     var sqrt2 = Math.sqrt(2);
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
                     ctx.rotate((this.value+45)*Math.PI/180);
-                    //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
                     ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
 
                 }
@@ -5717,4 +5664,29 @@ ideServices
         var OnPageClicked=this.OnPageClicked;
         var OnSubLayerClicked=this.OnSubLayerClicked;
         var SaveCurrentOperate=this.SaveCurrentOperate;
+
+
+        /**
+         * 用于将仪表盘中的角度转换，矫正变形偏差
+         * @param value
+         * @param scaleX
+         * @param scaleY
+         * @returns {*}
+         */
+        function translateAngle(value,scaleX,scaleY){
+            var tempAngle=null;
+            if(value>=0&&value<=90){
+                tempAngle = Math.atan(Math.tan(value*Math.PI/180)*(scaleY/scaleX));
+            }else if(value>90&&value<=180){
+                tempAngle = Math.atan(Math.tan((value-90)*Math.PI/180)*(scaleX/scaleY));
+                tempAngle+=Math.PI/2;
+            }else if(value>180&&value<=270){
+                tempAngle = Math.atan(Math.tan((value-180)*Math.PI/180)*(scaleY/scaleX));
+                tempAngle+=Math.PI;
+            }else if(value>270&&value<=360){
+                tempAngle = Math.atan(Math.tan((value-270)*Math.PI/180)*(scaleX/scaleY));
+                tempAngle+=Math.PI*3/2;
+            }
+            return tempAngle;
+        }
     });
