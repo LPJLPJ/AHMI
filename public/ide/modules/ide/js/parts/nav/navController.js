@@ -10,7 +10,7 @@
                                         TemplateProvider,
                                         ProjectFileManage,
                                         Type,
-                                        
+                                        CanvasService,
                                         OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService) {
 
         initUserInterface();
@@ -92,6 +92,54 @@
         function showBottom(){
             $scope.$emit('ChangeShownArea',2);
         }
+
+        /**
+         * Scale a dataUrl to target size
+         * @param srcDataUrl
+         * @param distWidth
+         * @param distHeight
+         * @param keepRatio
+         */
+        function scaleImg(srcDataUrl,typeParams,distWidth, distHeight, keepRatio, _cb){
+            var tempImg = new Image()
+            tempImg.src = srcDataUrl;
+            tempImg.onload = function () {
+                //draw to offctx
+                var originWidth = tempImg.width;
+                var originHeight = tempImg.height;
+                var offCanvas = CanvasService.getOffCanvas();
+                offCanvas.width = distWidth;
+                offCanvas.height = distHeight;
+                var offCtx = offCanvas.getContext('2d');
+                if (!!keepRatio){
+                    //keep ratio
+                    var hori = originWidth>originHeight;
+                    if (hori){
+                        var curHeight = originHeight*1.0/originWidth*distWidth;
+                        var offsetHeight = (distHeight - curHeight)/2.0;
+                        offCtx.drawImage(tempImg,0,offsetHeight,distWidth,curHeight);
+                    }else{
+                        var curWidth = originWidth*1.0/originHeight*distHeight;
+                        var offsetWidth = (distWidth - curWidth)/2.0;
+                        offCtx.drawImage(tempImg,offsetWidth,0,curWidth,distHeight);
+                    }
+
+                }else{
+                    offCtx.drawImage(tempImg,0,0,distWidth,distHeight);
+                }
+                //get offCtx
+                var type = typeParams[0];
+                if (type == 'jpeg'){
+                    _cb&&_cb(offCanvas.toDataURL('image/jpeg',typeParams[1]||0.8));
+                }else{
+                    _cb&&_cb(offCanvas.toDataURL('image/png'));
+                }
+
+            }
+        }
+
+
+
         function saveProject(_saveCb) {
             ProjectService.getProjectTo($scope);
 
@@ -104,85 +152,88 @@
                 function () {
                     var currentProject= _.cloneDeep($scope.project);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
-                    //console.log(thumb)
-                    _.forEach(currentProject.pages,function (_page) {
-                    _page.url='';
-                    _.forEach(_page.layers,function (_layer) {
-                        _layer.url='';
-                        _layer.showSubLayer.url='';
-                        _.forEach(_layer.subLayers,function (_subLayer) {
-                            _subLayer.url='';
-                        })
-
-                    })
-                    })
-                    //console.log(JSON.stringify(currentProject));
-
-                    //if (isOffline){
-                    //    return;
-                    //}
-
-                    uploadThumb(thumb, function () {
-                        $http({
-                            method:'PUT',
-                            url:'/project/'+currentProject.projectId+'/save',
-                            data:{
-                                project:currentProject
-
-                            }
-
-                        })
-                        .success(function (t) {
-                            if (t=='ok'){
-                                toastr.info('保存成功');
-                                $timeout(function () {
-
-                                    ProjectService.LoadCurrentOperate(projectClone, function () {
-                                        $scope.$emit('UpdateProject');
-                                        _saveCb && _saveCb();
-                                    });
-
+                    scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
+                        _.forEach(currentProject.pages,function (_page) {
+                            _page.url='';
+                            _.forEach(_page.layers,function (_layer) {
+                                _layer.url='';
+                                _layer.showSubLayer.url='';
+                                _.forEach(_layer.subLayers,function (_subLayer) {
+                                    _subLayer.url='';
                                 })
-                            }else{
-                                toastr.warning('保存失败')
-                                $timeout(function () {
 
-                                    ProjectService.LoadCurrentOperate(projectClone, function () {
-                                        $scope.$emit('UpdateProject');
-                                    });
-
-                                })
-                            }
-                        })
-                        .error(function (err) {
-                            console.log(err);
-                            toastr.warning('保存失败');
-                            $timeout(function () {
-                                ProjectService.LoadCurrentOperate(projectClone, function () {
-                                    $scope.$emit('UpdateProject');
-                                });
                             })
+                        })
+                        //console.log(JSON.stringify(currentProject));
 
+                        //if (isOffline){
+                        //    return;
+                        //}
+
+                        uploadThumb(scaledThumb, function () {
+                            $http({
+                                method:'PUT',
+                                url:'/project/'+currentProject.projectId+'/save',
+                                data:{
+                                    project:currentProject
+
+                                }
+
+                            })
+                                .success(function (t) {
+                                    if (t=='ok'){
+                                        toastr.info('保存成功');
+                                        $timeout(function () {
+
+                                            ProjectService.LoadCurrentOperate(projectClone, function () {
+                                                $scope.$emit('UpdateProject');
+                                                _saveCb && _saveCb();
+                                            });
+
+                                        })
+                                    }else{
+                                        toastr.warning('保存失败')
+                                        $timeout(function () {
+
+                                            ProjectService.LoadCurrentOperate(projectClone, function () {
+                                                $scope.$emit('UpdateProject');
+                                            });
+
+                                        })
+                                    }
+                                })
+                                .error(function (err) {
+                                    console.log(err);
+                                    toastr.warning('保存失败');
+                                    $timeout(function () {
+                                        ProjectService.LoadCurrentOperate(projectClone, function () {
+                                            $scope.$emit('UpdateProject');
+                                        });
+                                    })
+
+                                });
                         });
+                        function uploadThumb(thumb,_callback){
+                            $http({
+                                method:'POST',
+                                url:'/project/'+currentProject.projectId+'/thumbnail',
+                                data:{
+                                    thumbnail:thumb
+                                }
+                            })
+                                .success(function(r){
+                                    console.log(r);
+                                    _callback&&_callback();
+                                })
+                                .error(function (err) {
+                                    console.log(err);
+                                    toastr.warning('上传失败');
+                                })
+                            //_callback && _callback();
+                        }
                     });
-                    function uploadThumb(thumb,_callback){
-                        $http({
-                            method:'POST',
-                            url:'/project/'+currentProject.projectId+'/thumbnail',
-                            data:{
-                                thumbnail:thumb
-                            }
-                        })
-                        .success(function(r){
-                            console.log(r);
-                            _callback&&_callback();
-                        })
-                        .error(function (err) {
-                            console.log(err);
-                            toastr.warning('上传失败');
-                        })
-                        //_callback && _callback();
-                    }
+                    //console.log(thumb)
+
             });
 
 
