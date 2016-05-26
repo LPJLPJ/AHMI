@@ -7,7 +7,7 @@ var fs = require('fs')
 var path = require('path')
 var mongoose = require('mongoose')
 var UserModel = require('./db/models/UserModel')
-
+var dbConfig = require('./db/config/config');
 //logger
 var logger = require('morgan');
 
@@ -23,7 +23,7 @@ var sessionControl = require('./middlewares/sessionControl')
 var router = require('./routes/index')
 
 //init db
-mongoose.connect('mongodb://localhost/ahmi')
+mongoose.connect(dbConfig.dbPath);
 var db = mongoose.connection
 // console.log(db);
 db.once('open',function(){
