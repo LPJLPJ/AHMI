@@ -63,7 +63,7 @@ app.use(Session({
     },
 	secret:'ahmi',
 	store:new MongoStore({
-		url:'mongodb://localhost/ahmi',
+		url:dbConfig.dbPath,
         ttl:20000,
         autoRemove: 'native'
 	})
