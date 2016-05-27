@@ -9,7 +9,7 @@ var fs = require('fs')
 var path = require('path')
 var errHandler = require('../utils/errHandler')
 var defaultProject = require('../utils/defaultProject')
-var nodejszip = require('nodejs-zip');
+var nodejszip = require('../utils/zip');
 var mkdir = require('mkdir-p');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
