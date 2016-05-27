@@ -57,14 +57,18 @@ app.set('view engine','html')
 //logger.token('http-protocol', function(req, res){ return req.protocol })
 //app.use(logger(':method :http-protocol :url :response-time'));
 
-app.use(function (req, res, next) {
-    if (!req.secure){
-        return res.redirect('https://' + req.hostname + req.url);
-    }else{
-        next()
-    }
+if (!process.env.USING_HTTP){
+    app.use(function (req, res, next) {
+        if (!req.secure){
+            return res.redirect('https://' + req.hostname + req.url);
+        }else{
+            next()
+        }
 
-})
+    })
+}
+
+
 
 
 //cookie
