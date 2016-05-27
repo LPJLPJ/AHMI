@@ -116,6 +116,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     syncServices(globalProject)
+                    console.log(globalProject);
                     $scope.$broadcast('GlobalProjectReceived');
 
                 });

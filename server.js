@@ -53,16 +53,18 @@ app.set('views',path.join(__dirname,'views'))
 app.engine('.html',ejs.__express)
 app.set('view engine','html')
 
-//app.use(logger(':method :url :response-time'));
 
-//app.use(function (req, res, next) {
-//    if (!req.secure){
-//        return res.redirect('https://' + req.hostname + req.url);
-//    }else{
-//        next()
-//    }
-//
-//})
+//logger.token('http-protocol', function(req, res){ return req.protocol })
+//app.use(logger(':method :http-protocol :url :response-time'));
+
+app.use(function (req, res, next) {
+    if (!req.secure){
+        return res.redirect('https://' + req.hostname + req.url);
+    }else{
+        next()
+    }
+
+})
 
 
 //cookie
@@ -110,7 +112,7 @@ var options = {
     cert:certificate
 }
 http.createServer(app).listen(app.get('port'));
-//https.createServer(options,app).listen(443);
+https.createServer(options,app).listen(443);
 
 
 
