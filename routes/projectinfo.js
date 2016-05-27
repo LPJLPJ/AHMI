@@ -77,7 +77,7 @@ projectRoute.createProject = function (req, res) {
                     res.end(JSON.stringify(newProjectInfo))
                 }else{
                     //create new directory
-                    console.log('create new directory')
+                    console.log('create new directory',targetDir);
                     mkdir(targetDir, function (err) {
                         if (err){
                             console.log('mk error')
@@ -239,22 +239,26 @@ projectRoute.generateProject = function (req, res) {
                 var zip = new nodejszip();
                 var SrcUrl = path.join(ProjectBaseUrl,'resources');
                 var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                zip.compress(DistUrl,SrcUrl,['-rj'], function (err) {
-                    if (err){
-                        errHandler(res,500,err);
-                    }else{
-                        //res.status(200).send('ok')
-                        //res.download(DistUrl,'file.zip', function (err) {
-                        //    if (err){
-                        //        errHandler(res,500,err);
-                        //    }else{
-                        //        console.log('ok')
-                        //    }
-                        //})
-                        res.end('ok')
-                        //res.sendFile(DistUrl)
-                    }
-                })
+                try {
+                    zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
+                        if (err) {
+                            errHandler(res, 500, err);
+                        } else {
+                            //res.status(200).send('ok')
+                            //res.download(DistUrl,'file.zip', function (err) {
+                            //    if (err){
+                            //        errHandler(res,500,err);
+                            //    }else{
+                            //        console.log('ok')
+                            //    }
+                            //})
+                            res.end('ok')
+                            //res.sendFile(DistUrl)
+                        }
+                    })
+                }catch (err){
+                    errHandler(res, 500, err);
+                }
             }
         })
 
