@@ -27,6 +27,8 @@ ide.
                 selectedTagFun:selectedTagFun
             };
             readTagsInfo();
+            //判断属性type，用于在选择了多组canvas或多个控件时，不显示tag和action
+            readObjType();
 
             $scope.component.allTags = TagService.getAllTags();
 
