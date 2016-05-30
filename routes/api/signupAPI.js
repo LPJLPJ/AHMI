@@ -42,7 +42,9 @@ signupAPI.post = function(req, res){
                                     errHandler(res,500,err);
                                 }
                                 //send mail
-                                mailServiece.sendVerifyMail(newUser.email,newUser._id, function (err, info) {
+                                //baseurl
+                                var baseUrl = req.protocol+'://'+req.headers.host;
+                                mailServiece.sendVerifyMail(newUser.email,newUser._id,baseUrl, function (err, info) {
                                     if (err){
                                         errHandler(res,500,err)
                                     }
