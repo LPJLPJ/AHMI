@@ -27,8 +27,9 @@ mailService.sendTestMail = function (to) {
     }
 }
 
-mailService.sendVerifyMailExample = function (to, id) {
-    var url = 'http://localhost:3000/user/verify?id='+id;
+mailService.sendVerifyMailExample = function (to, id,baseUrl) {
+    baseUrl = baseUrl || 'http://localhost:300';
+    var url = baseUrl+'/user/verify?id='+id;
     return {
         from: '"Graphichina" <zeyu.cheng@graphichina.com>', // sender address
         to: to, // list of receivers
@@ -38,8 +39,9 @@ mailService.sendVerifyMailExample = function (to, id) {
     }
 }
 
-mailService.sendPasswordMailExample = function (to, key, timeTag) {
-    var url = 'http://localhost:3000/user/findpassword?mail='+to+'&key='+key+'&time='+timeTag;
+mailService.sendPasswordMailExample = function (to, key, timeTag,baseUrl) {
+    baseUrl = baseUrl || 'http://localhost:3000';
+    var url = baseUrl+'/user/findpassword?mail='+to+'&key='+key+'&time='+timeTag;
     return {
         from: '"Graphichina" <zeyu.cheng@graphichina.com>', // sender address
         to: to, // list of receivers
@@ -51,12 +53,12 @@ mailService.sendPasswordMailExample = function (to, key, timeTag) {
 
 
 
-mailService.sendVerifyMail = function (to, id, cb) {
-    mailService.transporter.sendMail(mailService.sendVerifyMailExample(to,id), cb);
+mailService.sendVerifyMail = function (to, id,baseUrl, cb) {
+    mailService.transporter.sendMail(mailService.sendVerifyMailExample(to,id,baseUrl), cb);
 }
 
 
-mailService.sendPasswordMail = function (to ,cb) {
+mailService.sendPasswordMail = function (to ,baseUrl,cb) {
     var timeTag = Date.now();
     var key = ''
 
@@ -66,7 +68,7 @@ mailService.sendPasswordMail = function (to ,cb) {
         bcrypt.hash(to,salt,function(err, hash){
             if (err) {return cb(err)}
             key = hash
-            mailService.transporter.sendMail(mailService.sendPasswordMailExample(to,key,timeTag),cb);
+            mailService.transporter.sendMail(mailService.sendPasswordMailExample(to,key,timeTag,baseUrl),cb);
         })
     })
 

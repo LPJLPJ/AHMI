@@ -14,7 +14,7 @@ findPassword.getFindPasswordPage = function (req, res) {
 }
 
 findPassword.postMail = function (req, res) {
-    var data = req.body
+    var data = req.body;
     if (data.mail!=''&&data.captcha!=''){
         if (data.captcha == req.session.captcha.text){
             UserModel.findByMail(data.mail, function (err, user) {
@@ -22,7 +22,9 @@ findPassword.postMail = function (req, res) {
                     errHandler(res,500,'error')
                 }else {
                     if (user){
-                        mailService.sendPasswordMail(data.mail, function (err, info) {
+                        var baseUrl = req.protocol+'://'+req.headers.host;
+                        //var baseUrl = req.headers.host;
+                        mailService.sendPasswordMail(data.mail,baseUrl, function (err, info) {
                             if (err){
                                 errHandler(res,500,'mail send error')
                             }else{
@@ -34,6 +36,8 @@ findPassword.postMail = function (req, res) {
                     }
                 }
             })
+            //delete captcha
+            req.session.captcha = null;
         }else{
             errHandler(res, 500, 'captcha error')
         }
@@ -70,9 +74,9 @@ findPassword.resetPassword = function (req, res) {
         errHandler(res,500,'captcha error')
         return;
     }
-    console.log('params',req.params)
-    console.log('query',req.query)
-    console.log('time',Date.now())
+    //console.log('params',req.params)
+    //console.log('query',req.query)
+    //console.log('time',Date.now())
     var timeDiff = Date.now() - time;
     if (timeDiff>0 && timeDiff<30*60*1000){
         //valid

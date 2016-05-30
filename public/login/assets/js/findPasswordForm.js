@@ -58,8 +58,7 @@ $(function () {
                 },
                 success: function (data, status, xhr) {
                     $('#captcha-verify').html(successMessages.general.ok)
-
-
+                    $('#captcha-img').attr('src','/captcha');
                     $('#submit').attr('disabled',false)
                 },
                 error: function (err, status, xhr) {
@@ -76,7 +75,7 @@ $(function () {
                             break;
 
                     }
-                    $('#captcha-img').attr('src','/captcha')
+                    $('#captcha-img').attr('src','/captcha');
                     $('#submit').attr('disabled',false)
                 }
             })

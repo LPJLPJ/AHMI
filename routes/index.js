@@ -148,9 +148,9 @@ router.route('/project/:id/resources/:rid')
 router.route('/mail/sendverifymail')
     .post(sendMail.sendVerifyMail);
 //
-//router.route('/mail/sendpasswordmail')
-//    .get(sendMail.sendPasswordMail)
-//
+router.route('/mail/sendpasswordmail')
+    .get(sendMail.sendPasswordMail)
+
 //router.route('/mail/test')
 //    .get(sendMail.sendTestMail)
 

@@ -26,7 +26,8 @@ module.exports.sendVerifyMail = function (req, res) {
                 errHandler(res, 500, 'error')
             }else{
                 if (user){
-                    mailService.sendVerifyMail(user.email,user._id, function (err,info) {
+                    var baseUrl = req.protocol+'://'+req.headers.host;
+                    mailService.sendVerifyMail(user.email,user._id, baseUrl,function (err,info) {
                         if (err){
                             //console.log(err)
                             errHandler(res, 500, 'mail send error')
@@ -56,7 +57,8 @@ module.exports.sendPasswordMail = function (req, res) {
                 errHandler(res,500,'user find error')
             }else{
                 if (user){
-                    mailService.sendPasswordMail(to, function (err, info) {
+                    var baseUrl = req.protocol+'://'+req.headers.host;
+                    mailService.sendPasswordMail(to, baseUrl, function (err, info) {
                         if (err){
                             errHandler(res,500,'send mail error')
                         }else{
