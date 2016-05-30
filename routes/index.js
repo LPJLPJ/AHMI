@@ -8,6 +8,7 @@ var getCaptcha = require('./getCaptcha');
 var getUsers = require('./getUsers');
 var route_space = require('./route_space');
 var routeValidate = require('./routeValidate');
+var UserModel = require('../db/models/UserModel')
 
 //api route
 var signupAPI = require('./api/signupAPI');
