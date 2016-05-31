@@ -411,14 +411,14 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
+                height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:360,
                 lowAlarmValue:0,highAlarmValue:360,
                 value:45,
+                offsetValue:0,
                 pointerLength:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
             };
             return {

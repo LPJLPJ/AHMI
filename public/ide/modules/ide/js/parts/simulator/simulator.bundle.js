@@ -20179,7 +20179,7 @@
 			if (widget.texList && widget.texList.length == 2) {
 				//has tex
 				//draw background
-				var texSlice = widget.texList[1].slices[0];
+				var texSlice = widget.texList[0].slices[0];
 				this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
 				//draw progress
 				//get current value
@@ -20191,7 +20191,7 @@
 				curScale = curScale >= 0 ? curScale : 0.0;
 				curScale = curScale <= 1 ? curScale : 1.0;
 
-				var progressSlice = widget.texList[0].slices[0];
+				var progressSlice = widget.texList[1].slices[0];
 
 				switch (widget.info.arrange) {
 
@@ -20498,6 +20498,7 @@
 
 			var width = widget.info.width;
 			var height = widget.info.height;
+			var offset = widget.info.offsetValue || 0;
 			if (widget.texList) {
 
 				//pointer
@@ -20525,7 +20526,7 @@
 					var bgTex = widget.texList[0].slices[0];
 					this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
 					//draw pointer
-					this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase, widget.texList[1].slices[0].imgSrc);
+					this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase + offset, widget.texList[1].slices[0].imgSrc);
 					//draw circle
 					// var circleTex = widget.texList[2].slices[0]
 					// this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -20536,9 +20537,9 @@
 						this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
 						//draw light strip
 						var lightStripTex = widget.texList[2].slices[0];
-						this.drawLightStrip(curX, curY, width, height, minArc + 90, curArc + 90, widget.texList[2].slices[0].imgSrc);
+						this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
 						//draw pointer
-						this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase, widget.texList[1].slices[0].imgSrc);
+						this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase + offset, widget.texList[1].slices[0].imgSrc);
 
 						//draw circle
 						// var circleTex = widget.texList[3].slices[0]

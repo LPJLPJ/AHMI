@@ -91,6 +91,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 pointerImg:'blank.png',
                 enterDashboardMode:enterDashboardMode,
                 enterDashboardValue:enterDashboardValue,
+                enterDashboardOffsetValue:enterDashboardOffsetValue,
                 enterPointerLength:enterPointerLength
             },
             textArea:{
@@ -719,7 +720,31 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         })
     }
 
+    function enterDashboardOffsetValue(e){
+        if (e.keyCode==13){
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.offsetValue))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.offsetValue==initObject.level.info.offsetValue){
+                return;
+            }
 
+            var option={
+                offsetValue:$scope.component.object.level.info.offsetValue
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardOffsetValue(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+
+            })
+
+        }
+    }
 
     function enterDashboardValue(e){
         if (e.keyCode==13){
@@ -747,8 +772,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             };
 
             //console.log('change attribute dashboard value',option)
+            var oldOperate=ProjectService.SaveCurrentOperate();
 
-            ProjectService.ChangeAttributeDashboardValue(option, function (oldOperate) {
+            ProjectService.ChangeAttributeDashboardValue(option, function () {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
 
             })
@@ -781,8 +807,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 pointerLength:$scope.component.object.level.info.pointerLength
             };
             console.log(option);
+            var oldOperate=ProjectService.SaveCurrentOperate();
 
-            ProjectService.ChangeAttributeDashboardPointerLength(option, function (oldOperate) {
+            ProjectService.ChangeAttributeDashboardPointerLength(option, function () {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
 
             })
@@ -920,6 +947,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
         }
     }
+
+
+
+
 
     function enterMinAlert(e){
         if (e.keyCode==13){

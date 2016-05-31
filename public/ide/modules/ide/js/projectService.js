@@ -600,7 +600,17 @@ ideServices
                 }
 
 
+                this.on('changeDashboardOffsetValue', function (arg) {
+                    if(arg.offsetValue||arg.offsetValue==0){
+                        self.offsetValue=arg.offsetValue;
+                    }
+                    //console.log('changeDashboardValue',self.value);
+                    var _callback=arg.callback;
 
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
 
 
                 this.on('changeDashboardValue', function (arg) {
@@ -715,8 +725,8 @@ ideServices
                     var radius=Math.max(this.width,this.height)/2;
                     ctx.moveTo(0,0);
                     //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                    var angle=translateAngle(this.value,this.scaleX,this.scaleY);
-                    var minAngle=translateAngle(this.minValue,this.scaleX,this.scaleY);
+                    var angle=translateAngle(this.value+this.offsetValue,this.scaleX,this.scaleY);
+                    var minAngle=translateAngle(this.minValue+this.offsetValue,this.scaleX,this.scaleY);
                     ctx.arc(0,0,radius,minAngle+Math.PI/2,angle+Math.PI/2);
                     ctx.closePath();
                     ctx.clip();
@@ -729,7 +739,7 @@ ideServices
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
-                    ctx.rotate((this.value+45)*Math.PI/180);
+                    ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
                     ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
 
                 }
@@ -4632,6 +4642,19 @@ ideServices
         };
 
 
+        this.ChangeAttributeDashboardOffsetValue = function(_option, _successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var offsetValue=_option.offsetValue;
+
+
+            selectObj.level.info.offsetValue=offsetValue;
+
+            var arg={
+                offsetValue:offsetValue,
+                callback:_successCallback
+            }
+            selectObj.target.fire('changeDashboardOffsetValue',arg);
+        }
 
 
         this.ChangeAttributeDashboardValue= function (_option, _successCallback) {
