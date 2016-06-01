@@ -80,8 +80,24 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 return;
             }
         }
-        ResourceService.deleteFileById($scope.component.top.files[index].id, function () {
+        var resourceId = $scope.component.top.files[index].id;
+        ResourceService.deleteFileById(resourceId, function () {
             $scope.component.top.files = ResourceService.getAllImages();
+            //delete on server
+            //$http({
+            //    method:'DELETE',
+            //    url:'/project/'+$scope.project.projectId+'/deleteresource/'+resourceId
+            //})
+            //.success(function (data, status, xhr) {
+            //    if (data == 'ok'){
+            //        toastr.info('删除成功');
+            //    }
+            //
+            //})
+            //.error(function (err) {
+            //    console.log('delete failed');
+            //    toastr.info('删除失败')
+            //})
         }.bind(this));
         
 

@@ -23,6 +23,7 @@ projectRoute.getAllProjects=function(req, res){
 
 projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id
+    var userId = req.session.user&&req.session.user.id;
 
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
@@ -30,7 +31,14 @@ projectRoute.getProjectById = function (req, res) {
                 errHandler(res,500,'error')
             }
             //console.log(project)
-            res.render('ide/index.html')
+            if (project.userId == userId){
+                res.render('ide/index.html')
+            }else{
+                res.render('login/login.html',{
+                    title:'重新登录'
+                });
+            }
+
         })
     }else{
         errHandler(res,500,'error')
@@ -181,7 +189,30 @@ projectRoute.saveProject = function (req, res) {
                             console.log(err)
                             errHandler(res, 500, 'project resave error')
                         }else{
+
                             res.end('ok')
+                            //delete files
+                            var resourceList = curProjectContent.resourceList;
+                            var resourceNames = resourceList.map(function(res){
+                                return res.id;
+                            })
+                            //console.log(resourceNames);
+                            var url = path.join(__dirname,'../projects',projectId,'resources');
+                            fs.readdir(url, function (err, files) {
+                                if (err){
+                                    console.log(err)
+                                }
+                                //console.log(files)
+                                if (files && files.length){
+
+                                    var diffResources = _.difference(files,resourceNames);
+                                    //console.log(diffResources)
+                                    for (var i=0;i<diffResources.length;i++){
+                                        fs.unlink(path.join(url,diffResources[i]));
+                                    }
+                                }
+                            })
+
                         }
                     })
                 }else{

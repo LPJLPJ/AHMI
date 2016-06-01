@@ -7,8 +7,8 @@ module.exports = function(req, res){
 			text:captcha.text
 		}
 
-		console.log('captcha',captcha.text);
-		console.log('req session',req.session);
+		//console.log('captcha',captcha.text);
+		//console.log('req session',req.session);
 		res.writeHead(200,{
 			'Content-Type':'image/png'
 		})

@@ -104,6 +104,31 @@ module.exports.uploadProjectFile = function (req, res) {
 }
 
 
+module.exports.deleteResource = function (req, res) {
+    var projectId = req.params.id;
+    var resourceId = req.params.rid;
+    var baseUrl = path.join(__dirname,'../projects/',projectId,'resources')
+    var resourceUrl = path.join(baseUrl,resourceUrl);
+    if (projectId){
+        fs.stat(resourceUrl, function (err, stats) {
+            if (stats && stats.isFile()){
+                fs.unlink(resourceUrl,function(err){
+                    if (err){
+                        errHandler(res,500,'delete error')
+                    }
+                    res.end('ok')
+                })
+            }else{
+                //can't delete
+                errHandler(res,500,'invalid resource')
+            }
+        })
+    }else{
+        errHandler(res, 500, 'invalid projectid')
+    }
+}
+
+
 module.exports.deleteProjectFile = function (req, res) {
     var projectId = req.params.id;
     var fileId = req.body.fileId;

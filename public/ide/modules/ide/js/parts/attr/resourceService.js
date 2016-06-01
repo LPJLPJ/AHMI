@@ -240,10 +240,10 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100)+'%';
 
                 }
-                console.log(ResourceService.getResourceUrl().split('/'))
-                //console.log('/project/'+ResourceService.getResourceUrl().split('/')[1]+'/upload')
-
-                console.log(file);
+                //console.log(ResourceService.getResourceUrl().split('/'))
+                ////console.log('/project/'+ResourceService.getResourceUrl().split('/')[1]+'/upload')
+                //
+                //console.log(file);
                 Upload.upload({
                     //url:baseUrl+'/resource',
                     //url:'/api/upload',
