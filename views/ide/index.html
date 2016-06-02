@@ -113,7 +113,7 @@
     </script>
 </head>
 <body ng-app="ide" style="height: 100%" ng-controller="IDECtrl">
-<div class="my-mask" style="position: absolute;left: 0;right: 0;top:0;bottom: 0;z-index: 1000;background: #fff" ng-class="{true:'my-hidden'}[ide.loaded]" >
+<div class="my-mask" style="position: absolute;left: 0;right: 0;top:0;bottom: 0;z-index: 1000;background: rgba(28, 43, 75, 1)" ng-class="{true:'my-hidden'}[ide.loaded]" >
         <div class="sk-wave" >
             <div class="sk-rect sk-rect1"></div>
             <div class="sk-rect sk-rect2"></div>
@@ -1548,7 +1548,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="cmd in action.commands" ng-click="chooseCmd($index)">
+                                    <tr ng-class="{'op-selected':$index==currentChosenIdx}"  ng-repeat="cmd in action.commands" ng-click="chooseCmd($index)">
                                         <td>{{$index+1}}</td>
                                         <td >{{cmd[0].symbol}}</td>
                                         <td><p>{{cmd[1]}}</p></td>
