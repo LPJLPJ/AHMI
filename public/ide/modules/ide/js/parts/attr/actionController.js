@@ -170,22 +170,31 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         });
         $scope.action = action;
         $scope.triggers = triggers;
-        $scope.chosenCmd = ['','',''];
+
+        $scope.currentChosenIdx = $scope.action.commands.length-1;
+        if ($scope.currentChosenIdx>0){
+            $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
+        }else{
+            $scope.chosenCmd = ['','',''];
+        }
 
         //选择指令
         $scope.chooseCmd = function (index) {
+            $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
         };
 
         //增加新指令
         $scope.addNewCmd = function () {
-            $scope.action.commands.push(['','','']);
-            $scope.chosenCmd = $scope.action.commands[$scope.action.commands.length-1];
+            $scope.action.commands.splice($scope.currentChosenIdx+1,0,['','','']);
+            $scope.currentChosenIdx += 1;
+            $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
         };
 
         //删除指令
         $scope.deleteCmd = function (index) {
             $scope.action.commands.splice(index,1);
+            $scope.currentChosenIdx -= 1;
         };
 
         //保存
