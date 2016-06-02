@@ -2,7 +2,7 @@
  * Created by Zzen1ss on 23/3/2016
  */
 
-ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','ProjectService', 'Type',function ($scope, ActionService,TagService,$uibModal,ProjectService,Type) {
+ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','ProjectService', 'Type','OperationService',function ($scope, ActionService,TagService,$uibModal,ProjectService,Type,OperationService) {
 
     $scope.$on('GlobalProjectReceived', function () {
 
@@ -160,8 +160,9 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 /**
  * action 模态窗口控制器
  */
-    .controller('ActionInstanceCtrl', function ($scope, $uibModalInstance, action,triggers,tags,timerTags) {
-        $scope.ops = ['GOTO','SET','INC','DEC'];
+    .controller('ActionInstanceCtrl', function ($scope, $uibModalInstance, action,triggers,tags,timerTags,OperationService) {
+        //$scope.ops = ['GOTO','SET','INC','DEC'];
+        $scope.ops = OperationService.getOperations();
         $scope.tags = _.map(tags, function (tag) {
             return tag.name;
         });

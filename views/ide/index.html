@@ -73,6 +73,7 @@
     <script src="../../public/ide/modules/ide/js/parts/attr/resourceService.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/attr/timerService.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/attr/tagService.js"></script>
+    <script src="../../public/ide/modules/ide/js/parts/attr/operationService.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/attr/characterSetService.js"></script>
     <script src="../../public/ide/modules/ide/js/closeBrowser.js"></script>
 
@@ -1511,7 +1512,7 @@
                                     <td>
                                         <div class="form-group modelPart">
                                             <span>Option</span>
-                                            <select class = "form-control" ng-model="chosenCmd[0]" ng-options="op for op in ops"></select>
+                                            <select class = "form-control" ng-model="chosenCmd[0]" ng-options="op as op.symbol for op in ops"></select>
                                         </div>
                                     </td>
 
@@ -1549,7 +1550,7 @@
                                     <tbody>
                                     <tr ng-repeat="cmd in action.commands" ng-click="chooseCmd($index)">
                                         <td>{{$index+1}}</td>
-                                        <td >{{cmd[0]}}</td>
+                                        <td >{{cmd[0].symbol}}</td>
                                         <td><p>{{cmd[1]}}</p></td>
                                         <td><p>{{cmd[2]}}</p></td>
                                         <td><img src="../../public/ide/modules/ide/img-web/icon_close.png" ng-click="deleteCmd($index)"></td>
