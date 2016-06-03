@@ -107,14 +107,15 @@ ideServices
 
                 //开始移动时Layer的Scale
                 this.on('OnRelease', function () {
+                    console.log('hahhaha');
                     var currentLayer=_self.getLevelById(self.id);
                     var layerNode=null;
                     layerNode=getFabricObject(self.id);
 
                     self.initPosition.left = _.cloneDeep(self.getLeft());
                     self.initPosition.top = _.cloneDeep(self.getTop());
-                    self.initScale.X=layerNode.getScaleX();
-                    self.initScale.Y=layerNode.getScaleY();
+                    self.initScale.X=layerNode.getScaleX().toFixed(2);
+                    self.initScale.Y=layerNode.getScaleY().toFixed(2);
 
 
                 });
@@ -122,7 +123,6 @@ ideServices
                 this.on('OnScaleRelease', function (objId) {
                     if (objId==self.id){
                         this.renderUrlInPage(self);
-
                     }
                 });
                 this.on('OnRenderUrl', function () {
@@ -133,6 +133,7 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -177,9 +178,9 @@ ideServices
 
             var layer=getLevelById(layerId);
 
+
             var layerWidth=layer.info.width/this.initScale.X;
             var layerHeight=layer.info.height/this.initScale.Y;
-
 
 
 
@@ -635,7 +636,6 @@ ideServices
                     self.pointerLength=arg.pointerLength;
                     self.scaleX = arg.scaleX;
                     self.scaleY = arg.scaleY;
-                    console.log('change pointer',self.pointerLength,level);
                     var _callback=arg.callback;
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -3454,7 +3454,7 @@ ideServices
                 }
                 currentPage.proJsonStr =
                     JSON.stringify(CanvasService.getPageNode().toJSON());
-                console.log(currentPage.proJsonStr);
+                //console.log(currentPage.proJsonStr);
 
                 var currentSubLayer=_self.getCurrentSubLayer();
                 if (currentSubLayer){
@@ -3611,6 +3611,7 @@ ideServices
 
             //如果当前在编辑Page,需要使所有Layer失焦,如果在编辑SubLayer,需要重新loadFromJSON
             var currentPage=project.pages[pageIndex];
+
             if (!currentPage){
                 currentPage=_self.getCurrentPage();
             }
@@ -3642,14 +3643,13 @@ ideServices
 
                 _successCallback && _successCallback();
             }else if (currentPage.mode==1){
-
                 _backToPage(currentPage, function () {
                     _self.OnPageClicked(pageIndex,null,skipClean);
 
                     pageNode.deactivateAll();
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                    console.log(currentPage.proJsonStr);
+                    console.log('currentPage',currentPage);
 
 
                     currentPage.mode=0;
@@ -3918,13 +3918,14 @@ ideServices
 
                 currentPage.currentFabLayer=_fabLayer?_fabLayer:getFabricObject(_layer.id);
                 var currentFabLayer=currentPage.currentFabLayer;
+                console.log('currentFabLayer',currentFabLayer);
 
                 pageNode.setActive(currentFabLayer);
 
                 currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                console.log(currentPage.proJsonStr);
+                //console.log(currentPage.proJsonStr);
 
                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                 _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
@@ -4028,9 +4029,7 @@ ideServices
                 console.log(e);
             }
 
-
             var currentSubLayer=currentLayer.subLayers[subLayerIndex];
-
 
             if (!currentSubLayer){
                 console.warn('找不到SubLayer');
@@ -4066,6 +4065,7 @@ ideServices
             }
             else {
 
+                console.log('subLayerNode',subLayerNode);
                 subLayerNode.clear();
                 subLayerNode.setBackgroundImage(null, function () {
                     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
@@ -4086,7 +4086,8 @@ ideServices
                         _successCallback && _successCallback();
                     });
 
-                })
+                });
+                console.log('');
 
             }
         };
@@ -5348,9 +5349,13 @@ ideServices
                     fabLayer.setScaleY(_option.height / fabLayer.height);
                     currentLayer.info.height = _option.height;
                 }
+
+                //for fix scale bug!!!
+                object.target.fire('OnRelease',object.target.id);
+
                 pageNode.renderAll();
                 currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                console.log(currentPage.proJsonStr);
+                //console.log(currentPage.proJsonStr);
 
                 var layer = getCurrentLayer();
                 _self.OnLayerSelected(layer, function () {
