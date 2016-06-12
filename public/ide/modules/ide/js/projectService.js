@@ -6,7 +6,7 @@
 var ideServices = angular.module('IDEServices', ['ngFileUpload']);
 ideServices
 //IDE界面共享整个项目资源
-    .service('ProjectService', function ($timeout,
+    .service('ProjectService', function ($rootScope,$timeout,
                                          CanvasService,
                                          GlobalService,
                                          Preference,
@@ -107,7 +107,6 @@ ideServices
 
                 //开始移动时Layer的Scale
                 this.on('OnRelease', function () {
-                    console.log('hahhaha');
                     var currentLayer=_self.getLevelById(self.id);
                     var layerNode=null;
                     layerNode=getFabricObject(self.id);
@@ -3649,9 +3648,6 @@ ideServices
                     pageNode.deactivateAll();
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                    console.log('currentPage',currentPage);
-
-
                     currentPage.mode=0;
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
@@ -3918,7 +3914,7 @@ ideServices
 
                 currentPage.currentFabLayer=_fabLayer?_fabLayer:getFabricObject(_layer.id);
                 var currentFabLayer=currentPage.currentFabLayer;
-                console.log('currentFabLayer',currentFabLayer);
+                //console.log('currentFabLayer',currentFabLayer);
 
                 pageNode.setActive(currentFabLayer);
 
@@ -3943,7 +3939,6 @@ ideServices
                     pageNode.setActive(currentFabLayer);
                     currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
 
-
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
@@ -3951,11 +3946,29 @@ ideServices
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
                     _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
-                        _successCallback&&_successCallback(currentFabLayer)
+                        _successCallback&&_successCallback(currentFabLayer);
                     });
 
 
+
                 });
+                //var object = getCurrentSelectObject();
+                //object.target.fire('OnRelease',object.target.id);
+                //$rootScope.$emit('ChangeCurrentPage',null,function(){});
+                //_self.UpdateCurrentThumb();
+                //for fix scale bug!!!
+                var currentPageIndex= _indexById(project.pages, currentPage);
+                var layer = getCurrentLayer();
+                _self.OnPageSelected(currentPageIndex,function () {
+                    //$rootScope.$emit('ChangeCurrentPage',null, function () {});
+                },false);
+
+                $timeout(function () {
+                    _self.OnLayerSelected(layer,function(){
+                        $rootScope.$emit('ChangeCurrentPage',null,function(){});
+                    },false);
+                },1);
+
             }
 
 
@@ -4064,8 +4077,6 @@ ideServices
 
             }
             else {
-
-                console.log('subLayerNode',subLayerNode);
                 subLayerNode.clear();
                 subLayerNode.setBackgroundImage(null, function () {
                     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
@@ -5626,7 +5637,7 @@ ideServices
 
 
                 });
-
+                //console.log('pageNode',pageNode);
             });
         };
 
