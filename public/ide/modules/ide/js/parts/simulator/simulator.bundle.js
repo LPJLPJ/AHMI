@@ -20955,7 +20955,7 @@
 			}
 		},
 		process: function (inst) {
-			var op = inst[0];
+			var op = inst[0].name;
 			var param1 = inst[1];
 			var param2 = inst[2];
 			//timer?

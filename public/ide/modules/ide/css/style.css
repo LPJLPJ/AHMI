@@ -57,7 +57,7 @@ body{
 
 .my-nav-tabs>li.active>a, .my-nav-tabs>li.active>a:focus, .my-nav-tabs>li.active>a:hover{
     color: #1C2B4B;
-    background-color: #fff;
+    background-color: rgb(247,247,247);
     border: 0;
 }
 
@@ -142,6 +142,10 @@ body{
 }
 .container-fluid.my-left-hide .my-pages{
     width: 0;
+}
+
+.container-fluid:focus{
+    outline:none;
 }
 
 .my-add-page{
@@ -593,4 +597,11 @@ body{
 
 .modal-body{
     overflow: auto;
+}
+
+
+
+/* action */
+.op-selected {
+    background-color: #F5F5F5;
 }
