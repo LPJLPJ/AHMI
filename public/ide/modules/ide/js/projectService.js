@@ -3952,22 +3952,18 @@ ideServices
 
 
                 });
-                //var object = getCurrentSelectObject();
-                //object.target.fire('OnRelease',object.target.id);
-                //$rootScope.$emit('ChangeCurrentPage',null,function(){});
-                //_self.UpdateCurrentThumb();
                 //for fix scale bug!!!
-                var currentPageIndex= _indexById(project.pages, currentPage);
-                var layer = getCurrentLayer();
-                _self.OnPageSelected(currentPageIndex,function () {
-                    //$rootScope.$emit('ChangeCurrentPage',null, function () {});
-                },false);
-
-                $timeout(function () {
-                    _self.OnLayerSelected(layer,function(){
-                        $rootScope.$emit('ChangeCurrentPage',null,function(){});
-                    },false);
-                },1);
+                //var currentPageIndex= _indexById(project.pages, currentPage);
+                //var layer = getCurrentLayer();
+                //_self.OnPageSelected(currentPageIndex,function () {
+                //    //$rootScope.$emit('ChangeCurrentPage',null, function () {});
+                //},false);
+                //
+                //$timeout(function () {
+                //    _self.OnLayerSelected(layer,function(){
+                //        $rootScope.$emit('ChangeCurrentPage',null,function(){});
+                //    },false);
+                //},1);
 
             }
 
@@ -4098,7 +4094,7 @@ ideServices
                     });
 
                 });
-                console.log('');
+                //console.log('');
 
             }
         };
@@ -4288,9 +4284,13 @@ ideServices
 
                 var currentFabWidget= currentSubLayer.currentFabWidget;
                 subLayerNode.setActive(currentFabWidget);
+                //console.log('subLayerNode toJson',subLayerNode.toJSON());
                 currentSubLayer.currentFabWidget= _.cloneDeep(currentFabWidget);
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+                console.log('currentSubLayer',currentSubLayer.proJsonStr);
+
                 subLayerNode.renderAll();
 
                 _successCallback && _successCallback(currentFabWidget);
@@ -4313,6 +4313,9 @@ ideServices
                         currentSubLayer.currentFabWidget=_.cloneDeep(currentFabWidget);
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+                        console.log('currentSubLayer',currentSubLayer.proJsonStr);
+
                         subLayerNode.renderAll();
                         currentPage.mode=1;
                         _successCallback && _successCallback(currentFabWidget);
