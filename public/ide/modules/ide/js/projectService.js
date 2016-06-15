@@ -555,6 +555,7 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.value=level.info.value;
+                this.offsetValue=level.info.offsetValue;
                 this.minValue=level.info.minValue;
                 this.pointerLength = level.info.pointerLength;
           
@@ -734,13 +735,24 @@ ideServices
                     ctx.restore();
                 }
                 if (this.pointerImageElement){
+                    ctx.save();
                     var sqrt2 = Math.sqrt(2);
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
 
+                    //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
+                    ctx.scale(this.scaleX,this.scaleY);
+                    ctx.fillStyle=this.pointerColor;
+                    ctx.fillRect(
+                        0,
+                        0,
+                        pointerImgWidth,
+                        pointerImgHeight
+                    );
                     ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
-
+                    ctx.restore();
                 }
 
             }
