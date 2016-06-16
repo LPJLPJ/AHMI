@@ -467,11 +467,11 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         },5*60*1000);
 
         //保持登录
-        $interval(function () {
-
-            console.log('重新登录');
-            reLogin();
-        },20*60*1000)
+        //$interval(function () {
+        //
+        //    console.log('重新登录');
+        //    reLogin();
+        //},20*60*1000)
     }
 
     function readCache() {

@@ -24,6 +24,7 @@ findPassword.postMail = function (req, res) {
                     if (user){
                         var baseUrl = req.protocol+'://'+req.headers.host;
                         //var baseUrl = req.headers.host;
+                        baseUrl = process.env.CUR_HOST || baseUrl;
                         mailService.sendPasswordMail(data.mail,baseUrl, function (err, info) {
                             if (err){
                                 errHandler(res,500,'mail send error')

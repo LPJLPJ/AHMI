@@ -118,9 +118,14 @@ var options = {
 http.createServer(app).listen(app.get('port'), function () {
     console.log('listening: '+app.get('port'))
 });
-https.createServer(options,app).listen(443,function(){
-    console.log('listening: '+443)
-});
+
+if(!process.env.USING_HTTP){
+    https.createServer(options,app).listen(443,function(){
+        console.log('listening: '+443)
+    });
+}
+
+
 
 
 

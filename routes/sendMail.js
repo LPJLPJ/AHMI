@@ -27,6 +27,7 @@ module.exports.sendVerifyMail = function (req, res) {
             }else{
                 if (user){
                     var baseUrl = req.protocol+'://'+req.headers.host;
+                    baseUrl = process.env.CUR_HOST || baseUrl;
                     mailService.sendVerifyMail(user.email,user._id, baseUrl,function (err,info) {
                         if (err){
                             //console.log(err)
@@ -58,6 +59,7 @@ module.exports.sendPasswordMail = function (req, res) {
             }else{
                 if (user){
                     var baseUrl = req.protocol+'://'+req.headers.host;
+                    baseUrl = process.env.CUR_HOST || baseUrl;
                     mailService.sendPasswordMail(to, baseUrl, function (err, info) {
                         if (err){
                             errHandler(res,500,'send mail error')
