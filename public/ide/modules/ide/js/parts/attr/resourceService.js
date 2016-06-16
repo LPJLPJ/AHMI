@@ -191,12 +191,23 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
             }
             function upload(file,translatedFile){
 
+                function deleteUploadingItem(translatedFile){
+                    var uploadingArray = scope.component.top.uploadingArray;
+                    for (var i=0;i<uploadingArray.length;i++){
+                        if (uploadingArray[i].id == translatedFile.id){
+                            uploadingArray.splice(i,1);
+                            break;
+                        }
+                    }
+                }
+
                 /**
                  * 上传成功处理
                  * @param data
                  * @param status
                  * @param headers
                  */
+
                 var successHandler = function(e){
 
                     console.log(e);
@@ -211,13 +222,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                             return true;
                         });
                         //删除scope.uploadingArray中该项
-                        var uploadingArray = scope.component.top.uploadingArray;
-                        for (var i=0;i<uploadingArray.length;i++){
-                            if (uploadingArray[i].id == translatedFile.id){
-                                uploadingArray.splice(i,1);
-                                break;
-                            }
-                        }
+                        deleteUploadingItem(translatedFile);
                         //update
                         scope.component.top.files = ResourceService.getAllImages();
                         scope.$emit('ResourceUpdate');
@@ -228,6 +233,17 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     console.log('err');
                     console.log(e);
                     translatedFile.progress ='上传失败';
+                    switch (e.data.errMsg){
+                        case 'not logged in':
+                            toastr.info('请重新登录');
+                            break;
+                        case 'user not valid':
+                            toastr.info('请登录');
+                            break;
+                        default:
+
+                    }
+                    deleteUploadingItem(translatedFile);
 
                 }
 
