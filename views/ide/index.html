@@ -463,8 +463,7 @@
 
 
     </div><div class="my-attribute" ng-controller="AttrCtrl"
-               ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'my-tool-show':component.out.toolShow}"
-        >
+               ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'my-tool-show':component.out.toolShow}">
         <div class="my-top-panel">
             <ul class="attribute-nav nav nav-tabs my-nav-tabs ">
 
@@ -1298,7 +1297,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">文本</span>
                             <input type="text"
-                                   class="my-attr-number-input"
+                                   class="my-attr-number-input form-control"
                                    ng-model="component.object.level.info.text"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.textArea.enterText($event)"/>
@@ -1729,48 +1728,50 @@
             </div>
 
             <!-- 字符集栏-->
-            <div class="my-panel-item deng-pannel-item" style="overflow: auto;" ng-show="component.top.currentNav==3">
-                <div ng-controller="AttributeCtrl">
-                    <div ng-show="component.object.type=='MyTextArea'">
-                        <div class="dropdown" ng-controller="characterSetCtrl">
-                            <span>字符集</span>
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle "
-                                    id="fontMenu"
-                                    data-toggle="dropdown"
-                                    aria-haspopup="true"
-                                    aria-expanded="true">
-                                {{componentOfChar.character.fontName}}
-                                <span class="caret"></span>
-                            </button>
+            <!--<div class="my-panel-item dengPage-attrbute-container" style="overflow-y: auto;" ng-show="component.top.currentNav==3">-->
+                <!--<div ng-controller="AttributeCtrl">-->
+                    <!--<div ng-show="component.object.type=='MyTextArea'">-->
+                        <!--<div class="dropdown my-attr-item lg" ng-controller="characterSetCtrl">-->
+                            <!--<span>字符集</span>-->
+                            <!--<button type="button" class="btn btn-default btn-sm dropdown-toggle "-->
+                                    <!--id="fontMenu"-->
+                                    <!--data-toggle="dropdown"-->
+                                    <!--aria-haspopup="true"-->
+                                    <!--aria-expanded="true">-->
+                                <!--{{componentOfChar.character.fontName}}-->
+                                <!--<span class="caret" style="width: 0"></span>-->
+                            <!--</button>-->
 
-                            <ul class="dropdown-menu list-group" aria-labelledby="fontMenu" id="characterNameInput">
-                                <li class="list-group-item">段落样式
-                                <span class="btn btn-default btn-primary badge" ng-click="component.textArea.addCharacterSet()">+</span>
-                                </li>
-                                <li ng-repeat="character in componentOfChar.allCharacters track by $index"
-                                    class="list-group-item"
-                                    style="cursor: pointer;"
-                                    ng-click="component.textArea.selectCharacterSetByIndex($index)">
-                                    <div ng-click="componentOfChar.selectCharacterByIndex($index)">
-                                        <input type="text"
-                                               class="dengpage-input"
-                                               style="width: 80px;border: 0;"
-                                               readonly="readonly"
-                                               ng-dblclick="componentOfChar.enableInput($index)"
-                                               ng-blur="componentOfChar.disableInput($index)"
-                                               ng-model="character.fontName">
-                                        <span class="btn btn-primary btn-sm badge" ng-click="component.textArea.deleteCharacterSetByIndex($index)">
-                                         ×
-                                        </span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                            <!--<ul class="dropdown-menu list-group " aria-labelledby="fontMenu" id="characterNameInput">-->
+                                <!--<li class="list-group-item">-->
+                                    <!--添加样式-->
+                                    <!--<span class="btn btn-default btn-primary badge" style="width: 30px" ng-click="component.textArea.addCharacterSet($event)">+</span>-->
 
-                        <div class="my-attr-item lg">
+                                <!--</li>-->
+                                <!--<li ng-repeat="character in componentOfChar.allCharacters track by $index"-->
+                                    <!--class="list-group-item"-->
+                                    <!--style="cursor: pointer;"-->
+                                    <!--ng-click="component.textArea.selectCharacterSetByIndex($index)">-->
+                                    <!--<div ng-click="componentOfChar.selectCharacterByIndex($index)">-->
+                                        <!--<input type="text"-->
+                                               <!--class="dengpage-input"-->
+                                               <!--style="width: 128px;border: 0;font-size:14px"-->
+                                               <!--readonly="readonly"-->
+                                               <!--ng-dblclick="componentOfChar.enableInput($index)"-->
+                                               <!--ng-blur="componentOfChar.disableInput($index)"-->
+                                               <!--ng-model="character.fontName">-->
+                                        <!--<span class="btn btn-primary btn-sm badge" style="width: 30px" ng-click="component.textArea.deleteCharacterSetByIndex($event,$index)">-->
+                                         <!--×-->
+                                        <!--</span>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+
+                        <!--<div class="my-attr-item lg">-->
                             <!--<span class="my-attr-title dengpage-title">字体</span>-->
 
-                            <!--<select class="form-control"-->
+                            <!--<select class="my-attr-number-input form-control"-->
                                     <!--ng-model="component.object.level.info.fontFamily"-->
                                     <!--ng-change="component.textArea.changeFontFamily()">-->
                                 <!--<option value="Arial" ng-selected="true">宋体</option>-->
@@ -1785,63 +1786,184 @@
                                     <!--ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.italicBtnToggle]">-->
                                 <!--<span class="iconfont icon">&#xe641;</span></button>-->
 
+                            <!--<div class="my-attr-item">-->
+                                <!--<span class="my-attr-title dengPage-title">字体大小</span>-->
+                                <!--<input class="my-attr-number-input form-control  short-input"-->
+                                       <!--ng-model="component.object.level.info.fontSize"-->
+                                       <!--type="number"-->
+                                       <!--ng-blur="component.restore()"-->
+                                       <!--ng-keypress="component.textArea.changeFontSize($event)">-->
+                            <!--</div><div class="my-attr-item">-->
+                            <!--<span class="my-attr-title dengpage-title">字体颜色</span>-->
+                            <!--<input colorpicker="rgba"-->
+                                   <!--ng-model="component.object.level.info.fontColor"-->
+                                   <!--type="text"-->
+                                   <!--class="my-attr-number-input form-control  short-input"-->
+                                   <!--ng-blur="component.restore()"-->
+                                   <!--ng-keypress="component.textArea.changeFontColor($event)"/>-->
+
+                            <!--</div>-->
+
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <!--<div ng-show="component.object.type=='MyNum'">-->
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title dengpage-title">数字字体</span>-->
+
+                            <!--<select class="form-control"-->
+                                    <!--ng-model="component.object.level.info.numFamily"-->
+                                    <!--ng-change="component.num.changeNumFamily()">-->
+                                <!--<option value="Arial" ng-selected="true">宋体</option>-->
+                                <!--<option value="times">Times</option>-->
+                            <!--</select>-->
+
+                            <!--<button ng-click="component.num.setBoldNum()"-->
+                                    <!--ng-class="{true:'btn btn-default active',false:'btn btn-default '}[component.object.level.info.boldBtnToggle]">-->
+                                <!--<span class="iconfont icon">&#xe618;</span></button>-->
+                            <!--&lt;!&ndash;<button ng-click="component.textArea.setUnderlineFont()" ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.underlineBtnToggle]" disabled="disabled" ><span class="iconfont icon">&#xe642;</span></button>&ndash;&gt;-->
+                            <!--<button ng-click="component.num.setItalicNum()"-->
+                                    <!--ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.italicBtnToggle]">-->
+                                <!--<span class="iconfont icon">&#xe641;</span></button>-->
+
                             <!--<br><br>-->
+                            <!--<span class="my-attr-title dengPage-title">对齐方式</span>-->
+                            <!--<select class="form-control"-->
+                                    <!--ng-model="component.object.level.info.align"-->
+                                    <!--ng-change="component.num.changeNumAlign()">-->
+                                <!--<option value="center" ng-selected="true">居中</option>-->
+                                <!--<option value="left">右对齐</option>-->
+                                <!--<option value="right">左对齐</option>-->
+                            <!--</select>-->
+
                             <!--<span class="my-attr-title dengPage-title">字体大小</span>-->
                             <!--<input class="dengpage-input"-->
-                                   <!--ng-model="component.object.level.info.fontSize"-->
+                                   <!--ng-model="component.object.level.info.numSize"-->
                                    <!--type="number"-->
                                    <!--ng-blur="component.restore()"-->
-                                   <!--ng-keypress="component.textArea.changeFontSize($event)">-->
+                                   <!--ng-keypress="component.num.changeNumSize($event)">-->
+                        <!--</div>-->
+                    <!--</div>-->
 
-                            <!--<br>-->
-                            <span class="my-attr-title dengpage-title">字体颜色</span>
+                <!--</div>-->
+            <!--</div>-->
+            <div class="my-panel-item xiangPage-textArea-container" style="overflow-y: auto;" ng-show="component.top.currentNav==3">
+                <div ng-controller="AttributeCtrl">
+                    <div ng-show="component.object.type=='MyTextArea'">
+                        <div class=" dropdown my-attr-item lg" ng-controller="characterSetCtrl">
+                            <span class="my-attr-title xiangPage-title">字符集</span>
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle my-attr-number-input form-control xiangPage-dropdown-button"
+                                    id="fontMenu"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="true">
+                                {{componentOfChar.character.fontName}}
+                                <span class="caret" style="width: 0"></span>
+                            </button>
+
+                            <ul class="dropdown-menu list-group xiangPage-dropdown" aria-labelledby="fontMenu" id="characterNameInput">
+                                <li class="list-group-item">
+                                    添加样式
+                                    <span class="btn btn-default btn-primary badge"  ng-click="component.textArea.addCharacterSet($event)">+</span>
+
+                                </li>
+                                <li ng-repeat="character in componentOfChar.allCharacters track by $index"
+                                    class="list-group-item"
+                                    style="cursor: pointer;"
+                                    ng-click="component.textArea.selectCharacterSetByIndex($index)">
+                                    <div ng-click="componentOfChar.selectCharacterByIndex($index)">
+                                        <input type="text"
+                                               class=""
+                                               readonly="readonly"
+                                               ng-dblclick="componentOfChar.enableInput($index)"
+                                               ng-blur="componentOfChar.disableInput($index)"
+                                               ng-model="character.fontName">
+                                        <span class="btn btn-primary btn-sm badge"  ng-click="component.textArea.deleteCharacterSetByIndex($event,$index)">
+                                         ×
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="my-attr-item xiangPage-fontfamily">
+                            <span class="my-attr-title xiangPage-title">字体</span>
+
+                            <select class="form-control xiangPage-selected"
+                                    ng-model="component.object.level.info.fontFamily"
+                                    ng-change="component.textArea.changeFontFamily()">
+                                <option value="Arial" ng-selected="true">宋体</option>
+                                <option value="times">Times</option>
+                            </select>
+                        </div><div class="my-attr-item xiangPage-fontStyle">
+                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.boldBtnToggle]" ng-click="component.textArea.setBoldFont()"><span class="iconfont icon">&#xe618;</span></a>
+                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.italicBtnToggle]" ng-click="component.textArea.setItalicFont()"><span class="iconfont icon">&#xe641;</span></a>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title xiangPage-title">字体大小</span>
+                            <input class="form-control xiangPage-selected"
+                                   ng-model="component.object.level.info.fontSize"
+                                   type="number"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.textArea.changeFontSize($event)">
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title xiangPage-title">字体颜色</span>
                             <input colorpicker="rgba"
                                    ng-model="component.object.level.info.fontColor"
                                    type="text"
-                                   class="dengpage-input dengpage-color-input form-control"
+                                   class="form-control xiangPage-selected"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.textArea.changeFontColor($event)"/>
+
                         </div>
                     </div>
 
                     <div ng-show="component.object.type=='MyNum'">
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title dengpage-title">数字字体</span>
+                        <div class="my-attr-item xiangPage-fontfamily">
+                            <span class="my-attr-title xiangPage-title">数字字体</span>
 
-                            <select class="form-control"
+                            <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.numFamily"
                                     ng-change="component.num.changeNumFamily()">
                                 <option value="Arial" ng-selected="true">宋体</option>
                                 <option value="times">Times</option>
                             </select>
+                        </div><div class="my-attr-item xiangPage-fontStyle">
+                                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.boldBtnToggle]" ng-click="component.num.setBoldNum()"><span class="iconfont icon">&#xe618;</span></a>
+                                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.italicBtnToggle]" ng-click="component.num.setItalicNum()"><span class="iconfont icon">&#xe641;</span></a>
+                                    </div>
 
-                            <button ng-click="component.num.setBoldNum()"
-                                    ng-class="{true:'btn btn-default active',false:'btn btn-default '}[component.object.level.info.boldBtnToggle]">
-                                <span class="iconfont icon">&#xe618;</span></button>
-                            <!--<button ng-click="component.textArea.setUnderlineFont()" ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.underlineBtnToggle]" disabled="disabled" ><span class="iconfont icon">&#xe642;</span></button>-->
-                            <button ng-click="component.num.setItalicNum()"
-                                    ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.italicBtnToggle]">
-                                <span class="iconfont icon">&#xe641;</span></button>
 
-                            <br><br>
-                            <span class="my-attr-title dengPage-title">对齐方式</span>
-                            <select class="form-control"
+
+                            <!--<button ng-click="component.num.setBoldNum()"-->
+                                    <!--ng-class="{true:'btn btn-default active',false:'btn btn-default '}[component.object.level.info.boldBtnToggle]">-->
+                                <!--<span class="iconfont icon">&#xe618;</span></button>-->
+                            <!--&lt;!&ndash;<button ng-click="component.textArea.setUnderlineFont()" ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.underlineBtnToggle]" disabled="disabled" ><span class="iconfont icon">&#xe642;</span></button>&ndash;&gt;-->
+                            <!--<button ng-click="component.num.setItalicNum()"-->
+                                    <!--ng-class="{true:'btn btn-default active',false:'btn btn-default inactive'}[component.object.level.info.italicBtnToggle]">-->
+                                <!--<span class="iconfont icon">&#xe641;</span></button>-->
+                        <div class="y-attr-item lg">
+                            <span class="my-attr-title xiangPage-title">对齐方式</span>
+                            <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.align"
                                     ng-change="component.num.changeNumAlign()">
                                 <option value="center" ng-selected="true">居中</option>
                                 <option value="left">右对齐</option>
                                 <option value="right">左对齐</option>
                             </select>
+                        </div>
 
-                            <span class="my-attr-title dengPage-title">字体大小</span>
-                            <input class="dengpage-input"
+                        <div class="y-attr-item lg">
+                            <span class="my-attr-title xiangPage-title">字体大小</span>
+                            <input class="form-control xiangPage-selected"
                                    ng-model="component.object.level.info.numSize"
                                    type="number"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.num.changeNumSize($event)">
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>

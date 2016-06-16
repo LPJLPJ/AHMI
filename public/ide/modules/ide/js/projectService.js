@@ -5729,6 +5729,12 @@ ideServices
          */
         function translateAngle(value,scaleX,scaleY){
             var tempAngle=null;
+            while(value>360){
+                value=value-360;
+            }
+            while(value<0){
+                value=value+360;
+            }
             if(value>=0&&value<=90){
                 tempAngle = Math.atan(Math.tan(value*Math.PI/180)*(scaleY/scaleX));
             }else if(value>90&&value<=180){
