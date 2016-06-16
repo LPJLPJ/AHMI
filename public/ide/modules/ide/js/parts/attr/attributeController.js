@@ -1277,7 +1277,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }
     }
 
-    function addCharacterSet(){
+    function addCharacterSet(event){
         var customCharacterSet = {
             fontName:'自定义',
             text:'自定义',
@@ -1290,11 +1290,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             italicBtnToggle: _.cloneDeep($scope.component.object.level.info.italicBtnToggle)
         }
         characterSetService.addCharacterSet(customCharacterSet);
+        event.stopPropagation();
 
     }
 
-    function deleteCharacterSetByIndex(index){
+    function deleteCharacterSetByIndex(event,index){
         characterSetService.deleteCharacterSetByIndex(index);
+        event.stopPropagation();
     }
 
     //下面是数字框的方法
