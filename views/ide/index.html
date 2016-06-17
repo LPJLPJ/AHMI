@@ -1601,7 +1601,8 @@
                         </tbody>
                     </table>
                     <!-- list of resources -->
-
+                    <!--total size-->
+                    <span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
                     <!-- table -->
                     <table class="table my-img-table table-bordered">
                         <thead>

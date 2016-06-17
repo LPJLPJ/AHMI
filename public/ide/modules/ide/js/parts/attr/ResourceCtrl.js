@@ -13,6 +13,11 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
     });
 
+    $scope.$on('ResourceChanged', function () {
+        $scope.component.top.files = ResourceService.getAllImages();
+        $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
+    });
+
     function initUserInterface(){
 
     }
@@ -37,7 +42,9 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.component.top.resources=$scope.project.resourceList;
 
         $scope.component.top.basicUrl = ResourceService.getResourceUrl();
+        $scope.component.top.maxSize = ResourceService.getMaxTotalSize();
         $scope.component.top.files = ResourceService.getAllImages();
+        $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
 
 
         
@@ -82,7 +89,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         }
         var resourceId = $scope.component.top.files[index].id;
         ResourceService.deleteFileById(resourceId, function () {
-            $scope.component.top.files = ResourceService.getAllImages();
+            //$scope.component.top.files = ResourceService.getAllImages();
+            scope.$emit('ResourceUpdate');
             //delete on server
             //$http({
             //    method:'DELETE',

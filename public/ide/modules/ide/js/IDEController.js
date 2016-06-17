@@ -107,6 +107,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                     width : resolution[0],
                     height :resolution[1]
                 }
+                globalProject.maxSize = data.maxSize;
 
                 globalProject.projectId = id;
 
@@ -141,6 +142,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                     width : resolution[0],
                     height :resolution[1]
                 }
+                globalProject.maxSize = data.maxSize;
                 console.log('globalProject',globalProject)
 
                 TemplateProvider.saveProjectFromGlobal(globalProject);
@@ -496,6 +498,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     //sync services like resource service and tag service
 
     function syncServices(globalProject){
+        ResourceService.setMaxTotalSize(globalProject.maxSize||100000000);
         ResourceService.syncFiles(globalProject.resourceList)
         //tags tbc
         TagService.syncCustomTags(globalProject.customTags)

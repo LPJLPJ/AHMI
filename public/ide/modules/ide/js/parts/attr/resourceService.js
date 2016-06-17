@@ -5,7 +5,8 @@ ideServices
     .service('ResourceService', function (ProjectService) {
 
 
-        var  files= []
+        var  files= [];
+        var size = 0;
         //var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
         var resourceUrl = ''
         this.getAllResource = function () {
@@ -45,6 +46,22 @@ ideServices
         this.ResourcesLength = function () {
             return files.length;
         };
+
+        this.getCurrentTotalSize = function () {
+            var size = 0;
+            for (var i=0;i<files.length;i++){
+                size+=files[i].size;
+            }
+            return size;
+        }
+
+        this.setMaxTotalSize = function (_size) {
+            size = _size;
+        }
+
+        this.getMaxTotalSize = function () {
+            return size;
+        }
 
         this.getResourceByIndex = function (index) {
             return files[index];
@@ -224,7 +241,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                         //删除scope.uploadingArray中该项
                         deleteUploadingItem(translatedFile);
                         //update
-                        scope.component.top.files = ResourceService.getAllImages();
+                        //scope.component.top.files = ResourceService.getAllImages();
                         scope.$emit('ResourceUpdate');
                     }
                 }
