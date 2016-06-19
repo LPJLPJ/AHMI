@@ -573,6 +573,65 @@ ideServices
             }
         };
 
+        this.getDefaultSwitch=function(){
+            var subLayerNode=CanvasService.getSubLayerNode();
+
+            var info={
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                bindBit:-1
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewSwitch',
+                type: Type.MySwitch,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'开关图片',
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'开关图片'
+                    }]
+                }]
+
+            }
+        };
+        this.getDefaultRotateImg=function(){
+            var subLayerNode=CanvasService.getSubLayerNode();
+
+            var info={
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                minValue:0,maxValue:360,
+                initValue:0
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewRotateImg',
+                type: Type.MyRotateImg,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'旋转图片',
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'旋转图片'
+                    }]
+                }]
+
+            }
+        };
 
 
         function _getRandomColor(){

@@ -150,6 +150,14 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 changeOscColor:changeOscColor,
             },
 
+            //开关
+            switch:{
+              enterBindBit:enterBindBit,
+            },
+            //旋转
+            rotateImg:{
+              enterInitValue:enterInitValue,
+            },
             enterName:enterName,
 			enterColor:enterColor,
 			enterX:enterX,
@@ -1612,7 +1620,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }
     }
 
-    function changeOscColor(){
+    function changeOscColor(e){
         if(e.keyCode==13){
             if($scope.component.object.level.info.oscColor==initObject.level.info.oscColor) {
                 return;
@@ -1623,6 +1631,40 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeOscilloscope(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function enterBindBit(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.bindBit==initObject.level.info.bindBit){
+                return;
+            };
+            toastr.info('修改成功');
+            var option= {
+                bindBit:$scope.component.object.level.info.bindBit,
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeBindBit(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+
+    function enterInitValue(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.initValue==initObject.level.info.initValue){
+                return;
+            }
+            if($scope.component.object.level.info.initValue<$scope.component.object.level.info.minValue||
+                $scope.component.object.level.info.initValue>$scope.component.object.level.info.maxValue){
+                toastr.warning('超出范围');
+            }
+            var option={
+              initValue:$scope.component.object.level.info.initValue,
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeInitValue(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
         }

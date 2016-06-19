@@ -353,6 +353,10 @@
                 newWidget=TemplateProvider.getDefaultOscilloscope();
             }else if(_index==0){
                 newWidget=TemplateProvider.getDefaultImage();
+            }else if(_index==16){
+                newWidget=TemplateProvider.getDefaultSwitch();
+            }else if(_index==6){
+                newWidget=TemplateProvider.getDefaultRotateImg();
             }
             else {
                 return;

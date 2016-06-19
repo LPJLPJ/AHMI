@@ -23,6 +23,8 @@ ideServices.
         var MyNum = this.MyNum = 'MyNum';
         var MyOscilloscope=this.MyOscilloscope='MyOscilloscope';
         var MyImage=this.MyImage='MyImage';
+        var MySwitch=this.MySwitch='MySwitch';
+        var MyRotateImg=this.MyRotateImg='MyRotateImg';
 
 
 
@@ -36,7 +38,8 @@ ideServices.
     this.isWidget= function (_typeStr) {
         if (_typeStr==this.MySlide||_typeStr==this.MyButton||
             _typeStr==this.MyProgress||_typeStr==this.MyNumber||_typeStr==this.MyButtonGroup||_typeStr == this.MyDashboard||
-            _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope||_typeStr==this.MyImage){
+            _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope||_typeStr==this.MyImage||
+            _typeStr==this.MySwitch||_typeStr==this.MyRotateImg){
             return true;
         }
         return false

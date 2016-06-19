@@ -6,8 +6,8 @@ ide.controller('addWidgetController',['$scope', function ($scope) {
         {name:"进度条",icon:"&#xe62a;"},
         {name:"仪表盘",icon:"&#xe632;"},
         {name:"示波器",icon:"&#xe62d;"},
-        {name:"色块",icon:"&#xe629;"},
-        {name:"动画",icon:"&#xe633;"},
+        {name:"旋转图",icon:"&#xe64f;"},
+        {name:"时间",icon:"&#xe64d;"},
         {name:"消息",icon:"&#xe62c;"},
         //{name:"数字框",icon:"&#xe631;"},
         {name:"文本框",icon:"&#xe62f;"},
@@ -16,7 +16,8 @@ ide.controller('addWidgetController',['$scope', function ($scope) {
         {name:"滑块",icon:"&#xe62e;"},
         {name:"按钮组",icon:"&#xe637;"},
         {name:"触发器",icon:"&#xe634;"},
-        {name:"数字",icon:"&#xe631;"}
+        {name:"数字",icon:"&#xe631;"},
+        {name:"开关",icon:"&#xe64e;"}
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;

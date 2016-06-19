@@ -1031,6 +1031,167 @@ ideServices
         };
         fabric.MyImage.async = true;
 
+        fabric.MySwitch = fabric.util.createClass(fabric.Object, {
+            type: Type.MySwitch,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+                this.bindBit=level.info.bindBit;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.imageElement=new Image();
+                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.imageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.imageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.imageElement=currentImageElement;
+                    }else {
+                        self.imageElement=null;
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.imageElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+            }
+        });
+        fabric.MySwitch.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MySwitch(level, option));
+        };
+        fabric.MySwitch.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    imageElement:this.imageElement,
+                    backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MySwitch.prototype.toObject);
+        fabric.MySwitch.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MySwitch(level, object));
+        };
+        fabric.MySwitch.async = true;
+
+        fabric.MyRotateImg = fabric.util.createClass(fabric.Object, {
+            type: Type.MyRotateImg,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+                this.minValue=level.info.minValue;
+                this.maxValue=level.info.maxValue;
+                this.initValue=level.info.initValue;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.imageElement=new Image();
+                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.imageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.imageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.imageElement=currentImageElement;
+                    }else {
+                        self.imageElement=null;
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeRotateImgInitValue',function(arg){
+                    if(arg.initValue||(arg.initValue==0))
+                    self.initValue=arg.initValue;
+                    self.setAngle(self.initValue);
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                })
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.imageElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+            }
+        });
+        fabric.MyRotateImg.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyRotateImg(level, option));
+        };
+        fabric.MyRotateImg.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    imageElement:this.imageElement,
+                    backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MyRotateImg.prototype.toObject);
+        fabric.MyRotateImg.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyRotateImg(level, object));
+        };
+        fabric.MyRotateImg.async = true;
 
         fabric.MyButton = fabric.util.createClass(fabric.Object, {
             type: Type.MyButton,
@@ -2850,6 +3011,42 @@ ideServices
 
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator);
+            }else if(_newWidget.type==Type.MySwitch){
+                fabric.MySwitch.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+
+                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
+            }else if(_newWidget.type==Type.MyRotateImg){
+                fabric.MyRotateImg.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
             }
 
 
@@ -4301,7 +4498,7 @@ ideServices
 
                 currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                console.log('currentSubLayer',currentSubLayer.proJsonStr);
+                //console.log('currentSubLayer',currentSubLayer.proJsonStr);
 
                 subLayerNode.renderAll();
 
@@ -4901,9 +5098,27 @@ ideServices
         //改变示波器的一些属性，如波形颜色
         this.ChangeAttributeOscilloscope = function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
-            selectObje.level.info.oscColor=_option.oscColor;
+            selectObj.level.info.oscColor=_option.oscColor;
             _successCallback&&_successCallback();
-        }
+        };
+        //改变开关纹理所绑定的tag的位
+        this.ChangeAttributeBindBit = function(_option,_successCallback){
+            var bindBit=_option.bindBit;
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.info.bindBit=_option.bindBit;
+            _successCallback&&_successCallback();
+        };
+        //改变旋转纹理的初始值
+        this.ChangeAttributeInitValue = function(_option,_successCallback){
+            var initValue=_option.initValue;
+            var selectObj= _self.getCurrentSelectObject();
+            selectObj.level.info.initValue=_option.initValue;
+            arg={
+                initValue:initValue,
+            };
+            _successCallback&&_successCallback();
+            selectObj.target.fire('changeRotateImgInitValue',arg);
+        };
 
         //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
         this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
@@ -4951,27 +5166,6 @@ ideServices
                             name:'仪表盘指针'
                         }]
                     },
-                    //{
-                    //    currentSliceIdx:0,
-                    //    name:'掩膜纹理',
-                    //    slices:[{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第一象限掩膜'
-                    //    },{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第二象限掩膜'
-                    //    },{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第三象限掩膜'
-                    //    },{
-                    //        color:'rgba(120,120,120,1)',
-                    //        imgSrc:'',
-                    //        name:'第四象限掩膜'
-                    //    }]
-                    //},
                     {
                         currentSliceIdx:0,
                         name:'光带效果',
