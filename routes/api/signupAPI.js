@@ -44,6 +44,7 @@ signupAPI.post = function(req, res){
                                 //send mail
                                 //baseurl
                                 var baseUrl = req.protocol+'://'+req.headers.host;
+                                baseUrl = process.env.CUR_HOST || baseUrl;
                                 mailServiece.sendVerifyMail(newUser.email,newUser._id,baseUrl, function (err, info) {
                                     if (err){
                                         errHandler(res,500,err)

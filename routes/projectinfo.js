@@ -73,7 +73,8 @@ projectRoute.createProject = function (req, res) {
         newProject.save(function (err) {
             if (err){
                 console.log('project save error')
-                res.status(500).end('save error')
+                //res.status(500).end('save error')
+                errHandler(res,500,'save error');
             }
             //create project directory
             var targetDir = path.join(__dirname,'../projects/',String(newProject._id),'resources')
