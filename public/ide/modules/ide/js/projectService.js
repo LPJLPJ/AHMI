@@ -558,6 +558,7 @@ ideServices
                 this.offsetValue=level.info.offsetValue;
                 this.minValue=level.info.minValue;
                 this.pointerLength = level.info.pointerLength;
+                this.clockwise=level.info.clockwise;
           
 
                 this.backgroundColor=level.texList[0].slices[0].color;
@@ -653,6 +654,14 @@ ideServices
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                 });
+                //chang dashboard clockwise
+                this.on('changeDashboardClockwise',function(arg){
+                    self.clockwise=arg.clockwise;
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
@@ -697,8 +706,6 @@ ideServices
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
-                    _callback&&_callback();
-
                 });
 
             },
@@ -720,14 +727,24 @@ ideServices
 
 
                 if(this.lightBandImageElement){
+                    //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
+                    var angle=translateAngle(this.value+this.offsetValue,this.scaleX,this.scaleY);
+                    var minAngle=translateAngle(this.minValue+this.offsetValue,this.scaleX,this.scaleY);
                     ctx.save();
                     ctx.beginPath();
                     var radius=Math.max(this.width,this.height)/2;
                     ctx.moveTo(0,0);
-                    //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                    var angle=translateAngle(this.value+this.offsetValue,this.scaleX,this.scaleY);
-                    var minAngle=translateAngle(this.minValue+this.offsetValue,this.scaleX,this.scaleY);
-                    ctx.arc(0,0,radius,minAngle+Math.PI/2,angle+Math.PI/2);
+                    //如果是逆时针，则反方向旋转
+                    if(this.clockwise=='0'){
+                        minAngle=-minAngle+Math.PI/2;
+                        angle=-angle+Math.PI/2;
+                        ctx.arc(0,0,radius,minAngle,angle,true);
+                    }
+                    else if(this.clockwise=='1'){
+                        minAngle=minAngle+Math.PI/2;
+                        angle=angle+Math.PI/2;
+                        ctx.arc(0,0,radius,minAngle,angle,false);
+                    }
                     ctx.closePath();
                     ctx.clip();
                     ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
@@ -739,10 +756,14 @@ ideServices
                     var sqrt2 = Math.sqrt(2);
                     var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                     var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
-
+                    var angleOfPointer = this.value+this.offsetValue;
+                    if(this.clockwise=='0'){
+                        angleOfPointer=-angleOfPointer;
+                    }
+                    angleOfPointer=angleOfPointer+45;
                     //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
                     ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
+                    ctx.rotate(angleOfPointer*Math.PI/180);
                     ctx.scale(this.scaleX,this.scaleY);
                     ctx.fillStyle=this.pointerColor;
                     ctx.fillRect(
@@ -5180,10 +5201,20 @@ ideServices
             }
             //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
             arg={
-                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
+                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeDashboardClockwise',arg);
+        };
+        //改变仪表盘的转动方向
+        this.ChangeAttributeDashboardClockwise=function(_option,_successCallback){
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.info.clockwise = _option.clockwise
+            arg={
+                clockwise: _.cloneDeep(selectObj.level.info.clockwise),
             };
             _successCallback&&_successCallback();
-            selectObj.target.fire('changeDashboardMode',arg);
+            selectObj.target.fire('changeDashboardClockwise',arg);
         };
         this.ChangeAttributeInterval= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();

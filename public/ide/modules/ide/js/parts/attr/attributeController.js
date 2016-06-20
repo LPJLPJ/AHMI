@@ -82,17 +82,23 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterCursor:enterCursor,
             },
             dashboard:{
-                //dashboardModeId:'0',
+                dashboardModeId:'0',
+                clockwise:'1',
                 dashboardModes:[
                     {id:'0',name:'简单模式'},
                     {id:'1',name:'复杂模式'}
                 ],
+                dashboardClockwise:[
+                    {wise:'1',name:'顺时针'},
+                    {wise:'0',name:'逆时针'}
+                ],
                 backgroundImage:'blank.png',
                 pointerImg:'blank.png',
                 enterDashboardMode:enterDashboardMode,
+                enterDashboardClockwise:enterDashboardClockwise,
                 enterDashboardValue:enterDashboardValue,
                 enterDashboardOffsetValue:enterDashboardOffsetValue,
-                enterPointerLength:enterPointerLength
+                enterPointerLength:enterPointerLength,
             },
             textArea:{
                 enterText:enterText,
@@ -278,6 +284,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     break;
                 case Type.MyDashboard:
                     $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
+                    $scope.component.dashboard.clockwise=$scope.component.object.level.info.clockwise;
                     if ($scope.component.object.level.backgroundImg==''){
                         $scope.component.dashboard.backgroundImage='blank.png';
                     }else {
@@ -841,6 +848,24 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             dashboardModeId:selectDashboardMode
         };
         ProjectService.ChangeAttributeDashboardModeId(option, function () {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function enterDashboardClockwise(e){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectDashboardClockwise=null;
+        if(selectObj.type==Type.MyDashboard){
+            selectDashboardClockwise=$scope.component.dashboard.clockwise;
+        }else{
+            return;
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+
+        var option={
+            clockwise:selectDashboardClockwise
+        };
+        ProjectService.ChangeAttributeDashboardClockwise(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }

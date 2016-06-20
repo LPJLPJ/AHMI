@@ -1017,23 +1017,14 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.dashboard.enterDashboardOffsetValue($event)"
                                    type="number">
-                        </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">指针长度</span>
-                            <input class="my-attr-number-input form-control"
-                                   ng-model="component.object.level.info.pointerLength"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.dashboard.enterPointerLength($event)"
-                                   type="number">
-                        </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">当前值</span>
-                            <input class="my-attr-number-input form-control"
-                                   type="number"
-                                   ng-model="component.object.level.info.value"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.dashboard.enterDashboardValue($event)">
-                        </div>
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">当前值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               type="number"
+                               ng-model="component.object.level.info.value"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.dashboard.enterDashboardValue($event)">
+                    </div>
                         <div class="my-attr-item ">
                             <span class="my-attr-title">低警报</span>
                             <input class="my-attr-number-input form-control  short-input"
@@ -1049,11 +1040,26 @@
                                    ng-keypress="component.enterMaxAlert($event)"
                                    type="number">
                         </div>
-
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">指针长度</span>
+                            <input class="my-attr-number-input form-control"
+                                   ng-model="component.object.level.info.pointerLength"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterPointerLength($event)"
+                                   type="number">
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
-                            <select class="form-control my-attr-number-input form-control" ng-model="component.dashboard.dashboardModeId" ng-change="component.dashboard.enterDashboardMode($event)">
+                            <select class="my-attr-number-input form-control" ng-model="component.dashboard.dashboardModeId" ng-change="component.dashboard.enterDashboardMode($event)">
                                 <option ng-repeat="mode in component.dashboard.dashboardModes" value="{{mode.id}}">{{mode.name}}</option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">转动方向</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.dashboard.clockwise"
+                                    ng-change="component.dashboard.enterDashboardClockwise($event)">
+                                <option ng-repeat="clockwise in component.dashboard.dashboardClockwise" value="{{clockwise.wise}}">{{clockwise.name}}</option>
                             </select>
                         </div>
 
