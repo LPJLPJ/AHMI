@@ -82,17 +82,23 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterCursor:enterCursor,
             },
             dashboard:{
-                //dashboardModeId:'0',
+                dashboardModeId:'0',
+                clockwise:'1',
                 dashboardModes:[
                     {id:'0',name:'简单模式'},
                     {id:'1',name:'复杂模式'}
                 ],
+                dashboardClockwise:[
+                    {wise:'1',name:'顺时针'},
+                    {wise:'0',name:'逆时针'}
+                ],
                 backgroundImage:'blank.png',
                 pointerImg:'blank.png',
                 enterDashboardMode:enterDashboardMode,
+                enterDashboardClockwise:enterDashboardClockwise,
                 enterDashboardValue:enterDashboardValue,
                 enterDashboardOffsetValue:enterDashboardOffsetValue,
-                enterPointerLength:enterPointerLength
+                enterPointerLength:enterPointerLength,
             },
             textArea:{
                 enterText:enterText,
@@ -150,6 +156,14 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 changeOscColor:changeOscColor,
             },
 
+            //开关
+            switch:{
+              enterBindBit:enterBindBit,
+            },
+            //旋转
+            rotateImg:{
+              enterInitValue:enterInitValue,
+            },
             enterName:enterName,
 			enterColor:enterColor,
 			enterX:enterX,
@@ -270,6 +284,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     break;
                 case Type.MyDashboard:
                     $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
+                    $scope.component.dashboard.clockwise=$scope.component.object.level.info.clockwise;
                     if ($scope.component.object.level.backgroundImg==''){
                         $scope.component.dashboard.backgroundImage='blank.png';
                     }else {
@@ -833,6 +848,24 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             dashboardModeId:selectDashboardMode
         };
         ProjectService.ChangeAttributeDashboardModeId(option, function () {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function enterDashboardClockwise(e){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectDashboardClockwise=null;
+        if(selectObj.type==Type.MyDashboard){
+            selectDashboardClockwise=$scope.component.dashboard.clockwise;
+        }else{
+            return;
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+
+        var option={
+            clockwise:selectDashboardClockwise
+        };
+        ProjectService.ChangeAttributeDashboardClockwise(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
@@ -1612,7 +1645,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }
     }
 
-    function changeOscColor(){
+    function changeOscColor(e){
         if(e.keyCode==13){
             if($scope.component.object.level.info.oscColor==initObject.level.info.oscColor) {
                 return;
@@ -1623,6 +1656,40 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeOscilloscope(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function enterBindBit(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.bindBit==initObject.level.info.bindBit){
+                return;
+            };
+            toastr.info('修改成功');
+            var option= {
+                bindBit:$scope.component.object.level.info.bindBit,
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeBindBit(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+
+    function enterInitValue(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.initValue==initObject.level.info.initValue){
+                return;
+            }
+            if($scope.component.object.level.info.initValue<$scope.component.object.level.info.minValue||
+                $scope.component.object.level.info.initValue>$scope.component.object.level.info.maxValue){
+                toastr.warning('超出范围');
+            }
+            var option={
+              initValue:$scope.component.object.level.info.initValue,
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeInitValue(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
         }

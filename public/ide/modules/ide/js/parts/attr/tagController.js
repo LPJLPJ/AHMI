@@ -252,6 +252,7 @@ ide.
                 case Type.MyOscilloscope:
                 case Type.MyTextArea:
                 case Type.MyImage:
+                case Type.MySwitch:
                     $scope.showTagPanel = true;
                     break;
                 default:

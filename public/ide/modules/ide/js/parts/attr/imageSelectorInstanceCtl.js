@@ -39,10 +39,10 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
             initConfigure(false,2,widgetInfo.tex);
             break;
         case Type.MyTextArea:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,1,widgetInfo.tex);
             break;
         case Type.MyNum:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,1,widgetInfo.tex);
             break;
         case Type.MyOscilloscope:
             initConfigure(false,2,widgetInfo.tex);
@@ -51,7 +51,10 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
             initConfigure(false,2,widgetInfo.tex);
             break;
         case Type.MyImage:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,1,widgetInfo.tex);
+            break;
+        case Type.MySwitch:
+            initConfigure(false,1,widgetInfo.tex);
             break;
         default:
             initConfigure(true,1,widgetInfo.tex);
