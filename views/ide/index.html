@@ -1602,7 +1602,10 @@
                     </table>
                     <!-- list of resources -->
                     <!--total size-->
-                    <span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
+                    <uib-progressbar class="progress-striped active" value="component.top.totalSize" max="component.top.maxSize" type="info">
+                        <span style="color:black;white-space: nowrap">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
+                    </uib-progressbar>
+                    <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
                     <!-- table -->
                     <table class="table my-img-table table-bordered">
                         <thead>
