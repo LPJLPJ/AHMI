@@ -130,15 +130,17 @@
 <!--<div class="container-fluid" >-->
 
     <div ng-controller="NavCtrl">
-        <div class="nav navbar-brand">
-            AHMIIDE
-        </div>
+
         <ul class="nav nav-tabs my-nav-tabs"  >
 
             <li role="presentation" ng-repeat="nav in component.nav.navs track by $index"
                 ng-class="{true:'active',false:'inactive'}[component.nav.currentNav==$index]"
                 ng-click="component.nav.changeNav($index)"><a href="#">{{nav.name}}</a></li>
+            <li class="inactive pull-right"><a href="/private/space" target="_blank">个人空间</a></li>
         </ul>
+        <!--<ul class="nav nav-tabs my-nav-tabs pull-right">-->
+
+        <!--</ul>-->
 
         <div class="my-tool-content" ng-class="{true:'my-tool-show',false:'my-tool-hidden'}[component.tool.toolShow]">
             <div class="my-tool-content-item" ng-show="component.nav.currentNav==0">
@@ -370,7 +372,7 @@
                                         ng-model="component.object.level.info.fontName"
                                         ng-change="component.textArea.selectCharacterSetByName(component.object.level.info.fontName)"
                                         ng-show="component.textArea.toolShow">
-                                    <option value="">选择您的字体</option>
+                                    <option value="">选择字体</option>
                                 </select>
                             </span>
                             </div>
@@ -1632,7 +1634,7 @@
                                 <tr>
                                     <td>
                                         <div class="form-group modelPart">
-                                            <span>Option</span>
+                                            <span>Operation</span>
                                             <select class = "form-control" ng-model="chosenCmd[0]" ng-options="op as op.symbol for op in ops"></select>
                                         </div>
                                     </td>
@@ -1640,7 +1642,8 @@
                                     <td>
                                         <div class="form-group modelPart">
                                             <span>Tag</span>
-                                            <select class = "form-control" ng-model="chosenCmd[1]" >
+                                            <select class="form-control" ng-model="chosenCmd[1].tag">
+                                                <option value="">--</option>
                                                 <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
                                                 <option ng-repeat="timerTag in timerTags" value="{{timerTag}}">{{timerTag}}</option>
                                             </select>
@@ -1650,7 +1653,15 @@
                                     <td>
                                         <div class="form-group modelPart">
                                             <span>Value</span>
-                                            <input class="form-control modelPart" type="text" ng-model="chosenCmd[2]" />
+                                            <select class="form-control" ng-model="chosenCmd[2].tag">
+                                                <option value="">--</option>
+                                                <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
+                                                <option ng-repeat="timerTag in timerTags" value="{{timerTag}}">
+                                                    {{timerTag}}
+                                                </option>
+                                            </select>
+                                            <input class="form-control modelPart" type="text"
+                                                   ng-model="chosenCmd[2].value"/>
                                         </div>
                                     </td>
                                 </tr>
@@ -1672,8 +1683,8 @@
                                     <tr ng-class="{'op-selected':$index==currentChosenIdx}"  ng-repeat="cmd in action.commands" ng-click="chooseCmd($index)">
                                         <td>{{$index+1}}</td>
                                         <td >{{cmd[0].symbol}}</td>
-                                        <td><p>{{cmd[1]}}</p></td>
-                                        <td><p>{{cmd[2]}}</p></td>
+                                        <td><p>{{cmd[1].tag}}</p></td>
+                                        <td><p>{{cmd[2].tag||cmd[2].value}}</p></td>
                                         <td><img src="../../public/ide/modules/ide/img-web/icon_close.png" ng-click="deleteCmd($index)"></td>
                                     </tr>
                                     </tbody>

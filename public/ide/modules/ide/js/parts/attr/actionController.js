@@ -97,7 +97,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
          */
         $scope.openPanel = function (index) {
             $scope.selectedIdx = index;
-            console.log($scope.tags);
+            // console.log($scope.tags);
             var targetAction ;
             if (index == -1){
                 //newAction
@@ -136,8 +136,8 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
              * when clicking at the background, pressing the esc button on keyboard, or calling $modalInstance.dismiss will trigger the latter one
              */
             modalInstance.result.then(function (newAction) {
-                console.log('new action');
-                console.log(newAction);
+                // console.log('new action');
+                // console.log(newAction);
                 //process save
                 if ($scope.selectedIdx == -1){
                     //new action
@@ -163,6 +163,8 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
  */
     .controller('ActionInstanceCtrl', function ($scope, $uibModalInstance, action,triggers,tags,timerTags,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
+
+        var blankCmd = ['', {tag: '', value: ''}, {tag: '', value: ''}];
         $scope.ops = OperationService.getOperations();
         $scope.tags = _.map(tags, function (tag) {
             return tag.name;
@@ -177,7 +179,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         if ($scope.currentChosenIdx>0){
             $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
         }else{
-            $scope.chosenCmd = ['','',''];
+            $scope.chosenCmd = _.cloneDeep(blankCmd);
         }
 
         //选择指令
@@ -188,7 +190,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 
         //增加新指令
         $scope.addNewCmd = function () {
-            $scope.action.commands.splice($scope.currentChosenIdx+1,0,['','','']);
+            $scope.action.commands.splice($scope.currentChosenIdx + 1, 0, _.cloneDeep(blankCmd));
             $scope.currentChosenIdx += 1;
             $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
         };
