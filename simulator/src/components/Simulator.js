@@ -890,11 +890,14 @@ module.exports = React.createClass({
             // var curArc = widget.info.value;
             var curDashboardTag = this.findTagByName(widget.tag);
             var curArc = (curDashboardTag && curDashboardTag.value) || 0;
+            var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
             var highAlarm = widget.info.highAlarmValue;
             var pointerLength = widget.info.pointerLength;
-            var pointerWidth = pointerLength / Math.sqrt(2);
-            var pointerHeight = pointerLength / Math.sqrt(2);
+            var pointerWidth,pointerHeight;
+            pointerWidth=pointerLength / Math.sqrt(2);
+            pointerHeight = pointerWidth;
+
 
             if (curArc > maxArc) {
                 curArc = maxArc
@@ -909,7 +912,7 @@ module.exports = React.createClass({
                 var bgTex = widget.texList[0].slices[0];
                 this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                 //draw pointer
-                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase + offset, widget.texList[1].slices[0].imgSrc);
+                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise*(curArc+ offset) + arcPhase , widget.texList[1].slices[0].imgSrc);
                 //draw circle
                 // var circleTex = widget.texList[2].slices[0]
                 // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -922,7 +925,7 @@ module.exports = React.createClass({
                 var lightStripTex = widget.texList[2].slices[0]
                 this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc)
                 //draw pointer
-                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + arcPhase + offset, widget.texList[1].slices[0].imgSrc);
+                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise*(curArc + offset)+arcPhase, widget.texList[1].slices[0].imgSrc);
 
                 //draw circle
                 // var circleTex = widget.texList[3].slices[0]
@@ -1232,7 +1235,6 @@ module.exports = React.createClass({
 
                     needRedraw = true;
                 }
-                ;
                 break;
             default:
                 widget.mouseState = mouseState;
@@ -1321,10 +1323,7 @@ module.exports = React.createClass({
                 if (tagList[i].name == tag) {
                     return tagList[i];
                 }
-            }
-            ;
-
-
+            };
         }
 
         return null;
@@ -1360,7 +1359,7 @@ module.exports = React.createClass({
         }
     },
     timerFlag: function (param) {
-        if (param.search(/SysTmr_(\d+)_\w+/) != -1) {
+        if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
             //get SysTmr
             return parseInt(param.match(/\d+/)[0]);
 
@@ -1371,6 +1370,15 @@ module.exports = React.createClass({
         for (var i = 0; i < cmds.length; i++) {
             this.process(cmds[i]);
         }
+    },
+    getParamValue:function (param) {
+        var value;
+        if (param.tag && param.tag !== ''){
+            value = this.getValueByTagName(param.tag);
+        }else{
+            value = param.value;
+        }
+        return value;
     },
     process: function (inst) {
         var op = inst[0].name;
@@ -1394,10 +1402,11 @@ module.exports = React.createClass({
 
 
                 // }
+                var param2Value = this.getParamValue(param2);
                 if (curPageTag) {
-                    if (param2 > 0 && param2 <= project.pageList.length) {
+                    if (param2Value > 0 && param2Value <= project.pageList.length) {
                         // curPageTag.value = param2;
-                        this.setTagByTag(curPageTag, param2)
+                        this.setTagByTag(curPageTag, param2Value);
                         this.draw()
                     }
                 }
@@ -1405,34 +1414,31 @@ module.exports = React.createClass({
                 break;
             case 'INC':
 
-                var targetTag = this.findTagByName(param1);
+                var targetTag = this.findTagByName(param1.tag);
 
                 if (targetTag) {
-                    var nextValue = targetTag.value + Number(param2);
+                    var nextValue = targetTag.value + Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw()
-                }
-                ;
+                };
                 break;
             case 'DEC':
-                var targetTag = this.findTagByName(param1);
+                var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value - Number(param2);
+                    var nextValue = targetTag.value - Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw()
-                }
-                ;
+                };
                 break;
             case 'SET':
 
-                var targetTag = this.findTagByName(param1);
+                var targetTag = this.findTagByName(param1.tag);
 
                 if (targetTag) {
                     // targetTag.value = parseInt(param2);
-                    this.setTagByTag(targetTag, Number(param2))
+                    this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
                     this.draw()
-                }
-                ;
+                };
                 break;
 
 
@@ -1440,8 +1446,7 @@ module.exports = React.createClass({
         //handle timer
         if (timerFlag != -1) {
             this.handleTimers(timerFlag);
-        }
-        ;
+        };
 
     },
     updateTag: function (curTagIdx, value) {
@@ -1455,35 +1460,13 @@ module.exports = React.createClass({
     render: function () {
 
         return (
-            < div
-        className = 'simulator' >
-            < div
-        className = 'canvas-wrapper col-md-9'
-        onMouseDown = {this.handlePress
-    }
-        onMouseUp = {this.handleRelease
-    }>
-        <
-        canvas
-        ref = 'canvas'
-        className = 'simulator-canvas' / >
-            < canvas
-        ref = 'offcanvas'
-        hidden
-        className = 'simulator-offcanvas' / >
-            < canvas
-        ref = 'tempcanvas'
-        hidden
-        className = 'simulator-tempcanvas' / >
-            < / div >
-            < TagList
-        tagList = {_.cloneDeep(this.state.tagList)
-    }
-        updateTag = {this.updateTag
-    } />
-        </
-        div >
-        )
-        ;
+            < div className='simulator'>
+                < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseUp={this.handleRelease}>
+                    <canvas ref='canvas' className='simulator-canvas' />
+                    < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
+                    < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
+                </div>
+                < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
+            </div >);
     }
 });
