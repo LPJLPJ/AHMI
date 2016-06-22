@@ -12,10 +12,11 @@ module.exports = {
         //login:"./src/js/login.js",
         //personal:"./src/js/personal.js",
         //test:"./src/js/test.js",
-        simulator: "./src/js/simulator.js"
+        simulator: "./src/js/simulator.js",
+        // simulator:"../public/ide/modules/ide/js/parts/simulator"
     },
     output: {
-        path: __dirname + '/dist',
+        path: path.join(__dirname,'../public/ide/modules/ide/js/parts/simulator/'),
         filename: "[name].bundle.js",
         publicPath: '/'
     },
