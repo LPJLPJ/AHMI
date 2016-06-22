@@ -93,8 +93,6 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
 
     function enterColor(op) {
         if(op.name='selectSlice.color'){
-            //console.log('success');
-           // console.log(op);
         }
     }
     function restore(){

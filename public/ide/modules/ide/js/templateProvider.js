@@ -176,10 +176,12 @@ ideServices
 
                 buttonText:'button',
                 buttonFontFamily:"Arial",
-                buttonFontSize:15,
+                buttonFontSize:20,
                 buttonFontColor:'rgba(0,0,0,1)',
                 buttonFontBold:"100",
-                buttonFontItalic:''
+                buttonFontItalic:'',
+                boldBtnToggle:false,
+                italicBtnToggle:false
             };
             return {
                 id: Math.random().toString(36).substr(2),

@@ -1332,13 +1332,15 @@ ideServices
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font="20px Arial";
                     ctx.textAlign='center';
-                    ctx.fillText(arrTime.join(":"),0,5);
+                    ctx.textBaseline='middle';
+                    ctx.fillText(arrTime.join(":"),0,0);
                 }else if(this.dateTimeModeId=='1'){
                     //显示日期
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font="20px Arial";
                     ctx.textAlign='center';
-                    ctx.fillText(arrDate.join("/"),0,5);
+                    ctx.textBaseline='middle';
+                    ctx.fillText(arrDate.join("/"),0,0);
                 }
 
             }
@@ -1368,7 +1370,14 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.normalColor=level.texList[0].slices[0].color;
+
                 this.buttonText=level.info.buttonText;
+                this.buttonFontFamily=level.info.buttonFontFamily;
+                this.buttonFontSize=level.info.buttonFontSize;
+                this.buttonFontColor=level.info.buttonFontColor;
+                this.buttonFontBold=level.info.buttonFontBold;
+                this.buttonFontItalic=level.info.buttonFontItalic;
+
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.normalImageElement=new Image();
                     this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
@@ -1403,14 +1412,39 @@ ideServices
                     _callback&&_callback();
                 });
 
+                this.on('changeButtonText',function(arg){
+                    if(arg.hasOwnProperty('buttonText')){
+                        self.buttonText=arg.buttonText;
 
-
+                    }
+                    if(arg.buttonFontFamily){
+                        self.buttonFontFamily=arg.buttonFontFamily;
+                    }
+                    if(arg.buttonFontBold){
+                        self.buttonFontBold=arg.buttonFontBold;
+                    }
+                    if(arg.buttonFontItalic){
+                        self.buttonFontItalic=arg.buttonFontItalic;
+                    }
+                    if(arg.buttonFontSize){
+                        self.buttonFontSize=arg.buttonFontSize;
+                    }
+                    if(arg.buttonFontColor){
+                        self.buttonFontColor=arg.buttonFontColor;
+                    }
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
 
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                ctx.fillStyle=this.buttonFontColor;
+                ctx.save();
                 ctx.fillStyle=this.normalColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -1420,6 +1454,16 @@ ideServices
 
                 if (this.normalImageElement){
                     ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                ctx.restore();
+                if(this.buttonText){
+                    var fontString=this.buttonFontItalic+" "+this.buttonFontBold+" "+this.buttonFontSize+"px"+" "+this.buttonFontFamily;
+                    //console.log(fontString);
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.buttonText,0,0);
                 }
 
             }
@@ -1668,7 +1712,6 @@ ideServices
                 });
 
                 this.on('changeNumContent', function (arg) {
-                    //console.log('enter on changeTextContent');
                     if(arg.numValue){
                         self.numValue=arg.numValue;
                     }
@@ -4955,10 +4998,52 @@ ideServices
                 return;
             }
             selectObj.level.pressImg=_option.image;
-
         };
 
+        this.ChangeAttributeButtonText=function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var fabTextObj=getFabricObject(selectObj.level.id,true);
+            var arg={
+                level:selectObj.level,
+                callback:function () {
+                    var currentWidget=selectObj.level;
+                    OnWidgetSelected(currentWidget,_successCallback);
+                }
+            };
 
+            if(_option.hasOwnProperty('buttonText')){
+                selectObj.level.info.buttonText=_option.buttonText;
+                arg.buttonText=_option.buttonText;
+            }
+            if(_option.buttonFontFamily){
+                selectObj.level.info.buttonFontFamily=_option.buttonFontFamily;
+                arg.buttonFontFamily=_option.buttonFontFamily;
+            }
+            if(_option.buttonFontSize){
+                selectObj.level.info.buttonFontSize=_option.buttonFontSize;
+                arg.buttonFontSize=_option.buttonFontSize;
+            }
+            if(_option.buttonFontColor){
+                selectObj.level.info.buttonFontColor=_option.buttonFontColor;
+                arg.buttonFontColor=_option.buttonFontColor;
+            }
+            if(_option.buttonFontBold){
+                selectObj.level.info.fontBold=_option.buttonFontBold;
+                selectObj.level.info.boldBtnToggle=_option.boldBtnToggle;
+                arg.buttonFontBold=_option.buttonFontBold;
+            }
+            if(_option.buttonFontItalic){
+                selectObj.level.info.fontItalic=_option.buttonFontItalic;
+                selectObj.level.info.italicBtnToggle=_option.italicBtnToggle;
+                arg.buttonFontItalic=_option.buttonFontItalic;
+            }
+            if(_option.fontName){
+                var tempFontName = _option.fontName;
+                selectObj.level.info.fontName=tempFontName;
+            }
+
+            selectObj.target.fire('changeButtonText',arg);
+        };
 
         this.ChangeAttributeProgressValue= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
@@ -5136,8 +5221,6 @@ ideServices
             var fabTextObj=getFabricObject(selectObj.level.id,true);
             var arg={
                 level:selectObj.level,
-                scaleX:fabTextObj.getScaleX(),
-                scaleY:fabTextObj.getScaleY(),
                 callback:function () {
                     var currentWidget=selectObj.level;
                     OnWidgetSelected(currentWidget,_successCallback);
