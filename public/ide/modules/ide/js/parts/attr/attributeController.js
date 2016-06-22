@@ -515,14 +515,17 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 		}
 	}
 	function enterColor(op) {
+        console.log('keke',op);
+        var oldOperate=null,
+            option=null;
 		if (op.name=='component.object.level.backgroundColor'){
 
 			if (initObject.level.backgroundColor==op.value){
 				return;
 			}
-            var oldOperate=ProjectService.SaveCurrentOperate();
+            oldOperate=ProjectService.SaveCurrentOperate();
 
-			var option={
+			option={
 				color:op.value
 			};
 			ProjectService.ChangeAttributeBackgroundColor(option, function () {
@@ -531,6 +534,34 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 			})
 
 		}
+        if(op.name=='component.object.level.info.fontColor'){
+            if(initObject.level.info.fontColor==op.value) {
+                return;
+            }
+            option = {
+                fontColor:op.value
+            };
+
+            oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+
+        if(op.name=='component.object.level.info.buttonFontColor'){
+            console.log('enter');
+            if(initObject.level.info.buttonFontColor==op.value) {
+                return;
+            }
+            option = {
+                buttonFontColor:op.value
+            };
+
+            oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
 	}
 
 	function enterShowSubLayer(op){
@@ -594,7 +625,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if ($scope.component.object.level.info.buttonText==initObject.level.info.buttonText){
                 return;
             }
-            console.log('haha',typeof $scope.component.object.level.info.buttonText);
             var option = {
                 buttonText:$scope.component.object.level.info.buttonText
             };
