@@ -56,6 +56,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterNormalImage:enterNormalImage,
                 enterPressImage:enterPressImage,
                 enterButtonText:enterButtonText,
+                changeButtonFontFamily:changeButtonFontFamily,
+
                 normalImage:'blank.png',
                 pressImage:'blank.png'
 
@@ -582,8 +584,36 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
-    function enterButtonText(){
+    function enterButtonText(e){
+        if(e.keyCode==13){
+            if ($scope.component.object.level.info.buttonText==initObject.level.info.buttonText){
+                return;
+            }
 
+            var option = {
+                buttonText:$scope.component.object.level.info.buttonText
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeButtonText(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+
+    function changeButtonFontFamily(){
+        if($scope.component.object.level.info.buttonFontFamily==initObject.level.info.buttonFontFamily) {
+            return;
+        }
+        var option = {
+            buttonFontFamily:$scope.component.object.level.info.buttonFontFamily
+        };
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
     function enterInterval(e){

@@ -468,7 +468,7 @@
                 })
                 .success(function (data,status,xhr) {
                     if (data == 'ok'){
-                        toastr.info('生成成功')
+                        toastr.info('生成成功');
                         //download
                         window.location.href = '/project/'+$scope.project.projectId+'/download'
                     }else{
@@ -478,7 +478,7 @@
 
                 })
                 .error(function (err,status,xhr) {
-                    console.log(err)
+                    console.log(err);
                     toastr.info('生成失败')
                 })
             })

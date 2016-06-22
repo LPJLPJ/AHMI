@@ -1368,7 +1368,14 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.normalColor=level.texList[0].slices[0].color;
+
                 this.buttonText=level.info.buttonText;
+                this.buttonFontFamily=level.info.buttonFontFamily;
+                this.buttonFontSize=level.info.buttonFontSize;
+                this.buttonFontColor=level.info.buttonFontColor;
+                this.buttonFontBold=level.info.buttonFontBold;
+                this.buttonFontItalic=level.info.buttonFontItalic;
+
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.normalImageElement=new Image();
                     this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
@@ -1403,14 +1410,21 @@ ideServices
                     _callback&&_callback();
                 });
 
-
-
+                this.on('changeButtonText',function(arg){
+                    self.buttonText=arg.buttonText;
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
 
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                ctx.fillStyle=this.fontColor;
+                ctx.save();
                 ctx.fillStyle=this.normalColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -1420,6 +1434,16 @@ ideServices
 
                 if (this.normalImageElement){
                     ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                ctx.restore();
+                if(this.buttonText){
+                    var fontString=this.buttonFontItalic+" "+this.buttonFontBold+" "+this.buttonFontSize+"px"+" "+this.buttonFontFamily;
+                    //console.log(fontString);
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.buttonText,0,0);
                 }
 
             }
@@ -4955,10 +4979,59 @@ ideServices
                 return;
             }
             selectObj.level.pressImg=_option.image;
-
         };
 
+        this.ChangeAttributeButtonText=function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var fabTextObj=getFabricObject(selectObj.level.id,true);
+            var arg={
+                level:selectObj.level,
+                callback:function () {
+                    var currentWidget=selectObj.level;
+                    OnWidgetSelected(currentWidget,_successCallback);
+                }
+            };
 
+            if(_option.buttonText){
+                selectObj.level.info.buttonText=_option.buttonText;
+                arg.buttonText=_option.buttonText;
+            }
+            if(_option.fontFamily){
+                var tempFontFamily=_option.fontFamily;
+                selectObj.level.info.fontFamily=tempFontFamily;
+                arg.fontFamily=tempFontFamily;
+            }
+            if(_option.fontSize){
+                var tempFontSize=_option.fontSize;
+                selectObj.level.info.fontSize=tempFontSize;
+                arg.fontSize=tempFontSize;
+            }
+            if(_option.fontColor){
+                var tempFontColor=_option.fontColor;
+                selectObj.level.info.fontColor=tempFontColor;
+                arg.fontColor=tempFontColor;
+            }
+            if(_option.fontBold){
+                var tempFontBold=_option.fontBold;
+                var tempBoldBtnToggle=_option.boldBtnToggle;
+                selectObj.level.info.fontBold=tempFontBold;
+                selectObj.level.info.boldBtnToggle=tempBoldBtnToggle;
+                arg.fontBold=tempFontBold;
+            }
+            if(_option.fontItalic){
+                var tempFontItalic=_option.fontItalic;
+                var tempItalicBtnToggle=_option.italicBtnToggle;
+                selectObj.level.info.fontItalic=tempFontItalic;
+                selectObj.level.info.italicBtnToggle=tempItalicBtnToggle;
+                arg.fontItalic=tempFontItalic;
+            }
+            if(_option.fontName){
+                var tempFontName = _option.fontName;
+                selectObj.level.info.fontName=tempFontName;
+            }
+
+            selectObj.target.fire('changeButtonText',arg);
+        };
 
         this.ChangeAttributeProgressValue= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();

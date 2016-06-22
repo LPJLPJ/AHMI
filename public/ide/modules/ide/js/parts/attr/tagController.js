@@ -253,6 +253,8 @@ ide.
                 case Type.MyTextArea:
                 case Type.MyImage:
                 case Type.MySwitch:
+                case Type.MyDateTime:
+                case Type.MyRotateImg:
                     $scope.showTagPanel = true;
                     break;
                 default:
