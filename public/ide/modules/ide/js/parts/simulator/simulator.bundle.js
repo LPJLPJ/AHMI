@@ -20293,6 +20293,8 @@
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        var tempcanvas = this.refs.tempcanvas;
+	        tempcanvas.width = width;
+	        tempcanvas.height = height;
 	        var tempctx = tempcanvas.getContext('2d');
 	        tempctx.save();
 	        tempctx.clearRect(0, 0, width, height);
@@ -20300,22 +20302,22 @@
 	        tempctx.textBaseline = 'middle';
 	        //font style
 	        tempctx.font = '24px arial';
-	        tempctx.fillText(dateTimeString, 0, 0);
+	        tempctx.fillText(dateTimeString, 0.5 * width, 0.5 * height);
 	        tempctx.restore();
 	        offctx.drawImage(tempcanvas, curX, curY, width, height);
 	    },
 	    getCurTime: function (date) {
 	        var date = date || new Date();
-	        var hour = getHours(date);
-	        var minute = getMinutes(date);
-	        var second = getSeconds(date);
+	        var hour = date.getHours();
+	        var minute = date.getMinutes();
+	        var second = date.getSeconds();
 	        return '' + hour + ':' + minute + ':' + second;
 	    },
 	    getCurDate: function (date) {
 	        var date = date || new Date();
-	        var year = getFullYear(date);
-	        var month = getMonth(date) + 1;
-	        var day = getDay(date);
+	        var year = date.getFullYear();
+	        var month = date.getMonth() + 1;
+	        var day = date.getDay();
 	        return '' + year + '/' + month + '/' + day;
 	    },
 	    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
