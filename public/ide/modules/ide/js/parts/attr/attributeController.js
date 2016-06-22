@@ -594,7 +594,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if ($scope.component.object.level.info.buttonText==initObject.level.info.buttonText){
                 return;
             }
-
+            console.log('haha',typeof $scope.component.object.level.info.buttonText);
             var option = {
                 buttonText:$scope.component.object.level.info.buttonText
             };

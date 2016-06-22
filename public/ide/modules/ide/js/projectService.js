@@ -1413,7 +1413,7 @@ ideServices
                 });
 
                 this.on('changeButtonText',function(arg){
-                    if(arg.buttonText){
+                    if(arg.hasOwnProperty('buttonText')){
                         self.buttonText=arg.buttonText;
 
                     }
@@ -5011,7 +5011,7 @@ ideServices
                 }
             };
 
-            if(_option.buttonText){
+            if(_option.hasOwnProperty('buttonText')){
                 selectObj.level.info.buttonText=_option.buttonText;
                 arg.buttonText=_option.buttonText;
             }
