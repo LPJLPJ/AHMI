@@ -29,7 +29,7 @@ loginAPI.post = function(req, res){
                             id:user._id,
                             username:username
                         };
-                        return res.end('ok');
+                        res.end('ok');
                     }else{
                         errHandler(res,500,'not match')
                     }

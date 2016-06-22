@@ -2,14 +2,25 @@
  * Created by ChangeCheng on 16/4/5.
  */
 
-ide.controller('ContainerCtl',['$scope','KeydownService','NavService','ProjectService',function($scope,KeydownService,NavService,ProjectService){
+ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'ProjectService', '$document', function ($scope, KeydownService, NavService, ProjectService, $document) {
     $scope.$on('GlobalProjectReceived', function () {
 
 
-
+        initInterface();
         initListeningKeyDown();
         $scope.$emit('LoadUp');
     });
+
+    function initInterface() {
+        // var container = angular.element('.container-fluid')[0];
+        // console.log(container);
+        // $document.bind('scroll',function (e) {
+        //     console.log(e);
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        // })
+    }
+
     function initListeningKeyDown(){
         $scope.handleKeyUp = function (e) {
             KeydownService.keyUp();

@@ -208,6 +208,16 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
             }
             function upload(file,translatedFile){
 
+                //overload check
+                var curSize = ResourceService.getCurrentTotalSize();
+                var maxSize = ResourceService.getMaxTotalSize();
+                if (curSize>maxSize){
+                    toastr.info('资源超过限制');
+                    deleteUploadingItem(translatedFile);
+                    return;
+                }
+
+
                 function deleteUploadingItem(translatedFile){
                     var uploadingArray = scope.component.top.uploadingArray;
                     for (var i=0;i<uploadingArray.length;i++){

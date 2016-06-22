@@ -1,28 +1,28 @@
 var http = require('http');
 var https = require('https');
-var express = require('express')
-var bodyParser = require('body-parser')
-var ejs = require('ejs')
-var fs = require('fs')
-var path = require('path')
-var mongoose = require('mongoose')
-var UserModel = require('./db/models/UserModel')
+var express = require('express');
+var bodyParser = require('body-parser');
+var ejs = require('ejs');
+var fs = require('fs');
+var path = require('path');
+var mongoose = require('mongoose');
+var UserModel = require('./db/models/UserModel');
 var dbConfig = require('./db/config/config');
 //logger
 var logger = require('morgan');
 
 //Captcha
-var CaptchaGenerator = require('./utils/CaptchaGenerator')
+var CaptchaGenerator = require('./utils/CaptchaGenerator');
 //Session
-var Session = require('express-session')
-var MongoStore = require('connect-mongo')(Session)
-var CookieParser = require('cookie-parser')
-var sessionControl = require('./middlewares/sessionControl')
+var Session = require('express-session');
+var MongoStore = require('connect-mongo')(Session);
+var CookieParser = require('cookie-parser');
+var sessionControl = require('./middlewares/sessionControl');
 
 //init projects
-var projectUrl = path.join(__dirname,'projects')
+var projectUrl = path.join(__dirname,'projects');
 try {
-    var projectDir = fs.statSync(projectUrl)
+    var projectDir = fs.statSync(projectUrl);
     if (!projectDir.isDirectory()){
         fs.mkdirSync(projectUrl);
     }
@@ -34,24 +34,24 @@ try {
 
 
 //router
-var router = require('./routes/index')
+var router = require('./routes/index');
 
 //init db
 mongoose.connect(dbConfig.dbPath);
-var db = mongoose.connection
+var db = mongoose.connection;
 // console.log(db);
 db.once('open',function(){
 	console.log('opend ahmi');
-})
+});
 db.on('error',function(err){
 	console.log('error: '+err);
-})
+});
 
-var app = express()
-app.set('port',process.env.PORT||3000)
-app.set('views',path.join(__dirname,'views'))
-app.engine('.html',ejs.__express)
-app.set('view engine','html')
+var app = express();
+app.set('port',process.env.PORT||3000);
+app.set('views',path.join(__dirname,'views'));
+app.engine('.html',ejs.__express);
+app.set('view engine','html');
 
 
 //logger.token('http-protocol', function(req, res){ return req.protocol })
@@ -91,20 +91,20 @@ app.use(Session({
 
 
 // parse application/x-www-form-urlencoded 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
  
 // parse application/json 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 //public
-app.use('/public',express.static('public'))
+app.use('/public',express.static('public'));
 
 //session control
-app.use(sessionControl)
+app.use(sessionControl);
 
 
 //router
-app.use(router)
+app.use(router);
 
 
 
@@ -114,7 +114,7 @@ var certificate = fs.readFileSync('./credentials/certificate.key');
 var options = {
     key:privateKey,
     cert:certificate
-}
+};
 http.createServer(app).listen(app.get('port'), function () {
     console.log('listening: '+app.get('port'))
 });
