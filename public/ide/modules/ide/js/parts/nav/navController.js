@@ -358,6 +358,9 @@
             }else if(_index==6){
                 newWidget=TemplateProvider.getDefaultRotateImg();
             }
+            else if(_index==7){
+                newWidget=TemplateProvider.getDefaultDateTime();
+            }
             else {
                 return;
             }

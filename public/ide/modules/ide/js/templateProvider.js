@@ -169,13 +169,17 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
+                arrange:true,            //true:横向 false:竖向
 
-                arrange:true            //true:横向 false:竖向
+                buttonText:'button',
+                buttonFontFamily:"Arial",
+                buttonFontSize:15,
+                buttonFontColor:'rgba(0,0,0,1)',
+                buttonFontBold:"100",
+                buttonFontItalic:''
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -539,7 +543,7 @@ ideServices
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
                 lowAlarmValue:0,highAlarmValue:100,
-                cursor:"0",   //光标序号
+                spacing:50,   //光标间距
                 oscColor:'rgb(50,60,50)'
 
             };
@@ -581,7 +585,7 @@ ideServices
                 width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
-                bindBit:-1
+                bindBit:-1 //绑定某tag的第几位
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -628,6 +632,36 @@ ideServices
                         color:_getRandomColor(),
                         imgSrc:'',
                         name:'旋转图片'
+                    }]
+                }]
+
+            }
+        };
+        this.getDefaultDateTime=function(){
+            var subLayerNode=CanvasService.getSubLayerNode();
+
+            var info={
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                initValue:0,
+                dateTimeModeId:'0'//0表示时间，1表示日期
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewDateTime',
+                type: Type.MyDateTime,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'旋转图片',
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'时间日期'
                     }]
                 }]
 

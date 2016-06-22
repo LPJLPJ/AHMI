@@ -394,6 +394,9 @@ ideServices
                         ctx.drawImage(this.progressImageElement, -this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
 
                     }
+                    if(this.cursorImageElement){
+                        ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue));
+                    }
 
                 }else {
                     ctx.fillStyle=this.progressColor;
@@ -405,9 +408,10 @@ ideServices
                     );
                     if (this.progressImageElement){
                         ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
-
                     }
-
+                    if(this.cursorImageElement){
+                        ctx.drawImage(this.cursorImageElement,-this.width/2,this.height/2-this.progressValue);
+                    }
                 }
 
 
@@ -445,6 +449,19 @@ ideServices
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
+                //this.spacing=level.info.spacing;
+                //this.potCount=Math.floor(this.width/this.spacing);
+                //this.arr=[];
+                //this.coordinate = {
+                //        x:-this.width/2,
+                //        y:0
+                //    };
+                //for(var i=0;i<this.potCount-1;i++){
+                //    this.coordinate.x+=this.spacing;
+                //    this.coordinate.y=Math.floor(Math.random()*this.height-this.height/2);
+                //    this.arr.push(_.cloneDeep(this.coordinate));
+                //}
+
 
                 this.backgroundColor=level.texList[0].slices[0].color;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
@@ -475,7 +492,6 @@ ideServices
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
-                    // console.log(level.texList);
                     self.backgroundColor=level.texList[0].slices[0].color;
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
@@ -486,6 +502,8 @@ ideServices
                     }else {
                         self.backgroundImageElement=null;
                     }
+
+
 
                     self.oscilloscopeColor=level.texList[1].slices[0].color;
                     if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
@@ -504,13 +522,24 @@ ideServices
                     _callback&&_callback();
 
                 });
+                this.on('ChangeAttributeOscilloscope',function(arg){
+                    var _callback=arg.callback;
+                    if(arg.hasOwnProperty('oscColor')){
 
-
+                    }
+                    if(arg.hasOwnProperty('spacing')){
+                        self.spacing=arg.spacing;
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -this.width / 2,
@@ -520,14 +549,29 @@ ideServices
                 );
                 if (this.backgroundImageElement){
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
                 }
 
+                //画折线
+                //ctx.save();
+                //ctx.fillStyle='white';
+                //for(var i=0;i<this.arr.length;i++){
+                //    ctx.lineTo(this.arr[i].x,this.arr[i].y);
+                //    ctx.stroke();
+                //    ctx.moveTo(this.arr[i].x,this.arr[i].y);
+                //    ctx.arc(this.arr[i].x,this.arr[i].y,2,0,2*Math.PI);
+                //    ctx.fill();
+                //}
+                //ctx.restore();
+
+
+                if(this.oscilloscopeImageElement){
+                    ctx.drawImage(this.oscilloscopeImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
             }
         });
         fabric.MyOscilloscope.fromLevel= function (level, callback,option) {
             callback && callback(new fabric.MyOscilloscope(level, option));
-        }
+        };
         fabric.MyOscilloscope.prototype.toObject = (function (toObject) {
             return function () {
                 return fabric.util.object.extend(toObject.call(this), {
@@ -1174,11 +1218,12 @@ ideServices
                     _callback&&_callback();
                 });
                 this.on('changeRotateImgInitValue',function(arg){
-                    if(arg.initValue||(arg.initValue==0))
+                    var _callback=arg.callback;
                     self.initValue=arg.initValue;
                     self.setAngle(self.initValue);
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
+                    _callback&&_callback();
                 })
             },
             toObject: function () {
@@ -1214,6 +1259,107 @@ ideServices
         };
         fabric.MyRotateImg.async = true;
 
+        fabric.MyDateTime = fabric.util.createClass(fabric.Object, {
+            type: Type.MyDateTime,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+                this.dateTimeModeId=level.info.dateTimeModeId;
+                this.initValue=level.info.initValue;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.imageElement=new Image();
+                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.imageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.imageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.imageElement=currentImageElement;
+                    }else {
+                        self.imageElement=null;
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeDateTimeModeId',function(arg){
+                    var dateTimeModeId=arg.dateTimeModeId;
+                    var _callback=arg.callback;
+                    self.dateTimeModeId=dateTimeModeId;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                })
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                var dateObj = new Date(),
+                    arrTime = [],
+                    arrDate = [];
+                arrTime.push(dateObj.getHours());
+                arrTime.push(dateObj.getMinutes());
+                arrTime.push(dateObj.getSeconds());
+
+                arrDate.push(dateObj.getFullYear());
+                arrDate.push(dateObj.getMonth()+1);
+                arrDate.push(dateObj.getDate());
+
+                ctx.fillStyle='#fff';//颜色可选？？大小字体固定？？
+                if(this.dateTimeModeId=='0'){
+                    //显示时间
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font="20px Arial";
+                    ctx.textAlign='center';
+                    ctx.fillText(arrTime.join(":"),0,5);
+                }else if(this.dateTimeModeId=='1'){
+                    //显示日期
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font="20px Arial";
+                    ctx.textAlign='center';
+                    ctx.fillText(arrDate.join("/"),0,5);
+                }
+
+            }
+        });
+        fabric.MyDateTime.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyDateTime(level, option));
+        };
+        fabric.MyDateTime.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    imageElement:this.imageElement,
+                    backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MyDateTime.prototype.toObject);
+        fabric.MyDateTime.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyDateTime(level, object));
+        };
+        fabric.MyDateTime.async = true;
+
         fabric.MyButton = fabric.util.createClass(fabric.Object, {
             type: Type.MyButton,
             initialize: function (level, options) {
@@ -1222,6 +1368,7 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.normalColor=level.texList[0].slices[0].color;
+                this.buttonText=level.info.buttonText;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.normalImageElement=new Image();
                     this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
@@ -1427,8 +1574,8 @@ ideServices
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
                     ctx.textAlign='center';
-                    ctx.fillText(this.text,0,this.fontSize/4);
-
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.text,0,0);
                 }
             }
         });
@@ -1598,12 +1745,12 @@ ideServices
                     //offCtx.save();
 
                     offCtx.globalCompositeOperation = "destination-in";
-                    //offCtx.scale(1/this.scaleX,1/this.scaleY);
-                    var numString = this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
+                    //var numString = this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
                     //offCtx.fillStyle = this.numColor;
-                    offCtx.font = numString;
+                    offCtx.font =this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
                     offCtx.textAlign = this.align;
 
+                    offCtx.textBaseline='middle';//设置数字垂直居中
 
                     var tempNumValue= this.numValue.toString();
                     var i=0;
@@ -1620,7 +1767,7 @@ ideServices
                             tempNumValue= tempNumValue+".";
                             for(i=0;i<this.decimalCount;i++){
                                 tempNumValue=tempNumValue+'0';
-                            };
+                            }
                         }
 
                     }
@@ -1648,14 +1795,14 @@ ideServices
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
                     if(this.align=='center'){
-                        offCtx.fillText(tempNumValue, this.width/2, this.height/2+this.numSize/4);
+                        offCtx.fillText(tempNumValue, this.width/2, this.height/2);
 
                     }else if(this.align=='left') {
                         //实际显示是右对齐
-                        offCtx.fillText(tempNumValue, 0, this.height / 2 + this.numSize / 4);
+                        offCtx.fillText(tempNumValue, 0, this.height/2);
                     }else if(this.align=='right'){
                         //实际显示是左对齐
-                        offCtx.fillText(tempNumValue,this.width,this.height/2+this.numSize/4);
+                        offCtx.fillText(tempNumValue,this.width,this.height/2);
                     }
                     //offCtx.restore();
                 }
@@ -3068,11 +3215,23 @@ ideServices
 
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator);
+            }else if(_newWidget.type==Type.MyDateTime){
+                fabric.MyDateTime.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
             }
-
-
-
-
 
 
 
@@ -4544,8 +4703,6 @@ ideServices
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
-                        console.log('currentSubLayer',currentSubLayer.proJsonStr);
-
                         subLayerNode.renderAll();
                         currentPage.mode=1;
                         _successCallback && _successCallback(currentFabWidget);
@@ -5119,8 +5276,18 @@ ideServices
         //改变示波器的一些属性，如波形颜色
         this.ChangeAttributeOscilloscope = function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
-            selectObj.level.info.oscColor=_option.oscColor;
-            _successCallback&&_successCallback();
+            var arg={
+                callback:_successCallback
+            };
+            if(_option.hasOwnProperty("oscColor")){
+                selectObj.level.info.oscColor= _.cloneDeep(_option.oscColor);
+                arg.oscColor= _.cloneDeep(_option.oscColor);
+            }
+            if(_option.hasOwnProperty("spacing")){
+                selectObj.level.info.spacing= _.cloneDeep(_option.spacing);
+                arg.spacing= _.cloneDeep(_option.spacing);
+            }
+            selectObj.target.fire('ChangeAttributeOscilloscope',arg);
         };
         //改变开关纹理所绑定的tag的位
         this.ChangeAttributeBindBit = function(_option,_successCallback){
@@ -5136,9 +5303,20 @@ ideServices
             selectObj.level.info.initValue=_option.initValue;
             arg={
                 initValue:initValue,
+                callback:_successCallback
             };
-            _successCallback&&_successCallback();
             selectObj.target.fire('changeRotateImgInitValue',arg);
+        };
+        //改变时间控件的显示模式
+        this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){
+            var dateTimeModeId = _option.dateTimeModeId;
+            var selectObj= _self.getCurrentSelectObject();
+            selectObj.level.info.dateTimeModeId=_option.dateTimeModeId;
+            arg={
+                dateTimeModeId:dateTimeModeId,
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeDateTimeModeId',arg);
         };
 
         //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容

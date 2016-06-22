@@ -55,6 +55,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterButtonMode:enterButtonMode,
                 enterNormalImage:enterNormalImage,
                 enterPressImage:enterPressImage,
+                enterButtonText:enterButtonText,
                 normalImage:'blank.png',
                 pressImage:'blank.png'
 
@@ -154,6 +155,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             //示波器
             oscilloscope:{
                 changeOscColor:changeOscColor,
+                changeOscSpacing:changeOscSpacing
             },
 
             //开关
@@ -163,6 +165,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             //旋转
             rotateImg:{
               enterInitValue:enterInitValue,
+            },
+            dateTime:{
+                dateTimeModes:[
+                    {id:'0',name:'时间模式'},
+                    {id:'1',name:'日期模式'}
+                ],
+                enterDateTimeMode:enterDateTimeMode,
             },
             enterName:enterName,
 			enterColor:enterColor,
@@ -343,6 +352,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
                     break;
                 case Type.MyOscilloscope:
+                    break;
+                case Type.MyDateTime:
+                    $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
                     break;
             }
 
@@ -569,6 +581,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         ProjectService.ChangeAttributePressImage(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
+    }
+    function enterButtonText(){
+
     }
 
     function enterInterval(e){
@@ -1660,6 +1675,25 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             })
         }
     }
+
+    function changeOscSpacing(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.spacing==initObject.level.info.spacing){
+                return;
+            }
+            if($scope.component.object.level.info.spacing<=0||
+                $scope.component.object.level.info.spacing>$scope.component.object.level.info.width){
+                toastr.warning('超出范围');
+            }
+            var option = {
+                spacing:$scope.component.object.level.info.spacing
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscope(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
     function enterBindBit(e){
         if(e.keyCode==13){
             if($scope.component.object.level.info.bindBit==initObject.level.info.bindBit){
@@ -1693,6 +1727,26 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
         }
+    }
+
+    function enterDateTimeMode(e){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectDateTimeModeId=null;
+        if (selectObj.type==Type.MyDateTime){
+            selectDateTimeModeId=$scope.component.dateTime.dateTimeModeId;
+
+        }else {
+            return;
+        }
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+
+        var option={
+            dateTimeModeId:selectDateTimeModeId
+        };
+        ProjectService.ChangeAttributeDateTimeModeId(option, function () {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
 });
