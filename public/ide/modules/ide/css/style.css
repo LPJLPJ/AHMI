@@ -232,7 +232,7 @@ body{
 .my-stage-container{
     /*min-height: 610px;*/
     /*min-width: 630px;*/
-    width: 67%;
+    width: 66%;
     background-color: #eff1f5;
     position: relative;
     transition: width 0.2s;

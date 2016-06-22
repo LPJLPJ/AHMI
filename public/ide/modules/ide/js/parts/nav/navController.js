@@ -11,6 +11,7 @@
                                         ProjectFileManage,
                                         Type,
                                         CanvasService,
+                                        $uibModal,
                                         OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService) {
 
         initUserInterface();
@@ -58,6 +59,7 @@
                     openProject:openProject,
                     generateDataFile:generateDataFile,
                     play:play,
+                    openPanel:openPanel,
                     closeSimulator:closeSimulator,
                     saveProject:saveProject,
                     showLeft:showLeft,
@@ -451,8 +453,8 @@
          * 生成符合格式的数据结构
          */
         
-        function generateDataFile(){
-            generateData();
+        function generateDataFile(format){
+            generateData(format);
             saveProject(function () {
                 $http({
                     method:'POST',
@@ -479,10 +481,11 @@
             })
         }
         
-        function generateData(){
+        function generateData(format){
             var temp = {};
             ProjectService.getProjectTo(temp);
             temp.project = ProjectTransformService.transDataFile(temp.project);
+            temp.project.format = format;
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
@@ -500,7 +503,7 @@
         }
 
         function play(){
-            generateData();
+            generateData()
             $scope.component.simulator.show = true;
 
         }
@@ -511,7 +514,62 @@
 
         }
 
+        function openPanel() {
+
+
+            /**
+             * 利用$uiModal服务，制作模态窗口
+             */
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'navModal.html',
+                controller: 'NavModalCtl',
+                size: 'md',
+                resolve: {
+
+                }
+            });
+
+            /**
+             * result.then接收两个匿名函数参数
+             * calling $uibModalInstance.close will trigger the former function
+             * when clicking at the background, pressing the esc button on keyboard, or calling $modalInstance.dismiss will trigger the latter one
+             */
+            modalInstance.result.then(function (result) {
+                // console.log('new action');
+                // console.log(newAction);
+                //process save
+                generateDataFile(result.format);
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
 
 
 
     });
+
+
+ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uibModalInstance) {
+    $scope.formats = [
+        {
+            type:'normal',
+            name:'默认'
+        },
+        {
+            type:'dxt3',
+            name:'压缩'
+        }
+    ];
+    $scope.generateFormat = 'normal';
+    $scope.ok = function () {
+        $uibModalInstance.close({
+            format:$scope.generateFormat
+        });
+    };
+
+    //取消
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+}]);
