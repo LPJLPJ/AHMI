@@ -20155,6 +20155,9 @@
 	            case 'MyNum':
 	                this.drawNum(curX, curY, widget, options);
 	                break;
+	            case 'MyDateTime':
+	                this.drawTime(curX, curY, widget, options);
+	                break;
 	        }
 	    },
 	    drawSlide: function (curX, curY, widget, options) {
@@ -20272,6 +20275,48 @@
 	            this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	            widget.oldValue = curProgress;
 	        }
+	    },
+	    drawTime: function (curX, curY, widget, options) {
+	        var width = widget.info.width;
+	        var height = widget.info.height;
+	        var dateTimeModeId = widget.info.dateTimeModeId;
+	        var curDate = new Date();
+	        var dateTimeString = '';
+	        if (dateTimeModeId == '0') {
+	            //time
+	            dateTimeString = this.getCurTime(curDate);
+	        } else {
+	            //date
+	            dateTimeString = this.getCurDate(curDate);
+	        }
+	        //draw
+	        var offcanvas = this.refs.offcanvas;
+	        var offctx = offcanvas.getContext('2d');
+	        var tempcanvas = this.refs.tempcanvas;
+	        var tempctx = tempcanvas.getContext('2d');
+	        tempctx.save();
+	        tempctx.clearRect(0, 0, width, height);
+	        tempctx.textAlign = 'center';
+	        tempctx.textBaseline = 'middle';
+	        //font style
+	        tempctx.font = '24px arial';
+	        tempctx.fillText(dateTimeString, 0, 0);
+	        tempctx.restore();
+	        offctx.drawImage(tempcanvas, curX, curY, width, height);
+	    },
+	    getCurTime: function (date) {
+	        var date = date || new Date();
+	        var hour = getHours(date);
+	        var minute = getMinutes(date);
+	        var second = getSeconds(date);
+	        return '' + hour + ':' + minute + ':' + second;
+	    },
+	    getCurDate: function (date) {
+	        var date = date || new Date();
+	        var year = getFullYear(date);
+	        var month = getMonth(date) + 1;
+	        var day = getDay(date);
+	        return '' + year + '/' + month + '/' + day;
 	    },
 	    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
 	        var offcanvas = this.refs.offcanvas;
