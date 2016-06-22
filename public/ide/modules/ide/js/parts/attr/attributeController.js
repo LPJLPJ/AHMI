@@ -55,8 +55,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterButtonMode:enterButtonMode,
                 enterNormalImage:enterNormalImage,
                 enterPressImage:enterPressImage,
+
                 enterButtonText:enterButtonText,
                 changeButtonFontFamily:changeButtonFontFamily,
+                setButtonFontBold:setButtonFontBold,
+                setButtonFontItalic:setButtonFontItalic,
+                changeButtonFontSize:changeButtonFontSize,
+                changeButtonFontColor:changeButtonFontColor,
 
                 normalImage:'blank.png',
                 pressImage:'blank.png'
@@ -614,6 +619,71 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
+    }
+    function setButtonFontBold(){
+        $scope.component.object.level.info.boldBtnToggle=!$scope.component.object.level.info.boldBtnToggle;
+
+        if($scope.component.object.level.info.boldBtnToggle){
+            $scope.component.object.level.info.buttonFontBold="bold";
+        }else{
+            $scope.component.object.level.info.buttonFontBold="100";
+        }
+        var option = {
+            buttonFontBold: $scope.component.object.level.info.buttonFontBold,
+            boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
+        };
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function setButtonFontItalic(){
+        $scope.component.object.level.info.italicBtnToggle=!$scope.component.object.level.info.italicBtnToggle;
+        if($scope.component.object.level.info.italicBtnToggle){
+            $scope.component.object.level.info.buttonFontItalic="italic";
+
+        }else{
+            $scope.component.object.level.info.buttonFontItalic=" ";
+        }
+        var option={
+            buttonFontItalic:$scope.component.object.level.info.buttonFontItalic,
+            italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
+        };
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function changeButtonFontSize(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.buttonFontSize==initObject.level.info.buttonFontSize) {
+                return;
+            }
+            var option = {
+                buttonFontSize:$scope.component.object.level.info.buttonFontSize
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function changeButtonFontColor(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.buttonFontColor==initObject.level.info.buttonFontColor) {
+                return;
+            }
+            var option = {
+                buttonFontColor:$scope.component.object.level.info.buttonFontColor
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
     }
 
     function enterInterval(e){
@@ -1400,7 +1470,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             var option = {
                 numBold: $scope.component.object.level.info.numBold,
                 boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
-            }
+            };
 
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {

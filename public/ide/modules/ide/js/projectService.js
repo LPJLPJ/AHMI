@@ -1332,13 +1332,15 @@ ideServices
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font="20px Arial";
                     ctx.textAlign='center';
-                    ctx.fillText(arrTime.join(":"),0,5);
+                    ctx.textBaseline='middle';
+                    ctx.fillText(arrTime.join(":"),0,0);
                 }else if(this.dateTimeModeId=='1'){
                     //显示日期
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font="20px Arial";
                     ctx.textAlign='center';
-                    ctx.fillText(arrDate.join("/"),0,5);
+                    ctx.textBaseline='middle';
+                    ctx.fillText(arrDate.join("/"),0,0);
                 }
 
             }
@@ -1411,7 +1413,25 @@ ideServices
                 });
 
                 this.on('changeButtonText',function(arg){
-                    self.buttonText=arg.buttonText;
+                    if(arg.buttonText){
+                        self.buttonText=arg.buttonText;
+
+                    }
+                    if(arg.buttonFontFamily){
+                        self.buttonFontFamily=arg.buttonFontFamily;
+                    }
+                    if(arg.buttonFontBold){
+                        self.buttonFontBold=arg.buttonFontBold;
+                    }
+                    if(arg.buttonFontItalic){
+                        self.buttonFontItalic=arg.buttonFontItalic;
+                    }
+                    if(arg.buttonFontSize){
+                        self.buttonFontSize=arg.buttonFontSize;
+                    }
+                    if(arg.buttonFontColor){
+                        self.buttonFontColor=arg.buttonFontColor;
+                    }
                     var _callback=arg.callback;
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -1423,7 +1443,7 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.fontColor;
+                ctx.fillStyle=this.buttonFontColor;
                 ctx.save();
                 ctx.fillStyle=this.normalColor;
                 ctx.fillRect(
@@ -1692,7 +1712,6 @@ ideServices
                 });
 
                 this.on('changeNumContent', function (arg) {
-                    //console.log('enter on changeTextContent');
                     if(arg.numValue){
                         self.numValue=arg.numValue;
                     }
@@ -4996,34 +5015,27 @@ ideServices
                 selectObj.level.info.buttonText=_option.buttonText;
                 arg.buttonText=_option.buttonText;
             }
-            if(_option.fontFamily){
-                var tempFontFamily=_option.fontFamily;
-                selectObj.level.info.fontFamily=tempFontFamily;
-                arg.fontFamily=tempFontFamily;
+            if(_option.buttonFontFamily){
+                selectObj.level.info.buttonFontFamily=_option.buttonFontFamily;
+                arg.buttonFontFamily=_option.buttonFontFamily;
             }
-            if(_option.fontSize){
-                var tempFontSize=_option.fontSize;
-                selectObj.level.info.fontSize=tempFontSize;
-                arg.fontSize=tempFontSize;
+            if(_option.buttonFontSize){
+                selectObj.level.info.buttonFontSize=_option.buttonFontSize;
+                arg.buttonFontSize=_option.buttonFontSize;
             }
-            if(_option.fontColor){
-                var tempFontColor=_option.fontColor;
-                selectObj.level.info.fontColor=tempFontColor;
-                arg.fontColor=tempFontColor;
+            if(_option.buttonFontColor){
+                selectObj.level.info.buttonFontColor=_option.buttonFontColor;
+                arg.buttonFontColor=_option.buttonFontColor;
             }
-            if(_option.fontBold){
-                var tempFontBold=_option.fontBold;
-                var tempBoldBtnToggle=_option.boldBtnToggle;
-                selectObj.level.info.fontBold=tempFontBold;
-                selectObj.level.info.boldBtnToggle=tempBoldBtnToggle;
-                arg.fontBold=tempFontBold;
+            if(_option.buttonFontBold){
+                selectObj.level.info.fontBold=_option.buttonFontBold;
+                selectObj.level.info.boldBtnToggle=_option.boldBtnToggle;
+                arg.buttonFontBold=_option.buttonFontBold;
             }
-            if(_option.fontItalic){
-                var tempFontItalic=_option.fontItalic;
-                var tempItalicBtnToggle=_option.italicBtnToggle;
-                selectObj.level.info.fontItalic=tempFontItalic;
-                selectObj.level.info.italicBtnToggle=tempItalicBtnToggle;
-                arg.fontItalic=tempFontItalic;
+            if(_option.buttonFontItalic){
+                selectObj.level.info.fontItalic=_option.buttonFontItalic;
+                selectObj.level.info.italicBtnToggle=_option.italicBtnToggle;
+                arg.buttonFontItalic=_option.buttonFontItalic;
             }
             if(_option.fontName){
                 var tempFontName = _option.fontName;
@@ -5209,8 +5221,6 @@ ideServices
             var fabTextObj=getFabricObject(selectObj.level.id,true);
             var arg={
                 level:selectObj.level,
-                scaleX:fabTextObj.getScaleX(),
-                scaleY:fabTextObj.getScaleY(),
                 callback:function () {
                     var currentWidget=selectObj.level;
                     OnWidgetSelected(currentWidget,_successCallback);
