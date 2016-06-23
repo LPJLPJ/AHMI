@@ -81,6 +81,12 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             },
 
             progress:{
+                progressModeId:'0',
+                progressModes:[
+                    {id:'0',name:'普通进度条'},
+                    {id:'1',name:'变色进度条'},
+                    {id:'2',name:'脚本进度条'}
+                ],
                 backgroundImage:'blank.png',
                 progressImage:'blank.png',
                 enterBottomImage:enterBottomImage,
@@ -283,7 +289,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     $scope.component.progress.arrangeModel=$scope.component.object.level.info.arrange;
                     //Progress的光标
                     $scope.component.progress.cursor = $scope.component.object.level.info.cursor;
-
+                    $scope.component.progress.progressModeId=$scope.component.object.level.info.progressModeId;
                     //调整背景图
                     if ($scope.component.object.level.backgroundImg==''){
                         $scope.component.progress.backgroundImage='blank.png';
@@ -837,20 +843,23 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterCursor(){
         var selectObj=ProjectService.getCurrentSelectObject();
         var selectCursor=null;
+        var selectModeId=null;
         if(selectObj.type==Type.MyProgress){
             selectCursor=$scope.component.progress.cursor;
+            selectModeId=$scope.component.progress.progressModeId;
         }else{
             return;
         }
         var oldOperate=ProjectService.SaveCurrentOperate();
         var option={
-            cursor:selectCursor
+            cursor:selectCursor,
+            progressModeId:selectModeId
         };
         ProjectService.ChangeAttributeCursor(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
-
         })
     }
+
 
     /**
      * 改变排列方向属性
