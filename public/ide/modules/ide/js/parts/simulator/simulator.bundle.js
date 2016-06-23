@@ -20781,7 +20781,7 @@
 	            if (options && options.updatedTagName == widget.tag) {
 	                newPoint = true;
 	                curValue = this.getValueByTagName(widget.tag, 0);
-	                this.limitValueBetween(curValue, minValue, maxValue);
+	                curValue = this.limitValueBetween(curValue, minValue, maxValue);
 	                if (widget.flag >= widget.maxPoints - 1) {
 	                    //overflow refresh
 	                    widget.curPoints = [];
@@ -20798,10 +20798,11 @@
 	            this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
 
 	            //draw grid
-	            this.drawGrid(curX, curY, width, height, 0, 0, spacing, spacing);
+	            this.drawGrid(curX, curY, width, height, 0, 0, 1.2 * spacing, 1.2 * spacing);
 	            //draw points lines
 
-	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue);
+	            var coverSlice = widget.texList[1].slices[0];
+	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice);
 
 	            //handle action
 	            if (newPoint) {
@@ -20818,6 +20819,25 @@
 	        var offctx = offcanvas.getContext('2d');
 	        offctx.save();
 	        offctx.translate(curX, curY);
+	        //draw bg
+	        offctx.save();
+	        offctx.beginPath();
+	        for (var i = 0; i < tranedPoints.length; i++) {
+	            if (i === 0) {
+	                offctx.moveTo(i * spacing, height - tranedPoints[i]);
+	            } else {
+	                offctx.lineTo(i * spacing, height - tranedPoints[i]);
+	            }
+	        }
+	        offctx.lineTo((i - 1) * spacing, height);
+	        offctx.lineTo(0, height);
+	        offctx.closePath();
+	        offctx.clip();
+	        //draw bg
+	        this.drawBg(0, 0, width, height, bgSlice.imgSrc, bgSlice.color);
+
+	        offctx.restore();
+	        //draw lines
 	        offctx.beginPath();
 	        for (var i = 0; i < tranedPoints.length; i++) {
 	            if (i === 0) {
@@ -20851,7 +20871,7 @@
 	            offctx.moveTo(0, horiY);
 	            offctx.lineTo(width, horiY);
 	        }
-	        offctx.fillStyle = gridStyle && gridStyle.color || 'black';
+	        offctx.fillStyle = gridStyle && gridStyle.color || 'light gray';
 	        offctx.stroke();
 	        offctx.restore();
 	    },
