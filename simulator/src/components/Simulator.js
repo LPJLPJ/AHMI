@@ -440,6 +440,9 @@ module.exports = React.createClass({
             case 'MyButton':
                 this.drawButton(curX, curY, widget, options);
                 break;
+            case 'MySwitch':
+                this.drawSwitch(curX,curY,widget,options);
+                break;
             case 'MyButtonGroup':
                 this.drawButtonGroup(curX, curY, widget, options);
                 break;
@@ -452,6 +455,9 @@ module.exports = React.createClass({
                 break;
             case 'MyDashboard':
                 this.drawDashboard(curX, curY, widget, options);
+                break;
+            case 'MyRotateImg':
+                this.drawRotateImg(curX,curY,widget,options);
                 break;
             case 'MyNum':
                 this.drawNum(curX, curY, widget, options)
@@ -499,6 +505,28 @@ module.exports = React.createClass({
                     this.drawBg(curX, curY, width, height, tex.slices[1].imgSrc, tex.slices[1].color);
                 }
                 break
+        }
+    },
+    drawSwitch: function (curX, curY, widget, options) {
+        // console.log(widget);
+        var tex = widget.texList[0];
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var bindBit = parseInt(widget.info.bindBit);
+
+        //switch mode
+        var bindTagValue = this.getValueByTagName(widget.tag, 0);
+        var switchState;
+        if (bindBit<0||bindBit>31){
+            switchState = 0;
+        }else{
+            switchState = bindTagValue & (Math.pow(2,bindBit));
+        }
+        if (switchState == 0) {
+            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+        } else {
+            // console.log(tex);
+            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
         }
     },
     drawButtonGroup: function (curX, curY, widget, options) {
@@ -617,11 +645,7 @@ module.exports = React.createClass({
                 this.draw();
             }.bind(this),1000)
         }
-    }
-
-
-
-    ,
+    },
     getCurTime:function (date) {
         var date = date||new Date();
         var hour = date.getHours();
@@ -983,13 +1007,42 @@ module.exports = React.createClass({
                 var lightStripTex = widget.texList[2].slices[0]
                 this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc)
                 //draw pointer
-                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise*(curArc + offset)+arcPhase, widget.texList[1].slices[0].imgSrc);
+                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise*(curArc + offset)+arcPhase, widget.texList[1].slices[0]);
 
                 //draw circle
                 // var circleTex = widget.texList[3].slices[0]
                 // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 
             }
+
+
+            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
+            widget.oldValue = curArc;
+
+        }
+    },
+    drawRotateImg: function (curX, curY, widget, options) {
+
+        var width = widget.info.width;
+        var height = widget.info.height;
+        if (widget.texList) {
+
+            //pointer
+            var minArc = widget.info.minValue;
+            var maxArc = widget.info.maxValue;
+            // var curArc = widget.info.value;
+            var curArc = this.getValueByTagName(widget.tag,0);
+
+            var lowAlarm = widget.info.lowAlarmValue;
+            var highAlarm = widget.info.highAlarmValue;
+
+
+            if (curArc > maxArc) {
+                curArc = maxArc
+            } else if (curArc < minArc) {
+                curArc = minArc;
+            }
+            this.drawRotateElem(curX, curY, width, height, width, height, curArc , widget.texList[0].slices[0],-0.5,-0.5);
 
 
             this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
@@ -1046,27 +1099,39 @@ module.exports = React.createClass({
             this.handleTargetAction(widget, 'EnterLowAlarm');
         }
     },
-    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, image) {
-        image = this.getImageName(image)
+    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice,transXratio,transYratio) {
+        var transXratio = transXratio || 0;
+        var transYratio = transYratio || 0;
+        var offcanvas = this.refs.offcanvas;
+        var offctx = offcanvas.getContext('2d');
+        offctx.save();
+        offctx.translate(x + 0.5 * w , y + 0.5 * h );
+        offctx.rotate(Math.PI * arc / 180);
+        offctx.translate(transXratio * elemWidth,transYratio * elemHeight);
+
+
+        //draw color
+        offctx.fillStyle = texSlice.color;
+        offctx.fillRect(0,0,elemWidth,elemHeight);
+        
+        var image = this.getImageName(texSlice.imgSrc);
         if (image && image != '') {
-            var offcanvas = this.refs.offcanvas;
-            var offctx = offcanvas.getContext('2d');
-            offctx.save();
-            offctx.translate(x + 0.5 * w, y + 0.5 * h);
-            offctx.rotate(Math.PI * arc / 180);
             var imageList = this.state.imageList;
             for (var i = 0; i < imageList.length; i++) {
                 if (imageList[i].id == image) {
                     // console.log(image);
                     // offctx.drawImage(imageList[i].content,0,0,w,h,x,y,w,h);
-                    offctx.drawImage(imageList[i].content, -0, 0, elemWidth, elemHeight);
+                    offctx.drawImage(imageList[i].content, 0, 0, elemWidth, elemHeight);
                     // offctx.drawImage(imageList[i].content,x,y,w,h)
                     break;
                 }
-            }
-            ;
-            offctx.restore();
+            };
+
         }
+
+
+
+        offctx.restore();
     },
     drawBg: function (x, y, w, h, imageName, color, ctx) {
         this.drawBgColor(x, y, w, h, color, ctx);
