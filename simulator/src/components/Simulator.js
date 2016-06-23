@@ -611,9 +611,17 @@ module.exports = React.createClass({
         tempctx.restore();
         offctx.drawImage(tempcanvas,curX,curY,width,height);
 
+        //timer 1 s
+        if (!(widget.timerId && widget.timerId!==0)){
+            widget.timerId = setInterval(function () {
+                this.draw();
+            }.bind(this),1000)
+        }
+    }
 
 
-    },
+
+    ,
     getCurTime:function (date) {
         var date = date||new Date();
         var hour = date.getHours();
