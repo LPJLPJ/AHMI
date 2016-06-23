@@ -263,11 +263,12 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.progressValue=level.info.progressValue/(level.info.maxValue-level.info.minValue);
+                this.progressModeId=level.info.progressModeId;
 
-                this.backgroundColor=level.texList[0].slices[0].color;
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                this.backgroundColor=level.texList[1].slices[0].color;
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
                     this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.src=level.texList[1].slices[0].imgSrc;
                     this.backgroundImageElement.onload = (function () {
 
                         this.loaded = true;
@@ -278,11 +279,11 @@ ideServices
                     this.backgroundImageElement=null;
                 }
 
-                this.progressColor=level.texList[1].slices[0].color;
-                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                this.progressColor=level.texList[0].slices[0].color;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
 
                     this.progressImageElement=new Image();
-                    this.progressImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.progressImageElement.src=level.texList[0].slices[0].imgSrc;
                     this.progressImageElement.onload = (function () {
 
                     }).bind(this);
@@ -308,10 +309,10 @@ ideServices
                     var level=arg.level;
                     var _callback=arg.callback;
                     //console.log(level.texList);
-                    self.backgroundColor=level.texList[0].slices[0].color;
-                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    self.backgroundColor=level.texList[1].slices[0].color;
+                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
-                        self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                        self.backgroundImageElement.src=level.texList[1].slices[0].imgSrc;
                         self.backgroundImageElement.onload = (function () {
 
                         }).bind(this);
@@ -319,11 +320,11 @@ ideServices
                         self.backgroundImageElement=null;
                     }
 
-                    self.progressColor=level.texList[1].slices[0].color;
-                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    self.progressColor=level.texList[0].slices[0].color;
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
 
                         self.progressImageElement=new Image();
-                        self.progressImageElement.src=level.texList[1].slices[0].imgSrc;
+                        self.progressImageElement.src=level.texList[0].slices[0].imgSrc;
                         self.progressImageElement.onload = (function () {
 
                         }).bind(this);
@@ -333,7 +334,6 @@ ideServices
 
                     //判断是否有第三层光标
                     if(level.texList[2]){
-                        console.log('设置了光标');
                         self.cursorColor=level.texList[2].slices[0].color;
                         if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
                             self.cursorImageElement=new Image();
@@ -342,6 +342,8 @@ ideServices
 
                             }).bind(this);
                         }
+                    }else{
+                        self.cursorImageElement=null;
                     }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -360,6 +362,20 @@ ideServices
 
                 this.on('changeAttributeCursor',function(arg){
                     self.backgroundColor=arg.backgroundColor;
+                    self.progressColor=arg.progressColor;
+                    self.progressModeId=arg.progressModeId;
+
+                    if(arg.hasOwnProperty('initColor')){
+                        self.progressColor=arg.initColor;
+                    }
+                    if(arg.hasOwnProperty('endColor')){
+                        self.backgroundColor=arg.endColor;
+                    }
+
+                    self.backgroundImageElement=null;
+                    self.progressImageElement=null;
+                    self.cursorImageElement=null;
+
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                 });
@@ -369,51 +385,68 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -this.width / 2,
-                    -this.height / 2,
-                    this.width,
-                    this.height
-                );
-                if (this.backgroundImageElement){
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
-                }
-
-                if (this.arrange=='horizontal'){
-                    ctx.fillStyle=this.progressColor;
+                if(this.progressModeId=='0'){
+                    //普通进度条
+                    ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,
                         -this.height / 2,
-                        this.width*this.progressValue,
+                        this.width,
                         this.height
                     );
-                    if (this.progressImageElement){
-                        ctx.drawImage(this.progressImageElement, -this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
-
-                    }
-                    if(this.cursorImageElement){
-                        ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue));
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
 
-                }else {
-                    ctx.fillStyle=this.progressColor;
-                    ctx.fillRect(
-                        -this.width / 2,
-                        this.height / 2-this.height*this.progressValue,
-                        this.width,
-                        this.height*this.progressValue
-                    );
-                    if (this.progressImageElement){
-                        ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                    if (this.arrange=='horizontal'){
+                        ctx.fillStyle=this.progressColor;
+                        ctx.fillRect(
+                            -this.width / 2,
+                            -this.height / 2,
+                            this.width*this.progressValue,
+                            this.height
+                        );
+                        if (this.progressImageElement){
+                            ctx.drawImage(this.progressImageElement, -this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+
+                        }
+                        if(this.cursorImageElement){
+                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue));
+                        }
+
+                    }else {
+                        ctx.fillStyle=this.progressColor;
+                        ctx.fillRect(
+                            -this.width / 2,
+                            this.height / 2-this.height*this.progressValue,
+                            this.width,
+                            this.height*this.progressValue
+                        );
+                        if (this.progressImageElement){
+                            ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                        }
+                        if(this.cursorImageElement){
+                            ctx.drawImage(this.cursorImageElement,-this.width/2,this.height/2-this.progressValue);
+                        }
                     }
-                    if(this.cursorImageElement){
-                        ctx.drawImage(this.cursorImageElement,-this.width/2,this.height/2-this.progressValue);
+                }else if(this.progressModeId=='1'){
+                    //变色进度条
+                    if(this.arrange=='horizontal'){
+                        var horizontal_gradient=ctx.createLinearGradient(-this.width/2,-this.height/2,this.width/2,-this.height/2);
+                        horizontal_gradient.addColorStop(0,this.progressColor);
+                        horizontal_gradient.addColorStop(1,this.backgroundColor);
+                        ctx.fillStyle=horizontal_gradient;
+                        ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height)
+                    }else{
+                        var vertical_gradient=ctx.createLinearGradient(-this.width/2,this.height/2,-this.width/2,-this.height/2);
+                        vertical_gradient.addColorStop(0,this.progressColor);
+                        vertical_gradient.addColorStop(1,this.backgroundColor);
+                        ctx.fillStyle=vertical_gradient;
+                        ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
                     }
+                }else if(this.progressModeId=='2'){
+                    //脚本进度条，啥也不画！
                 }
-
 
             }
         });
@@ -480,10 +513,9 @@ ideServices
                 this.oscilloscopeColor=level.texList[1].slices[0].color;
                 if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
-                    this.oscilloscopeElement=new Image();
-                    this.oscilloscopeElement.src=level.texList[1].slices[0].imgSrc;
-                    this.oscilloscopeElement.onload = (function () {
-
+                    this.oscilloscopeImageElement=new Image();
+                    this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.oscilloscopeImageElement.onload = (function () {
                     }).bind(this);
                 }else {
                     this.oscilloscopeImageElement=null;
@@ -1457,6 +1489,7 @@ ideServices
                 }
                 ctx.restore();
                 if(this.buttonText){
+                    ctx.save();
                     var fontString=this.buttonFontItalic+" "+this.buttonFontBold+" "+this.buttonFontSize+"px"+" "+this.buttonFontFamily;
                     //console.log(fontString);
                     ctx.scale(1/this.scaleX,1/this.scaleY);
@@ -1464,6 +1497,7 @@ ideServices
                     ctx.textAlign='center';
                     ctx.textBaseline='middle';//使文本垂直居中
                     ctx.fillText(this.buttonText,0,0);
+                    ctx.restore();
                 }
 
             }
@@ -5071,11 +5105,14 @@ ideServices
 
         };
 
-        //改变所选进度条的光标模式
+        //改变所选进度条的光标和 模式
         this.ChangeAttributeCursor = function(_option,_successCallback){
+            var arg={};
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.info.cursor=_option.cursor;
+            selectObj.level.info.progressModeId=_option.progressModeId;
             if(_option.cursor=='0'){
+                //普通进度条
                 selectObj.level.texList=[{
                     currentSliceIdx:0,
                     name:'进度条',
@@ -5088,11 +5125,21 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:'rgb(120,120,120)',
+                        color:'rgb(80,80,80)',
                         imgSrc:'',
                         name:'进度条底纹'
                     }]
-                }]
+                }];
+                //变色进度条
+                if(_option.progressModeId=='1'){
+                    selectObj.level.texList[0].name='初始颜色';
+                    selectObj.level.texList[1].name='结束颜色';
+                    selectObj.level.texList[0].slices[0].name='初始颜色';
+                    selectObj.level.texList[1].slices[0].name='结束颜色';
+
+                    arg.initColor=selectObj.level.texList[0].slices[0].color;
+                    arg.endColor=selectObj.level.texList[1].slices[0].color;
+                }
             }
             if(_option.cursor=='1'){
                 selectObj.level.texList=[{
@@ -5107,7 +5154,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:'rgb(120,120,120)',
+                        color:'rgb(80,80,80)',
                         imgSrc:'',
                         name:'进度条底纹'
                     }]
@@ -5119,11 +5166,22 @@ ideServices
                         imgSrc:'',
                         name:'光标纹理'
                     }]
-                }]
+                }];
+                //变色进度条
+                if(_option.progressModeId=='1'){
+                    selectObj.level.texList[0].name='初始颜色';
+                    selectObj.level.texList[1].name='结束颜色';
+                    selectObj.level.texList[0].slices[0].name='初始颜色';
+                    selectObj.level.texList[1].slices[0].name='结束颜色';
+
+                    arg.initColor=selectObj.level.texList[0].slices[0].color;
+                    arg.endColor=selectObj.level.texList[1].slices[0].color;
+                }
             }
-            arg={
-                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color)
-            };
+            arg.backgroundColor= selectObj.level.texList[0].slices[0].color;
+            arg.progressColor=selectObj.level.texList[1].slices[0].color;
+            arg.progressModeId=selectObj.level.info.progressModeId;
+
             _successCallback&&_successCallback();
             selectObj.target.fire('changeAttributeCursor',arg);
         };

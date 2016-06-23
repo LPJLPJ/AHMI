@@ -930,8 +930,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
-                        </div>
-                        <div class="my-attr-item">
+                        </div><div class="my-attr-item">
                             <span class="my-attr-title">最大值</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.maxValue"
@@ -962,10 +961,19 @@
                                    ng-keypress="component.enterMaxAlert($event)"
                                    type="number">
                         </div>
-
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">模式</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.progress.progressModeId"
+                                    ng-change="component.progress.enterCursor($event)">
+                                <option ng-repeat="mode in component.progress.progressModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title">方向:</span>
+                            <span class="my-attr-title">方向</span>
 
                             <select class="my-attr-number-input form-control" ng-model="component.progress.arrangeModel"
                                     ng-change="component.progress.enterArrange($event)">
@@ -974,7 +982,7 @@
                             </select>
                         </div>
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title">光标:</span>
+                            <span class="my-attr-title">光标</span>
                             <select class="my-attr-number-input form-control" ng-model="component.progress.cursor"
                                     ng-change="component.progress.enterCursor()">
                                 <option value="0">无光标</option>
@@ -1032,8 +1040,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
-                        </div>
-                        <div class="my-attr-item">
+                        </div><div class="my-attr-item">
                             <span class="my-attr-title">最大值</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.maxValue"
@@ -1243,8 +1250,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
-                        </div>
-                        <div class="my-attr-item">
+                        </div><div class="my-attr-item">
                             <span class="my-attr-title">最大值</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.maxValue"
@@ -1318,8 +1324,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
-                        </div>
-                        <div class="my-attr-item ">
+                        </div><div class="my-attr-item ">
                             <span class="my-attr-title">最大值</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.maxValue"
@@ -1641,15 +1646,14 @@
                                    type="number">
                         </div>
                         <div class="my-attr-item">
-                            <span class="my-attr-title">最小值</span>
+                            <span class="my-attr-title">最小角度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.minValue"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
-                        </div>
-                        <div class="my-attr-item">
-                            <span class="my-attr-title">最大值</span>
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">最大角度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.maxValue"
                                    ng-blur="component.restore()"
@@ -1657,7 +1661,7 @@
                                    type="number">
                         </div>
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title">初始值</span>
+                            <span class="my-attr-title">初始角度</span>
                             <input type="number"
                                    class="my-attr-number-input form-control"
                                    ng-model="component.object.level.info.initValue"

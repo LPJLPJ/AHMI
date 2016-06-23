@@ -369,8 +369,8 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
+                height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
@@ -378,8 +378,8 @@ ideServices
                 lowAlarmValue:0,highAlarmValue:100,
                 progressValue:50,
                 arrange:"horizontal" ,  //horizontal:水平   vertical:竖直
-                cursor:"0"   //光标设置，0:无光标，1:有光标
-
+                cursor:"0",   //光标设置，0:无光标，1:有光标
+                progressModeId:'0' //0:普通进度条，1:变色进度条，2:脚本进度条
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -393,19 +393,19 @@ ideServices
                 zIndex:0,
                 texList:[{
                     currentSliceIdx:0,
-                    name:'进度条底纹',
-                    slices:[{
-                        color:_getRandomColor(),
-                        imgSrc:'',
-                        name:'进度条底纹'
-                    }]
-                },{
-                    currentSliceIdx:0,
                     name:'进度条',
                     slices:[{
                         color:_getRandomColor(),
                         imgSrc:'',
                         name:'进度条'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'进度条底纹',
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'进度条底纹'
                     }]
                 }]
 
@@ -431,7 +431,7 @@ ideServices
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
-                dashboardModeId:'0',
+                dashboardModeId:'0',//0-简单模式，1-复杂模式
                 name: 'NewDashboard',
                 type: Type.MyDashboard,
                 expand:true,
@@ -546,7 +546,7 @@ ideServices
                 minValue:0,maxValue:100,
                 lowAlarmValue:0,highAlarmValue:100,
                 spacing:50,   //光标间距
-                oscColor:'rgb(50,60,50)'
+                //oscColor:'rgb(50,60,50)'
 
             };
             return {
