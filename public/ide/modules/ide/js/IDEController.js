@@ -132,14 +132,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                         }
                     }.bind(this);
                 }
-
-                // TemplateProvider.saveProjectFromGlobal(globalProject);
-                // ProjectService.saveProjectFromGlobal(globalProject, function () {
-                //     syncServices(globalProject)
-                //     console.log(globalProject);
-                //     $scope.$broadcast('GlobalProjectReceived');
-                //
-                // });
+                
 
                 //readCache();
             }else{
