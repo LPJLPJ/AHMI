@@ -20154,6 +20154,9 @@
 	            case 'MyDashboard':
 	                this.drawDashboard(curX, curY, widget, options);
 	                break;
+	            case 'MyOscilloscope':
+	                this.drawOscilloscope(curX, curY, widget, options);
+	                break;
 	            case 'MyRotateImg':
 	                this.drawRotateImg(curX, curY, widget, options);
 	                break;
@@ -20754,6 +20757,104 @@
 	            widget.oldValue = curArc;
 	        }
 	    },
+	    drawOscilloscope: function (curX, curY, widget, options) {
+	        if (widget.texList) {
+	            var width = widget.info.width;
+	            var height = widget.info.height;
+	            var minValue = widget.info.minValue;
+	            var maxValue = widget.info.maxValue;
+	            var lowAlarm = widget.info.lowAlarmValue;
+	            var highAlarm = widget.info.highAlarmValue;
+
+	            var spacing = widget.info.spacing;
+
+	            var newPoint = false;
+	            var curValue;
+
+	            if (!widget.maxPoints) {
+	                var maxPoints = Math.floor(width / spacing) + 1;
+	                widget.maxPoints = maxPoints;
+	                widget.flag = -1;
+	                widget.curPoints = [];
+	            }
+
+	            if (options && options.updatedTagName == widget.tag) {
+	                newPoint = true;
+	                curValue = this.getValueByTagName(widget.tag, 0);
+	                this.limitValueBetween(curValue, minValue, maxValue);
+	                if (widget.flag >= widget.maxPoints - 1) {
+	                    //overflow refresh
+	                    widget.curPoints = [];
+	                    widget.curPoints.push(curValue);
+	                    widget.flag = 0;
+	                } else {
+	                    widget.curPoints.push(curValue);
+	                    widget.flag += 1;
+	                }
+	            }
+
+	            //draw bg
+	            var bgSlice = widget.texList[0].slices[0];
+	            this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
+
+	            //draw grid
+	            this.drawGrid(curX, curY, width, height, 0, 0, spacing, spacing);
+	            //draw points lines
+
+	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue);
+
+	            //handle action
+	            if (newPoint) {
+	                this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
+	                widget.oldValue = curValue;
+	            }
+	        }
+	    },
+	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice) {
+	        var tranedPoints = points.map(function (point) {
+	            return 1.0 * (point - minValue) / (maxValue - minValue) * height;
+	        });
+	        var offcanvas = this.refs.offcanvas;
+	        var offctx = offcanvas.getContext('2d');
+	        offctx.save();
+	        offctx.translate(curX, curY);
+	        offctx.beginPath();
+	        for (var i = 0; i < tranedPoints.length; i++) {
+	            if (i === 0) {
+	                offctx.moveTo(i * spacing, height - tranedPoints[i]);
+	            } else {
+	                offctx.lineTo(i * spacing, height - tranedPoints[i]);
+	            }
+	        }
+	        //stroke
+	        offctx.stroke();
+	        offctx.restore();
+	    },
+	    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle) {
+	        var offsetX = offsetX % gridWidth;
+	        var offsetY = offsetY % gridHeight;
+	        var vertGrids = Math.floor((width - offsetX) / gridWidth) + 1;
+	        var horiGrids = Math.floor((height - offsetY) / gridHeight) + 1;
+	        var offcanvas = this.refs.offcanvas;
+	        var offctx = offcanvas.getContext('2d');
+	        offctx.save();
+	        offctx.translate(curX, curY);
+	        offctx.beginPath();
+	        //draw verts
+	        for (var i = 0; i < vertGrids; i++) {
+	            var vertX = i * gridWidth + offsetX;
+	            offctx.moveTo(vertX, 0);
+	            offctx.lineTo(vertX, height);
+	        }
+	        for (var i = 0; i < horiGrids; i++) {
+	            var horiY = i * gridHeight + offsetY;
+	            offctx.moveTo(0, horiY);
+	            offctx.lineTo(width, horiY);
+	        }
+	        offctx.fillStyle = gridStyle && gridStyle.color || 'black';
+	        offctx.stroke();
+	        offctx.restore();
+	    },
 	    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image) {
 	        //clip a fan shape
 	        // console.log(minArc, curArc);
@@ -21215,7 +21316,9 @@
 	                    if (param2Value > 0 && param2Value <= project.pageList.length) {
 	                        // curPageTag.value = param2;
 	                        this.setTagByTag(curPageTag, param2Value);
-	                        this.draw();
+	                        this.draw(null, {
+	                            updatedTagName: project.tag
+	                        });
 	                    }
 	                }
 
@@ -21227,7 +21330,9 @@
 	                if (targetTag) {
 	                    var nextValue = targetTag.value + Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
-	                    this.draw();
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
 	                };
 	                break;
 	            case 'DEC':
@@ -21235,8 +21340,10 @@
 	                if (targetTag) {
 	                    var nextValue = targetTag.value - Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
-	                    this.draw();
-	                };
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
 	                break;
 	            case 'SET':
 
@@ -21245,8 +21352,10 @@
 	                if (targetTag) {
 	                    // targetTag.value = parseInt(param2);
 	                    this.setTagByTag(targetTag, Number(this.getParamValue(param2)));
-	                    this.draw();
-	                };
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
 	                break;
 
 	        }
@@ -21260,7 +21369,9 @@
 	        if (curTagIdx >= 0 && curTagIdx < tagList.length) {
 	            // tagList[curTagIdx].value = value;
 	            this.setTagByTag(tagList[curTagIdx], value);
-	            this.draw();
+	            this.draw(null, {
+	                updatedTagName: tagList[curTagIdx].name
+	            });
 	        }
 	    },
 	    render: function () {
