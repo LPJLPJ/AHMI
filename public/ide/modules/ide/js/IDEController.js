@@ -114,13 +114,32 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
                 console.log('globalProject',globalProject)
 
-                TemplateProvider.saveProjectFromGlobal(globalProject);
-                ProjectService.saveProjectFromGlobal(globalProject, function () {
-                    syncServices(globalProject)
-                    console.log(globalProject);
-                    $scope.$broadcast('GlobalProjectReceived');
+                var resourceList = globalProject.resourceList;
+                var count = resourceList.length;
+                for (var i=0;i<resourceList.length;i++){
+                    var img = new Image();
+                    img.src = resourceList[i].src;
+                    img.onload = function () {
+                        count = count - 1;
+                        if (count<=0){
+                            // toastr.info('loaded');
+                            TemplateProvider.saveProjectFromGlobal(globalProject);
+                            ProjectService.saveProjectFromGlobal(globalProject, function () {
+                                syncServices(globalProject)
+                                $scope.$broadcast('GlobalProjectReceived');
 
-                });
+                            });
+                        }
+                    }.bind(this);
+                }
+
+                // TemplateProvider.saveProjectFromGlobal(globalProject);
+                // ProjectService.saveProjectFromGlobal(globalProject, function () {
+                //     syncServices(globalProject)
+                //     console.log(globalProject);
+                //     $scope.$broadcast('GlobalProjectReceived');
+                //
+                // });
 
                 //readCache();
             }else{
@@ -144,6 +163,25 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 }
                 globalProject.maxSize = data.maxSize;
                 console.log('globalProject',globalProject)
+
+                // var resourceList = globalProject.resourceList;
+                // var count = resourceList.length;
+                // for (var i=0;i<resourceList.length;i++){
+                //     var img = new Image();
+                //     img.src = resourceList.src;
+                //     img.onload = function () {
+                //         count = count - 1;
+                //         if (count<=0){
+                //             // toastr.info('loaded');
+                //             TemplateProvider.saveProjectFromGlobal(globalProject);
+                //             ProjectService.saveProjectFromGlobal(globalProject, function () {
+                //                 syncServices(globalProject)
+                //                 $scope.$broadcast('GlobalProjectReceived');
+                //
+                //             });
+                //         }
+                //     }.bind(this);
+                // }
 
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
