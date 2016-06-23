@@ -513,10 +513,9 @@ ideServices
                 this.oscilloscopeColor=level.texList[1].slices[0].color;
                 if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
-                    this.oscilloscopeElement=new Image();
-                    this.oscilloscopeElement.src=level.texList[1].slices[0].imgSrc;
-                    this.oscilloscopeElement.onload = (function () {
-
+                    this.oscilloscopeImageElement=new Image();
+                    this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.oscilloscopeImageElement.onload = (function () {
                     }).bind(this);
                 }else {
                     this.oscilloscopeImageElement=null;
