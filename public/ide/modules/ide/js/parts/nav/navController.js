@@ -362,6 +362,8 @@
             }
             else if(_index==7){
                 newWidget=TemplateProvider.getDefaultDateTime();
+            }else if(_index==14){
+                newWidget=TemplateProvider.getDefaultScriptTrigger();
             }
             else {
                 return;

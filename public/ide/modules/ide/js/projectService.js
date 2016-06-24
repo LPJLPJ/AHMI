@@ -1205,6 +1205,114 @@ ideServices
         };
         fabric.MySwitch.async = true;
 
+        fabric.MySwitch = fabric.util.createClass(fabric.Object, {
+            type: Type.MySwitch,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+                this.bindBit=level.info.bindBit;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.imageElement=new Image();
+                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.imageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.imageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    if (tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.imageElement=currentImageElement;
+                    }else {
+                        self.imageElement=null;
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.imageElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+            }
+        });
+        fabric.MySwitch.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MySwitch(level, option));
+        };
+        fabric.MySwitch.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    imageElement:this.imageElement,
+                    backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MySwitch.prototype.toObject);
+        fabric.MySwitch.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MySwitch(level, object));
+        };
+        fabric.MySwitch.async = true;
+
+        fabric.MyScriptTrigger = fabric.util.createClass(fabric.Object, {
+            type: Type.MyScriptTrigger,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render:function(ctx){
+
+            }
+        });
+        fabric.MyScriptTrigger.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyScriptTrigger(level, option));
+        };
+        fabric.MyScriptTrigger.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                });
+            }
+        })(fabric.MyScriptTrigger.prototype.toObject);
+        fabric.MyScriptTrigger.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyScriptTrigger(level, object));
+        };
+        fabric.MyScriptTrigger.async = true;
+
         fabric.MyRotateImg = fabric.util.createClass(fabric.Object, {
             type: Type.MyRotateImg,
             initialize: function (level, options) {
@@ -3294,6 +3402,22 @@ ideServices
                 },initiator);
             }else if(_newWidget.type==Type.MyDateTime){
                 fabric.MyDateTime.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
+            }else if(_newWidget.type==Type.MyScriptTrigger){
+                fabric.MyScriptTrigger.fromLevel(_newWidget,function(fabWidget){
                     _self.currentFabWidgetIdList=[fabWidget.id];
                     fabWidget.urls=_newWidget.subSlides;
                     subLayerNode.add(fabWidget);
@@ -5732,54 +5856,54 @@ ideServices
         this.ChangeAttributeValue= function (_option, _successCallback) {
             var currentOperate=SaveCurrentOperate();
             var subLayerNode=CanvasService.getSubLayerNode();
+            var arg=null;
+            var progress=null;
 
             var selectObj=getCurrentSelectObject();
             if (_option.maxValue){
                 selectObj.level.info.maxValue=_option.maxValue;
 
                 if(selectObj.type==Type.MyProgress){
-                    var progress=(selectObj.level.info.progressValue-selectObj.level.info.minValue)/(selectObj.level.info.maxValue-selectObj.level.info.minValue);
+                    progress=(selectObj.level.info.progressValue-selectObj.level.info.minValue)/(selectObj.level.info.maxValue-selectObj.level.info.minValue);
 
-                    var arg={
+                    arg={
                         progress:progress,
                         callback:_successCallback
-                    }
+                    };
                     selectObj.target.fire('changeProgressValue',arg);
                 }
 
             }
-            if (_option.minValue||_option.minValue==0){
+            if (_option.hasOwnProperty('minValue')){
                 selectObj.level.info.minValue=_option.minValue;
 
                 if(selectObj.type==Type.MyProgress){
-                    var progress=(selectObj.level.info.progressValue-selectObj.level.info.minValue)/(selectObj.level.info.maxValue-selectObj.level.info.minValue);
+                    progress=(selectObj.level.info.progressValue-selectObj.level.info.minValue)/(selectObj.level.info.maxValue-selectObj.level.info.minValue);
 
-                    var arg={
+                    arg={
                         progress:progress,
                         callback:_successCallback
-                    }
+                    };
                     selectObj.target.fire('changeProgressValue',arg);
                 }
                 if(selectObj.type==Type.MyDashboard){
-                    var arg={
+                    arg={
                         minValue:_option.minValue,
                         callback:_successCallback
-                    }
+                    };
                     selectObj.target.fire('changeDashboardValue',arg);
                 }
             }
-            if (_option.highAlarmValue){
+            if (_option.hasOwnProperty('highAlarmValue')){
                 selectObj.level.info.highAlarmValue=_option.highAlarmValue;
             }
-            if (_option.lowAlarmValue){
+            if (_option.hasOwnProperty('lowAlarmValue')){
                 selectObj.level.info.lowAlarmValue=_option.lowAlarmValue;
             }
-            if (_option.initValue){
+            if (_option.hasOwnProperty('initValue')){
                 selectObj.level.info.initValue=_option.initValue;
-
                 selectObj.target.fire('changeNumber',selectObj.level);
                 subLayerNode.renderAll();
-
             }
             toastr.info('修改成功!');
             _successCallback&&_successCallback(currentOperate);
