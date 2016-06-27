@@ -153,4 +153,20 @@ renderer.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb
     }
 };
 
+renderer.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+    switch (widget.subType){
+        case 'MyButton':
+            renderer.renderButton(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+            break;
+        case 'MySlide':
+            renderer.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+            break;
+        case 'MyOscilloscope':
+            renderer.renderOscilloscope(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+            break;
+        default:
+            cb&&cb();
+    }
+};
+
 module.exports = renderer;

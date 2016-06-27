@@ -10,14 +10,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Created by ChangeCheng on 16/6/20.
  */
 
-var Size = function Size() {
-    var w = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-    var h = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+var Pos = function Pos() {
+    var x = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+    var y = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
 
-    _classCallCheck(this, Size);
+    _classCallCheck(this, Pos);
 
-    this.w = w;
-    this.h = h;
+    this.x = x;
+    this.y = y;
 };
 
-exports.default = Size;
+exports.default = Pos;

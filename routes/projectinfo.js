@@ -11,6 +11,8 @@ var errHandler = require('../utils/errHandler')
 var defaultProject = require('../utils/defaultProject')
 var nodejszip = require('../utils/zip');
 var mkdir = require('mkdir-p');
+//rendering
+var renderer = require('../utils/render/renderer');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -263,37 +265,86 @@ projectRoute.generateProject = function (req, res) {
     if (projectId!=""){
         var ProjectBaseUrl = path.join(__dirname,'../projects',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
-        fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
-            if (err){
-                errHandler(res,500,err);
-            }else{
-                //write ok
-                var zip = new nodejszip();
-                var SrcUrl = path.join(ProjectBaseUrl,'resources');
-                var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                try {
-                    zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
-                        if (err) {
-                            errHandler(res, 500, err);
-                        } else {
-                            //res.status(200).send('ok')
-                            //res.download(DistUrl,'file.zip', function (err) {
-                            //    if (err){
-                            //        errHandler(res,500,err);
-                            //    }else{
-                            //        console.log('ok')
-                            //    }
-                            //})
-                            res.end('ok')
-                            //res.sendFile(DistUrl)
-                        }
-                    })
-                }catch (err){
-                    errHandler(res, 500, err);
+        // fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+        //     if (err){
+        //         errHandler(res,500,err);
+        //     }else{
+        //         //write ok
+        //         var zip = new nodejszip();
+        //         var SrcUrl = path.join(ProjectBaseUrl,'resources');
+        //         var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+        //         try {
+        //             zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
+        //                 if (err) {
+        //                     errHandler(res, 500, err);
+        //                 } else {
+        //                     res.end('ok')
+        //
+        //                 }
+        //             })
+        //         }catch (err){
+        //             errHandler(res, 500, err);
+        //         }
+        //     }
+        // })
+        //trans all widgets
+        var allWidgets = [];
+        for (var i=0;i<dataStructure.pageList.length;i++){
+            var curPage = dataStructure.pageList[i];
+            for (var j=0;j<curPage.canvasList.length;j++){
+                var curCanvas = curPage.canvasList[j];
+                for (var k=0;k<curCanvas.subCanvasList.length;k++){
+                    var curSubCanvas = curCanvas.subCanvasList[k];
+                    for (var l=0;l<curSubCanvas.widgetList.length;l++){
+                        allWidgets.push(curSubCanvas.widgetList[l]);
+                    }
                 }
             }
-        })
+        }
+        var totalNum = allWidgets.length;
+        var okFlag = true;
+        var cb = function (err) {
+            if (err){
+                okFlag = false;
+                console.log('err',err);
+            }else{
+                totalNum-=1;
+                if (totalNum<=0){
+                    if (okFlag){
+                        //ok
+                        console.log('trans finished');
+                        fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                            if (err){
+                                errHandler(res,500,err);
+                            }else{
+                                //write ok
+                                var zip = new nodejszip();
+                                var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                                var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                                try {
+                                    zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
+                                        if (err) {
+                                            errHandler(res, 500, err);
+                                        } else {
+                                            res.end('ok')
 
+                                        }
+                                    })
+                                }catch (err){
+                                    errHandler(res, 500, err);
+                                }
+                            }
+                        })
+                    }else{
+                        errHandler(res,500,'generate error')
+                    }
+                }
+            }
+        }.bind(this);
+        for (var m=0;m<allWidgets.length;m++){
+            var curWidget = allWidgets[m];
+            renderer.renderWidget(curWidget,path.join(__dirname,'..'),path.join(ProjectBaseUrl,'resources'),path.join('projects',String(projectId),'resources'),cb);
+        }
     }else{
         errHandler(res,500,'projectId error');
     }
