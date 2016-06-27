@@ -162,7 +162,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 backgroundImage:'blank.png',
                 knobImg:'blank.png',
                 enterKnobSize:enterKnobSize,
-                enterKnobValue:enterKnobValue,
+                enterKnobValue:enterKnobValue
             },
 
             //示波器
