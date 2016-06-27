@@ -183,10 +183,12 @@
                 </a>
                 <script type="text/ng-template" id="navModal.html">
                     <div class="modal-header">
-                        导出工程
+                        <h3 class="modal-title">导出工程</h3>
                     </div>
-                    <div class="modal-body">
-                        <select ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">
+                            <select class="form-control dengModel-trigger" ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
