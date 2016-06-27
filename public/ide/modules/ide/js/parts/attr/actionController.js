@@ -62,6 +62,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             case Type.MyNum:
             case Type.MyImage:
             case Type.MySwitch:
+            case Type.MyScriptTrigger:
                 $scope.showActionPanel = true;
                 break;
             default:

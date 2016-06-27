@@ -255,6 +255,7 @@ ide.
                 case Type.MySwitch:
                 case Type.MyDateTime:
                 case Type.MyRotateImg:
+                case Type.MyScriptTrigger:
                     $scope.showTagPanel = true;
                     break;
                 default:

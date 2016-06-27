@@ -670,6 +670,26 @@ ideServices
             }
         };
 
+        this.getDefaultScriptTrigger = function(){
+            var subLayerNode=CanvasService.getSubLayerNode();
+
+            var info={
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                lowAlarmValue:0,highAlarmValue:100
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewScriptTrigger',
+                type: Type.MyScriptTrigger,
+                expand:true,
+                url:'',
+                zIndex:0
+            }
+        };
+
 
         function _getRandomColor(){
             var r = _.random(64, 255);
