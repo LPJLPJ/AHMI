@@ -82,7 +82,12 @@
 
     var JUMP = {
         name:'JUMP',
-        symbol:''
+        symbol:'JUMP'
+    }
+
+    var END = {
+        name:'END',
+        symbol:'END'
     }
     
     function trans(block,changeIfConditon) {
@@ -185,7 +190,7 @@
             //   label:String(l1),
             //   cmd:['END','','']
             // });
-            transedThenBlock.push(new Command(l1, ['END', '', '']));
+            transedThenBlock.push(new Command(l1, [END, '', '']));
         }
 
         // results.concat(transedThenBlock);
@@ -196,7 +201,7 @@
         //   label:String(l2),
         //   cmd:['END','','']
         // });
-        results.push(new Command(l2, ['END', '', '']));
+        results.push(new Command(l2, [END, '', '']));
         return results;
 
 
@@ -241,7 +246,7 @@
         transedThenBlock.push(new Command('', [JUMP, '', l1]));
         transedThenBlock[0].label = String(l2);
         [].push.apply(results, transedThenBlock);
-        results.push(new Command(l3, ['END', '', '']));
+        results.push(new Command(l3, [END, '', '']));
 
         return results;
     }

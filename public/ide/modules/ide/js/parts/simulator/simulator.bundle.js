@@ -20608,7 +20608,7 @@
 	        //offCtx.fillStyle = this.numColor;
 	        tempCtx.font = numString;
 	        tempCtx.textAlign = 'center';
-	        console.log(curValue);
+	        // console.log(curValue);
 
 	        widget.oldValue = widget.oldValue || 0;
 
@@ -20678,7 +20678,7 @@
 	        tempCtx.save();
 	        this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
 	        tempCtx.globalCompositeOperation = "destination-in";
-	        console.log(tempNumValue);
+	        // console.log(tempNumValue);
 	        tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 + numSize / 4);
 	        // tempCtx.fillText(tempNumValue,0,)
 	        tempCtx.restore();
@@ -21307,14 +21307,14 @@
 	    },
 	    findTagByName: function (tag) {
 	        var tagList = this.state.tagList;
-	        // console.log(tag);
+	        // console.log(tag,tagList);
 	        if (tag && tag != "") {
 
 	            for (var i = 0; i < tagList.length; i++) {
 	                if (tagList[i].name == tag) {
 	                    return tagList[i];
 	                }
-	            };
+	            }
 	        }
 
 	        return null;
@@ -21349,10 +21349,13 @@
 	        }
 	    },
 	    timerFlag: function (param) {
-	        if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
-	            //get SysTmr
-	            return parseInt(param.tag.match(/\d+/)[0]);
+	        if (param && param.tag) {
+	            if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
+	                //get SysTmr
+	                return parseInt(param.tag.match(/\d+/)[0]);
+	            }
 	        }
+
 	        return -1;
 	    },
 	    processCmds: function (cmds) {
@@ -21360,16 +21363,37 @@
 	        //     this.process(cmds[i]);
 	        // }
 	        if (cmds && cmds.length) {
+	            console.log(cmds);
 	            this.process(cmds, 0);
 	        }
 	    },
 	    getParamValue: function (param) {
 	        var value;
-	        if (param.tag && param.tag !== '') {
-	            value = this.getValueByTagName(param.tag);
+	        // if (param.tag && param.tag !== ''){
+	        //     value = this.getValueByTagName(param.tag);
+	        // }else{
+	        //     if (param.value!=='undefined'){
+	        //         value = param.value;
+	        //     }else{
+	        //         value = Number(param);
+	        //
+	        //     }
+	        //
+	        // }
+	        if (typeof param === 'number') {
+	            value = param;
 	        } else {
-	            value = param.value;
+	            if (param) {
+	                if (param.tag) {
+	                    value = Number(this.getValueByTagName(param.tag));
+	                } else {
+	                    value = Number(param.value);
+	                }
+	            } else {
+	                value = 0;
+	            }
 	        }
+	        // console.log(value,param,(typeof param));
 	        return value;
 	    },
 	    process: function (cmds, index) {
@@ -21380,7 +21404,10 @@
 	            console.log('processing error');
 	            return;
 	        }
-	        var inst = cmds[index];
+
+	        var inst = cmds[index].cmd;
+	        console.log('inst: ', inst[0], inst[1], inst[2]);
+
 	        var op = inst[0].name;
 	        var param1 = inst[1];
 	        var param2 = inst[2];
@@ -21546,7 +21573,7 @@
 	                break;
 	            //compare
 	            case 'EQ':
-	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue == secondValue) {
 	                    nextStep.step = 1;
@@ -21555,7 +21582,7 @@
 	                }
 	                break;
 	            case 'NEQ':
-	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue != secondValue) {
 	                    nextStep.step = 1;
@@ -21564,8 +21591,10 @@
 	                }
 	                break;
 	            case 'GT':
-	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
+	                console.log(param1);
+	                console.log('GT', firstValue, secondValue);
 	                if (firstValue > secondValue) {
 	                    nextStep.step = 1;
 	                } else {
@@ -21573,7 +21602,7 @@
 	                }
 	                break;
 	            case 'GTE':
-	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue >= secondValue) {
 	                    nextStep.step = 1;
@@ -21582,7 +21611,7 @@
 	                }
 	                break;
 	            case 'LT':
-	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue < secondValue) {
 	                    nextStep.step = 1;
@@ -21591,9 +21620,9 @@
 	                }
 	                break;
 	            case 'LTE':
-	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
-	                if (firstValue == secondValue) {
+	                if (firstValue <= secondValue) {
 	                    nextStep.step = 1;
 	                } else {
 	                    nextStep.step = 2;
@@ -21601,6 +21630,8 @@
 	                break;
 	            case 'JUMP':
 	                nextStep.step = Number(this.getParamValue(param2));
+	                break;
+	            case 'END':
 	                break;
 
 	        }
