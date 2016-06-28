@@ -625,7 +625,7 @@ module.exports = React.createClass({
     drawProgress: function (curX, curY, widget, options) {
         var width = widget.info.width;
         var height = widget.info.height;
-        if (widget.texList && widget.texList.length == 2) {
+        if (widget.texList) {
             //has tex
             //draw background
             var texSlice = widget.texList[0].slices[0];
@@ -641,7 +641,7 @@ module.exports = React.createClass({
             curScale = (curScale <= 1 ? curScale : 1.0);
 
             var progressSlice = widget.texList[1].slices[0];
-
+            console.log('drawing color progress',widget.info.progressModeId);
             switch (widget.info.progressModeId){
                 case '0':
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
@@ -662,9 +662,11 @@ module.exports = React.createClass({
                     }
                     break;
                 case '1':
+
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
                     var lastSlice = widget.texList[2].slices[0];
                     var mixedColor = this.addTwoColor(progressSlice.color,lastSlice.color,curScale);
+                    console.log('mixedColor',mixedColor);
                     switch (widget.info.arrange) {
 
                         case 'vertical':
@@ -697,14 +699,16 @@ module.exports = React.createClass({
         var color2Array = this.transColorToArray(color2);
         var mixedColor = [];
         for (var i=0;i<4;i++){
-            mixedColor[i] = color1Array[i] * ratio + (1-ratio)* color2Array[i];
+            mixedColor[i] = parseInt(color1Array[i] * ratio + (1-ratio)* color2Array[i]);
         }
         return 'rgba('+mixedColor.join(',')+')';
     },
     transColorToArray:function (color) {
         //rgba to array
         var temp = color.split('(')[1].split(')')[0];
-        var colorArray = temp.split(',');
+        var colorArray = temp.split(',').map(function (colorbit) {
+            return Number(colorbit);
+        });
         return colorArray;
     },
     drawTime:function (curX,curY,widget,options) {

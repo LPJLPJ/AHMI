@@ -451,8 +451,9 @@ ideServices
                     }
                 }else if(this.progressModeId=='1'){
                     //变色进度条
-                    var initColorArr = this.initColor.slice(5,this.progressColor.length-1).split(','),
-                        endColorArr = this.endColor.slice(5,this.backgroundColor.length-1).split(',');
+
+                    var initColorArr = (this.initColor||'rgba(0,0,0,0)').slice(5,this.progressColor.length-1).split(','),
+                        endColorArr = (this.endColor||'rgba(0,0,0,0)').slice(5,this.backgroundColor.length-1).split(',');
                     var initColorR = parseInt(initColorArr[0]),
                         initColorG = parseInt(initColorArr[1]),
                         initColorB = parseInt(initColorArr[2]),
