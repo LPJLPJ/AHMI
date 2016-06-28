@@ -265,10 +265,10 @@ ideServices
                 this.progressValue=level.info.progressValue/(level.info.maxValue-level.info.minValue);
                 this.progressModeId=level.info.progressModeId;
 
-                this.backgroundColor=level.texList[1].slices[0].color;
-                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                this.backgroundColor=level.texList[0].slices[0].color;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
                     this.backgroundImageElement.onload = (function () {
 
                         this.loaded = true;
@@ -279,11 +279,11 @@ ideServices
                     this.backgroundImageElement=null;
                 }
 
-                this.progressColor=level.texList[0].slices[0].color;
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                this.progressColor=level.texList[1].slices[0].color;
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
                     this.progressImageElement=new Image();
-                    this.progressImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.progressImageElement.src=level.texList[1].slices[0].imgSrc;
                     this.progressImageElement.onload = (function () {
 
                     }).bind(this);
@@ -309,10 +309,10 @@ ideServices
                     var level=arg.level;
                     var _callback=arg.callback;
                     //console.log(level.texList);
-                    self.backgroundColor=level.texList[1].slices[0].color;
-                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
-                        self.backgroundImageElement.src=level.texList[1].slices[0].imgSrc;
+                        self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
                         self.backgroundImageElement.onload = (function () {
 
                         }).bind(this);
@@ -320,11 +320,11 @@ ideServices
                         self.backgroundImageElement=null;
                     }
 
-                    self.progressColor=level.texList[0].slices[0].color;
-                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    self.progressColor=level.texList[1].slices[0].color;
+                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
                         self.progressImageElement=new Image();
-                        self.progressImageElement.src=level.texList[0].slices[0].imgSrc;
+                        self.progressImageElement.src=level.texList[1].slices[0].imgSrc;
                         self.progressImageElement.onload = (function () {
 
                         }).bind(this);
@@ -432,11 +432,33 @@ ideServices
                 }else if(this.progressModeId=='1'){
                     //变色进度条
                     if(this.arrange=='horizontal'){
-                        var horizontal_gradient=ctx.createLinearGradient(-this.width/2,-this.height/2,this.width/2,-this.height/2);
-                        horizontal_gradient.addColorStop(0,this.progressColor);
-                        horizontal_gradient.addColorStop(1,this.backgroundColor);
-                        ctx.fillStyle=horizontal_gradient;
-                        ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height)
+                        //var horizontal_gradient=ctx.createLinearGradient(-this.width/2,-this.height/2,this.width/2,-this.height/2);
+                        //horizontal_gradient.addColorStop(0,this.progressColor);
+                        //horizontal_gradient.addColorStop(1,this.backgroundColor);
+                        //ctx.fillStyle=horizontal_gradient;
+                        //ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+
+                        var initColorArr = this.progressColor.slice(5,this.progressColor.length-1).split(','),
+                            endColorArr = this.backgroundColor.slice(5,this.backgroundColor.length-1).split(',');
+                        var initColorR = parseInt(initColorArr[0]),
+                            initColorG = parseInt(initColorArr[1]),
+                            initColorB = parseInt(initColorArr[2]),
+                            initColorA = parseInt(initColorArr[3]),
+                            endColorR = parseInt(endColorArr[0]),
+                            endColorG = parseInt(endColorArr[1]),
+                            endColorB = parseInt(endColorArr[2]),
+                            endColorA = parseInt(endColorArr[3]);
+
+                        var progressColorR = parseInt(endColorR+(endColorR-initColorR)*this.progressValue),
+                            progressColorG = parseInt(endColorG+(endColorG-initColorG)*this.progressValue),
+                            progressColorB = parseInt(endColorB+(endColorB-initColorB)*this.progressValue),
+                            progressColorA = 1;
+                        var progressColor = 'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
+                        console.log(progressColor);
+                        ctx.fillStyle=progressColor;
+                        ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+
+
                     }else{
                         var vertical_gradient=ctx.createLinearGradient(-this.width/2,this.height/2,-this.width/2,-this.height/2);
                         vertical_gradient.addColorStop(0,this.progressColor);
@@ -5240,7 +5262,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条',
                     slices:[{
-                        color:'rgb(120,120,120)',
+                        color:'rgba(120,120,120,1)',
                         imgSrc:'',
                         name:'进度条'
                     }]
@@ -5248,7 +5270,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:'rgb(80,80,80)',
+                        color:'rgba(80,80,80,1)',
                         imgSrc:'',
                         name:'进度条底纹'
                     }]
@@ -5269,7 +5291,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条',
                     slices:[{
-                        color:'rgb(120,120,120)',
+                        color:'rgba(120,120,120,1)',
                         imgSrc:'',
                         name:'进度条'
                     }]
@@ -5277,7 +5299,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:'rgb(80,80,80)',
+                        color:'rgba(80,80,80,1)',
                         imgSrc:'',
                         name:'进度条底纹'
                     }]
@@ -5285,7 +5307,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'光标纹理',
                     slices:[{
-                        color:'rgb(120,120,120)',
+                        color:'rgba(120,120,120,1)',
                         imgSrc:'',
                         name:'光标纹理'
                     }]

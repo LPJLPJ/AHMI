@@ -393,19 +393,19 @@ ideServices
                 zIndex:0,
                 texList:[{
                     currentSliceIdx:0,
-                    name:'进度条',
-                    slices:[{
-                        color:_getRandomColor(),
-                        imgSrc:'',
-                        name:'进度条'
-                    }]
-                },{
-                    currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
                         color:_getRandomColor(),
                         imgSrc:'',
                         name:'进度条底纹'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'进度条',
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'进度条'
                     }]
                 }]
 
@@ -659,7 +659,7 @@ ideServices
                 zIndex:0,
                 texList:[{
                     currentSliceIdx:0,
-                    name:'旋转图片',
+                    name:'时间日期',
                     slices:[{
                         color:_getRandomColor(),
                         imgSrc:'',
