@@ -74,11 +74,11 @@
 
         function initProject(){
             ProjectService.getProjectTo($scope);
-            $scope.project.resourceList = ResourceService.getAllResource()
+            $scope.project.resourceList = ResourceService.getAllResource();
 
-            $scope.project.customTags = TagService.getAllCustomTags()
-            $scope.project.timerTags = TagService.getAllTimerTags()
-            $scope.project.timers = TimerService.getTimerNum()
+            $scope.project.customTags = TagService.getAllCustomTags();
+            $scope.project.timerTags = TagService.getAllTimerTags();
+            $scope.project.timers = TimerService.getTimerNum();
 
             $scope.$on('NavStatusChanged', onNavStatusChanged);
 
