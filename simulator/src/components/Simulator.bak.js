@@ -1,3 +1,6 @@
+/**
+ * Created by zzen1ss on 16/6/28.
+ */
 var React = require('react');
 var $ = require('jquery');
 var _ = require('lodash');
@@ -1184,7 +1187,7 @@ module.exports = React.createClass({
                 }
             }
 
-           //draw bg
+            //draw bg
             var bgSlice = widget.texList[0].slices[0];
             this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
 
@@ -1331,7 +1334,7 @@ module.exports = React.createClass({
         //draw color
         offctx.fillStyle = texSlice.color;
         offctx.fillRect(0,0,elemWidth,elemHeight);
-        
+
         var image = this.getImageName(texSlice.imgSrc);
         if (image && image != '') {
             var imageList = this.state.imageList;

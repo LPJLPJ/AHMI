@@ -197,7 +197,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 $timeout(function () {
                     $scope.ide.loaded=true;
 
-                    intervalSave();
+                    // intervalSave();
 
                 },2000)
             }
@@ -369,7 +369,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 $timeout(function () {
                     $scope.ide.loaded=true;
 
-                    intervalSave();
+                    // intervalSave();
 
                 },2000)
             }

@@ -20358,21 +20358,21 @@
 	                case '1':
 	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
 	                    var lastSlice = widget.texList[2].slices[0];
+	                    var mixedColor = this.addTwoColor(progressSlice.color, lastSlice.color, curScale);
 	                    switch (widget.info.arrange) {
 
 	                        case 'vertical':
 	                            // console.log(curScale);
 	                            // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
-	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', progressSlice.color);
+	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor);
 	                            break;
 	                        case 'horizontal':
 	                        default:
 	                            //default horizontal
 	                            // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
-	                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', progressSlice.color);
+	                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', mixedColor);
 	                            break;
 	                    }
-	                    break;
 	                    break;
 	                case '2':
 	                    break;
@@ -20386,6 +20386,11 @@
 	    addTwoColor: function (color1, color2, ratio) {
 	        var color1Array = this.transColorToArray(color1);
 	        var color2Array = this.transColorToArray(color2);
+	        var mixedColor = [];
+	        for (var i = 0; i < 4; i++) {
+	            mixedColor[i] = color1Array[i] * ratio + (1 - ratio) * color2Array[i];
+	        }
+	        return 'rgba(' + mixedColor.join(',') + ')';
 	    },
 	    transColorToArray: function (color) {
 	        //rgba to array
