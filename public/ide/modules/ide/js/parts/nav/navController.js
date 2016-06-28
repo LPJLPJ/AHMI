@@ -144,8 +144,7 @@
 
         function saveProject(_saveCb) {
             ProjectService.getProjectTo($scope);
-
-
+            console.log($scope.project);
             var projectClone=ProjectService.SaveCurrentOperate();
 
 

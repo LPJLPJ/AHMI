@@ -20002,9 +20002,12 @@
 	        var postfix = ['Start', 'Stop', 'Step', 'Interval', 'CurVal', 'Mode'];
 	        for (var i = 0; i < postfix.length; i++) {
 	            var key = 'SysTmr_' + num + '_' + postfix[i];
-	            timer[key] = this.findTagByName(key)['value'] || 0;
+	            var curTag = this.findTagByName(key);
+	            console.log(curTag, timerList);
+	            timer[key] = curTag && curTag.value || 0;
+	            // timer[key] = this.findTagByName(key)['value'] || 0;
 	        }
-	        ;
+
 	        // console.log(timer);
 	        if (timer.timerID == 0) {
 	            //start timer or not
@@ -20015,7 +20018,6 @@
 	            timer.timerID = 0;
 	            this.startNewTimer(timer, num, true);
 	        }
-	        ;
 	    },
 	    startNewTimer: function (timer, num, cont) {
 	        if ((timer['SysTmr_' + num + '_Mode'] & 1) == 1) {
@@ -20029,7 +20031,6 @@
 	                    // targetTag.value = startValue;
 	                    this.setTagByTag(targetTag, startValue);
 	                }
-	                ;
 	            } else {
 	                // targetTag.value = startValue;
 	                this.setTagByTag(targetTag, startValue);
@@ -20054,7 +20055,6 @@
 	                            this.draw();
 	                        }
 	                    }
-	                    ;
 	                } else {
 	                    if (targetTag.name != '') {
 	                        targetTag.value += timer['SysTmr_' + num + '_Step'];
@@ -20066,11 +20066,9 @@
 	                            this.draw();
 	                        }
 	                    }
-	                    ;
 	                }
 	            }.bind(this), timer['SysTmr_' + num + '_Interval']);
 	        }
-	        ;
 	    },
 	    drawCanvas: function (canvasData, options) {
 	        //draw
@@ -20099,7 +20097,6 @@
 	        if (subCanvas) {
 	            this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
 	        }
-	        ;
 	    },
 	    drawSubCanvas: function (subCanvas, x, y, w, h, options) {
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
@@ -20165,6 +20162,9 @@
 	                break;
 	            case 'MyDateTime':
 	                this.drawTime(curX, curY, widget, options);
+	                break;
+	            case 'MyTextArea':
+	                this.drawTextArea(curX, curY, widget, options);
 	                break;
 	        }
 	    },
@@ -20238,11 +20238,28 @@
 	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	            }
 	    },
+	    drawTextArea: function (curX, curY, widget, options) {
+	        var info = widget.info;
+	        var width = info.width;
+	        var height = info.height;
+	        var bgSlice = widget.texList[0].slices[0];
+	        this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
+	        //draw text
+	        if (info.text) {
+	            //
+	            var font = {};
+	            font['font-style'] = info.fontItalic;
+	            font['font-weight'] = info.fontBold;
+	            font['font-size'] = info.fontSize;
+	            font['font-family'] = info.fontFamily;
+	            this.drawTextByTempCanvas(curX, curY, width, height, info.text, font);
+	        }
+	    },
 	    drawTextByTempCanvas: function (curX, curY, width, height, text, font) {
 
 	        var text = text || '';
 	        var font = font || {};
-	        console.log(font);
+	        // console.log(font);
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        var tempcanvas = this.refs.tempcanvas;
@@ -20256,7 +20273,7 @@
 	        //font style
 	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + (font['font-family'] || 'arial');
 	        tempctx.font = fontStr;
-	        console.log('tempctx.font', fontStr);
+	        // console.log('tempctx.font',fontStr);
 	        tempctx.fillStyle = font['font-color'];
 	        tempctx.fillText(text, 0.5 * width, 0.5 * height);
 	        tempctx.restore();
@@ -20305,8 +20322,8 @@
 	        if (widget.texList && widget.texList.length == 2) {
 	            //has tex
 	            //draw background
-	            var texSlice = widget.texList[1].slices[0];
-	            this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+	            var texSlice = widget.texList[0].slices[0];
+
 	            //draw progress
 	            //get current value
 	            var curProgressTag = this.findTagByName(widget.tag);
@@ -20317,20 +20334,47 @@
 	            curScale = curScale >= 0 ? curScale : 0.0;
 	            curScale = curScale <= 1 ? curScale : 1.0;
 
-	            var progressSlice = widget.texList[0].slices[0];
+	            var progressSlice = widget.texList[1].slices[0];
 
-	            switch (widget.info.arrange) {
+	            switch (widget.info.progressModeId) {
+	                case '0':
+	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
 
-	                case 'vertical':
-	                    // console.log(curScale);
-	                    // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
-	                    this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
+	                    switch (widget.info.arrange) {
+
+	                        case 'vertical':
+	                            // console.log(curScale);
+	                            // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
+	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
+	                            break;
+	                        case 'horizontal':
+	                        default:
+	                            //default horizontal
+	                            // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
+	                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
+	                            break;
+	                    }
 	                    break;
-	                case 'horizontal':
-	                default:
-	                    //default horizontal
-	                    // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
-	                    this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
+	                case '1':
+	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+	                    var lastSlice = widget.texList[2].slices[0];
+	                    switch (widget.info.arrange) {
+
+	                        case 'vertical':
+	                            // console.log(curScale);
+	                            // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
+	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', progressSlice.color);
+	                            break;
+	                        case 'horizontal':
+	                        default:
+	                            //default horizontal
+	                            // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
+	                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', progressSlice.color);
+	                            break;
+	                    }
+	                    break;
+	                    break;
+	                case '2':
 	                    break;
 	            }
 
@@ -20338,6 +20382,16 @@
 	            this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	            widget.oldValue = curProgress;
 	        }
+	    },
+	    addTwoColor: function (color1, color2, ratio) {
+	        var color1Array = this.transColorToArray(color1);
+	        var color2Array = this.transColorToArray(color2);
+	    },
+	    transColorToArray: function (color) {
+	        //rgba to array
+	        var temp = color.split('(')[1].split(')')[0];
+	        var colorArray = temp.split(',');
+	        return colorArray;
 	    },
 	    drawTime: function (curX, curY, widget, options) {
 	        var width = widget.info.width;
@@ -21292,7 +21346,7 @@
 	    timerFlag: function (param) {
 	        if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
 	            //get SysTmr
-	            return parseInt(param.match(/\d+/)[0]);
+	            return parseInt(param.tag.match(/\d+/)[0]);
 	        }
 	        return -1;
 	    },
@@ -21382,7 +21436,7 @@
 	        //handle timer
 	        if (timerFlag != -1) {
 	            this.handleTimers(timerFlag);
-	        };
+	        }
 	    },
 	    updateTag: function (curTagIdx, value) {
 	        var tagList = this.state.tagList;
