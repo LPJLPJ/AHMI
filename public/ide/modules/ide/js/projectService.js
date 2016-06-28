@@ -1003,8 +1003,6 @@ ideServices
 
                 }
 
-                //pointer
-
                 //ctx.fillStyle=this.pointerColor;
                 //ctx.fillRect(
                 //    -this.width / 2,
@@ -1017,8 +1015,9 @@ ideServices
                     var sqrt2 = Math.sqrt(2);
                     var knobImgWidth = this.knobSize/sqrt2/this.scaleX;
                     var knobImgHeight = this.knobSize/sqrt2/this.scaleY;
-
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.rotate((this.value)*Math.PI/180);
+                    ctx.scale(this.scaleX,this.scaleY);
                     //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
                     ctx.drawImage(this.knobImageElement, -knobImgWidth/2, -knobImgHeight/2,knobImgWidth,knobImgHeight);
 
