@@ -610,7 +610,7 @@ module.exports = React.createClass({
         if (widget.texList && widget.texList.length == 2) {
             //has tex
             //draw background
-            var texSlice = widget.texList[0].slices[0];
+            var texSlice = widget.texList[1].slices[0];
             this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
             //draw progress
             //get current value
@@ -622,7 +622,7 @@ module.exports = React.createClass({
             curScale = (curScale >= 0 ? curScale : 0.0);
             curScale = (curScale <= 1 ? curScale : 1.0);
 
-            var progressSlice = widget.texList[1].slices[0];
+            var progressSlice = widget.texList[0].slices[0];
 
             switch (widget.info.arrange) {
 
@@ -1507,7 +1507,7 @@ module.exports = React.createClass({
                 //change button tag
                 var curButtonIdx = widget.curButtonIdx || 0;
                 var targetTag = this.findTagByName(widget.tag);
-
+                console.log(targetTag);
                 if (targetTag && targetTag.name != '') {
                     // targetTag.value = parseInt(curButtonIdx);
                     this.setTagByTag(targetTag, parseInt(curButtonIdx))
