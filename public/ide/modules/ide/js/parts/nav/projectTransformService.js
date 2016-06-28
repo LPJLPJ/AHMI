@@ -2,6 +2,21 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     this.transDataFile = transDataFile;
 
+    function transCmds(cmds,changelt){
+        // actionCompiler
+        return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
+    }
+    
+    function transActions(object,changelt) {
+        changelt = changelt||true;
+        if (object&&object.actions&&object.actions.length){
+            for (var i=0;i<object.actions.length;i++){
+                var curAction = object.actions[i];
+                curAction.commands = transCmds(curAction.commands,changelt);
+            }
+        }
+    }
+
     function transDataFile(rawProject){
         var targetProject = {};
         targetProject.name = rawProject.name || 'default project';
@@ -18,7 +33,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var targetPage = {};
         targetPage.id = ''+index;
         targetPage.type = Type.MyPage;
+        
         deepCopyAttributes(rawPage,targetPage,['name','backgroundImage','backgroundColor','triggers','actions','tag']);
+        transActions(targetPage);
         //CanvasList
         targetPage.canvasList = [];
         for (var i=0;i<rawPage.layers.length;i++){
@@ -32,6 +49,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetLayer.id = pageIdx+'.'+layerIdx;
         targetLayer.type = Type.MyLayer;
         deepCopyAttributes(rawLayer,targetLayer,['name','triggers','actions','tag','zIndex']);
+        transActions(targetLayer);
         targetLayer.w = rawLayer.info.width;
         targetLayer.h = rawLayer.info.height;
         targetLayer.x = rawLayer.info.left;
@@ -78,6 +96,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //targetWidget.info = rawWidget.info;
 
         targetWidget = _.cloneDeep(rawWidget);
+        transActions(targetWidget);
         targetWidget.type = 'widget';
         targetWidget.subType = rawWidget.type;
         targetWidget.id = subLayerIdx+'.'+widgetIdx;
