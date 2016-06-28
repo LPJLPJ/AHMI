@@ -30,8 +30,8 @@ ideServices
         };
 
         this.syncAllTags = function (_tagList) {
-            var _tags = []
-            var _timerTags = []
+            var _tags = [];
+            var _timerTags = [];
             if (_tagList){
                 for (var i = 0; i<_tagList.length;i++){
                     if (_tagList[i].name.indexOf('Sys')==0){
@@ -43,19 +43,19 @@ ideServices
                 }
             }
 
-            tags = _tags
+            tags = _tags;
             timerTags = _timerTags
 
-        }
+        };
 
 
         this.syncCustomTags = function (_customTags) {
             tags = _customTags||[]
-        }
+        };
 
         this.syncTimerTags = function (_timerTags) {
             timerTags = _timerTags||[]
-        }
+        };
 
         //返回所有的自定义tags
         this.getAllCustomTags=function(){

@@ -3,7 +3,7 @@
  */
 ideServices
     .service('TimerService',function(){
-    var timerNum=0;
+    var timerNum=null;
     this.setTimerNum=function(num){
         //console.log("set num success!");
         timerNum=num;

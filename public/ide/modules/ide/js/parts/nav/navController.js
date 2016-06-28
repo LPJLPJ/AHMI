@@ -144,7 +144,10 @@
 
         function saveProject(_saveCb) {
             ProjectService.getProjectTo($scope);
-            console.log($scope.project);
+
+            //edit by lixiang
+            $scope.project.timers = TimerService.getTimerNum();
+
             var projectClone=ProjectService.SaveCurrentOperate();
 
 
