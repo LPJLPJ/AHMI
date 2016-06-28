@@ -21356,8 +21356,11 @@
 	        return -1;
 	    },
 	    processCmds: function (cmds) {
-	        for (var i = 0; i < cmds.length; i++) {
-	            this.process(cmds[i]);
+	        // for (var i = 0; i < cmds.length; i++) {
+	        //     this.process(cmds[i]);
+	        // }
+	        if (cmds && cmds.length) {
+	            this.process(cmds, 0);
 	        }
 	    },
 	    getParamValue: function (param) {
@@ -21369,13 +21372,25 @@
 	        }
 	        return value;
 	    },
-	    process: function (inst) {
+	    process: function (cmds, index) {
+	        var cmdsLength = cmds.length;
+	        if (index >= cmdsLength) {
+	            return;
+	        } else if (index < 0) {
+	            console.log('processing error');
+	            return;
+	        }
+	        var inst = cmds[index];
 	        var op = inst[0].name;
 	        var param1 = inst[1];
 	        var param2 = inst[2];
 	        //timer?
 	        var timerFlag = -1;
 	        timerFlag = this.timerFlag(param1);
+	        var nextStep = {
+	            process: true,
+	            step: 1
+	        };
 	        switch (op) {
 	            case 'GOTO':
 
@@ -21400,6 +21415,8 @@
 	                        });
 	                    }
 	                }
+	                //next
+	                nextStep.process = false;
 
 	                break;
 	            case 'INC':
@@ -21412,12 +21429,103 @@
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
 	                    });
-	                };
+	                }
+
 	                break;
 	            case 'DEC':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
 	                    var nextValue = targetTag.value - Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'MUL':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value * Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'DIV':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value / Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'MOD':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value % Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'OR':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value | Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'XOR':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value ^ Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'NOT':
+	                // var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = !Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'AND':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value & Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'SL':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value << Number(this.getParamValue(param2));
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+	            case 'SR':
+	                var targetTag = this.findTagByName(param1.tag);
+	                if (targetTag) {
+	                    var nextValue = targetTag.value >> Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -21436,11 +21544,74 @@
 	                    });
 	                }
 	                break;
+	            //compare
+	            case 'EQ':
+	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var secondValue = Number(this.getParamValue(param2));
+	                if (firstValue == secondValue) {
+	                    nextStep.step = 1;
+	                } else {
+	                    nextStep.step = 2;
+	                }
+	                break;
+	            case 'NEQ':
+	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var secondValue = Number(this.getParamValue(param2));
+	                if (firstValue != secondValue) {
+	                    nextStep.step = 1;
+	                } else {
+	                    nextStep.step = 2;
+	                }
+	                break;
+	            case 'GT':
+	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var secondValue = Number(this.getParamValue(param2));
+	                if (firstValue > secondValue) {
+	                    nextStep.step = 1;
+	                } else {
+	                    nextStep.step = 2;
+	                }
+	                break;
+	            case 'GTE':
+	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var secondValue = Number(this.getParamValue(param2));
+	                if (firstValue >= secondValue) {
+	                    nextStep.step = 1;
+	                } else {
+	                    nextStep.step = 2;
+	                }
+	                break;
+	            case 'LT':
+	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var secondValue = Number(this.getParamValue(param2));
+	                if (firstValue < secondValue) {
+	                    nextStep.step = 1;
+	                } else {
+	                    nextStep.step = 2;
+	                }
+	                break;
+	            case 'LTE':
+	                var firstValue = Number(this.findTagByName(param1.tag));
+	                var secondValue = Number(this.getParamValue(param2));
+	                if (firstValue == secondValue) {
+	                    nextStep.step = 1;
+	                } else {
+	                    nextStep.step = 2;
+	                }
+	                break;
+	            case 'JUMP':
+	                nextStep.step = Number(this.getParamValue(param2));
+	                break;
 
 	        }
 	        //handle timer
 	        if (timerFlag != -1) {
 	            this.handleTimers(timerFlag);
+	        }
+
+	        //process next
+	        if (nextStep.process) {
+	            this.process(cmds, index + nextStep.step);
 	        }
 	    },
 	    updateTag: function (curTagIdx, value) {
