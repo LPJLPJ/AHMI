@@ -33,7 +33,7 @@ renderer.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         font['font-style'] = widget.info.buttonFontItalic;
         font['font-weight'] = widget.info.buttonFontBold;
         font['font-size'] = widget.info.buttonFontSize;
-        font['font-family'] = widget.info.buttonFontFamily;
+        font['font-family'] = 'Songti'||widget.info.buttonFontFamily;
         font['font-color'] = widget.info.buttonFontColor;
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
         style.textAlign = 'center';
@@ -72,6 +72,8 @@ renderer.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
             ctx.restore();
 
         }.bind(this));
+    }else{
+        cb&&cb();
     }
 };
 
@@ -103,6 +105,7 @@ renderer.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
             fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
                 if (err){
                     console.error(err);
+
                     cb && cb(err);
                 }else{
                     //write widget
@@ -117,6 +120,8 @@ renderer.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
             ctx.restore();
         }
 
+    }else{
+        cb&&cb();
     }
 
 };
@@ -150,7 +155,56 @@ renderer.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb
                 cb && cb();
             }
         }.bind(this));
+    }else{
+        cb&&cb();
     }
+};
+
+
+renderer.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+    var info = widget.info;
+    var width = info.width;
+    var height = info.height;
+    if (info){
+        var style = {};
+        var font = {};
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = 'Songti'||widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
+        style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+        style.textAlign = 'center';
+        style.textBaseline = 'middle';
+        var canvas = new Canvas(width,height);
+        var ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0,width,height);
+        var bgSlice = widget.texList[0].slices[0];
+        renderingX.renderColor(ctx,new Size(width,height),new Pos(),bgSlice.color);
+        if (bgSlice.imgSrc!==''){
+            renderingX.renderImage(ctx,new Size(width,height),new Pos(),bgSlice.imgSrc,new Pos(),new Size(width,height));
+        }
+        if (info.text&&info.text!==''){
+            //draw text
+            renderingX.renderText(ctx,new Size(width,height),new Pos(),'文本',style,true,new Pos(0.5*width,0.5*height));
+        }
+        //output
+        var imgName = widget.id.split('.').join('');
+        var outputFilename = imgName +'-'+ 1+'.png';
+        fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
+            if (err){
+                console.error(err);
+                cb && cb(err);
+            }else{
+                //write widget
+                bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                cb && cb();
+            }
+        }.bind(this));
+    }else{
+        cb&&cb();
+    }
+
 };
 
 renderer.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
@@ -163,6 +217,9 @@ renderer.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
             break;
         case 'MyOscilloscope':
             renderer.renderOscilloscope(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+            break;
+        case 'MyTextArea':
+            renderer.renderTextArea(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
             break;
         default:
             cb&&cb();

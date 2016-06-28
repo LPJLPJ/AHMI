@@ -90,7 +90,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         var resourceId = $scope.component.top.files[index].id;
         ResourceService.deleteFileById(resourceId, function () {
             //$scope.component.top.files = ResourceService.getAllImages();
-            scope.$emit('ResourceUpdate');
+            $scope.$emit('ResourceUpdate');
             //delete on server
             //$http({
             //    method:'DELETE',

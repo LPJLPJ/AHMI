@@ -25,6 +25,10 @@ var _canvas = require('canvas');
 
 var Canvas = _interopRequireWildcard(_canvas);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -36,6 +40,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Image = Canvas.Image;
+var Font = Canvas.Font;
 /**
  * base slice
  */
@@ -76,19 +81,29 @@ var TextSlice = exports.TextSlice = function (_Slice) {
         _this.style = style || {};
         _this.offsetPos = offsetPos || new _position2.default(size.w / 2.0, size.h / 2.0);
         _this.fillOrStroke = fillOrStroke || true;
+
         return _this;
     }
 
     _createClass(TextSlice, [{
+        key: 'fontFile',
+        value: function fontFile(name) {
+            // console.log(path.join(__dirname, '/fonts/', name));
+            return _path2.default.join(__dirname, '/fonts/', name);
+        }
+    }, {
         key: 'draw',
         value: function draw(ctx, cb) {
             // fontStyleItems.length;
             // const fontStyleItems = ['font-style','font-variant','font-weight','font-size','font-family'];
+            var fonts = { 'Songti': new Font('Songti', this.fontFile('Songti.ttc')) };
             ctx.save();
             ctx.translate(this.originPos.x, this.originPos.y);
             //clip
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
+            ctx.addFont(fonts.Songti);
             ctx.font = this.style.font;
+            // console.log(this.style.font);
             ctx.textAlign = this.style.textAlign;
             ctx.textBaseline = this.style.textBaseline;
             // console.log(this.offsetPos);

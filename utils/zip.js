@@ -95,7 +95,8 @@ module.exports = function() {
                     }else{
                         zip();
                     }
-                })
+                });
+                // zip();
             }else{
                 zip();
             }

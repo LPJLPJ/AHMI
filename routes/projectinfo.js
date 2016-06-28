@@ -306,18 +306,20 @@ projectRoute.generateProject = function (req, res) {
         var cb = function (err) {
             if (err){
                 okFlag = false;
-                console.log('err',err);
+                errHandler(res,500,'generate error');
             }else{
                 totalNum-=1;
                 if (totalNum<=0){
                     if (okFlag){
                         //ok
+                        console.log(totalNum);
                         console.log('trans finished');
                         fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
                             if (err){
                                 errHandler(res,500,err);
                             }else{
                                 //write ok
+                                console.log('write ok');
                                 var zip = new nodejszip();
                                 var SrcUrl = path.join(ProjectBaseUrl,'resources');
                                 var DistUrl = path.join(ProjectBaseUrl,'file.zip');
@@ -335,8 +337,6 @@ projectRoute.generateProject = function (req, res) {
                                 }
                             }
                         })
-                    }else{
-                        errHandler(res,500,'generate error')
                     }
                 }
             }
