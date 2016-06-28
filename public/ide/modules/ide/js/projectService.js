@@ -431,39 +431,38 @@ ideServices
                     }
                 }else if(this.progressModeId=='1'){
                     //变色进度条
+                    var initColorArr = this.backgroundColor.slice(5,this.progressColor.length-1).split(','),
+                        endColorArr = this.progressColor.slice(5,this.backgroundColor.length-1).split(',');
+                    var initColorR = parseInt(initColorArr[0]),
+                        initColorG = parseInt(initColorArr[1]),
+                        initColorB = parseInt(initColorArr[2]),
+                        initColorA = parseInt(initColorArr[3]),
+                        endColorR = parseInt(endColorArr[0]),
+                        endColorG = parseInt(endColorArr[1]),
+                        endColorB = parseInt(endColorArr[2]),
+                        endColorA = parseInt(endColorArr[3]);
+
+                    var progressColorR = parseInt(initColorR+(endColorR-initColorR)*this.progressValue),
+                        progressColorG = parseInt(initColorG+(endColorG-initColorG)*this.progressValue),
+                        progressColorB = parseInt(initColorB+(endColorB-initColorB)*this.progressValue),
+                        progressColorA = 1;
+                    var progressColor = 'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
                     if(this.arrange=='horizontal'){
                         //var horizontal_gradient=ctx.createLinearGradient(-this.width/2,-this.height/2,this.width/2,-this.height/2);
-                        //horizontal_gradient.addColorStop(0,this.progressColor);
-                        //horizontal_gradient.addColorStop(1,this.backgroundColor);
+                        //horizontal_gradient.addColorStop(this.progressValue,this.progressColor);
+                        //horizontal_gradient.addColorStop(this.progressValue,this.backgroundColor);
                         //ctx.fillStyle=horizontal_gradient;
                         //ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
 
-                        var initColorArr = this.progressColor.slice(5,this.progressColor.length-1).split(','),
-                            endColorArr = this.backgroundColor.slice(5,this.backgroundColor.length-1).split(',');
-                        var initColorR = parseInt(initColorArr[0]),
-                            initColorG = parseInt(initColorArr[1]),
-                            initColorB = parseInt(initColorArr[2]),
-                            initColorA = parseInt(initColorArr[3]),
-                            endColorR = parseInt(endColorArr[0]),
-                            endColorG = parseInt(endColorArr[1]),
-                            endColorB = parseInt(endColorArr[2]),
-                            endColorA = parseInt(endColorArr[3]);
-
-                        var progressColorR = parseInt(endColorR+(endColorR-initColorR)*this.progressValue),
-                            progressColorG = parseInt(endColorG+(endColorG-initColorG)*this.progressValue),
-                            progressColorB = parseInt(endColorB+(endColorB-initColorB)*this.progressValue),
-                            progressColorA = 1;
-                        var progressColor = 'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
-                        console.log(progressColor);
+                        //console.log(progressColor);
                         ctx.fillStyle=progressColor;
                         ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
 
-
                     }else{
-                        var vertical_gradient=ctx.createLinearGradient(-this.width/2,this.height/2,-this.width/2,-this.height/2);
-                        vertical_gradient.addColorStop(0,this.progressColor);
-                        vertical_gradient.addColorStop(1,this.backgroundColor);
-                        ctx.fillStyle=vertical_gradient;
+                        //var vertical_gradient=ctx.createLinearGradient(-this.width/2,this.height/2,-this.width/2,-this.height/2);
+                        //vertical_gradient.addColorStop(0,this.progressColor);
+                        //vertical_gradient.addColorStop(1,this.backgroundColor);
+                        ctx.fillStyle=progressColor;
                         ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
                     }
                 }else if(this.progressModeId=='2'){
