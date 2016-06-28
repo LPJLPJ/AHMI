@@ -379,7 +379,7 @@ ideServices
                 progressValue:50,
                 arrange:"horizontal" ,  //horizontal:水平   vertical:竖直
                 cursor:"0",   //光标设置，0:无光标，1:有光标
-                progressModeId:'0' //0:普通进度条，1:变色进度条，2:脚本进度条
+                progressModeId:'0',//0:普通进度条，1:变色进度条，2:脚本进度条
             };
             return {
                 id: Math.random().toString(36).substr(2),
