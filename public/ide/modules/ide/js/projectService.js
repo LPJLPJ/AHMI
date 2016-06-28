@@ -5325,6 +5325,7 @@ ideServices
                     arg.endColor=selectObj.level.texList[2].slices[0].color;
                 }
             }
+            //有光标
             if(_option.cursor=='1'){
                 selectObj.level.texList=[{
                     currentSliceIdx:0,
@@ -5386,11 +5387,6 @@ ideServices
                             name:'光标纹理'
                         }]
                     }];
-                    //selectObj.level.texList[0].name='初始颜色';
-                    //selectObj.level.texList[1].name='结束颜色';
-                    //selectObj.level.texList[0].slices[0].name='初始颜色';
-                    //selectObj.level.texList[1].slices[0].name='结束颜色';
-
                     arg.initColor=selectObj.level.texList[1].slices[0].color;
                     arg.endColor=selectObj.level.texList[2].slices[0].color;
                 }
@@ -5740,7 +5736,7 @@ ideServices
                 backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
                 callback:_successCallback
             };
-            selectObj.target.fire('changeDashboardClockwise',arg);
+            selectObj.target.fire('changeDashboardMode',arg);
         };
         //改变仪表盘的转动方向
         this.ChangeAttributeDashboardClockwise=function(_option,_successCallback){
