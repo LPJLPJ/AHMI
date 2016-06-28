@@ -82,6 +82,10 @@
 
             $scope.$on('NavStatusChanged', onNavStatusChanged);
 
+            setInterval(function () {
+                saveProject();
+            }.bind(this),5*60*1000)
+
         }
 
 

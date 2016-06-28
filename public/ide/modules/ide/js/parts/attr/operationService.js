@@ -27,6 +27,7 @@ ideServices.service('OperationService',[function () {
         ['ELSE','else'],
         ['END','end'],
         ['EQ','=='],
+        ['NEQ','!='],
         ['GT','>'],
         ['LT','<'],
         ['GTE','>='],
