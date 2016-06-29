@@ -20,7 +20,7 @@ var CookieParser = require('cookie-parser');
 var sessionControl = require('./middlewares/sessionControl');
 
 //init projects
-var projectUrl = path.join(__dirname,'projects');
+var projectUrl = path.join(__dirname,'project');
 try {
     var projectDir = fs.statSync(projectUrl);
     if (!projectDir.isDirectory()){

@@ -179,33 +179,28 @@ var ImageSlice = exports.ImageSlice = function (_Slice2) {
             //     }
             // }.bind(this);
             // img.src = this.imgSrc;
-            var stats = _fs2.default.statSync(this.imgSrc);
-            console.log(this.imgSrc);
-            if (stats && stats.isFile()) {
-                try {
 
-                    img.src = _fs2.default.readFileSync(this.imgSrc);
-                    switch (this.type) {
-                        case 1:
-                            ctx.drawImage(img, 0, 0);
-                            // ctx.drawImage(img,0,0,100,100);
-                            break;
-                        case 2:
-                            ctx.drawImage(img, 0, 0, this.dstSize.w, this.dstSize.h);
-                            break;
-                        case 3:
-                            ctx.drawImage(img, this.srcPos.x, this.srcPos.y, this.srcSize.w, this.srcSize.h, this.dstPos.x, this.dstPos.y, this.dstSize.w, this.dstSize.h);
-                            break;
-                    }
-                    ctx.restore();
-                    cb && cb();
-                } catch (e) {
-                    ctx.restore();
-                    console.error(e);
-                    cb && cb(e);
+            try {
+
+                img.src = _fs2.default.readFileSync(this.imgSrc);
+                switch (this.type) {
+                    case 1:
+                        ctx.drawImage(img, 0, 0);
+                        // ctx.drawImage(img,0,0,100,100);
+                        break;
+                    case 2:
+                        ctx.drawImage(img, 0, 0, this.dstSize.w, this.dstSize.h);
+                        break;
+                    case 3:
+                        ctx.drawImage(img, this.srcPos.x, this.srcPos.y, this.srcSize.w, this.srcSize.h, this.dstPos.x, this.dstPos.y, this.dstSize.w, this.dstSize.h);
+                        break;
                 }
-            } else {
+                ctx.restore();
                 cb && cb();
+            } catch (e) {
+                ctx.restore();
+                console.error(e);
+                cb && cb(e);
             }
         }
     }]);

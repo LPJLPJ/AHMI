@@ -105,7 +105,6 @@ renderer.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
             fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
                 if (err){
                     console.error(err);
-
                     cb && cb(err);
                 }else{
                     //write widget
@@ -139,7 +138,8 @@ renderer.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb
         var bgSlice = widget.texList[0].slices[0];
         renderingX.renderColor(ctx,new Size(width,height),new Pos(),bgSlice.color);
         if (bgSlice.imgSrc!==''){
-            renderingX.renderImage(ctx,new Size(width,height),new Pos(),bgSlice.imgSrc,new Pos(),new Size(width,height));
+            var imgUrl = path.join(srcRootDir,bgSlice.imgSrc);
+            renderingX.renderImage(ctx,new Size(width,height),new Pos(),imgUrl,new Pos(),new Size(width,height));
         }
         renderingX.renderGrid(ctx,new Size(width,height),new Pos(),new Size(info.spacing,info.spacing),new Pos());
         //output
@@ -182,7 +182,8 @@ renderer.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var bgSlice = widget.texList[0].slices[0];
         renderingX.renderColor(ctx,new Size(width,height),new Pos(),bgSlice.color);
         if (bgSlice.imgSrc!==''){
-            renderingX.renderImage(ctx,new Size(width,height),new Pos(),bgSlice.imgSrc,new Pos(),new Size(width,height));
+            var imgUrl = path.join(srcRootDir,bgSlice.imgSrc);
+            renderingX.renderImage(ctx,new Size(width,height),new Pos(),imgUrl,new Pos(),new Size(width,height));
         }
         if (info.text&&info.text!==''){
             //draw text

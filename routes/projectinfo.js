@@ -79,7 +79,7 @@ projectRoute.createProject = function (req, res) {
                 errHandler(res,500,'save error');
             }
             //create project directory
-            var targetDir = path.join(__dirname,'../projects/',String(newProject._id),'resources')
+            var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources')
             fs.stat(targetDir, function (err, stats) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //exists
@@ -158,7 +158,7 @@ projectRoute.deleteProject = function (req, res) {
                 errHandler(res,500,'delete error')
             }
             //delete directory
-            var targetDir = path.join(__dirname,'../projects/',String(projectId))
+            var targetDir = path.join(__dirname,'../project/',String(projectId))
             fs.stat(targetDir, function (err, stats) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //exists
@@ -200,7 +200,7 @@ projectRoute.saveProject = function (req, res) {
                                 return res.id;
                             })
                             //console.log(resourceNames);
-                            var url = path.join(__dirname,'../projects',projectId,'resources');
+                            var url = path.join(__dirname,'../project',projectId,'resources');
                             fs.readdir(url, function (err, files) {
                                 if (err){
                                     console.log(err)
@@ -263,7 +263,7 @@ projectRoute.generateProject = function (req, res) {
     var projectId = req.params.id;
     var dataStructure = req.body.dataStructure;
     if (projectId!=""){
-        var ProjectBaseUrl = path.join(__dirname,'../projects',String(projectId));
+        var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
         // fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
         //     if (err){
@@ -302,49 +302,75 @@ projectRoute.generateProject = function (req, res) {
             }
         }
         var totalNum = allWidgets.length;
-        var okFlag = true;
-        var cb = function (err) {
-            if (err){
-                okFlag = false;
-                errHandler(res,500,'generate error');
-            }else{
-                totalNum-=1;
-                if (totalNum<=0){
-                    if (okFlag){
-                        //ok
-                        console.log(totalNum);
-                        console.log('trans finished');
-                        fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
-                            if (err){
-                                errHandler(res,500,err);
-                            }else{
-                                //write ok
-                                console.log('write ok');
-                                var zip = new nodejszip();
-                                var SrcUrl = path.join(ProjectBaseUrl,'resources');
-                                var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                                try {
-                                    zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
-                                        if (err) {
-                                            errHandler(res, 500, err);
-                                        } else {
-                                            res.end('ok')
+        if (totalNum>0){
+            var okFlag = true;
+            var cb = function (err) {
+                if (err){
+                    okFlag = false;
+                    errHandler(res,500,'generate error');
+                }else{
+                    totalNum-=1;
+                    if (totalNum<=0){
+                        if (okFlag){
+                            //ok
+                            console.log('trans finished');
+                            fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                                if (err){
+                                    errHandler(res,500,err);
+                                }else{
+                                    //write ok
+                                    console.log('write ok');
+                                    var zip = new nodejszip();
+                                    var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                                    var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                                    try {
+                                        zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
+                                            if (err) {
+                                                errHandler(res, 500, err);
+                                            } else {
+                                                res.end('ok')
 
-                                        }
-                                    })
-                                }catch (err){
-                                    errHandler(res, 500, err);
+                                            }
+                                        })
+                                    }catch (err){
+                                        errHandler(res, 500, err);
+                                    }
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
                 }
+            }.bind(this);
+            for (var m=0;m<allWidgets.length;m++){
+                var curWidget = allWidgets[m];
+                renderer.renderWidget(curWidget,path.join(__dirname,'..'),path.join(ProjectBaseUrl,'resources'),path.join('project',String(projectId),'resources'),cb);
             }
-        }.bind(this);
-        for (var m=0;m<allWidgets.length;m++){
-            var curWidget = allWidgets[m];
-            renderer.renderWidget(curWidget,path.join(__dirname,'..'),path.join(ProjectBaseUrl,'resources'),path.join('projects',String(projectId),'resources'),cb);
+        }else{
+            fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                if (err){
+                    errHandler(res,500,err);
+                }else{
+                    //write ok
+                    console.log('write ok');
+                    var zip = new nodejszip();
+                    var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                    var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                    try {
+                        zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
+                            if (err) {
+                                errHandler(res, 500, err);
+                            } else {
+                                res.end('ok')
+
+                            }
+                        })
+                    }catch (err){
+                        errHandler(res, 500, err);
+                    }
+                }
+            })
         }
+
     }else{
         errHandler(res,500,'projectId error');
     }
@@ -353,7 +379,7 @@ projectRoute.generateProject = function (req, res) {
 projectRoute.downloadProject = function (req, res) {
     var projectId = req.params.id;
     if (projectId!=""){
-        var ProjectBaseUrl = path.join(__dirname,'../projects',String(projectId));
+        var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DistUrl = path.join(ProjectBaseUrl,'file.zip');
         res.download(DistUrl,'file.zip', function (err) {
             if (err){

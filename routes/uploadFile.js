@@ -88,7 +88,7 @@ module.exports.uploadProjectFile = function (req, res) {
 
 function uploadSingleFile(req, res){
     var projectId = req.params.id;
-    var baseUrl = path.join(__dirname,'../projects/',projectId,'resources')
+    var baseUrl = path.join(__dirname,'../project/',projectId,'resources')
     var fields={}
     var files = {}
     var form = new formidable.IncomingForm()
@@ -136,7 +136,7 @@ function uploadSingleFile(req, res){
 module.exports.deleteResource = function (req, res) {
     var projectId = req.params.id;
     var resourceId = req.params.rid;
-    var baseUrl = path.join(__dirname,'../projects/',projectId,'resources')
+    var baseUrl = path.join(__dirname,'../project/',projectId,'resources')
     var resourceUrl = path.join(baseUrl,resourceUrl);
     if (projectId){
         fs.stat(resourceUrl, function (err, stats) {
@@ -163,7 +163,7 @@ module.exports.deleteProjectFile = function (req, res) {
     var fileId = req.body.fileId;
     if (projectId!=''&&fileId!=''){
         //valid fileid
-        var url = path.join(__dirname,'../projects/',String(projectId),fileId);
+        var url = path.join(__dirname,'../project/',String(projectId),fileId);
         fs.stat(url, function (err, stats) {
             if (stats&&stats.isFile&&stats.isFile()){
                 fs.unlink(url, function (err) {
@@ -188,7 +188,7 @@ module.exports.getProjectFile = function (req, res) {
     var fileId = req.params.rid;
     if (projectId!=''&&fileId!=''){
         //valid
-        res.sendFile(path.join(__dirname,'../projects/',String(projectId),'/resources/',String(fileId)), function (err) {
+        res.sendFile(path.join(__dirname,'../project/',String(projectId),'/resources/',String(fileId)), function (err) {
             if (err){
                 errHandler(res,500,'get file error');
             }
