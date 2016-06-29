@@ -264,6 +264,10 @@ ideServices
                 this.hasRotatingPoint=false;
                 this.progressValue=level.info.progressValue/(level.info.maxValue-level.info.minValue);
                 this.progressModeId=level.info.progressModeId;
+                if(this.progressModeId=='1'){
+                    this.initColor=level.texList[1].slices[0].color;
+                    this.endColor=level.texList[2].slices[0].color;
+                }
 
                 this.backgroundColor=level.texList[0].slices[0].color;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
@@ -451,22 +455,7 @@ ideServices
                     }
                 }else if(this.progressModeId=='1'){
                     //变色进度条
-                    var initColorArr = this.initColor.slice(5,this.progressColor.length-1).split(','),
-                        endColorArr = this.endColor.slice(5,this.backgroundColor.length-1).split(',');
-                    var initColorR = parseInt(initColorArr[0]),
-                        initColorG = parseInt(initColorArr[1]),
-                        initColorB = parseInt(initColorArr[2]),
-                        initColorA = parseInt(initColorArr[3]),
-                        endColorR = parseInt(endColorArr[0]),
-                        endColorG = parseInt(endColorArr[1]),
-                        endColorB = parseInt(endColorArr[2]),
-                        endColorA = parseInt(endColorArr[3]);
-
-                    var progressColorR = parseInt(initColorR+(endColorR-initColorR)*this.progressValue),
-                        progressColorG = parseInt(initColorG+(endColorG-initColorG)*this.progressValue),
-                        progressColorB = parseInt(initColorB+(endColorB-initColorB)*this.progressValue),
-                        progressColorA = 1;
-                    var progressColor = 'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
+                    var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
                     console.log(progressColor);
                     if(this.arrange=='horizontal'){
                         ctx.fillStyle=progressColor;
@@ -5316,11 +5305,6 @@ ideServices
                             name:'结束颜色'
                         }]
                     }];
-                    //selectObj.level.texList[0].name='初始颜色';
-                    //selectObj.level.texList[1].name='结束颜色';
-                    //selectObj.level.texList[0].slices[0].name='初始颜色';
-                    //selectObj.level.texList[1].slices[0].name='结束颜色';
-
                     arg.initColor=selectObj.level.texList[1].slices[0].color;
                     arg.endColor=selectObj.level.texList[2].slices[0].color;
                 }
@@ -6505,5 +6489,32 @@ ideServices
                 tempAngle+=Math.PI*3/2;
             }
             return tempAngle;
+        }
+
+        /**
+         * 用于求渐变色
+         * @param initColor
+         * @param endColor
+         * @param value
+         */
+        function changeColor(initColor,endColor,progressValue){
+            var initColorArr = initColor.slice(5,initColor.length-1).split(','),
+                endColorArr = endColor.slice(5,endColor.length-1).split(',');
+            var initColorR = parseInt(initColorArr[0]),
+                initColorG = parseInt(initColorArr[1]),
+                initColorB = parseInt(initColorArr[2]),
+                initColorA = parseInt(initColorArr[3]),
+                endColorR = parseInt(endColorArr[0]),
+                endColorG = parseInt(endColorArr[1]),
+                endColorB = parseInt(endColorArr[2]),
+                endColorA = parseInt(endColorArr[3]);
+
+            var progressColorR = parseInt(initColorR+(endColorR-initColorR)*progressValue),
+                progressColorG = parseInt(initColorG+(endColorG-initColorG)*progressValue),
+                progressColorB = parseInt(initColorB+(endColorB-initColorB)*progressValue),
+                progressColorA = 1;
+
+            return  'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
+
         }
     });
