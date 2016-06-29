@@ -237,7 +237,7 @@ projectRoute.saveThumbnail = function (req, res) {
                 errHandler(res,500,'project error')
             }else{
                 var thumbnail = req.body.thumbnail;
-                if (thumbnail){
+                if (!!thumbnail){
                     project.thumbnail = thumbnail;
                     //console.log('thumbnail',thumbnail)
                     project.save(function (err) {
