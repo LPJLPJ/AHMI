@@ -2032,10 +2032,8 @@ ideServices
                         offCtx.fillText(tempNumValue, this.width/2, this.height/2);
 
                     }else if(this.align=='left') {
-                        //实际显示是右对齐
                         offCtx.fillText(tempNumValue, 0, this.height/2);
                     }else if(this.align=='right'){
-                        //实际显示是左对齐
                         offCtx.fillText(tempNumValue,this.width,this.height/2);
                     }
                     //offCtx.restore();
