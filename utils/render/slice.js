@@ -25,13 +25,13 @@ var _canvas = require('canvas');
 
 var Canvas = _interopRequireWildcard(_canvas);
 
-var _path = require('path');
-
-var _path2 = _interopRequireDefault(_path);
-
 var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -180,38 +180,27 @@ var ImageSlice = exports.ImageSlice = function (_Slice2) {
             // }.bind(this);
             // img.src = this.imgSrc;
 
-            // fs.readFile(this.imgSrc,function (err, buffer) {
-            //    if (err){
-            //        cb&&cb(err);
-            //    }else{
-            //
-            //    }
-            // }.bind(this));
-
-            img.onload = function () {
-                try {
-                    switch (this.type) {
-                        case 1:
-                            ctx.drawImage(img, 0, 0);
-                            // ctx.drawImage(img,0,0,100,100);
-                            break;
-                        case 2:
-                            ctx.drawImage(img, 0, 0, this.dstSize.w, this.dstSize.h);
-                            break;
-                        case 3:
-                            ctx.drawImage(img, this.srcPos.x, this.srcPos.y, this.srcSize.w, this.srcSize.h, this.dstPos.x, this.dstPos.y, this.dstSize.w, this.dstSize.h);
-                            break;
-                    }
-                    ctx.restore();
-                    cb && cb();
-                } catch (e) {
-                    ctx.restore();
-                    console.error(e);
-                    cb && cb(e);
+            try {
+                img.src = _fs2.default.readFileSync(this.imgSrc);
+                switch (this.type) {
+                    case 1:
+                        ctx.drawImage(img, 0, 0);
+                        // ctx.drawImage(img,0,0,100,100);
+                        break;
+                    case 2:
+                        ctx.drawImage(img, 0, 0, this.dstSize.w, this.dstSize.h);
+                        break;
+                    case 3:
+                        ctx.drawImage(img, this.srcPos.x, this.srcPos.y, this.srcSize.w, this.srcSize.h, this.dstPos.x, this.dstPos.y, this.dstSize.w, this.dstSize.h);
+                        break;
                 }
-            }.bind(this);
-
-            img.src = this.imgSrc;
+                ctx.restore();
+                cb && cb();
+            } catch (e) {
+                ctx.restore();
+                console.error(e);
+                cb && cb(e);
+            }
         }
     }]);
 
