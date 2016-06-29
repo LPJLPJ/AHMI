@@ -35,6 +35,7 @@ renderer.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         font['font-size'] = widget.info.buttonFontSize;
         font['font-family'] = 'Songti'||widget.info.buttonFontFamily;
         font['font-color'] = widget.info.buttonFontColor;
+        style.color = font['font-color'];
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
@@ -176,6 +177,7 @@ renderer.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         font['font-size'] = widget.info.fontSize;
         font['font-family'] = 'Songti'||widget.info.fontFamily;
         font['font-color'] = widget.info.fontColor;
+        style.color = font['font-color'];
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
@@ -183,7 +185,6 @@ renderer.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var ctx = canvas.getContext('2d');
         ctx.clearRect(0,0,width,height);
         var bgSlice = widget.texList[0].slices[0];
-        console.log(bgSlice.color);
         renderingX.renderColor(ctx,new Size(width,height),new Pos(),bgSlice.color);
         if (bgSlice.imgSrc!==''){
             var imgUrl = path.join(srcRootDir,bgSlice.imgSrc);

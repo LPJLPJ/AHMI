@@ -107,10 +107,13 @@ var TextSlice = exports.TextSlice = function (_Slice) {
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
             ctx.addFont(fonts.Songti);
             ctx.font = this.style.font;
+            console.log('font', this.style.font);
             // console.log(this.style.font);
             ctx.textAlign = this.style.textAlign;
             ctx.textBaseline = this.style.textBaseline;
             // console.log(this.offsetPos);
+            ctx.fillStyle = this.style.color;
+            ctx.strokeStyle = this.style.color;
             if (this.fillOrStroke) {
                 ctx.fillText(this.text, this.offsetPos.x, this.offsetPos.y);
             } else {
@@ -287,6 +290,7 @@ var ColorSlice = exports.ColorSlice = function (_Slice4) {
             ctx.translate(this.originPos.x, this.originPos.y);
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
             ctx.fillStyle = this.color;
+            // console.log('size',this.size);
             ctx.fillRect(0, 0, this.size.w, this.size.h);
             ctx.restore();
             cb && cb();
