@@ -142,6 +142,10 @@
                 }
 
             }
+
+            tempImg.onerror = function(){
+                _cb && _cb('');
+            }
         }
 
 
