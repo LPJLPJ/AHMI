@@ -20493,7 +20493,7 @@
 	        return result;
 	    },
 	    changeNumDigits: function (originalNum, digits, appendNum, beforeOrFalse) {
-	        var originalNum = String(parseInt(originalNum));
+	        var originalNum = String(parseInt(originalNum || 0));
 	        var originalLength = originalNum.length;
 	        var resultNum = '';
 	        if (originalLength > digits) {
@@ -20689,6 +20689,7 @@
 	    },
 	    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
 	        var tempNumValue = String(curValue);
+	        console.log(tempNumValue);
 	        //配置小数位数
 	        if (parseInt(decimalCount) > 0) {
 	            tempNumValuePair = tempNumValue.split('.');
@@ -20703,6 +20704,7 @@
 	        if (numOfDigits) {
 	            //配置前导0模式
 	            var intPart = tempNumValue.split('.')[0];
+	            var fracPart = tempNumValue.split('.')[1];
 	            var intDigits = numOfDigits - decimalCount;
 	            if (frontZeroMode == '1') {
 	                intPart = this.changeNumDigits(intPart, intDigits, 0, true);
@@ -20710,7 +20712,7 @@
 	                intPart = this.changeNumDigits(intPart, intDigits, ' ', true);
 	            }
 	            if (tempNumValue.split('.').length > 1) {
-	                tempNumValue = intPart + '.' + tempNumValue[1];
+	                tempNumValue = intPart + '.' + fracPart;
 	            } else {
 	                tempNumValue = intPart;
 	            }
