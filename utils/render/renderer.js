@@ -40,11 +40,14 @@ renderer.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         style.textBaseline = 'middle';
         var beforePressSlice = widget.texList[0].slices[0];
         var afterPressSlice = widget.texList[0].slices[1];
-        var imgs = [beforePressSlice.imgSrc,afterPressSlice.imgSrc];
-        var totalSlices = imgs.length;
-        imgs.map(function (img,index) {
+        var slices = [beforePressSlice,afterPressSlice];
+        var totalSlices = slices.length;
+        slices.map(function (slice,index) {
+            var img =slice.imgSrc;
             ctx.clearRect(0,0,info.width,info.height);
             ctx.save();
+            //color
+            renderingX.renderColor(ctx,new Size(info.width,info.height),new Pos(),slice.color);
             var imgUrl;
             if (img !== ''){
                 //draw image
@@ -180,6 +183,7 @@ renderer.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var ctx = canvas.getContext('2d');
         ctx.clearRect(0,0,width,height);
         var bgSlice = widget.texList[0].slices[0];
+        console.log(bgSlice.color);
         renderingX.renderColor(ctx,new Size(width,height),new Pos(),bgSlice.color);
         if (bgSlice.imgSrc!==''){
             var imgUrl = path.join(srcRootDir,bgSlice.imgSrc);
