@@ -625,7 +625,7 @@ module.exports = React.createClass({
     drawProgress: function (curX, curY, widget, options) {
         var width = widget.info.width;
         var height = widget.info.height;
-        if (widget.texList && widget.texList.length == 2) {
+        if (widget.texList) {
             //has tex
             //draw background
             var texSlice = widget.texList[0].slices[0];
@@ -641,7 +641,7 @@ module.exports = React.createClass({
             curScale = (curScale <= 1 ? curScale : 1.0);
 
             var progressSlice = widget.texList[1].slices[0];
-
+            console.log('drawing color progress',widget.info.progressModeId);
             switch (widget.info.progressModeId){
                 case '0':
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
@@ -662,9 +662,11 @@ module.exports = React.createClass({
                     }
                     break;
                 case '1':
+
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
                     var lastSlice = widget.texList[2].slices[0];
                     var mixedColor = this.addTwoColor(progressSlice.color,lastSlice.color,curScale);
+                    console.log('mixedColor',mixedColor);
                     switch (widget.info.arrange) {
 
                         case 'vertical':
@@ -697,14 +699,16 @@ module.exports = React.createClass({
         var color2Array = this.transColorToArray(color2);
         var mixedColor = [];
         for (var i=0;i<4;i++){
-            mixedColor[i] = color1Array[i] * ratio + (1-ratio)* color2Array[i];
+            mixedColor[i] = parseInt(color1Array[i] * ratio + (1-ratio)* color2Array[i]);
         }
         return 'rgba('+mixedColor.join(',')+')';
     },
     transColorToArray:function (color) {
         //rgba to array
         var temp = color.split('(')[1].split(')')[0];
-        var colorArray = temp.split(',');
+        var colorArray = temp.split(',').map(function (colorbit) {
+            return Number(colorbit);
+        });
         return colorArray;
     },
     drawTime:function (curX,curY,widget,options) {
@@ -922,7 +926,7 @@ module.exports = React.createClass({
         //offCtx.fillStyle = this.numColor;
         tempCtx.font = numString;
         tempCtx.textAlign = 'center';
-        console.log(curValue);
+        // console.log(curValue);
 
         widget.oldValue = widget.oldValue || 0
 
@@ -1002,7 +1006,7 @@ module.exports = React.createClass({
         tempCtx.save()
         this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx)
         tempCtx.globalCompositeOperation = "destination-in";
-        console.log(tempNumValue);
+        // console.log(tempNumValue);
         tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 + numSize / 4);
         // tempCtx.fillText(tempNumValue,0,)
         tempCtx.restore()
@@ -1657,14 +1661,14 @@ module.exports = React.createClass({
     },
     findTagByName: function (tag) {
         var tagList = this.state.tagList;
-        // console.log(tag);
+        // console.log(tag,tagList);
         if (tag && tag != "") {
 
             for (var i = 0; i < tagList.length; i++) {
                 if (tagList[i].name == tag) {
                     return tagList[i];
                 }
-            };
+            }
         }
 
         return null;
@@ -1700,11 +1704,14 @@ module.exports = React.createClass({
         }
     },
     timerFlag: function (param) {
-        if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
-            //get SysTmr
-            return parseInt(param.tag.match(/\d+/)[0]);
+        if (param&&param.tag){
+            if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
+                //get SysTmr
+                return parseInt(param.tag.match(/\d+/)[0]);
 
+            }
         }
+
         return -1;
     },
     processCmds: function (cmds) {
@@ -1712,17 +1719,38 @@ module.exports = React.createClass({
         //     this.process(cmds[i]);
         // }
         if (cmds && cmds.length){
+            console.log(cmds);
             this.process(cmds,0);
         }
 
     },
     getParamValue:function (param) {
         var value;
-        if (param.tag && param.tag !== ''){
-            value = this.getValueByTagName(param.tag);
+        // if (param.tag && param.tag !== ''){
+        //     value = this.getValueByTagName(param.tag);
+        // }else{
+        //     if (param.value!=='undefined'){
+        //         value = param.value;
+        //     }else{
+        //         value = Number(param);
+        //
+        //     }
+        //
+        // }
+        if ((typeof param) === 'number'){
+            value = param;
         }else{
-            value = param.value;
+            if (param){
+                if (param.tag){
+                    value = Number(this.getValueByTagName(param.tag));
+                }else{
+                    value = Number(param.value);
+                }
+            }else{
+                value = 0;
+            }
         }
+        // console.log(value,param,(typeof param));
         return value;
     },
     process: function (cmds,index) {
@@ -1733,7 +1761,10 @@ module.exports = React.createClass({
             console.log('processing error');
             return;
         }
-        var inst = cmds[index];
+
+        var inst = cmds[index].cmd;
+        console.log('inst: ',inst[0],inst[1],inst[2]);
+
         var op = inst[0].name;
         var param1 = inst[1];
         var param2 = inst[2];
@@ -1900,7 +1931,7 @@ module.exports = React.createClass({
                 break;
             //compare
             case 'EQ':
-                var firstValue = Number(this.findTagByName(param1.tag));
+                var firstValue = Number(this.getValueByTagName(param1.tag,0));
                 var secondValue = Number(this.getParamValue(param2));
                 if (firstValue == secondValue){
                     nextStep.step = 1;
@@ -1909,7 +1940,7 @@ module.exports = React.createClass({
                 }
                 break;
             case 'NEQ':
-                var firstValue = Number(this.findTagByName(param1.tag));
+                var firstValue = Number(this.getValueByTagName(param1.tag,0));
                 var secondValue = Number(this.getParamValue(param2));
                 if (firstValue != secondValue){
                     nextStep.step = 1;
@@ -1918,8 +1949,10 @@ module.exports = React.createClass({
                 }
                 break;
             case 'GT':
-                var firstValue = Number(this.findTagByName(param1.tag));
+                var firstValue = Number(this.getValueByTagName(param1.tag,0));
                 var secondValue = Number(this.getParamValue(param2));
+                console.log(param1);
+                console.log('GT',firstValue,secondValue);
                 if (firstValue > secondValue){
                     nextStep.step = 1;
                 }else{
@@ -1927,7 +1960,7 @@ module.exports = React.createClass({
                 }
                 break;
             case 'GTE':
-                var firstValue = Number(this.findTagByName(param1.tag));
+                var firstValue = Number(this.getValueByTagName(param1.tag,0));
                 var secondValue = Number(this.getParamValue(param2));
                 if (firstValue >= secondValue){
                     nextStep.step = 1;
@@ -1936,7 +1969,7 @@ module.exports = React.createClass({
                 }
                 break;
             case 'LT':
-                var firstValue = Number(this.findTagByName(param1.tag));
+                var firstValue = Number(this.getValueByTagName(param1.tag,0));
                 var secondValue = Number(this.getParamValue(param2));
                 if (firstValue < secondValue){
                     nextStep.step = 1;
@@ -1945,9 +1978,9 @@ module.exports = React.createClass({
                 }
                 break;
             case 'LTE':
-                var firstValue = Number(this.findTagByName(param1.tag));
+                var firstValue = Number(this.getValueByTagName(param1.tag,0));
                 var secondValue = Number(this.getParamValue(param2));
-                if (firstValue == secondValue){
+                if (firstValue <= secondValue){
                     nextStep.step = 1;
                 }else{
                     nextStep.step = 2;
@@ -1956,6 +1989,9 @@ module.exports = React.createClass({
             case 'JUMP':
                 nextStep.step = Number(this.getParamValue(param2));
                 break;
+            case 'END':
+                break;
+
 
 
         }
