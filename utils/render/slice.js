@@ -97,16 +97,26 @@ var TextSlice = exports.TextSlice = function (_Slice) {
         }
     }, {
         key: 'draw',
-        value: function draw(ctx, cb) {
+        value: function draw(ctx, customFonts, cb) {
             // fontStyleItems.length;
+            var startTime = new Date();
             // const fontStyleItems = ['font-style','font-variant','font-weight','font-size','font-family'];
-            var fonts = { 'Songti': new Font('Songti', this.fontFile('Songti.ttc')) };
+            // var fonts = {'Songti':new Font('Songti',this.fontFile('Songti.ttc'))};
             ctx.save();
+            //add customFonts
+            customFonts = customFonts || {};
+            var i = void 0;
+            for (i in customFonts) {
+                ctx.addFont(customFonts[i]);
+            }
+            ctx.textDrawingMode = 'path';
+
             ctx.translate(this.originPos.x, this.originPos.y);
             //clip
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
-            ctx.addFont(fonts.Songti);
+
             ctx.font = this.style.font;
+            // ctx.font = '40px helvetica';
             console.log('font', this.style.font);
             // console.log(this.style.font);
             ctx.textAlign = this.style.textAlign;
@@ -121,6 +131,9 @@ var TextSlice = exports.TextSlice = function (_Slice) {
             }
 
             ctx.restore();
+            var stopTime = new Date();
+            console.log('Text Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
+
             cb && cb();
         }
     }]);
@@ -136,12 +149,12 @@ var TextSlice = exports.TextSlice = function (_Slice) {
 var ImageSlice = exports.ImageSlice = function (_Slice2) {
     _inherits(ImageSlice, _Slice2);
 
-    function ImageSlice(originSize, originPos, imgSrc, dstPos, dstSize, srcPos, srcSize) {
+    function ImageSlice(originSize, originPos, imgObj, dstPos, dstSize, srcPos, srcSize) {
         _classCallCheck(this, ImageSlice);
 
         var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(ImageSlice).call(this, originSize, originPos));
 
-        _this2.imgSrc = imgSrc;
+        _this2.imgObj = imgObj;
         if (!dstPos) {
             _this2.type = 1;
         } else if (dstPos && dstSize) {
@@ -163,10 +176,11 @@ var ImageSlice = exports.ImageSlice = function (_Slice2) {
     _createClass(ImageSlice, [{
         key: 'draw',
         value: function draw(ctx, cb) {
+            var startTime = new Date();
             ctx.save();
             ctx.translate(this.originPos.x, this.originPos.y);
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
-            var img = new Image();
+
             // img.onload = function () {
             //     switch (this.type){
             //         case 1:
@@ -182,28 +196,34 @@ var ImageSlice = exports.ImageSlice = function (_Slice2) {
             //     }
             // }.bind(this);
             // img.src = this.imgSrc;
-
-            try {
-
-                img.src = _fs2.default.readFileSync(this.imgSrc);
-                switch (this.type) {
-                    case 1:
-                        ctx.drawImage(img, 0, 0);
-                        // ctx.drawImage(img,0,0,100,100);
-                        break;
-                    case 2:
-                        ctx.drawImage(img, 0, 0, this.dstSize.w, this.dstSize.h);
-                        break;
-                    case 3:
-                        ctx.drawImage(img, this.srcPos.x, this.srcPos.y, this.srcSize.w, this.srcSize.h, this.dstPos.x, this.dstPos.y, this.dstSize.w, this.dstSize.h);
-                        break;
-                }
-                ctx.restore();
+            console.log('drawing: ', this.imgObj);
+            if (!this.imgObj) {
                 cb && cb();
-            } catch (e) {
-                ctx.restore();
-                console.error(e);
-                cb && cb(e);
+            } else {
+
+                try {
+
+                    switch (this.type) {
+                        case 1:
+                            ctx.drawImage(this.imgObj, 0, 0);
+                            // ctx.drawImage(img,0,0,100,100);
+                            break;
+                        case 2:
+                            ctx.drawImage(this.imgObj, 0, 0, this.dstSize.w, this.dstSize.h);
+                            break;
+                        case 3:
+                            ctx.drawImage(this.imgObj, this.srcPos.x, this.srcPos.y, this.srcSize.w, this.srcSize.h, this.dstPos.x, this.dstPos.y, this.dstSize.w, this.dstSize.h);
+                            break;
+                    }
+                    ctx.restore();
+                    var stopTime = new Date();
+                    console.log('Image Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
+                    cb && cb();
+                } catch (e) {
+                    ctx.restore();
+                    console.error(e);
+                    cb && cb(e);
+                }
             }
         }
     }]);
@@ -286,6 +306,7 @@ var ColorSlice = exports.ColorSlice = function (_Slice4) {
     _createClass(ColorSlice, [{
         key: 'draw',
         value: function draw(ctx, cb) {
+            var startTime = new Date();
             ctx.save();
             ctx.translate(this.originPos.x, this.originPos.y);
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
@@ -293,6 +314,8 @@ var ColorSlice = exports.ColorSlice = function (_Slice4) {
             // console.log('size',this.size);
             ctx.fillRect(0, 0, this.size.w, this.size.h);
             ctx.restore();
+            var stopTime = new Date();
+            console.log('Color Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
             cb && cb();
         }
     }]);

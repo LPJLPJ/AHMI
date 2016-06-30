@@ -20,19 +20,24 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var renderingX = {}; /**
-                      * Created by zzen1ss on 16/6/24.
-                      */
+var renderingX = {};
 
+// renderingX.renderImage = function (ctx,originSize,originPos,imgSrc,dstPos,dstSize,srcPos,srcSize,cb) {
+//     let curImageSlice = new SliceGroup.ImageSlice(originSize,originPos,imgSrc,dstPos,dstSize,srcPos,srcSize);
+//     curImageSlice.draw(ctx,cb);
+// };
 
-renderingX.renderImage = function (ctx, originSize, originPos, imgSrc, dstPos, dstSize, srcPos, srcSize, cb) {
-    var curImageSlice = new SliceGroup.ImageSlice(originSize, originPos, imgSrc, dstPos, dstSize, srcPos, srcSize);
+/**
+ * Created by zzen1ss on 16/6/24.
+ */
+renderingX.renderImage = function (ctx, originSize, originPos, imgObj, dstPos, dstSize, srcPos, srcSize, cb) {
+    var curImageSlice = new SliceGroup.ImageSlice(originSize, originPos, imgObj, dstPos, dstSize, srcPos, srcSize);
     curImageSlice.draw(ctx, cb);
 };
 
-renderingX.renderText = function (ctx, originSize, originPos, text, style, fillOrStroke, offsetPos, cb) {
+renderingX.renderText = function (ctx, originSize, originPos, text, style, fillOrStroke, offsetPos, customFonts, cb) {
     var curTextSlice = new SliceGroup.TextSlice(originSize, originPos, text, style, fillOrStroke, offsetPos);
-    curTextSlice.draw(ctx, cb);
+    curTextSlice.draw(ctx, customFonts, cb);
 };
 
 renderingX.renderColor = function (ctx, originSize, originPos, color, cb) {

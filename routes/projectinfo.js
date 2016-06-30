@@ -12,7 +12,7 @@ var defaultProject = require('../utils/defaultProject')
 var nodejszip = require('../utils/zip');
 var mkdir = require('mkdir-p');
 //rendering
-var renderer = require('../utils/render/renderer');
+var Renderer = require('../utils/render/renderer');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -341,6 +341,7 @@ projectRoute.generateProject = function (req, res) {
                     }
                 }
             }.bind(this);
+            var renderer = new Renderer();
             for (var m=0;m<allWidgets.length;m++){
                 var curWidget = allWidgets[m];
                 renderer.renderWidget(curWidget,path.join(__dirname,'..'),path.join(ProjectBaseUrl,'resources'),path.join('project',String(projectId),'resources'),cb);
