@@ -116,22 +116,24 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
                 var resourceList = globalProject.resourceList;
                 var count = resourceList.length;
+                var coutDown = function() {
+                    count = count - 1;
+                    if (count<=0){
+                        // toastr.info('loaded');
+                        TemplateProvider.saveProjectFromGlobal(globalProject);
+                        ProjectService.saveProjectFromGlobal(globalProject, function () {
+                            syncServices(globalProject)
+                            $scope.$broadcast('GlobalProjectReceived');
+
+                        });
+                    }
+                }.bind(this);
                 if (count>0){
                     for (var i=0;i<resourceList.length;i++){
                         var img = new Image();
                         img.src = resourceList[i].src;
-                        img.onload = function () {
-                            count = count - 1;
-                            if (count<=0){
-                                // toastr.info('loaded');
-                                TemplateProvider.saveProjectFromGlobal(globalProject);
-                                ProjectService.saveProjectFromGlobal(globalProject, function () {
-                                    syncServices(globalProject)
-                                    $scope.$broadcast('GlobalProjectReceived');
-
-                                });
-                            }
-                        }.bind(this);
+                        img.onload = coutDown;
+                        img.onerror = coutDown;
                     }
                 }else{
                     TemplateProvider.saveProjectFromGlobal(globalProject);
