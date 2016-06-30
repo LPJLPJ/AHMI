@@ -192,7 +192,7 @@ renderer.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         }
         if (info.text&&info.text!==''){
             //draw text
-            renderingX.renderText(ctx,new Size(width,height),new Pos(),'文本',style,true,new Pos(0.5*width,0.5*height));
+            renderingX.renderText(ctx,new Size(width,height),new Pos(),info.text,style,true,new Pos(0.5*width,0.5*height));
         }
         //output
         var imgName = widget.id.split('.').join('');

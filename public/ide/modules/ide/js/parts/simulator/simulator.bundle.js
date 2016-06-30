@@ -20293,7 +20293,7 @@
 	            var singleWidth = (width - interval * (count - 1)) / count;
 	            for (var i = 0; i < texList.length; i++) {
 	                var curButtonTex = texList[i];
-	                if (i == curButtonIdx) {
+	                if (i == curButtonIdx - 1) {
 	                    //pressed tex
 	                    this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[1].imgSrc, curButtonTex.slices[1].color);
 	                } else {
@@ -20306,7 +20306,7 @@
 	            var singleHeight = (height - interval * (count - 1)) / count;
 	            for (var i = 0; i < texList.length; i++) {
 	                var curButtonTex = texList[i];
-	                if (i == curButtonIdx) {
+	                if (i == curButtonIdx - 1) {
 	                    //pressed tex
 	                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[1].imgSrc, curButtonTex.slices[1].color);
 	                } else {
@@ -20612,6 +20612,7 @@
 	        //offCtx.fillStyle = this.numColor;
 	        tempCtx.font = numString;
 	        tempCtx.textAlign = 'center';
+	        tempCtx.textBaseline = 'middle';
 	        // console.log(curValue);
 
 	        widget.oldValue = widget.oldValue || 0;
@@ -20683,7 +20684,7 @@
 	        this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
 	        tempCtx.globalCompositeOperation = "destination-in";
 	        // console.log(tempNumValue);
-	        tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 + numSize / 4);
+	        tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2);
 	        // tempCtx.fillText(tempNumValue,0,)
 	        tempCtx.restore();
 	    },
@@ -21150,29 +21151,28 @@
 	        ;
 	    },
 	    handleInnerClickedElement: function (widget, x, y) {
+	        var left = widget.info.left;
+	        var top = widget.info.top;
+	        var width = widget.info.width;
+	        var height = widget.info.height;
 	        switch (widget.subType) {
 	            case 'MyButtonGroup':
+	                var interval = widget.info.interval;
+	                var count = widget.info.count;
 	                if (widget.info.arrange == 'horizontal') {
-	                    var left = widget.info.left;
-	                    var top = widget.info.top;
-	                    var width = widget.info.width;
-	                    var interval = widget.info.interval;
-	                    var count = widget.info.count;
 	                    var singleWidth = (width - interval * (count - 1)) / count;
 	                    for (var i = 0; i < count; i++) {
 	                        if (x >= left + i * (singleWidth + interval) && x <= left + i * (singleWidth + interval) + singleWidth) {
-	                            widget.curButtonIdx = i;
+	                            widget.curButtonIdx = i + 1;
 	                            break;
 	                        }
 	                    }
 	                } else {
-	                    var height = widget.info.height;
-	                    var interval = widget.info.interval;
-	                    var count = widget.info.count;
+
 	                    var singleHeight = (height - interval * (count - 1)) / count;
 	                    for (var i = 0; i < count; i++) {
 	                        if (y >= top + i * (singleHeight + interval) && y <= top + i * (singleHeight + interval) + singleHeight) {
-	                            widget.curButtonIdx = i;
+	                            widget.curButtonIdx = i + 1;
 	                            break;
 	                        }
 	                    }
