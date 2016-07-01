@@ -52,8 +52,7 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
     var info = widget.info;
     if (info && info.buttonText && info.buttonText!==''){
         //has text
-        var canvas = new Canvas(info.width,info.height);
-        var ctx = canvas.getContext('2d');
+
 
         //font style
         var style = {};
@@ -72,6 +71,8 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
         var slices = [beforePressSlice,afterPressSlice];
         var totalSlices = slices.length;
         slices.map(function (slice,index) {
+            var canvas = new Canvas(info.width,info.height);
+            var ctx = canvas.getContext('2d');
             var img =slice.imgSrc;
             ctx.clearRect(0,0,info.width,info.height);
             ctx.save();
@@ -151,12 +152,12 @@ renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix
         //trans each slide
         var width = info.width;
         var height = info.height;
-        var canvas = new Canvas(width,height);
-        var ctx = canvas.getContext('2d');
+
         var slideTex = widget.texList[0];
         var totalSlices = slideTex.slices.length;
         for (var i=0;i<slideTex.slices.length;i++){
-
+            var canvas = new Canvas(width,height);
+            var ctx = canvas.getContext('2d');
             var curSlice = slideTex.slices[i];
             // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
             ctx.clearRect(0,0,width,height);
