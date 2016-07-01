@@ -62,6 +62,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     //update
                     $scope.texList[$scope.selectedIdx] = newTex;
                 }
+                console.log('texlist',$scope.texList)
                 var oldOperate=ProjectService.SaveCurrentOperate();
                 ProjectService.ChangeAttributeTexList(_.cloneDeep($scope.texList), function () {
                     $scope.$emit('ChangeCurrentPage',oldOperate);

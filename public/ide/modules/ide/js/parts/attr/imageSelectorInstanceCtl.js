@@ -5,6 +5,10 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
 
 
     $scope.images = ResourceService.getAllImages();
+    $scope.images.unshift({
+        name:'---',
+        src:''
+    });
     $scope.basicUrl = ResourceService.getResourceUrl();
 
     //edit by lixiang
