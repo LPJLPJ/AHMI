@@ -10,6 +10,7 @@ var path = require('path')
 var errHandler = require('../utils/errHandler')
 var defaultProject = require('../utils/defaultProject')
 var nodejszip = require('../utils/zip');
+var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
 //rendering
 var Renderer = require('../utils/render/renderer');
@@ -320,21 +321,33 @@ projectRoute.generateProject = function (req, res) {
                                 }else{
                                     //write ok
                                     console.log('write ok');
-                                    var zip = new nodejszip();
+                                    // var zip = new nodejszip();
+                                    // var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                                    // var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                                    // try {
+                                    //     zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
+                                    //         if (err) {
+                                    //             errHandler(res, 500, err);
+                                    //         } else {
+                                    //             res.end('ok')
+                                    //
+                                    //         }
+                                    //     })
+                                    // }catch (err){
+                                    //     errHandler(res, 500, err);
+                                    // }
+
+                                    //using myzip
                                     var SrcUrl = path.join(ProjectBaseUrl,'resources');
                                     var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                                    try {
-                                        zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
-                                            if (err) {
-                                                errHandler(res, 500, err);
-                                            } else {
-                                                res.end('ok')
+                                    MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+                                        if (err) {
+                                            errHandler(res, 500, err);
+                                        } else {
+                                            res.end('ok')
 
-                                            }
-                                        })
-                                    }catch (err){
-                                        errHandler(res, 500, err);
-                                    }
+                                        }
+                                    })
                                 }
                             })
                         }
