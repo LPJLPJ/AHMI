@@ -2,7 +2,7 @@
  * Created by shenaolin on 16/3/10.
  */
 ideServices
-    .service('ResourceService', function (ProjectService) {
+    .service('ResourceService', function () {
 
 
         var  files= [];
