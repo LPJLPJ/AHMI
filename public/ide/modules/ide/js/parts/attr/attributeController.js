@@ -521,7 +521,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 		}
 	}
 	function enterColor(op) {
-        console.log('keke',op);
         var oldOperate=null,
             option=null;
 		if (op.name=='component.object.level.backgroundColor'){

@@ -462,7 +462,7 @@ ideServices
 
                         }
                         if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue));
+                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.height/2,this.cursorImageElement.width,this.cursorImageElement.height);
                         }
 
                     }else {
@@ -477,7 +477,7 @@ ideServices
                             ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
                         }
                         if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2,this.height/2-this.progressValue);
+                            ctx.drawImage(this.cursorImageElement,-this.width/2,this.height/2-this.height*this.progressValue,this.cursorImageElement.width,this.cursorImageElement.height);
                         }
                     }
                 }else if(this.progressModeId=='1'){

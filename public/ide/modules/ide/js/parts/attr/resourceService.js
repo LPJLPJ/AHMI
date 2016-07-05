@@ -335,7 +335,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 _.extend(newSelectFile,uploadingFile);
                 newSelectFile.id  = fileName;
                 newSelectFile.name = fileNameArray.slice(0,-1).join('');
-                newSelectFile.src = baseUrl+newSelectFile.id
+                newSelectFile.src = baseUrl+newSelectFile.id;
                 //console.log(newSelectFile)
 
                 return newSelectFile;
