@@ -20319,6 +20319,7 @@
 	    drawProgress: function (curX, curY, widget, options) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
+	        var cursor = widget.info.cursor == '1' ? true : false;
 	        if (widget.texList) {
 	            //has tex
 	            //draw background
@@ -20346,12 +20347,20 @@
 	                            // console.log(curScale);
 	                            // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
 	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
+	                            if (cursor) {
+	                                var cursorSlice = widget.texList[2].slices[0];
+	                                this.drawCursor(curX, curY + height * (1.0 - curScale), width, height, false, cursorSlice.imgSrc, cursorSlice.color);
+	                            }
 	                            break;
 	                        case 'horizontal':
 	                        default:
 	                            //default horizontal
 	                            // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
 	                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
+	                            if (cursor) {
+	                                var cursorSlice = widget.texList[2].slices[0];
+	                                this.drawCursor(width * curScale + curX, curY, width, height, true, cursorSlice.imgSrc, cursorSlice.color);
+	                            }
 	                            break;
 	                    }
 	                    break;
@@ -20360,21 +20369,31 @@
 	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
 	                    var lastSlice = widget.texList[2].slices[0];
 	                    var mixedColor = this.addTwoColor(progressSlice.color, lastSlice.color, curScale);
-	                    console.log('mixedColor', mixedColor);
+
+	                    // console.log('mixedColor',mixedColor);
 	                    switch (widget.info.arrange) {
 
 	                        case 'vertical':
 	                            // console.log(curScale);
 	                            // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
 	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor);
+	                            if (cursor) {
+	                                var cursorSlice = widget.texList[3].slices[0];
+	                                this.drawCursor(curX, curY + height * (1.0 - curScale), width, height, false, cursorSlice.imgSrc, cursorSlice.color);
+	                            }
 	                            break;
 	                        case 'horizontal':
 	                        default:
 	                            //default horizontal
 	                            // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
 	                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', mixedColor);
+	                            if (cursor) {
+	                                var cursorSlice = widget.texList[3].slices[0];
+	                                this.drawCursor(width * curScale + curX, curY, width, height, true, cursorSlice.imgSrc, cursorSlice.color);
+	                            }
 	                            break;
 	                    }
+
 	                    break;
 	                case '2':
 	                    break;
@@ -20383,6 +20402,21 @@
 	            //handle action
 	            this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	            widget.oldValue = curProgress;
+	        }
+	    },
+	    drawCursor: function (beginX, beginY, width, height, align, img, color) {
+	        var cursorImg = this.getImage(img);
+	        cursorImg = cursorImg && cursorImg.content || null;
+	        if (cursorImg) {
+	            var imgW = cursorImg.width;
+	            var imgH = cursorImg.height;
+	            if (align) {
+	                //horizontal
+	                this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, imgW, height, img, color);
+	            } else {
+	                //vertical
+	                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, imgH, img, color);
+	            }
 	        }
 	    },
 	    addTwoColor: function (color1, color2, ratio) {
@@ -20611,7 +20645,7 @@
 	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
 	        //offCtx.fillStyle = this.numColor;
 	        tempCtx.font = numString;
-	        tempCtx.textAlign = 'center';
+	        tempCtx.textAlign = widget.info.align || 'center';
 	        tempCtx.textBaseline = 'middle';
 	        // console.log(curValue);
 
@@ -21036,7 +21070,6 @@
 	            offctx.fillStyle = color;
 	            offctx.fillRect(x, y, w, h);
 	        }
-	        ;
 	    },
 	    drawBgImg: function (x, y, w, h, imageName, ctx) {
 	        //console.log('x: '+x+' y: '+y+' w: '+w+' h: '+h);
