@@ -462,7 +462,7 @@ ideServices
 
                         }
                         if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.height/2,this.cursorImageElement.width,this.cursorImageElement.height);
+                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2,this.cursorImageElement.width,this.cursorImageElement.height);
                         }
 
                     }else {
@@ -477,7 +477,7 @@ ideServices
                             ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
                         }
                         if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2,this.height/2-this.height*this.progressValue,this.cursorImageElement.width,this.cursorImageElement.height);
+                            ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2,this.height/2-this.height*this.progressValue-this.cursorImageElement.height,this.cursorImageElement.width,this.cursorImageElement.height);
                         }
                     }
                 }else if(this.progressModeId=='1'){
@@ -498,6 +498,18 @@ ideServices
                 }else if(this.progressModeId=='2'){
                     //脚本进度条，啥也不画！
                 }
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
 
             }
         });
