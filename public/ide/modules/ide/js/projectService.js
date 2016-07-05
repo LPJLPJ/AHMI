@@ -12,7 +12,8 @@ ideServices
                                          Preference,
                                          TemplateProvider,
                                          ViewService,
-                                         Type) {
+                                         Type,
+                                         ResourceService) {
 
 
         var _self=this;
@@ -274,9 +275,9 @@ ideServices
                     if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
                         this.cursorImageElement=new Image();
                         this.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
-                        this.cursorImageElement.onload=(function(){
+                        this.cursorImageElement.onload=function(){
 
-                        }).bind(this);
+                        }.bind(this);
                     }else{
                         this.cursorImageElement=null;
                     }
@@ -286,9 +287,9 @@ ideServices
                     if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
                         this.cursorImageElement=new Image();
                         this.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
-                        this.cursorImageElement.onload=(function(){
+                        this.cursorImageElement.onload=function(){
 
-                        }).bind(this);
+                        }.bind(this);
                     }else{
                         this.cursorImageElement=null;
                     }
@@ -298,12 +299,12 @@ ideServices
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.backgroundImageElement=new Image();
                     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
+                    this.backgroundImageElement.onload = function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.backgroundImageElement=null;
                 }
@@ -313,9 +314,9 @@ ideServices
 
                     this.progressImageElement=new Image();
                     this.progressImageElement.src=level.texList[1].slices[0].imgSrc;
-                    this.progressImageElement.onload = (function () {
+                    this.progressImageElement.onload = function () {
 
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.progressImageElement=null;
                 }
@@ -343,9 +344,9 @@ ideServices
                         if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                             self.backgroundImageElement=new Image();
                             self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                            self.backgroundImageElement.onload = (function () {
+                            self.backgroundImageElement.onload = function () {
 
-                            }).bind(this);
+                            }.bind(this);
                         }else {
                             self.backgroundImageElement=null;
                         }
@@ -357,9 +358,9 @@ ideServices
 
                             self.progressImageElement=new Image();
                             self.progressImageElement.src=level.texList[1].slices[0].imgSrc;
-                            self.progressImageElement.onload = (function () {
+                            self.progressImageElement.onload = function () {
 
-                            }).bind(this);
+                            }.bind(this);
                         }else {
                             self.progressImageElement=null;
                         }
@@ -372,9 +373,9 @@ ideServices
                         if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
                             self.cursorImageElement=new Image();
                             self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
-                            self.cursorImageElement.onload=(function(){
+                            self.cursorImageElement.onload=function(){
 
-                            }).bind(this);
+                            }.bind(this);
                         }else{
                             self.cursorImageElement=null;
                         }
@@ -387,9 +388,9 @@ ideServices
                         if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
                             self.cursorImageElement=new Image();
                             self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
-                            self.cursorImageElement.onload=(function(){
+                            self.cursorImageElement.onload=function(){
 
-                            }).bind(this);
+                            }.bind(this);
                         }else{
                             self.cursorImageElement=null;
                         }
@@ -550,12 +551,12 @@ ideServices
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.backgroundImageElement=new Image();
                     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
+                    this.backgroundImageElement.onload = function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.backgroundImageElement=null;
                 }
@@ -565,8 +566,8 @@ ideServices
 
                     this.oscilloscopeImageElement=new Image();
                     this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
-                    this.oscilloscopeImageElement.onload = (function () {
-                    }).bind(this);
+                    this.oscilloscopeImageElement.onload = function () {
+                    }.bind(this);
                 }else {
                     this.oscilloscopeImageElement=null;
                 }
@@ -578,9 +579,9 @@ ideServices
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
                         self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                        self.backgroundImageElement.onload = (function () {
+                        self.backgroundImageElement.onload = function () {
 
-                        }).bind(this);
+                        }.bind(this);
                     }else {
                         self.backgroundImageElement=null;
                     }
@@ -592,9 +593,9 @@ ideServices
 
                         self.oscilloscopeImageElement=new Image();
                         self.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
-                        self.oscilloscopeImageElement.onload = (function () {
+                        self.oscilloscopeImageElement.onload = function () {
 
-                        }).bind(this);
+                        }.bind(this);
                     }else {
                         self.oscilloscopeImageElement=null;
                     }
@@ -691,12 +692,12 @@ ideServices
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.backgroundImageElement=new Image();
                     this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
+                    this.backgroundImageElement.onload = function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.backgroundImageElement=null;
                 }
@@ -706,9 +707,9 @@ ideServices
 
                     this.pointerImageElement=new Image();
                     this.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
-                    this.pointerImageElement.onload = (function () {
+                    this.pointerImageElement.onload = function () {
 
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.pointerImageElement=null;
                 }
@@ -719,9 +720,9 @@ ideServices
                     if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
                         this.lightBandImageElement =new Image();
                         this.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
-                        this.lightBandImageElement.onload = (function(){
+                        this.lightBandImageElement.onload = function(){
 
-                        }).bind(this);
+                        }.bind(this);
                     }else{
                         this.lightBandImageElement=null;
                     }
@@ -796,9 +797,9 @@ ideServices
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
                         self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                        self.backgroundImageElement.onload = (function () {
+                        self.backgroundImageElement.onload = function () {
 
-                        }).bind(this);
+                        }.bind(this);
                     }else {
                         self.backgroundImageElement=null;
                     }
@@ -808,9 +809,9 @@ ideServices
 
                         self.pointerImageElement=new Image();
                         self.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
-                        self.pointerImageElement.onload = (function () {
+                        self.pointerImageElement.onload = function () {
 
-                        }).bind(this);
+                        }.bind(this);
                     }else {
                         self.pointerImageElement=null;
                     }
@@ -821,9 +822,9 @@ ideServices
                         if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
                             self.lightBandImageElement=new Image();
                             self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
-                            self.lightBandImageElement.onload = (function () {
+                            self.lightBandImageElement.onload = function () {
 
-                            }).bind(this);
+                            }.bind(this);
                         }else {
                             self.lightBandImageElement = null;
                         }
@@ -943,12 +944,12 @@ ideServices
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.backgroundImageElement=new Image();
                     this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
+                    this.backgroundImageElement.onload = function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.backgroundImageElement=null;
                 }
@@ -958,9 +959,9 @@ ideServices
 
                     this.knobImageElement=new Image();
                     this.knobImageElement.src=level.texList[1].slices[0].imgSrc;
-                    this.knobImageElement.onload = (function () {
+                    this.knobImageElement.onload = function () {
 
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.knobImageElement=null;
                 }
@@ -1002,9 +1003,9 @@ ideServices
                     if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                         self.backgroundImageElement=new Image();
                         self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                        self.backgroundImageElement.onload = (function () {
+                        self.backgroundImageElement.onload = function () {
 
-                        }).bind(this);
+                        }.bind(this);
                     }else {
                         self.backgroundImageElement=null;
                     }
@@ -1013,9 +1014,9 @@ ideServices
                     if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
                         self.knobImageElement=new Image();
                         self.knobImageElement.src=level.texList[1].slices[0].imgSrc;
-                        self.knobImageElement.onload = (function () {
+                        self.knobImageElement.onload = function () {
 
-                        }).bind(this);
+                        }.bind(this);
                     }else {
                         self.knobImageElement=null;
                     }
@@ -1108,12 +1109,12 @@ ideServices
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.imageElement=new Image();
                     this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.imageElement.onload = (function () {
+                    this.imageElement.onload = function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.imageElement=null;
                 }
@@ -1127,8 +1128,8 @@ ideServices
                     if (tex.slices[0].imgSrc!='') {
                         var currentImageElement=new Image();
                         currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
+                        currentImageElement.onload = function () {
+                        }.bind(this);
                         self.imageElement=currentImageElement;
                     }else {
                         self.imageElement=null;
@@ -1189,12 +1190,12 @@ ideServices
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.imageElement=new Image();
                     this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.imageElement.onload = (function () {
+                    this.imageElement.onload = function () {
 
                         this.loaded = true;
                         this.setCoords();
                         this.fire('image:loaded');
-                    }).bind(this);
+                    }.bind(this);
                 }else {
                     this.imageElement=null;
                 }
@@ -1395,8 +1396,8 @@ ideServices
                     if (tex.slices[0].imgSrc!='') {
                         var currentImageElement=new Image();
                         currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
+                        currentImageElement.onload = function () {
+                        }.bind(this);
                         self.imageElement=currentImageElement;
                     }else {
                         self.imageElement=null;
@@ -5135,8 +5136,8 @@ ideServices
 
                         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         var currentPageIndex= _indexById(project.pages, _self.getCurrentPage());
-
-                        var currentSubLayerIndex= _indexById(project.pages[currentPageIndex].subLayers, currentSubLayer);
+                        var currentLayerIndex=_indexById(project.pages[currentPageIndex].layers,_self.getCurrentLayer());
+                        var currentSubLayerIndex= _indexById(project.pages[currentPageIndex].layers[currentLayerIndex].subLayers, _self.getCurrentSubLayer());
                         _self.OnSubLayerSelected(currentPageIndex,currentSubLayerIndex, function () {
                             _successCallback&&_successCallback(currentOperate);
                         });
@@ -5158,7 +5159,7 @@ ideServices
                         pageNode.renderAll();
                         currentPage.backgroundImage=_option.image;
                         currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                            console.log(currentPage.proJsonStr);
+                            //console.log(currentPage.proJsonStr);
 
                             var currentPageIndex= _indexById(project.pages, currentPage);
                         _self.OnPageSelected(currentPageIndex, function () {
@@ -5844,7 +5845,7 @@ ideServices
 
                 pageNode.renderAll();
                 currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                console.log(currentPage.proJsonStr);
+                //console.log(currentPage.proJsonStr);
 
                 _self.OnLayerSelected(currentLayer, function () {
                     _successCallback && _successCallback(currentOperate);
@@ -6540,5 +6541,19 @@ ideServices
 
             return  'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
 
+        }
+
+        /**
+         * get image name(id)
+         * @param imageName
+         * @returns {*}
+         */
+        function getImageName(imageName) {
+            if (imageName && typeof imageName === 'string') {
+                var names = imageName.split('/');
+                return names[names.length - 1];
+            } else {
+                return '';
+            }
         }
     });

@@ -90,7 +90,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             method:'GET',
             url:baseUrl+'/project/'+id+'/content'
         }).success(function (data) {
-            console.log(data)
+            console.log(data);
             if (data.content){
                 //console.log(data)
 
@@ -112,7 +112,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 globalProject.projectId = id;
 
 
-                console.log('globalProject',globalProject)
+                console.log('globalProject',globalProject);
 
                 var resourceList = globalProject.resourceList;
                 var count = resourceList.length;
