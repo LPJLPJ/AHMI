@@ -20425,15 +20425,15 @@
 
 	            //get current value
 	            var curSlideTag = this.findTagByName(widget.tag);
-
-	            var curSlide = curSlideTag && curSlideTag.value || 0;
+	            console.log(widget.curValue);
+	            var curSlide = curSlideTag && curSlideTag.value || widget.curValue || 0;
 	            var curScale = 1.0 * (curSlide - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
 
 	            curScale = curScale >= 0 ? curScale : 0.0;
 	            curScale = curScale <= 1 ? curScale : 1.0;
 
 	            var slideSlice = widget.texList[1].slices[0];
-	            var slideImg = this.getImage(img);
+	            var slideImg = this.getImage(slideSlice.imgSrc);
 	            slideImg = slideImg && slideImg.content || null;
 	            if (slideImg) {
 	                var slideRatio;
@@ -20457,6 +20457,9 @@
 	        }
 	    },
 	    drawCursor: function (beginX, beginY, width, height, align, alignLimit, img, color) {
+
+	        var cursorImg = this.getImage(img);
+	        cursorImg = cursorImg && cursorImg.content || null;
 	        if (cursorImg) {
 	            var imgW = cursorImg.width;
 	            var imgH = cursorImg.height;
@@ -21328,28 +21331,34 @@
 	                }
 	                break;
 	            case 'MySlideBlock':
+	                var x = widget.info.left;
+	                var y = widget.info.top;
+	                var width = widget.info.width;
+	                var height = widget.info.height;
 	                var hori = widget.info.arrange == 'horizontal';
 	                if (!widget.slideSize) {
 
-	                    var defaultSize = hori ? widget.info.h : widget.info.w;
+	                    var defaultSize = hori ? height : width;
 	                    widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc, defaultSize, defaultSize);
 	                }
+	                console.log('widget slice', widget.slideSize);
 
 	                var curPos = {
-	                    x: mouseState.pos.x - widget.info.x,
-	                    y: mouseState.pos.y - widget.info.y
+	                    x: mouseState.position.x - x,
+	                    y: mouseState.position.y - y
 	                };
 
-	                var curValue;
+	                var curValue = 0;
 	                var bgRange;
 	                if (hori) {
-	                    bgRange = widget.info.w - widget.slideSize.w;
+	                    bgRange = width - widget.slideSize.w || 1;
 	                    curValue = (curPos - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	                } else {
-	                    bgRange = widget.info.h - widget.slideSize.h;
+	                    bgRange = height - widget.slideSize.h || 1;
 	                    curValue = (curPos - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	                }
 	                widget.curValue = curValue;
+	                console.log(curValue, widget.info);
 	                needRedraw = true;
 
 	                break;
@@ -21365,6 +21374,7 @@
 	        var img = this.getImage(imgName);
 	        img = img && img.content || null;
 	        if (!!img) {
+	            // console.log(img,img.width,img.height)
 	            return {
 	                w: img.width,
 	                h: img.height
