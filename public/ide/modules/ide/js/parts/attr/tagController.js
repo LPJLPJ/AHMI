@@ -256,6 +256,7 @@ ide.
                 case Type.MyDateTime:
                 case Type.MyRotateImg:
                 case Type.MyScriptTrigger:
+                case Type.MySlideBlock:
                     $scope.showTagPanel = true;
                     break;
                 default:
