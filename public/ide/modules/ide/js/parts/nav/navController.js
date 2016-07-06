@@ -336,7 +336,7 @@
             }
             var oldOperate=ProjectService.SaveCurrentOperate();
             var newWidget=null;
-            if (_index==2){
+            if (_index==1){
                 newWidget = TemplateProvider.getDefaultSlide();
             }
             else if (_index==3){
@@ -358,14 +358,14 @@
             else if(_index==9){
                 newWidget=TemplateProvider.getDefaultTextArea();
             }
-            else if(_index==15){
+            else if(_index==8){
                 newWidget=TemplateProvider.getDefaultNum();
             }
             else if(_index==5){
                 newWidget=TemplateProvider.getDefaultOscilloscope();
             }else if(_index==0){
                 newWidget=TemplateProvider.getDefaultImage();
-            }else if(_index==16){
+            }else if(_index==2){
                 newWidget=TemplateProvider.getDefaultSwitch();
             }else if(_index==6){
                 newWidget=TemplateProvider.getDefaultRotateImg();
@@ -374,6 +374,8 @@
                 newWidget=TemplateProvider.getDefaultDateTime();
             }else if(_index==14){
                 newWidget=TemplateProvider.getDefaultScriptTrigger();
+            }else if(_index==12){
+                newWidget=TemplateProvider.getDefaultSlideBlock();
             }
             else {
                 return;

@@ -501,13 +501,13 @@ ideServices
                 frontZeroMode:'0',//前导0模式标志，0：无前导0模式，1：有前导0模式
                 symbolMode:'0',//符号模式标志，1：无符号位，1：有符号位
                 decimalCount:0,//保留的小数位数
-                numOfDigits:8,//数字的位数，最小1，最大未定
+                numOfDigits:3,//数字的位数，最小1，最大未定
                 align:'center',//数字对齐方式
 
                 arrange:true,         //true:横向 false:竖向
                 numValue:1,
                 numFamily:'Arial',
-                numSize:15,
+                numSize:30,
                 numColor:'rgba(0,0,0,1)',
                 numBold:"100",
                 numItalic:"",
@@ -647,7 +647,11 @@ ideServices
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
-                dateTimeModeId:'0'//0表示时间，1表示日期
+                dateTimeModeId:'0',//0表示时间，1表示日期
+                fontFamily:'Arial',
+                fontSize:20,
+                fontColor:'rgba(255,255,255,1)',
+                fontAlign:'center'
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -687,6 +691,48 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0
+            }
+        };
+        this.getDefaultSlideBlock = function(){
+            var subLayerNode=CanvasService.getSubLayerNode();
+
+            var info={
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
+                height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                minValue:0,maxValue:100,
+                lowAlarmValue:0,highAlarmValue:100,
+                initValue:0,
+                arrange:"horizontal"   //horizontal:水平   vertical:竖直
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewSlideBlock',
+                type: Type.MySlideBlock,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'滑块背景',
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'滑块背景'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'滑块',
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'滑块'
+                    }]
+                }]
+
             }
         };
 
