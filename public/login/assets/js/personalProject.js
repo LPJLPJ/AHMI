@@ -8,15 +8,25 @@ $(function(){
  //        $(".menu").stop().animate({"height":"0px"})
  //    })
     var curSelectedPanel = null;
+    var curPanel = null;
+    var closeModal = $('#exampleModal');
+    var curProject = null;
+
+    var closeModalConfirmButton = $('#closeModalConfirm');
+    closeModalConfirmButton.on('click',function (e) {
+       deleteProject(curProject,curPanel);
+    });
+
 
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
-        var curPanel = $(this)
+        curPanel = $(this)
         curSelectedPanel = curPanel
 
 
-        var project = $(this).attr('data-project')
-        project = JSON.parse(project)
+        var project = $(this).attr('data-project');
+        project = JSON.parse(project);
+        curProject = project;
         var curNodeName = e.target.nodeName
         if (curNodeName == 'IMG'){
             //img
@@ -33,11 +43,12 @@ $(function(){
             resolution.val(project.resolution)
         }else if (curNodeName == 'I'){
             //delete
-            if(confirm('确认删除?')){
-                deleteProject(project,curPanel)
-            }else{
-
-            }
+            // if(confirm('确认删除?')){
+            //     deleteProject(project,curPanel)
+            // }else{
+            //
+            // }
+            closeModal.modal('show');
 
         }
     });
