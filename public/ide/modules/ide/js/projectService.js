@@ -1040,14 +1040,7 @@ ideServices
 
                 });
 
-                //this.on('changeArrange', function (arg) {
-                //    self.arrange=arg.arrange;
-                //    var _callback=arg.callback;
-                //
-                //    var subLayerNode=CanvasService.getSubLayerNode();
-                //    subLayerNode.renderAll();
-                //    _callback&&_callback();
-                //});
+
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1419,7 +1412,7 @@ ideServices
                     subLayerNode.renderAll();
                     _callback&&_callback();
                 });
-                this.on('changeRotateImgInitValue',function(arg){
+                this.on('changeInitValue',function(arg){
                     var _callback=arg.callback;
                     self.initValue=arg.initValue;
                     self.setAngle(self.initValue);
@@ -1461,6 +1454,148 @@ ideServices
         };
         fabric.MyRotateImg.async = true;
 
+        fabric.MySlideBlock = fabric.util.createClass(fabric.Object, {
+            type: Type.MySlideBlock,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.minValue=level.info.minValue;
+                this.maxValue=level.info.maxValue;
+                this.initValue=level.info.initValue;
+                this.arrange=level.info.arrange;
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
+                }
+
+                this.slideColor=level.texList[1].slices[0].color;
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    this.slideImageElement=new Image();
+                    this.slideImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.slideImageElement.onload = (function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.slideImageElement=null;
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    if(level.texList&&level.texList[0]){
+                        self.backgroundColor=level.texList[0].slices[0].color;
+                        if (level.texList[0].slices[0].imgSrc!='') {
+                            var backgroundImageElement=new Image();
+                            backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                            backgroundImageElement.onload = function () {
+                            }.bind(this);
+                            self.backgroundImageElement=backgroundImageElement;
+                        }else {
+                            self.backgroundImageElement=null;
+                        }
+                    }
+
+                    if(level.texList&&level.texList[1]){
+                        self.slideColor=level.texList[1].slices[0].color;
+                        if (level.texList[1].slices[0].imgSrc!='') {
+                            var slideImageElement=new Image();
+                            slideImageElement.src=level.texList[1].slices[0].imgSrc
+                            slideImageElement.onload = function () {
+                            }.bind(this);
+                            self.slideImageElement=slideImageElement;
+                        }else {
+                            self.slideImageElement=null;
+                        }
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeInitValue',function(arg){
+                    var _callback=arg.callback;
+                    self.initValue=arg.initValue;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeArrange', function (arg) {
+                    self.arrange=arg.arrange;
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                var progress = this.initValue/(this.maxValue-this.minValue);
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.backgroundImageElementElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                if(this.slideImageElement){
+                    if(this.arrange=='horizontal'){
+                        ctx.drawImage(this.slideImageElement,-this.width/2+((this.width-this.slideImageElement.width)*progress),-this.slideImageElement.height/2,this.slideImageElement.width,this.slideImageElement.height);
+                    }else{
+                        ctx.drawImage(this.slideImageElement,-this.slideImageElement.width/2,this.height/2-(this.height-this.slideImageElement.height)*progress-this.slideImageElement.height,this.slideImageElement.width,this.slideImageElement.height);
+                    }
+                }
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+        });
+        fabric.MySlideBlock.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MySlideBlock(level, option));
+        };
+        fabric.MySlideBlock.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+
+                });
+            }
+        })(fabric.MySlideBlock.prototype.toObject);
+        fabric.MySlideBlock.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MySlideBlock(level, object));
+        };
+        fabric.MySlideBlock.async = true;
+
         fabric.MyDateTime = fabric.util.createClass(fabric.Object, {
             type: Type.MyDateTime,
             initialize: function (level, options) {
@@ -1470,6 +1605,10 @@ ideServices
                 this.hasRotatingPoint=false;
                 this.backgroundColor=level.texList[0].slices[0].color;
                 this.dateTimeModeId=level.info.dateTimeModeId;
+                this.fontFamily=level.info.fontFamily;
+                this.fontSize=level.info.fontSize;
+                this.fontColor=level.info.fontColor;
+                this.fontAlign=level.info.fontAlign;
                 this.initValue=level.info.initValue;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.imageElement=new Image();
@@ -1517,6 +1656,7 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                var fontString = null;
                 var dateObj = new Date(),
                     arrTime = [],
                     arrDate = [];
@@ -1528,21 +1668,24 @@ ideServices
                 arrDate.push(dateObj.getMonth()+1);
                 arrDate.push(dateObj.getDate());
 
-                ctx.fillStyle='#fff';//颜色可选？？大小字体固定？？
+                ctx.fillStyle=this.fontColor;//颜色可选？？大小字体固定？？
+                fontString=this.fontSize+'px'+" "+this.fontFamily;
                 if(this.dateTimeModeId=='0'){
                     //显示时间
                     ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.font="20px Arial";
-                    ctx.textAlign='center';
+                    ctx.font=fontString;
+                    ctx.textAlign=this.fontAlign;
                     ctx.textBaseline='middle';
                     ctx.fillText(arrTime.join(":"),0,0);
+                    ctx.scale(this.scaleX,this.scaleY);
                 }else if(this.dateTimeModeId=='1'){
                     //显示日期
                     ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.font="20px Arial";
-                    ctx.textAlign='center';
+                    ctx.font=fontString;
+                    ctx.textAlign=this.fontAlign;
                     ctx.textBaseline='middle';
                     ctx.fillText(arrDate.join("/"),0,0);
+                    ctx.scale(this.scaleX,this.scaleY);
                 }
 
             }
@@ -3478,6 +3621,22 @@ ideServices
                 },initiator);
             }else if(_newWidget.type==Type.MyScriptTrigger){
                 fabric.MyScriptTrigger.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
+            }else if(_newWidget.type==Type.MySlideBlock){
+                fabric.MySlideBlock.fromLevel(_newWidget,function(fabWidget){
                     _self.currentFabWidgetIdList=[fabWidget.id];
                     fabWidget.urls=_newWidget.subSlides;
                     subLayerNode.add(fabWidget);
@@ -5671,7 +5830,7 @@ ideServices
             selectObj.level.info.bindBit=_option.bindBit;
             _successCallback&&_successCallback();
         };
-        //改变旋转纹理的初始值
+        //改变控件初始值
         this.ChangeAttributeInitValue = function(_option,_successCallback){
             var initValue=_option.initValue;
             var selectObj= _self.getCurrentSelectObject();
@@ -5680,7 +5839,7 @@ ideServices
                 initValue:initValue,
                 callback:_successCallback
             };
-            selectObj.target.fire('changeRotateImgInitValue',arg);
+            selectObj.target.fire('changeInitValue',arg);
         };
         //改变时间控件的显示模式
         this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){

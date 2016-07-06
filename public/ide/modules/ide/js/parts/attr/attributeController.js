@@ -73,13 +73,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterArrange:enterArrange
 
             },
-            number:{
-                numberNoInit:false,
-                enterInitValue:enterInitValue,
-                enterNoInit:enterNoInit
-
-            },
-
             progress:{
                 progressModeId:'0',
                 progressModes:[
@@ -173,11 +166,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
             //开关
             switch:{
-              enterBindBit:enterBindBit,
+                enterBindBit:enterBindBit
             },
             //旋转
             rotateImg:{
-              enterInitValue:enterInitValue,
+                enterInitValue:enterInitValue
             },
             dateTime:{
                 dateTimeModes:[
@@ -186,6 +179,12 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 ],
                 enterDateTimeMode:enterDateTimeMode,
             },
+            //滑块
+            slideBlock:{
+                enterInitValue:enterInitValue,
+                enterArrange:enterArrange
+            },
+
             enterName:enterName,
 			enterColor:enterColor,
 			enterX:enterX,
@@ -368,6 +367,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     break;
                 case Type.MyDateTime:
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
+                    break;
+                case Type.MySlideBlock:
+                    $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
                     break;
             }
 
@@ -873,7 +875,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }else if (selectObj.type==Type.MyButtonGroup){
             selectArrange=$scope.component.buttonGroup.arrangeModel;
 
-        }else {
+        }else if(selectObj.type==Type.MySlideBlock){
+            selectArrange=$scope.component.slideBlock.arrangeModel;
+        } else {
             return;
         }
 
@@ -1187,54 +1191,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }
     }
 
-    /**
-     * 输入number的初始值
-     * @param e
-     */
-    function enterInitValue(e){
-
-
-        if (e.keyCode==13){
-            //判断输入是否合法
-            console.log(_.isNumber($scope.component.object.level.info.initValue));
-            if (!_.toNumber($scope.component.object.level.info.initValue)&&_.toNumber($scope.component.object.level.info.initValue)!=0){
-                toastr.warning('输入不合法');
-                restore();
-                return;
-            }
-            //判断是否有变化
-            if ($scope.component.object.level.info.initValue==initObject.level.info.initValue){
-                return;
-            }
-            //判断范围
-            if ($scope.component.object.level.info.initValue<$scope.component.object.level.info.minValue){
-                toastr.warning('不能比最小值小');
-
-                restore();
-                return;
-            }
-            if ($scope.component.object.level.info.initValue>$scope.component.object.level.info.maxValue){
-                toastr.warning('不能比最大值大');
-
-                restore();
-                return;
-            }
-            var option={
-                initValue:$scope.component.object.level.info.initValue
-            };
-            var oldOperate=ProjectService.SaveCurrentOperate();
-
-            ProjectService.ChangeAttributeValue(option, function () {
-                var selectObj=ProjectService.getCurrentSelectObject();
-
-                var fabNumber=ProjectService.getFabricObject(selectObj.level.id,true);
-                ProjectService.SyncLevelFromFab(selectObj.level,fabNumber);
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-
-            })
-
-        }
-    }
     function enterButtonMode(e){
         var selectObj=ProjectService.getCurrentSelectObject();
         var selectButtonMode=null;
@@ -1848,6 +1804,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }
     }
 
+    /**
+     * 输入初始值
+     * @param e
+     */
     function enterInitValue(e){
         if(e.keyCode==13){
             if($scope.component.object.level.info.initValue==initObject.level.info.initValue){
@@ -1855,10 +1815,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             }
             if($scope.component.object.level.info.initValue<$scope.component.object.level.info.minValue||
                 $scope.component.object.level.info.initValue>$scope.component.object.level.info.maxValue){
-                toastr.warning('超出范围');
+                toastr.warning('超出最大或最小范围');
             }
             var option={
-              initValue:$scope.component.object.level.info.initValue,
+              initValue:$scope.component.object.level.info.initValue
             };
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeInitValue(option, function (oldOperate) {
