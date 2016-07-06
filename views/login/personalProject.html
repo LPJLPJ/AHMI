@@ -29,7 +29,7 @@
                 <!--</ul>-->
             </div>
             <div id="user-icon"   class="dropdown right">
-                <a data-toggle="dropdown"><img src="/public/login/images/Grgc/Fruit.png" /></a>
+                <a data-toggle="dropdown"><img src="/public/login/assets/img/Fruit.png" /></a>
 
                 <!--<div id="user-icon-menu" class="menu">-->
                     <!--<a href="/private/info">个人信息</a>-->
@@ -39,6 +39,33 @@
                     <!--<li><a href="/private/info">个人信息</a></li>-->
                     <li><a href="/user/logout">退出</a></li>
                 </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">确认删除?</h4>
+                </div>
+                <!--<div class="modal-body">-->
+                    <!--<form>-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="recipient-name" class="control-label">Recipient:</label>-->
+                            <!--<input type="text" class="form-control" id="recipient-name">-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="message-text" class="control-label">Message:</label>-->
+                            <!--<textarea class="form-control" id="message-text"></textarea>-->
+                        <!--</div>-->
+                    <!--</form>-->
+                <!--</div>-->
+                <div class="modal-footer">
+                    <button id="closeModalConfirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+
+                </div>
             </div>
         </div>
     </div>
@@ -112,7 +139,7 @@
                 <li data-project=<%= JSON.stringify(projects[i].projectInfo) %>  class="projectpanel">
                          <div class="img">
                              <i class="projectdelete iconfont">&#xe607;</i>
-                             <a href="#"><img src=<%= projects[i].thumbnail||"/public/login/images/Grgc/pro_1.png" %> /></a>
+                             <a href="#"><img src=<%= projects[i].thumbnail||"/public/login/assets/img/pro_1.png" %> /></a>
                              <!--<div class="img_bot">-->
                                  <!--<div class="img_bg">haha</div>-->
                                  <!--<div class="img_bot_test">-->
