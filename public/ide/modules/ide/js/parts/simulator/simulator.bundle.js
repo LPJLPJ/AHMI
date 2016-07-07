@@ -20128,6 +20128,8 @@
 	        var curY = widget.info.top + sy;
 	        //this.drawBgColor(curX,curY,widget.w,widget.h,widget.bgColor);
 	        var subType = widget.subType;
+	        widget.parentX = sx;
+	        widget.parentY = sy;
 	        switch (subType) {
 	            case 'MySlide':
 	                this.drawSlide(curX, curY, widget, options);
@@ -20440,13 +20442,14 @@
 	                switch (widget.info.arrange) {
 	                    case 'vertical':
 	                        slideRatio = (height - slideImg.height) * 1.0 / height;
-	                        this.drawCursor(curX, curY + height * (1.0 - curScale * slideRatio), width, height, false, height * (1 - curScale * slideRatio), slideSlice.imgSrc, slideSlice.color);
+	                        this.drawCursor(curX, curY + height * (1.0 - curScale * slideRatio) + 0.5 * slideImg.height, width, height, false, height * (1 - curScale * slideRatio), slideSlice.imgSrc, slideSlice.color);
 	                        break;
 	                    case 'horizontal':
 	                    default:
-	                        slideRatio = (width - slideImg.width) * 1.0 / height;
+	                        console.log(slideRatio, curScale);
+	                        slideRatio = (width - slideImg.width) * 1.0 / width;
 
-	                        this.drawCursor(width * curScale * slideRatio + curX, curY, width, height, true, width * (1 - curScale * slideRatio), slideSlice.imgSrc, slideSlice.color);
+	                        this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
 	                        break;
 	                }
 	            }
@@ -21229,6 +21232,7 @@
 	                            if (this.inRect(x - canvas.x, y - canvas.y, widgetList[i], 'widget')) {
 	                                targets.push(widgetList[i]);
 	                                //handle widget like buttongroup
+	                                // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
 	                                this.handleInnerClickedElement(widgetList[i], x - canvas.x, y - canvas.y);
 	                            }
 	                        }
@@ -21272,15 +21276,46 @@
 	                    }
 	                }
 	                break;
+	            case 'MySlideBlock':
+
+	                x = x - left;
+	                y = y - top;
+	                console.log('relative rect', x, y);
+	                this.handleSlideBlockInnerPress(widget, x, y);
+
+	                break;
 	        }
+	    },
+	    handleSlideBlockInnerPress: function (widget, x, y) {
+	        var left = widget.info.left;
+	        var top = widget.info.top;
+	        var width = widget.info.width;
+	        var height = widget.info.height;
+	        var hori = widget.info.arrange == 'horizontal';
+	        if (!widget.slideSize) {
+
+	            var defaultSize = hori ? height : width;
+	            widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc, defaultSize, defaultSize);
+	        }
+
+	        var curValue = 0;
+	        var bgRange;
+	        if (hori) {
+	            bgRange = width - widget.slideSize.w || 1;
+	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	        } else {
+	            bgRange = height - widget.slideSize.h || 1;
+	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	        }
+	        widget.curValue = curValue;
+	        console.log(curValue, widget.info);
 	    },
 	    handlePress: function (e) {
 	        // console.log(e);
 	        // console.log(e.target.scrollLeft,e.targetTag.scrollTop);
-	        var clientRect = e.target.getBoundingClientRect();
-	        var x = Math.round(e.pageX - clientRect.left);
-	        var y = Math.round(e.pageY - clientRect.top);
-	        // console.log(x, y)
+	        var relativeRect = this.getRelativeRect(e);
+	        var x = relativeRect.x;
+	        var y = relativeRect.y;
 	        this.mouseState.state = 'press';
 	        this.mouseState.position.x = x;
 	        this.mouseState.position.y = y;
@@ -21293,6 +21328,60 @@
 	                this.handleWidgetPress(targets[i], _.cloneDeep(this.mouseState));
 	                this.handleTargetAction(targets[i], 'Press');
 	            }
+	        }
+	    },
+	    getRelativeRect: function (e) {
+	        var clientRect = e.target.getBoundingClientRect();
+	        var x = Math.round(e.pageX - clientRect.left);
+	        var y = Math.round(e.pageY - clientRect.top);
+
+	        return {
+	            x: x,
+	            y: y
+	        };
+	    },
+	    handleMove: function (e) {
+	        var relativeRect = this.getRelativeRect(e);
+	        var x = relativeRect.x;
+	        var y = relativeRect.y;
+
+	        this.mouseState.position.x = x;
+	        this.mouseState.position.y = y;
+
+	        if (this.mouseState.state === 'press' || this.mouseState.state === 'dragging') {
+	            this.mouseState.state = 'dragging';
+	            this.handleDragging(_.cloneDeep(this.mouseState));
+	        } else {
+	            this.mouseState.state = 'move';
+	        }
+	    },
+	    handleHolding: function () {},
+	    handleDragging: function (mouseState) {
+	        var targets = this.state.currentPressedTargets;
+	        for (var i = 0; i < targets.length; i++) {
+	            if (targets[i].type == 'widget') {
+	                this.handleWidgetDrag(targets[i], mouseState);
+	                this.handleTargetAction(targets[i], 'drag');
+	            }
+	        }
+	    },
+	    handleWidgetDrag: function (widget, mouseState) {
+	        var subType = widget.subType;
+	        var left = widget.info.left;
+	        var top = widget.info.top;
+	        var relativeX = mouseState.position.x - widget.parentX - left;
+	        var relativeY = mouseState.position.y - widget.parentY - top;
+	        var needRedraw = false;
+	        switch (subType) {
+	            case 'MySlideBlock':
+	                this.handleSlideBlockInnerPress(widget, relativeX, relativeY);
+	                widget.mouseState = mouseState;
+	                needRedraw = true;
+	                break;
+	        }
+
+	        if (needRedraw) {
+	            this.drawAfterMouseAction(mouseState);
 	        }
 	    },
 	    handleWidgetPress: function (widget, mouseState) {
@@ -21331,34 +21420,11 @@
 	                }
 	                break;
 	            case 'MySlideBlock':
-	                var x = widget.info.left;
-	                var y = widget.info.top;
-	                var width = widget.info.width;
-	                var height = widget.info.height;
-	                var hori = widget.info.arrange == 'horizontal';
-	                if (!widget.slideSize) {
-
-	                    var defaultSize = hori ? height : width;
-	                    widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc, defaultSize, defaultSize);
+	                var targetTag = this.findTagByName(widget.tag);
+	                if (targetTag && targetTag.name != '') {
+	                    this.setTagByTag(targetTag, parseInt(curButtonIdx));
 	                }
-	                console.log('widget slice', widget.slideSize);
-
-	                var curPos = {
-	                    x: mouseState.position.x - x,
-	                    y: mouseState.position.y - y
-	                };
-
-	                var curValue = 0;
-	                var bgRange;
-	                if (hori) {
-	                    bgRange = width - widget.slideSize.w || 1;
-	                    curValue = (curPos - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	                } else {
-	                    bgRange = height - widget.slideSize.h || 1;
-	                    curValue = (curPos - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	                }
-	                widget.curValue = curValue;
-	                console.log(curValue, widget.info);
+	                widget.mouseState = mouseState;
 	                needRedraw = true;
 
 	                break;
@@ -21809,7 +21875,7 @@
 	            { className: 'simulator' },
 	            React.createElement(
 	                'div',
-	                { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseUp: this.handleRelease },
+	                { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseMove: this.handleMove, onMouseUp: this.handleRelease },
 	                React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
 	                React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
 	                React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
