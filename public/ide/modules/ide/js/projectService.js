@@ -1716,12 +1716,12 @@ ideServices
                 this.hasRotatingPoint=false;
                 this.normalColor=level.texList[0].slices[0].color;
 
-                this.buttonText=level.info.buttonText;
-                this.buttonFontFamily=level.info.buttonFontFamily;
-                this.buttonFontSize=level.info.buttonFontSize;
-                this.buttonFontColor=level.info.buttonFontColor;
-                this.buttonFontBold=level.info.buttonFontBold;
-                this.buttonFontItalic=level.info.buttonFontItalic;
+                this.text=level.info.text;
+                this.fontFamily=level.info.fontFamily;
+                this.fontSize=level.info.fontSize;
+                this.fontColor=level.info.fontColor;
+                this.fontBold=level.info.fontBold;
+                this.fontItalic=level.info.fontItalic;
 
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.normalImageElement=new Image();
@@ -1758,24 +1758,24 @@ ideServices
                 });
 
                 this.on('changeButtonText',function(arg){
-                    if(arg.hasOwnProperty('buttonText')){
-                        self.buttonText=arg.buttonText;
+                    if(arg.hasOwnProperty('text')){
+                        self.text=arg.text;
 
                     }
-                    if(arg.buttonFontFamily){
-                        self.buttonFontFamily=arg.buttonFontFamily;
+                    if(arg.fontFamily){
+                        self.fontFamily=arg.fontFamily;
                     }
-                    if(arg.buttonFontBold){
-                        self.buttonFontBold=arg.buttonFontBold;
+                    if(arg.fontBold){
+                        self.fontBold=arg.fontBold;
                     }
-                    if(arg.buttonFontItalic){
-                        self.buttonFontItalic=arg.buttonFontItalic;
+                    if(arg.hasOwnProperty('fontItalic')){
+                        self.fontItalic=arg.fontItalic;
                     }
-                    if(arg.buttonFontSize){
-                        self.buttonFontSize=arg.buttonFontSize;
+                    if(arg.fontSize){
+                        self.fontSize=arg.fontSize;
                     }
-                    if(arg.buttonFontColor){
-                        self.buttonFontColor=arg.buttonFontColor;
+                    if(arg.fontColor){
+                        self.fontColor=arg.fontColor;
                     }
                     var _callback=arg.callback;
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -1788,7 +1788,7 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.buttonFontColor;
+                ctx.fillStyle=this.fontColor;
                 ctx.save();
                 ctx.fillStyle=this.normalColor;
                 ctx.fillRect(
@@ -1801,15 +1801,14 @@ ideServices
                     ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
                 ctx.restore();
-                if(this.buttonText){
+                if(this.text){
                     ctx.save();
-                    var fontString=this.buttonFontItalic+" "+this.buttonFontBold+" "+this.buttonFontSize+"px"+" "+this.buttonFontFamily;
-                    //console.log(fontString);
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
                     ctx.textAlign='center';
                     ctx.textBaseline='middle';//使文本垂直居中
-                    ctx.fillText(this.buttonText,0,0);
+                    ctx.fillText(this.text,0,0);
                     ctx.restore();
                 }
 
@@ -2008,11 +2007,11 @@ ideServices
                 this.backgroundColor=level.texList[0].slices[0].color;
 
                 this.numValue=level.info.numValue;
-                this.numFamily=level.info.numFamily;
-                this.numSize=level.info.numSize;
-                this.numColor=level.info.numColor;
-                this.numBold=level.info.numBold;
-                this.numItalic=level.info.numItalic;
+                this.fontFamily=level.info.fontFamily;
+                this.fontSize=level.info.fontSize;
+                this.fontColor=level.info.fontColor;
+                this.fontBold=level.info.fontBold;
+                this.fontItalic=level.info.fontItalic;
                 this.align=level.info.align;
                 //下面位数字模式属性
                 this.numOfDigits=level.info.numOfDigits;
@@ -2020,9 +2019,9 @@ ideServices
                 this.symbolMode=level.info.symbolMode;
                 this.frontZeroMode=level.info.frontZeroMode;
                 //设置canvas的宽度和高度
-                if(this.numOfDigits&&this.numSize){
-                    this.setWidth((this.numOfDigits+1)*this.numSize);
-                    this.setHeight(this.numSize*1.5);
+                if(this.numOfDigits&&this.fontSize){
+                    this.setWidth(this.numOfDigits*this.fontSize);
+                    this.setHeight(this.fontSize*1.5);
                 }
 
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
@@ -2062,22 +2061,22 @@ ideServices
                     if(arg.numValue){
                         self.numValue=arg.numValue;
                     }
-                    if(arg.numFamily){
-                        self.numFamily=arg.numFamily;
+                    if(arg.fontFamily){
+                        self.fontFamily=arg.fontFamily;
                     }
-                    if(arg.numSize){
-                        self.numSize=arg.numSize;
+                    if(arg.fontSize){
+                        self.fontSize=arg.fontSize;
                     }
-                    if(arg.numBold){
-                        self.numBold=arg.numBold;
+                    if(arg.fontBold){
+                        self.fontBold=arg.fontBold;
                     }
-                    if(arg.numItalic){
-                        self.numItalic=arg.numItalic;
+                    if(arg.hasOwnProperty('fontItalic')){
+                        self.fontItalic=arg.fontItalic;
                     }
                     if(arg.numOfDigits){
                         self.numOfDigits=arg.numOfDigits;
                     }
-                    if(arg.decimalCount||arg.decimalCount==0){
+                    if(arg.hasOwnProperty('decimalCount')){
                         self.decimalCount=arg.decimalCount;
                     }
                     if(arg.symbolMode){
@@ -2094,9 +2093,9 @@ ideServices
                     }
 
                     //设置宽高
-                    if(self.numOfDigits&&self.numSize){
-                        self.setWidth(self.numOfDigits*self.numSize);
-                        self.setHeight(self.numSize*1.5);
+                    if(self.numOfDigits&&self.fontSize){
+                        self.setWidth(self.numOfDigits*self.fontSize);
+                        self.setHeight(self.fontSize*1.5);
                     }
 
                     var _callback=arg.callback;
@@ -2135,9 +2134,7 @@ ideServices
                     //offCtx.save();
 
                     offCtx.globalCompositeOperation = "destination-in";
-                    //var numString = this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
-                    //offCtx.fillStyle = this.numColor;
-                    offCtx.font =this.numItalic + " " + this.numBold + " " + this.numSize + "px" + " " + this.numFamily;
+                    offCtx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
                     offCtx.textAlign = this.align;
 
                     offCtx.textBaseline='middle';//设置数字垂直居中
@@ -5388,35 +5385,32 @@ ideServices
                 }
             };
 
-            if(_option.hasOwnProperty('buttonText')){
-                selectObj.level.info.buttonText=_option.buttonText;
-                arg.buttonText=_option.buttonText;
+            if(_option.hasOwnProperty('text')){
+                selectObj.level.info.text=_option.text;
+                arg.text=_option.text;
             }
-            if(_option.buttonFontFamily){
-                selectObj.level.info.buttonFontFamily=_option.buttonFontFamily;
-                arg.buttonFontFamily=_option.buttonFontFamily;
+            if(_option.fontFamily){
+                selectObj.level.info.fontFamily=_option.fontFamily;
+                arg.fontFamily=_option.fontFamily;
             }
-            if(_option.buttonFontSize){
-                selectObj.level.info.buttonFontSize=_option.buttonFontSize;
-                arg.buttonFontSize=_option.buttonFontSize;
+            if(_option.fontSize){
+                selectObj.level.info.fontSize=_option.fontSize;
+                arg.fontSize=_option.fontSize;
             }
-            if(_option.buttonFontColor){
-                selectObj.level.info.buttonFontColor=_option.buttonFontColor;
-                arg.buttonFontColor=_option.buttonFontColor;
+            if(_option.fontColor){
+                selectObj.level.info.fontColor=_option.fontColor;
+                arg.fontColor=_option.fontColor;
             }
-            if(_option.buttonFontBold){
-                selectObj.level.info.fontBold=_option.buttonFontBold;
-                selectObj.level.info.boldBtnToggle=_option.boldBtnToggle;
-                arg.buttonFontBold=_option.buttonFontBold;
+            if(_option.fontBold){
+                selectObj.level.info.fontBold=_option.fontBold;
+                arg.fontBold=_option.fontBold;
             }
-            if(_option.buttonFontItalic){
-                selectObj.level.info.fontItalic=_option.buttonFontItalic;
-                selectObj.level.info.italicBtnToggle=_option.italicBtnToggle;
-                arg.buttonFontItalic=_option.buttonFontItalic;
+            if(_option.hasOwnProperty('fontItalic')){
+                selectObj.level.info.fontItalic=_option.fontItalic;
+                arg.fontItalic=_option.fontItalic;
             }
             if(_option.fontName){
-                var tempFontName = _option.fontName;
-                selectObj.level.info.fontName=tempFontName;
+                selectObj.level.info.fontName=_option.fontName;
             }
 
             selectObj.target.fire('changeButtonText',arg);
@@ -5731,29 +5725,25 @@ ideServices
             };
 
             //下面是数字字体属性，如字体，字体大小，粗体，斜体
-            if(_option.numFamily){
-                var tempNumFamily=_option.numFamily;
-                selectObj.level.info.numFamily=tempNumFamily;
-                arg.numFamily=tempNumFamily;
+            if(_option.fontFamily){
+                var tempFontFamily=_option.fontFamily;
+                selectObj.level.info.fontFamily=tempFontFamily;
+                arg.fontFamily=tempFontFamily;
             }
-            if(_option.numSize){
-                var tempNumSize=_option.numSize;
-                selectObj.level.info.numSize=tempNumSize;
-                arg.numSize=tempNumSize;
+            if(_option.fontSize){
+                var tempFontSize=_option.fontSize;
+                selectObj.level.info.fontSize=tempFontSize;
+                arg.fontSize=tempFontSize;
             }
-            if(_option.numBold){
-                var tempNumBold=_option.numBold;
-                var tempBoldBtnToggle=_option.boldBtnToggle;
-                selectObj.level.info.numBold=tempNumBold;
-                selectObj.level.info.boldBtnToggle=tempBoldBtnToggle;
-                arg.numBold=tempNumBold;
+            if(_option.fontBold){
+                var tempFontBold=_option.fontBold;
+                selectObj.level.info.fontBold=tempFontBold;
+                arg.fontBold=tempFontBold;
             }
-            if(_option.numItalic){
-                var tempNumItalic=_option.numItalic;
-                var tempItalicBtnToggle=_option.italicBtnToggle;
-                selectObj.level.info.numItalic=tempNumItalic;
-                selectObj.level.info.italicBtnToggle=tempItalicBtnToggle;
-                arg.numItalic=tempNumItalic;
+            if(_option.hasOwnProperty('fontItalic')){
+                var tempFontItalic=_option.fontItalic;
+                selectObj.level.info.fontItalic=tempFontItalic;
+                arg.fontItalic=tempFontItalic;
             }
 
             //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式

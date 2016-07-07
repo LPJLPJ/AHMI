@@ -629,15 +629,15 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
     function enterButtonText(e){
         if(e.keyCode==13){
-            if ($scope.component.object.level.info.buttonText==initObject.level.info.buttonText){
+            if ($scope.component.object.level.info.text==initObject.level.info.text){
                 return;
             }
             var option = {
-                buttonText:$scope.component.object.level.info.buttonText
+                text:$scope.component.object.level.info.text
             };
 
+            console.log('keke');
             var oldOperate=ProjectService.SaveCurrentOperate();
-
             ProjectService.ChangeAttributeButtonText(option, function () {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
@@ -645,11 +645,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
 
     function changeButtonFontFamily(){
-        if($scope.component.object.level.info.buttonFontFamily==initObject.level.info.buttonFontFamily) {
+        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
             return;
         }
         var option = {
-            buttonFontFamily:$scope.component.object.level.info.buttonFontFamily
+            fontFamily:$scope.component.object.level.info.fontFamily
         };
 
         var oldOperate=ProjectService.SaveCurrentOperate();
@@ -658,47 +658,38 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         })
     }
     function setButtonFontBold(){
-        $scope.component.object.level.info.boldBtnToggle=!$scope.component.object.level.info.boldBtnToggle;
-
-        if($scope.component.object.level.info.boldBtnToggle){
-            $scope.component.object.level.info.buttonFontBold="bold";
-        }else{
-            $scope.component.object.level.info.buttonFontBold="100";
+        if($scope.component.object.level.info.fontBold=="100"){
+            $scope.component.object.level.info.fontBold="bold";
+        }else if($scope.component.object.level.info.fontBold=="bold"){
+            $scope.component.object.level.info.fontBold="100";
         }
         var option = {
-            buttonFontBold: $scope.component.object.level.info.buttonFontBold,
-            boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
+            fontBold:$scope.component.object.level.info.fontBold
         };
-
-        var oldOperate=ProjectService.SaveCurrentOperate();
         ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
     function setButtonFontItalic(){
-        $scope.component.object.level.info.italicBtnToggle=!$scope.component.object.level.info.italicBtnToggle;
-        if($scope.component.object.level.info.italicBtnToggle){
-            $scope.component.object.level.info.buttonFontItalic="italic";
-
-        }else{
-            $scope.component.object.level.info.buttonFontItalic=" ";
+        if($scope.component.object.level.info.fontItalic==""){
+            $scope.component.object.level.info.fontItalic="italic";
+        }else if($scope.component.object.level.info.fontItalic=="italic"){
+            $scope.component.object.level.info.fontItalic="";
         }
-        var option={
-            buttonFontItalic:$scope.component.object.level.info.buttonFontItalic,
-            italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
+        var option = {
+            fontItalic:$scope.component.object.level.info.fontItalic
         };
-        var oldOperate=ProjectService.SaveCurrentOperate();
         ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
     function changeButtonFontSize(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.info.buttonFontSize==initObject.level.info.buttonFontSize) {
+            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
                 return;
             }
             var option = {
-                buttonFontSize:$scope.component.object.level.info.buttonFontSize
+                fontSize:$scope.component.object.level.info.fontSize
             };
 
             var oldOperate=ProjectService.SaveCurrentOperate();
@@ -709,11 +700,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
     function changeButtonFontColor(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.info.buttonFontColor==initObject.level.info.buttonFontColor) {
+            if($scope.component.object.level.info.fontColor==initObject.level.info.fontColor) {
                 return;
             }
             var option = {
-                buttonFontColor:$scope.component.object.level.info.buttonFontColor
+                fontColor:$scope.component.object.level.info.fontColor
             };
 
             var oldOperate=ProjectService.SaveCurrentOperate();
@@ -1443,11 +1434,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
     //下面是数字框的方法
     function changeNumFamily(){
-        if($scope.component.object.level.info.numFamily==initObject.level.info.numFamily) {
+        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
             return;
         }
         var option = {
-            numFamily:$scope.component.object.level.info.numFamily
+            fontFamily:$scope.component.object.level.info.fontFamily
         };
 
         var oldOperate=ProjectService.SaveCurrentOperate();
@@ -1457,65 +1448,40 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
 
     function setBoldNum(){
-        $scope.component.object.level.info.boldBtnToggle=!$scope.component.object.level.info.boldBtnToggle;
-
-        if($scope.component.object.level.info.boldBtnToggle){
-            $scope.component.object.level.info.numBold="bold";
-            var option = {
-                numBold: $scope.component.object.level.info.numBold,
-                boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }else{
-            $scope.component.object.level.info.numBold="100";
-            var option = {
-                numBold: $scope.component.object.level.info.numBold,
-                boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
+        if($scope.component.object.level.info.fontBold=="100"){
+            $scope.component.object.level.info.fontBold="bold";
+        }else if($scope.component.object.level.info.fontBold=="bold"){
+            $scope.component.object.level.info.fontBold="100";
         }
+        var option = {
+            fontBold:$scope.component.object.level.info.fontBold
+        };
+        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
     function setItalicNum(){
-        $scope.component.object.level.info.italicBtnToggle=!$scope.component.object.level.info.italicBtnToggle;
-        if($scope.component.object.level.info.italicBtnToggle){
-            $scope.component.object.level.info.numItalic="italic";
-            var option={
-                numItalic:$scope.component.object.level.info.numItalic,
-                italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
-            }
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }else{
-            $scope.component.object.level.info.numItalic=" ";
-            var option={
-                numItalic:$scope.component.object.level.info.numItalic,
-                italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
-            };
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
+        if($scope.component.object.level.info.fontItalic==""){
+            $scope.component.object.level.info.fontItalic="italic";
+        }else if($scope.component.object.level.info.fontItalic=="italic"){
+            $scope.component.object.level.info.fontItalic="";
         }
+        var option = {
+            fontItalic:$scope.component.object.level.info.fontItalic
+        };
+        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
     function changeNumSize(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.info.numSize==initObject.level.info.numSize) {
+            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
                 return;
             }
             var option = {
-                numSize:$scope.component.object.level.info.numSize
+                fontSize:$scope.component.object.level.info.fontSize
             };
 
             var oldOperate=ProjectService.SaveCurrentOperate();
@@ -1684,8 +1650,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             return;
         }
         var option={
-            align:$scope.component.object.level.info.align,
-        }
+            align:$scope.component.object.level.info.align
+        };
         ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
 
