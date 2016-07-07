@@ -180,8 +180,6 @@ ideServices
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
                 fontItalic:'',
-                boldBtnToggle:false,
-                italicBtnToggle:false
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -621,7 +619,7 @@ ideServices
                 fontFamily:'Arial',
                 fontSize:20,
                 fontColor:'rgba(255,255,255,1)',
-                fontAlign:'center'
+                align:'center'
             };
             return {
                 id: Math.random().toString(36).substr(2),

@@ -387,7 +387,7 @@ ideServices
                         self.cursorColor=level.texList[3].slices[0].color;
                         if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
                             self.cursorImageElement=new Image();
-                            self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
+                            self.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
                             self.cursorImageElement.onload=function(){
 
                             }.bind(this);
@@ -462,7 +462,7 @@ ideServices
 
                         }
                         if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2,this.cursorImageElement.width,this.cursorImageElement.height);
+                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                         }
 
                     }else {
@@ -477,7 +477,7 @@ ideServices
                             ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
                         }
                         if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2,this.height/2-this.height*this.progressValue-this.cursorImageElement.height,this.cursorImageElement.width,this.cursorImageElement.height);
+                            ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                         }
                     }
                 }else if(this.progressModeId=='1'){
@@ -490,10 +490,15 @@ ideServices
                         if(this.backgroundImageElement){
                             ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                         }
-
+                        if(this.cursorImageElement){
+                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                        }
                     }else{
                         ctx.fillStyle=progressColor;
                         ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                        if(this.cursorImageElement){
+                            ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                        }
                     }
                 }else if(this.progressModeId=='2'){
                     //脚本进度条，啥也不画！
@@ -1561,9 +1566,10 @@ ideServices
                 }
                 if(this.slideImageElement){
                     if(this.arrange=='horizontal'){
-                        ctx.drawImage(this.slideImageElement,-this.width/2+((this.width-this.slideImageElement.width)*progress),-this.slideImageElement.height/2,this.slideImageElement.width,this.slideImageElement.height);
+                        ctx.drawImage(this.slideImageElement,-this.width/2+((this.width-this.slideImageElement.width/this.scaleX)*progress),-this.slideImageElement.height/(2*this.scaleY),this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
                     }else{
-                        ctx.drawImage(this.slideImageElement,-this.slideImageElement.width/2,this.height/2-(this.height-this.slideImageElement.height)*progress-this.slideImageElement.height,this.slideImageElement.width,this.slideImageElement.height);
+                        console.log(this.width,this.height,this.slideImageElement.width,this.slideImageElement.height);
+                        ctx.drawImage(this.slideImageElement,-this.slideImageElement.width/(2*this.scaleX),this.height/2-this.slideImageElement.height/this.scaleY*(1-progress)-this.height*progress,this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
                     }
                 }
 
@@ -1608,7 +1614,7 @@ ideServices
                 this.fontFamily=level.info.fontFamily;
                 this.fontSize=level.info.fontSize;
                 this.fontColor=level.info.fontColor;
-                this.fontAlign=level.info.fontAlign;
+                this.align=level.info.align;
                 this.initValue=level.info.initValue;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
                     this.imageElement=new Image();
@@ -1674,7 +1680,7 @@ ideServices
                     //显示时间
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
-                    ctx.textAlign=this.fontAlign;
+                    ctx.textAlign=this.align;
                     ctx.textBaseline='middle';
                     ctx.fillText(arrTime.join(":"),0,0);
                     ctx.scale(this.scaleX,this.scaleY);
@@ -1682,7 +1688,7 @@ ideServices
                     //显示日期
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
-                    ctx.textAlign=this.fontAlign;
+                    ctx.textAlign=this.align;
                     ctx.textBaseline='middle';
                     ctx.fillText(arrDate.join("/"),0,0);
                     ctx.scale(this.scaleX,this.scaleY);
