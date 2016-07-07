@@ -79,10 +79,16 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         }
     }
 
+    function readLocalProjectData() {
+        var url = window.location.href;
+        var projectId = url.split('?')[1].split('=')[1];
+        //load projectId project
+        var path = require('path');
+        var fs = require('fs');
+    }
 
     function readProjectData(){
         var url = window.location.href
-        console.log('url ',url)
         var url_splices = url.split('/')
         //console.log(url_splices)
         var id = ''
