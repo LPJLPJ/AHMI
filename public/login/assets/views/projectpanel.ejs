@@ -1,7 +1,7 @@
 <li data-project=<%= JSON.stringify(project) %>  class="projectpanel">
     <div class="img">
         <i class="projectdelete iconfont">&#xe607;</i>
-        <a href="#"><img src="/public/login/assets/img/pro_1.png"></a>
+        <a href="#"><img src=<%= project.thumbnail||"../../public/login/assets/img/pro_1.png" %> /></a>
         <!--<div class="img_bot">-->
         <!--<div class="img_bg">haha</div>-->
         <!--<div class="img_bot_test">-->

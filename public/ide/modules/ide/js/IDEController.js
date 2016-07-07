@@ -66,12 +66,23 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         $scope.leftShown=true;
         $scope.rightShown=true;
         $scope.bottomShown=true;
+
+        try {
+            var os = require('os');
+            if (os){
+
+                window.local = true;
+
+            }
+        }catch (e){
+            window.local = false;
+        }
     }
 
 
     function readProjectData(){
         var url = window.location.href
-        //console.log(url)
+        console.log('url ',url)
         var url_splices = url.split('/')
         //console.log(url_splices)
         var id = ''
@@ -82,7 +93,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 break
             }
         }
-        console.log(id)
         //window.localStorage.setItem('projectId',id);
         ResourceService.setResourceUrl('/project/'+id+'/resources/')
 
@@ -151,7 +161,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 //console.log('获取信息失败');
                 //
                 //readCache();
-                console.log(data)
+
                 globalProject = GlobalService.getBlankProject()
                 globalProject.projectId = id;
                 //change resolution
@@ -169,24 +179,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 globalProject.maxSize = data.maxSize;
                 console.log('globalProject',globalProject)
 
-                // var resourceList = globalProject.resourceList;
-                // var count = resourceList.length;
-                // for (var i=0;i<resourceList.length;i++){
-                //     var img = new Image();
-                //     img.src = resourceList.src;
-                //     img.onload = function () {
-                //         count = count - 1;
-                //         if (count<=0){
-                //             // toastr.info('loaded');
-                //             TemplateProvider.saveProjectFromGlobal(globalProject);
-                //             ProjectService.saveProjectFromGlobal(globalProject, function () {
-                //                 syncServices(globalProject)
-                //                 $scope.$broadcast('GlobalProjectReceived');
-                //
-                //             });
-                //         }
-                //     }.bind(this);
-                // }
 
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -196,8 +188,31 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 });
             }
         }).error(function (msg) {
-            console.log(msg);
-            readCache();
+            toastr.info('读取错误');
+            var globalProject = GlobalService.getBlankProject()
+            globalProject.projectId = id;
+            //change resolution
+            var resolution = '800*480'.split('*').map(function (r) {
+                return Number(r)
+            })
+            globalProject.initSize = {
+                width : resolution[0],
+                height :resolution[1]
+            }
+            globalProject.currentSize = {
+                width : resolution[0],
+                height :resolution[1]
+            }
+            globalProject.maxSize = 100*1024*1024;
+            console.log('globalProject',globalProject)
+
+
+            TemplateProvider.saveProjectFromGlobal(globalProject);
+            ProjectService.saveProjectFromGlobal(globalProject, function () {
+                syncServices(globalProject)
+                $scope.$broadcast('GlobalProjectReceived');
+
+            });
 
         })
 
@@ -211,7 +226,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
                     // intervalSave();
 
-                },2000)
+                },200)
             }
         })
     }
