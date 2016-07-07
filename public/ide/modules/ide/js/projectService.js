@@ -1872,7 +1872,7 @@ ideServices
                     if(arg.fontBold){
                         self.fontBold=arg.fontBold;
                     }
-                    if(arg.fontItalic){
+                    if(arg.hasOwnProperty('fontItalic')){
                         self.fontItalic=arg.fontItalic;
                     }
 
@@ -5665,21 +5665,16 @@ ideServices
             }
             if(_option.fontBold){
                 var tempFontBold=_option.fontBold;
-                var tempBoldBtnToggle=_option.boldBtnToggle;
                 selectObj.level.info.fontBold=tempFontBold;
-                selectObj.level.info.boldBtnToggle=tempBoldBtnToggle;
                 arg.fontBold=tempFontBold;
             }
-            if(_option.fontItalic){
+            if(_option.hasOwnProperty('fontItalic')){
                 var tempFontItalic=_option.fontItalic;
-                var tempItalicBtnToggle=_option.italicBtnToggle;
                 selectObj.level.info.fontItalic=tempFontItalic;
-                selectObj.level.info.italicBtnToggle=tempItalicBtnToggle;
                 arg.fontItalic=tempFontItalic;
             }
             if(_option.fontName){
-                var tempFontName = _option.fontName;
-                selectObj.level.info.fontName=tempFontName;
+                selectObj.level.info.fontName=_option.fontName;
             }
 
             selectObj.target.fire('changeTextContent',arg);
