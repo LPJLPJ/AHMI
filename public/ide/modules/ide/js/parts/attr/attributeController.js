@@ -550,24 +550,17 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             };
 
             oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
 
-        if(op.name=='component.object.level.info.buttonFontColor'){
-            console.log('enter');
-            if(initObject.level.info.buttonFontColor==op.value) {
-                return;
+            var selectObj=ProjectService.getCurrentSelectObject();
+            if(selectObj.type==Type.MyTextArea){
+                ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
+            }else if(selectObj.type==Type.MyButton){
+                ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
             }
-            option = {
-                buttonFontColor:op.value
-            };
-
-            oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
         }
 	}
 
@@ -1282,31 +1275,42 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }
     }
     function setBoldFont(){
-        $scope.component.object.level.info.boldBtnToggle=!$scope.component.object.level.info.boldBtnToggle;
-
-        if($scope.component.object.level.info.boldBtnToggle){
+        //$scope.component.object.level.info.boldBtnToggle=!$scope.component.object.level.info.boldBtnToggle;
+        //
+        //if($scope.component.object.level.info.boldBtnToggle){
+        //    $scope.component.object.level.info.fontBold="bold";
+        //    var option = {
+        //        fontBold: $scope.component.object.level.info.fontBold,
+        //        boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
+        //    }
+        //
+        //    var oldOperate=ProjectService.SaveCurrentOperate();
+        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+        //        $scope.$emit('ChangeCurrentPage',oldOperate);
+        //    })
+        //}else{
+        //    $scope.component.object.level.info.fontBold="100";
+        //    var option = {
+        //        fontBold: $scope.component.object.level.info.fontBold,
+        //        boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
+        //    };
+        //
+        //    var oldOperate=ProjectService.SaveCurrentOperate();
+        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+        //        $scope.$emit('ChangeCurrentPage',oldOperate);
+        //    })
+        //}
+        if($scope.component.object.level.info.fontBold=="100"){
             $scope.component.object.level.info.fontBold="bold";
-            var option = {
-                fontBold: $scope.component.object.level.info.fontBold,
-                boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
-            }
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }else{
+        }else if($scope.component.object.level.info.fontBold=="bold"){
             $scope.component.object.level.info.fontBold="100";
-            var option = {
-                fontBold: $scope.component.object.level.info.fontBold,
-                boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
         }
+        var option = {
+            fontBold:$scope.component.object.level.info.fontBold
+        };
+        ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
 
@@ -1315,28 +1319,39 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
 
     function setItalicFont(){
-        $scope.component.object.level.info.italicBtnToggle=!$scope.component.object.level.info.italicBtnToggle;
-        if($scope.component.object.level.info.italicBtnToggle){
+        //$scope.component.object.level.info.italicBtnToggle=!$scope.component.object.level.info.italicBtnToggle;
+        //if($scope.component.object.level.info.italicBtnToggle){
+        //    $scope.component.object.level.info.fontItalic="italic";
+        //    var option={
+        //        fontItalic:$scope.component.object.level.info.fontItalic,
+        //        italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
+        //    }
+        //    var oldOperate=ProjectService.SaveCurrentOperate();
+        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+        //        $scope.$emit('ChangeCurrentPage',oldOperate);
+        //    })
+        //}else{
+        //    $scope.component.object.level.info.fontItalic=" ";
+        //    var option={
+        //        fontItalic:$scope.component.object.level.info.fontItalic,
+        //        italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
+        //    };
+        //    var oldOperate=ProjectService.SaveCurrentOperate();
+        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+        //        $scope.$emit('ChangeCurrentPage',oldOperate);
+        //    })
+        //}
+        if($scope.component.object.level.info.fontItalic==""){
             $scope.component.object.level.info.fontItalic="italic";
-            var option={
-                fontItalic:$scope.component.object.level.info.fontItalic,
-                italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
-            }
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }else{
-            $scope.component.object.level.info.fontItalic=" ";
-            var option={
-                fontItalic:$scope.component.object.level.info.fontItalic,
-                italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
-            };
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
+        }else if($scope.component.object.level.info.fontItalic=="italic"){
+            $scope.component.object.level.info.fontItalic="";
         }
+        var option = {
+            fontItalic:$scope.component.object.level.info.fontItalic
+        };
+        ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
     function selectCharacterSetByIndex(index){

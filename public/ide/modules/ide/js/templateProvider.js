@@ -266,10 +266,7 @@ ideServices
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
                 fontItalic:"",
-                fontUnderline:null,
-                boldBtnToggle:false,
-                italicBtnToggle:false,
-                underlineBtnToggle:false
+                fontUnderline:null
             };
             return {
                 id: Math.random().toString(36).substr(2),
