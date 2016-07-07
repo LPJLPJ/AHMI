@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <title>个人空间</title>
 
-    <link rel="stylesheet" href="/public/font/iconfont/iconfont.css" type="text/css" />
-    <link href="/public/login/assets/css/bootstrap.css" rel="stylesheet" />
-    <link rel="stylesheet" href="/public/login/assets/css/personalProject.css" type="text/css" />
-    <script src="/public/login/assets/js/jquery-1.10.2.js"></script>
-    <script src="/public/login/assets/js/bootstrap.js"></script>
-    <script src="/public/login/assets/js/ejs_production.js"></script>
-    <script src="/public/login/assets/js/personalProject.js"></script>
+    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
+    <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../public/login/assets/css/personalProject.css" type="text/css" />
+    <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
+    <script src="../../public/login/assets/js/bootstrap.js"></script>
+    <script src="../../public/login/assets/js/ejs_production.js"></script>
+    <script src="../../public/login/assets/js/personalProject.js"></script>
 </head>
 <body>
     <div class="header">
         <div class="header_main">
             <div class="header_main_logo"><a href="/">
-                <img src="/public/login/assets/img/速显微.png" />
+                <img src="../../public/login/assets/img/速显微.png" />
             </a></div>
             <div class="nav">
                 <!--<ul>-->
@@ -29,7 +29,7 @@
                 <!--</ul>-->
             </div>
             <div id="user-icon"   class="dropdown right">
-                <a data-toggle="dropdown"><img src="/public/login/assets/img/Fruit.png" /></a>
+                <a data-toggle="dropdown"><img src="../../public/login/assets/img/Fruit.png" /></a>
 
                 <!--<div id="user-icon-menu" class="menu">-->
                     <!--<a href="/private/info">个人信息</a>-->
@@ -139,7 +139,7 @@
                 <li data-project=<%= JSON.stringify(projects[i].projectInfo) %>  class="projectpanel">
                          <div class="img">
                              <i class="projectdelete iconfont">&#xe607;</i>
-                             <a href="#"><img src=<%= projects[i].thumbnail||"/public/login/assets/img/pro_1.png" %> /></a>
+                             <a href="#"><img src=<%= projects[i].thumbnail||"../../public/login/assets/img/pro_1.png" %> /></a>
                              <!--<div class="img_bot">-->
                                  <!--<div class="img_bg">haha</div>-->
                                  <!--<div class="img_bot_test">-->

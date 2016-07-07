@@ -17,6 +17,43 @@ $(function(){
        deleteProject(curProject,curPanel);
     });
 
+    var local = false;
+    try {
+        var os = require('os');
+        if (os){
+            local = true;
+            console.log('os',os);
+        }
+    }catch (e){
+
+    }
+
+    //render projects
+    if (local){
+        //delte projectPanels
+        
+        // $('.projectpanel').each(function (index,elem) {
+        //     $(elem).remove();
+        // });
+        
+        $('#addproject').siblings().each(function (index,elem) {
+            $(elem).remove();
+        });
+
+        //load projects
+        var projects = [];
+        
+        
+        
+        
+        var addProjectButton =  $('#addproject');
+        for(var i=projects.length-1;i>0;i--){
+            var newProject = projects[i];
+            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
+            addProjectButton.after(html);
+        }
+    }
+    
 
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
@@ -31,7 +68,16 @@ $(function(){
         if (curNodeName == 'IMG'){
             //img
             //open in new window
-            window.open('/project/'+project._id+'/editor')
+            var targetUrl = '';
+            if (local){
+
+                targetUrl = '../ide/index.html?project_id='+project._id;
+            }else{
+                targetUrl = '/project/'+project._id+'/editor';
+            }
+
+            window.open(targetUrl);
+
         }else if (curNodeName == 'SPAN'){
             //span
             //show modal
@@ -83,12 +129,12 @@ $(function(){
         var op = $('#modal-ok').html()
         console.log(op)
         if (op == '确认'){
-            updateProject(e)
+            updateProject(e,local)
         }else{
-            createProject(e)
+            createProject(e,local)
         }
     }
-    function createProject(e) {
+    function createProject(e,local) {
         console.log('create')
         var project = {}
         var title = $('#basicinfo-title')
@@ -99,18 +145,25 @@ $(function(){
             project.name = title.val().trim()
             project.resolution = resolution.val().trim()
 
-            $.ajax({
-                type:'POST',
-                url:'/project/create',
-                data:project,
-                success: function (data, status, xhr) {
-                    var newProject = JSON.parse(data)
-                    addNewProject(newProject)
-                },
-                error: function (err, status, xhr) {
-                    console.log(err)
-                }
-            })
+            if (local){
+                project.createdTime = Date.now();
+                project.lastModified =  Date.now();
+                project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
+                addNewProject(project);
+            }else{
+                $.ajax({
+                    type:'POST',
+                    url:'/project/create',
+                    data:project,
+                    success: function (data, status, xhr) {
+                        var newProject = JSON.parse(data)
+                        addNewProject(newProject)
+                    },
+                    error: function (err, status, xhr) {
+                        console.log(err)
+                    }
+                })
+            }
         }
 
     }
@@ -118,24 +171,30 @@ $(function(){
 
     function deleteProject(project,curPanel){
         console.log('delete')
-        $.ajax({
-            type:'POST',
-            url:'/project/delete',
-            data:{projectId:project._id},
-            success:function (data, status, xhr){
-                //delete ok
-                console.log(data)
-                curPanel.remove()
+        if (local){
+            console.log('project id',project._id);
+            curPanel.remove()
+        }else{
+            $.ajax({
+                type:'POST',
+                url:'/project/delete',
+                data:{projectId:project._id},
+                success:function (data, status, xhr){
+                    //delete ok
+                    console.log(data)
+                    curPanel.remove()
 
-            },
-            error: function (err, status, xhr) {
-                console.log(err)
-                alert('删除失败')
-            }
-        })
+                },
+                error: function (err, status, xhr) {
+                    console.log(err)
+                    alert('删除失败')
+                }
+            })
+        }
+
     }
 
-    function updateProject(e) {
+    function updateProject(e,local) {
         var curPanel = curSelectedPanel
         var project = curPanel.attr('data-project')
         project = JSON.parse(project)
@@ -147,31 +206,42 @@ $(function(){
             //changed
             project.name = title.val().trim()
             project.resolution = resolution.val().trim()
-            $.ajax({
-                type:'POST',
-                url:'/project/'+project._id+'/basicinfo',
-                data:project,
-                success: function (data, status, xhr) {
-                    //update success
-                    console.log('success',data)
-                    //update panel
-                    var html = new EJS({url:'/public/login/assets/views/projectpanel.ejs'}).render({project:project});
+            var updateSuccess = false;
+            if (local){
+                updateSuccess = true;
+            }else{
+                $.ajax({
+                    type:'POST',
+                    url:'/project/'+project._id+'/basicinfo',
+                    data:project,
+                    success: function (data, status, xhr) {
+                        //update success
+                        console.log('success',data)
+                        //update panel
+                        updateSuccess = true;
 
-                    curPanel.replaceWith(html)
-                },
-                error: function (err, status, xhr) {
-                    //update error
-                    console.log('err',err)
-                    alert('修改失败')
-                }
-            })
+                    },
+                    error: function (err, status, xhr) {
+                        //update error
+                        console.log('err',err)
+                        alert('修改失败')
+                    }
+                })
+            }
+
+            if (updateSuccess){
+                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project});
+
+                curPanel.replaceWith(html)
+            }
+
         }
     }
 
 
     function addNewProject(newProject){
         console.log(newProject)
-        var html = new EJS({url:'/public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
+        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
         console.log(html)
         $('#addproject').after(html)
     }
