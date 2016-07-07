@@ -171,7 +171,7 @@ ideServices
 
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
 
             }
@@ -522,7 +522,7 @@ ideServices
                     };
                 }
                 catch(err){
-                    console.log('错误描述',err.description)
+                    console.log('错误描述',err)
                 }
 
             }
@@ -665,7 +665,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
 
             }
@@ -922,7 +922,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -1082,7 +1082,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -1172,7 +1172,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -1253,7 +1253,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -1375,7 +1375,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -1523,7 +1523,7 @@ ideServices
                     };
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -1637,7 +1637,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 };
             }
         });
@@ -1765,7 +1765,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -1925,7 +1925,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -2156,7 +2156,7 @@ ideServices
                     ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
@@ -2315,7 +2315,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
 
             }
@@ -2607,7 +2607,7 @@ ideServices
                     }
                 }
                 catch(err){
-                    console.log('错误描述',err.description);
+                    console.log('错误描述',err);
                 }
             }
         });
