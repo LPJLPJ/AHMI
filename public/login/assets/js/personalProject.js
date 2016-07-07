@@ -11,7 +11,7 @@ $(function(){
     var curPanel = null;
     var closeModal = $('#exampleModal');
     var curProject = null;
-
+    var fs,path,mkdir,__dirname;
     var closeModalConfirmButton = $('#closeModalConfirm');
     closeModalConfirmButton.on('click',function (e) {
        deleteProject(curProject,curPanel);
@@ -23,9 +23,29 @@ $(function(){
         if (os){
             local = true;
             console.log('os',os);
+
         }
     }catch (e){
 
+    }
+
+    if (local){
+        //create localproject folder
+        fs = require('fs');
+        path = require('path');
+        mkdir = require('mkdir-p');
+        __dirname = global.__dirname;
+        console.log(__dirname)
+        var stats;
+        var localprojectpath = path.join(__dirname,'localproject');
+        try {
+            stats = fs.statSync(localprojectpath);
+            if (!stats.isDirectory()){
+                mkdir.sync(localprojectpath);
+            }
+        }catch (e){
+            mkdir.sync(localprojectpath);
+        }
     }
 
     //render projects
@@ -35,22 +55,78 @@ $(function(){
         // $('.projectpanel').each(function (index,elem) {
         //     $(elem).remove();
         // });
-        
+
         $('#addproject').siblings().each(function (index,elem) {
             $(elem).remove();
         });
 
         //load projects
-        var projects = [];
+        var projects = readLocalProjects().map(function (raw) {
+            return JSON.parse(raw);
+        });
         
-        
+        console.log(projects);
         
         
         var addProjectButton =  $('#addproject');
-        for(var i=projects.length-1;i>0;i--){
+        for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
+
             addProjectButton.after(html);
+        }
+    }
+
+    function readLocalProjects() {
+        var localprojectpath = path.join(__dirname,'localproject');
+        var stats = fs.statSync(localprojectpath);
+        var projects=[];
+        if (stats&&stats.isDirectory()){
+            var projectNames = fs.readdirSync(localprojectpath);
+            for (var i=0;i<projectNames.length;i++){
+                var curProjectDir =  path.join(localprojectpath,projectNames[i]);
+                var curProject = readSingleFile(path.join(curProjectDir,'project.json'),true);
+                if (curProject){
+                    projects.push(curProject);
+                }
+            }
+        }
+        return projects;
+    }
+
+    function readSingleFile(filePath,check) {
+        if (check){
+            try{
+                var stats = fs.statSync(filePath);
+                if (stats&&stats.isFile()){
+                    return fs.readFileSync(filePath,'utf-8');
+                }else{
+                    return null;
+                }
+            }catch (e){
+                return null;
+            }
+
+
+        }else{
+            return fs.readFileSync(filePath,'utf-8');
+        }
+    }
+
+    //rm -rf
+    function rmdir(dirpath) {
+        var stats = fs.statSync(dirpath);
+        if (stats ){
+            if (stats.isDirectory()){
+                var files = fs.readdirSync(dirpath);
+                for (var i=0;i<files.length;i++){
+                    var curPath = path.join(dirpath,String(files[i]));
+                    rmdir(curPath);
+                }
+                fs.rmdirSync(dirpath);
+            }else if (stats.isFile()){
+                fs.unlinkSync(dirpath);
+            }
         }
     }
     
@@ -149,7 +225,22 @@ $(function(){
                 project.createdTime = Date.now();
                 project.lastModified =  Date.now();
                 project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
-                addNewProject(project);
+                var localprojectpath = path.join(__dirname,'localproject',String(project._id));
+                var localresourcepath = path.join(localprojectpath,'resources')
+                console.log(localprojectpath);
+
+                try {
+                    mkdir.sync(localresourcepath);
+                    //save init project.json
+                    var filePath = path.join(localprojectpath,'project.json')
+                    fs.writeFileSync(filePath,JSON.stringify(project));
+                    addNewProject(project);
+                }catch (e){
+                    console.log('write error')
+                }
+
+
+
             }else{
                 $.ajax({
                     type:'POST',
@@ -173,7 +264,15 @@ $(function(){
         console.log('delete')
         if (local){
             console.log('project id',project._id);
+            var projectdirpath = path.join(__dirname,'localproject',String(project._id));
+            try{
+                rmdir(projectdirpath);
+            }catch (e){
+                console.log(e);
+            }
+
             curPanel.remove()
+
         }else{
             $.ajax({
                 type:'POST',
@@ -208,6 +307,8 @@ $(function(){
             project.resolution = resolution.val().trim()
             var updateSuccess = false;
             if (local){
+                var projectPath = path.join(__dirname,'localproject',String(project._id),'project.json');
+                fs.writeFileSync(projectPath,JSON.stringify(project));
                 updateSuccess = true;
             }else{
                 $.ajax({
