@@ -31,7 +31,7 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
             initConfigure(false,2,widgetInfo.tex);
             break;
         case Type.MyProgress:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,1,widgetInfo.tex);
             break;
         case Type.MySlide:
             initConfigure(true,2,widgetInfo.tex);
@@ -59,6 +59,11 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
             break;
         case Type.MySwitch:
             initConfigure(false,1,widgetInfo.tex);
+            break;
+        case Type.MyRotateImg:
+            initConfigure(false,1,widgetInfo.tex);
+            break;
+        case Type.MySlideBlock(false,2,widgetInfo.tex):
             break;
         default:
             initConfigure(true,1,widgetInfo.tex);
