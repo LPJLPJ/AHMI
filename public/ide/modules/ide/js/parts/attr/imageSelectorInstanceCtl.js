@@ -63,7 +63,8 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
         case Type.MyRotateImg:
             initConfigure(false,1,widgetInfo.tex);
             break;
-        case Type.MySlideBlock(false,2,widgetInfo.tex):
+        case Type.MySlideBlock:
+            initConfigure(false,1,widgetInfo.tex);
             break;
         default:
             initConfigure(true,1,widgetInfo.tex);
