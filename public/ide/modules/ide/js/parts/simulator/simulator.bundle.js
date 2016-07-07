@@ -20446,7 +20446,7 @@
 	                        break;
 	                    case 'horizontal':
 	                    default:
-	                        console.log(slideRatio, curScale);
+	                        // console.log(slideRatio,curScale);
 	                        slideRatio = (width - slideImg.width) * 1.0 / width;
 
 	                        this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
@@ -21308,7 +21308,7 @@
 	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	        }
 	        widget.curValue = curValue;
-	        console.log(curValue, widget.info);
+	        // console.log(curValue,widget.info);
 	    },
 	    handlePress: function (e) {
 	        // console.log(e);

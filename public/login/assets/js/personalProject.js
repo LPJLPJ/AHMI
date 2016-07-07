@@ -225,6 +225,7 @@ $(function(){
                 project.createdTime = Date.now();
                 project.lastModified =  Date.now();
                 project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
+                project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(__dirname,'localproject',String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources')
                 console.log(localprojectpath);

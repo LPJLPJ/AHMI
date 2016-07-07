@@ -27,7 +27,7 @@
 
 
         function initUserInterface(){
-
+            console.log('initing stage contrller')
             $scope.component={
                 out:{
                     toolShow:false
