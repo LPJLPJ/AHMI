@@ -174,12 +174,12 @@ ideServices
                 originX: 'center', originY: 'center',
                 arrange:true,            //true:横向 false:竖向
 
-                buttonText:'button',
-                buttonFontFamily:"Arial",
-                buttonFontSize:20,
-                buttonFontColor:'rgba(0,0,0,1)',
-                buttonFontBold:"100",
-                buttonFontItalic:'',
+                text:'button',
+                fontFamily:"Arial",
+                fontSize:20,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:'',
                 boldBtnToggle:false,
                 italicBtnToggle:false
             };
@@ -458,34 +458,6 @@ ideServices
             }
         };
 
-        this.getDefaultNumber= function () {
-            var subLayerNode=CanvasService.getSubLayerNode();
-
-            var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-
-
-                left: 0, top: 0,
-                originX: 'center', originY: 'center',
-                minValue:0,maxValue:100,
-                lowAlarmValue:0,highAlarmValue:100,
-                noInit:'NO',
-                initValue:0
-            };
-            return {
-                id: Math.random().toString(36).substr(2),
-                info: info,
-                name: 'NewNumber',
-                type: Type.MyNumber,
-                expand:true,
-                url:'',
-                zIndex:0,
-                texList:[]
-
-            }
-        };
-
         this.getDefaultNum = function(){
             var subLayerNode = CanvasService.getSubLayerNode();
             var info={
@@ -506,13 +478,11 @@ ideServices
 
                 arrange:true,         //true:横向 false:竖向
                 numValue:1,
-                numFamily:'Arial',
-                numSize:30,
-                numColor:'rgba(0,0,0,1)',
-                numBold:"100",
-                numItalic:"",
-                boldBtnToggle:false,
-                italicBtnToggle:false
+                fontFamily:'Arial',
+                fontSize:30,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:""
             };
             return {
                 id: Math.random().toString(36).substr(2),
