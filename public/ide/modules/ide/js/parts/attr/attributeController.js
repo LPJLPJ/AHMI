@@ -628,8 +628,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             var option = {
                 text:$scope.component.object.level.info.text
             };
-
-            console.log('keke');
+            
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeButtonText(option, function () {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
