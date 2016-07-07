@@ -133,42 +133,46 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                try{
+                    ctx.fillStyle =this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
 
-                ctx.fillStyle =this.backgroundColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height );
+                    var currentLayer=getCurrentLayer();
 
-                var currentLayer=getCurrentLayer();
+                    if (currentLayer&&scalingOperate.scaling&&scalingOperate.objId==this.id){
+                        this.widgetImgs=[];
+                        var layerNode=getFabricObject(currentLayer.id);
 
-                if (currentLayer&&scalingOperate.scaling&&scalingOperate.objId==this.id){
-                    this.widgetImgs=[];
-                    var layerNode=getFabricObject(currentLayer.id);
+                        var angle=layerNode.getAngle()*Math.PI/180;
+                        var sin=Math.sin(angle);
+                        var cos=Math.cos(angle);
+                        var deltaLeft=this.initPosition.left-this.getLeft();
+                        var deltaTop=this.initPosition.top-this.getTop();
 
-                    var angle=layerNode.getAngle()*Math.PI/180;
-                    var sin=Math.sin(angle);
-                    var cos=Math.cos(angle);
-                    var deltaLeft=this.initPosition.left-this.getLeft();
-                    var deltaTop=this.initPosition.top-this.getTop();
+                        this.backgroundImg.width=this.width/layerNode.getScaleX()*this.initScale.X;
+                        this.backgroundImg.height=this.height/layerNode.getScaleY()*this.initScale.Y;
 
-                    this.backgroundImg.width=this.width/layerNode.getScaleX()*this.initScale.X;
-                    this.backgroundImg.height=this.height/layerNode.getScaleY()*this.initScale.Y;
+                        this.backgroundImg.top=(-sin*deltaLeft+cos*deltaTop)/layerNode.getScaleY()-this.height/2;
+                        this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
 
-                    this.backgroundImg.top=(-sin*deltaLeft+cos*deltaTop)/layerNode.getScaleY()-this.height/2;
-                    this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
+                    }
+
+
+                    ctx.drawImage(this.backgroundImg.element,
+                        this.backgroundImg.left,
+                        this.backgroundImg.top,
+
+                        this.backgroundImg.width,
+                        this.backgroundImg.height);
 
                 }
-
-
-                ctx.drawImage(this.backgroundImg.element,
-                    this.backgroundImg.left,
-                    this.backgroundImg.top,
-
-                    this.backgroundImg.width,
-                    this.backgroundImg.height);
-
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
 
             }
         });
@@ -436,85 +440,90 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                if(this.progressModeId=='0'){
-                    //普通进度条
-                    ctx.fillStyle=this.backgroundColor;
-                    ctx.fillRect(
-                        -this.width / 2,
-                        -this.height / 2,
-                        this.width,
-                        this.height
-                    );
-                    if (this.backgroundImageElement){
-                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                    }
-
-                    if (this.arrange=='horizontal'){
-                        ctx.fillStyle=this.progressColor;
+                try{
+                    if(this.progressModeId=='0'){
+                        //普通进度条
+                        ctx.fillStyle=this.backgroundColor;
                         ctx.fillRect(
                             -this.width / 2,
                             -this.height / 2,
-                            this.width*this.progressValue,
+                            this.width,
                             this.height
                         );
-                        if (this.progressImageElement){
-                            ctx.drawImage(this.progressImageElement, -this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
-
-                        }
-                        if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
-                        }
-
-                    }else {
-                        ctx.fillStyle=this.progressColor;
-                        ctx.fillRect(
-                            -this.width / 2,
-                            this.height / 2-this.height*this.progressValue,
-                            this.width,
-                            this.height*this.progressValue
-                        );
-                        if (this.progressImageElement){
-                            ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
-                        }
-                        if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
-                        }
-                    }
-                }else if(this.progressModeId=='1'){
-                    //变色进度条
-                    var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
-                    //console.log(progressColor);
-                    if(this.arrange=='horizontal'){
-                        ctx.fillStyle=progressColor;
-                        ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
-                        if(this.backgroundImageElement){
+                        if (this.backgroundImageElement){
                             ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                         }
-                        if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
-                        }
-                    }else{
-                        ctx.fillStyle=progressColor;
-                        ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
-                        if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
-                        }
-                    }
-                }else if(this.progressModeId=='2'){
-                    //脚本进度条，啥也不画！
-                }
 
-                //将图片超出canvas的部分裁剪
-                this.clipTo=function(ctx){
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.rect(-this.width / 2,
-                        -this.height / 2,
-                        this.width,
-                        this.height);
-                    ctx.closePath();
-                    ctx.restore();
-                };
+                        if (this.arrange=='horizontal'){
+                            ctx.fillStyle=this.progressColor;
+                            ctx.fillRect(
+                                -this.width / 2,
+                                -this.height / 2,
+                                this.width*this.progressValue,
+                                this.height
+                            );
+                            if (this.progressImageElement){
+                                ctx.drawImage(this.progressImageElement, -this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+
+                            }
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+
+                        }else {
+                            ctx.fillStyle=this.progressColor;
+                            ctx.fillRect(
+                                -this.width / 2,
+                                this.height / 2-this.height*this.progressValue,
+                                this.width,
+                                this.height*this.progressValue
+                            );
+                            if (this.progressImageElement){
+                                ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            }
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+                        }
+                    }else if(this.progressModeId=='1'){
+                        //变色进度条
+                        var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
+                        //console.log(progressColor);
+                        if(this.arrange=='horizontal'){
+                            ctx.fillStyle=progressColor;
+                            ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+                            if(this.backgroundImageElement){
+                                ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                            }
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+                        }else{
+                            ctx.fillStyle=progressColor;
+                            ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+                        }
+                    }else if(this.progressModeId=='2'){
+                        //脚本进度条，啥也不画！
+                    }
+
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+                }
+                catch(err){
+                    console.log('错误描述',err.description)
+                }
 
             }
         });
@@ -639,34 +648,26 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
+                    );
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
 
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -this.width / 2,
-                    -this.height / 2,
-                    this.width,
-                    this.height
-                );
-                if (this.backgroundImageElement){
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    if(this.oscilloscopeImageElement){
+                        ctx.drawImage(this.oscilloscopeImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err.description);
                 }
 
-                //画折线
-                //ctx.save();
-                //ctx.fillStyle='white';
-                //for(var i=0;i<this.arr.length;i++){
-                //    ctx.lineTo(this.arr[i].x,this.arr[i].y);
-                //    ctx.stroke();
-                //    ctx.moveTo(this.arr[i].x,this.arr[i].y);
-                //    ctx.arc(this.arr[i].x,this.arr[i].y,2,0,2*Math.PI);
-                //    ctx.fill();
-                //}
-                //ctx.restore();
-
-
-                if(this.oscilloscopeImageElement){
-                    ctx.drawImage(this.oscilloscopeImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                }
             }
         });
         fabric.MyOscilloscope.fromLevel= function (level, callback,option) {
@@ -857,69 +858,72 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -this.width / 2,
-                    -this.height / 2,
-                    this.width,
-                    this.height
-                );
-                if (this.backgroundImageElement){
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                }
-
-
-                if(this.lightBandImageElement){
-                    //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                    var angle=translateAngle(this.value+this.offsetValue,this.scaleX,this.scaleY);
-                    var minAngle=translateAngle(this.minValue+this.offsetValue,this.scaleX,this.scaleY);
-                    ctx.save();
-                    ctx.beginPath();
-                    var radius=Math.max(this.width,this.height)/2;
-                    ctx.moveTo(0,0);
-                    //如果是逆时针，则反方向旋转
-                    if(this.clockwise=='0'){
-                        minAngle=-minAngle+Math.PI/2;
-                        angle=-angle+Math.PI/2;
-                        ctx.arc(0,0,radius,minAngle,angle,true);
-                    }
-                    else if(this.clockwise=='1'){
-                        minAngle=minAngle+Math.PI/2;
-                        angle=angle+Math.PI/2;
-                        ctx.arc(0,0,radius,minAngle,angle,false);
-                    }
-                    ctx.closePath();
-                    ctx.clip();
-                    ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
-                    ctx.restore();
-                }
-                if (this.pointerImageElement){
-                    ctx.save();
-                    var sqrt2 = Math.sqrt(2);
-                    var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
-                    var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
-                    var angleOfPointer = this.value+this.offsetValue;
-                    if(this.clockwise=='0'){
-                        angleOfPointer=-angleOfPointer;
-                    }
-                    angleOfPointer=angleOfPointer+45;
-                    //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.rotate(angleOfPointer*Math.PI/180);
-                    ctx.scale(this.scaleX,this.scaleY);
-                    ctx.fillStyle=this.pointerColor;
+                try{
+                    ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
-                        0,
-                        0,
-                        pointerImgWidth,
-                        pointerImgHeight
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
                     );
-                    ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
-                    ctx.restore();
-                }
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
 
+
+                    if(this.lightBandImageElement){
+                        //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
+                        var angle=translateAngle(this.value+this.offsetValue,this.scaleX,this.scaleY);
+                        var minAngle=translateAngle(this.minValue+this.offsetValue,this.scaleX,this.scaleY);
+                        ctx.save();
+                        ctx.beginPath();
+                        var radius=Math.max(this.width,this.height)/2;
+                        ctx.moveTo(0,0);
+                        //如果是逆时针，则反方向旋转
+                        if(this.clockwise=='0'){
+                            minAngle=-minAngle+Math.PI/2;
+                            angle=-angle+Math.PI/2;
+                            ctx.arc(0,0,radius,minAngle,angle,true);
+                        }
+                        else if(this.clockwise=='1'){
+                            minAngle=minAngle+Math.PI/2;
+                            angle=angle+Math.PI/2;
+                            ctx.arc(0,0,radius,minAngle,angle,false);
+                        }
+                        ctx.closePath();
+                        ctx.clip();
+                        ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                        ctx.restore();
+                    }
+                    if (this.pointerImageElement){
+                        ctx.save();
+                        var sqrt2 = Math.sqrt(2);
+                        var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
+                        var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
+                        var angleOfPointer = this.value+this.offsetValue;
+                        if(this.clockwise=='0'){
+                            angleOfPointer=-angleOfPointer;
+                        }
+                        angleOfPointer=angleOfPointer+45;
+                        //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.rotate(angleOfPointer*Math.PI/180);
+                        ctx.scale(this.scaleX,this.scaleY);
+                        ctx.fillStyle=this.pointerColor;
+                        ctx.fillRect(
+                            0,
+                            0,
+                            pointerImgWidth,
+                            pointerImgHeight
+                        );
+                        ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
+                        ctx.restore();
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
             }
         });
         fabric.MyDashboard.fromLevel= function (level, callback,option) {
@@ -1051,37 +1055,34 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -this.width / 2,
-                    -this.height / 2,
-                    this.width,
-                    this.height
-                );
-                if (this.backgroundImageElement){
-                    //console.log('bg',this.width,this.height);
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
+                    );
+                    if (this.backgroundImageElement){
+                        //console.log('bg',this.width,this.height);
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
 
+                    }
+                    if (this.knobImageElement){
+                        //console.log('draw knob',this.knobImageElement)
+                        var sqrt2 = Math.sqrt(2);
+                        var knobImgWidth = this.knobSize/sqrt2/this.scaleX;
+                        var knobImgHeight = this.knobSize/sqrt2/this.scaleY;
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.rotate((this.value)*Math.PI/180);
+                        ctx.scale(this.scaleX,this.scaleY);
+                        //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
+                        ctx.drawImage(this.knobImageElement, -knobImgWidth/2, -knobImgHeight/2,knobImgWidth,knobImgHeight);
+
+                    }
                 }
-
-                //ctx.fillStyle=this.pointerColor;
-                //ctx.fillRect(
-                //    -this.width / 2,
-                //    -this.height / 2,
-                //    this.width,
-                //    this.height
-                //);
-                if (this.knobImageElement){
-                    //console.log('draw knob',this.knobImageElement)
-                    var sqrt2 = Math.sqrt(2);
-                    var knobImgWidth = this.knobSize/sqrt2/this.scaleX;
-                    var knobImgHeight = this.knobSize/sqrt2/this.scaleY;
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.rotate((this.value)*Math.PI/180);
-                    ctx.scale(this.scaleX,this.scaleY);
-                    //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
-                    ctx.drawImage(this.knobImageElement, -knobImgWidth/2, -knobImgHeight/2,knobImgWidth,knobImgHeight);
-
+                catch(err){
+                    console.log('错误描述',err.description);
                 }
             }
         });
@@ -1158,17 +1159,21 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height);
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
 
-                if (this.imageElement){
-                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    if (this.imageElement){
+                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
                 }
-
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
             }
         });
         fabric.MyImage.fromLevel= function (level, callback,option) {
@@ -1235,94 +1240,21 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height);
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
 
-                if (this.imageElement){
-                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                }
-
-            }
-        });
-        fabric.MySwitch.fromLevel= function (level, callback,option) {
-            callback && callback(new fabric.MySwitch(level, option));
-        };
-        fabric.MySwitch.prototype.toObject = (function (toObject) {
-            return function () {
-                return fabric.util.object.extend(toObject.call(this), {
-                    imageElement:this.imageElement,
-                    backgroundColor:this.backgroundColor
-                });
-            }
-        })(fabric.MySwitch.prototype.toObject);
-        fabric.MySwitch.fromObject = function (object, callback) {
-            var level=_self.getLevelById(object.id);
-            callback && callback(new fabric.MySwitch(level, object));
-        };
-        fabric.MySwitch.async = true;
-
-        fabric.MySwitch = fabric.util.createClass(fabric.Object, {
-            type: Type.MySwitch,
-            initialize: function (level, options) {
-                var self=this;
-                this.callSuper('initialize',options);
-                this.lockRotation=true;
-                this.hasRotatingPoint=false;
-                this.backgroundColor=level.texList[0].slices[0].color;
-                this.bindBit=level.info.bindBit;
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.imageElement=new Image();
-                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.imageElement.onload = (function () {
-
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.imageElement=null;
-                }
-
-                this.on('changeTex', function (arg) {
-                    var level=arg.level;
-                    var _callback=arg.callback;
-
-                    var tex=level.texList[0];
-                    self.backgroundColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc!='') {
-                        var currentImageElement=new Image();
-                        currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
-                        self.imageElement=currentImageElement;
-                    }else {
-                        self.imageElement=null;
+                    if (this.imageElement){
+                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
-
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-                });
-            },
-            toObject: function () {
-                return fabric.util.object.extend(this.callSuper('toObject'));
-            },
-            _render: function (ctx) {
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height);
-
-                if (this.imageElement){
-                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
-
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
             }
         });
         fabric.MySwitch.fromLevel= function (level, callback,option) {
@@ -1430,15 +1362,20 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height);
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
 
-                if (this.imageElement){
-                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    if (this.imageElement){
+                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err.description);
                 }
             }
         });
@@ -1553,37 +1490,41 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                var progress = this.initValue/(this.maxValue-this.minValue);
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height);
-
-                if (this.backgroundImageElementElement){
-                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                }
-                if(this.slideImageElement){
-                    if(this.arrange=='horizontal'){
-                        ctx.drawImage(this.slideImageElement,-this.width/2+((this.width-this.slideImageElement.width/this.scaleX)*progress),-this.slideImageElement.height/(2*this.scaleY),this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
-                    }else{
-                        console.log(this.width,this.height,this.slideImageElement.width,this.slideImageElement.height);
-                        ctx.drawImage(this.slideImageElement,-this.slideImageElement.width/(2*this.scaleX),this.height/2-this.slideImageElement.height/this.scaleY*(1-progress)-this.height*progress,this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
-                    }
-                }
-
-                //将图片超出canvas的部分裁剪
-                this.clipTo=function(ctx){
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.rect(-this.width / 2,
-                        -this.height / 2,
-                        this.width,
+                try{
+                    var progress = this.initValue/(this.maxValue-this.minValue);
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
                         this.height);
-                    ctx.closePath();
-                    ctx.restore();
-                };
+
+                    if (this.backgroundImageElementElement){
+                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                    if(this.slideImageElement){
+                        if(this.arrange=='horizontal'){
+                            ctx.drawImage(this.slideImageElement,-this.width/2+((this.width-this.slideImageElement.width/this.scaleX)*progress),-this.slideImageElement.height/(2*this.scaleY),this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
+                        }else{
+                            ctx.drawImage(this.slideImageElement,-this.slideImageElement.width/(2*this.scaleX),this.height/2-this.slideImageElement.height/this.scaleY*(1-progress)-this.height*progress,this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
+                        }
+                    }
+
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+                }
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
             }
         });
         fabric.MySlideBlock.fromLevel= function (level, callback,option) {
@@ -1662,38 +1603,42 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                var fontString = null;
-                var dateObj = new Date(),
-                    arrTime = [],
-                    arrDate = [];
-                arrTime.push(dateObj.getHours());
-                arrTime.push(dateObj.getMinutes());
-                arrTime.push(dateObj.getSeconds());
+                try{
+                    var fontString = null;
+                    var dateObj = new Date(),
+                        arrTime = [],
+                        arrDate = [];
+                    arrTime.push(dateObj.getHours());
+                    arrTime.push(dateObj.getMinutes());
+                    arrTime.push(dateObj.getSeconds());
 
-                arrDate.push(dateObj.getFullYear());
-                arrDate.push(dateObj.getMonth()+1);
-                arrDate.push(dateObj.getDate());
+                    arrDate.push(dateObj.getFullYear());
+                    arrDate.push(dateObj.getMonth()+1);
+                    arrDate.push(dateObj.getDate());
 
-                ctx.fillStyle=this.fontColor;//颜色可选？？大小字体固定？？
-                fontString=this.fontSize+'px'+" "+this.fontFamily;
-                if(this.dateTimeModeId=='0'){
-                    //显示时间
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.font=fontString;
-                    ctx.textAlign=this.align;
-                    ctx.textBaseline='middle';
-                    ctx.fillText(arrTime.join(":"),0,0);
-                    ctx.scale(this.scaleX,this.scaleY);
-                }else if(this.dateTimeModeId=='1'){
-                    //显示日期
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.font=fontString;
-                    ctx.textAlign=this.align;
-                    ctx.textBaseline='middle';
-                    ctx.fillText(arrDate.join("/"),0,0);
-                    ctx.scale(this.scaleX,this.scaleY);
+                    ctx.fillStyle=this.fontColor;//颜色可选？？大小字体固定？？
+                    fontString=this.fontSize+'px'+" "+this.fontFamily;
+                    if(this.dateTimeModeId=='0'){
+                        //显示时间
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign=this.align;
+                        ctx.textBaseline='middle';
+                        ctx.fillText(arrTime.join(":"),0,0);
+                        ctx.scale(this.scaleX,this.scaleY);
+                    }else if(this.dateTimeModeId=='1'){
+                        //显示日期
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign=this.align;
+                        ctx.textBaseline='middle';
+                        ctx.fillText(arrDate.join("/"),0,0);
+                        ctx.scale(this.scaleX,this.scaleY);
+                    }
                 }
-
+                catch(err){
+                    console.log('错误描述',err.description);
+                };
             }
         });
         fabric.MyDateTime.fromLevel= function (level, callback,option) {
@@ -1794,30 +1739,34 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.fontColor;
-                ctx.save();
-                ctx.fillStyle=this.normalColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height);
-
-                if (this.normalImageElement){
-                    ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                }
-                ctx.restore();
-                if(this.text){
+                try{
+                    ctx.fillStyle=this.fontColor;
                     ctx.save();
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.font=fontString;
-                    ctx.textAlign='center';
-                    ctx.textBaseline='middle';//使文本垂直居中
-                    ctx.fillText(this.text,0,0);
-                    ctx.restore();
-                }
+                    ctx.fillStyle=this.normalColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
 
+                    if (this.normalImageElement){
+                        ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                    ctx.restore();
+                    if(this.text){
+                        ctx.save();
+                        var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign='center';
+                        ctx.textBaseline='middle';//使文本垂直居中
+                        ctx.fillText(this.text,0,0);
+                        ctx.restore();
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
             }
         });
         fabric.MyButton.fromLevel= function (level, callback,option) {
@@ -1948,30 +1897,35 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                ctx.fillStyle=this.fontColor;
-                ctx.save();
-                ctx.fillStyle=this.backgroundColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width,
-                    this.height);
+                try{
+                    ctx.fillStyle=this.fontColor;
+                    ctx.save();
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width,
+                        this.height);
 
-                if (this.backgroundImageElement){
-                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+
+                    ctx.restore();
+                    //var subLayerNode=CanvasService.getSubLayerNode();
+
+                    if(this.text){
+                        var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                        //console.log(fontString);
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign='center';
+                        ctx.textBaseline='middle';//使文本垂直居中
+                        ctx.fillText(this.text,0,0);
+                    }
                 }
-
-                ctx.restore();
-                //var subLayerNode=CanvasService.getSubLayerNode();
-
-                if(this.text){
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
-                    //console.log(fontString);
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.font=fontString;
-                    ctx.textAlign='center';
-                    ctx.textBaseline='middle';//使文本垂直居中
-                    ctx.fillText(this.text,0,0);
+                catch(err){
+                    console.log('错误描述',err.description);
                 }
             }
         });
@@ -2118,89 +2072,92 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                var offCanvas = CanvasService.getOffCanvas();
+                try{
+                    var offCanvas = CanvasService.getOffCanvas();
 
-                offCanvas.width = this.width;
-                offCanvas.height = this.height;
-                //获取offCanvas
-                var offCtx = offCanvas.getContext('2d');
-                offCtx.clearRect(0,0,this.width,this.height);
+                    offCanvas.width = this.width;
+                    offCanvas.height = this.height;
+                    //获取offCanvas
+                    var offCtx = offCanvas.getContext('2d');
+                    offCtx.clearRect(0,0,this.width,this.height);
 
 
 
 
-                offCtx.fillStyle=this.backgroundColor;
-                offCtx.fillRect(0,0,this.width,this.height);
-                if (this.backgroundImageElement) {
-                    offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
-                }
-
-                //在数字框里展示数字预览效果
-                if(this.numValue) {
-                    //offCtx.save();
-
-                    offCtx.globalCompositeOperation = "destination-in";
-                    offCtx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
-                    offCtx.textAlign = this.align;
-
-                    offCtx.textBaseline='middle';//设置数字垂直居中
-
-                    var tempNumValue= this.numValue.toString();
-                    var i=0;
-                    //配置小数位数
-                    if(this.decimalCount){
-                        if(tempNumValue.indexOf('.')!=-1){
-                            //console.log('输入有小数')
-                            var tempDecimalCount=tempNumValue.split('.')[1];
-                            for(i=0;i<this.decimalCount-tempDecimalCount.length;i++){
-                                tempNumValue=tempNumValue+'0';
-                            }
-                        }else{
-                            //console.log('输入无小数')
-                            tempNumValue= tempNumValue+".";
-                            for(i=0;i<this.decimalCount;i++){
-                                tempNumValue=tempNumValue+'0';
-                            }
-                        }
-
+                    offCtx.fillStyle=this.backgroundColor;
+                    offCtx.fillRect(0,0,this.width,this.height);
+                    if (this.backgroundImageElement) {
+                        offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
                     }
-                    //配置前导0模式
-                    if(this.frontZeroMode=='1'){
-                        //console.log('minus',this.numOfDigits-tempNumValue.length);
-                        var minus=this.numOfDigits-tempNumValue.length;
-                        console.log('minus',minus);
+
+                    //在数字框里展示数字预览效果
+                    if(this.numValue) {
+                        //offCtx.save();
+
+                        offCtx.globalCompositeOperation = "destination-in";
+                        offCtx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
+                        offCtx.textAlign = this.align;
+
+                        offCtx.textBaseline='middle';//设置数字垂直居中
+
+                        var tempNumValue= this.numValue.toString();
+                        var i=0;
+                        //配置小数位数
                         if(this.decimalCount){
-                            for(i=0;i<minus+1;i++){
-                                tempNumValue='0'+tempNumValue;
+                            if(tempNumValue.indexOf('.')!=-1){
+                                //console.log('输入有小数')
+                                var tempDecimalCount=tempNumValue.split('.')[1];
+                                for(i=0;i<this.decimalCount-tempDecimalCount.length;i++){
+                                    tempNumValue=tempNumValue+'0';
+                                }
+                            }else{
+                                //console.log('输入无小数')
+                                tempNumValue= tempNumValue+".";
+                                for(i=0;i<this.decimalCount;i++){
+                                    tempNumValue=tempNumValue+'0';
+                                }
                             }
-                        }else{
-                            for(i=0;i<minus;i++){
-                                //console.log(i);
-                                tempNumValue='0'+tempNumValue;
-                            }
-                        }
 
-                    }
-                    //配置正负号
-                    if(this.symbolMode=='1'){
-                        tempNumValue='+'+tempNumValue;
+                        }
+                        //配置前导0模式
+                        if(this.frontZeroMode=='1'){
+                            //console.log('minus',this.numOfDigits-tempNumValue.length);
+                            var minus=this.numOfDigits-tempNumValue.length;
+                            console.log('minus',minus);
+                            if(this.decimalCount){
+                                for(i=0;i<minus+1;i++){
+                                    tempNumValue='0'+tempNumValue;
+                                }
+                            }else{
+                                for(i=0;i<minus;i++){
+                                    //console.log(i);
+                                    tempNumValue='0'+tempNumValue;
+                                }
+                            }
+
+                        }
+                        //配置正负号
+                        if(this.symbolMode=='1'){
+                            tempNumValue='+'+tempNumValue;
+                        }
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
+                        if(this.align=='center'){
+                            offCtx.fillText(tempNumValue, this.width/2, this.height/2);
+
+                        }else if(this.align=='left') {
+                            offCtx.fillText(tempNumValue, 0, this.height/2);
+                        }else if(this.align=='right'){
+                            offCtx.fillText(tempNumValue,this.width,this.height/2);
+                        }
+                        //offCtx.restore();
                     }
                     ctx.scale(1/this.scaleX,1/this.scaleY);
-                    //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
-                    if(this.align=='center'){
-                        offCtx.fillText(tempNumValue, this.width/2, this.height/2);
-
-                    }else if(this.align=='left') {
-                        offCtx.fillText(tempNumValue, 0, this.height/2);
-                    }else if(this.align=='right'){
-                        offCtx.fillText(tempNumValue,this.width,this.height/2);
-                    }
-                    //offCtx.restore();
+                    ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
                 }
-                ctx.scale(1/this.scaleX,1/this.scaleY);
-                ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
-                //console.log(ctx);
-
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
             }
         });
         fabric.MyNum.fromLevel = function(level,callback,option){
@@ -2302,58 +2259,63 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
-                var count=this.normalColors.length;
-                if (this.arrange=='horizontal'){
-                    //横向
-                    var width=(this.width-this.interval*(count-1))/count;
-                    var height=this.height;
-                    var interval=this.interval;
-                    if (width<0){
-                        return;
-                    }
+                try{
+                    var count=this.normalColors.length;
+                    if (this.arrange=='horizontal'){
+                        //横向
+                        var width=(this.width-this.interval*(count-1))/count;
+                        var height=this.height;
+                        var interval=this.interval;
+                        if (width<0){
+                            return;
+                        }
 
-                    //按顺序画按钮
-                    for (var i=0;i<this.normalColors.length;i++){
-                        ctx.fillStyle=this.normalColors[i];
-                        ctx.fillRect(
-                            -(this.width / 2)+(width+interval)*i,
-                            -(this.height / 2) ,
-                            width ,
-                            height );
-
-
-                    }
-                    for (var i=0;i<this.normalImageElements.length;i++){
-                        var normalImageElement=this.normalImageElements[i];
-                        if (normalImageElement){
-                            ctx.drawImage(normalImageElement, -this.width / 2+(width+interval)*i, -this.height / 2,width,height);
+                        //按顺序画按钮
+                        for (var i=0;i<this.normalColors.length;i++){
+                            ctx.fillStyle=this.normalColors[i];
+                            ctx.fillRect(
+                                -(this.width / 2)+(width+interval)*i,
+                                -(this.height / 2) ,
+                                width ,
+                                height );
 
 
                         }
-                    }
-                }else{
-                    //纵向
-                    var height=(this.height-this.interval*(count-1))/count;
-                    var width=this.width;
-                    var interval=this.interval;
-                    if (height<0){
-                        return;
-                    }
+                        for (var i=0;i<this.normalImageElements.length;i++){
+                            var normalImageElement=this.normalImageElements[i];
+                            if (normalImageElement){
+                                ctx.drawImage(normalImageElement, -this.width / 2+(width+interval)*i, -this.height / 2,width,height);
 
-                    //按顺序画按钮
-                    for (var i=0;i<this.normalColors.length;i++){
-                        ctx.fillStyle=this.normalColors[i];
-                        ctx.fillRect(
-                            -(this.width / 2),
-                            -(this.height / 2)+(height+interval)*i ,
-                            width ,
-                            height );
 
-                        var normalImageElement=this.normalImageElements[i];
-                        if (normalImageElement){
-                            ctx.drawImage(normalImageElement, -this.width / 2, -this.height / 2+(height+interval)*i,width,height);
+                            }
+                        }
+                    }else{
+                        //纵向
+                        var height=(this.height-this.interval*(count-1))/count;
+                        var width=this.width;
+                        var interval=this.interval;
+                        if (height<0){
+                            return;
+                        }
+
+                        //按顺序画按钮
+                        for (var i=0;i<this.normalColors.length;i++){
+                            ctx.fillStyle=this.normalColors[i];
+                            ctx.fillRect(
+                                -(this.width / 2),
+                                -(this.height / 2)+(height+interval)*i ,
+                                width ,
+                                height );
+
+                            var normalImageElement=this.normalImageElements[i];
+                            if (normalImageElement){
+                                ctx.drawImage(normalImageElement, -this.width / 2, -this.height / 2+(height+interval)*i,width,height);
+                            }
                         }
                     }
+                }
+                catch(err){
+                    console.log('错误描述',err.description);
                 }
 
             }
@@ -2632,18 +2594,21 @@ ideServices
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.currentColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
+                    if (this.currentImageElement){
+                        ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
 
-                ctx.fillStyle=this.currentColor;
-                ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
-                    this.width ,
-                    this.height );
-                if (this.currentImageElement){
-                    ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
+                    }
                 }
-
+                catch(err){
+                    console.log('错误描述',err.description);
+                }
             }
         });
         fabric.MySlide.fromLevel= function (level, callback,option) {
