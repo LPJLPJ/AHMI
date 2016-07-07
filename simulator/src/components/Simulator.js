@@ -469,6 +469,9 @@ module.exports = React.createClass({
             case 'MyTextArea':
                 this.drawTextArea(curX,curY,widget,options);
                 break;
+            case 'MySlideBlock':
+                this.drawSlideBlock(curX,curY,widget,options);
+                break;
         }
     },
     drawSlide: function (curX, curY, widget, options) {
@@ -655,7 +658,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
                             if (cursor){
                                 var cursorSlice = widget.texList[2].slices[0];
-                                this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,cursorSlice.imgSrc,cursorSlice.color);
+                                this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
                         case 'horizontal':
@@ -665,7 +668,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
                             if (cursor){
                                 var cursorSlice = widget.texList[2].slices[0];
-                                this.drawCursor(width*curScale+curX,curY,width,height,true,cursorSlice.imgSrc,cursorSlice.color);
+                                this.drawCursor(width*curScale+curX,curY,width,height,true,width*(1-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
                     }
@@ -685,7 +688,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor);
                             if (cursor){
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,cursorSlice.imgSrc,cursorSlice.color);
+                                this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
                         case 'horizontal':
@@ -695,7 +698,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', mixedColor);
                             if (cursor){
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawCursor(width*curScale+curX,curY,width,height,true,cursorSlice.imgSrc,cursorSlice.color);
+                                this.drawCursor(width*curScale+curX,curY,width,height,true,width*(1-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
                     }
@@ -713,7 +716,62 @@ module.exports = React.createClass({
 
         }
     },
-    drawCursor:function (beginX, beginY, width, height, align, img,color) {
+    drawSlideBlock: function (curX, curY, widget, options) {
+        var width = widget.info.width;
+        var height = widget.info.height;
+
+        if (widget.texList) {
+            var hori = widget.info.arrange == 'horizontal';
+            if (!widget.slideSize){
+
+                var defaultSize = hori? widget.info.h:widget.info.w;
+                widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc,defaultSize,defaultSize);
+            }
+            //has tex
+            //draw background
+            var texSlice = widget.texList[0].slices[0];
+            this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+
+            
+            //get current value
+            var curSlideTag = this.findTagByName(widget.tag);
+            console.log(widget.curValue);
+            var curSlide = (curSlideTag && curSlideTag.value) || widget.curValue||0;
+            var curScale = 1.0 * (curSlide - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
+
+            curScale = (curScale >= 0 ? curScale : 0.0);
+            curScale = (curScale <= 1 ? curScale : 1.0);
+
+            var slideSlice = widget.texList[1].slices[0];
+            var slideImg  = this.getImage(slideSlice.imgSrc);
+            slideImg = (slideImg && slideImg.content) || null;
+            if (slideImg){
+                var slideRatio;
+                switch (widget.info.arrange) {
+                    case 'vertical':
+                        slideRatio = (height-slideImg.height)*1.0/height;
+                        this.drawCursor(curX,curY+ height * (1.0 - curScale*slideRatio),width,height,false,height*(1-curScale*slideRatio),slideSlice.imgSrc,slideSlice.color);
+                        break;
+                    case 'horizontal':
+                    default:
+                        slideRatio = (width-slideImg.width)*1.0/height;
+
+                        this.drawCursor(width*curScale*slideRatio+curX,curY,width,height,true,width*(1-curScale*slideRatio),slideSlice.imgSrc,slideSlice.color);
+                        break;
+                }
+            }
+
+
+
+
+            //handle action
+            this.handleAlarmAction(curSlide, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
+            widget.oldValue = curSlide;
+
+        }
+    },
+    drawCursor:function (beginX, beginY, width, height, align,alignLimit, img,color) {
+
         var cursorImg  = this.getImage(img);
         cursorImg = (cursorImg && cursorImg.content) || null;
         if (cursorImg){
@@ -721,10 +779,10 @@ module.exports = React.createClass({
             var imgH = cursorImg.height;
             if (align){
                 //horizontal
-                this.drawBgClip(beginX,beginY-(imgH-height)*0.5,imgW,imgH,beginX,beginY,imgW,height,img,color);
+                this.drawBgClip(beginX,beginY-(imgH-height)*0.5,imgW,imgH,beginX,beginY,Math.min(imgW,alignLimit),height,img,color);
             }else{
                 //vertical
-                this.drawBgClip(beginX-(imgW-width)*0.5,beginY-imgH,imgW,imgH,beginX,beginY-imgH,width,imgH,img,color);
+                this.drawBgClip(beginX-(imgW-width)*0.5,beginY-imgH,imgW,imgH,beginX,beginY-imgH,width,Math.min(imgH,alignLimit),img,color);
             }
         }
 
@@ -805,6 +863,16 @@ module.exports = React.createClass({
         offctx.save();
 
         offctx.beginPath();
+
+        if ((childX+childWidth)>(curX+parentWidth)){
+            childWidth = curX+parentWidth -childX;
+        }
+
+        if ((childY+childHeight)>(curY+parentHeight)){
+            childHeight = curY+parentHeight - childY;
+        }
+
+
         offctx.rect(childX, childY, childWidth, childHeight);
 
 
@@ -823,7 +891,6 @@ module.exports = React.createClass({
 
             }
         }
-        ;
     },
     limitValueBetween: function (curVal, minVal, maxVal) {
         if (curVal < minVal) {
@@ -1611,7 +1678,6 @@ module.exports = React.createClass({
                 //change button tag
                 var curButtonIdx = widget.curButtonIdx || 0;
                 var targetTag = this.findTagByName(widget.tag);
-                console.log(targetTag);
                 if (targetTag && targetTag.name != '') {
                     // targetTag.value = parseInt(curButtonIdx);
                     this.setTagByTag(targetTag, parseInt(curButtonIdx))
@@ -1619,12 +1685,61 @@ module.exports = React.createClass({
                     needRedraw = true;
                 }
                 break;
+            case 'MySlideBlock':
+                var x = widget.info.left;
+                var y = widget.info.top;
+                var width = widget.info.width;
+                var height = widget.info.height;
+                var hori = widget.info.arrange == 'horizontal';
+                if (!widget.slideSize){
+
+                    var defaultSize = hori? height:width;
+                    widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc,defaultSize,defaultSize);
+
+                }
+                console.log('widget slice',widget.slideSize);
+
+                var curPos = {
+                    x:mouseState.position.x-x,
+                    y:mouseState.position.y-y
+                };
+
+                var curValue=0;
+                var bgRange;
+                if (hori){
+                    bgRange = (width - widget.slideSize.w)||1;
+                    curValue = (curPos-0.5*widget.slideSize.w)/bgRange * (widget.info.maxValue-widget.info.minValue)+widget.info.minValue;
+                }else{
+                    bgRange = (height - widget.slideSize.h)||1;
+                    curValue = (curPos-0.5*widget.slideSize.h)/bgRange * (widget.info.maxValue-widget.info.minValue)+widget.info.minValue;
+                }
+                widget.curValue = curValue;
+                console.log(curValue,widget.info);
+                needRedraw = true;
+
+                break;
             default:
                 widget.mouseState = mouseState;
                 needRedraw = true;
         }
         if (needRedraw) {
             this.drawAfterMouseAction(mouseState);
+        }
+    },
+    getImageSize:function (imgName,defaultValueW,defaultValueH) {
+        var img  = this.getImage(imgName);
+        img = (img && img.content) || null;
+        if (!!img){
+            // console.log(img,img.width,img.height)
+            return {
+                w:img.width,
+                h:img.height
+            }
+        }else{
+            return {
+                w:defaultValueW,
+                h:defaultValueH
+            }
         }
     },
     handleRelease: function (e) {

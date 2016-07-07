@@ -57,11 +57,11 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
         //font style
         var style = {};
         var font = {};
-        font['font-style'] = widget.info.buttonFontItalic;
-        font['font-weight'] = widget.info.buttonFontBold;
-        font['font-size'] = widget.info.buttonFontSize;
-        font['font-family'] = widget.info.buttonFontFamily;
-        font['font-color'] = widget.info.buttonFontColor;
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
         style.color = font['font-color'];
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
         style.textAlign = 'center';
