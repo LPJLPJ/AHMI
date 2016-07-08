@@ -71,6 +71,7 @@ $(function(){
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
+            console.log(newProject);
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
 
             addProjectButton.after(html);

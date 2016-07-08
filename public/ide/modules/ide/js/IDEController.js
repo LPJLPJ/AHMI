@@ -94,6 +94,10 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     function readLocalProjectData() {
         var url = window.location.href;
         var projectId = url.split('?')[1].split('=')[1];
+        if (projectId[projectId.length - 1] === '#') {
+            projectId = projectId.slice(0, -1);
+        }
+        console.log(projectId);
         //load projectId project
         var projectBaseUrl = path.join(__dirname,'localproject',projectId);
         ResourceService.setResourceUrl(path.join(projectBaseUrl,'resources'));
@@ -150,7 +154,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             toastr.info('加载成功')
 
             //var globalProject = GlobalService.getBlankProject()
-            var globalProject = JSON.parse(data.content)
+            var globalProject = data.content;
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
             })
