@@ -100,6 +100,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         console.log(projectId);
         //load projectId project
         var projectBaseUrl = path.join(__dirname,'localproject',projectId);
+        ResourceService.setProjectUrl(projectBaseUrl);
         ResourceService.setResourceUrl(path.join(projectBaseUrl,'resources'));
         var data = readSingleFile(path.join(projectBaseUrl,'project.json'));
 
