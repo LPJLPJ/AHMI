@@ -24,6 +24,7 @@ $(function(){
             local = true;
             console.log('os',os);
 
+
         }
     }catch (e){
 
@@ -35,7 +36,14 @@ $(function(){
         path = require('path');
         mkdir = require('mkdir-p');
         __dirname = global.__dirname;
-        console.log(__dirname)
+        console.log(__dirname, process)
+        console.log(window.location);
+
+        function getResourceRelativePath(resourceFilePath) {
+            var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
+            return path.relative(realDirPath, resourceFilePath);
+        }
+
         var stats;
         var localprojectpath = path.join(__dirname,'localproject');
         try {
@@ -67,11 +75,12 @@ $(function(){
         
         console.log(projects);
         
-        
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
             console.log(newProject);
+            newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
+            delete newProject.content;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
 
             addProjectButton.after(html);

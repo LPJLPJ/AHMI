@@ -208,13 +208,13 @@
                             saveThumb(scaledThumb, function () {
                                 //save
                                 //save currentProject
-                                var projectUrl = $scope.project.projectUrl || path.join(__dirname, 'localproject', currentProject.projectId);
+                                var projectUrl = ResourceService.getProjectUrl();
                                 var dataUrl = path.join(projectUrl, 'project.json');
                                 try {
                                     var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
                                     oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
                                     console.log(oldProjectData.thumbnail);
-                                    oldProjectData.content = currentProject;
+                                    oldProjectData.content = JSON.stringify(currentProject);
                                     fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
                                     //success
                                     toastr.info('保存成功');
@@ -308,7 +308,7 @@
                             console.log(thumb);
                             var thumbFile = new Buffer(thumb.split(',')[1], 'base64');
                             var projectUrl = $scope.project.projectUrl || path.join(__dirname, 'localproject', currentProject.projectId);
-                            var thumbUrl = path.join(projectUrl, 'thumb.jpg');
+                            var thumbUrl = path.join(projectUrl, 'thumbnail.jpg');
                             try {
                                 fs.writeFileSync(thumbUrl, thumbFile);
                                 _callback && _callback();

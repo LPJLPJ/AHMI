@@ -3,6 +3,13 @@
  */
 var ide=angular.module('ide',['ui.bootstrap.contextMenu','colorpicker.module','btford.modal','ui.bootstrap','ngAnimate','GlobalModule','ui.tree','IDEServices']);
 
+
+ide.config(['$compileProvider',
+    function ($compileProvider) {
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*((https?|ftp|file|blob|chrome-extension):|data:image\/)/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file:chrome-extension):/);
+    }]);
+
 var baseUrl='';
 
 var PID='';
@@ -101,7 +108,12 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         //load projectId project
         var projectBaseUrl = path.join(__dirname,'localproject',projectId);
         ResourceService.setProjectUrl(projectBaseUrl);
-        ResourceService.setResourceUrl(path.join(projectBaseUrl,'resources'));
+        var resourceUrl = path.join(projectBaseUrl, 'resources');
+        ResourceService.setResourceUrl(resourceUrl);
+        var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
+
+        ResourceService.setResourceNWUrl(path.relative(realDirPath, resourceUrl));
+        console.log(path.relative(realDirPath, resourceUrl));
         var data = readSingleFile(path.join(projectBaseUrl,'project.json'));
 
         $timeout(function () {
@@ -155,7 +167,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             toastr.info('加载成功')
 
             //var globalProject = GlobalService.getBlankProject()
-            var globalProject = data.content;
+            var globalProject = JSON.parse(data.content);
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
             })

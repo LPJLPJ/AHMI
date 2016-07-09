@@ -9,7 +9,14 @@ ideServices
         var size = 0;
         //var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
         var resourceUrl = '';
+        var resourceNWUrl = '';
         var projectUrl = '';
+        this.setResourceNWUrl = function (_url) {
+            resourceNWUrl = _url;
+        };
+        this.getResourceNWUrl = function () {
+            return resourceNWUrl;
+        };
         this.setProjectUrl = function (_projectUrl) {
             projectUrl = _projectUrl;
         };
@@ -205,10 +212,11 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
         link: function (scope, element, attributes) {
             var path;
             var fs;
-
+            var local = false;
             try {
                 path = require('path');
                 fs = require('fs');
+                local = true;
             } catch (e) {
 
             }
@@ -433,6 +441,12 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 var newSelectFile = {};
                 //process newSelectFile with uploadingFile
                 //every file with a unique id as fileName
+                var _baseUrl;
+                if (local) {
+                    _baseUrl = ResourceService.getResourceNWUrl() + path.sep;
+                } else {
+                    _baseUrl = ResourceService.getResourceUrl();
+                }
                 if (!uploadingFile.name) {
                     return null;
                 }
@@ -447,7 +461,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 _.extend(newSelectFile,uploadingFile);
                 newSelectFile.id  = fileName;
                 newSelectFile.name = fileNameArray.slice(0,-1).join('');
-                newSelectFile.src = baseUrl+newSelectFile.id;
+                newSelectFile.src = _baseUrl + newSelectFile.id;
                 //console.log(newSelectFile)
 
                 return newSelectFile;
