@@ -8,7 +8,23 @@ ideServices
         var  files= [];
         var size = 0;
         //var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
-        var resourceUrl = ''
+        var resourceUrl = '';
+        var resourceNWUrl = '';
+        var projectUrl = '';
+        this.setResourceNWUrl = function (_url) {
+            resourceNWUrl = _url;
+        };
+        this.getResourceNWUrl = function () {
+            return resourceNWUrl;
+        };
+        this.setProjectUrl = function (_projectUrl) {
+            projectUrl = _projectUrl;
+        };
+
+        this.getProjectUrl = function () {
+            return projectUrl;
+        };
+
         this.getAllResource = function () {
 
             //var scope=null;
@@ -194,6 +210,16 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
         template:"<input type='file' ngf-select='uploadFiles($files)' accept='image/*' ngf-multiple='true' />",
         replace:'true',
         link: function (scope, element, attributes) {
+            var path;
+            var fs;
+            var local = false;
+            try {
+                path = require('path');
+                fs = require('fs');
+                local = true;
+            } catch (e) {
+
+            }
             var baseUrl = ResourceService.getResourceUrl()
 
             scope.uploadFiles = function (files) {
@@ -206,7 +232,111 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     }
                 }
             }
-            function upload(file,translatedFile){
+
+            function deleteUploadingItem(translatedFile) {
+                var uploadingArray = scope.component.top.uploadingArray;
+                for (var i = 0; i < uploadingArray.length; i++) {
+                    if (uploadingArray[i].id == translatedFile.id) {
+                        uploadingArray.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+
+            function upload(file, translatedFile) {
+                if (window.local) {
+                    uploadLocal(file, translatedFile);
+                } else {
+                    uploadServer(file, translatedFile);
+                }
+            }
+
+            function uploadLocal(file, translatedFile) {
+                //overload check
+                var curSize = ResourceService.getCurrentTotalSize();
+                var maxSize = ResourceService.getMaxTotalSize();
+                if (curSize > maxSize) {
+                    toastr.info('资源超过限制');
+                    deleteUploadingItem(translatedFile);
+                    return;
+                }
+
+                var successHandler = function () {
+
+                    ResourceService.appendFileUnique(translatedFile, function (file, files) {
+                        for (var i in files) {
+                            if (files[i].id == file.id) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
+                    //删除scope.uploadingArray中该项
+                    deleteUploadingItem(translatedFile);
+                    //update
+                    //scope.component.top.files = ResourceService.getAllImages();
+                    scope.$emit('ResourceUpdate');
+                }
+
+                var errHandler = function () {
+                    translatedFile.progress = '上传失败';
+                    deleteUploadingItem(translatedFile);
+
+                }
+
+                /**
+                 * 处理进度
+                 * @param e
+                 */
+                var progressHandler = function (e) {
+
+                    translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
+                    console.log(translatedFile.progress);
+                };
+
+
+                function saveFileAsync(data, dstUrl, successHandler, errHandler, progressHandler) {
+
+                    var dstStream = fs.createWriteStream(dstUrl);
+                    var srcStream;
+                    var stats;
+                    var totalSize;
+                    try {
+                        console.log(data);
+                        srcStream = fs.createReadStream(data);
+                        stats = fs.statSync(data);
+                        totalSize = stats.size;
+                    } catch (e) {
+                        console.log('err load file', e);
+                        return;
+                    }
+                    dstStream.on('finish', function () {
+                        successHandler && successHandler();
+                    });
+                    dstStream.on('error', function (err) {
+                        errHandler && errHandler(err);
+                    });
+                    srcStream.on('data', function (chunk) {
+                        // console.log(arguments);
+                        var e = {
+                            loaded: dstStream.bytesWritten,
+                            total: totalSize
+                        };
+                        progressHandler && progressHandler(e);
+                    });
+
+                    srcStream.pipe(dstStream);
+                }
+
+                // {file:file,name:translatedFile.id}
+                var resourcePath = ResourceService.getResourceUrl();
+                var filePath = path.join(resourcePath, translatedFile.id);
+                saveFileAsync(file.path, filePath, successHandler, errHandler, progressHandler);
+
+
+            }
+
+            function uploadServer(file, translatedFile) {
 
                 //overload check
                 var curSize = ResourceService.getCurrentTotalSize();
@@ -217,16 +347,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     return;
                 }
 
-
-                function deleteUploadingItem(translatedFile){
-                    var uploadingArray = scope.component.top.uploadingArray;
-                    for (var i=0;i<uploadingArray.length;i++){
-                        if (uploadingArray[i].id == translatedFile.id){
-                            uploadingArray.splice(i,1);
-                            break;
-                        }
-                    }
-                }
 
                 /**
                  * 上传成功处理
@@ -321,6 +441,12 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 var newSelectFile = {};
                 //process newSelectFile with uploadingFile
                 //every file with a unique id as fileName
+                var _baseUrl;
+                if (local) {
+                    _baseUrl = ResourceService.getResourceNWUrl() + path.sep;
+                } else {
+                    _baseUrl = ResourceService.getResourceUrl();
+                }
                 if (!uploadingFile.name) {
                     return null;
                 }
@@ -335,7 +461,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 _.extend(newSelectFile,uploadingFile);
                 newSelectFile.id  = fileName;
                 newSelectFile.name = fileNameArray.slice(0,-1).join('');
-                newSelectFile.src = baseUrl+newSelectFile.id;
+                newSelectFile.src = _baseUrl + newSelectFile.id;
                 //console.log(newSelectFile)
 
                 return newSelectFile;

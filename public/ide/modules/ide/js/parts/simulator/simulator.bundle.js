@@ -20441,13 +20441,12 @@
 	                var slideRatio;
 	                switch (widget.info.arrange) {
 	                    case 'vertical':
-	                        slideRatio = (height - slideImg.height) * 1.0 / height;
-	                        this.drawCursor(curX, curY + height * (1.0 - curScale * slideRatio) + 0.5 * slideImg.height, width, height, false, height * (1 - curScale * slideRatio), slideSlice.imgSrc, slideSlice.color);
+
+	                        this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
 	                        break;
 	                    case 'horizontal':
 	                    default:
-	                        console.log(slideRatio, curScale);
-	                        slideRatio = (width - slideImg.width) * 1.0 / width;
+	                        // console.log(slideRatio,curScale);
 
 	                        this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
 	                        break;
@@ -21308,7 +21307,7 @@
 	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	        }
 	        widget.curValue = curValue;
-	        console.log(curValue, widget.info);
+	        // console.log(curValue,widget.info);
 	    },
 	    handlePress: function (e) {
 	        // console.log(e);
@@ -21377,6 +21376,7 @@
 	                this.handleSlideBlockInnerPress(widget, relativeX, relativeY);
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
+	                this.setTagByName(widget.tag, widget.curValue || 0);
 	                break;
 	        }
 
@@ -21422,7 +21422,7 @@
 	            case 'MySlideBlock':
 	                var targetTag = this.findTagByName(widget.tag);
 	                if (targetTag && targetTag.name != '') {
-	                    this.setTagByTag(targetTag, parseInt(curButtonIdx));
+	                    this.setTagByTag(targetTag, parseInt(widget.curValue));
 	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;

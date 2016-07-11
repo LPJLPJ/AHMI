@@ -3,6 +3,13 @@
  */
 var ide=angular.module('ide',['ui.bootstrap.contextMenu','colorpicker.module','btford.modal','ui.bootstrap','ngAnimate','GlobalModule','ui.tree','IDEServices']);
 
+
+ide.config(['$compileProvider',
+    function ($compileProvider) {
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*((https?|ftp|file|blob|chrome-extension):|data:image\/)/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file:chrome-extension):/);
+    }]);
+
 var baseUrl='';
 
 var PID='';
@@ -29,7 +36,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     };
 
     var loadStep=0;     //加载到了第几步,共8步
-
+    var fs,path,__dirname;
     
 
 
@@ -54,7 +61,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     initUI();
 
-    readProjectData();
+    loadProject();
 
     //receiveGlobalProject();
 
@@ -72,6 +79,9 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             if (os){
 
                 window.local = true;
+                __dirname = global.__dirname;
+                path = require('path');
+                fs = require('fs');
 
             }
         }catch (e){
@@ -79,12 +89,196 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         }
     }
 
+    function loadProject() {
+        if (window.local){
+            readLocalProjectData();
+        }else{
+            readProjectData();
+        }
+        // readLocalProjectData();
+    }
+
     function readLocalProjectData() {
         var url = window.location.href;
         var projectId = url.split('?')[1].split('=')[1];
+        if (projectId[projectId.length - 1] === '#') {
+            projectId = projectId.slice(0, -1);
+        }
+        console.log(projectId);
         //load projectId project
-        var path = require('path');
-        var fs = require('fs');
+        var projectBaseUrl = path.join(__dirname,'localproject',projectId);
+        ResourceService.setProjectUrl(projectBaseUrl);
+        var resourceUrl = path.join(projectBaseUrl, 'resources');
+        ResourceService.setResourceUrl(resourceUrl);
+        var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
+
+        ResourceService.setResourceNWUrl(path.relative(realDirPath, resourceUrl));
+        console.log(path.relative(realDirPath, resourceUrl));
+        var data = readSingleFile(path.join(projectBaseUrl,'project.json'));
+
+        $timeout(function () {
+            if (data){
+                data = JSON.parse(data);
+                loadFromContent(data,projectId);
+            }else{
+                loadFromBlank({},projectId);
+            }
+        },0);
+       
+
+        $scope.$on('LoadUp', function () {
+
+            loadStep++;
+            if (loadStep==8){
+                //到达第8步,加载完成
+                $timeout(function () {
+                    $scope.ide.loaded=true;
+
+                    // intervalSave();
+
+                },200)
+            }
+        })
+        
+
+    }
+
+    function readSingleFile(filePath,check) {
+        if (check){
+            try{
+                var stats = fs.statSync(filePath);
+                if (stats&&stats.isFile()){
+                    return fs.readFileSync(filePath,'utf-8');
+                }else{
+                    return null;
+                }
+            }catch (e){
+                return null;
+            }
+
+
+        }else{
+            return fs.readFileSync(filePath,'utf-8');
+        }
+    }
+
+    function loadFromContent(data,id) {
+        if (data.content){
+            toastr.info('加载成功')
+
+            //var globalProject = GlobalService.getBlankProject()
+            var globalProject = JSON.parse(data.content);
+            var resolution = data.resolution.split('*').map(function (r) {
+                return Number(r)
+            })
+            globalProject.initSize = {
+                width : resolution[0],
+                height :resolution[1]
+            }
+            globalProject.currentSize = {
+                width : resolution[0],
+                height :resolution[1]
+            }
+            globalProject.maxSize = data.maxSize;
+
+            globalProject.projectId = id;
+
+
+            console.log('globalProject',globalProject);
+
+            var resourceList = globalProject.resourceList;
+            var count = resourceList.length;
+            var coutDown = function() {
+                count = count - 1;
+                if (count<=0){
+                    // toastr.info('loaded');
+                    TemplateProvider.saveProjectFromGlobal(globalProject);
+                    ProjectService.saveProjectFromGlobal(globalProject, function () {
+                        syncServices(globalProject)
+                        $scope.$broadcast('GlobalProjectReceived');
+
+                    });
+                }
+            }.bind(this);
+            if (count>0){
+                for (var i=0;i<resourceList.length;i++){
+                    var img = new Image();
+                    img.src = resourceList[i].src;
+                    img.onload = coutDown;
+                    img.onerror = coutDown;
+                }
+            }else{
+                TemplateProvider.saveProjectFromGlobal(globalProject);
+                ProjectService.saveProjectFromGlobal(globalProject, function () {
+                    syncServices(globalProject)
+                    $scope.$broadcast('GlobalProjectReceived');
+
+                });
+            }
+
+
+
+            //readCache();
+        }else{
+            //console.log('获取信息失败');
+            //
+            //readCache();
+            toastr.info('新建工程')
+
+            globalProject = GlobalService.getBlankProject()
+            globalProject.projectId = id;
+            //change resolution
+            console.log(data);
+            var resolution = data.resolution.split('*').map(function (r) {
+                return Number(r)
+            })
+            globalProject.initSize = {
+                width : resolution[0],
+                height :resolution[1]
+            }
+            globalProject.currentSize = {
+                width : resolution[0],
+                height :resolution[1]
+            }
+            globalProject.maxSize = data.maxSize;
+            console.log('globalProject new',_.cloneDeep(globalProject));
+
+
+            TemplateProvider.saveProjectFromGlobal(globalProject);
+            ProjectService.saveProjectFromGlobal(globalProject, function () {
+                syncServices(globalProject)
+                $scope.$broadcast('GlobalProjectReceived');
+
+            });
+        }
+    }
+
+    function loadFromBlank(options,id) {
+        var globalProject = GlobalService.getBlankProject()
+        globalProject.projectId = id;
+        //change resolution
+        var resolution = (options.resolution||'800*480').split('*').map(function (r) {
+            return Number(r)
+        })
+        globalProject.initSize = {
+            width : resolution[0],
+            height :resolution[1]
+        }
+        globalProject.currentSize = {
+            width : resolution[0],
+            height :resolution[1]
+        }
+        globalProject.maxSize = options.maxSize||100*1024*1024;
+        console.log('globalProject',globalProject)
+
+
+        TemplateProvider.saveProjectFromGlobal(globalProject);
+        ProjectService.saveProjectFromGlobal(globalProject, function () {
+            syncServices(globalProject)
+            $scope.$broadcast('GlobalProjectReceived');
+
+        });
+
     }
 
     function readProjectData(){
@@ -107,119 +301,11 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             url:baseUrl+'/project/'+id+'/content'
         }).success(function (data) {
             console.log(data);
-            if (data.content){
-                //console.log(data)
+            loadFromContent(data,id);
 
-                //var globalProject = GlobalService.getBlankProject()
-                var globalProject = JSON.parse(data.content)
-                var resolution = data.resolution.split('*').map(function (r) {
-                    return Number(r)
-                })
-                globalProject.initSize = {
-                    width : resolution[0],
-                    height :resolution[1]
-                }
-                globalProject.currentSize = {
-                    width : resolution[0],
-                    height :resolution[1]
-                }
-                globalProject.maxSize = data.maxSize;
-
-                globalProject.projectId = id;
-
-
-                console.log('globalProject',globalProject);
-
-                var resourceList = globalProject.resourceList;
-                var count = resourceList.length;
-                var coutDown = function() {
-                    count = count - 1;
-                    if (count<=0){
-                        // toastr.info('loaded');
-                        TemplateProvider.saveProjectFromGlobal(globalProject);
-                        ProjectService.saveProjectFromGlobal(globalProject, function () {
-                            syncServices(globalProject)
-                            $scope.$broadcast('GlobalProjectReceived');
-
-                        });
-                    }
-                }.bind(this);
-                if (count>0){
-                    for (var i=0;i<resourceList.length;i++){
-                        var img = new Image();
-                        img.src = resourceList[i].src;
-                        img.onload = coutDown;
-                        img.onerror = coutDown;
-                    }
-                }else{
-                    TemplateProvider.saveProjectFromGlobal(globalProject);
-                    ProjectService.saveProjectFromGlobal(globalProject, function () {
-                        syncServices(globalProject)
-                        $scope.$broadcast('GlobalProjectReceived');
-
-                    });
-                }
-
-                
-
-                //readCache();
-            }else{
-                //console.log('获取信息失败');
-                //
-                //readCache();
-
-                globalProject = GlobalService.getBlankProject()
-                globalProject.projectId = id;
-                //change resolution
-                var resolution = data.resolution.split('*').map(function (r) {
-                    return Number(r)
-                })
-                globalProject.initSize = {
-                    width : resolution[0],
-                    height :resolution[1]
-                }
-                globalProject.currentSize = {
-                    width : resolution[0],
-                    height :resolution[1]
-                }
-                globalProject.maxSize = data.maxSize;
-                console.log('globalProject',globalProject)
-
-
-                TemplateProvider.saveProjectFromGlobal(globalProject);
-                ProjectService.saveProjectFromGlobal(globalProject, function () {
-                    syncServices(globalProject)
-                    $scope.$broadcast('GlobalProjectReceived');
-
-                });
-            }
         }).error(function (msg) {
             toastr.info('读取错误');
-            var globalProject = GlobalService.getBlankProject()
-            globalProject.projectId = id;
-            //change resolution
-            var resolution = '800*480'.split('*').map(function (r) {
-                return Number(r)
-            })
-            globalProject.initSize = {
-                width : resolution[0],
-                height :resolution[1]
-            }
-            globalProject.currentSize = {
-                width : resolution[0],
-                height :resolution[1]
-            }
-            globalProject.maxSize = 100*1024*1024;
-            console.log('globalProject',globalProject)
-
-
-            TemplateProvider.saveProjectFromGlobal(globalProject);
-            ProjectService.saveProjectFromGlobal(globalProject, function () {
-                syncServices(globalProject)
-                $scope.$broadcast('GlobalProjectReceived');
-
-            });
-
+            loadFromBlank({},id);
         })
 
         $scope.$on('LoadUp', function () {

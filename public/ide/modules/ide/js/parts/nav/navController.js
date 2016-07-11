@@ -12,8 +12,10 @@
                                         Type,
                                         CanvasService,
                                         $uibModal,
-                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService) {
+                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService,RenderSerive) {
 
+        var path, fs, __dirname;
+        initLocalPref();
         initUserInterface();
 
         $scope.$on('GlobalProjectReceived', function () {
@@ -27,6 +29,15 @@
         /**
          * 初始化Nav界面
          */
+
+        function initLocalPref() {
+            if (window.local) {
+                path = require('path');
+                fs = require('fs');
+                __dirname = global.__dirname;
+            }
+        }
+
         function initUserInterface(){
             $scope.component= {
                 nav: {
@@ -149,6 +160,18 @@
         }
 
 
+        function DataUrlToBlob(dataUrl) {
+            var arr = dataUrl.split(',');
+            var mime = arr[0].match(/:(.*?);/)[1];
+            var bstr = atob(arr[1]);
+            var n = bstr.length;
+            var u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], {type: mime});
+        }
+
 
         function saveProject(_saveCb) {
             ProjectService.getProjectTo($scope);
@@ -181,41 +204,30 @@
                         //if (isOffline){
                         //    return;
                         //}
+                        if (window.local) {
+                            saveThumb(scaledThumb, function () {
+                                //save
+                                //save currentProject
+                                var projectUrl = ResourceService.getProjectUrl();
+                                var dataUrl = path.join(projectUrl, 'project.json');
+                                try {
+                                    var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
+                                    oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
+                                    console.log(oldProjectData.thumbnail);
+                                    oldProjectData.content = JSON.stringify(currentProject);
+                                    fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
+                                    //success
+                                    toastr.info('保存成功');
+                                    $timeout(function () {
 
-                        uploadThumb(scaledThumb, function () {
-                            $http({
-                                method:'PUT',
-                                url:'/project/'+currentProject.projectId+'/save',
-                                data:{
-                                    project:currentProject
+                                        ProjectService.LoadCurrentOperate(projectClone, function () {
+                                            $scope.$emit('UpdateProject');
+                                            _saveCb && _saveCb();
+                                        });
 
-                                }
-
-                            })
-                                .success(function (t) {
-                                    if (t=='ok'){
-                                        toastr.info('保存成功');
-                                        $timeout(function () {
-
-                                            ProjectService.LoadCurrentOperate(projectClone, function () {
-                                                $scope.$emit('UpdateProject');
-                                                _saveCb && _saveCb();
-                                            });
-
-                                        })
-                                    }else{
-                                        toastr.warning('保存失败')
-                                        $timeout(function () {
-
-                                            ProjectService.LoadCurrentOperate(projectClone, function () {
-                                                $scope.$emit('UpdateProject');
-                                            });
-
-                                        })
-                                    }
-                                })
-                                .error(function (err) {
-                                    console.log(err);
+                                    })
+                                } catch (e) {
+                                    //fail
                                     toastr.warning('保存失败');
                                     $timeout(function () {
                                         ProjectService.LoadCurrentOperate(projectClone, function () {
@@ -223,8 +235,56 @@
                                         });
                                     })
 
-                                });
-                        });
+                                }
+
+
+                            });
+                        } else {
+                            uploadThumb(scaledThumb, function () {
+                                $http({
+                                    method: 'PUT',
+                                    url: '/project/' + currentProject.projectId + '/save',
+                                    data: {
+                                        project: currentProject
+
+                                    }
+
+                                })
+                                    .success(function (t) {
+                                        if (t == 'ok') {
+                                            toastr.info('保存成功');
+                                            $timeout(function () {
+
+                                                ProjectService.LoadCurrentOperate(projectClone, function () {
+                                                    $scope.$emit('UpdateProject');
+                                                    _saveCb && _saveCb();
+                                                });
+
+                                            })
+                                        } else {
+                                            toastr.warning('保存失败')
+                                            $timeout(function () {
+
+                                                ProjectService.LoadCurrentOperate(projectClone, function () {
+                                                    $scope.$emit('UpdateProject');
+                                                });
+
+                                            })
+                                        }
+                                    })
+                                    .error(function (err) {
+                                        console.log(err);
+                                        toastr.warning('保存失败');
+                                        $timeout(function () {
+                                            ProjectService.LoadCurrentOperate(projectClone, function () {
+                                                $scope.$emit('UpdateProject');
+                                            });
+                                        })
+
+                                    });
+                            });
+                        }
+
                         function uploadThumb(thumb,_callback){
                             $http({
                                 method:'POST',
@@ -242,6 +302,20 @@
                                     toastr.warning('上传失败');
                                 })
                             //_callback && _callback();
+                        }
+
+                        function saveThumb(thumb, _callback) {
+                            console.log(thumb);
+                            var thumbFile = new Buffer(thumb.split(',')[1], 'base64');
+                            var projectUrl = $scope.project.projectUrl || path.join(__dirname, 'localproject', currentProject.projectId);
+                            var thumbUrl = path.join(projectUrl, 'thumbnail.jpg');
+                            try {
+                                fs.writeFileSync(thumbUrl, thumbFile);
+                                _callback && _callback();
+                            } catch (e) {
+                                _callback && _callback(e);
+                            }
+
                         }
                     });
                     //console.log(thumb)
@@ -472,30 +546,35 @@
         
         function generateDataFile(format){
             generateData(format);
-            saveProject(function () {
-                $http({
-                    method:'POST',
-                    url:'/project/'+$scope.project.projectId+'/generate',
-                    data:{
-                        dataStructure:window.projectData
-                    }
-                })
-                .success(function (data,status,xhr) {
-                    if (data == 'ok'){
-                        toastr.info('生成成功');
-                        //download
-                        window.location.href = '/project/'+$scope.project.projectId+'/download'
-                    }else{
-                        console.log(data);
-                        toastr.info('生成失败')
-                    }
+            if (window.local){
+                RenderSerive.renderProject();
+            }else{
+                saveProject(function () {
+                    $http({
+                        method:'POST',
+                        url:'/project/'+$scope.project.projectId+'/generate',
+                        data:{
+                            dataStructure:window.projectData
+                        }
+                    })
+                        .success(function (data,status,xhr) {
+                            if (data == 'ok'){
+                                toastr.info('生成成功');
+                                //download
+                                window.location.href = '/project/'+$scope.project.projectId+'/download'
+                            }else{
+                                console.log(data);
+                                toastr.info('生成失败')
+                            }
 
+                        })
+                        .error(function (err,status,xhr) {
+                            console.log(err);
+                            toastr.info('生成失败')
+                        })
                 })
-                .error(function (err,status,xhr) {
-                    console.log(err);
-                    toastr.info('生成失败')
-                })
-            })
+            }
+
         }
         
         function generateData(format){
