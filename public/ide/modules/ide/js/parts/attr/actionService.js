@@ -38,6 +38,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyNumber:
                 triggers = ['MaxOverflow','MinOverflow','Enter','Leave'];
                 break;
+            case Type.MyScriptTrigger:
             case Type.MyProgress:
             case Type.MyDashboard:
                 triggers = ['EnterLowAlarm','LeaveLowAlarm','EnterHighAlarm','LeaveHighAlarm','Enter','Leave'];

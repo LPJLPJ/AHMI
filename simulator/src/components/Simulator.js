@@ -473,6 +473,8 @@ module.exports = React.createClass({
                 break;
             case 'MySlideBlock':
                 this.drawSlideBlock(curX,curY,widget,options);
+            case 'MyScriptTrigger':
+                this.drawScriptTrigger(curX,curY,widget,options);
                 break;
         }
     },
@@ -773,7 +775,17 @@ module.exports = React.createClass({
 
         }
     },
-    drawCursor:function (beginX, beginY, width, height, align,alignLimit, img,color) {
+    drawScriptTrigger:function(curX, curY, widget, options){
+        //get current value
+        var curScriptTriggerTag = this.findTagByName(widget.tag);
+
+        var curScriptTrigger = (curScriptTriggerTag && curScriptTriggerTag.value) || 0;
+
+        //handle action
+        this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
+        widget.oldValue = curScriptTrigger;
+    },
+    drawCursor:function(beginX, beginY, width, height, align,alignLimit, img,color) {
 
         var cursorImg  = this.getImage(img);
         cursorImg = (cursorImg && cursorImg.content) || null;
