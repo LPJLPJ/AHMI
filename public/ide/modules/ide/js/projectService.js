@@ -1499,8 +1499,8 @@ ideServices
                         this.width ,
                         this.height);
 
-                    if (this.backgroundImageElementElement){
-                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
                     if(this.slideImageElement){
                         if(this.arrange=='horizontal'){
