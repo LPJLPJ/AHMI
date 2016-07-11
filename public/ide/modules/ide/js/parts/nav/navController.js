@@ -12,7 +12,7 @@
                                         Type,
                                         CanvasService,
                                         $uibModal,
-                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService) {
+                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService,RenderSerive) {
 
         var path, fs, __dirname;
         initLocalPref();
@@ -546,30 +546,35 @@
         
         function generateDataFile(format){
             generateData(format);
-            saveProject(function () {
-                $http({
-                    method:'POST',
-                    url:'/project/'+$scope.project.projectId+'/generate',
-                    data:{
-                        dataStructure:window.projectData
-                    }
-                })
-                .success(function (data,status,xhr) {
-                    if (data == 'ok'){
-                        toastr.info('生成成功');
-                        //download
-                        window.location.href = '/project/'+$scope.project.projectId+'/download'
-                    }else{
-                        console.log(data);
-                        toastr.info('生成失败')
-                    }
+            if (window.local){
+                RenderSerive.renderProject();
+            }else{
+                saveProject(function () {
+                    $http({
+                        method:'POST',
+                        url:'/project/'+$scope.project.projectId+'/generate',
+                        data:{
+                            dataStructure:window.projectData
+                        }
+                    })
+                        .success(function (data,status,xhr) {
+                            if (data == 'ok'){
+                                toastr.info('生成成功');
+                                //download
+                                window.location.href = '/project/'+$scope.project.projectId+'/download'
+                            }else{
+                                console.log(data);
+                                toastr.info('生成失败')
+                            }
 
+                        })
+                        .error(function (err,status,xhr) {
+                            console.log(err);
+                            toastr.info('生成失败')
+                        })
                 })
-                .error(function (err,status,xhr) {
-                    console.log(err);
-                    toastr.info('生成失败')
-                })
-            })
+            }
+
         }
         
         function generateData(format){
