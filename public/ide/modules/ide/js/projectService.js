@@ -5750,7 +5750,12 @@ ideServices
         //如下属性改变，但是不用重新渲染界面，包括切换模式
         this.ChangeAttributeOfNum=function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
-            selectObj.level.info.numModeId=_option.numModeId;
+            if(_option.numModeId){
+                selectObj.level.info.numModeId=_option.numModeId;
+            }
+            if(_option.overFlowStyle){
+                selectObj.level.info.overFlowStyle=_option.overFlowStyle;
+            }
             _successCallback&&_successCallback();
             //console.log('displayModel',selectObj.level.info.numModeId);
 

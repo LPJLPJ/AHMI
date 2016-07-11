@@ -469,6 +469,8 @@ ideServices
                 symbolMode:'0',//符号模式标志，1：无符号位，1：有符号位
                 decimalCount:0,//保留的小数位数
                 numOfDigits:3,//数字的位数，最小1，最大未定
+                overFlowStyle:'0',//指数字大于最大值时是否继续显示,0不显示，1显示
+
                 align:'center',//数字对齐方式
 
                 arrange:true,         //true:横向 false:竖向
