@@ -41,7 +41,12 @@ $(function(){
 
         function getResourceRelativePath(resourceFilePath) {
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
-            return path.relative(realDirPath, resourceFilePath);
+            if (resourceFilePath){
+                return path.relative(realDirPath, resourceFilePath);
+            }else{
+                return '';
+            }
+
         }
 
         var stats;
