@@ -20191,7 +20191,7 @@
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
 	        var height = widget.info.height;
-	        var text = widget.info.buttonText;
+	        var text = widget.info.text;
 	        var font = {};
 	        font['font-style'] = widget.info.buttonFontItalic;
 	        font['font-weight'] = widget.info.buttonFontBold;

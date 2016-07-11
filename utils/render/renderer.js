@@ -99,7 +99,7 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
                 renderingX.renderImage(ctx,new Size(info.width,info.height),new Pos(),targetImageObj,new Pos(),new Size(info.width,info.height));
             }
             //draw text
-            renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.buttonText,style,true,null,this.customFonts);
+            renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
             //generate file
             var imgName = widget.id.split('.').join('');
             var outputFilename = imgName +'-'+ index+'.png';
