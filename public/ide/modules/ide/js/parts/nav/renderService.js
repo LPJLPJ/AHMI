@@ -400,7 +400,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
     };
 
 
-    this.renderProject=function (projectData) {
+    this.renderTest=function (projectData) {
         var fakeButton = {
             "id": "0.0.0.5",
             "info": {
@@ -487,6 +487,102 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
 
 
+    }
+
+    this.renderProject = function (dataStructure,sCb, fCb) {
+        var MyZip = require('../../utils/MyZip');
+        var errReported = false;
+        function errHandler(err) {
+            console.log(err);
+            if (!errReported){
+
+                fCb && fCb();
+                errReported = true;
+            }
+        }
+
+        function successHandler() {
+            console.log('zip ok');
+            sCb && sCb();
+        }
+        var ProjectBaseUrl = ResourceService.getProjectUrl();
+        var ResourceUrl = ResourceService.getResourceUrl();
+        var DataFileUrl = path.join(ResourceUrl,'data.json');
+        var allWidgets = [];
+        for (var i=0;i<dataStructure.pageList.length;i++){
+            var curPage = dataStructure.pageList[i];
+            for (var j=0;j<curPage.canvasList.length;j++){
+                var curCanvas = curPage.canvasList[j];
+                for (var k=0;k<curCanvas.subCanvasList.length;k++){
+                    var curSubCanvas = curCanvas.subCanvasList[k];
+                    for (var l=0;l<curSubCanvas.widgetList.length;l++){
+                        allWidgets.push(curSubCanvas.widgetList[l]);
+                    }
+                }
+            }
+        }
+        var totalNum = allWidgets.length;
+        if (totalNum>0){
+            var okFlag = true;
+            var cb = function (err) {
+                if (err){
+                    okFlag = false;
+                    errHandler('generate error');
+                }else{
+                    totalNum-=1;
+                    if (totalNum<=0){
+                        if (okFlag){
+                            //ok
+                            console.log('trans finished');
+                            fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                                if (err){
+                                    errHandler(err);
+                                }else{
+                                    //write ok
+                                    console.log('write ok');
+                                    //using myzip
+                                    var SrcUrl = ResourceUrl;
+                                    var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                                    MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+                                        if (err) {
+                                            errHandler(err);
+                                        } else {
+                                            successHandler();
+
+                                        }
+                                    })
+                                }
+                            })
+                        }else{
+                            //fail
+                        }
+                    }
+                }
+            }.bind(this);
+            var Renderer = new renderer();
+            for (var m=0;m<allWidgets.length;m++){
+                var curWidget = allWidgets[m];
+                Renderer.renderWidget(curWidget,ResourceUrl,ResourceUrl,ResourceUrl,cb);
+            }
+        }else{
+            fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                if (err){
+                    errHandler(res,500,err);
+                }else{
+                    //write ok
+                    var SrcUrl = ResourceUrl;
+                    var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                    MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+                        if (err) {
+                            errHandler(err);
+                        } else {
+                            successHandler();
+
+                        }
+                    })
+                }
+            })
+        }
     }
 
 }]);

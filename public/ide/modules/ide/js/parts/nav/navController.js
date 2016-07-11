@@ -547,7 +547,11 @@
         function generateDataFile(format){
             generateData(format);
             if (window.local){
-                RenderSerive.renderProject();
+                RenderSerive.renderProject(window.projectData,function () {
+                    toastr.info('生成成功');
+                },function () {
+                    toastr.info('生成失败');
+                });
             }else{
                 saveProject(function () {
                     $http({
