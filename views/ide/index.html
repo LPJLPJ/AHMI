@@ -1329,7 +1329,16 @@
                                 </option>
                             </select>
                         </div>
-
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">数字溢出模式</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.num.overFlowStyle"
+                                    ng-change="component.num.enterOverFlowStyle()">
+                                <option ng-repeat="style in component.num.overFlowStyles" value="{{style.id}}">
+                                    {{style.name}}
+                                </option>
+                            </select>
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">数字值</span>
                             <input class="my-attr-number-input form-control"

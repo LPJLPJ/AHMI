@@ -136,6 +136,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     {id:'0',name:'无前导0模式'},
                     {id:'1',name:'有前导0模式'}
                 ],
+                overFlowStyle:'0',
+                overFlowStyles:[
+                    {id:'0',name:'超出不显示'},
+                    {id:'1',name:'超出显示'}
+                ],
                 changeNumFamily:changeNumFamily,
                 setBoldNum:setBoldNum,
                 setItalicNum:setItalicNum,
@@ -145,6 +150,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterNumMode:enterNumMode,
                 enterSymbolMode:enterSymbolMode,
                 enterFrontZeroMode:enterFrontZeroMode,
+                enterOverFlowStyle:enterOverFlowStyle,
 
                 enterNumValue:enterNumValue,
                 changeNumAlign:changeNumAlign
@@ -362,6 +368,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     $scope.component.num.numModeId=$scope.component.object.level.info.numModeId;
                     $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
                     $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
+                    $scope.component.num.overFlowStyle=$scope.component.object.level.info.overFlowStyle
                     break;
                 case Type.MyOscilloscope:
                     break;
@@ -628,7 +635,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             var option = {
                 text:$scope.component.object.level.info.text
             };
-            
+
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeButtonText(option, function () {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
@@ -1274,31 +1281,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }
     }
     function setBoldFont(){
-        //$scope.component.object.level.info.boldBtnToggle=!$scope.component.object.level.info.boldBtnToggle;
-        //
-        //if($scope.component.object.level.info.boldBtnToggle){
-        //    $scope.component.object.level.info.fontBold="bold";
-        //    var option = {
-        //        fontBold: $scope.component.object.level.info.fontBold,
-        //        boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
-        //    }
-        //
-        //    var oldOperate=ProjectService.SaveCurrentOperate();
-        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-        //        $scope.$emit('ChangeCurrentPage',oldOperate);
-        //    })
-        //}else{
-        //    $scope.component.object.level.info.fontBold="100";
-        //    var option = {
-        //        fontBold: $scope.component.object.level.info.fontBold,
-        //        boldBtnToggle:$scope.component.object.level.info.boldBtnToggle
-        //    };
-        //
-        //    var oldOperate=ProjectService.SaveCurrentOperate();
-        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-        //        $scope.$emit('ChangeCurrentPage',oldOperate);
-        //    })
-        //}
         if($scope.component.object.level.info.fontBold=="100"){
             $scope.component.object.level.info.fontBold="bold";
         }else if($scope.component.object.level.info.fontBold=="bold"){
@@ -1318,28 +1300,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
 
     function setItalicFont(){
-        //$scope.component.object.level.info.italicBtnToggle=!$scope.component.object.level.info.italicBtnToggle;
-        //if($scope.component.object.level.info.italicBtnToggle){
-        //    $scope.component.object.level.info.fontItalic="italic";
-        //    var option={
-        //        fontItalic:$scope.component.object.level.info.fontItalic,
-        //        italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
-        //    }
-        //    var oldOperate=ProjectService.SaveCurrentOperate();
-        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-        //        $scope.$emit('ChangeCurrentPage',oldOperate);
-        //    })
-        //}else{
-        //    $scope.component.object.level.info.fontItalic=" ";
-        //    var option={
-        //        fontItalic:$scope.component.object.level.info.fontItalic,
-        //        italicBtnToggle: $scope.component.object.level.info.italicBtnToggle
-        //    };
-        //    var oldOperate=ProjectService.SaveCurrentOperate();
-        //    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-        //        $scope.$emit('ChangeCurrentPage',oldOperate);
-        //    })
-        //}
         if($scope.component.object.level.info.fontItalic==""){
             $scope.component.object.level.info.fontItalic="italic";
         }else if($scope.component.object.level.info.fontItalic=="italic"){
@@ -1357,9 +1317,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         var selectCharacterSet = characterSetService.selectCharacterByIndex(index);
         //console.log(selectCharacterSet);
         if(selectCharacterSet){
-            //$scope.component.object.level.info.text=selectCharacterSet.text;
-            //$scope.component.object.level.info.fontName=selectCharacterSet.fontName;
-
             $scope.component.object.level.info.fontName=selectCharacterSet.fontName;
             $scope.component.object.level.info.fontFamily=selectCharacterSet.fontFamily;
             $scope.component.object.level.info.fontSize=selectCharacterSet.fontSize;
@@ -1557,12 +1514,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }else {
             return;
         }
-
-        var oldOperate=ProjectService.SaveCurrentOperate();
-
         var option={
             numModeId:selectNumMode
-        }
+        };
 
         var oldOperate=ProjectService.SaveCurrentOperate();
         ProjectService.ChangeAttributeOfNum(option, function (oldOperate) {
@@ -1579,13 +1533,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         }else {
             return;
         }
-
-        var oldOperate=ProjectService.SaveCurrentOperate();
-
         var option={
-            symbolMode:selectSymbolMode,
-        }
-
+            symbolMode:selectSymbolMode
+        };
         var oldOperate=ProjectService.SaveCurrentOperate();
         ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
@@ -1602,14 +1552,33 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             return;
         }
 
-        var oldOperate=ProjectService.SaveCurrentOperate();
-
         var option={
-            frontZeroMode:selectFrontZeroMode,
-        }
+            frontZeroMode:selectFrontZeroMode
+        };
 
         var oldOperate=ProjectService.SaveCurrentOperate();
         ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+
+    function enterOverFlowStyle(){
+        var selectObj=ProjectService.getCurrentSelectObject();
+        var selectOverFlowStyle=null;
+        //console.log('当前值',$scope.component.num.frontZeroMode);
+        if (selectObj.type==Type.MyNum){
+            selectOverFlowStyle=$scope.component.num.overFlowStyle
+
+        }else {
+            return;
+        }
+
+        var option={
+            overFlowStyle:selectOverFlowStyle
+        };
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeOfNum(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
