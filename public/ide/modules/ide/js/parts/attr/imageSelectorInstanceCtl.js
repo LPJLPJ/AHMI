@@ -87,6 +87,14 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
         $uibModalInstance.dismiss('cancel');
     };
 
+    $scope.disableColorInput = function(slice){
+        if(slice.imgSrc){
+            slice.color='rgba(0,0,0,0)';
+        }else{
+            slice.color=_getRandomColor();
+        }
+    };
+
 
     function initConfigure(_canAddNewSlice,_sliceNum,_tex){
         $scope.canAddNewSlice = _canAddNewSlice;
@@ -111,6 +119,13 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
             $scope.tex.slices= _.cloneDeep($scope.tempSlices);
             //console.log($scope.tex.slices);
         });
+    }
+
+    function _getRandomColor(){
+        var r = _.random(64, 255);
+        var g = _.random(64, 255);
+        var b = _.random(64, 255);
+        return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
     }
 
 });

@@ -791,6 +791,7 @@ ideServices
 
                 //change dashboard mode
                 this.on('changeDashboardMode',function(arg){
+                    var _callback=arg.callback;
                     self.backgroundColor=arg.backgroundColor;
                     //若改变模式，重置已经画好的仪表盘控件
                     self.backgroundImageElement=null;
@@ -798,6 +799,7 @@ ideServices
                     self.lightBandImageElement=null;
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
+                    _callback&&_callback();
                 });
                 //chang dashboard clockwise
                 this.on('changeDashboardClockwise',function(arg){

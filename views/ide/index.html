@@ -751,15 +751,15 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">纹理</span>
-                            <p ng-repeat="subSlide in component.object.level.subSlides">{{subSlide.name}}</p>
-                            <p>
-                                <button class="btn btn-default" style="padding: 2px 8px;"
-                                        ng-click="component.slide.addSubSlide()">新建纹理
-                                </button>
-                            </p>
-                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">纹理</span>-->
+                            <!--<p ng-repeat="subSlide in component.object.level.subSlides">{{subSlide.name}}</p>-->
+                            <!--<p>-->
+                                <!--<button class="btn btn-default" style="padding: 2px 8px;"-->
+                                        <!--ng-click="component.slide.addSubSlide()">新建纹理-->
+                                <!--</button>-->
+                            <!--</p>-->
+                        <!--</div>-->
                     </div>
 
                     <div ng-show="component.object.type=='MyButton'">
@@ -1842,12 +1842,13 @@
                                     <td><input class="form-control" type="text" ng-model="slice.name"/></td>
                                     <!--image-->
                                     <td><select class="form-control" ng-model="slice.imgSrc"
-                                                ng-options="image.src as image.name for image in images ">
+                                                ng-options="image.src as image.name for image in images "
+                                                ng-change="disableColorInput(slice)">
                                         <!--<option value="">-&#45;&#45;</option>-->
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
-                                               ng-model="slice.color"/></td>
+                                               ng-model="slice.color" /></td>
                                     <td>
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"

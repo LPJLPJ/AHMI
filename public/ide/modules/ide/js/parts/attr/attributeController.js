@@ -591,12 +591,47 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         var selectImage='';
         if ($scope.component.object.type==Type.MyPage){
             selectImage=$scope.component.page.selectImage;
+            if(selectImage=='/public/images/blank.png'){
+                $scope.component.object.level.backgroundColor=_getRandomColor();
+            }
+            else{
+                $scope.component.object.level.backgroundColor='rgba(0,0,0,0)'
+            }
+
+            var currentPage=ProjectService.getCurrentPage();
+            var pageNode=CanvasService.getPageNode();
+            pageNode.setBackgroundColor($scope.component.object.level.backgroundColor, function () {
+                pageNode.renderAll();
+                currentPage.backgroundColor=$scope.component.object.level.backgroundColor;
+                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+            });
         }else if ($scope.component.object.type==Type.MySubLayer){
             selectImage=$scope.component.subLayer.selectImage;
+            if(selectImage=='/public/images/blank.png'){
+                $scope.component.object.level.backgroundColor=_getRandomColor();
+            }
+            else{
+                $scope.component.object.level.backgroundColor='rgba(0,0,0,0)'
+            }
+
+            var currentSubLayer=ProjectService.getCurrentSubLayer();
+            var subLayerNode=CanvasService.getSubLayerNode();
+            subLayerNode.setBackgroundColor($scope.component.object.level.backgroundColor, function () {
+                subLayerNode.renderAll();
+                currentSubLayer.backgroundColor=$scope.component.object.level.backgroundColor;
+
+                currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+            })
+
+        }else{
+            return;
         }
+
+
+
         var option={
             image: _.cloneDeep(selectImage)
-        }
+        };
         ProjectService.ChangeAttributeBackgroundImage(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
@@ -1794,6 +1829,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         ProjectService.ChangeAttributeDateTimeModeId(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
+    }
+
+    function _getRandomColor(){
+        var r = _.random(64, 255);
+        var g = _.random(64, 255);
+        var b = _.random(64, 255);
+        return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
     }
 
 });
