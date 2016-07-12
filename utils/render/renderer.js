@@ -50,7 +50,7 @@ renderer.prototype.addImage = function (imageUrl, image) {
 
 renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
     var info = widget.info;
-    if (info && info.buttonText && info.buttonText!==''){
+    if (info){
         //has text
 
 

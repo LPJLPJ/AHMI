@@ -99,7 +99,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
     renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
-        if (info && info.buttonText && info.buttonText!==''){
+        if (info ){
             //has text
 
 
@@ -148,7 +148,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                     renderingX.renderImage(ctx,new Size(info.width,info.height),new Pos(),targetImageObj,new Pos(),new Size(info.width,info.height));
                 }
                 //draw text
-                renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.buttonText,style,true,null,this.customFonts);
+                renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
                 //generate file
                 var imgName = widget.id.split('.').join('');
                 var outputFilename = imgName +'-'+ index+'.png';
@@ -490,6 +490,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
     }
 
     this.renderProject = function (dataStructure,sCb, fCb) {
+        console.log(dataStructure);
         var MyZip = require('../../utils/MyZip');
         var errReported = false;
         function errHandler(err) {
@@ -560,9 +561,10 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                 }
             }.bind(this);
             var Renderer = new renderer();
+            var ViewUrl = path.join(global.__dirname,path.dirname(window.location.pathname));
             for (var m=0;m<allWidgets.length;m++){
                 var curWidget = allWidgets[m];
-                Renderer.renderWidget(curWidget,ResourceUrl,ResourceUrl,ResourceUrl,cb);
+                Renderer.renderWidget(curWidget,ViewUrl,ResourceUrl,ResourceUrl,cb);
             }
         }else{
             fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
