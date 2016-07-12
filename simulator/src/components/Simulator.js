@@ -1011,7 +1011,7 @@ module.exports = React.createClass({
 
     },
     drawNum: function (curX, curY, widget, options) {
-        // console.log(widget.info);
+        console.log('keke',widget.info);
         var offcanvas = this.refs.offcanvas
         var offctx = offcanvas.getContext('2d')
         //get current value
@@ -1025,11 +1025,11 @@ module.exports = React.createClass({
         var symbolMode = widget.info.symbolMode
         var decimalCount = widget.info.decimalCount || 0
         var numOfDigits = widget.info.numOfDigits
-        var numFamily = widget.info.numFamily
-        var numSize = widget.info.numSize
-        var numColor = widget.info.numColor
-        var numBold = widget.info.numBold
-        var numItalic = widget.info.numItalic
+        var numFamily = widget.info.fontFamily
+        var numSize = widget.info.fontSize
+        var numColor = widget.info.fontColor
+        var numBold = widget.info.fontBold
+        var numItalic = widget.info.fontItalic
         //size
         var curWidth = widget.info.width;
         var curHeight = widget.info.height;
@@ -1043,7 +1043,15 @@ module.exports = React.createClass({
         var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
         //offCtx.fillStyle = this.numColor;
         tempCtx.font = numString;
-        tempCtx.textAlign = widget.info.align||'center';
+        switch(widget.info.align){
+            case "right":
+                tempCtx.textAlign="left";
+                break;
+            case "left":
+                tempCtx.textAlign="right";
+                break;
+        }
+        tempCtx.textAlign = tempCtx.textAlign||'center';
         tempCtx.textBaseline= 'middle';
         // console.log(curValue);
 
@@ -1067,7 +1075,7 @@ module.exports = React.createClass({
                 // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
                 // // tempCtx.fillText(tempNumValue,0,)
                 // tempCtx.restore()
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx)
+                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempCtx)
                 offctx.drawImage(tempcanvas, curX, curY, curWidth, curHeight)
                 //offCtx.restore();
 
@@ -1084,12 +1092,12 @@ module.exports = React.createClass({
                 var totalFrameNum = 10
                 // //draw
                 var tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx)
+                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempCtx)
                 var oldHeight = (totalFrameNum - widget.curFrameNum) * 1.0 / totalFrameNum * curHeight
                 offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
 
                 var tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx)
+                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempCtx)
                 var oldHeight = widget.curFrameNum * 1.0 / totalFrameNum * curHeight
                 offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
 
@@ -1120,12 +1128,14 @@ module.exports = React.createClass({
         }
 
     },
-    drawStyleString: function (tempNumValue, curWidth, curHeight, numSize, bgTex, tempCtx) {
+    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
         tempCtx.clearRect(0, 0, curWidth, curHeight)
         tempCtx.save()
         this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx)
         tempCtx.globalCompositeOperation = "destination-in";
         // console.log(tempNumValue);
+        tempCtx.textBaseline="middle"
+        tempCtx.font=font;
         tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 );
         // tempCtx.fillText(tempNumValue,0,)
         tempCtx.restore()
