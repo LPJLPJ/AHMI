@@ -1,5 +1,5 @@
 {
-  "name": "server_demo2",
+  "name": "AHMI IDE",
   "version": "1.0.0",
   "description": "",
   "main": "./views/login/personalProject.html",

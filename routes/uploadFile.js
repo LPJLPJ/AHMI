@@ -190,6 +190,7 @@ module.exports.getProjectFile = function (req, res) {
         //valid
         res.sendFile(path.join(__dirname,'../project/',String(projectId),'/resources/',String(fileId)), function (err) {
             if (err){
+                console.log(err);
                 errHandler(res,500,'get file error');
             }
 
