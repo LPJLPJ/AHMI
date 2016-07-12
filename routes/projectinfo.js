@@ -366,21 +366,16 @@ projectRoute.generateProject = function (req, res) {
                 }else{
                     //write ok
                     console.log('write ok');
-                    var zip = new nodejszip();
                     var SrcUrl = path.join(ProjectBaseUrl,'resources');
                     var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                    try {
-                        zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
-                            if (err) {
-                                errHandler(res, 500, err);
-                            } else {
-                                res.end('ok')
+                    MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+                        if (err) {
+                            errHandler(res, 500, err);
+                        } else {
+                            res.end('ok')
 
-                            }
-                        })
-                    }catch (err){
-                        errHandler(res, 500, err);
-                    }
+                        }
+                    })
                 }
             })
         }
