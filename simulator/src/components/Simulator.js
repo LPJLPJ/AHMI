@@ -1043,7 +1043,15 @@ module.exports = React.createClass({
         var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
         //offCtx.fillStyle = this.numColor;
         tempCtx.font = numString;
-        tempCtx.textAlign = widget.info.align||'center';
+        switch(widget.info.align){
+            case "right":
+                tempCtx.textAlign="left";
+                break;
+            case "left":
+                tempCtx.textAlign="right";
+                break;
+        }
+        tempCtx.textAlign = tempCtx.textAlign||'center';
         tempCtx.textBaseline= 'middle';
         // console.log(curValue);
 
@@ -1126,7 +1134,6 @@ module.exports = React.createClass({
         this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx)
         tempCtx.globalCompositeOperation = "destination-in";
         // console.log(tempNumValue);
-        tempCtx.textAlign="center";
         tempCtx.textBaseline="middle"
         tempCtx.font=font;
         tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 );
