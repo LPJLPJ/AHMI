@@ -271,6 +271,13 @@ ide.
 
         //点击按钮删除自定义tag
         function deleteTag(index){
+            var requiredTagNames=ProjectService.getRequiredTagNames();
+            for (var i=0;i<requiredTagNames.length;i++){
+                if ($scope.component.allCustomTags[index].name==requiredTagNames[i]){
+                    toastr.warning('该tag已经被使用');
+                    return;
+                }
+            }
             TagService.deleteTagByIndex(index);
         }
 
@@ -315,22 +322,17 @@ ide.
 
             var nameString=$scope.component.tag.name;
             if(nameString.match("SysTmr_")){
-                //console.log("edit TimerTag");
                 TagService.editTimerTagByIndex($scope.component.indexOfTagInList,$scope.component.tag);
             }
             else{
-                console.log("edit tag");
                 TagService.editTagByIndex($scope.component.indexOfTagInList,$scope.component.tag);
-                //console.log($scope.component.tag);
             }
-            //console.log($scope.component.tag);
         }
 
         /**
          *更新所选控件的tag
          */
         function selectedTagFun(){
-            console.log($scope.component.selectedTag);
             ProjectService.ChangeAttributeTag($scope.component.selectedTag);
 
         }

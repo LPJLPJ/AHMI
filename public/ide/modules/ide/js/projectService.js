@@ -2998,9 +2998,35 @@ ideServices
                         })
                     })
                 })
-            })
+            });
             return names;
-        }
+        };
+        /**
+         * 搜寻所有被项目引用过的tag名
+         * 用于删除资源时判断  该资源是否可以被删除
+         * @type {getRequiredResourceNames}
+         */
+        var getRequiredTagNames=this.getRequiredTagNames=function(){
+            var names=[];
+            _.forEach(project.pages,function(page){
+                if(page.tag){
+                    names.push(page.tag);
+                }
+                _.forEach(page.layers,function(layer){
+                    if(layer.tag){
+                        names.push(layer.tag);
+                    }
+                    _.forEach(layer.subLayers,function(subLayer){
+                       _.forEach(subLayer.widgets,function(widget){
+                           if(widget.tag){
+                               names.push(widget.tag);
+                           }
+                       })
+                    })
+                })
+            });
+            return names
+        };
 
         /**
          * Page之间的切换
