@@ -90,8 +90,17 @@ $(function(){
 		}
 	});
 
+    var captchaCount = 0
 	$('#change-captcha').on('click',function(){
-		$('#captcha-img').attr('src','/captcha') 
+        console.log('eeee')
+
+        var src = (captchaCount++%2==0)?'':'/captcha';
+        $('#captcha-img').attr('src',src)
+	});
+
+	$('#change-img').on('click',function(){
+        console.log('hehe')
+		$(this).attr('src','/captcha')
 	});
 
 	$('#submit').on('click',function(){
