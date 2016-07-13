@@ -90,18 +90,23 @@ $(function(){
 		}
 	});
 
-    var captchaCount = 0
 	$('#change-captcha').on('click',function(){
-        console.log('eeee')
+        // $.ajax({
+		// 	type:'GET',
+		// 	url:'/captcha',
+         //    success:function(data, status, xhr){
+         //        console.log(data)
+         //        $('#captcha-img').attr('src',data)
+         //    },
+         //    error: function (err, status, xhr) {
+         //        $('#captcha-img').attr('src','')
+         //    }
+		// })
+        $('#captcha-img').attr('src','/captcha?'+Date.now());
 
-        var src = (captchaCount++%2==0)?'':'/captcha';
-        $('#captcha-img').attr('src',src)
 	});
 
-	$('#change-img').on('click',function(){
-        console.log('hehe')
-		$(this).attr('src','/captcha')
-	});
+
 
 	$('#submit').on('click',function(){
 		var userInfo = {

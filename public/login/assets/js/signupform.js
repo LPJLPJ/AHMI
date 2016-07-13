@@ -36,7 +36,7 @@ $(function () {
     }
 
     init();
-    
+
     function get(name) {
         return document.getElementById(name)
     }
@@ -200,7 +200,7 @@ $(function () {
         captchaButton.addEventListener('click', function (e) {
             e.preventDefault()
 
-            captchaImg.src = '/captcha'
+            captchaImg.src = '/captcha?'+Date.now();
         })
         captchaInput.addEventListener('focus', function () {
             captchaVerify.innerHTML = ''
