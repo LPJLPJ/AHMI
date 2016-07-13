@@ -29,7 +29,6 @@ $(function(){
     }catch (e){
 
     }
-
     if (local){
         //create localproject folder
         fs = require('fs');
