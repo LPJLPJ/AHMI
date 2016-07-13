@@ -1049,20 +1049,9 @@ module.exports = React.createClass({
         var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
         //offCtx.fillStyle = this.numColor;
         tempCtx.font = numString;
-        switch(widget.info.align){
-            case "right":
-                tempCtx.textAlign="left";
-                break;
-            case "left":
-                tempCtx.textAlign="right";
-                break;
-            case "center":
-                tempCtx.textAlign="center";
-                break;
-        }
+        tempCtx.textAlign=widget.info.align;
         tempCtx.textAlign = tempCtx.textAlign||'center';
         tempCtx.textBaseline= 'middle';
-        // console.log(curValue);
 
         widget.oldValue = widget.oldValue || 0;
 
@@ -1138,14 +1127,25 @@ module.exports = React.createClass({
 
     },
     drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
-        tempCtx.clearRect(0, 0, curWidth, curHeight)
+        tempCtx.clearRect(0, 0, curWidth, curHeight);
         tempCtx.save()
-        this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx)
+        this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
         tempCtx.globalCompositeOperation = "destination-in";
         // console.log(tempNumValue);
-        tempCtx.textBaseline="middle"
+        //tempCtx.textBaseline="middle"
         tempCtx.font=font;
-        tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 );
+        switch(tempCtx.textAlign){
+            case 'left':
+                tempCtx.fillText(tempNumValue, 0, curHeight / 2 );
+                break;
+            case 'right':
+                tempCtx.fillText(tempNumValue, curWidth , curHeight / 2 );
+                break;
+            case 'center':
+            default :
+                tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 );
+                break;
+        }
         // tempCtx.fillText(tempNumValue,0,)
         tempCtx.restore()
     },
