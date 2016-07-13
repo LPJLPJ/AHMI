@@ -4,11 +4,6 @@ var _ = require('lodash');
 var TagList = require('./TagList');
 var LoadState = require('./LoadState')
 var sep = '/';
-try{
-    var path = require('path');
-    sep = '\\';
-}catch (e){
-}
 var defaultState = {
     loadDone: false,
     curPageIdx: 0,
@@ -19,6 +14,13 @@ var defaultState = {
     currentPressedTargets: []
 
 };
+
+try{
+    eval("var os = require('os')");
+    sep = '\\';
+}catch (e){
+    console.log(e);
+}
 
 var defaultSimulator = {
     project: {},
