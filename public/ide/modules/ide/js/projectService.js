@@ -2136,7 +2136,6 @@ ideServices
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }
-
                         }
                         //配置正负号
                         if(this.symbolMode=='1'){
