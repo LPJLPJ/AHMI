@@ -3,6 +3,12 @@ var $ = require('jquery');
 var _ = require('lodash');
 var TagList = require('./TagList');
 var LoadState = require('./LoadState')
+var sep = '/';
+try{
+    var path = require('path');
+    sep = '\\';
+}catch (e){
+}
 var defaultState = {
     loadDone: false,
     curPageIdx: 0,
@@ -117,7 +123,6 @@ module.exports = React.createClass({
                             if (num == 0) {
                                 callBack(data);
                             }
-                            ;
                         }.bind(this);
                         newResource.content = newImg;
                         imageList.push(newResource)
@@ -1529,7 +1534,7 @@ module.exports = React.createClass({
     },
     getImageName: function (imageName) {
         if (imageName && (typeof imageName === 'string')) {
-            var names = imageName.split('/')
+            var names = imageName.split(sep)
             return names[names.length - 1]
         } else {
             return ''
