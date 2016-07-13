@@ -3035,7 +3035,7 @@ ideServices
          */
         this.changeCurrentPageIndex = function (_pageIndex, _successCallback,isInit) {
             if (isInit){
-                console.log('初始化页面');
+                //console.log('初始化页面');
                 intoNewPage();
 
             }
@@ -3050,7 +3050,7 @@ ideServices
                             oldPageIndex=__pageIndex;
                         }
                     })
-                    console.log(oldPageIndex+'/'+_pageIndex);
+                    //console.log(oldPageIndex+'/'+_pageIndex);
                     if (oldPageIndex!=_pageIndex){
                         console.log('页面间切换');
                         if (oldPage.mode==1){
@@ -3063,7 +3063,7 @@ ideServices
                         }
 
                     }else{
-                        console.log('相同页面点击');
+                        //console.log('相同页面点击');
 
                             _self.OnPageSelected(_pageIndex,function(){
                                 _successCallback&&_successCallback(true);
@@ -3097,7 +3097,7 @@ ideServices
                         //pageNode.setWidth(project.currentSize.width);
                         //pageNode.setHeight(project.currentSize.height);
                         if (isInit){
-                            console.log('更新layer');
+                            //console.log('更新layer');
                             updateLayerImage(0,function () {
                                 _self.ScaleCanvas('page');
 
@@ -3109,7 +3109,7 @@ ideServices
                             })
 
                         }else{
-                            console.log('不更新layer');
+                            //console.log('不更新layer');
                             _self.ScaleCanvas('page');
 
                             pageNode.renderAll();
@@ -4604,7 +4604,7 @@ ideServices
                     subLayerIndex=_index;
                 }
             })
-            console.log(currentPageIndex+'/'+layerIndex+'/'+subLayerIndex);
+            //console.log(currentPageIndex+'/'+layerIndex+'/'+subLayerIndex);
             _self.OnPageSelected(currentPageIndex,function () {
                 _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback,true);
 
@@ -4671,7 +4671,7 @@ ideServices
                 currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                console.log(currentPage.proJsonStr);
+                //console.log(currentPage.proJsonStr);
 
                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                 _successCallback && _successCallback();
@@ -4683,7 +4683,7 @@ ideServices
                     currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                    console.log(currentPage.proJsonStr);
+                    //console.log(currentPage.proJsonStr);
 
                     currentPage.mode=0;
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -5284,7 +5284,7 @@ ideServices
                         pageNode.renderAll();
                         currentPage.backgroundColor=_option.color;
                         currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                        console.log(currentPage.proJsonStr);
+                        //console.log(currentPage.proJsonStr);
 
                         var currentPageIndex= _indexById(project.pages, currentPage);
                         _self.OnPageSelected(currentPageIndex, function () {
@@ -6072,7 +6072,7 @@ ideServices
 
                 }else {
                     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                    console.log(currentPage.proJsonStr);
+                    //console.log(currentPage.proJsonStr);
 
                 }
                 subLayerNode.renderAll();

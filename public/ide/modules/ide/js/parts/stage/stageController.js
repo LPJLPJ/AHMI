@@ -27,7 +27,7 @@
 
 
         function initUserInterface(){
-            console.log('initing stage contrller')
+            //console.log('initing stage contrller')
             $scope.component={
                 out:{
                     toolShow:false
@@ -618,9 +618,9 @@
                     }
                     _.forEach($scope.component.canvas.node.getObjects(), function (_fabLayer) {
 
-                        console.log(clickX+'/'+clickY);
-                        console.log(_fabLayer.width+'/'+_fabLayer.getWidth());
-                        console.log(_fabLayer.top+'/'+_fabLayer.getTop());
+                        //console.log(clickX+'/'+clickY);
+                        //console.log(_fabLayer.width+'/'+_fabLayer.getWidth());
+                        //console.log(_fabLayer.top+'/'+_fabLayer.getTop());
                         if (clickX<=(_fabLayer.getWidth()+_fabLayer.left)&&clickY<=(_fabLayer.getHeight()+_fabLayer.top)
                             &&clickX>=_fabLayer.left&&clickY>=_fabLayer.top){
                             clickedFabLayer=_fabLayer;

@@ -184,7 +184,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             globalProject.projectId = id;
 
 
-            console.log('globalProject',globalProject);
+            //console.log('globalProject',globalProject);
 
             var resourceList = globalProject.resourceList;
             var count = resourceList.length;
@@ -228,7 +228,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             globalProject = GlobalService.getBlankProject()
             globalProject.projectId = id;
             //change resolution
-            console.log(data);
+            //console.log(data);
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
             })
@@ -300,7 +300,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             method:'GET',
             url:baseUrl+'/project/'+id+'/content'
         }).success(function (data) {
-            console.log(data);
+            //console.log(data);
             loadFromContent(data,id);
 
         }).error(function (msg) {
