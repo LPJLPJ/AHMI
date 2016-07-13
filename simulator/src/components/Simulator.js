@@ -1016,34 +1016,33 @@ module.exports = React.createClass({
 
     },
     drawNum: function (curX, curY, widget, options) {
-        console.log('keke',widget.info);
-        var offcanvas = this.refs.offcanvas
-        var offctx = offcanvas.getContext('2d')
+        var offcanvas = this.refs.offcanvas;
+        var offctx = offcanvas.getContext('2d');
         //get current value
-        var curValue = this.getValueByTagName(widget.tag)
-        var minValue = widget.info.minValue
-        var maxValue = widget.info.maxValue
-        var lowAlarmValue = widget.info.lowAlarmValue
-        var highAlarmValue = widget.info.highAlarmValue
-        var numModeId = widget.info.numModeId
-        var frontZeroMode = widget.info.frontZeroMode
-        var symbolMode = widget.info.symbolMode
-        var decimalCount = widget.info.decimalCount || 0
-        var numOfDigits = widget.info.numOfDigits
-        var numFamily = widget.info.fontFamily
-        var numSize = widget.info.fontSize
-        var numColor = widget.info.fontColor
-        var numBold = widget.info.fontBold
-        var numItalic = widget.info.fontItalic
+        var curValue = this.getValueByTagName(widget.tag);
+        var minValue = widget.info.minValue;
+        var maxValue = widget.info.maxValue;
+        var lowAlarmValue = widget.info.lowAlarmValue;
+        var highAlarmValue = widget.info.highAlarmValue;
+        var numModeId = widget.info.numModeId;
+        var frontZeroMode = widget.info.frontZeroMode;
+        var symbolMode = widget.info.symbolMode;
+        var decimalCount = widget.info.decimalCount || 0;
+        var numOfDigits = widget.info.numOfDigits;
+        var numFamily = widget.info.fontFamily;
+        var numSize = widget.info.fontSize;
+        var numColor = widget.info.fontColor;
+        var numBold = widget.info.fontBold;
+        var numItalic = widget.info.fontItalic;
         //size
         var curWidth = widget.info.width;
         var curHeight = widget.info.height;
 
-        var tempcanvas = this.refs.tempcanvas
-        tempcanvas.width = curWidth
-        tempcanvas.height = curHeight
-        var tempCtx = tempcanvas.getContext('2d')
-        tempCtx.clearRect(0, 0, curWidth, curHeight)
+        var tempcanvas = this.refs.tempcanvas;
+        tempcanvas.width = curWidth;
+        tempcanvas.height = curHeight;
+        var tempCtx = tempcanvas.getContext('2d');
+        tempCtx.clearRect(0, 0, curWidth, curHeight);
         //offCtx.scale(1/this.scaleX,1/this.scaleY);
         var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
         //offCtx.fillStyle = this.numColor;
@@ -1055,12 +1054,15 @@ module.exports = React.createClass({
             case "left":
                 tempCtx.textAlign="right";
                 break;
+            case "center":
+                tempCtx.textAlign="center";
+                break;
         }
         tempCtx.textAlign = tempCtx.textAlign||'center';
         tempCtx.textBaseline= 'middle';
         // console.log(curValue);
 
-        widget.oldValue = widget.oldValue || 0
+        widget.oldValue = widget.oldValue || 0;
 
         if (curValue != undefined && curValue != null) {
             //offCtx.save();

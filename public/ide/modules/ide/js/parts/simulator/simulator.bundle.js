@@ -20692,7 +20692,6 @@
 	        }
 	    },
 	    drawNum: function (curX, curY, widget, options) {
-	        console.log('keke', widget.info);
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        //get current value
@@ -20730,6 +20729,9 @@
 	                break;
 	            case "left":
 	                tempCtx.textAlign = "right";
+	                break;
+	            case "center":
+	                tempCtx.textAlign = "center";
 	                break;
 	        }
 	        tempCtx.textAlign = tempCtx.textAlign || 'center';
