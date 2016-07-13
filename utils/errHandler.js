@@ -11,5 +11,4 @@ module.exports = function (res, code, message) {
     }else{
         res.end()
     }
-    return;
-}
+};
