@@ -3,7 +3,7 @@
  */
 ;(function () {
     window.onload = function () {
-        var versionNum = 'beta: 0.99';
+        var versionNum = 'beta: 0.991';
         var versionTag = document.createElement('div');
         versionTag.id = 'version-tag';
         versionTag.innerHTML = versionNum;
