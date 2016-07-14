@@ -2136,6 +2136,18 @@ ideServices
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }
+                        }else{
+                            minus=this.numOfDigits-tempNumValue.length;
+                            if(this.decimalCount){
+                                for(i=0;i<minus+1;i++){
+                                    tempNumValue=String(' ')+tempNumValue;
+                                }
+                            }else{
+                                for(i=0;i<minus;i++){
+                                    //console.log(i);
+                                    tempNumValue=String(' ')+tempNumValue;
+                                }
+                            }
                         }
                         //配置正负号
                         if(this.symbolMode=='1'){
