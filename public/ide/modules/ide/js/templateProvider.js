@@ -528,19 +528,19 @@ ideServices
                 zIndex:0,
                 texList:[{
                     currentSliceIdx:0,
-                    name:'示波器背景',
+                    name:'背景纹理',
                     slices:[{
                         color:_getRandomColor(),
                         imgSrc:'',
-                        name:'示波器背景'
+                        name:'背景图片'
                     }]
                 },{
                     currentSliceIdx:0,
-                    name:'波形渲染背景',//指示波器折线图下方图案
+                    name:'背光纹理',//指示波器折线图下方图案
                     slices:[{
                         color:_getRandomColor(),
                         imgSrc:'',
-                        name:'波形渲染背景'
+                        name:'背光图片'
                     }]
                 }]
 
