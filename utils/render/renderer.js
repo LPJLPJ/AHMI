@@ -248,12 +248,12 @@ renderer.prototype.renderDashboard = function (widget,srcRootDir,dstDir,imgUrlPr
         var texList = widget.texList;
         var totalSlices = texList.length;
         for (var i=0;i<texList.length;i++){
-            var canvas = new Canvas(width,height);
-            var ctx = canvas.getContext('2d');
             if (i===1){
                 //pointer
                 width = height = info.pointerLength/Math.sqrt(2);
             }
+            var canvas = new Canvas(width,height);
+            var ctx = canvas.getContext('2d');
             var curSlice = texList[i].slices[0];
             ctx.clearRect(0,0,width,height);
             ctx.save();
