@@ -554,6 +554,11 @@
                 });
             }else{
                 saveProject(function () {
+                    if (window.spinner){
+                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                        window.spinner.show();
+                    }
+
                     $http({
                         method:'POST',
                         url:'/project/'+$scope.project.projectId+'/generate',
@@ -562,6 +567,7 @@
                         }
                     })
                         .success(function (data,status,xhr) {
+                            window.spinner&&window.spinner.hide();
                             if (data == 'ok'){
                                 toastr.info('生成成功');
                                 //download
@@ -571,10 +577,13 @@
                                 toastr.info('生成失败')
                             }
 
+
                         })
                         .error(function (err,status,xhr) {
+                            window.spinner&&window.spinner.hide();
                             console.log(err);
                             toastr.info('生成失败')
+
                         })
                 })
             }

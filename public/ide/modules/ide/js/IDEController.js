@@ -131,12 +131,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             loadStep++;
             if (loadStep==8){
                 //到达第8步,加载完成
-                $timeout(function () {
-                    $scope.ide.loaded=true;
-
-                    // intervalSave();
-
-                },200)
+                showIDE();
             }
         })
         
@@ -164,7 +159,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     function loadFromContent(data,id) {
         if (data.content){
-            toastr.info('加载成功')
 
             //var globalProject = GlobalService.getBlankProject()
             var globalProject = JSON.parse(data.content);
@@ -223,7 +217,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             //console.log('获取信息失败');
             //
             //readCache();
-            toastr.info('新建工程')
 
             globalProject = GlobalService.getBlankProject()
             globalProject.projectId = id;
@@ -313,16 +306,19 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             loadStep++;
             if (loadStep==8){
                 //到达第8步,加载完成
-                $timeout(function () {
-                    $scope.ide.loaded=true;
-
-                    // intervalSave();
-
-                },200)
+                showIDE();
             }
         })
     }
 
+    function showIDE() {
+        $timeout(function () {
+            $scope.ide.loaded=true;
+            window.spinner && window.spinner.hide();
+            // intervalSave();
+
+        },200)
+    }
 
     function getUrlParams() {
         var result = {};
