@@ -30,7 +30,7 @@ renderingX = getRidofDefault(renderingX);
 
 function renderer(images,customFonts) {
     this.images = images||{};
-    this.customFonts = customFonts || {'Songti':new Font('Songti',fontFile('Songti.ttc'))};
+    this.customFonts = customFonts || {};
 }
 
 //customfonts
@@ -63,7 +63,7 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
         font['font-family'] = widget.info.fontFamily;
         font['font-color'] = widget.info.fontColor;
         style.color = font['font-color'];
-        style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+        style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+('\"'+font['font-family']+'\"'||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
         var beforePressSlice = widget.texList[0].slices[0];
@@ -95,7 +95,6 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
                     }
 
                 }
-                console.log(targetImageObj);
                 renderingX.renderImage(ctx,new Size(info.width,info.height),new Pos(),targetImageObj,new Pos(),new Size(info.width,info.height));
             }
             //draw text
@@ -145,6 +144,95 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
         cb&&cb();
     }
 };
+
+renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+    var info = widget.info;
+    if (!!info){
+        //trans each slide
+        var width = info.width;
+        var height = info.height;
+
+        var interval = info.interval;
+        var count = info.count;
+        var arrange = info.arrange
+
+        var texList = widget.texList;
+        var totalSlices = 2*texList.length;
+        for (var i=0;i<2*texList.length;i++){
+            var canvas = new Canvas(width,height);
+            var ctx = canvas.getContext('2d');
+
+            var curSlice = texList[parseInt(i/2)].slices[i%2];
+            ctx.clearRect(0,0,width,height);
+            ctx.save();
+            //render color
+            renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+            //render image;
+            var imgSrc = curSlice.imgSrc;
+            if (imgSrc!==''){
+                var imgUrl = path.join(srcRootDir,imgSrc);
+                var targetImageObj = this.getTargetImage(imgUrl);
+                if (!targetImageObj){
+                    //not added to images
+                    var imgObj = new Image;
+                    try{
+                        imgObj.src = fs.readFileSync(imgUrl);
+                        this.addImage(imgUrl,imgObj);
+                        targetImageObj = imgObj;
+                    }catch (err){
+                        targetImageObj = null;
+                    }
+
+                }
+                renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+            }
+            //output
+            var imgName = widget.id.split('.').join('');
+            var outputFilename = imgName +'-'+ i+'.png';
+            fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
+                if (err){
+                    console.error(err);
+                    cb && cb(err);
+                }else{
+                    //write widget
+                    curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                    //if last trigger cb
+                    totalSlices -= 1;
+                    if (totalSlices<=0){
+                        cb && cb();
+                    }
+                }
+            }.bind(this));
+
+            // var out = fs.createWriteStream(path.join(dstDir,outputFilename));
+            // var stream = canvas.pngStream();
+            //
+            // stream.on('data', function(chunk){
+            //     out.write(chunk);
+            // });
+            // stream.on('error',function (err) {
+            //     console.error(err);
+            //     cb && cb(err);
+            // }.bind(this));
+            // stream.on('end', function(){
+            //     //write widget
+            //     curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+            //     //if last trigger cb
+            //     totalSlices -= 1;
+            //     if (totalSlices<=0){
+            //         cb && cb();
+            //     }
+            // }.bind(this));
+
+            ctx.restore();
+        }
+
+    }else{
+        cb&&cb();
+    }
+
+};
+
 
 renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
     var info = widget.info;
@@ -309,7 +397,7 @@ renderer.prototype.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPre
         font['font-family'] = widget.info.fontFamily;
         font['font-color'] = widget.info.fontColor;
         style.color = font['font-color'];
-        style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+        style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+('\"'+font['font-family']+'\"'||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
         var canvas = new Canvas(width,height);
@@ -386,6 +474,9 @@ renderer.prototype.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefi
     switch (widget.subType){
         case 'MyButton':
             this.renderButton(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+            break;
+        case 'MyButtonGroup':
+            this.renderButtonGroup(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
             break;
         case 'MySlide':
             this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
