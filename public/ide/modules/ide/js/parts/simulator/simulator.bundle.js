@@ -20962,6 +20962,8 @@
 	            var highAlarm = widget.info.highAlarmValue;
 
 	            var spacing = widget.info.spacing;
+	            var grid = widget.info.grid;
+	            var lineWidth = widget.info.lineWidth;
 
 	            var newPoint = false;
 	            var curValue;
@@ -20993,7 +20995,12 @@
 	            this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
 
 	            //draw grid
-	            this.drawGrid(curX, curY, width, height, 0, 0, 1.2 * spacing, 1.2 * spacing);
+	            if (grid == '1') {
+	                var gridStyle = {
+	                    lineWidth: lineWidth
+	                };
+	                this.drawGrid(curX, curY, width, height, 0, 0, 1.2 * spacing, 1.2 * spacing, gridStyle);
+	            }
 	            //draw points lines
 
 	            var coverSlice = widget.texList[1].slices[0];
@@ -21059,11 +21066,13 @@
 	        for (var i = 0; i < vertGrids; i++) {
 	            var vertX = i * gridWidth + offsetX;
 	            offctx.moveTo(vertX, 0);
+	            offctx.lineWidth = gridStyle && gridStyle.lineWidth || 1;
 	            offctx.lineTo(vertX, height);
 	        }
 	        for (var i = 0; i < horiGrids; i++) {
 	            var horiY = i * gridHeight + offsetY;
 	            offctx.moveTo(0, horiY);
+	            offctx.lineWidth = gridStyle && gridStyle.lineWidth || 1;
 	            offctx.lineTo(width, horiY);
 	        }
 	        offctx.fillStyle = gridStyle && gridStyle.color || 'light gray';

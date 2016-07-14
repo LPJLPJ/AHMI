@@ -559,19 +559,9 @@ ideServices
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
-                //this.spacing=level.info.spacing;
-                //this.potCount=Math.floor(this.width/this.spacing);
-                //this.arr=[];
-                //this.coordinate = {
-                //        x:-this.width/2,
-                //        y:0
-                //    };
-                //for(var i=0;i<this.potCount-1;i++){
-                //    this.coordinate.x+=this.spacing;
-                //    this.coordinate.y=Math.floor(Math.random()*this.height-this.height/2);
-                //    this.arr.push(_.cloneDeep(this.coordinate));
-                //}
-
+                this.spacing=level.info.spacing;
+                this.grid=level.info.grid;
+                this.lineWidth=level.info.lineWidth;
 
                 this.backgroundColor=level.texList[0].slices[0].color;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
@@ -633,11 +623,17 @@ ideServices
                 });
                 this.on('ChangeAttributeOscilloscope',function(arg){
                     var _callback=arg.callback;
-                    if(arg.hasOwnProperty('oscColor')){
+                    if(arg.hasOwnProperty('lineColor')){
 
                     }
                     if(arg.hasOwnProperty('spacing')){
                         self.spacing=arg.spacing;
+                    }
+                    if(arg.hasOwnProperty('grid')){
+                        self.grid=arg.grid;
+                    }
+                    if(arg.hasOwnProperty('lineWidth')){
+                        self.lineWidth=arg.lineWidth;
                     }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -662,6 +658,12 @@ ideServices
 
                     if(this.oscilloscopeImageElement){
                         ctx.drawImage(this.oscilloscopeImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                    if(this.grid=='1'){
+                        var style={
+                            lineWidth:this.lineWidth
+                        };
+                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,0,0,1.2*this.spacing,1.2*this.spacing,style,ctx);
                     }
                 }
                 catch(err){
@@ -5807,21 +5809,33 @@ ideServices
             _successCallback&&_successCallback();
         };
 
-        //改变示波器的一些属性，如波形颜色
-        this.ChangeAttributeOscilloscope = function(_option,_successCallback){
+        //改变示波器的一些需要重新渲染的属性，如点距离，添加网格，
+        this.ChangeAttributeOscilloscopeForRender = function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
             var arg={
                 callback:_successCallback
             };
-            if(_option.hasOwnProperty("oscColor")){
-                selectObj.level.info.oscColor= _.cloneDeep(_option.oscColor);
-                arg.oscColor= _.cloneDeep(_option.oscColor);
+            if(_option.hasOwnProperty('spacing')){
+                selectObj.level.info.spacing= _option.spacing;
+                arg.spacing=_option.spacing;
             }
-            if(_option.hasOwnProperty("spacing")){
-                selectObj.level.info.spacing= _.cloneDeep(_option.spacing);
-                arg.spacing= _.cloneDeep(_option.spacing);
+            if(_option.hasOwnProperty('grid')){
+                selectObj.level.info.grid=_option.grid;
+                arg.grid=_option.grid;
+            }
+            if(_option.hasOwnProperty('lineWidth')){
+                selectObj.level.info.lineWidth=_option.lineWidth;
+                arg.lineWidth=_option.lineWidth;
             }
             selectObj.target.fire('ChangeAttributeOscilloscope',arg);
+        };
+        //改变示波器的不需要重新渲染的属性，如线条颜色
+        this.ChangeAttributeOscilloscope = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            if(_option.hasOwnProperty("lineColor")){
+                console.log('keke',_option.lineColor);
+                selectObj.level.info.lineColor= _option.lineColor;
+            }
         };
         //改变开关纹理所绑定的tag的位
         this.ChangeAttributeBindBit = function(_option,_successCallback){
@@ -6726,5 +6740,43 @@ ideServices
             } else {
                 return '';
             }
+        }
+
+        /**
+         * 画网格
+         * @param curX
+         * @param curY
+         * @param width
+         * @param height
+         * @param offsetX
+         * @param offsetY
+         * @param gridWidth
+         * @param gridHeight
+         * @param gridStyle
+         */
+        function drawGrid(curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,ctx) {
+            var offsetX = offsetX % gridWidth;
+            var offsetY = offsetY % gridHeight;
+            var vertGrids = Math.floor((width - offsetX)/gridWidth)+1;
+            var horiGrids = Math.floor((height - offsetY)/gridHeight)+1;
+            ctx.save();
+            ctx.translate(curX,curY);
+            ctx.beginPath();
+            //draw verts
+            for (var i=0;i<vertGrids;i++){
+                var vertX = i * gridWidth + offsetX;
+                ctx.moveTo(vertX,0);
+                ctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
+                ctx.lineTo(vertX,height);
+            }
+            for (i=0;i<horiGrids;i++){
+                var horiY = i * gridHeight + offsetY;
+                ctx.moveTo(0,horiY);
+                ctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
+                ctx.lineTo(width,horiY);
+            }
+            ctx.fillStyle = (gridStyle&&gridStyle.color) || 'light gray';
+            ctx.stroke();
+            ctx.restore();
         }
     });
