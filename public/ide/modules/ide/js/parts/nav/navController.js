@@ -547,10 +547,16 @@
         function generateDataFile(format){
             generateData(format);
             if (window.local){
+                if (window.spinner){
+                    window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                    window.spinner.show();
+                }
                 RenderSerive.renderProject(window.projectData,function () {
                     toastr.info('生成成功');
+                    window.spinner&&window.spinner.hide();
                 },function () {
                     toastr.info('生成失败');
+                    window.spinner&&window.spinner.hide();
                 });
             }else{
                 saveProject(function () {

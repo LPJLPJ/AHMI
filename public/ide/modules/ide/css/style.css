@@ -241,13 +241,13 @@ body{
     -o-transition: width 0.2s;	/* Opera */
 }
 .container-fluid.my-left-hide.my-right-hide .my-stage-container{
-    width: calc(100% - 2px)
+    width: calc(99% - 2px)
 }
 .container-fluid.my-left-show.my-right-hide .my-stage-container{
-    width: calc(87% - 2px);
+    width: calc(86% - 2px);
 }
 .container-fluid.my-left-hide.my-right-show .my-stage-container{
-    width: calc(80% - 2px);
+    width: calc(79% - 2px);
 }
 
 .my-stage{
@@ -370,7 +370,7 @@ body{
     border-left: 1px solid #E9EBED;
     vertical-align:top;
     padding: 5px;
-
+    float:right;
     transition: width 0.2s;
     -moz-transition: width 0.2s;	/* Firefox 4 */
     -webkit-transition: width 0.2s;	/* Safari 和 Chrome */
