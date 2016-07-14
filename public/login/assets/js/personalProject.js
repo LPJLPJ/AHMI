@@ -13,6 +13,7 @@ $(function(){
     var curProject = null;
     var fs,path,mkdir,__dirname;
     var closeModalConfirmButton = $('#closeModalConfirm');
+    var localProjectDir='';
     closeModalConfirmButton.on('click',function (e) {
        deleteProject(curProject,curPanel);
     });
@@ -38,7 +39,7 @@ $(function(){
         __dirname = global.__dirname;
         console.log(__dirname, process)
         console.log(window.location);
-
+        localProjectDir = path.join(__dirname,'localproject');
         function getResourceRelativePath(resourceFilePath) {
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
             if (resourceFilePath){
@@ -50,14 +51,14 @@ $(function(){
         }
 
         var stats;
-        var localprojectpath = path.join(__dirname,'localproject');
+
         try {
-            stats = fs.statSync(localprojectpath);
+            stats = fs.statSync(localProjectDir);
             if (!stats.isDirectory()){
-                mkdir.sync(localprojectpath);
+                mkdir.sync(localProjectDir);
             }
         }catch (e){
-            mkdir.sync(localprojectpath);
+            mkdir.sync(localProjectDir);
         }
     }
 
@@ -93,19 +94,24 @@ $(function(){
     }
 
     function readLocalProjects() {
-        var localprojectpath = path.join(__dirname,'localproject');
-        var stats = fs.statSync(localprojectpath);
+
         var projects=[];
-        if (stats&&stats.isDirectory()){
-            var projectNames = fs.readdirSync(localprojectpath);
-            for (var i=0;i<projectNames.length;i++){
-                var curProjectDir =  path.join(localprojectpath,projectNames[i]);
-                var curProject = readSingleFile(path.join(curProjectDir,'project.json'),true);
-                if (curProject){
-                    projects.push(curProject);
+        try {
+            var stats = fs.statSync(localProjectDir);
+            if (stats&&stats.isDirectory()){
+                var projectNames = fs.readdirSync(localProjectDir);
+                for (var i=0;i<projectNames.length;i++){
+                    var curProjectDir =  path.join(localProjectDir,projectNames[i]);
+                    var curProject = readSingleFile(path.join(curProjectDir,'project.json'),true);
+                    if (curProject){
+                        projects.push(curProject);
+                    }
                 }
             }
+        }catch (err){
+
         }
+
         return projects;
     }
 
@@ -241,7 +247,7 @@ $(function(){
                 project.lastModified =  Date.now();
                 project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
                 project.maxSize = 1024*1024*100;
-                var localprojectpath = path.join(__dirname,'localproject',String(project._id));
+                var localprojectpath = path.join(localProjectDir,String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources')
                 console.log(localprojectpath);
 
@@ -280,7 +286,7 @@ $(function(){
         console.log('delete')
         if (local){
             console.log('project id',project._id);
-            var projectdirpath = path.join(__dirname,'localproject',String(project._id));
+            var projectdirpath = path.join(localProjectDir,String(project._id));
             try{
                 rmdir(projectdirpath);
             }catch (e){
@@ -323,7 +329,7 @@ $(function(){
             project.resolution = resolution.val().trim()
             var updateSuccess = false;
             if (local){
-                var projectPath = path.join(__dirname,'localproject',String(project._id),'project.json');
+                var projectPath = path.join(localProjectDir,String(project._id),'project.json');
                 fs.writeFileSync(projectPath,JSON.stringify(project));
                 updateSuccess = true;
             }else{

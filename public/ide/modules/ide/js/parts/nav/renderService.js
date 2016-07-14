@@ -526,6 +526,9 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                 case 'MyButton':
                     this.renderButton(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                     break;
+                case 'MyButtonGroup':
+                    this.renderButtonGroup(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                    break;
                 case 'MySlide':
                     this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                     break;
@@ -534,6 +537,9 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                     break;
                 case 'MyTextArea':
                     this.renderTextArea(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                    break;
+                case 'MyDashboard':
+                    this.renderDashboard(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                     break;
                 default:
                     cb&&cb();
