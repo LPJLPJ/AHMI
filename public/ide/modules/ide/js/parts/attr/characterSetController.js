@@ -17,7 +17,7 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
             character:{
                 text:null,
                 fontName:'默认',
-                fontFamily:'Arial',
+                fontFamily:'宋体',
                 fontSize:'20px',
                 fontColor:null,
                 fontBold:null,
