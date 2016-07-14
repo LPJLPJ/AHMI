@@ -66,6 +66,7 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+('\"'+font['font-family']+'\"'||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
+        console.log(style.font);
         var beforePressSlice = widget.texList[0].slices[0];
         var afterPressSlice = widget.texList[0].slices[1];
         var slices = [beforePressSlice,afterPressSlice];
