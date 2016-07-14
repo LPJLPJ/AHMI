@@ -570,6 +570,7 @@ module.exports = React.createClass({
             font['font-weight'] = info.fontBold;
             font['font-size'] = info.fontSize;
             font['font-family'] = info.fontFamily;
+            font['font-color']=info.fontColor;
             this.drawTextByTempCanvas(curX,curY,width,height,info.text,font);
         }
     },
