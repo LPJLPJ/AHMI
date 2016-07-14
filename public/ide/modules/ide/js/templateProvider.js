@@ -512,8 +512,12 @@ ideServices
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
                 lowAlarmValue:0,highAlarmValue:100,
-                spacing:50,   //光标间距
-                //oscColor:'rgb(50,60,50)'
+                spacing:10,   //光标间距
+                lineColor:'rgba(0,0,0,1)',
+                grid:'0',//0表示无网格，1表示有网格
+                horMin:0,horMax:100,//横坐标起始值和终止值
+                verMin:0,verMax:100,//纵坐标起始值和终止值
+                lineWidth:1//网格线宽
 
             };
             return {

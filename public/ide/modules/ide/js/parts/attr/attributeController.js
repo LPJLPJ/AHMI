@@ -61,7 +61,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 setButtonFontBold:setButtonFontBold,
                 setButtonFontItalic:setButtonFontItalic,
                 changeButtonFontSize:changeButtonFontSize,
-                changeButtonFontColor:changeButtonFontColor,
 
                 normalImage:'blank.png',
                 pressImage:'blank.png'
@@ -111,7 +110,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterText:enterText,
                 changeFontFamily:changeFontFamily,
                 changeFontSize:changeFontSize,
-                changeFontColor:changeFontColor,
                 setBoldFont:setBoldFont,
                 setUnderlineFont:setUnderlineFont,
                 setItalicFont:setItalicFont,
@@ -166,8 +164,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
             //示波器
             oscilloscope:{
-                changeOscColor:changeOscColor,
-                changeOscSpacing:changeOscSpacing
+                changeOscSpacing:changeOscSpacing,
+                changeOscGrid:changeOscGrid,
+                changeOscLinWidth:changeOscLinWidth,
             },
 
             //开关
@@ -569,6 +568,18 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 })
             }
         }
+        if(op.name=='component.object.level.info.lineColor'){
+            if(initObject.level.info.lineColor==op.value){
+                return;
+            }
+            option={
+                lineColor:op.value
+            };
+            oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscope(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
 	}
 
 	function enterShowSubLayer(op){
@@ -732,22 +743,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             })
         }
     }
-    function changeButtonFontColor(e){
-        if(e.keyCode==13){
-            if($scope.component.object.level.info.fontColor==initObject.level.info.fontColor) {
-                return;
-            }
-            var option = {
-                fontColor:$scope.component.object.level.info.fontColor
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
-
     function enterInterval(e){
         if (e.keyCode==13){
             //判断输入是否合法
@@ -1300,21 +1295,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             })
         }
     }
-    function changeFontColor(e){
-        if(e.keyCode==13){
-            if($scope.component.object.level.info.fontColor==initObject.level.info.fontColor) {
-                return;
-            }
-            var option = {
-                fontColor:$scope.component.object.level.info.fontColor
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
     function setBoldFont(){
         if($scope.component.object.level.info.fontBold=="100"){
             $scope.component.object.level.info.fontBold="bold";
@@ -1737,23 +1717,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
         }
     }
-
-    function changeOscColor(e){
-        if(e.keyCode==13){
-            if($scope.component.object.level.info.oscColor==initObject.level.info.oscColor) {
-                return;
-            }
-            var option = {
-                oscColor:$scope.component.object.level.info.oscColor,
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeOscilloscope(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
-
     function changeOscSpacing(e){
         if(e.keyCode==13){
             if($scope.component.object.level.info.spacing==initObject.level.info.spacing){
@@ -1767,10 +1730,42 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 spacing:$scope.component.object.level.info.spacing
             };
             var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeOscilloscope(option, function (oldOperate) {
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
         }
+    }
+    function changeOscLinWidth(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.lineWidth==initObject.level.info.lineWidth){
+                return;
+            }
+            if($scope.component.object.level.info.lineWidth<=0||
+                $scope.component.object.level.info.lineWidth>$scope.component.object.level.info.spacing/2){
+                toastr.warning('超出范围');
+            }
+            var option = {
+                lineWidth:$scope.component.object.level.info.lineWidth
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function changeOscGrid(){
+        if($scope.component.object.level.info.grid==initObject.level.info.grid){
+                return;
+        };
+        //toastr.info('修改成功');
+        var option= {
+            grid:$scope.component.object.level.info.grid,
+        };
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+
     }
     function enterBindBit(e){
         if(e.keyCode==13){
