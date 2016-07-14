@@ -1847,7 +1847,7 @@
                                     <!--image-->
                                     <td><select class="form-control" ng-model="slice.imgSrc"
                                                 ng-options="image.src as image.name for image in images "
-                                                ng-change="disableColorInput(slice)">
+                                                ng-change="disableColorInput(slice)" ng-disabled="{{slice.name=='数字背景'}}">
                                         <!--<option value="">-&#45;&#45;</option>-->
                                     </select></td>
                                     <!--color-->
