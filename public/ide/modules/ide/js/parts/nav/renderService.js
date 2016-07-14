@@ -152,7 +152,6 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                             }
 
                         }
-                        console.log(targetImageObj);
                         renderingX.renderImage(ctx,new Size(info.width,info.height),new Pos(),targetImageObj,new Pos(),new Size(info.width,info.height));
                     }
                     //draw text
@@ -188,6 +187,155 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
             }
         };
 
+
+        renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+            var info = widget.info;
+            if (!!info){
+                //trans each slide
+                var width = info.width;
+                var height = info.height;
+
+                var interval = info.interval;
+                var count = info.count;
+                var arrange = (info.arrange === 'horizontal');
+                if (arrange){
+                    width = (width-(count-1)*interval)/count;
+                }else{
+                    height = (height-(count-1)*interval)/count;
+                }
+
+                var texList = widget.texList;
+                var totalSlices = 2*texList.length;
+                for (var i=0;i<2*texList.length;i++){
+                    var canvas = new Canvas(width,height);
+                    var ctx = canvas.getContext('2d');
+
+                    var curSlice = texList[parseInt(i/2)].slices[i%2];
+                    ctx.clearRect(0,0,width,height);
+                    ctx.save();
+                    //render color
+                    renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                    //render image;
+                    var imgSrc = curSlice.imgSrc;
+                    if (imgSrc!==''){
+                        var imgUrl = path.join(srcRootDir,imgSrc);
+                        var targetImageObj = this.getTargetImage(imgUrl);
+                        if (!targetImageObj){
+                            //not added to images
+                            var imgObj = new Image();
+                            try{
+                                imgObj.src = loadImageSync(imgUrl);
+                                this.addImage(imgUrl,imgObj);
+                                targetImageObj = imgObj;
+                            }catch (err){
+                                targetImageObj = null;
+                            }
+
+                        }
+                        renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                    }
+                    //output
+                    var imgName = widget.id.split('.').join('');
+                    var outputFilename = imgName +'-'+ i+'.png';
+                    var outpath = path.join(dstDir,outputFilename);
+                    canvas.output(outpath,function (err) {
+                        if (err){
+                            totalSlices-=1;
+                            if (totalSlices<=0){
+                                cb && cb(err);
+                            }
+                        }else{
+                           curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                            totalSlices-=1;
+                            if (totalSlices<=0){
+                                cb && cb();
+                            }
+                        }
+
+                    }.bind(this));
+
+
+
+                    ctx.restore();
+                }
+
+            }else{
+                cb&&cb();
+            }
+
+        };
+
+        renderer.prototype.renderDashboard = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+            var info = widget.info;
+            if (!!info){
+                //trans each slide
+                var width = info.width;
+                var height = info.height;
+
+                var texList = widget.texList;
+                var totalSlices = texList.length;
+                for (var i=0;i<texList.length;i++){
+                    if (i===1){
+                        //pointer
+                        width = height = info.pointerLength/Math.sqrt(2);
+                    }
+                    var canvas = new Canvas(width,height);
+                    var ctx = canvas.getContext('2d');
+                    var curSlice = texList[i].slices[0];
+                    ctx.clearRect(0,0,width,height);
+                    ctx.save();
+                    //render color
+                    renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                    //render image;
+                    var imgSrc = curSlice.imgSrc;
+                    if (imgSrc!==''){
+                        var imgUrl = path.join(srcRootDir,imgSrc);
+                        var targetImageObj = this.getTargetImage(imgUrl);
+                        if (!targetImageObj){
+                            //not added to images
+                            var imgObj = new Image();
+                            try{
+                                imgObj.src = loadImageSync(imgUrl);
+                                this.addImage(imgUrl,imgObj);
+                                targetImageObj = imgObj;
+                            }catch (err){
+                                targetImageObj = null;
+                            }
+
+                        }
+                        renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                    }
+                    //output
+                    var imgName = widget.id.split('.').join('');
+                    var outputFilename = imgName +'-'+ i+'.png';
+                    var outpath = path.join(dstDir,outputFilename);
+                    canvas.output(outpath,function (err) {
+                        if (err){
+                            totalSlices-=1;
+                            if (totalSlices<=0){
+                                cb && cb(err);
+                            }
+                        }else{
+                            curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                            totalSlices-=1;
+                            if (totalSlices<=0){
+                                cb && cb();
+                            }
+                        }
+
+                    }.bind(this));
+
+
+
+                    ctx.restore();
+                }
+
+            }else{
+                cb&&cb();
+            }
+
+        };
+
         renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
             var info = widget.info;
             if (!!info){
@@ -213,7 +361,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                         var targetImageObj = this.getTargetImage(imgUrl);
                         if (!targetImageObj){
                             //not added to images
-                            var imgObj = new Image;
+                            var imgObj = new Image();
                             try{
                                 imgObj.src = loadImageSync(imgUrl);
                                 this.addImage(imgUrl,imgObj);
@@ -228,9 +376,9 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                     //output
                     var imgName = widget.id.split('.').join('');
                     var outputFilename = imgName +'-'+ i+'.png';
-                    fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
+                    var outpath = path.join(dstDir,outputFilename);
+                    canvas.output(outpath,function (err) {
                         if (err){
-                            console.error(err);
                             cb && cb(err);
                         }else{
                             //write widget
@@ -288,6 +436,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
 
                 var outpath = path.join(dstDir,outputFilename);
+
                 canvas.output(outpath,function (err) {
                     if (err){
                         cb && cb(err);
@@ -365,22 +514,6 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                     }
                 })
 
-                // var out = fs.createWriteStream(path.join(dstDir,outputFilename));
-                // var stream = canvas.pngStream();
-                //
-                // stream.on('data', function(chunk){
-                //     out.write(chunk);
-                // });
-                // stream.on('error',function (err) {
-                //     console.error(err);
-                //     cb && cb(err);
-                // }.bind(this));
-                // stream.on('end', function(){
-                //     bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
-                //     var stopTime = new Date();
-                //     console.log('Output stream costs: ',(stopTime-startTime)/1000.0+'s');
-                //     cb && cb();
-                // }.bind(this));
 
             }else{
                 cb&&cb();
@@ -393,6 +526,9 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                 case 'MyButton':
                     this.renderButton(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                     break;
+                case 'MyButtonGroup':
+                    this.renderButtonGroup(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                    break;
                 case 'MySlide':
                     this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                     break;
@@ -401,6 +537,9 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                     break;
                 case 'MyTextArea':
                     this.renderTextArea(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                    break;
+                case 'MyDashboard':
+                    this.renderDashboard(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                     break;
                 default:
                     cb&&cb();

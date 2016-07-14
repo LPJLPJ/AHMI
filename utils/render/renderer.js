@@ -66,7 +66,6 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+('\"'+font['font-family']+'\"'||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
-        console.log(style.font);
         var beforePressSlice = widget.texList[0].slices[0];
         var afterPressSlice = widget.texList[0].slices[1];
         var slices = [beforePressSlice,afterPressSlice];
@@ -155,7 +154,12 @@ renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrl
 
         var interval = info.interval;
         var count = info.count;
-        var arrange = info.arrange
+        var arrange = (info.arrange === 'horizontal');
+        if (arrange){
+            width = (width-(count-1)*interval)/count;
+        }else{
+            height = (height-(count-1)*interval)/count;
+        }
 
         var texList = widget.texList;
         var totalSlices = 2*texList.length;
@@ -164,6 +168,93 @@ renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrl
             var ctx = canvas.getContext('2d');
 
             var curSlice = texList[parseInt(i/2)].slices[i%2];
+            ctx.clearRect(0,0,width,height);
+            ctx.save();
+            //render color
+            renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+            //render image;
+            var imgSrc = curSlice.imgSrc;
+            if (imgSrc!==''){
+                var imgUrl = path.join(srcRootDir,imgSrc);
+                var targetImageObj = this.getTargetImage(imgUrl);
+                if (!targetImageObj){
+                    //not added to images
+                    var imgObj = new Image;
+                    try{
+                        imgObj.src = fs.readFileSync(imgUrl);
+                        this.addImage(imgUrl,imgObj);
+                        targetImageObj = imgObj;
+                    }catch (err){
+                        targetImageObj = null;
+                    }
+
+                }
+                renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+            }
+            //output
+            var imgName = widget.id.split('.').join('');
+            var outputFilename = imgName +'-'+ i+'.png';
+            fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
+                if (err){
+                    console.error(err);
+                    cb && cb(err);
+                }else{
+                    //write widget
+                    curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                    //if last trigger cb
+                    totalSlices -= 1;
+                    if (totalSlices<=0){
+                        cb && cb();
+                    }
+                }
+            }.bind(this));
+
+            // var out = fs.createWriteStream(path.join(dstDir,outputFilename));
+            // var stream = canvas.pngStream();
+            //
+            // stream.on('data', function(chunk){
+            //     out.write(chunk);
+            // });
+            // stream.on('error',function (err) {
+            //     console.error(err);
+            //     cb && cb(err);
+            // }.bind(this));
+            // stream.on('end', function(){
+            //     //write widget
+            //     curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+            //     //if last trigger cb
+            //     totalSlices -= 1;
+            //     if (totalSlices<=0){
+            //         cb && cb();
+            //     }
+            // }.bind(this));
+
+            ctx.restore();
+        }
+
+    }else{
+        cb&&cb();
+    }
+
+};
+
+renderer.prototype.renderDashboard = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+    var info = widget.info;
+    if (!!info){
+        //trans each slide
+        var width = info.width;
+        var height = info.height;
+
+        var texList = widget.texList;
+        var totalSlices = texList.length;
+        for (var i=0;i<texList.length;i++){
+            if (i===1){
+                //pointer
+                width = height = info.pointerLength/Math.sqrt(2);
+            }
+            var canvas = new Canvas(width,height);
+            var ctx = canvas.getContext('2d');
+            var curSlice = texList[i].slices[0];
             ctx.clearRect(0,0,width,height);
             ctx.save();
             //render color
@@ -487,6 +578,9 @@ renderer.prototype.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefi
             break;
         case 'MyTextArea':
             this.renderTextArea(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+            break;
+        case 'MyDashboard':
+            this.renderDashboard(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
             break;
         default:
             cb&&cb();
