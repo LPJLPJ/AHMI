@@ -153,7 +153,7 @@
             <li role="presentation" ng-repeat="nav in component.nav.navs track by $index"
                 ng-class="{true:'active',false:'inactive'}[component.nav.currentNav==$index]"
                 ng-click="component.nav.changeNav($index)"><a href="#">{{nav.name}}</a></li>
-            <li class="inactive pull-right"><a href="/private/space" target="_blank">个人空间</a></li>
+            <li class="inactive pull-right"><a ng-href={{local?"/views/login/personalProject.html":"/private/space"}} target="_blank">个人空间</a></li>
         </ul>
         <!--<ul class="nav nav-tabs my-nav-tabs pull-right">-->
 

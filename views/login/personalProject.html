@@ -19,7 +19,7 @@
 <body>
     <div class="header">
         <div class="header_main">
-            <div class="header_main_logo"><a href="/">
+            <div class="header_main_logo"><a id="mainhref" href="/">
                 <img src="../../public/login/assets/img/速显微.png" />
             </a></div>
             <div class="nav">
@@ -33,7 +33,7 @@
                 <!--</ul>-->
             </div>
             <div id="user-icon"   class="dropdown right">
-                <a data-toggle="dropdown"><img src="../../public/login/assets/img/Fruit.png" /></a>
+                <a id="icon-dropdown" data-toggle="dropdown"><img src="../../public/login/assets/img/Fruit.png" /></a>
 
                 <!--<div id="user-icon-menu" class="menu">-->
                     <!--<a href="/private/info">个人信息</a>-->
@@ -163,6 +163,21 @@
             </ul>
         </div>
     </div>
+
+    <script>
+//        for local
+
+        try{
+            var os = require('os');
+            var mainhref = document.getElementById('mainhref');
+            mainhref.setAttribute('href','#');
+            var iconDropdown = document.getElementById('icon-dropdown');
+            iconDropdown.parentNode.removeChild(iconDropdown);
+        }catch (e){
+
+        }
+
+    </script>
 
 </body>
 </html>

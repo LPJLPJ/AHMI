@@ -7,7 +7,7 @@ var ide=angular.module('ide',['ui.bootstrap.contextMenu','colorpicker.module','b
 ide.config(['$compileProvider',
     function ($compileProvider) {
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*((https?|ftp|file|blob|chrome-extension):|data:image\/)/);
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file:chrome-extension):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file:chrome-extension|chrome-extension):/);
     }]);
 
 var baseUrl='';
@@ -79,6 +79,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             if (os){
 
                 window.local = true;
+                $scope.local = true;
                 __dirname = global.__dirname;
                 path = require('path');
                 fs = require('fs');
