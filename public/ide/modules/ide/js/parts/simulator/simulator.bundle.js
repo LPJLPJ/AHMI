@@ -19761,6 +19761,12 @@
 	    getInitialState: function () {
 	        return _.cloneDeep(defaultSimulator);
 	    },
+	    componentWillUnmount: function () {
+	        this.state.timerList.map(function (timer, i) {
+	            var curTimeID = timer.timerID;
+	            clearInterval(curTimeID);
+	        }.bind(this));
+	    },
 	    initCanvas: function (data, callBack) {
 	        this.mouseState = {
 	            state: 'release',
@@ -19881,6 +19887,10 @@
 	        this.initProject();
 	    },
 	    componentWillReceiveProps: function (newProps) {
+	        this.state.timerList.map(function (timer, i) {
+	            var curTimeID = timer.timerID;
+	            clearInterval(curTimeID);
+	        }.bind(this));
 	        this.state = _.cloneDeep(defaultSimulator);
 	        this.state.project = _.cloneDeep(newProps.projectData);
 	        this.initProject();
@@ -20029,7 +20039,8 @@
 	    startNewTimer: function (timer, num, cont) {
 	        if ((timer['SysTmr_' + num + '_Mode'] & 1) == 1) {
 	            //start
-	            console.log('start');
+	            var loop = (timer['SysTmr_' + num + '_Mode'] & 2) == 2;
+	            console.log('start', loop);
 	            // timer['SysTmr_'+num+'_CurVal'] = timer['SysTmr_'+num+'_Start'];
 	            var targetTag = this.findTagByName('SysTmr_' + num + '_CurVal');
 	            var startValue = timer['SysTmr_' + num + '_Start'];
@@ -20056,8 +20067,13 @@
 	                        targetTag.value -= timer['SysTmr_' + num + '_Step'];
 	                        if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
 	                            //clear timer
-	                            clearInterval(timer.timerID);
-	                            timer.timerID = 0;
+	                            if (loop) {
+	                                this.setTagByTag(targetTag, startValue);
+	                                this.draw();
+	                            } else {
+	                                clearInterval(timer.timerID);
+	                                timer.timerID = 0;
+	                            }
 	                        } else {
 	                            this.draw();
 	                        }
@@ -20067,8 +20083,13 @@
 	                        targetTag.value += timer['SysTmr_' + num + '_Step'];
 	                        if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
 	                            //clear timer
-	                            clearInterval(timer.timerID);
-	                            timer.timerID = 0;
+	                            if (loop) {
+	                                this.setTagByTag(targetTag, startValue);
+	                                this.draw();
+	                            } else {
+	                                clearInterval(timer.timerID);
+	                                timer.timerID = 0;
+	                            }
 	                        } else {
 	                            this.draw();
 	                        }

@@ -163,7 +163,13 @@ renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrl
 
         var texList = widget.texList;
         var totalSlices = 2*texList.length;
-        for (var i=0;i<2*texList.length;i++){
+        var slices = [];
+        for (var i=0;i<texList.length;i++){
+            for (var j=0;j<2;j++){
+                slices.push(texList[i].slices[j]);
+            }
+        }
+        slices.map(function (slice,i) {
             var canvas = new Canvas(width,height);
             var ctx = canvas.getContext('2d');
 
@@ -209,28 +215,11 @@ renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrl
                 }
             }.bind(this));
 
-            // var out = fs.createWriteStream(path.join(dstDir,outputFilename));
-            // var stream = canvas.pngStream();
-            //
-            // stream.on('data', function(chunk){
-            //     out.write(chunk);
-            // });
-            // stream.on('error',function (err) {
-            //     console.error(err);
-            //     cb && cb(err);
-            // }.bind(this));
-            // stream.on('end', function(){
-            //     //write widget
-            //     curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
-            //     //if last trigger cb
-            //     totalSlices -= 1;
-            //     if (totalSlices<=0){
-            //         cb && cb();
-            //     }
-            // }.bind(this));
 
             ctx.restore();
-        }
+        }.bind(this));
+
+
 
     }else{
         cb&&cb();
@@ -247,7 +236,7 @@ renderer.prototype.renderDashboard = function (widget,srcRootDir,dstDir,imgUrlPr
 
         var texList = widget.texList;
         var totalSlices = texList.length;
-        for (var i=0;i<texList.length;i++){
+        texList.map(function (tex,i) {
             if (i===1){
                 //pointer
                 width = height = info.pointerLength/Math.sqrt(2);
@@ -317,7 +306,9 @@ renderer.prototype.renderDashboard = function (widget,srcRootDir,dstDir,imgUrlPr
             // }.bind(this));
 
             ctx.restore();
-        }
+        }.bind(this));
+
+
 
     }else{
         cb&&cb();
@@ -335,7 +326,7 @@ renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix
 
         var slideTex = widget.texList[0];
         var totalSlices = slideTex.slices.length;
-        for (var i=0;i<slideTex.slices.length;i++){
+        slideTex.slices.map(function (slice,i) {
             var canvas = new Canvas(width,height);
             var ctx = canvas.getContext('2d');
             var curSlice = slideTex.slices[i];
@@ -381,28 +372,13 @@ renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix
                 }
             }.bind(this));
 
-            // var out = fs.createWriteStream(path.join(dstDir,outputFilename));
-            // var stream = canvas.pngStream();
-            //
-            // stream.on('data', function(chunk){
-            //     out.write(chunk);
-            // });
-            // stream.on('error',function (err) {
-            //     console.error(err);
-            //     cb && cb(err);
-            // }.bind(this));
-            // stream.on('end', function(){
-            //     //write widget
-            //     curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
-            //     //if last trigger cb
-            //     totalSlices -= 1;
-            //     if (totalSlices<=0){
-            //         cb && cb();
-            //     }
-            // }.bind(this));
-
             ctx.restore();
-        }
+        }.bind(this));
+
+
+
+            
+
 
     }else{
         cb&&cb();

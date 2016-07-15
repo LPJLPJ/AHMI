@@ -206,7 +206,14 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
                 var texList = widget.texList;
                 var totalSlices = 2*texList.length;
-                for (var i=0;i<2*texList.length;i++){
+
+                var slices = [];
+                for (var i=0;i<texList.length;i++){
+                    for (var j=0;j<2;j++){
+                        slices.push(texList[i].slices[j]);
+                    }
+                }
+                slices.map(function (slice,i) {
                     var canvas = new Canvas(width,height);
                     var ctx = canvas.getContext('2d');
 
@@ -257,7 +264,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
 
                     ctx.restore();
-                }
+                }.bind(this));
 
             }else{
                 cb&&cb();
@@ -274,7 +281,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
                 var texList = widget.texList;
                 var totalSlices = texList.length;
-                for (var i=0;i<texList.length;i++){
+                texList.map(function (tex,i) {
                     if (i===1){
                         //pointer
                         width = height = info.pointerLength/Math.sqrt(2);
@@ -328,7 +335,9 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
 
                     ctx.restore();
-                }
+                }.bind(this));
+
+
 
             }else{
                 cb&&cb();
@@ -345,7 +354,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
 
                 var slideTex = widget.texList[0];
                 var totalSlices = slideTex.slices.length;
-                for (var i=0;i<slideTex.slices.length;i++){
+                slideTex.slices.map(function (slice,i) {
                     var canvas = new Canvas(width,height);
                     var ctx = canvas.getContext('2d');
                     var curSlice = slideTex.slices[i];
@@ -392,7 +401,7 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                     }.bind(this));
 
                     ctx.restore();
-                }
+                }.bind(this));
 
             }else{
                 cb&&cb();

@@ -1,0 +1,22 @@
+{
+  "name": "AHMI-IDE",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./views/login/personalProject.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mkdir-p": "0.0.7",
+    "yazl": "^2.4.1"
+  },
+  "domain":"ide.graphichina.com",
+  "window":{
+    "width":800,
+    "height":600,
+    "icon":"./public/images/favicon.ico",
+    "fullscreen":false
+  }
+}
