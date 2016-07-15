@@ -76,12 +76,10 @@ body{
     color:blue;
 }
 .main{
-    width: 1200px;
     margin: 0px auto;
     overflow: hidden;
 }
 .top{
-    width: 1200px;
     height:50px;
     line-height: 65px;
     font-family: "微软雅黑";
