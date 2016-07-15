@@ -182,7 +182,8 @@ $(function(){
             var title = $('#basicinfo-title')
             var author = $('#basicinfo-author')
             var resolution = $('#basicinfo-resolution')
-            title.val(project.name)
+            title.val(project.name);
+            author.val(project.author);
             resolution.val(project.resolution)
         }else if (curNodeName == 'I'){
             //delete
@@ -239,7 +240,13 @@ $(function(){
         var resolution = $('#basicinfo-resolution')
         if (title.val().trim()!=''&&resolution.val().trim()!=''){
             //create
-            project.name = title.val().trim()
+            project.name = title.val().trim();
+            project.author = author.val().trim();
+            if (!checkName(project.name,project.author)){
+                //invalid name
+                toastr.error('名称只能是汉字、英文和数字');
+                return;
+            }
             project.resolution = resolution.val().trim()
 
             if (local){
@@ -315,6 +322,22 @@ $(function(){
 
     }
 
+    function checkName() {
+        // name.match(/["'\/\\\(\){},\.\+\-\*\?]/)
+        try {
+            for (var i=0;i<arguments.length;i++){
+                var name = arguments[i];
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF]/)){
+                    return false;
+                }
+            }
+            return true;
+
+        }catch (e){
+            return false;
+        }
+    }
+
     function updateProject(e,local) {
         var curPanel = curSelectedPanel
         var project = curPanel.attr('data-project')
@@ -323,16 +346,25 @@ $(function(){
         var title = $('#basicinfo-title')
         var author = $('#basicinfo-author')
         var resolution = $('#basicinfo-resolution')
-        if (project.name != title.val().trim() || project.resolution != resolution.val().trim()){
+        var thumbnailDOM = curPanel.find('img');
+        var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
+        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
             //changed
-            project.name = title.val().trim()
+            project.name = title.val().trim();
+            project.author = author.val().trim();
+            //check name;
+            if (!checkName(project.name,project.author)){
+                //invalid name
+                toastr.error('名称只能是汉字、英文和数字');
+                return;
+            }
             project.resolution = resolution.val().trim()
             var updateSuccess = false;
             if (local){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');
                 fs.writeFileSync(projectPath,JSON.stringify(project));
                 updateSuccess = true;
-                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project});
+                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
                 curPanel.replaceWith(html)
             }else{
                 $.ajax({
@@ -344,7 +376,7 @@ $(function(){
                         console.log('success',data)
                         //update panel
                         updateSuccess = true;
-                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project});
+                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
                         curPanel.replaceWith(html)
 
                     },
@@ -355,14 +387,14 @@ $(function(){
                     }
                 })
             }
-            
+
         }
     }
 
 
     function addNewProject(newProject){
         console.log(newProject)
-        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject});
+        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
         console.log(html)
         $('#addproject').after(html)
     }
