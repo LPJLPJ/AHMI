@@ -332,6 +332,8 @@ $(function(){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');
                 fs.writeFileSync(projectPath,JSON.stringify(project));
                 updateSuccess = true;
+                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project});
+                curPanel.replaceWith(html)
             }else{
                 $.ajax({
                     type:'POST',
@@ -342,6 +344,8 @@ $(function(){
                         console.log('success',data)
                         //update panel
                         updateSuccess = true;
+                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project});
+                        curPanel.replaceWith(html)
 
                     },
                     error: function (err, status, xhr) {
@@ -352,11 +356,7 @@ $(function(){
                 })
             }
 
-            if (updateSuccess){
-                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project});
-
-                curPanel.replaceWith(html)
-            }
+            
 
         }
     }
