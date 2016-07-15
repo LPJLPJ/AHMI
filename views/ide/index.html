@@ -1111,6 +1111,8 @@
                                     ng-change="component.oscilloscope.changeOscGrid()">
                                 <option value="0" selected="true">无网格模式</option>
                                 <option value="1">有网格模式</option>
+                                <option value="2">横网格模式</option>
+                                <option value="3">竖网格模式</option>
                             </select>
                         </div>
                         <div class="my-attr-item lg">
@@ -2256,7 +2258,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.textArea.changeFontFamily()">
-                                <option value="Arial" ng-selected="true">宋体</option>
+                                <option value="宋体" ng-selected="true">宋体</option>
                                 <option value="times">Times</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">

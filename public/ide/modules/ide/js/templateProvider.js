@@ -233,7 +233,7 @@ ideServices
                 arrange:true,         //true:横向 false:竖向
                 text:'文本',
                 fontName:'正文',
-                fontFamily:'Arial',
+                fontFamily:'宋体',
                 fontSize:15,
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
@@ -484,12 +484,12 @@ ideServices
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
                 lowAlarmValue:0,highAlarmValue:100,
-                spacing:10,   //光标间距
+                spacing:20,   //光标间距
                 lineColor:'rgba(0,0,0,1)',
-                grid:'0',//0表示无网格，1表示有网格
+                grid:'0',//0表示无网格，1表示有网格,2表示横网格，3表示竖网格
                 horMin:0,horMax:100,//横坐标起始值和终止值
                 verMin:0,verMax:100,//纵坐标起始值和终止值
-                lineWidth:1//网格线宽
+                lineWidth:1,//网格线宽
 
             };
             return {
