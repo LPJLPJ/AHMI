@@ -336,72 +336,75 @@ renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix
         var slideTex = widget.texList[0];
         var totalSlices = slideTex.slices.length;
         for (var i=0;i<slideTex.slices.length;i++){
-            var canvas = new Canvas(width,height);
-            var ctx = canvas.getContext('2d');
-            var curSlice = slideTex.slices[i];
-            // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
-            ctx.clearRect(0,0,width,height);
-            ctx.save();
-            //render color
-            renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
-            //render image;
-            var imgSrc = curSlice.imgSrc;
-            if (imgSrc!==''){
-                var imgUrl = path.join(srcRootDir,imgSrc);
-                var targetImageObj = this.getTargetImage(imgUrl);
-                if (!targetImageObj){
-                    //not added to images
-                    var imgObj = new Image;
-                    try{
-                        imgObj.src = fs.readFileSync(imgUrl);
-                        this.addImage(imgUrl,imgObj);
-                        targetImageObj = imgObj;
-                    }catch (err){
-                        targetImageObj = null;
+            (function () {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slideTex.slices[i];
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image;
+                        try{
+                            imgObj.src = fs.readFileSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
                     }
-
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
-                renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
-            }
-            //output
-            var imgName = widget.id.split('.').join('');
-            var outputFilename = imgName +'-'+ i+'.png';
-            fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
-                if (err){
-                    console.error(err);
-                    cb && cb(err);
-                }else{
-                    //write widget
-                    curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
-                    //if last trigger cb
-                    totalSlices -= 1;
-                    if (totalSlices<=0){
-                        cb && cb();
+                //output
+                var imgName = widget.id.split('.').join('');
+                var outputFilename = imgName +'-'+ i+'.png';
+                fs.writeFile(path.join(dstDir,outputFilename),canvas.toBuffer(),function (err) {
+                    if (err){
+                        console.error(err);
+                        cb && cb(err);
+                    }else{
+                        //write widget
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
                     }
-                }
-            }.bind(this));
+                }.bind(this));
 
-            // var out = fs.createWriteStream(path.join(dstDir,outputFilename));
-            // var stream = canvas.pngStream();
-            //
-            // stream.on('data', function(chunk){
-            //     out.write(chunk);
-            // });
-            // stream.on('error',function (err) {
-            //     console.error(err);
-            //     cb && cb(err);
-            // }.bind(this));
-            // stream.on('end', function(){
-            //     //write widget
-            //     curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
-            //     //if last trigger cb
-            //     totalSlices -= 1;
-            //     if (totalSlices<=0){
-            //         cb && cb();
-            //     }
-            // }.bind(this));
+                // var out = fs.createWriteStream(path.join(dstDir,outputFilename));
+                // var stream = canvas.pngStream();
+                //
+                // stream.on('data', function(chunk){
+                //     out.write(chunk);
+                // });
+                // stream.on('error',function (err) {
+                //     console.error(err);
+                //     cb && cb(err);
+                // }.bind(this));
+                // stream.on('end', function(){
+                //     //write widget
+                //     curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                //     //if last trigger cb
+                //     totalSlices -= 1;
+                //     if (totalSlices<=0){
+                //         cb && cb();
+                //     }
+                // }.bind(this));
 
-            ctx.restore();
+                ctx.restore();
+            })(i);
+
         }
 
     }else{
