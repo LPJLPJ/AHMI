@@ -56,3 +56,6 @@
     width: 40%;
 
 }
+.my-stage>table>tbody>tr>td{
+    background-color: lightgray;
+}

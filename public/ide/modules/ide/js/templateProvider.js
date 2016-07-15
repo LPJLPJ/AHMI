@@ -19,9 +19,9 @@ ideServices
          * @returns {{url, id, proJsonStr, layers}}
          */
         this.getRandomPage = function () {
-            var r = _.random(64, 255);
-            var g = _.random(64, 255);
-            var b = _.random(64, 255);
+            var r = 42;
+            var g = 172;
+            var b = 246;
             var jsonStr = '{"objects":[],"background":"rgb(' + r + ',' + g + ',' + b + ')"}';
             return {
                 url: '',
@@ -128,7 +128,7 @@ ideServices
                     name:'纹理',
                     currentSliceIdx:0,
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(252,94,34,1)',
                         imgSrc:'',
                         name:'图片'
                     }]
@@ -156,7 +156,7 @@ ideServices
                     name:'纹理',
                     currentSliceIdx:0,
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(239,162,68,1)',
                         imgSrc:'',
                         name:'图片'
                     }]
@@ -196,11 +196,11 @@ ideServices
                     name:'按钮纹理',
                     currentSliceIdx:0,
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(52,100,169,1)',
                         imgSrc:'',
                         name:'按下前'
                     },{
-                        color:_getRandomColor(),
+                        color:'rgba(47,132,85,1)',
                         imgSrc:'',
                         name:'按下后'
                     }]
@@ -233,7 +233,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'旋钮背景',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(97,217,86,1)',
                         imgSrc:'',
                         name:'旋钮背景'
                     }]
@@ -241,7 +241,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'旋钮',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(70,70,70,1)',
                         imgSrc:'',
                         name:'旋钮'
                     }]
@@ -390,7 +390,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(33,46,41,1)',
                         imgSrc:'',
                         name:'进度条底纹'
                     }]
@@ -398,7 +398,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(41,144,229,1)',
                         imgSrc:'',
                         name:'进度条'
                     }]
@@ -436,7 +436,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'仪表盘背景',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(52,53,46,1)',
                         imgSrc:'',
                         name:'仪表盘背景'
                     }]
@@ -444,7 +444,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'仪表盘指针',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(77,80,82,1)',
                         imgSrc:'',
                         name:'仪表盘指针'
                     }]
@@ -534,7 +534,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'背景纹理',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(17,17,17,1)',
                         imgSrc:'',
                         name:'背景图片'
                     }]
@@ -542,7 +542,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'背光纹理',//指示波器折线图下方图案
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(228,110,119,1)',
                         imgSrc:'',
                         name:'背光图片'
                     }]
@@ -572,7 +572,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'开关图片',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(97,161,92,1)',
                         imgSrc:'',
                         name:'开关图片'
                     }]
@@ -602,7 +602,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'旋转图片',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(229,203,139,1)',
                         imgSrc:'',
                         name:'旋转图片'
                     }]
@@ -690,7 +690,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'滑块背景',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(63,63,63,1)',
                         imgSrc:'',
                         name:'滑块背景'
                     }]
@@ -698,7 +698,7 @@ ideServices
                     currentSliceIdx:0,
                     name:'滑块',
                     slices:[{
-                        color:_getRandomColor(),
+                        color:'rgba(128,45,47,1)',
                         imgSrc:'',
                         name:'滑块'
                     }]
@@ -714,6 +714,7 @@ ideServices
             var b = _.random(64, 255);
             return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
         }
+
 
 
 
