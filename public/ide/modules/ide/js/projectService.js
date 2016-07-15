@@ -1113,89 +1113,6 @@ ideServices
         };
         fabric.MyKnob.async = true;
 
-        fabric.MyImage = fabric.util.createClass(fabric.Object, {
-            type: Type.MyImage,
-            initialize: function (level, options) {
-                var self=this;
-                this.callSuper('initialize',options);
-                this.lockRotation=true;
-                this.hasRotatingPoint=false;
-                this.backgroundColor=level.texList[0].slices[0].color;
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.imageElement=new Image();
-                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.imageElement.onload = function () {
-
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }.bind(this);
-                }else {
-                    this.imageElement=null;
-                }
-
-                this.on('changeTex', function (arg) {
-                    var level=arg.level;
-                    var _callback=arg.callback;
-
-                    var tex=level.texList[0];
-                    self.backgroundColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc!='') {
-                        var currentImageElement=new Image();
-                        currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = function () {
-                        }.bind(this);
-                        self.imageElement=currentImageElement;
-                    }else {
-                        self.imageElement=null;
-                    }
-
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-                });
-
-
-
-
-            },
-            toObject: function () {
-                return fabric.util.object.extend(this.callSuper('toObject'));
-            },
-            _render: function (ctx) {
-                try{
-                    ctx.fillStyle=this.backgroundColor;
-                    ctx.fillRect(
-                        -(this.width / 2),
-                        -(this.height / 2) ,
-                        this.width ,
-                        this.height);
-
-                    if (this.imageElement){
-                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                    }
-                }
-                catch(err){
-                    console.log('错误描述',err);
-                }
-            }
-        });
-        fabric.MyImage.fromLevel= function (level, callback,option) {
-            callback && callback(new fabric.MyImage(level, option));
-        };
-        fabric.MyImage.prototype.toObject = (function (toObject) {
-            return function () {
-                return fabric.util.object.extend(toObject.call(this), {
-                    imageElement:this.imageElement,
-                    backgroundColor:this.backgroundColor
-                });
-            }
-        })(fabric.MyImage.prototype.toObject);
-        fabric.MyImage.fromObject = function (object, callback) {
-            var level=_self.getLevelById(object.id);
-            callback && callback(new fabric.MyImage(level, object));
-        };
-        fabric.MyImage.async = true;
 
         fabric.MySwitch = fabric.util.createClass(fabric.Object, {
             type: Type.MySwitch,
@@ -3556,26 +3473,6 @@ ideServices
 
                     OnWidgetSelected(_newWidget,_successCallback);
                 },initiator)
-            }else if(_newWidget.type==Type.MyImage){
-                fabric.MyImage.fromLevel(_newWidget,function(fabWidget){
-                    _self.currentFabWidgetIdList=[fabWidget.id];
-
-                    fabWidget.urls=_newWidget.subSlides;
-                    subLayerNode.add(fabWidget);
-                    subLayerNode.renderAll.bind(subLayerNode)();
-
-                    _newWidget.info.width=fabWidget.getWidth();
-                    _newWidget.info.height=fabWidget.getHeight();
-                    //console.log('-');
-
-
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-
-                    OnWidgetSelected(_newWidget,_successCallback);
-                },initiator);
             }else if(_newWidget.type==Type.MySwitch){
                 fabric.MySwitch.fromLevel(_newWidget,function(fabWidget){
                     _self.currentFabWidgetIdList=[fabWidget.id];

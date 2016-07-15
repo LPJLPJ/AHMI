@@ -1,6 +1,5 @@
 ide.controller('addWidgetController',['$scope', function ($scope) {
     $scope.widgets=[
-        {name:"图像",icon:"&#xe630;"},
         {name:"图层",icon:"&#xe640;"},
         {name:"开关",icon:"&#xe64e;"},
         {name:"进度条",icon:"&#xe62a;"},
