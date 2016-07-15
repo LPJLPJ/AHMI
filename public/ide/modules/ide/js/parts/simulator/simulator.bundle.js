@@ -20995,9 +20995,10 @@
 	            this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
 
 	            //draw grid
-	            if (grid == '1') {
+	            if (grid != '0') {
 	                var gridStyle = {
-	                    lineWidth: lineWidth
+	                    lineWidth: lineWidth,
+	                    grid: grid
 	                };
 	                this.drawGrid(curX, curY, width, height, 0, 0, 1.2 * spacing, 1.2 * spacing, gridStyle);
 	            }
@@ -21063,19 +21064,23 @@
 	        offctx.translate(curX, curY);
 	        offctx.beginPath();
 	        //draw verts
-	        for (var i = 0; i < vertGrids; i++) {
-	            var vertX = i * gridWidth + offsetX;
-	            offctx.moveTo(vertX, 0);
-	            offctx.lineWidth = gridStyle && gridStyle.lineWidth || 1;
-	            offctx.lineTo(vertX, height);
+	        if (gridStyle && gridStyle.grid && gridStyle.grid == '1' || gridStyle.grid == '3') {
+	            for (var i = 0; i < vertGrids; i++) {
+	                var vertX = i * gridWidth + offsetX;
+	                offctx.moveTo(vertX, 0);
+	                offctx.lineWidth = gridStyle && gridStyle.lineWidth || 1;
+	                offctx.lineTo(vertX, height - gridHeight);
+	            }
 	        }
-	        for (var i = 0; i < horiGrids; i++) {
-	            var horiY = i * gridHeight + offsetY;
-	            offctx.moveTo(0, horiY);
-	            offctx.lineWidth = gridStyle && gridStyle.lineWidth || 1;
-	            offctx.lineTo(width, horiY);
+	        if (gridStyle && gridStyle.grid && gridStyle.grid == '1' || gridStyle.grid == '2') {
+	            for (var i = 0; i < horiGrids - 1; i++) {
+	                var horiY = i * gridHeight + offsetY;
+	                offctx.moveTo(gridWidth, horiY);
+	                offctx.lineWidth = gridStyle && gridStyle.lineWidth || 1;
+	                offctx.lineTo(width, horiY);
+	            }
 	        }
-	        offctx.fillStyle = gridStyle && gridStyle.color || 'light gray';
+	        offctx.strokeStyle = gridStyle && gridStyle.color || 'lightgrey';
 	        offctx.stroke();
 	        offctx.restore();
 	    },

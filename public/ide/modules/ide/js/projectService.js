@@ -659,9 +659,12 @@ ideServices
                     if(this.oscilloscopeImageElement){
                         ctx.drawImage(this.oscilloscopeImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
-                    if(this.grid=='1'){
+                    if(this.grid!='0'){
                         var style={
-                            lineWidth:this.lineWidth
+                            lineWidth:this.lineWidth,
+                            grid:this.grid,
+                            scaleX:this.scaleX,
+                            scaleY:this.scaleY
                         };
                         drawGrid(-this.width/2,-this.height/2,this.width,this.height,0,0,1.2*this.spacing,1.2*this.spacing,style,ctx);
                     }
@@ -6654,25 +6657,31 @@ ideServices
         function drawGrid(curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,ctx) {
             var offsetX = offsetX % gridWidth;
             var offsetY = offsetY % gridHeight;
+            var width = width*gridStyle.scaleX;
+            var height=height*gridStyle.scaleY;
             var vertGrids = Math.floor((width - offsetX)/gridWidth)+1;
             var horiGrids = Math.floor((height - offsetY)/gridHeight)+1;
             ctx.save();
             ctx.translate(curX,curY);
             ctx.beginPath();
             //draw verts
-            for (var i=0;i<vertGrids;i++){
-                var vertX = i * gridWidth + offsetX;
-                ctx.moveTo(vertX,0);
-                ctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
-                ctx.lineTo(vertX,height);
+            if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
+                for (var i=1;i<vertGrids;i++){
+                    var vertX = i * gridWidth + offsetX;
+                    ctx.moveTo(vertX,0);
+                    ctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
+                    ctx.lineTo(vertX,height-gridHeight);
+                }
             }
-            for (i=0;i<horiGrids;i++){
-                var horiY = i * gridHeight + offsetY;
-                ctx.moveTo(0,horiY);
-                ctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
-                ctx.lineTo(width,horiY);
+            if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
+                for (i = 1; i < (horiGrids-1); i++) {
+                    var horiY = i * gridHeight + offsetY;
+                    ctx.moveTo(gridWidth, horiY);
+                    ctx.lineWidth = (gridStyle && gridStyle.lineWidth) || 1;
+                    ctx.lineTo(width, horiY);
+                }
             }
-            ctx.fillStyle = (gridStyle&&gridStyle.color) || 'light gray';
+            ctx.strokeStyle = (gridStyle&&gridStyle.color) || 'lightgrey';
             ctx.stroke();
             ctx.restore();
         }
