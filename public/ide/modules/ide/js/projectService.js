@@ -562,6 +562,8 @@ ideServices
                 this.spacing=level.info.spacing;
                 this.grid=level.info.grid;
                 this.lineWidth=level.info.lineWidth;
+                this.blankX=level.info.blankX;
+                this.blankY=level.info.blankY;
 
                 this.backgroundColor=level.texList[0].slices[0].color;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
@@ -666,7 +668,7 @@ ideServices
                             scaleX:this.scaleX,
                             scaleY:this.scaleY
                         };
-                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,0,0,1.2*this.spacing,1.2*this.spacing,style,ctx);
+                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,1.2*this.spacing,1.2*this.spacing,style,ctx);
                     }
                 }
                 catch(err){
@@ -6655,32 +6657,39 @@ ideServices
          * @param gridStyle
          */
         function drawGrid(curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,ctx) {
-            var offsetX = offsetX % gridWidth;
-            var offsetY = offsetY % gridHeight;
-            var width = width*gridStyle.scaleX;
-            var height=height*gridStyle.scaleY;
-            var vertGrids = Math.floor((width - offsetX)/gridWidth)+1;
-            var horiGrids = Math.floor((height - offsetY)/gridHeight)+1;
+            var _offsetX = offsetX % (2*gridWidth)/gridStyle.scaleX;
+            var _offsetY = offsetY % (2*gridHeight)/gridStyle.scaleY;
+            var _gridWidth = gridWidth/gridStyle.scaleX;
+            var _gridHeight = gridHeight/gridStyle.scaleY;
+            var vertGrids = Math.floor((width - _offsetX)/_gridWidth)+1;
+            var horiGrids = Math.floor((height - _offsetY)/_gridHeight)+1;
+            //console.log('keke',width,height,gridWidth,gridHeight,_offsetX,_offsetY);
             ctx.save();
             ctx.translate(curX,curY);
             ctx.beginPath();
             //draw verts
+            ctx.save();
+            ctx.translate(_offsetX,0);
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
-                for (var i=1;i<vertGrids;i++){
-                    var vertX = i * gridWidth + offsetX;
+                for (var i=0;i<vertGrids;i++){
+                    var vertX = i * _gridWidth;
                     ctx.moveTo(vertX,0);
-                    ctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
-                    ctx.lineTo(vertX,height-gridHeight);
+                    ctx.lineWidth=(gridStyle.lineWidth/gridStyle.scaleY)||1;
+                    ctx.lineTo(vertX,height-_offsetY);
                 }
             }
+            ctx.restore();
+            ctx.save();
+            ctx.translate(_offsetX,height-_offsetY);
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
-                for (i = 1; i < (horiGrids-1); i++) {
-                    var horiY = i * gridHeight + offsetY;
-                    ctx.moveTo(gridWidth, horiY);
-                    ctx.lineWidth = (gridStyle && gridStyle.lineWidth) || 1;
-                    ctx.lineTo(width, horiY);
+                for (i = 0; i < horiGrids; i++) {
+                    var horiY = i * _gridHeight;
+                    ctx.moveTo(0, -horiY);
+                    ctx.lineWidth =(gridStyle.lineWidth/gridStyle.scaleX)|| 1;
+                    ctx.lineTo(width-_offsetX, -horiY);
                 }
             }
+            ctx.restore();
             ctx.strokeStyle = (gridStyle&&gridStyle.color) || 'lightgrey';
             ctx.stroke();
             ctx.restore();

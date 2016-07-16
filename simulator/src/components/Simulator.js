@@ -1327,6 +1327,8 @@ module.exports = React.createClass({
             var spacing = widget.info.spacing;
             var grid=widget.info.grid;
             var lineWidth=widget.info.lineWidth;
+            var blankX = widget.info.blankX;
+            var blankY = widget.info.blankY;
 
             var newPoint = false;
             var curValue;
@@ -1363,7 +1365,7 @@ module.exports = React.createClass({
                     lineWidth:lineWidth,
                     grid:grid
                 }
-                this.drawGrid(curX,curY,width,height,0,0,1.2*spacing,1.2*spacing,gridStyle);
+                this.drawGrid(curX,curY,width,height,blankX,blankY,1.2*spacing,1.2*spacing,gridStyle);
             }
             //draw points lines
 
@@ -1419,32 +1421,41 @@ module.exports = React.createClass({
         offctx.restore();
     },
     drawGrid:function (curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle) {
-        var offsetX = offsetX % gridWidth;
-        var offsetY = offsetY % gridHeight;
-        var vertGrids = Math.floor((width - offsetX)/gridWidth)+1;
-        var horiGrids = Math.floor((height - offsetY)/gridHeight)+1;
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
+        var _offsetX = offsetX % (2*gridWidth);
+        var _offsetY = offsetY % (2*gridHeight);
+        var _gridWidth = gridWidth;
+        var _gridHeight = gridHeight;
+        var vertGrids = Math.floor((width - _offsetX)/_gridWidth)+1;
+        var horiGrids = Math.floor((height - _offsetY)/_gridHeight)+1;
+        //console.log('keke',width,height,gridWidth,gridHeight,_offsetX,_offsetY);
         offctx.save();
         offctx.translate(curX,curY);
         offctx.beginPath();
         //draw verts
+        offctx.save();
+        offctx.translate(_offsetX,0);
         if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
             for (var i=0;i<vertGrids;i++){
-                var vertX = i * gridWidth + offsetX;
+                var vertX = i * _gridWidth;
                 offctx.moveTo(vertX,0);
                 offctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
-                offctx.lineTo(vertX,height-gridHeight);
+                offctx.lineTo(vertX,height-_offsetY);
             }
         }
+        offctx.restore();
+        offctx.save();
+        offctx.translate(_offsetX,height-_offsetY);
         if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
-            for (var i = 0; i < (horiGrids - 1); i++) {
-                var horiY = i * gridHeight + offsetY;
-                offctx.moveTo(gridWidth, horiY);
-                offctx.lineWidth = (gridStyle && gridStyle.lineWidth) || 1;
-                offctx.lineTo(width, horiY);
+            for (i = 0; i < horiGrids; i++) {
+                var horiY = i * _gridHeight;
+                offctx.moveTo(0, -horiY);
+                offctx.lineWidth =(gridStyle&&gridStyle.lineWidth)|| 1;
+                offctx.lineTo(width-_offsetX, -horiY);
             }
         }
+        offctx.restore();
         offctx.strokeStyle = (gridStyle&&gridStyle.color) || 'lightgrey';
         offctx.stroke();
         offctx.restore();
