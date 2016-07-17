@@ -6702,7 +6702,6 @@ ideServices
                     var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
 
                     ctx.moveTo(vertX,0);
-                    ctx.lineWidth=(gridStyle.lineWidth)||1;
                     ctx.lineTo(vertX,height-_offsetY);
 
                     ctx.textAlign='center';
@@ -6721,8 +6720,8 @@ ideServices
                 for (i = 0; i < horiGrids; i++) {
                     var horiY = i * _gridHeight;
                     var yValue = gridStyle.gridInitValue+i*gridStyle.gridUnitY;
+
                     ctx.moveTo(0, -horiY);
-                    ctx.lineWidth =(gridStyle.lineWidth/gridStyle.scaleX)|| 1;
                     ctx.lineTo(width-_offsetX, -horiY);
 
                     ctx.textAlign='right';
@@ -6737,6 +6736,7 @@ ideServices
                 }
             }
             ctx.restore();
+            ctx.lineWidth=gridStyle.lineWidth||1;
             ctx.strokeStyle = (gridStyle&&gridStyle.color) || 'lightgrey';
             ctx.stroke();
             ctx.restore();

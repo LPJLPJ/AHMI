@@ -1357,7 +1357,7 @@ module.exports = React.createClass({
                     widget.flag += 1;
                 }
             }
-
+            
            //draw bg
             var bgSlice = widget.texList[0].slices[0];
             this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
@@ -1447,7 +1447,6 @@ module.exports = React.createClass({
                 var vertX = i * _gridWidth;
                 var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
                 offctx.moveTo(vertX,0);
-                offctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
                 offctx.lineTo(vertX,height-_offsetY);
 
                 offctx.textAlign='center';
@@ -1465,7 +1464,6 @@ module.exports = React.createClass({
                 var horiY = i * _gridHeight;
                 var yValue = gridStyle.gridInitValue+i*gridStyle.gridUnitY;
                 offctx.moveTo(0, -horiY);
-                offctx.lineWidth =(gridStyle&&gridStyle.lineWidth)|| 1;
                 offctx.lineTo(width-_offsetX, -horiY);
 
                 offctx.textAlign='right';
@@ -1478,6 +1476,7 @@ module.exports = React.createClass({
             }
         }
         offctx.restore();
+        offctx.lineWidth =(gridStyle&&gridStyle.lineWidth)|| 1;
         offctx.strokeStyle = (gridStyle&&gridStyle.color) || 'lightgrey';
         offctx.stroke();
         offctx.restore();
