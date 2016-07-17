@@ -1123,7 +1123,29 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.oscilloscope.changeOscLinWidth($event)"/>
                         </div>
-
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">起始值</span>
+                            <input ng-model="component.object.level.info.gridInitValue"
+                                   type="number"
+                                   class="dengpage-input dengpage-color-input form-control"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.oscilloscope.changeOscGridUnit($event)"/>
+                        </div>
+                        <div class="my-attr-item ">
+                            <span class="my-attr-title">横单位长</span>
+                            <input ng-model="component.object.level.info.gridUnitX"
+                                   type="number"
+                                   class="dengpage-input dengpage-color-input form-control short-input"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.oscilloscope.changeOscGridUnitX($event)"/>
+                        </div><div class="my-attr-item ">
+                            <span class="my-attr-title">纵单位长</span>
+                            <input ng-model="component.object.level.info.gridUnitY"
+                                   type="number"
+                                   class="dengpage-input dengpage-color-input form-control short-input"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.oscilloscope.changeOscGridUnitY($event)"/>
+                        </div>
                     </div>
 
                     <!--Dashboard-->

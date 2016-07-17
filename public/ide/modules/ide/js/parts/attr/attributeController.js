@@ -167,6 +167,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 changeOscSpacing:changeOscSpacing,
                 changeOscGrid:changeOscGrid,
                 changeOscLinWidth:changeOscLinWidth,
+                changeOscGridInitValue:changeOscGridInitValue,
+                changeOscGridUnitX:changeOscGridUnitX,
+                changeOscGridUnitY:changeOscGridUnitY
             },
 
             //开关
@@ -1747,6 +1750,48 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             var option = {
                 lineWidth:$scope.component.object.level.info.lineWidth
             };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function changeOscGridInitValue(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.gridInitValue==initObject.level.info.gridInitValue){
+                return;
+            }
+            var option = {
+                gridInitValue:$scope.component.object.level.info.gridInitValue
+            }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function changeOscGridUnitX(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.gridUnitX==initObject.level.info.gridUnitX){
+                return;
+            }
+            var option = {
+                gridUnitX:$scope.component.object.level.info.gridUnitX
+            }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function changeOscGridUnitY(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.gridUnitY==initObject.level.info.gridUnitY){
+                return;
+            }
+            var option = {
+                gridUnitY:$scope.component.object.level.info.gridUnitY
+            }
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);

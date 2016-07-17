@@ -562,6 +562,9 @@ ideServices
                 this.spacing=level.info.spacing;
                 this.grid=level.info.grid;
                 this.lineWidth=level.info.lineWidth;
+                this.gridUnitX=level.info.gridUnitX;
+                this.gridUnitY=level.info.gridUnitY;
+                this.gridInitValue=level.info.gridInitValue;
                 this.blankX=level.info.blankX;
                 this.blankY=level.info.blankY;
 
@@ -637,6 +640,15 @@ ideServices
                     if(arg.hasOwnProperty('lineWidth')){
                         self.lineWidth=arg.lineWidth;
                     }
+                    if(arg.hasOwnProperty('gridInitValue')){
+                        self.gridInitValue=arg.gridInitValue;
+                    }
+                    if(arg.hasOwnProperty('gridUnitX')){
+                        self.gridUnitX=arg.gridUnitX;
+                    }
+                    if(arg.hasOwnProperty('gridUnitY')){
+                        self.gridUnitY=arg.gridUnitY;
+                    }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -665,8 +677,11 @@ ideServices
                         var style={
                             lineWidth:this.lineWidth,
                             grid:this.grid,
+                            gridInitValue:this.gridInitValue,
+                            gridUnitX:this.gridUnitX,
+                            gridUnitY:this.gridUnitY,
                             scaleX:this.scaleX,
-                            scaleY:this.scaleY
+                            scaleY:this.scaleY,
                         };
                         drawGrid(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,1.2*this.spacing,1.2*this.spacing,style,ctx);
                     }
@@ -5729,6 +5744,18 @@ ideServices
                 selectObj.level.info.lineWidth=_option.lineWidth;
                 arg.lineWidth=_option.lineWidth;
             }
+            if(_option.hasOwnProperty('gridInitValue')){
+                selectObj.level.info.gridInitValue=_option.gridInitValue;
+                arg.gridInitValue=_option.gridInitValue;
+            }
+            if(_option.hasOwnProperty('gridUnitX')){
+                selectObj.level.info.gridUnitX=_option.gridUnitX;
+                arg.gridUnitX=_option.gridUnitX;
+            }
+            if(_option.hasOwnProperty('gridUnitY')){
+                selectObj.level.info.gridUnitY=_option.gridUnitY;
+                arg.gridUnitY=_option.gridUnitY;
+            }
             selectObj.target.fire('ChangeAttributeOscilloscope',arg);
         };
         //改变示波器的不需要重新渲染的属性，如线条颜色
@@ -6657,25 +6684,34 @@ ideServices
          * @param gridStyle
          */
         function drawGrid(curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,ctx) {
-            var _offsetX = offsetX % (2*gridWidth)/gridStyle.scaleX;
-            var _offsetY = offsetY % (2*gridHeight)/gridStyle.scaleY;
+            var _offsetX = offsetX/gridStyle.scaleX;
+            var _offsetY = offsetY/gridStyle.scaleY;
             var _gridWidth = gridWidth/gridStyle.scaleX;
             var _gridHeight = gridHeight/gridStyle.scaleY;
             var vertGrids = Math.floor((width - _offsetX)/_gridWidth)+1;
             var horiGrids = Math.floor((height - _offsetY)/_gridHeight)+1;
-            //console.log('keke',width,height,gridWidth,gridHeight,_offsetX,_offsetY);
             ctx.save();
             ctx.translate(curX,curY);
             ctx.beginPath();
             //draw verts
             ctx.save();
             ctx.translate(_offsetX,0);
+            //console.log('keke',_offsetX,_offsetY);
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
                 for (var i=0;i<vertGrids;i++){
                     var vertX = i * _gridWidth;
-                    ctx.moveTo(vertX,0);
-                    ctx.lineWidth=(gridStyle.lineWidth/gridStyle.scaleY)||1;
-                    ctx.lineTo(vertX,height-_offsetY);
+                    var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
+                    ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
+                    ctx.moveTo(vertX*gridStyle.scaleX,0);
+                    ctx.lineWidth=(gridStyle.lineWidth)||1;
+                    ctx.lineTo(vertX*gridStyle.scaleX,(height-_offsetY)*gridStyle.scaleY);
+
+                    ctx.textAlign='center';
+                    ctx.textBaseline='top';
+                    ctx.fillStyle='rgba(255,255,255,1)';
+                    ctx.font='10px';
+                    ctx.fillText(xValue,vertX*gridStyle.scaleX,(height-_offsetY+2)*gridStyle.scaleY,20);
+                    ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
                 }
             }
             ctx.restore();
@@ -6684,9 +6720,20 @@ ideServices
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
                 for (i = 0; i < horiGrids; i++) {
                     var horiY = i * _gridHeight;
+                    var yValue = gridStyle.gridInitValue+i*gridStyle.gridUnitY;
                     ctx.moveTo(0, -horiY);
                     ctx.lineWidth =(gridStyle.lineWidth/gridStyle.scaleX)|| 1;
                     ctx.lineTo(width-_offsetX, -horiY);
+
+                    ctx.textAlign='right';
+                    ctx.textBaseline='top';
+                    ctx.fillStyle='rgba(255,255,255,1)';
+                    ctx.font='10px';
+                    if(i!=0){
+                        ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
+                        ctx.fillText(yValue,(0-2)*gridStyle.scaleX, -horiY*gridStyle.scaleY);
+                        ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
+                    }
                 }
             }
             ctx.restore();
