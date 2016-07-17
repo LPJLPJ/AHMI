@@ -6766,6 +6766,10 @@ ideServices
             ctx.save();
             ctx.translate(_offsetX,height-_offsetY);
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
+                ctx.textAlign='right';
+                ctx.textBaseline='middle';
+                ctx.fillStyle='rgba(255,255,255,1)';
+                ctx.font='10px';
                 for (i = 0; i < horiGrids; i++) {
                     var horiY = i * _gridHeight;
                     var yValue = minValue+gridStyle.gridInitValue+i*gridStyle.gridUnitY;
@@ -6773,10 +6777,7 @@ ideServices
                     ctx.moveTo(0, -horiY);
                     ctx.lineTo(width-_offsetX, -horiY);
 
-                    ctx.textAlign='right';
-                    ctx.textBaseline='middle';
-                    ctx.fillStyle='rgba(255,255,255,1)';
-                    ctx.font='10px';
+
                     ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
                     ctx.fillText(yValue,(0-2)*gridStyle.scaleX, -horiY*gridStyle.scaleY);
                     ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
