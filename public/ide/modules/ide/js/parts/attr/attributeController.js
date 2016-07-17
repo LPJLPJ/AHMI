@@ -1083,7 +1083,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
-            } else {
+            }
+            if($scope.component.object.level.type==Type.Mynum){
                 //默认是数字框
                 if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
 
@@ -1137,7 +1138,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
-            }else {
+            }
+            if($scope.component.object.level.type==Type.Mynum){
                 //默认是数字框
                 if ($scope.component.object.level.info.maxValue<$scope.component.object.level.info.initValue){
 

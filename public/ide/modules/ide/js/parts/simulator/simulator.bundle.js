@@ -20274,9 +20274,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	                // console.log(tex);
-	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	            }
+	            // console.log(tex);
+	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	        }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20937,20 +20937,20 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else {
-	                    // complex mode
-	                    //background
-	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                    //draw light strip
-	                    var lightStripTex = widget.texList[2].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
-	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                // complex mode
+	                //background
+	                var bgTex = widget.texList[0].slices[0];
+	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                //draw light strip
+	                var lightStripTex = widget.texList[2].slices[0];
+	                this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
+	                //draw pointer
+	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                    //draw circle
-	                    // var circleTex = widget.texList[3].slices[0]
-	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	                }
+	                //draw circle
+	                // var circleTex = widget.texList[3].slices[0]
+	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	            }
 
 	            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	            widget.oldValue = curArc;
@@ -20993,6 +20993,7 @@
 
 	            var spacing = widget.info.spacing;
 	            var grid = widget.info.grid;
+	            var lineColor = widget.info.lineColor;
 	            var lineWidth = widget.info.lineWidth;
 	            var blankX = widget.info.blankX;
 	            var blankY = widget.info.blankY;
@@ -21038,12 +21039,12 @@
 	                    gridUnitX: gridUnitX,
 	                    gridUnitY: gridUnitY
 	                };
-	                this.drawGrid(curX, curY, width, height, blankX, blankY, spacing, spacing, gridStyle);
+	                this.drawGrid(curX, curY, width, height, blankX, blankY, spacing, spacing, gridStyle, minValue);
 	            }
 	            //draw points lines
 
 	            var coverSlice = widget.texList[1].slices[0];
-	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice, blankX, blankY);
+	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice, blankX, blankY, lineColor);
 
 	            //handle action
 	            if (newPoint) {
@@ -21052,7 +21053,7 @@
 	            }
 	        }
 	    },
-	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY) {
+	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor) {
 	        var tranedPoints = points.map(function (point) {
 	            return 1.0 * (point - minValue) / (maxValue - minValue) * (height - blankY);
 	        });
@@ -21088,10 +21089,11 @@
 	            }
 	        }
 	        //stroke
+	        offctx.strokeStyle = lineColor;
 	        offctx.stroke();
 	        offctx.restore();
 	    },
-	    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle) {
+	    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        var _offsetX = offsetX % (2 * gridWidth);
@@ -21108,17 +21110,20 @@
 	        offctx.save();
 	        offctx.translate(_offsetX, 0);
 	        if (gridStyle && gridStyle.grid && gridStyle.grid == '1' || gridStyle.grid == '3') {
+	            offctx.textAlign = 'center';
+	            offctx.textBaseline = 'top';
+	            offctx.fillStyle = 'rgba(255,255,255,1)';
+	            offctx.font = '10px';
+	            var maxXValue = gridStyle.gridInitValue + (vertGrids - 1) * gridStyle.gridUnitX;
+	            var q = Math.floor(offctx.measureText(maxXValue).width / (2 * gridWidth / 3)) + 1;
 	            for (var i = 0; i < vertGrids; i++) {
 	                var vertX = i * _gridWidth;
 	                var xValue = gridStyle.gridInitValue + i * gridStyle.gridUnitX;
 	                offctx.moveTo(vertX, 0);
 	                offctx.lineTo(vertX, height - _offsetY);
-
-	                offctx.textAlign = 'center';
-	                offctx.textBaseline = 'top';
-	                offctx.fillStyle = 'rgba(255,255,255,1)';
-	                offctx.font = '10px';
-	                offctx.fillText(xValue, vertX, height - _offsetY + 2, 20);
+	                if (i % q == 0) {
+	                    offctx.fillText(xValue, vertX, height - _offsetY + 2, 20);
+	                }
 	            }
 	        }
 	        offctx.restore();
@@ -21127,7 +21132,7 @@
 	        if (gridStyle && gridStyle.grid && gridStyle.grid == '1' || gridStyle.grid == '2') {
 	            for (i = 0; i < horiGrids; i++) {
 	                var horiY = i * _gridHeight;
-	                var yValue = gridStyle.gridInitValue + i * gridStyle.gridUnitY;
+	                var yValue = minValue + gridStyle.gridInitValue + i * gridStyle.gridUnitY;
 	                offctx.moveTo(0, -horiY);
 	                offctx.lineTo(width - _offsetX, -horiY);
 
@@ -21135,9 +21140,7 @@
 	                offctx.textBaseline = 'middle';
 	                offctx.fillStyle = 'rgba(255,255,255,1)';
 	                offctx.font = '10px';
-	                if (i != 0) {
-	                    offctx.fillText(yValue, 0 - 2, -horiY);
-	                }
+	                offctx.fillText(yValue, 0 - 2, -horiY);
 	            }
 	        }
 	        offctx.restore();
@@ -21494,20 +21497,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                        //switch
-	                        //if (widget.switchState) {
-	                        //	widget.switchState = !widget.switch
-	                        //}else{
-	                        //	widget.switchState = 1;
-	                        //}
-	                        //update its tag
-	                        var targetTag = this.findTagByName(widget.tag);
-	                        if (targetTag) {
-	                            targetTag.value = parseInt(targetTag.value);
-	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
-	                        }
+	                    //switch
+	                    //if (widget.switchState) {
+	                    //	widget.switchState = !widget.switch
+	                    //}else{
+	                    //	widget.switchState = 1;
+	                    //}
+	                    //update its tag
+	                    var targetTag = this.findTagByName(widget.tag);
+	                    if (targetTag) {
+	                        targetTag.value = parseInt(targetTag.value);
+	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
 	                    }
+	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
