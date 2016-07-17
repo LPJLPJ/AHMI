@@ -238,7 +238,7 @@ $(function () {
                     setTimeout(function () {
                         window.location.href = '/user/login'
                     }, 2000);
-                    captchaImg.src = '/captcha'
+                    captchaImg.src = '/captcha?' + Date.now();
                     submit.disabled = false
                 },
                 error: function (err, textStatus, xhr) {
@@ -259,7 +259,7 @@ $(function () {
                             break;
 
                     }
-                    captchaImg.src = '/captcha'
+                    captchaImg.src = '/captcha?' + Date.now()
                     submit.disabled = false
                 }
             })

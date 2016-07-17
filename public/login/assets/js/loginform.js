@@ -126,7 +126,7 @@ $(function(){
                     return;
                 }
 
-                $('#captcha-img').attr('src','/captcha');
+                $('#captcha-img').attr('src', '/captcha?' + Date.now());
                 $('#submit').attr('disabled',false)
 			},
 			error:function(err, status, xhr){
@@ -152,7 +152,7 @@ $(function(){
 
                 }
 
-                $('#captcha-img').attr('src','/captcha');
+                $('#captcha-img').attr('src', '/captcha?' + Date.now());
                 $('#submit').attr('disabled',false)
 
 			}
