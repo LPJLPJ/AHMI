@@ -1326,6 +1326,7 @@ module.exports = React.createClass({
 
             var spacing = widget.info.spacing;
             var grid=widget.info.grid;
+            var lineColor=widget.info.lineColor;
             var lineWidth=widget.info.lineWidth;
             var blankX = widget.info.blankX;
             var blankY = widget.info.blankY;
@@ -1371,12 +1372,12 @@ module.exports = React.createClass({
                     gridUnitX:gridUnitX,
                     gridUnitY:gridUnitY
                 }
-                this.drawGrid(curX,curY,width,height,blankX,blankY,spacing,spacing,gridStyle);
+                this.drawGrid(curX,curY,width,height,blankX,blankY,spacing,spacing,gridStyle,minValue);
             }
             //draw points lines
 
             var coverSlice = widget.texList[1].slices[0];
-            this.drawPointsLine(curX,curY,width,height,spacing,widget.curPoints,minValue,maxValue,coverSlice,blankX,blankY);
+            this.drawPointsLine(curX,curY,width,height,spacing,widget.curPoints,minValue,maxValue,coverSlice,blankX,blankY,lineColor);
 
             //handle action
             if (newPoint){
@@ -1387,7 +1388,7 @@ module.exports = React.createClass({
 
         }
     },
-    drawPointsLine:function (curX, curY, width, height,spacing,points,minValue, maxValue,bgSlice,blankX,blankY) {
+    drawPointsLine:function (curX, curY, width, height,spacing,points,minValue, maxValue,bgSlice,blankX,blankY,lineColor) {
         var tranedPoints = points.map(function (point) {
             return 1.0*(point-minValue)/(maxValue-minValue)*(height-blankY);
         });
@@ -1423,10 +1424,11 @@ module.exports = React.createClass({
             }
         }
         //stroke
+        offctx.strokeStyle=lineColor;
         offctx.stroke();
         offctx.restore();
     },
-    drawGrid:function (curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle) {
+    drawGrid:function (curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,minValue) {
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
         var _offsetX = offsetX % (2*gridWidth);
@@ -1443,17 +1445,20 @@ module.exports = React.createClass({
         offctx.save();
         offctx.translate(_offsetX,0);
         if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
+            offctx.textAlign='center';
+            offctx.textBaseline='top';
+            offctx.fillStyle='rgba(255,255,255,1)';
+            offctx.font='10px';
+            var maxXValue =  gridStyle.gridInitValue+(vertGrids-1)*gridStyle.gridUnitX;
+            var q = Math.floor(offctx.measureText(maxXValue).width/(2*gridWidth/3))+1;
             for (var i=0;i<vertGrids;i++){
                 var vertX = i * _gridWidth;
                 var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
                 offctx.moveTo(vertX,0);
                 offctx.lineTo(vertX,height-_offsetY);
-
-                offctx.textAlign='center';
-                offctx.textBaseline='top';
-                offctx.fillStyle='rgba(255,255,255,1)';
-                offctx.font='10px';
-                offctx.fillText(xValue,vertX,height-_offsetY+2,20);
+                if(i%q==0){
+                    offctx.fillText(xValue,vertX,height-_offsetY+2,20);
+                }
             }
         }
         offctx.restore();
@@ -1462,7 +1467,7 @@ module.exports = React.createClass({
         if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
             for (i = 0; i < horiGrids; i++) {
                 var horiY = i * _gridHeight;
-                var yValue = gridStyle.gridInitValue+i*gridStyle.gridUnitY;
+                var yValue = minValue+gridStyle.gridInitValue+i*gridStyle.gridUnitY;
                 offctx.moveTo(0, -horiY);
                 offctx.lineTo(width-_offsetX, -horiY);
 
@@ -1470,9 +1475,7 @@ module.exports = React.createClass({
                 offctx.textBaseline='middle';
                 offctx.fillStyle='rgba(255,255,255,1)';
                 offctx.font='10px';
-                if(i!=0){
-                    offctx.fillText(yValue,0-2, -horiY);
-                }
+                offctx.fillText(yValue,0-2, -horiY);
             }
         }
         offctx.restore();

@@ -569,6 +569,7 @@ ideServices
                 this.gridInitValue=level.info.gridInitValue;
                 this.blankX=level.info.blankX;
                 this.blankY=level.info.blankY;
+                this.setScaleY((((this.maxValue-this.minValue)/this.gridUnitY+1/2)*this.spacing+this.blankY)/this.height);
 
                 this.backgroundColor=level.texList[0].slices[0].color;
                 if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
@@ -629,12 +630,15 @@ ideServices
 
                 });
                 this.on('ChangeAttributeOscilloscope',function(arg){
+                    var selectObj=_self.getCurrentSelectObject();
                     var _callback=arg.callback;
                     if(arg.hasOwnProperty('lineColor')){
 
                     }
                     if(arg.hasOwnProperty('spacing')){
                         self.spacing=arg.spacing;
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
                     }
                     if(arg.hasOwnProperty('grid')){
                         self.grid=arg.grid;
@@ -650,11 +654,18 @@ ideServices
                     }
                     if(arg.hasOwnProperty('gridUnitY')){
                         self.gridUnitY=arg.gridUnitY;
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
                     }
                     if(arg.hasOwnProperty('maxValue')){
-                        console.log('keke',arg.maxValue);
                         self.maxValue=arg.maxValue;
-                        self.setHeight(self.maxValue-self.minValue+self.blankY);
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
+                    }
+                    if(arg.hasOwnProperty('minValue')){
+                        self.minValue=arg.minValue;
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
                     }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -690,8 +701,20 @@ ideServices
                             scaleX:this.scaleX,
                             scaleY:this.scaleY,
                         };
-                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,this.spacing,this.spacing,style,ctx);
+                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,this.spacing,this.spacing,style,ctx,this.minValue);
                     }
+
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
                 }
                 catch(err){
                     console.log('错误描述',err);
@@ -6094,7 +6117,8 @@ ideServices
                 if(selectObj.type==Type.MyOscilloscope){
                     arg={
                         maxValue:_option.maxValue,
-                    }
+                        callback:_successCallback
+                    };
                     selectObj.target.fire('ChangeAttributeOscilloscope',arg);
                 }
 
@@ -6117,6 +6141,13 @@ ideServices
                         callback:_successCallback
                     };
                     selectObj.target.fire('changeDashboardValue',arg);
+                }
+                if(selectObj.type==Type.MyOscilloscope){
+                    arg={
+                        minValue:_option.minValue,
+                        callback:_successCallback
+                    }
+                    selectObj.target.fire('ChangeAttributeOscilloscope',arg);
                 }
             }
             if (_option.hasOwnProperty('highAlarmValue')){
@@ -6696,13 +6727,14 @@ ideServices
          * @param gridHeight
          * @param gridStyle
          */
-        function drawGrid(curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,ctx) {
+        function drawGrid(curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,ctx,minValue) {
             var _offsetX = offsetX/gridStyle.scaleX;
             var _offsetY = offsetY/gridStyle.scaleY;
             var _gridWidth = gridWidth/gridStyle.scaleX;
             var _gridHeight = gridHeight/gridStyle.scaleY;
             var vertGrids = Math.floor((width - _offsetX)/_gridWidth)+1;
             var horiGrids = Math.floor((height - _offsetY)/_gridHeight)+1;
+            var maxWidth = 0;
             ctx.save();
             ctx.translate(curX,curY);
             ctx.beginPath();
@@ -6710,6 +6742,12 @@ ideServices
             ctx.save();
             ctx.translate(_offsetX,0);
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
+                ctx.textAlign='center';
+                ctx.textBaseline='top';
+                ctx.fillStyle='rgba(255,255,255,1)';
+                ctx.font='10px';
+                var maxXValue =  gridStyle.gridInitValue+(vertGrids-1)*gridStyle.gridUnitX;
+                var q = Math.floor(ctx.measureText(maxXValue).width/(2*gridWidth/3))+1;
                 for (var i=0;i<vertGrids;i++){
                     var vertX = i * _gridWidth;
                     var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
@@ -6717,13 +6755,11 @@ ideServices
                     ctx.moveTo(vertX,0);
                     ctx.lineTo(vertX,height-_offsetY);
 
-                    ctx.textAlign='center';
-                    ctx.textBaseline='top';
-                    ctx.fillStyle='rgba(255,255,255,1)';
-                    ctx.font='10px';
-                    ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
-                    ctx.fillText(xValue,vertX*gridStyle.scaleX,(height-_offsetY+2)*gridStyle.scaleY,20);
-                    ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
+                    if(i%q==0){
+                        ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
+                        ctx.fillText(xValue,vertX*gridStyle.scaleX,(height-_offsetY+2)*gridStyle.scaleY,20);
+                        ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
+                    }
                 }
             }
             ctx.restore();
@@ -6732,7 +6768,7 @@ ideServices
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
                 for (i = 0; i < horiGrids; i++) {
                     var horiY = i * _gridHeight;
-                    var yValue = gridStyle.gridInitValue+i*gridStyle.gridUnitY;
+                    var yValue = minValue+gridStyle.gridInitValue+i*gridStyle.gridUnitY;
 
                     ctx.moveTo(0, -horiY);
                     ctx.lineTo(width-_offsetX, -horiY);
@@ -6741,16 +6777,15 @@ ideServices
                     ctx.textBaseline='middle';
                     ctx.fillStyle='rgba(255,255,255,1)';
                     ctx.font='10px';
-                    if(i!=0){
-                        ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
-                        ctx.fillText(yValue,(0-2)*gridStyle.scaleX, -horiY*gridStyle.scaleY);
-                        ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
-                    }
+                    ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
+                    ctx.fillText(yValue,(0-2)*gridStyle.scaleX, -horiY*gridStyle.scaleY);
+                    ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
                 }
             }
             ctx.restore();
             ctx.lineWidth=gridStyle.lineWidth||1;
             ctx.strokeStyle = (gridStyle&&gridStyle.color) || 'lightgrey';
+            ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
             ctx.stroke();
             ctx.restore();
         }
