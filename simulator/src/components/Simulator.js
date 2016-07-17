@@ -19,7 +19,7 @@ try{
     eval("var os = require('os')");
     sep = '\\';
 }catch (e){
-    console.log(e);
+    //console.log(e);
 }
 
 var defaultSimulator = {
@@ -313,7 +313,7 @@ module.exports = React.createClass({
         for (var i = 0; i < postfix.length; i++) {
             var key = 'SysTmr_' + num + '_' + postfix[i];
             var curTag = this.findTagByName(key);
-            console.log(curTag,timerList);
+            //console.log(curTag,timerList);
             timer[key] = (curTag&&curTag.value) || 0;
             // timer[key] = this.findTagByName(key)['value'] || 0;
         }
@@ -402,9 +402,10 @@ module.exports = React.createClass({
     drawCanvas: function (canvasData, options) {
         //draw
         var subCanvasList = canvasData.subCanvasList || [];
-        var canvasTag = this.findTagByName(canvasData.tag && canvasData.tag.name);
+        var canvasTag = this.findTagByName(canvasData.tag);
         var nextSubCanvasIdx = (canvasTag && canvasTag.value) || 0;
-        canvasData.curSubCanvasIdx = nextSubCanvasIdx
+        var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+        canvasData.curSubCanvasIdx = nextSubCanvasIdx;
         //handle unload subcanvas
         // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
         // 	//unload lastsubcanvas
@@ -414,10 +415,11 @@ module.exports = React.createClass({
         // var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
         for (var i = 0; i < subCanvasList.length; i++) {
             if (subCanvasList[i].state && subCanvasList[i].state == LoadState.loaded) {
-                if ((nextSubCanvasIdx - 1 ) != i) {
+                if ((nextSubCanvasIdx ) != i) {
                     //another sc loaded
                     //unload sc of i
                     this.handleTargetAction(subCanvasList[i], 'Unload')
+                    //console.log('canvas unload')
                     break
                 }
             }
@@ -425,8 +427,8 @@ module.exports = React.createClass({
         var subCanvas = subCanvasList[nextSubCanvasIdx];
         if (subCanvas) {
             this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
-
-
+        } else {
+            this.handleTargetAction(oldSubCanvas, 'Unload');
         }
     },
     drawSubCanvas: function (subCanvas, x, y, w, h, options) {
@@ -502,6 +504,7 @@ module.exports = React.createClass({
                 break;
             case 'MySlideBlock':
                 this.drawSlideBlock(curX,curY,widget,options);
+                break;
             case 'MyScriptTrigger':
                 this.drawScriptTrigger(curX,curY,widget,options);
                 break;
@@ -769,7 +772,7 @@ module.exports = React.createClass({
             
             //get current value
             var curSlideTag = this.findTagByName(widget.tag);
-            console.log(widget.curValue);
+            //console.log(widget.curValue);
             var curSlide = (curSlideTag && curSlideTag.value) || widget.curValue||0;
             var curScale = 1.0 * (curSlide - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
 
@@ -1045,6 +1048,10 @@ module.exports = React.createClass({
         var offctx = offcanvas.getContext('2d');
         //get current value
         var curValue = this.getValueByTagName(widget.tag);
+        if (curValue === null || curValue === 'undefined') {
+            curValue = widget.info.numValue;
+        }
+        // console.log(curValue);
         var minValue = widget.info.minValue;
         var maxValue = widget.info.maxValue;
         var lowAlarmValue = widget.info.lowAlarmValue;
@@ -1174,7 +1181,7 @@ module.exports = React.createClass({
     },
     generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
         var tempNumValue = String(curValue)
-        console.log(tempNumValue);
+        //console.log(tempNumValue);
         //配置小数位数
         if (parseInt(decimalCount) > 0) {
             tempNumValuePair = tempNumValue.split('.')
@@ -1732,7 +1739,7 @@ module.exports = React.createClass({
 
                 x = x-left;
                 y = y-top;
-                console.log('relative rect',x,y)
+                //console.log('relative rect',x,y)
                 this.handleSlideBlockInnerPress(widget,x,y);
 
                 break;
@@ -1976,6 +1983,7 @@ module.exports = React.createClass({
             for (var i = 0; i < target.actions.length; i++) {
                 if (target.actions[i].trigger == type) {
                     var curCmds = target.actions[i].commands;
+                    //console.log(curCmds)
                     this.processCmds(curCmds);
 
                 }
@@ -2274,8 +2282,8 @@ module.exports = React.createClass({
             case 'GT':
                 var firstValue = Number(this.getValueByTagName(param1.tag,0));
                 var secondValue = Number(this.getParamValue(param2));
-                console.log(param1);
-                console.log('GT',firstValue,secondValue);
+                //console.log(param1);
+                //console.log('GT',firstValue,secondValue);
                 if (firstValue > secondValue){
                     nextStep.step = 1;
                 }else{

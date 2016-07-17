@@ -1,16 +1,16 @@
-ide.controller('addWidgetController',['$scope', function ($scope) {
+ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type) {
     $scope.widgets=[
         {name:"图层",icon:"&#xe640;"},
         {name:"开关",icon:"&#xe64e;"},
         {name:"进度条",icon:"&#xe62a;"},
         {name:"仪表盘",icon:"&#xe632;"},
-        {name:"示波器",icon:"&#xe62d;"},
+        // {name:"示波器",icon:"&#xe62d;"},
         {name:"旋转图",icon:"&#xe64f;"},
         {name:"时间",icon:"&#xe64d;"},
         {name:"数字",icon:"&#xe631;"},
         {name:"文本框",icon:"&#xe62f;"},
         {name:"按钮",icon:"&#xe636;"},
-        {name:"旋钮",icon:"&#xe628;"},
+        // {name:"旋钮",icon:"&#xe628;"},
         {name:"滑块",icon:"&#xe62e;"},
         {name:"按钮组",icon:"&#xe637;"},
         {name:"触发器",icon:"&#xe634;"}
