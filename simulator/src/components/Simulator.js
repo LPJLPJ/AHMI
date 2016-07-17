@@ -1357,6 +1357,7 @@ module.exports = React.createClass({
                     widget.flag += 1;
                 }
             }
+
            //draw bg
             var bgSlice = widget.texList[0].slices[0];
             this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
