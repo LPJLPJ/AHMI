@@ -11,15 +11,15 @@ mailService.transporter = nodemailer.createTransport({
     port: 465,
     secureConnection:true,
     auth: {
-        user: 'zeyu.cheng@graphichina.com',
-        pass: 'Change092410'
+        user: 'no-reply@graphichina.com',
+        pass: 'Graphichina12345'
     }
 })
 
 
 mailService.sendTestMail = function (to) {
     return {
-        from: '"Graphichina" <zeyu.cheng@graphichina.com>', // sender address
+        from: '"Graphichina" <no-reply@graphichina.com>', // sender address
         to: to, // list of receivers
         subject: 'Test', // Subject line
         text: 'Hello World', // plaintext body
@@ -31,7 +31,7 @@ mailService.sendVerifyMailExample = function (to, id,baseUrl) {
     baseUrl = baseUrl || 'http://localhost:300';
     var url = baseUrl+'/user/verify?id='+id;
     return {
-        from: '"Graphichina" <zeyu.cheng@graphichina.com>', // sender address
+        from: '"Graphichina" <no-reply@graphichina.com>', // sender address
         to: to, // list of receivers
         subject: '注册确认', // Subject line
         //text: '请点击链接进行确认: '+'http', // plaintext body
@@ -43,7 +43,7 @@ mailService.sendPasswordMailExample = function (to, key, timeTag,baseUrl) {
     baseUrl = baseUrl || 'http://localhost:3000';
     var url = baseUrl+'/user/findpassword?mail='+to+'&key='+key+'&time='+timeTag;
     return {
-        from: '"Graphichina" <zeyu.cheng@graphichina.com>', // sender address
+        from: '"Graphichina" <no-reply@graphichina.com>', // sender address
         to: to, // list of receivers
         subject: '找回密码', // Subject line
         //text: '请点击链接找回密码: '+'http', // plaintext body

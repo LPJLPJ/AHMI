@@ -418,35 +418,37 @@
                 newWidget=TemplateProvider.getDefaultProgress();
             }else if(_index==3){
                 newWidget = TemplateProvider.getDefaultDashboard();
-            }else if (_index==9){
+            } else if (_index == 8) {
 
                 newWidget=TemplateProvider.getDefaultButton();
             }
             //else if (_index==9){
             //    newWidget=TemplateProvider.getDefaultNumber();}
-            else if (_index==12){
+            else if (_index == 10) {
                 newWidget=TemplateProvider.getDefaultButtonGroup();
-            }else if(_index==10){
-                newWidget=TemplateProvider.getDefaultKnob();
             }
-            else if(_index==8){
+            // else if(_index==10){
+            //     newWidget=TemplateProvider.getDefaultKnob();
+            // }
+            else if (_index == 7) {
                 newWidget=TemplateProvider.getDefaultTextArea();
             }
-            else if(_index==7){
+            else if (_index == 6) {
                 newWidget=TemplateProvider.getDefaultNum();
             }
-            else if(_index==4){
-                newWidget=TemplateProvider.getDefaultOscilloscope();
-            }else if(_index==1){
+            // else if(_index==4){
+            //     newWidget=TemplateProvider.getDefaultOscilloscope();
+            // }
+            else if (_index == 1) {
                 newWidget=TemplateProvider.getDefaultSwitch();
-            }else if(_index==5){
+            } else if (_index == 4) {
                 newWidget=TemplateProvider.getDefaultRotateImg();
             }
-            else if(_index==6){
+            else if (_index == 5) {
                 newWidget=TemplateProvider.getDefaultDateTime();
-            }else if(_index==13){
+            } else if (_index == 11) {
                 newWidget=TemplateProvider.getDefaultScriptTrigger();
-            }else if(_index==11){
+            } else if (_index == 9) {
                 newWidget=TemplateProvider.getDefaultSlideBlock();
             }
             else {

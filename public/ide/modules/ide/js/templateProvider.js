@@ -385,7 +385,7 @@ ideServices
 
             var info={
                 width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
-                height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 clockwise:'1',//1代表顺时针，0代表逆时针
@@ -559,7 +559,8 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
+                height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:360,

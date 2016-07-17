@@ -130,7 +130,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         $scope.$on('LoadUp', function () {
 
             loadStep++;
-            if (loadStep==8){
+            if (loadStep == 6) {
                 //到达第8步,加载完成
                 showIDE();
             }
@@ -305,7 +305,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         $scope.$on('LoadUp', function () {
 
             loadStep++;
-            if (loadStep==8){
+            if (loadStep == 6) {
                 //到达第8步,加载完成
                 showIDE();
             }
@@ -480,7 +480,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         $scope.$on('LoadUp', function () {
 
             loadStep++;
-            if (loadStep==8){
+            if (loadStep == 6) {
                 //到达第8步,加载完成
                 $timeout(function () {
                     $scope.ide.loaded=true;
