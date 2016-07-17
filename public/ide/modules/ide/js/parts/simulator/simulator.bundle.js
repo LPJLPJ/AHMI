@@ -20995,7 +20995,7 @@
 	            var curValue;
 
 	            if (!widget.maxPoints) {
-	                var maxPoints = Math.floor(width / spacing) + 1;
+	                var maxPoints = Math.floor((width - blankX) / spacing) + 1;
 	                widget.maxPoints = maxPoints;
 	                widget.flag = -1;
 	                widget.curPoints = [];
@@ -21029,12 +21029,12 @@
 	                    gridUnitX: gridUnitX,
 	                    gridUnitY: gridUnitY
 	                };
-	                this.drawGrid(curX, curY, width, height, blankX, blankY, 1.2 * spacing, 1.2 * spacing, gridStyle);
+	                this.drawGrid(curX, curY, width, height, blankX, blankY, spacing, spacing, gridStyle);
 	            }
 	            //draw points lines
 
 	            var coverSlice = widget.texList[1].slices[0];
-	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice);
+	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice, blankX, blankY);
 
 	            //handle action
 	            if (newPoint) {
@@ -21043,9 +21043,9 @@
 	            }
 	        }
 	    },
-	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice) {
+	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY) {
 	        var tranedPoints = points.map(function (point) {
-	            return 1.0 * (point - minValue) / (maxValue - minValue) * height;
+	            return 1.0 * (point - minValue) / (maxValue - minValue) * (height - blankY);
 	        });
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
@@ -21056,13 +21056,13 @@
 	        offctx.beginPath();
 	        for (var i = 0; i < tranedPoints.length; i++) {
 	            if (i === 0) {
-	                offctx.moveTo(i * spacing, height - tranedPoints[i]);
+	                offctx.moveTo(i * spacing + blankX, height - tranedPoints[i] - blankY);
 	            } else {
-	                offctx.lineTo(i * spacing, height - tranedPoints[i]);
+	                offctx.lineTo(i * spacing + blankX, height - tranedPoints[i] - blankY);
 	            }
 	        }
-	        offctx.lineTo((i - 1) * spacing, height);
-	        offctx.lineTo(0, height);
+	        offctx.lineTo((i - 1) * spacing + blankX, height - blankY);
+	        offctx.lineTo(blankX, height - blankY);
 	        offctx.closePath();
 	        offctx.clip();
 	        //draw bg
@@ -21073,9 +21073,9 @@
 	        offctx.beginPath();
 	        for (var i = 0; i < tranedPoints.length; i++) {
 	            if (i === 0) {
-	                offctx.moveTo(i * spacing, height - tranedPoints[i]);
+	                offctx.moveTo(i * spacing + blankX, height - tranedPoints[i] - blankY);
 	            } else {
-	                offctx.lineTo(i * spacing, height - tranedPoints[i]);
+	                offctx.lineTo(i * spacing + blankX, height - tranedPoints[i] - blankY);
 	            }
 	        }
 	        //stroke
@@ -21123,7 +21123,7 @@
 	                offctx.lineTo(width - _offsetX, -horiY);
 
 	                offctx.textAlign = 'right';
-	                offctx.textBaseline = 'top';
+	                offctx.textBaseline = 'middle';
 	                offctx.fillStyle = 'rgba(255,255,255,1)';
 	                offctx.font = '10px';
 	                if (i != 0) {

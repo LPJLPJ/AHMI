@@ -683,7 +683,7 @@ ideServices
                             scaleX:this.scaleX,
                             scaleY:this.scaleY,
                         };
-                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,1.2*this.spacing,1.2*this.spacing,style,ctx);
+                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,this.spacing,this.spacing,style,ctx);
                     }
                 }
                 catch(err){
@@ -6725,7 +6725,7 @@ ideServices
                     ctx.lineTo(width-_offsetX, -horiY);
 
                     ctx.textAlign='right';
-                    ctx.textBaseline='top';
+                    ctx.textBaseline='middle';
                     ctx.fillStyle='rgba(255,255,255,1)';
                     ctx.font='10px';
                     if(i!=0){

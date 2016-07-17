@@ -488,9 +488,9 @@ ideServices
                 lineColor:'rgba(0,0,0,1)',
                 grid:'0',//0表示无网格，1表示有网格,2表示横网格，3表示竖网格
                 lineWidth:1,//网格线宽
-                gridUnitX:10,//横向网格长度
-                gridUnitY:10,//纵向网格长度
-                gridInitValue:0,//网格初始值
+                gridUnitX:10,//横向网格单位长度长度
+                gridUnitY:10,//纵向网格单位长度
+                gridInitValue:0,//网格初始坐标值
                 blankX:24,//x方向留白
                 blankY:24,//y方向留白
 
