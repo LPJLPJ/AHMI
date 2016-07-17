@@ -6696,20 +6696,20 @@ ideServices
             //draw verts
             ctx.save();
             ctx.translate(_offsetX,0);
-            //console.log('keke',_offsetX,_offsetY);
             if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
                 for (var i=0;i<vertGrids;i++){
                     var vertX = i * _gridWidth;
                     var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
-                    ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
-                    ctx.moveTo(vertX*gridStyle.scaleX,0);
+
+                    ctx.moveTo(vertX,0);
                     ctx.lineWidth=(gridStyle.lineWidth)||1;
-                    ctx.lineTo(vertX*gridStyle.scaleX,(height-_offsetY)*gridStyle.scaleY);
+                    ctx.lineTo(vertX,height-_offsetY);
 
                     ctx.textAlign='center';
                     ctx.textBaseline='top';
                     ctx.fillStyle='rgba(255,255,255,1)';
                     ctx.font='10px';
+                    ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
                     ctx.fillText(xValue,vertX*gridStyle.scaleX,(height-_offsetY+2)*gridStyle.scaleY,20);
                     ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
                 }

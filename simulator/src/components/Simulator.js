@@ -1329,6 +1329,9 @@ module.exports = React.createClass({
             var lineWidth=widget.info.lineWidth;
             var blankX = widget.info.blankX;
             var blankY = widget.info.blankY;
+            var gridInitValue = widget.info.gridInitValue;
+            var gridUnitX = widget.info.gridUnitX;
+            var gridUnitY = widget.info.gridUnitY;
 
             var newPoint = false;
             var curValue;
@@ -1354,7 +1357,6 @@ module.exports = React.createClass({
                     widget.flag += 1;
                 }
             }
-
            //draw bg
             var bgSlice = widget.texList[0].slices[0];
             this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
@@ -1363,7 +1365,10 @@ module.exports = React.createClass({
             if(grid!='0'){
                 var gridStyle={
                     lineWidth:lineWidth,
-                    grid:grid
+                    grid:grid,
+                    gridInitValue:gridInitValue,
+                    gridUnitX:gridUnitX,
+                    gridUnitY:gridUnitY
                 }
                 this.drawGrid(curX,curY,width,height,blankX,blankY,1.2*spacing,1.2*spacing,gridStyle);
             }
@@ -1439,9 +1444,16 @@ module.exports = React.createClass({
         if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
             for (var i=0;i<vertGrids;i++){
                 var vertX = i * _gridWidth;
+                var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
                 offctx.moveTo(vertX,0);
                 offctx.lineWidth=(gridStyle&&gridStyle.lineWidth)||1;
                 offctx.lineTo(vertX,height-_offsetY);
+
+                offctx.textAlign='center';
+                offctx.textBaseline='top';
+                offctx.fillStyle='rgba(255,255,255,1)';
+                offctx.font='10px';
+                offctx.fillText(xValue,vertX,height-_offsetY+2,20);
             }
         }
         offctx.restore();
@@ -1450,9 +1462,18 @@ module.exports = React.createClass({
         if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
             for (i = 0; i < horiGrids; i++) {
                 var horiY = i * _gridHeight;
+                var yValue = gridStyle.gridInitValue+i*gridStyle.gridUnitY;
                 offctx.moveTo(0, -horiY);
                 offctx.lineWidth =(gridStyle&&gridStyle.lineWidth)|| 1;
                 offctx.lineTo(width-_offsetX, -horiY);
+
+                offctx.textAlign='right';
+                offctx.textBaseline='top';
+                offctx.fillStyle='rgba(255,255,255,1)';
+                offctx.font='10px';
+                if(i!=0){
+                    offctx.fillText(yValue,0-2, -horiY);
+                }
             }
         }
         offctx.restore();
