@@ -559,6 +559,8 @@ ideServices
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
+                this.maxValue=level.info.maxValue;
+                this.minValue=level.info.minValue;
                 this.spacing=level.info.spacing;
                 this.grid=level.info.grid;
                 this.lineWidth=level.info.lineWidth;
@@ -648,6 +650,11 @@ ideServices
                     }
                     if(arg.hasOwnProperty('gridUnitY')){
                         self.gridUnitY=arg.gridUnitY;
+                    }
+                    if(arg.hasOwnProperty('maxValue')){
+                        console.log('keke',arg.maxValue);
+                        self.maxValue=arg.maxValue;
+                        self.setHeight(self.maxValue-self.minValue+self.blankY);
                     }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -6072,7 +6079,7 @@ ideServices
             var progress=null;
 
             var selectObj=getCurrentSelectObject();
-            if (_option.maxValue){
+            if (_option.hasOwnProperty('maxValue')){
                 selectObj.level.info.maxValue=_option.maxValue;
 
                 if(selectObj.type==Type.MyProgress){
@@ -6083,6 +6090,12 @@ ideServices
                         callback:_successCallback
                     };
                     selectObj.target.fire('changeProgressValue',arg);
+                }
+                if(selectObj.type==Type.MyOscilloscope){
+                    arg={
+                        maxValue:_option.maxValue,
+                    }
+                    selectObj.target.fire('ChangeAttributeOscilloscope',arg);
                 }
 
             }
