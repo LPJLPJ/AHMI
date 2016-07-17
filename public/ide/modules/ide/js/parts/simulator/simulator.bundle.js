@@ -21320,13 +21320,12 @@
 	                            break;
 	                        }
 	                    }
-	                    ;
 	                }
-	                ;
+
 	                if (canvas == '') {
 	                    return targets;
 	                }
-	                ;
+
 	                //if widget clicked
 	                var subCanvas = '';
 	                //canvas.subCanvasList[canvas.curSubCanvasIdx];
@@ -21343,17 +21342,13 @@
 	                                this.handleInnerClickedElement(widgetList[i], x - canvas.x, y - canvas.y);
 	                            }
 	                        }
-	                        ;
 	                    }
-	                    ;
 	                }
-	                ;
 
 	                return targets;
 	            }
-	            ;
 	        }
-	        ;
+            return targets;
 	    },
 	    handleInnerClickedElement: function (widget, x, y) {
 	        var left = widget.info.left;
