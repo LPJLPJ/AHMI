@@ -5,9 +5,26 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ColorSlice = exports.GridSlice = exports.ImageSlice = exports.TextSlice = exports.Slice = undefined;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Created by ChangeCheng on 16/6/20.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+var _createClass = (function () {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || false;
+            descriptor.configurable = true;
+            if ("value" in descriptor) descriptor.writable = true;
+            Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);
+        if (staticProps) defineProperties(Constructor, staticProps);
+        return Constructor;
+    };
+})();
+/**
+ * Created by ChangeCheng on 16/6/20.
+ */
 
 var _position = require('./position');
 
@@ -25,10 +42,6 @@ var _canvas = require('canvas');
 
 var Canvas = _interopRequireWildcard(_canvas);
 
-var _fs = require('fs');
-
-var _fs2 = _interopRequireDefault(_fs);
-
 var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
@@ -44,12 +57,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Image = Canvas.Image;
-var Font = Canvas.Font;
+
 /**
  * base slice
  */
 
-var Slice = exports.Slice = function () {
+var Slice = exports.Slice = (function () {
     function Slice() {
         var size = arguments.length <= 0 || arguments[0] === undefined ? new _size2.default() : arguments[0];
         var originPos = arguments.length <= 1 || arguments[1] === undefined ? new _position2.default() : arguments[1];
@@ -66,14 +79,13 @@ var Slice = exports.Slice = function () {
     }]);
 
     return Slice;
-}();
+})();
 
 /**
  * text
  */
 
-
-var TextSlice = exports.TextSlice = function (_Slice) {
+var TextSlice = exports.TextSlice = (function (_Slice) {
     _inherits(TextSlice, _Slice);
 
     function TextSlice(size, originPos, text, style, fillOrStroke, offsetPos) {
@@ -105,7 +117,7 @@ var TextSlice = exports.TextSlice = function (_Slice) {
             ctx.save();
             //add customFonts
             customFonts = customFonts || {};
-            var i = void 0;
+            var i = undefined;
             for (i in customFonts) {
                 ctx.addFont(customFonts[i]);
             }
@@ -139,14 +151,13 @@ var TextSlice = exports.TextSlice = function (_Slice) {
     }]);
 
     return TextSlice;
-}(Slice);
+})(Slice);
 
 /**
  * image
  */
 
-
-var ImageSlice = exports.ImageSlice = function (_Slice2) {
+var ImageSlice = exports.ImageSlice = (function (_Slice2) {
     _inherits(ImageSlice, _Slice2);
 
     function ImageSlice(originSize, originPos, imgObj, dstPos, dstSize, srcPos, srcSize) {
@@ -229,19 +240,18 @@ var ImageSlice = exports.ImageSlice = function (_Slice2) {
     }]);
 
     return ImageSlice;
-}(Slice);
+})(Slice);
 
 /**
  * grid
  */
 
-
-var GridSlice = exports.GridSlice = function (_Slice3) {
+var GridSlice = exports.GridSlice = (function (_Slice3) {
     _inherits(GridSlice, _Slice3);
 
     function GridSlice(originSize, originPos, gridSize) {
         var gridOffset = arguments.length <= 3 || arguments[3] === undefined ? new _position2.default() : arguments[3];
-        var gridLineWidth = arguments.length <= 4 || arguments[4] === undefined ? '1px' : arguments[4];
+        var lineOptions = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
 
         _classCallCheck(this, GridSlice);
 
@@ -249,7 +259,18 @@ var GridSlice = exports.GridSlice = function (_Slice3) {
 
         _this3.gridSize = gridSize;
         _this3.gridOffset = gridOffset;
-        _this3.gridLineWidth = gridLineWidth;
+        _this3.gridLineWidth = (lineOptions.gridLineWidth || 1) + 'px';
+        _this3.lineColor = lineOptions.lineColor;
+        _this3.gridUnitX = lineOptions.gridUnitX;
+        _this3.gridUnitY = lineOptions.gridUnitY;
+        _this3.gridInitValue = lineOptions.gridInitValue;
+        _this3.blankX = lineOptions.blankX || 24;
+        _this3.blankY = lineOptions.blankY || 24;
+        _this3.showX = lineOptions.showX || false;
+        _this3.grid = Number(lineOptions.grid);
+        _this3.font = lineOptions.font || '24px Arial';
+        _this3.Xmin = lineOptions.Xmin;
+        _this3.Ymin = lineOptions.Ymin;
         return _this3;
     }
 
@@ -260,38 +281,71 @@ var GridSlice = exports.GridSlice = function (_Slice3) {
             ctx.translate(this.originPos.x, this.originPos.y);
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
             //drawing
-            var realOffset = new _position2.default(this.gridOffset.x % this.gridSize.w, this.gridOffset.y % this.gridSize.h);
+            // let realOffset = new Pos(this.gridOffset.x % this.gridSize.w,this.gridOffset.y % this.gridSize.h);
             ctx.lineWidth = this.gridLineWidth;
+            //color
+            ctx.fillStyle = this.lineColor;
+
+            ctx.translate(this.gridOffset.x || 0, this.gridOffset.y || 0);
             //draw vertical lines
-            ctx.beginPath();
-            for (var i = 0; i < this.size.w / this.gridSize.w; i++) {
-                //x = vert y=0,size.h
-                var gridX = realOffset.x + i * this.gridSize.w;
-                ctx.moveTo(gridX, 0);
-                ctx.lineTo(gridX, this.size.h);
+            if (this.grid) {
+                ctx.beginPath();
+                if (this.grid === 1 || this.grid === 3) {
+                    for (var i = 0; i < this.size.w / this.gridSize.w; i++) {
+                        //x = vert y=0,size.h
+                        var gridX = i * this.gridSize.w;
+                        ctx.moveTo(gridX, 0);
+                        ctx.lineTo(gridX, this.size.h);
+                    }
+                }
+
+                //draw horizontal lines
+                if (this.grid === 1 || this.grid === 2) {
+                    for (var _i = 0; _i < this.size.h / this.gridSize.h; _i++) {
+                        //y = vert x=0,size.w
+                        var gridY = this.size.h - _i * this.gridSize.h;
+                        ctx.moveTo(0, gridY);
+                        ctx.lineTo(this.size.w, gridY);
+                    }
+                }
+
+                ctx.stroke();
             }
-            //draw horizontal lines
-            for (var _i = 0; _i < this.size.h / this.gridSize.h; _i++) {
+
+            //draw numbers
+
+            //draw x
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            if (this.showX) {
+
+                for (var _i2 = 0; _i2 < this.size.w / this.gridSize.w; _i2++) {
+                    var _gridX = _i2 * this.gridSize.w;
+                    var number = this.Xmin + _i2 * this.gridUnitX;
+                    ctx.fillText(String(number), _gridX, this.size.h - this.gridOffset.y * 0.5);
+                }
+            }
+
+            for (var _i3 = 0; _i3 < this.size.h / this.gridSize.h; _i3++) {
                 //y = vert x=0,size.w
-                var gridY = realOffset.y + _i * this.gridSize.h;
-                ctx.moveTo(0, gridY);
-                ctx.lineTo(this.size.w, gridY);
+                var _gridY = this.size.h - _i3 * this.gridSize.h;
+                var _number = this.Ymin + _i3 * this.gridUnitY;
+                ctx.fillText(String(_number), -this.gridOffset.x * 0.5, _gridY);
             }
-            ctx.stroke();
+
             ctx.restore();
             cb && cb();
         }
     }]);
 
     return GridSlice;
-}(Slice);
+})(Slice);
 
 /**
  * color
  */
 
-
-var ColorSlice = exports.ColorSlice = function (_Slice4) {
+var ColorSlice = exports.ColorSlice = (function (_Slice4) {
     _inherits(ColorSlice, _Slice4);
 
     function ColorSlice(originSize, originPos, color) {
@@ -313,6 +367,7 @@ var ColorSlice = exports.ColorSlice = function (_Slice4) {
             ctx.fillStyle = this.color;
             // console.log('size',this.size);
             ctx.fillRect(0, 0, this.size.w, this.size.h);
+            console.log('rendering color ', this.color);
             ctx.restore();
             var stopTime = new Date();
             console.log('Color Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
@@ -321,4 +376,4 @@ var ColorSlice = exports.ColorSlice = function (_Slice4) {
     }]);
 
     return ColorSlice;
-}(Slice);
+})(Slice);

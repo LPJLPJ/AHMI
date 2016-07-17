@@ -377,7 +377,7 @@ renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix
 
 
 
-            
+
 
 
     }else{
@@ -415,7 +415,23 @@ renderer.prototype.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUr
             }
             renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
         }
-        renderingX.renderGrid(ctx,new Size(width,height),new Pos(),new Size(info.spacing,info.spacing),new Pos());
+        ctx.save();
+        var lineOptions = {};
+        lineOptions.gridLineWidth = info.gridLineWidth;
+        lineOptions.lineColor = info.lineColor;
+        lineOptions.gridUnitX = info.gridUnitX;
+        lineOptions.gridUnitY = info.gridUnitY;
+        lineOptions.gridInitValue = info.gridInitValue;
+        lineOptions.blankX = info.blankX
+        lineOptions.blankY = info.blankY
+        lineOptions.showX = true;
+        lineOptions.grid = Number(info.grid);
+        lineOptions.font = lineOptions.font || '24px Arial';
+        lineOptions.Xmin = info.gridInitValue;
+        lineOptions.Ymin = info.minValue;
+
+        renderingX.renderGrid(ctx, new Size(width, height), new Pos(), new Size(info.spacing, info.spacing), new Pos(info.blankX, -info.blankY), lineOptions);
+        ctx.restore();
         //output
         var imgName = widget.id.split('.').join('');
         var outputFilename = imgName +'-'+ 1+'.png';
