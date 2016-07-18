@@ -1194,18 +1194,33 @@
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小角度</span>
                             <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.minAngle"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMinAngle($event)"
+                                   type="number">
+                        </div><div class="my-attr-item ">
+                            <span class="my-attr-title">最大角度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.maxAngle"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMaxAngle($event)"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">最小值</span>
+                            <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.minValue"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
                         </div><div class="my-attr-item ">
-                            <span class="my-attr-title">最大角度</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item ">
                             <span class="my-attr-title">起始角度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1900,7 +1915,7 @@
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
-                                               ng-model="slice.color" /></td>
+                                               ng-model="slice.color" ng-disabled="slice.name=='光标纹理'"/></td>
                                     <td>
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
@@ -2318,7 +2333,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.num.changeNumFamily()">
-                                <option value="Arial" ng-selected="true">宋体</option>
+                                <option value="宋体" ng-selected="true">宋体</option>
                                 <option value="times">Times</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
@@ -2358,7 +2373,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.button.changeButtonFontFamily()">
-                                <option value="Arial" ng-selected="true">宋体</option>
+                                <option value="宋体" ng-selected="true">宋体</option>
                                 <option value="times">Times</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">

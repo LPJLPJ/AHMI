@@ -20242,11 +20242,11 @@
 	        var height = widget.info.height;
 	        var text = widget.info.text;
 	        var font = {};
-	        font['font-style'] = widget.info.buttonFontItalic;
-	        font['font-weight'] = widget.info.buttonFontBold;
-	        font['font-size'] = widget.info.buttonFontSize;
-	        font['font-family'] = widget.info.buttonFontFamily;
-	        font['font-color'] = widget.info.buttonFontColor;
+	        font['font-style'] = widget.info.fontItalic;
+	        font['font-weight'] = widget.info.fontBold;
+	        font['font-size'] = widget.info.fontSize;
+	        font['font-family'] = widget.info.fontFamily;
+	        font['font-color'] = widget.info.fontColor;
 	        switch (widget.buttonModeId) {
 	            case '0':
 	                //normal
@@ -20290,9 +20290,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	                // console.log(tex);
-	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	            }
+	            // console.log(tex);
+	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	        }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20922,11 +20922,14 @@
 	        if (widget.texList) {
 
 	            //pointer
-	            var minArc = widget.info.minValue;
-	            var maxArc = widget.info.maxValue;
+	            var minArc = widget.info.minAngle;
+	            var maxArc = widget.info.maxAngle;
+	            var minValue = widget.info.minValue;
+	            var maxValue = widget.info.maxValue;
 	            // var curArc = widget.info.value;
 	            var curDashboardTag = this.findTagByName(widget.tag);
-	            var curArc = curDashboardTag && curDashboardTag.value || 0;
+	            var curArc = parseInt((maxArc - minArc) / (maxValue - minValue) * (curDashboardTag && curDashboardTag.value || 0));
+	            console.log('keke', curArc);
 	            var clockwise = widget.info.clockwise == '1' ? 1 : -1;
 	            var lowAlarm = widget.info.lowAlarmValue;
 	            var highAlarm = widget.info.highAlarmValue;
@@ -20953,20 +20956,20 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else {
-	                    // complex mode
-	                    //background
-	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                    //draw light strip
-	                    var lightStripTex = widget.texList[2].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
-	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                // complex mode
+	                //background
+	                var bgTex = widget.texList[0].slices[0];
+	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                //draw light strip
+	                var lightStripTex = widget.texList[2].slices[0];
+	                this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
+	                //draw pointer
+	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                    //draw circle
-	                    // var circleTex = widget.texList[3].slices[0]
-	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	                }
+	                //draw circle
+	                // var circleTex = widget.texList[3].slices[0]
+	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	            }
 
 	            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	            widget.oldValue = curArc;
@@ -20981,6 +20984,7 @@
 	            //pointer
 	            var minArc = widget.info.minValue;
 	            var maxArc = widget.info.maxValue;
+	            var initValue = widget.info.initValue;
 	            // var curArc = widget.info.value;
 	            var curArc = this.getValueByTagName(widget.tag, 0);
 
@@ -20992,7 +20996,7 @@
 	            } else if (curArc < minArc) {
 	                curArc = minArc;
 	            }
-	            this.drawRotateElem(curX, curY, width, height, width, height, curArc, widget.texList[0].slices[0], -0.5, -0.5);
+	            this.drawRotateElem(curX, curY, width, height, width, height, curArc + initValue, widget.texList[0].slices[0], -0.5, -0.5);
 
 	            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	            widget.oldValue = curArc;
@@ -21516,20 +21520,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                        //switch
-	                        //if (widget.switchState) {
-	                        //	widget.switchState = !widget.switch
-	                        //}else{
-	                        //	widget.switchState = 1;
-	                        //}
-	                        //update its tag
-	                        var targetTag = this.findTagByName(widget.tag);
-	                        if (targetTag) {
-	                            targetTag.value = parseInt(targetTag.value);
-	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
-	                        }
+	                    //switch
+	                    //if (widget.switchState) {
+	                    //	widget.switchState = !widget.switch
+	                    //}else{
+	                    //	widget.switchState = 1;
+	                    //}
+	                    //update its tag
+	                    var targetTag = this.findTagByName(widget.tag);
+	                    if (targetTag) {
+	                        targetTag.value = parseInt(targetTag.value);
+	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
 	                    }
+	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;

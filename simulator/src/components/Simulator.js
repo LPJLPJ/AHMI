@@ -546,11 +546,11 @@ module.exports = React.createClass({
         var height = widget.info.height;
         var text = widget.info.text;
         var font = {};
-        font['font-style'] = widget.info.buttonFontItalic;
-        font['font-weight'] = widget.info.buttonFontBold;
-        font['font-size'] = widget.info.buttonFontSize;
-        font['font-family'] = widget.info.buttonFontFamily;
-        font['font-color'] = widget.info.buttonFontColor;
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
         switch (widget.buttonModeId) {
             case '0':
                 //normal
@@ -1256,11 +1256,14 @@ module.exports = React.createClass({
         if (widget.texList) {
 
             //pointer
-            var minArc = widget.info.minValue;
-            var maxArc = widget.info.maxValue;
+            var minArc = widget.info.minAngle;
+            var maxArc = widget.info.maxAngle;
+            var minValue = widget.info.minValue;
+            var maxValue = widget.info.maxValue;
             // var curArc = widget.info.value;
             var curDashboardTag = this.findTagByName(widget.tag);
-            var curArc = (curDashboardTag && curDashboardTag.value) || 0;
+            var curArc = parseInt((maxArc-minArc)/(maxValue-minValue)*(curDashboardTag&&curDashboardTag.value||0));
+            console.log('keke',curArc);
             var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
             var highAlarm = widget.info.highAlarmValue;
@@ -1319,6 +1322,7 @@ module.exports = React.createClass({
             //pointer
             var minArc = widget.info.minValue;
             var maxArc = widget.info.maxValue;
+            var initValue = widget.info.initValue;
             // var curArc = widget.info.value;
             var curArc = this.getValueByTagName(widget.tag,0);
 
@@ -1331,7 +1335,7 @@ module.exports = React.createClass({
             } else if (curArc < minArc) {
                 curArc = minArc;
             }
-            this.drawRotateElem(curX, curY, width, height, width, height, curArc , widget.texList[0].slices[0],-0.5,-0.5);
+            this.drawRotateElem(curX, curY, width, height, width, height, curArc+initValue , widget.texList[0].slices[0],-0.5,-0.5);
 
 
             this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);

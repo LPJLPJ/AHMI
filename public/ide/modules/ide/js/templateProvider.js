@@ -147,7 +147,7 @@ ideServices
                 arrange:true,            //true:横向 false:竖向
 
                 text:'button',
-                fontFamily:"Arial",
+                fontFamily:"宋体",
                 fontSize:20,
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
@@ -389,7 +389,8 @@ ideServices
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 clockwise:'1',//1代表顺时针，0代表逆时针
-                minValue:0,maxValue:360,
+                minValue:0,maxValue:360,//最小值和最大值
+                minAngle:0,maxAngle:360,//最小角度和最大角度
                 lowAlarmValue:0,highAlarmValue:360,
                 value:45,
                 offsetValue:0,
@@ -447,7 +448,7 @@ ideServices
 
                 arrange:true,         //true:横向 false:竖向
                 numValue:1,
-                fontFamily:'Arial',
+                fontFamily:'宋体',
                 fontSize:30,
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
@@ -595,7 +596,7 @@ ideServices
                 originX: 'center', originY: 'center',
                 initValue:0,
                 dateTimeModeId:'0',//0表示时间，1表示日期
-                fontFamily:'Arial',
+                fontFamily:'宋体',
                 fontSize:20,
                 fontColor:'rgba(0,0,0,1)',
                 align:'center'
@@ -608,15 +609,15 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:[{
-                    currentSliceIdx:0,
-                    name:'时间日期',
-                    slices:[{
-                        color:_getRandomColor(),
-                        imgSrc:'',
-                        name:'时间日期'
-                    }]
-                }]
+                //texList:[{
+                //    currentSliceIdx:0,
+                //    name:'时间日期',
+                //    slices:[{
+                //        color:_getRandomColor(),
+                //        imgSrc:'',
+                //        name:'时间日期'
+                //    }]
+                //}]
 
             }
         };
