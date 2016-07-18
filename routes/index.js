@@ -30,10 +30,10 @@ var userVerify = require('./userVerify');
 //password
 var findPassword = require('./findPassword');
 
-router.route('/userlist')
-.get(function(req, res){
-	res.render('client/index.html')
-});
+// router.route('/userlist')
+// .get(function(req, res){
+// 	res.render('client/index.html')
+// });
 
 //index.html
 router
@@ -81,6 +81,11 @@ router.route('/api/upload')
 
 router.route('/api/generateproject')
     .post(generateProject);
+
+router.route('/api/refreshlogin')
+    .get(function (req, res) {
+       res.end('ok');
+    });
 
 //captcha
 router.route('/captcha')

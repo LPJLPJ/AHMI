@@ -69,6 +69,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     loadPreference();
 
+    refreshLoginStatus();
+
     function initUI(){
         $scope.leftShown=true;
         $scope.rightShown=true;
@@ -303,7 +305,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             loadFromContent(data,id);
 
         }).error(function (msg) {
-            toastr.info('读取错误');
+            toastr.warning('读取错误');
             loadFromBlank({},id);
         })
 
@@ -366,6 +368,17 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             _errCallback&&_errCallback(err);
         });
     };
+
+    function refreshLoginStatus() {
+        setInterval(function () {
+            $http({
+                method:'GET',
+                url:baseUrl+'/api/refreshlogin'
+            }).success(function (data) {
+                console.log(data);
+            });
+        },10*60*1000)
+    }
 
     function receiveProject(pid) {
 
