@@ -7,6 +7,11 @@ ide.
             var option={
                 index:_op
             };
-            ProjectService.ChangeAttributeZIndex(option);
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeZIndex(option,function () {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                    ProjectService.updateCurrentThumbInPage();
+
+                });
         }
     });
