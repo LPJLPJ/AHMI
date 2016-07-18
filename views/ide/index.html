@@ -1899,7 +1899,7 @@
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
-                                               ng-model="slice.color" /></td>
+                                               ng-model="slice.color" ng-disabled="slice.name=='光标纹理'"/></td>
                                     <td>
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
@@ -2317,7 +2317,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.num.changeNumFamily()">
-                                <option value="Arial" ng-selected="true">宋体</option>
+                                <option value="宋体" ng-selected="true">宋体</option>
                                 <option value="times">Times</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
@@ -2357,7 +2357,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.button.changeButtonFontFamily()">
-                                <option value="Arial" ng-selected="true">宋体</option>
+                                <option value="宋体" ng-selected="true">宋体</option>
                                 <option value="times">Times</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">

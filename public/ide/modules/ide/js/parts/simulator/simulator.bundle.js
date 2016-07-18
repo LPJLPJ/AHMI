@@ -20226,11 +20226,11 @@
 	        var height = widget.info.height;
 	        var text = widget.info.text;
 	        var font = {};
-	        font['font-style'] = widget.info.buttonFontItalic;
-	        font['font-weight'] = widget.info.buttonFontBold;
-	        font['font-size'] = widget.info.buttonFontSize;
-	        font['font-family'] = widget.info.buttonFontFamily;
-	        font['font-color'] = widget.info.buttonFontColor;
+	        font['font-style'] = widget.info.fontItalic;
+	        font['font-weight'] = widget.info.fontBold;
+	        font['font-size'] = widget.info.fontSize;
+	        font['font-family'] = widget.info.fontFamily;
+	        font['font-color'] = widget.info.fontColor;
 	        switch (widget.buttonModeId) {
 	            case '0':
 	                //normal
@@ -20312,6 +20312,7 @@
 	        tempctx.textAlign = font.textAlign || 'center';
 	        tempctx.textBaseline = font.textBaseline || 'middle';
 	        //font style
+	        console.log('keke', font['font-family']);
 	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + (font['font-family'] || 'arial');
 	        tempctx.font = fontStr;
 	        // console.log('tempctx.font',fontStr);
@@ -20965,6 +20966,7 @@
 	            //pointer
 	            var minArc = widget.info.minValue;
 	            var maxArc = widget.info.maxValue;
+	            var initValue = widget.info.initValue;
 	            // var curArc = widget.info.value;
 	            var curArc = this.getValueByTagName(widget.tag, 0);
 
@@ -20976,7 +20978,7 @@
 	            } else if (curArc < minArc) {
 	                curArc = minArc;
 	            }
-	            this.drawRotateElem(curX, curY, width, height, width, height, curArc, widget.texList[0].slices[0], -0.5, -0.5);
+	            this.drawRotateElem(curX, curY, width, height, width, height, curArc + initValue, widget.texList[0].slices[0], -0.5, -0.5);
 
 	            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	            widget.oldValue = curArc;

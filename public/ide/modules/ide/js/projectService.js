@@ -1521,46 +1521,46 @@ ideServices
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
-                this.backgroundColor=level.texList[0].slices[0].color;
+                //this.backgroundColor=level.texList[0].slices[0].color;
                 this.dateTimeModeId=level.info.dateTimeModeId;
                 this.fontFamily=level.info.fontFamily;
                 this.fontSize=level.info.fontSize;
                 this.fontColor=level.info.fontColor;
                 this.align=level.info.align;
                 this.initValue=level.info.initValue;
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.imageElement=new Image();
-                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.imageElement.onload = (function () {
+                //if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //    this.imageElement=new Image();
+                //    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                //    this.imageElement.onload = (function () {
+                //
+                //        this.loaded = true;
+                //        this.setCoords();
+                //        this.fire('image:loaded');
+                //    }).bind(this);
+                //}else {
+                //    this.imageElement=null;
+                //}
 
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.imageElement=null;
-                }
-
-                this.on('changeTex', function (arg) {
-                    var level=arg.level;
-                    var _callback=arg.callback;
-
-                    var tex=level.texList[0];
-                    self.backgroundColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc!='') {
-                        var currentImageElement=new Image();
-                        currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
-                        self.imageElement=currentImageElement;
-                    }else {
-                        self.imageElement=null;
-                    }
-
-                    var subLayerNode=CanvasService.getSubLayerNode();
-                    subLayerNode.renderAll();
-                    _callback&&_callback();
-                });
+                //this.on('changeTex', function (arg) {
+                //    var level=arg.level;
+                //    var _callback=arg.callback;
+                //
+                //    var tex=level.texList[0];
+                //    self.backgroundColor=tex.slices[0].color;
+                //    if (tex.slices[0].imgSrc!='') {
+                //        var currentImageElement=new Image();
+                //        currentImageElement.src=tex.slices[0].imgSrc;
+                //        currentImageElement.onload = (function () {
+                //        }).bind(this);
+                //        self.imageElement=currentImageElement;
+                //    }else {
+                //        self.imageElement=null;
+                //    }
+                //
+                //    var subLayerNode=CanvasService.getSubLayerNode();
+                //    subLayerNode.renderAll();
+                //    _callback&&_callback();
+                //});
                 this.on('changeDateTimeModeId',function(arg){
                     var dateTimeModeId=arg.dateTimeModeId;
                     var _callback=arg.callback;
