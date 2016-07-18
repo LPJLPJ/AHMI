@@ -72,7 +72,7 @@
     }
 
     var targetCompareOps = {
-        'LT':'GTE',
+        'GTE':'LT',
         'LTE':'GT'
     };
 
