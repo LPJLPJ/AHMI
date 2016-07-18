@@ -969,7 +969,7 @@ module.exports = React.createClass({
     multiDigits: function (digit, num) {
         var result = ''
         for (var i = 0; i < num; i++) {
-            result += String(digit)
+            result += digit;
         }
         return result
     },
@@ -1218,7 +1218,7 @@ module.exports = React.createClass({
             if (frontZeroMode == '1') {
                 intPart = this.changeNumDigits(intPart, intDigits, 0, true)
             } else {
-                intPart = this.changeNumDigits(intPart, intDigits, ' ', true)
+                intPart = this.changeNumDigits(intPart, intDigits, '', true)
             }
             if (tempNumValue.split('.').length > 1) {
                 tempNumValue = intPart + '.' + fracPart;
@@ -1234,7 +1234,7 @@ module.exports = React.createClass({
             if (value > 0) {
                 symbol = '+'
             } else if (value < 0) {
-                symbol = '-'
+                symbol = ''
             }
             tempNumValue = symbol + tempNumValue
         }
@@ -1263,7 +1263,7 @@ module.exports = React.createClass({
             // var curArc = widget.info.value;
             var curDashboardTag = this.findTagByName(widget.tag);
             var curArc = parseInt((maxArc-minArc)/(maxValue-minValue)*(curDashboardTag&&curDashboardTag.value||0));
-            console.log('keke',curArc);
+            //console.log('keke',curArc);
             var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
             var highAlarm = widget.info.highAlarmValue;

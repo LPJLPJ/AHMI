@@ -172,6 +172,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染Layer出错');
                 }
 
             }
@@ -523,6 +524,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err)
+                    toastr.warning('渲染进度条出错');
                 }
 
             }
@@ -718,6 +720,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染示波器出错');
                 }
 
             }
@@ -989,6 +992,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染仪表盘出错');
                 }
             }
         });
@@ -1148,6 +1152,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染旋钮出错');
                 }
             }
         });
@@ -1236,6 +1241,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染开关出错');
                 }
             }
         });
@@ -1358,6 +1364,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染旋转图出错');
                 }
             }
         });
@@ -1506,6 +1513,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染滑块出错');
                 }
             }
         });
@@ -1620,6 +1628,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染时间日期出错');
                 };
             }
         });
@@ -1748,6 +1757,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染按钮出错');
                 }
             }
         });
@@ -1908,6 +1918,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染文本出错');
                 }
             }
         });
@@ -2116,21 +2127,9 @@ ideServices
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }
-                        }else{
-                            minus=this.numOfDigits-tempNumValue.length;
-                            if(this.decimalCount){
-                                for(i=0;i<minus+1;i++){
-                                    tempNumValue=String(' ')+tempNumValue;
-                                }
-                            }else{
-                                for(i=0;i<minus;i++){
-                                    //console.log(i);
-                                    tempNumValue=String(' ')+tempNumValue;
-                                }
-                            }
                         }
                         //配置正负号
-                        if(this.symbolMode=='1'){
+                        if((this.symbolMode=='1')&&(this.numValue>=0)){
                             tempNumValue='+'+tempNumValue;
                         }
                         ctx.scale(1/this.scaleX,1/this.scaleY);
@@ -2150,6 +2149,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染数字出错');
                 }
             }
         });
@@ -2309,6 +2309,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染按钮组出错');
                 }
 
             }
@@ -2601,6 +2602,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
+                    toastr.warning('渲染Slide出错');
                 }
             }
         });

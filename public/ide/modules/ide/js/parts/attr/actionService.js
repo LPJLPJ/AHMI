@@ -42,6 +42,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyNum:
+            case Type.MySlideBlock:
                 triggers = ['EnterLowAlarm','LeaveLowAlarm','EnterHighAlarm','LeaveHighAlarm'];
                 break;
             default:

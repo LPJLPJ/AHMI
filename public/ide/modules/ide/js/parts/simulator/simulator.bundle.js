@@ -20647,7 +20647,7 @@
 	    multiDigits: function (digit, num) {
 	        var result = '';
 	        for (var i = 0; i < num; i++) {
-	            result += String(digit);
+	            result += digit;
 	        }
 	        return result;
 	    },
@@ -20885,7 +20885,7 @@
 	            if (frontZeroMode == '1') {
 	                intPart = this.changeNumDigits(intPart, intDigits, 0, true);
 	            } else {
-	                intPart = this.changeNumDigits(intPart, intDigits, ' ', true);
+	                intPart = this.changeNumDigits(intPart, intDigits, '', true);
 	            }
 	            if (tempNumValue.split('.').length > 1) {
 	                tempNumValue = intPart + '.' + fracPart;
@@ -20901,7 +20901,7 @@
 	            if (value > 0) {
 	                symbol = '+';
 	            } else if (value < 0) {
-	                symbol = '-';
+	                symbol = '';
 	            }
 	            tempNumValue = symbol + tempNumValue;
 	        }
@@ -20929,7 +20929,7 @@
 	            // var curArc = widget.info.value;
 	            var curDashboardTag = this.findTagByName(widget.tag);
 	            var curArc = parseInt((maxArc - minArc) / (maxValue - minValue) * (curDashboardTag && curDashboardTag.value || 0));
-	            console.log('keke', curArc);
+	            //console.log('keke',curArc);
 	            var clockwise = widget.info.clockwise == '1' ? 1 : -1;
 	            var lowAlarm = widget.info.lowAlarmValue;
 	            var highAlarm = widget.info.highAlarmValue;
@@ -21430,9 +21430,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	                bgRange = height - widget.slideSize.h || 1;
-	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	            }
+	            bgRange = height - widget.slideSize.h || 1;
+	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	        }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
