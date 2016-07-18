@@ -2508,9 +2508,6 @@ ideServices
                         width ,
                         height );
                 }
-
-
-
             }
         });
         fabric.MyNumber.fromLevel= function (level, callback,option) {
