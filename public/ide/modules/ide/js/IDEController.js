@@ -183,7 +183,12 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
             var resourceList = globalProject.resourceList;
             var count = resourceList.length;
-            var coutDown = function() {
+            var coutDown = function(index,e) {
+                console.log(arguments)
+                if (e.type === 'error'){
+                    console.log(e)
+                    toastr.warning('图片加载失败: '+resourceList[index].name);
+                }
                 count = count - 1;
                 if (count<=0){
                     // toastr.info('loaded');
@@ -199,8 +204,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 for (var i=0;i<resourceList.length;i++){
                     var img = new Image();
                     img.src = resourceList[i].src;
-                    img.onload = coutDown;
-                    img.onerror = coutDown;
+                    img.onload = coutDown.bind(this,i);
+                    img.onerror = coutDown.bind(this,i);
                 }
             }else{
                 TemplateProvider.saveProjectFromGlobal(globalProject);

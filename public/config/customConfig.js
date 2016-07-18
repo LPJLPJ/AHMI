@@ -7,7 +7,7 @@
     if (window.toastr){
         toastr.options = {
             "closeButton": true,
-            "debug": true,
+            "debug": false,
             "newestOnTop": true,
             "progressBar": true,
             "positionClass": "toast-top-right",

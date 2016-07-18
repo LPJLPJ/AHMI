@@ -19852,6 +19852,10 @@
 	                                callBack(data);
 	                            }
 	                        }.bind(this);
+	                        newImg.onerror = function (e) {
+
+	                            newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=";
+	                        }.bind(this);
 	                        newResource.content = newImg;
 	                        imageList.push(newResource);
 	                        break;
