@@ -167,8 +167,8 @@
             var oppositeOp = targetCompareOps[ifBlockOp];
             if (!!oppositeOp){
                 condition[0].name = oppositeOp;
-                thenBlock = args[2];
-                elseBlock = args[1];
+                thenBlock = args[1];
+                elseBlock = args[2];
             }
         }
 
