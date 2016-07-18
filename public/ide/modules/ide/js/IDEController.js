@@ -186,7 +186,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             var coutDown = function(index,e) {
                 console.log(arguments)
                 if (e.type === 'error'){
-                    console.log(e)
+                    // console.log(e)
                     toastr.warning('图片加载失败: '+resourceList[index].name);
                 }
                 count = count - 1;
