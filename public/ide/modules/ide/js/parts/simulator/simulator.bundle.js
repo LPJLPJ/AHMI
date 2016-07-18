@@ -20421,7 +20421,7 @@
 
 	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
 	                    var lastSlice = widget.texList[2].slices[0];
-	                    var mixedColor = this.addTwoColor(progressSlice.color, lastSlice.color, curScale);
+	                    var mixedColor = this.addTwoColor(lastSlice.color, progressSlice.color, curScale);
 
 	                    // console.log('mixedColor',mixedColor);
 	                    switch (widget.info.arrange) {
@@ -21134,7 +21134,7 @@
 	                offctx.moveTo(vertX, 0);
 	                offctx.lineTo(vertX, height - _offsetY);
 	                if (i % q == 0) {
-	                    offctx.fillText(xValue, vertX, height - _offsetY + 2, 20);
+	                    offctx.fillText(xValue, vertX, height - _offsetY + 2);
 	                }
 	            }
 	        }
