@@ -3235,6 +3235,9 @@ ideServices
         this.AddNewLayerInCurrentPage = function (_newLayer, _successCallback) {
 
             var pageNode = CanvasService.getPageNode();
+            //init zindex
+            _newLayer.zIndex = pageNode.getObjects().length;
+
             var currentPage=_self.getCurrentPage();
             var initiator = {
                 width: _newLayer.info.width,
@@ -6241,30 +6244,47 @@ ideServices
                 }
                 if (_option.index==0){
                     fabLayer.bringForward();
-                    var isTop=true;
-                    _.forEach(currentPage.layers, function (_layer) {
-                        if (currentLayer.zIndex<=_layer.zIndex&&currentLayer.id!=_layer.id){
-                            isTop=false;
-                        }
-                    });
-                    if (!isTop){
-                        currentLayer.zIndex=currentLayer.zIndex+1;
-                    }
+                    //var isTop=true;
+                    //_.forEach(currentPage.layers, function (_layer) {
+                    //    if (currentLayer.zIndex<=_layer.zIndex&&currentLayer.id!=_layer.id){
+                    //        isTop=false;
+                    //    }
+                    //});
+                    //if (!isTop){
+                    //    currentLayer.zIndex=currentLayer.zIndex+1;
+                    //}
 
 
                 }else {
                     fabLayer.sendBackwards();
-                    var isBottom=true;
-                    _.forEach(currentPage.layers, function (_layer) {
-                        if (currentLayer.zIndex>=_layer.zIndex&&currentLayer.id!=_layer.id){
-                            isBottom=false;
-                        }
-                    });
-                    if (!isBottom){
-                        currentLayer.zIndex=currentLayer.zIndex-1;
-                    }
+                    //var isBottom=true;
+                    //_.forEach(currentPage.layers, function (_layer) {
+                    //    if (currentLayer.zIndex>=_layer.zIndex&&currentLayer.id!=_layer.id){
+                    //        isBottom=false;
+                    //    }
+                    //});
+                    //if (!isBottom){
+                    //    currentLayer.zIndex=currentLayer.zIndex-1;
+                    //}
 
                 }
+                //console.log(currentPage.layers);
+                var layers = pageNode.getObjects();
+                _.forEach(currentPage.layers, function (_layer,index) {
+                    // if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
+                    //     isTop=false;
+                    // }
+
+                    for (var i=0;i<layers.length;i++){
+                        if (layers[i].id == _layer.id){
+                            _layer.zIndex = i;
+                            break;
+                        }
+                    }
+                });
+                //currentPage.layers.map(function (layer,idx) {
+                //    console.log(layer.id,layer.zIndex);
+                //})
 
             }
             else if (Type.isWidget(object.type)){
@@ -6298,6 +6318,7 @@ ideServices
                     // console.log('上移至'+currentWidget.zIndex);
 
                 }else {
+                    fabWidget.sendBackwards();
                     // var isBottom=true;
                     // _.forEach(currentSubLayer.widgets, function (_widget) {
                     //     if (currentWidget.zIndex>=_widget.zIndex&&currentWidget.id!=_widget.id){
@@ -6311,7 +6332,7 @@ ideServices
 
                 }
 
-                console.log(subLayerNode.getObjects())
+                //console.log(subLayerNode.getObjects())
                 var widgetObjs = subLayerNode.getObjects();
                 _.forEach(currentSubLayer.widgets, function (_widget,index) {
                     // if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
@@ -6325,9 +6346,9 @@ ideServices
                         }
                     }
                 });
-                currentSubLayer.widgets.map(function (widget,idx) {
-                    console.log(widget.id,widget.zIndex);
-                })
+                //currentSubLayer.widgets.map(function (widget,idx) {
+                //    console.log(widget.id,widget.zIndex);
+                //})
             }
 
             _successCallback&&_successCallback(currentOperate);
