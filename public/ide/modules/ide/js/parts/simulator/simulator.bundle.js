@@ -21424,10 +21424,13 @@
 	        if (hori) {
 	            bgRange = width - widget.slideSize.w || 1;
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+	                bgRange = height - widget.slideSize.h || 1;
+	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            }
+	        curValue = parseInt(curValue);
+	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
 	        // console.log(curValue,widget.info);
 	    },
