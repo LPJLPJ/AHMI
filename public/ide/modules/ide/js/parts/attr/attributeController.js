@@ -1066,6 +1066,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
+            if($scope.component.object.level.info.maxValue<(-Math.pow(2,31))){
+                toastr.warning('低于最小值');
+                restore();
+                return;
+            }
             //判断是否有变化
             if ($scope.component.object.level.info.maxValue==initObject.level.info.minValue){
                 return;
@@ -1130,6 +1135,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
+            if($scope.component.object.level.info.maxValue>Math.pow(2,31)){
+                toastr.warning('超过最大值');
+                restore();
+                return;
+            }
             //判断是否有变化
             if ($scope.component.object.level.info.maxValue==initObject.level.info.maxValue){
                 return;
@@ -1160,6 +1170,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
+
             }
 
             var option={
