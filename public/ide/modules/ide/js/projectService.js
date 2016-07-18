@@ -6268,6 +6268,11 @@ ideServices
                     //}
 
                 }
+                //pageNode.deactivateAll();
+                //pageNode.renderAll();
+                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+
+                //currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                 //console.log(currentPage.layers);
                 var layers = pageNode.getObjects();
                 _.forEach(currentPage.layers, function (_layer,index) {
@@ -6333,6 +6338,7 @@ ideServices
                 }
 
                 //console.log(subLayerNode.getObjects())
+                currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                 var widgetObjs = subLayerNode.getObjects();
                 _.forEach(currentSubLayer.widgets, function (_widget,index) {
                     // if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
