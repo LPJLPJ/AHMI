@@ -1193,18 +1193,33 @@
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小角度</span>
                             <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.minAngle"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMinAngle($event)"
+                                   type="number">
+                        </div><div class="my-attr-item ">
+                            <span class="my-attr-title">最大角度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.maxAngle"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMaxAngle($event)"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">最小值</span>
+                            <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.minValue"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
                         </div><div class="my-attr-item ">
-                            <span class="my-attr-title">最大角度</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item ">
                             <span class="my-attr-title">起始角度</span>
                             <input class="my-attr-number-input form-control short-input"

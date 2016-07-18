@@ -754,6 +754,9 @@ ideServices
                 this.value=level.info.value;
                 this.offsetValue=level.info.offsetValue;
                 this.minValue=level.info.minValue;
+                this.maxValue=level.info.maxValue;
+                this.minAngle=level.info.minAngle;
+                this.maxAngle=level.info.maxAngle;
                 this.pointerLength = level.info.pointerLength;
                 this.clockwise=level.info.clockwise;
           
@@ -813,13 +816,21 @@ ideServices
 
 
                 this.on('changeDashboardValue', function (arg) {
-                    if(arg.value||arg.value==0){
+                    if(arg.hasOwnProperty('value')){
                         self.value=arg.value;
                     }
-                    if(arg.minValue||arg.minValue==0){
-                        self.minValue=arg.minValue
+                    if(arg.hasOwnProperty('maxValue')){
+                        self.maxValue=arg.maxValue;
                     }
-                    //console.log('changeDashboardValue',self.value);
+                    if(arg.hasOwnProperty('minValue')){
+                        self.minValue=arg.minValue;
+                    }
+                    if(arg.hasOwnProperty('minAngle')){
+                        self.minAngle=arg.minAngle;
+                    }
+                    if(arg.hasOwnProperty('maxAngle')){
+                        self.maxAngle=arg.maxAngle;
+                    }
                     var _callback=arg.callback;
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -913,6 +924,8 @@ ideServices
             },
             _render: function (ctx) {
                 try{
+                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
+                    console.log('keke',newValue,this.maxAngle,this.minAngle,this.maxValue,this.minValue,this.value);
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,
@@ -927,7 +940,7 @@ ideServices
 
                     if(this.lightBandImageElement){
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                        var angle=translateAngle(this.value+this.offsetValue,this.scaleX,this.scaleY);
+                        var angle=translateAngle(newValue+this.offsetValue,this.scaleX,this.scaleY);
                         var minAngle=translateAngle(this.minValue+this.offsetValue,this.scaleX,this.scaleY);
                         ctx.save();
                         ctx.beginPath();
@@ -955,7 +968,7 @@ ideServices
                         var sqrt2 = Math.sqrt(2);
                         var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                         var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
-                        var angleOfPointer = this.value+this.offsetValue;
+                        var angleOfPointer = newValue+this.offsetValue;
                         if(this.clockwise=='0'){
                             angleOfPointer=-angleOfPointer;
                         }
@@ -1047,7 +1060,6 @@ ideServices
 
                 this.on('changeKnobValue', function (arg) {
                     self.value=arg.value;
-                    //console.log('changeDashboardValue',self.value);
                     var _callback=arg.callback;
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -6114,6 +6126,13 @@ ideServices
                     };
                     selectObj.target.fire('changeProgressValue',arg);
                 }
+                if(selectObj.type==Type.MyDashboard){
+                    arg={
+                        maxValue:_option.maxValue,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeDashboardValue',arg);
+                }
                 if(selectObj.type==Type.MyOscilloscope){
                     arg={
                         maxValue:_option.maxValue,
@@ -6148,6 +6167,27 @@ ideServices
                         callback:_successCallback
                     }
                     selectObj.target.fire('ChangeAttributeOscilloscope',arg);
+                }
+            }
+            if(_option.hasOwnProperty('minAngle')){
+                selectObj.level.info.minAngle=_option.minAngle;
+
+                if(selectObj.type==Type.MyDashboard){
+                    arg={
+                        minAngle:_option.minAngle,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeDashboardValue',arg);
+                }
+            }
+            if(_option.hasOwnProperty('maxAngle')){
+                selectObj.level.info.maxAngle=_option.maxAngle;
+                if(selectObj.type==Type.MyDashboard){
+                    arg={
+                        maxAngle:_option.maxAngle,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeDashboardValue',arg);
                 }
             }
             if (_option.hasOwnProperty('highAlarmValue')){

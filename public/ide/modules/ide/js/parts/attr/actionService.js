@@ -33,15 +33,16 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MySubLayer:
                 break;
             case Type.MyButton:
-                triggers = ['Press','Release','Enter','Leave'];
+                triggers = ['Press','Release'];
                 break;
             case Type.MyNumber:
-                triggers = ['MaxOverflow','MinOverflow','Enter','Leave'];
+                triggers = ['MaxOverflow','MinOverflow'];
                 break;
             case Type.MyScriptTrigger:
             case Type.MyProgress:
             case Type.MyDashboard:
-                triggers = ['EnterLowAlarm','LeaveLowAlarm','EnterHighAlarm','LeaveHighAlarm','Enter','Leave'];
+            case Type.MyNum:
+                triggers = ['EnterLowAlarm','LeaveLowAlarm','EnterHighAlarm','LeaveHighAlarm'];
                 break;
             default:
                 triggers = ['Enter','Leave']

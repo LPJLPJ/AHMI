@@ -389,7 +389,8 @@ ideServices
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 clockwise:'1',//1代表顺时针，0代表逆时针
-                minValue:0,maxValue:360,
+                minValue:0,maxValue:360,//最小值和最大值
+                minAngle:0,maxAngle:360,//最小角度和最大角度
                 lowAlarmValue:0,highAlarmValue:360,
                 value:45,
                 offsetValue:0,

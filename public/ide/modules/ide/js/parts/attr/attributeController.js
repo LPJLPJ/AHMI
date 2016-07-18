@@ -202,6 +202,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 			enterImage:enterBackgroundImage,
             enterMinValue:enterMinValue,
             enterMaxValue:enterMaxValue,
+            enterMinAngle:enterMinAngle,
+            enterMaxAngle:enterMaxAngle,
             enterMinAlert:enterMinAlert,
             enterMaxAlert:enterMaxAlert,
 			restore:restore
@@ -1162,8 +1164,54 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
         }
     }
+    function enterMinAngle(e){
+        if (e.keyCode==13){
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.minAngle))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.minAngle==initObject.level.info.minAngle){
+                return;
+            }
+            var option={
+                minAngle:$scope.component.object.level.info.minAngle
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
 
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
 
+            })
+
+        }
+    }
+    function enterMaxAngle(e){
+        if (e.keyCode==13){
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.maxAngle))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.maxAngle==initObject.level.info.maxAngle){
+                return;
+            }
+            var option={
+                maxAngle:$scope.component.object.level.info.maxAngle
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+
+            })
+
+        }
+    }
 
 
 
