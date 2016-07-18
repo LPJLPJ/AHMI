@@ -3288,7 +3288,8 @@ ideServices
         this.AddNewWidgetInCurrentSubLayer = function (_newWidget, _successCallback) {
             var subLayerNode = CanvasService.getSubLayerNode();
             var currentSubLayer=getCurrentSubLayer();
-
+            //init zindex
+            _newWidget.zIndex = subLayerNode.getObjects().length;
             var initiator = {
                 width: _newWidget.info.width,
                 height: _newWidget.info.height,
@@ -6215,6 +6216,11 @@ ideServices
          * @param _successCallback
          * @constructor
          */
+
+        function sortObjects(objArray){
+
+        }
+
         this.ChangeAttributeZIndex= function (_option, _successCallback) {
             var currentOperate=SaveCurrentOperate();
             var object=getCurrentSelectObject();
@@ -6265,6 +6271,7 @@ ideServices
                 var subLayerNode = CanvasService.getSubLayerNode();
                 var fabWidget = null;
                 var currentSubLayer=getCurrentSubLayer();
+                console.log(currentSubLayer.widgets);
                 var currentWidget = getCurrentWidget();
                 _.forEach(subLayerNode.getObjects(), function (_fabObj) {
                     if (_fabObj.id == object.target.id) {
@@ -6277,31 +6284,50 @@ ideServices
                 }
                 if (_option.index==0){
                     fabWidget.bringForward();
-                    var isTop=true;
-                    _.forEach(currentSubLayer.widgets, function (_widget) {
-                        if (currentSubLayer.zIndex<=_widget.zIndex&&currentSubLayer.id!=_widget.id){
-                            isTop=false;
-                        }
-                    });
-                    if (!isTop){
-                        currentWidget.zIndex=currentWidget.zIndex+1;
-                    }
-                    console.log('上移至'+currentWidget.zIndex);
+                    // var isTop=true;
+                    // _.forEach(currentSubLayer.widgets, function (_widget) {
+                    //     if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
+                    //         isTop=false;
+                    //     }
+                    // });
+                    // if (!isTop){
+                    //     currentWidget.zIndex=currentWidget.zIndex+1;
+                    // }
+
+
+                    // console.log('上移至'+currentWidget.zIndex);
 
                 }else {
-                    fabWidget.sendBackwards();
-                    var isBottom=true;
-                    _.forEach(currentSubLayer.widgets, function (_widget) {
-                        if (currentSubLayer.zIndex<=_widget.zIndex&&currentSubLayer.id!=_widget.id){
-                            isBottom=false;
-                        }
-                    });
-                    if (!isBottom){
-                        currentWidget.zIndex=currentWidget.zIndex-1;
-                    }
-                    console.log('下移至'+currentWidget.zIndex);
+                    // var isBottom=true;
+                    // _.forEach(currentSubLayer.widgets, function (_widget) {
+                    //     if (currentWidget.zIndex>=_widget.zIndex&&currentWidget.id!=_widget.id){
+                    //         isBottom=false;
+                    //     }
+                    // });
+                    // if (!isBottom){
+                    //     currentWidget.zIndex=currentWidget.zIndex-1;
+                    // }
+                    // console.log('下移至'+currentWidget.zIndex);
 
                 }
+
+                console.log(subLayerNode.getObjects())
+                var widgetObjs = subLayerNode.getObjects();
+                _.forEach(currentSubLayer.widgets, function (_widget,index) {
+                    // if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
+                    //     isTop=false;
+                    // }
+
+                    for (var i=0;i<widgetObjs.length;i++){
+                        if (widgetObjs[i].id == _widget.id){
+                            _widget.zIndex = i;
+                            break;
+                        }
+                    }
+                });
+                currentSubLayer.widgets.map(function (widget,idx) {
+                    console.log(widget.id,widget.zIndex);
+                })
             }
 
             _successCallback&&_successCallback(currentOperate);

@@ -20016,9 +20016,7 @@
 	            for (var i = 0; i < canvasList.length; i++) {
 	                this.drawCanvas(canvasList[i], options);
 	            }
-	            ;
 	        }
-	        ;
 
 	        page.state = LoadState.loaded;
 	    },
