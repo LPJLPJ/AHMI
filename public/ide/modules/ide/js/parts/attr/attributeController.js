@@ -791,6 +791,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
+            if($scope.component.object.level.info.count>15){
+                toastr.warning('按钮数至多为15');
+                restore();
+                return;
+            }
 
             var option={
                 count:parseInt($scope.component.object.level.info.count)
