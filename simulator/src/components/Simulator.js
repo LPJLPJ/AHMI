@@ -714,7 +714,7 @@ module.exports = React.createClass({
 
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
                     var lastSlice = widget.texList[2].slices[0];
-                    var mixedColor = this.addTwoColor(progressSlice.color,lastSlice.color,curScale);
+                    var mixedColor = this.addTwoColor(lastSlice.color,progressSlice.color,curScale);
 
                     // console.log('mixedColor',mixedColor);
                     switch (widget.info.arrange) {

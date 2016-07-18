@@ -597,7 +597,7 @@ ideServices
                 dateTimeModeId:'0',//0表示时间，1表示日期
                 fontFamily:'Arial',
                 fontSize:20,
-                fontColor:'rgba(255,255,255,1)',
+                fontColor:'rgba(0,0,0,1)',
                 align:'center'
             };
             return {
