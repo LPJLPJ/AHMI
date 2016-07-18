@@ -2011,7 +2011,7 @@ ideServices
                 });
 
                 this.on('changeNumContent', function (arg) {
-                    if(arg.numValue){
+                    if(arg.hasOwnProperty('numValue')){
                         self.numValue=arg.numValue;
                     }
                     if(arg.fontFamily){
@@ -2037,9 +2037,6 @@ ideServices
                     }
                     if(arg.frontZeroMode){
                         self.frontZeroMode=arg.frontZeroMode;
-                    }
-                    if(arg.numValue){
-                        self.numValue=arg.numValue;
                     }
                     if(arg.align){
                         self.align=arg.align;
@@ -2084,7 +2081,7 @@ ideServices
                     }
 
                     //在数字框里展示数字预览效果
-                    if(this.numValue) {
+                    if(this.numValue||this.numValue==0) {
                         //offCtx.save();
 
                         offCtx.globalCompositeOperation = "destination-in";
@@ -5733,7 +5730,7 @@ ideServices
             }
 
             //下面是数字数值
-            if(_option.numValue){
+            if(_option.hasOwnProperty('numValue')){
                 var tempNumValue = _option.numValue;
                 selectObj.level.info.numValue=tempNumValue;
                 arg.numValue=tempNumValue;
