@@ -19741,7 +19741,7 @@
 	    eval("var os = require('os')");
 	    sep = '\\';
 	} catch (e) {
-        //console.log(e);
+	    //console.log(e);
 	}
 
 	var defaultSimulator = {
@@ -19945,15 +19945,21 @@
 	                curPageIdx = 0;
 	            }
 
-	            //handle unload
+	            //handle UnLoad
+	            var pageUnloadIdx = null;
 	            for (var i = 0; i < project.pageList.length; i++) {
 	                if (project.pageList[i].state && project.pageList[i].state == LoadState.loaded) {
 	                    if (i != curPageIdx) {
-	                        //handle unload
-	                        this.handleTargetAction(project.pageList[i], 'Unload');
+	                        //handle UnLoad
+	                        pageUnloadIdx = i;
+	                        project.pageList[i].state = LoadState.notLoad;
 	                        break;
 	                    }
 	                }
+	            }
+
+	            if (pageUnloadIdx !== null) {
+	                this.handleTargetAction(project.pageList[pageUnloadIdx], 'UnLoad');
 	            }
 
 	            var page = project.pageList[curPageIdx];
@@ -20020,7 +20026,7 @@
 	        for (var i = 0; i < postfix.length; i++) {
 	            var key = 'SysTmr_' + num + '_' + postfix[i];
 	            var curTag = this.findTagByName(key);
-                //console.log(curTag,timerList);
+	            //console.log(curTag,timerList);
 	            timer[key] = curTag && curTag.value || 0;
 	            // timer[key] = this.findTagByName(key)['value'] || 0;
 	        }
@@ -20101,33 +20107,39 @@
 	    drawCanvas: function (canvasData, options) {
 	        //draw
 	        var subCanvasList = canvasData.subCanvasList || [];
-            var canvasTag = this.findTagByName(canvasData.tag);
+	        var canvasTag = this.findTagByName(canvasData.tag);
 	        var nextSubCanvasIdx = canvasTag && canvasTag.value || 0;
-            var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+	        var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
 	        canvasData.curSubCanvasIdx = nextSubCanvasIdx;
-	        //handle unload subcanvas
+	        //handle UnLoad subcanvas
 	        // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
-	        // 	//unload lastsubcanvas
-	        // 	this.handleTargetAction(canvasData,'Unload');
+	        // 	//UnLoad lastsubcanvas
+	        // 	this.handleTargetAction(canvasData,'UnLoad');
 	        // }
 	        // canvasData.curSubCanvasIdx = nextSubCanvasIdx;
 	        // var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+	        var subCanvasUnloadIdx = null;
 	        for (var i = 0; i < subCanvasList.length; i++) {
 	            if (subCanvasList[i].state && subCanvasList[i].state == LoadState.loaded) {
-                    if (nextSubCanvasIdx != i) {
+	                if (nextSubCanvasIdx != i) {
 	                    //another sc loaded
-	                    //unload sc of i
-	                    this.handleTargetAction(subCanvasList[i], 'Unload');
-                        //console.log('canvas unload')
+	                    //UnLoad sc of i
+	                    subCanvasUnloadIdx = i;
+	                    subCanvasList[i].state = LoadState.notLoad;
 	                    break;
 	                }
 	            }
 	        }
+
+	        if (subCanvasUnloadIdx !== null) {
+	            console.log('handle unload sc');
+	            this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
+	        }
 	        var subCanvas = subCanvasList[nextSubCanvasIdx];
 	        if (subCanvas) {
 	            this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
-            } else {
-                this.handleTargetAction(oldSubCanvas, 'Unload');
+	        } else {
+	            this.handleTargetAction(oldSubCanvas, 'UnLoad');
 	        }
 	    },
 	    drawSubCanvas: function (subCanvas, x, y, w, h, options) {
@@ -20202,7 +20214,7 @@
 	                break;
 	            case 'MySlideBlock':
 	                this.drawSlideBlock(curX, curY, widget, options);
-                    break;
+	                break;
 	            case 'MyScriptTrigger':
 	                this.drawScriptTrigger(curX, curY, widget, options);
 	                break;
@@ -20274,9 +20286,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-                // console.log(tex);
-                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-            }
+	                // console.log(tex);
+	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20463,7 +20475,7 @@
 
 	            //get current value
 	            var curSlideTag = this.findTagByName(widget.tag);
-                //console.log(widget.curValue);
+	            //console.log(widget.curValue);
 	            var curSlide = curSlideTag && curSlideTag.value || widget.curValue || 0;
 	            var curScale = 1.0 * (curSlide - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
 
@@ -20726,10 +20738,10 @@
 	        var offctx = offcanvas.getContext('2d');
 	        //get current value
 	        var curValue = this.getValueByTagName(widget.tag);
-            if (curValue === null || curValue === 'undefined') {
-                curValue = widget.info.numValue;
-            }
-            // console.log(curValue);
+	        if (curValue === null || curValue === 'undefined') {
+	            curValue = widget.info.numValue;
+	        }
+	        // console.log(curValue);
 	        var minValue = widget.info.minValue;
 	        var maxValue = widget.info.maxValue;
 	        var lowAlarmValue = widget.info.lowAlarmValue;
@@ -20849,7 +20861,7 @@
 	    },
 	    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
 	        var tempNumValue = String(curValue);
-            //console.log(tempNumValue);
+	        //console.log(tempNumValue);
 	        //配置小数位数
 	        if (parseInt(decimalCount) > 0) {
 	            tempNumValuePair = tempNumValue.split('.');
@@ -20937,20 +20949,20 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else {
-                    // complex mode
-                    //background
-                    var bgTex = widget.texList[0].slices[0];
-                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-                    //draw light strip
-                    var lightStripTex = widget.texList[2].slices[0];
-                    this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
-                    //draw pointer
-                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                    // complex mode
+	                    //background
+	                    var bgTex = widget.texList[0].slices[0];
+	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    //draw light strip
+	                    var lightStripTex = widget.texList[2].slices[0];
+	                    this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
+	                    //draw pointer
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-                    //draw circle
-                    // var circleTex = widget.texList[3].slices[0]
-                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-                }
+	                    //draw circle
+	                    // var circleTex = widget.texList[3].slices[0]
+	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                }
 
 	            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	            widget.oldValue = curArc;
@@ -21351,7 +21363,7 @@
 	                return targets;
 	            }
 	        }
-            return targets;
+	        return targets;
 	    },
 	    handleInnerClickedElement: function (widget, x, y) {
 	        var left = widget.info.left;
@@ -21385,7 +21397,7 @@
 
 	                x = x - left;
 	                y = y - top;
-                    //console.log('relative rect',x,y)
+	                //console.log('relative rect',x,y)
 	                this.handleSlideBlockInnerPress(widget, x, y);
 
 	                break;
@@ -21497,19 +21509,19 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-                        //switch
-                        //if (widget.switchState) {
-                        //	widget.switchState = !widget.switch
-                        //}else{
-                        //	widget.switchState = 1;
-                        //}
-                        //update its tag
-                        var targetTag = this.findTagByName(widget.tag);
-                        if (targetTag) {
-                            targetTag.value = parseInt(targetTag.value);
-                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
-                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
-                        }
+	                        //switch
+	                        //if (widget.switchState) {
+	                        //	widget.switchState = !widget.switch
+	                        //}else{
+	                        //	widget.switchState = 1;
+	                        //}
+	                        //update its tag
+	                        var targetTag = this.findTagByName(widget.tag);
+	                        if (targetTag) {
+	                            targetTag.value = parseInt(targetTag.value);
+	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        }
 	                    }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
@@ -21619,7 +21631,7 @@
 	            for (var i = 0; i < target.actions.length; i++) {
 	                if (target.actions[i].trigger == type) {
 	                    var curCmds = target.actions[i].commands;
-                        //console.log(curCmds)
+	                    //console.log(curCmds)
 	                    this.processCmds(curCmds);
 	                }
 	            }
@@ -21748,8 +21760,8 @@
 	                //     //param2 valid
 	                //     var lastPage = project.pageList[curPageTag.value - 1];
 	                //     lastPage.loaded = false;
-	                //     //handle unload
-	                //     this.handleTargetAction(lastPage, 'Unload');
+	                //     //handle UnLoad
+	                //     this.handleTargetAction(lastPage, 'UnLoad');
 
 	                // }
 	                var param2Value = this.getParamValue(param2);
@@ -21913,8 +21925,8 @@
 	            case 'GT':
 	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
-                    //console.log(param1);
-                    //console.log('GT',firstValue,secondValue);
+	                //console.log(param1);
+	                //console.log('GT',firstValue,secondValue);
 	                if (firstValue > secondValue) {
 	                    nextStep.step = 1;
 	                } else {
