@@ -488,16 +488,16 @@ ideServices
                     }else if(this.progressModeId=='1'){
                         //变色进度条
                         var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
+                        if(this.backgroundImageElement){
+                            ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                        }
                         //console.log(progressColor);
                         if(this.arrange=='horizontal'){
-                            ctx.fillStyle=progressColor;
-                            ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
-                            if(this.backgroundImageElement){
-                                ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                            }
                             if(this.cursorImageElement){
                                 ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                             }
+                            ctx.fillStyle=progressColor;
+                            ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
                         }else{
                             ctx.fillStyle=progressColor;
                             ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
@@ -6734,7 +6734,7 @@ ideServices
             var _gridHeight = gridHeight/gridStyle.scaleY;
             var vertGrids = Math.floor((width - _offsetX)/_gridWidth)+1;
             var horiGrids = Math.floor((height - _offsetY)/_gridHeight)+1;
-            var maxWidth = 0;
+            //var maxWidth = 0;
             ctx.save();
             ctx.translate(curX,curY);
             ctx.beginPath();
@@ -6757,7 +6757,7 @@ ideServices
 
                     if(i%q==0){
                         ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
-                        ctx.fillText(xValue,vertX*gridStyle.scaleX,(height-_offsetY+2)*gridStyle.scaleY,20);
+                        ctx.fillText(xValue,vertX*gridStyle.scaleX,(height-_offsetY+2)*gridStyle.scaleY);
                         ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
                     }
                 }

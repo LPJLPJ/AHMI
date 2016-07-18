@@ -1464,7 +1464,7 @@ module.exports = React.createClass({
                 offctx.moveTo(vertX,0);
                 offctx.lineTo(vertX,height-_offsetY);
                 if(i%q==0){
-                    offctx.fillText(xValue,vertX,height-_offsetY+2,20);
+                    offctx.fillText(xValue,vertX,height-_offsetY+2);
                 }
             }
         }

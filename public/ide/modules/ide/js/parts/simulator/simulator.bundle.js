@@ -19741,7 +19741,7 @@
 	    eval("var os = require('os')");
 	    sep = '\\';
 	} catch (e) {
-        //console.log(e);
+	    //console.log(e);
 	}
 
 	var defaultSimulator = {
@@ -20020,7 +20020,7 @@
 	        for (var i = 0; i < postfix.length; i++) {
 	            var key = 'SysTmr_' + num + '_' + postfix[i];
 	            var curTag = this.findTagByName(key);
-                //console.log(curTag,timerList);
+	            //console.log(curTag,timerList);
 	            timer[key] = curTag && curTag.value || 0;
 	            // timer[key] = this.findTagByName(key)['value'] || 0;
 	        }
@@ -20101,9 +20101,9 @@
 	    drawCanvas: function (canvasData, options) {
 	        //draw
 	        var subCanvasList = canvasData.subCanvasList || [];
-            var canvasTag = this.findTagByName(canvasData.tag);
+	        var canvasTag = this.findTagByName(canvasData.tag);
 	        var nextSubCanvasIdx = canvasTag && canvasTag.value || 0;
-            var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+	        var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
 	        canvasData.curSubCanvasIdx = nextSubCanvasIdx;
 	        //handle unload subcanvas
 	        // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
@@ -20114,11 +20114,11 @@
 	        // var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
 	        for (var i = 0; i < subCanvasList.length; i++) {
 	            if (subCanvasList[i].state && subCanvasList[i].state == LoadState.loaded) {
-                    if (nextSubCanvasIdx != i) {
+	                if (nextSubCanvasIdx != i) {
 	                    //another sc loaded
 	                    //unload sc of i
 	                    this.handleTargetAction(subCanvasList[i], 'Unload');
-                        //console.log('canvas unload')
+	                    //console.log('canvas unload')
 	                    break;
 	                }
 	            }
@@ -20126,8 +20126,8 @@
 	        var subCanvas = subCanvasList[nextSubCanvasIdx];
 	        if (subCanvas) {
 	            this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
-            } else {
-                this.handleTargetAction(oldSubCanvas, 'Unload');
+	        } else {
+	            this.handleTargetAction(oldSubCanvas, 'Unload');
 	        }
 	    },
 	    drawSubCanvas: function (subCanvas, x, y, w, h, options) {
@@ -20202,7 +20202,7 @@
 	                break;
 	            case 'MySlideBlock':
 	                this.drawSlideBlock(curX, curY, widget, options);
-                    break;
+	                break;
 	            case 'MyScriptTrigger':
 	                this.drawScriptTrigger(curX, curY, widget, options);
 	                break;
@@ -20463,7 +20463,7 @@
 
 	            //get current value
 	            var curSlideTag = this.findTagByName(widget.tag);
-                //console.log(widget.curValue);
+	            //console.log(widget.curValue);
 	            var curSlide = curSlideTag && curSlideTag.value || widget.curValue || 0;
 	            var curScale = 1.0 * (curSlide - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
 
@@ -20726,10 +20726,10 @@
 	        var offctx = offcanvas.getContext('2d');
 	        //get current value
 	        var curValue = this.getValueByTagName(widget.tag);
-            if (curValue === null || curValue === 'undefined') {
-                curValue = widget.info.numValue;
-            }
-            // console.log(curValue);
+	        if (curValue === null || curValue === 'undefined') {
+	            curValue = widget.info.numValue;
+	        }
+	        // console.log(curValue);
 	        var minValue = widget.info.minValue;
 	        var maxValue = widget.info.maxValue;
 	        var lowAlarmValue = widget.info.lowAlarmValue;
@@ -20849,7 +20849,7 @@
 	    },
 	    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
 	        var tempNumValue = String(curValue);
-            //console.log(tempNumValue);
+	        //console.log(tempNumValue);
 	        //配置小数位数
 	        if (parseInt(decimalCount) > 0) {
 	            tempNumValuePair = tempNumValue.split('.');
@@ -21122,7 +21122,7 @@
 	                offctx.moveTo(vertX, 0);
 	                offctx.lineTo(vertX, height - _offsetY);
 	                if (i % q == 0) {
-	                    offctx.fillText(xValue, vertX, height - _offsetY + 2, 20);
+	                    offctx.fillText(xValue, vertX, height - _offsetY + 2);
 	                }
 	            }
 	        }
@@ -21351,7 +21351,7 @@
 	                return targets;
 	            }
 	        }
-            return targets;
+	        return targets;
 	    },
 	    handleInnerClickedElement: function (widget, x, y) {
 	        var left = widget.info.left;
@@ -21385,7 +21385,7 @@
 
 	                x = x - left;
 	                y = y - top;
-                    //console.log('relative rect',x,y)
+	                //console.log('relative rect',x,y)
 	                this.handleSlideBlockInnerPress(widget, x, y);
 
 	                break;
@@ -21619,7 +21619,7 @@
 	            for (var i = 0; i < target.actions.length; i++) {
 	                if (target.actions[i].trigger == type) {
 	                    var curCmds = target.actions[i].commands;
-                        //console.log(curCmds)
+	                    //console.log(curCmds)
 	                    this.processCmds(curCmds);
 	                }
 	            }
@@ -21913,8 +21913,8 @@
 	            case 'GT':
 	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
-                    //console.log(param1);
-                    //console.log('GT',firstValue,secondValue);
+	                //console.log(param1);
+	                //console.log('GT',firstValue,secondValue);
 	                if (firstValue > secondValue) {
 	                    nextStep.step = 1;
 	                } else {
