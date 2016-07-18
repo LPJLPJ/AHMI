@@ -632,7 +632,6 @@ module.exports = React.createClass({
         tempctx.textAlign = font.textAlign||'center';
         tempctx.textBaseline = font.textBaseline||'middle';
         //font style
-        console.log('keke',font['font-family']);
         var fontStr = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
         tempctx.font = fontStr;
         // console.log('tempctx.font',fontStr);
@@ -1257,11 +1256,14 @@ module.exports = React.createClass({
         if (widget.texList) {
 
             //pointer
-            var minArc = widget.info.minValue;
-            var maxArc = widget.info.maxValue;
+            var minArc = widget.info.minAngle;
+            var maxArc = widget.info.maxAngle;
+            var minValue = widget.info.minValue;
+            var maxValue = widget.info.maxValue;
             // var curArc = widget.info.value;
             var curDashboardTag = this.findTagByName(widget.tag);
-            var curArc = (curDashboardTag && curDashboardTag.value) || 0;
+            var curArc = parseInt((maxArc-minArc)/(maxValue-minValue)*(curDashboardTag&&curDashboardTag.value||0));
+            console.log('keke',curArc);
             var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
             var highAlarm = widget.info.highAlarmValue;
