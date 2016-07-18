@@ -174,7 +174,7 @@
 
 
         function saveProject(_saveCb) {
-            ProjectService.getProjectTo($scope);
+            // ProjectService.getProjectTo($scope);
 
             //edit by lixiang
             $scope.project.timers = TimerService.getTimerNum();
@@ -186,6 +186,7 @@
 
                 function () {
                     var currentProject= _.cloneDeep($scope.project);
+                    // console.log(currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
                     scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
                         _.forEach(currentProject.pages,function (_page) {
@@ -241,6 +242,7 @@
                             });
                         } else {
                             uploadThumb(scaledThumb, function () {
+                                // console.log(currentProject)
                                 $http({
                                     method: 'PUT',
                                     url: '/project/' + currentProject.projectId + '/save',

@@ -132,6 +132,11 @@ module.exports = React.createClass({
                                 callBack(data);
                             }
                         }.bind(this);
+                        newImg.onerror = function (e) {
+
+                            newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII="
+                           
+                        }.bind(this);
                         newResource.content = newImg;
                         imageList.push(newResource)
                         break;
@@ -231,15 +236,21 @@ module.exports = React.createClass({
                 curPageIdx = 0;
             }
 
-            //handle unload
+            //handle UnLoad
+            var pageUnloadIdx = null;
             for (var i = 0; i < project.pageList.length; i++) {
                 if (project.pageList[i].state && project.pageList[i].state == LoadState.loaded) {
                     if (i != curPageIdx) {
-                        //handle unload
-                        this.handleTargetAction(project.pageList[i], 'Unload')
+                        //handle UnLoad
+                        pageUnloadIdx = i;
+                        project.pageList[i].state = LoadState.notLoad;
                         break
                     }
                 }
+            }
+
+            if (pageUnloadIdx !== null){
+                this.handleTargetAction(project.pageList[pageUnloadIdx], 'UnLoad')
             }
 
             var page = project.pageList[curPageIdx];
@@ -406,29 +417,35 @@ module.exports = React.createClass({
         var nextSubCanvasIdx = (canvasTag && canvasTag.value) || 0;
         var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
         canvasData.curSubCanvasIdx = nextSubCanvasIdx;
-        //handle unload subcanvas
+        //handle UnLoad subcanvas
         // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
-        // 	//unload lastsubcanvas
-        // 	this.handleTargetAction(canvasData,'Unload');
+        // 	//UnLoad lastsubcanvas
+        // 	this.handleTargetAction(canvasData,'UnLoad');
         // }
         // canvasData.curSubCanvasIdx = nextSubCanvasIdx;
         // var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+        var subCanvasUnloadIdx = null;
         for (var i = 0; i < subCanvasList.length; i++) {
-            if (subCanvasList[i].state && subCanvasList[i].state == LoadState.loaded) {
+            if (subCanvasList[i].state && (subCanvasList[i].state == LoadState.loaded)) {
                 if ((nextSubCanvasIdx ) != i) {
                     //another sc loaded
-                    //unload sc of i
-                    this.handleTargetAction(subCanvasList[i], 'Unload')
-                    //console.log('canvas unload')
+                    //UnLoad sc of i
+                    subCanvasUnloadIdx = i;
+                    subCanvasList[i].state = LoadState.notLoad;
                     break
                 }
             }
+        }
+
+        if (subCanvasUnloadIdx !== null){
+            console.log('handle unload sc')
+            this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
         }
         var subCanvas = subCanvasList[nextSubCanvasIdx];
         if (subCanvas) {
             this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
         } else {
-            this.handleTargetAction(oldSubCanvas, 'Unload');
+            this.handleTargetAction(oldSubCanvas, 'UnLoad');
         }
     },
     drawSubCanvas: function (subCanvas, x, y, w, h, options) {
@@ -2118,8 +2135,8 @@ module.exports = React.createClass({
                 //     //param2 valid
                 //     var lastPage = project.pageList[curPageTag.value - 1];
                 //     lastPage.loaded = false;
-                //     //handle unload
-                //     this.handleTargetAction(lastPage, 'Unload');
+                //     //handle UnLoad
+                //     this.handleTargetAction(lastPage, 'UnLoad');
 
 
                 // }

@@ -19852,6 +19852,10 @@
 	                                callBack(data);
 	                            }
 	                        }.bind(this);
+	                        newImg.onerror = function (e) {
+
+	                            newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=";
+	                        }.bind(this);
 	                        newResource.content = newImg;
 	                        imageList.push(newResource);
 	                        break;
@@ -19945,15 +19949,21 @@
 	                curPageIdx = 0;
 	            }
 
-	            //handle unload
+	            //handle UnLoad
+	            var pageUnloadIdx = null;
 	            for (var i = 0; i < project.pageList.length; i++) {
 	                if (project.pageList[i].state && project.pageList[i].state == LoadState.loaded) {
 	                    if (i != curPageIdx) {
-	                        //handle unload
-	                        this.handleTargetAction(project.pageList[i], 'Unload');
+	                        //handle UnLoad
+	                        pageUnloadIdx = i;
+	                        project.pageList[i].state = LoadState.notLoad;
 	                        break;
 	                    }
 	                }
+	            }
+
+	            if (pageUnloadIdx !== null) {
+	                this.handleTargetAction(project.pageList[pageUnloadIdx], 'UnLoad');
 	            }
 
 	            var page = project.pageList[curPageIdx];
@@ -20105,29 +20115,35 @@
 	        var nextSubCanvasIdx = canvasTag && canvasTag.value || 0;
 	        var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
 	        canvasData.curSubCanvasIdx = nextSubCanvasIdx;
-	        //handle unload subcanvas
+	        //handle UnLoad subcanvas
 	        // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
-	        // 	//unload lastsubcanvas
-	        // 	this.handleTargetAction(canvasData,'Unload');
+	        // 	//UnLoad lastsubcanvas
+	        // 	this.handleTargetAction(canvasData,'UnLoad');
 	        // }
 	        // canvasData.curSubCanvasIdx = nextSubCanvasIdx;
 	        // var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+	        var subCanvasUnloadIdx = null;
 	        for (var i = 0; i < subCanvasList.length; i++) {
 	            if (subCanvasList[i].state && subCanvasList[i].state == LoadState.loaded) {
 	                if (nextSubCanvasIdx != i) {
 	                    //another sc loaded
-	                    //unload sc of i
-	                    this.handleTargetAction(subCanvasList[i], 'Unload');
-	                    //console.log('canvas unload')
+	                    //UnLoad sc of i
+	                    subCanvasUnloadIdx = i;
+	                    subCanvasList[i].state = LoadState.notLoad;
 	                    break;
 	                }
 	            }
+	        }
+
+	        if (subCanvasUnloadIdx !== null) {
+	            console.log('handle unload sc');
+	            this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
 	        }
 	        var subCanvas = subCanvasList[nextSubCanvasIdx];
 	        if (subCanvas) {
 	            this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
 	        } else {
-	            this.handleTargetAction(oldSubCanvas, 'Unload');
+	            this.handleTargetAction(oldSubCanvas, 'UnLoad');
 	        }
 	    },
 	    drawSubCanvas: function (subCanvas, x, y, w, h, options) {
@@ -20274,9 +20290,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	            // console.log(tex);
-	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	        }
+	                // console.log(tex);
+	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20938,20 +20954,20 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else {
-	                // complex mode
-	                //background
-	                var bgTex = widget.texList[0].slices[0];
-	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                //draw light strip
-	                var lightStripTex = widget.texList[2].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
-	                //draw pointer
-	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                    // complex mode
+	                    //background
+	                    var bgTex = widget.texList[0].slices[0];
+	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    //draw light strip
+	                    var lightStripTex = widget.texList[2].slices[0];
+	                    this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc);
+	                    //draw pointer
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                //draw circle
-	                // var circleTex = widget.texList[3].slices[0]
-	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	            }
+	                    //draw circle
+	                    // var circleTex = widget.texList[3].slices[0]
+	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                }
 
 	            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	            widget.oldValue = curArc;
@@ -21499,20 +21515,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                    //switch
-	                    //if (widget.switchState) {
-	                    //	widget.switchState = !widget.switch
-	                    //}else{
-	                    //	widget.switchState = 1;
-	                    //}
-	                    //update its tag
-	                    var targetTag = this.findTagByName(widget.tag);
-	                    if (targetTag) {
-	                        targetTag.value = parseInt(targetTag.value);
-	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        //switch
+	                        //if (widget.switchState) {
+	                        //	widget.switchState = !widget.switch
+	                        //}else{
+	                        //	widget.switchState = 1;
+	                        //}
+	                        //update its tag
+	                        var targetTag = this.findTagByName(widget.tag);
+	                        if (targetTag) {
+	                            targetTag.value = parseInt(targetTag.value);
+	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        }
 	                    }
-	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
@@ -21750,8 +21766,8 @@
 	                //     //param2 valid
 	                //     var lastPage = project.pageList[curPageTag.value - 1];
 	                //     lastPage.loaded = false;
-	                //     //handle unload
-	                //     this.handleTargetAction(lastPage, 'Unload');
+	                //     //handle UnLoad
+	                //     this.handleTargetAction(lastPage, 'UnLoad');
 
 	                // }
 	                var param2Value = this.getParamValue(param2);

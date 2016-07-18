@@ -71,8 +71,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var targetSubLayer = {};
         targetSubLayer.id = layerIdx+'.'+subLayerIdx;
         targetSubLayer.type = Type.MySubLayer;
-        deepCopyAttributes(rawSubLayer,targetSubLayer,['name','tag','zIndex','backgroundImage','backgroundColor']);
-
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['name','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        transActions(targetSubLayer);
 
         targetSubLayer.widgetList = [];
         for (var i=0;i<rawSubLayer.widgets.length;i++){
