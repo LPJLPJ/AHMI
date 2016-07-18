@@ -89,6 +89,11 @@
         name:'END',
         symbol:'END'
     }
+
+    var BLANK = {
+        tag:'',
+        value:''
+    }
     
     function trans(block,changeIfConditon) {
         var tempResult = transBlock(block,changeIfConditon);
@@ -112,8 +117,8 @@
             var curCmd = curLine.cmd;
             if (curCmd[0].name === 'JUMP') {
                 //jump
-                var labelIdx = labels[curCmd[2]];
-                curCmd[2] = labelIdx - i;
+                var labelIdx = labels[curCmd[2].value];
+                curCmd[2].value = labelIdx - i;
             }
         }
     }
@@ -173,13 +178,13 @@
         //jump to then
         var l1 = labelCount;
         labelCount = labelCount + 1;
-        results.push(new Command('', [JUMP, '', l1]));
+        results.push(new Command('', [JUMP, BLANK, {tag:'',value:l1}]));
 
         [].push.apply(results, transBlock(elseBlock,changeCondition));
         //jump to END
         var l2 = labelCount;
         labelCount = labelCount + 1;
-        results.push(new Command('', [JUMP, '', l2]));
+        results.push(new Command('', [JUMP, BLANK, {tag:'',value:l2}]));
 
         //then block;
         var transedThenBlock = transBlock(thenBlock,changeCondition);
@@ -225,17 +230,17 @@
                 results.push(new Command(l1, condition));
 
                 //jump to then block;
-                results.push(new Command('', [JUMP, '', l3]));
+                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l3}]));
                 //jump to end;
-                results.push(new Command('', [JUMP, '', l2]));
+                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l2}]));
             }else{
                 //condition
                 results.push(new Command(l1, condition));
 
                 //jump to then block;
-                results.push(new Command('', [JUMP, '', l2]));
+                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l2}]));
                 //jump to end;
-                results.push(new Command('', [JUMP, '', l3]));
+                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l3}]));
             }
         }
 
@@ -243,7 +248,7 @@
 
         //then block;
         var transedThenBlock = transBlock(block,changeCondition);
-        transedThenBlock.push(new Command('', [JUMP, '', l1]));
+        transedThenBlock.push(new Command('', [JUMP, BLANK, {tag:'',value:l1}]));
         transedThenBlock[0].label = String(l2);
         [].push.apply(results, transedThenBlock);
         results.push(new Command(l3, [END, '', '']));
