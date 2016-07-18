@@ -35,7 +35,7 @@ mailService.sendVerifyMailExample = function (to, id,baseUrl) {
         to: to, // list of receivers
         subject: '注册确认', // Subject line
         //text: '请点击链接进行确认: '+'http', // plaintext body
-        html: '<p>请点击链接进行确认:</p><br><a href='+url+'>'+url+'</a> ' // html body
+        html: '<p>请点击以下链接进行注册确认:</p><br><a href='+url+'>'+url+'</a><br><p>如果以上链接不能点击,请复制网址到地址栏打开</p> <br><p>这是一封自动发送的邮件, 请不要直接回复</p>' // html body
     }
 }
 
@@ -47,7 +47,7 @@ mailService.sendPasswordMailExample = function (to, key, timeTag,baseUrl) {
         to: to, // list of receivers
         subject: '找回密码', // Subject line
         //text: '请点击链接找回密码: '+'http', // plaintext body
-        html: '<p>请点击链接找回密码:</p><br><a href='+url+'>'+url+'</a> ' // html body
+        html: '<p>请点击以下链接找回密码:</p><br><a href='+url+'>'+url+'</a> <br><p>如果以上链接不能点击,请复制网址到地址栏打开</p> <br><p>这是一封自动发送的邮件, 请不要直接回复</p>' // html body
     }
 }
 
