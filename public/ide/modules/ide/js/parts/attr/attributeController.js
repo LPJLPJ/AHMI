@@ -1090,6 +1090,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
+                if($scope.component.object.level.info.minValue<0){
+                    toastr.warning('不能小于0');
+                    restore();
+                    return;
+                }
             }
             if($scope.component.object.level.type==Type.Mynum){
                 //默认是数字框
