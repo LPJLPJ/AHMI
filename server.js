@@ -84,7 +84,7 @@ app.use(Session({
 	secret:'ahmi',
 	store:new MongoStore({
 		url:dbConfig.dbPath,
-        ttl:20000,
+        ttl:24 * 60 * 60,
         autoRemove: 'native'
 	})
 }));

@@ -3,7 +3,8 @@
  */
 
 module.exports = function (req, res, next) {
-    req.session.touch()
+    req.session._garbage = Date();
+    req.session.touch();
     //console.log('touch',req.session)
     next()
 }

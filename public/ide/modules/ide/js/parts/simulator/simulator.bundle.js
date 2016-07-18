@@ -19804,7 +19804,8 @@
 	        data.tagList.push(curPageTag);
 	        data.tag = '当前页面序号';
 	        // this.state.tagList = data.tagList
-	        this.setState({ tagList: data.tagList });
+	        // this.setState({tagList: data.tagList})
+	        this.state.tagList = data.tagList;
 	        console.log('tagList loaded', data.tagList);
 
 	        //initialize timer
@@ -21430,9 +21431,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+	                bgRange = height - widget.slideSize.h || 1;
+	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
