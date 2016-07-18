@@ -84,7 +84,8 @@ module.exports = React.createClass({
         data.tagList.push(curPageTag);
         data.tag = '当前页面序号';
         // this.state.tagList = data.tagList
-        this.setState({tagList: data.tagList})
+        // this.setState({tagList: data.tagList})
+        this.state.tagList = data.tagList;
         console.log('tagList loaded', data.tagList)
 
         //initialize timer
