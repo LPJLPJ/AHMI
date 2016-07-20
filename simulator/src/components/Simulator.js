@@ -957,13 +957,14 @@ module.exports = React.createClass({
             }
         }
     },
-    limitValueBetween: function (curVal, minVal, maxVal) {
+    limitValueBetween: function (curVal, minVal, maxVal,overFlowStyle) {
         if (curVal < minVal) {
-            return minVal
-        } else if (curVal > maxVal) {
-            return maxVal
+            return minVal;
+        }
+         else if (curVal > maxVal) {
+            return maxVal;
         } else {
-            return curVal
+            return curVal;
         }
     },
     multiDigits: function (digit, num) {
@@ -1083,6 +1084,7 @@ module.exports = React.createClass({
         var numColor = widget.info.fontColor;
         var numBold = widget.info.fontBold;
         var numItalic = widget.info.fontItalic;
+        var overFlowStyle = widget.info.overFlowStyle;
         //size
         var curWidth = widget.info.width;
         var curHeight = widget.info.height;
@@ -1105,7 +1107,11 @@ module.exports = React.createClass({
         if (curValue != undefined && curValue != null) {
             //offCtx.save();
             //handle action before
-            curValue = this.limitValueBetween(curValue, minValue, maxValue)
+            if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
+                //offctx.clearRect(curX, curY, curWidth, curHeight);
+                return;
+            }
+            curValue = this.limitValueBetween(curValue, minValue, maxValue);
             if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
 
