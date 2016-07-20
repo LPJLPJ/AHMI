@@ -2822,6 +2822,12 @@ ideServices
         };
 
 
+        this.getProjectCopyTo = function (scope, __sc) {
+            scope.project = _.cloneDeep(project);
+            __sc && __sc();
+        };
+
+
         /**
          * 获得当前Page
          * @returns {*}
