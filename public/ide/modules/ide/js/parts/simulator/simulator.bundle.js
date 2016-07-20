@@ -20783,7 +20783,6 @@
 	            //offCtx.save();
 	            //handle action before
 	            if (overFlowStyle == '0' && (curValue > maxValue || curValue < minValue)) {
-	                //offctx.clearRect(curX, curY, curWidth, curHeight);
 	                return;
 	            }
 	            curValue = this.limitValueBetween(curValue, minValue, maxValue);

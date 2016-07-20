@@ -2187,7 +2187,7 @@ ideServices
                     self.normalColors.push(_tex.slices[0].color);
                     if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
                         var normalImageElement=new Image();
-                        normalImageElement.src=level.normalImg;
+                        normalImageElement.src=_tex.slices[0].imgSrc;
                         normalImageElement.onload = (function () {
 
                         }).bind(this);
