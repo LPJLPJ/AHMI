@@ -3,8 +3,15 @@
  */
 ideServices
     .service('ResourceService', function () {
-
-        var globalResources = [];
+        var blankImg = new Image();
+        blankImg.src = '';
+        var globalResources = [{
+            id: 'blank',
+            src: 'blank',
+            name: 'blank',
+            content: blankImg,
+            complete: true
+        }];
         var  files= [];
         var size = 0;
         //var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
@@ -20,6 +27,20 @@ ideServices
             globalResources = glres;
         };
 
+
+        this.getResourceFromCache = function (key, type) {
+            type = type || 'src';
+            for (var i = 0; i < globalResources.length; i++) {
+                if (globalResources[i][type] == key) {
+                    if (globalResources[i].complete) {
+                        return globalResources[i];
+                    } else {
+                        return null;
+                    }
+                }
+            }
+            return null;
+        }
         this.setResourceNWUrl = function (_url) {
             resourceNWUrl = _url;
         };

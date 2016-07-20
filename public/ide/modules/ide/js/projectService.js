@@ -1665,17 +1665,26 @@ ideServices
                 this.fontBold=level.info.fontBold;
                 this.fontItalic=level.info.fontItalic;
 
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.normalImageElement=new Image();
-                    this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.normalImageElement.onload = (function () {
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.normalImageElement=new Image();
+                //     this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.normalImageElement.onload = (function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                //
+                //
+                // }else {
+                //     this.normalImageElement=null;
+                // }
 
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.normalImageElement=null;
+                this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc)
+                if (this.normalImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
                 }
 
                 this.on('changeTex', function (arg) {
@@ -1684,15 +1693,17 @@ ideServices
 
                     var tex=level.texList[0];
                     self.normalColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc!='') {
-                        var currentImageElement=new Image();
-                        currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
-                        self.normalImageElement=currentImageElement;
-                    }else {
-                        self.normalImageElement=null;
-                    }
+                    // if (tex.slices[0].imgSrc!='') {
+                    //     var currentImageElement=new Image();
+                    //     currentImageElement.src=tex.slices[0].imgSrc;
+                    //     currentImageElement.onload = (function () {
+                    //     }).bind(this);
+                    //     self.normalImageElement=currentImageElement;
+                    // }else {
+                    //     self.normalImageElement=null;
+                    // }
+
+                    self.normalImageElement = ResourceService.getResourceFromCache(tex.slices[0].imgSrc);
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -1813,18 +1824,26 @@ ideServices
                     this.setHeight(this.fontSize*2);
                 }
 
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.backgroundImageElement=new Image();
+                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.backgroundImageElement.onload = (function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                // }else {
+                //     this.backgroundImageElement=null;
+                // }
 
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.backgroundImageElement=null;
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
                 }
+
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
@@ -1832,15 +1851,18 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                        var currentImageElement=new Image();
-                        currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
-                        self.backgroundImageElement=currentImageElement;
-                    }else {
-                        self.backgroundImageElement=null;
-                    }
+                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
+                    //     var currentImageElement=new Image();
+                    //     currentImageElement.src=tex.slices[0].imgSrc;
+                    //     currentImageElement.onload = (function () {
+                    //     }).bind(this);
+                    //     self.backgroundImageElement=currentImageElement;
+                    // }else {
+                    //     self.backgroundImageElement=null;
+                    // }
+
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -1977,16 +1999,23 @@ ideServices
                     this.setHeight(this.fontSize*1.5);
                 }
 
-                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    this.backgroundImageElement=new Image();
-                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    this.backgroundImageElement.onload = (function () {
-                        this.loaded = true;
-                        this.setCoords();
-                        this.fire('image:loaded');
-                    }).bind(this);
-                }else {
-                    this.backgroundImageElement=null;
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.backgroundImageElement=new Image();
+                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.backgroundImageElement.onload = (function () {
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                // }else {
+                //     this.backgroundImageElement=null;
+                // }
+
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
                 }
 
                 this.on('changeTex', function (arg) {
@@ -1995,15 +2024,16 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                        var currentImageElement=new Image();
-                        currentImageElement.src=tex.slices[0].imgSrc;
-                        currentImageElement.onload = (function () {
-                        }).bind(this);
-                        self.backgroundImageElement=currentImageElement;
-                    }else {
-                        self.backgroundImageElement=null;
-                    }
+                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
+                    //     var currentImageElement=new Image();
+                    //     currentImageElement.src=tex.slices[0].imgSrc;
+                    //     currentImageElement.onload = (function () {
+                    //     }).bind(this);
+                    //     self.backgroundImageElement=currentImageElement;
+                    // }else {
+                    //     self.backgroundImageElement=null;
+                    // }
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -2185,17 +2215,20 @@ ideServices
                 self.normalImageElements=[];
                 _.forEach(level.texList, function (_tex) {
                     self.normalColors.push(_tex.slices[0].color);
-                    if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
-                        var normalImageElement=new Image();
-                        normalImageElement.src=level.normalImg;
-                        normalImageElement.onload = (function () {
+                    // if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
+                    //     var normalImageElement=new Image();
+                    //     normalImageElement.src=level.normalImg;
+                    //     normalImageElement.onload = (function () {
+                    //
+                    //     }).bind(this);
+                    //     self.normalImageElements.push(normalImageElement);
+                    // }else {
+                    //     self.normalImageElements.push(null);
+                    //
+                    // }
 
-                        }).bind(this);
-                        self.normalImageElements.push(normalImageElement);
-                    }else {
-                        self.normalImageElements.push(null);
+                    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
 
-                    }
                 });
 
                 this.on('changeArrange', function (arg) {
@@ -2224,17 +2257,19 @@ ideServices
                     //console.log(level.texList);
                     _.forEach(level.texList, function (_tex) {
                         self.normalColors.push(_tex.slices[0].color);
-                        if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
-                            var normalImageElement=new Image();
-                            normalImageElement.src=_tex.slices[0].imgSrc;
-                            normalImageElement.onload = (function () {
+                        // if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
+                        //     var normalImageElement=new Image();
+                        //     normalImageElement.src=_tex.slices[0].imgSrc;
+                        //     normalImageElement.onload = (function () {
+                        //
+                        //     }).bind(this);
+                        //     self.normalImageElements.push(normalImageElement);
+                        // }else {
+                        //     self.normalImageElements.push(null);
+                        //
+                        // }
 
-                            }).bind(this);
-                            self.normalImageElements.push(normalImageElement);
-                        }else {
-                            self.normalImageElements.push(null);
-
-                        }
+                        self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
                     });
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -2825,7 +2860,7 @@ ideServices
         this.getProjectCopyTo = function (scope, scb) {
             scope.project = _.cloneDeep(project);
             scb && scb();
-        }
+        };
 
 
         /**
