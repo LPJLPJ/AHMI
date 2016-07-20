@@ -187,13 +187,7 @@
                 showSpinner();
             }
             //edit by lixiang
-            var curScope = {};
-            ProjectService.getProjectCopyTo(curScope);
-            curScope.project.resourceList = ResourceService.getAllResource();
 
-            curScope.project.customTags = TagService.getAllCustomTags();
-            curScope.project.timerTags = TagService.getAllTimerTags();
-            curScope.project.timers = TimerService.getTimerNum();
 
             var projectClone=ProjectService.SaveCurrentOperate();
 
@@ -201,6 +195,14 @@
             ProjectService.changeCurrentPageIndex(0,
 
                 function () {
+                    var curScope = {};
+                    ProjectService.getProjectCopyTo(curScope);
+                    curScope.project.resourceList = ResourceService.getAllResource();
+
+                    curScope.project.customTags = TagService.getAllCustomTags();
+                    curScope.project.timerTags = TagService.getAllTimerTags();
+                    curScope.project.timers = TimerService.getTimerNum();
+                    
                     var currentProject = curScope.project;
                     // console.log(currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
@@ -256,7 +258,7 @@
                             });
                         } else {
                             uploadThumb(scaledThumb, function () {
-                                // console.log(currentProject)
+                                console.log(currentProject)
                                 $http({
                                     method: 'PUT',
                                     url: '/project/' + currentProject.projectId + '/save',

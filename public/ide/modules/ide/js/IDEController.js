@@ -213,6 +213,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 }
             }else{
+                console.log(globalProject);
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     syncServices(globalProject)
