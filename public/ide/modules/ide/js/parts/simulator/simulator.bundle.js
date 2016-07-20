@@ -21918,18 +21918,18 @@
 	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue == secondValue) {
-	                    nextStep.step = 1;
-	                } else {
 	                    nextStep.step = 2;
+	                } else {
+	                    nextStep.step = 1;
 	                }
 	                break;
 	            case 'NEQ':
 	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue != secondValue) {
-	                    nextStep.step = 1;
-	                } else {
 	                    nextStep.step = 2;
+	                } else {
+	                    nextStep.step = 1;
 	                }
 	                break;
 	            case 'GT':
@@ -21938,36 +21938,36 @@
 	                //console.log(param1);
 	                //console.log('GT',firstValue,secondValue);
 	                if (firstValue > secondValue) {
-	                    nextStep.step = 1;
-	                } else {
 	                    nextStep.step = 2;
+	                } else {
+	                    nextStep.step = 1;
 	                }
 	                break;
 	            case 'GTE':
 	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue >= secondValue) {
-	                    nextStep.step = 1;
-	                } else {
 	                    nextStep.step = 2;
+	                } else {
+	                    nextStep.step = 1;
 	                }
 	                break;
 	            case 'LT':
 	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue < secondValue) {
-	                    nextStep.step = 1;
-	                } else {
 	                    nextStep.step = 2;
+	                } else {
+	                    nextStep.step = 1;
 	                }
 	                break;
 	            case 'LTE':
 	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
 	                var secondValue = Number(this.getParamValue(param2));
 	                if (firstValue <= secondValue) {
-	                    nextStep.step = 1;
-	                } else {
 	                    nextStep.step = 2;
+	                } else {
+	                    nextStep.step = 1;
 	                }
 	                break;
 	            case 'JUMP':

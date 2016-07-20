@@ -155,8 +155,8 @@
             args.push([]);
         }
         var condition = args[0];
-        var thenBlock = args[1];
-        var elseBlock = args[2];
+        var thenBlock = args[2];
+        var elseBlock = args[1];
 
         changeCondition = changeCondition || false;
         if (changeCondition){
@@ -167,8 +167,8 @@
             var oppositeOp = targetCompareOps[ifBlockOp];
             if (!!oppositeOp){
                 condition[0].name = oppositeOp;
-                thenBlock = args[2];
-                elseBlock = args[1];
+                thenBlock = args[1];
+                elseBlock = args[2];
             }
         }
 
@@ -230,17 +230,17 @@
                 results.push(new Command(l1, condition));
 
                 //jump to then block;
-                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l3}]));
-                //jump to end;
                 results.push(new Command('', [JUMP, BLANK, {tag:'',value:l2}]));
+                //jump to end;
+                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l3}]));
             }else{
                 //condition
                 results.push(new Command(l1, condition));
 
                 //jump to then block;
-                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l2}]));
-                //jump to end;
                 results.push(new Command('', [JUMP, BLANK, {tag:'',value:l3}]));
+                //jump to end;
+                results.push(new Command('', [JUMP, BLANK, {tag:'',value:l2}]));
             }
         }
 
