@@ -3864,6 +3864,10 @@ ideServices
         function _getCopyLayer(_layer){
             var copyLayer= _.cloneDeep(_layer);
             copyLayer.id=Math.random().toString(36).substr(2);
+            if(copyLayer&&copyLayer.info){
+                copyLayer.info.left+=10;
+                copyLayer.info.top+=10;
+            }
             _.forEach(copyLayer.subLayers, function (_subLayer) {
                 _subLayer.id=Math.random().toString(36).substr(2);
                 var proJson1=JSON.parse(_subLayer.proJsonStr);
@@ -3929,6 +3933,10 @@ ideServices
             var copyWidget= _.cloneDeep(_widget);
             var newId=Math.random().toString(36).substr(2);
             copyWidget.id=newId;
+            if(copyWidget&&copyWidget.info){
+                copyWidget.info.left+=5;
+                copyWidget.info.top+=5;
+            }
             return copyWidget;
         }
 
