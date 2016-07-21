@@ -33,7 +33,7 @@ ideServices
             for (var i = 0; i < globalResources.length; i++) {
                 if (globalResources[i][type] == key) {
                     if (globalResources[i].complete) {
-                        return globalResources[i];
+                        return globalResources[i].content;
                     } else {
                         return null;
                     }
