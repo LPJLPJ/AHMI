@@ -161,13 +161,15 @@ ideServices
 
                     }
 
+                    if (this.backgroundImg.element) {
+                        ctx.drawImage(this.backgroundImg.element,
+                            this.backgroundImg.left,
+                            this.backgroundImg.top,
 
-                    ctx.drawImage(this.backgroundImg.element,
-                        this.backgroundImg.left,
-                        this.backgroundImg.top,
+                            this.backgroundImg.width,
+                            this.backgroundImg.height);
+                    }
 
-                        this.backgroundImg.width,
-                        this.backgroundImg.height);
 
                 }
                 catch(err){
@@ -193,17 +195,18 @@ ideServices
 
 
             if (layer.showSubLayer.url==''){
-                backgroundImg.src=TemplateProvider.getDefaultSubLayer().url
+                backgroundImg = null;
             }else{
                 backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
+                backgroundImg.onload = (function () {
+                    this.width = layerWidth;
+                    this.height = layerHeight;
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }).bind(this);
             }
-            backgroundImg.onload = (function () {
-                this.width = layerWidth;
-                this.height = layerHeight;
-                this.loaded = true;
-                this.setCoords();
-                this.fire('image:loaded');
-            }).bind(this);
+
             this.backgroundImg={
                 element:backgroundImg,
                 width:layerWidth,
