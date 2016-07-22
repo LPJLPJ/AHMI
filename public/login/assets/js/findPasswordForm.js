@@ -42,7 +42,7 @@ $(function () {
     })
 
     $('#change-captcha').on('click', function () {
-        $('#captcha-img').attr('src','/captcha')
+        $('#captcha-img').attr('src','/captcha?'+Date.now())
     })
 
     $('#submit').on('click', function () {

@@ -136,8 +136,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 ],
                 overFlowStyle:'0',
                 overFlowStyles:[
-                    {id:'0',name:'超出不显示'},
-                    {id:'1',name:'超出显示'}
+                    {id:'0',name:'溢出不显示'},
+                    {id:'1',name:'溢出显示'}
                 ],
                 changeNumFamily:changeNumFamily,
                 setBoldNum:setBoldNum,

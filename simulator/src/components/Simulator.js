@@ -957,13 +957,14 @@ module.exports = React.createClass({
             }
         }
     },
-    limitValueBetween: function (curVal, minVal, maxVal) {
+    limitValueBetween: function (curVal, minVal, maxVal,overFlowStyle) {
         if (curVal < minVal) {
-            return minVal
-        } else if (curVal > maxVal) {
-            return maxVal
+            return minVal;
+        }
+         else if (curVal > maxVal) {
+            return maxVal;
         } else {
-            return curVal
+            return curVal;
         }
     },
     multiDigits: function (digit, num) {
@@ -1083,6 +1084,7 @@ module.exports = React.createClass({
         var numColor = widget.info.fontColor;
         var numBold = widget.info.fontBold;
         var numItalic = widget.info.fontItalic;
+        var overFlowStyle = widget.info.overFlowStyle;
         //size
         var curWidth = widget.info.width;
         var curHeight = widget.info.height;
@@ -1105,7 +1107,10 @@ module.exports = React.createClass({
         if (curValue != undefined && curValue != null) {
             //offCtx.save();
             //handle action before
-            curValue = this.limitValueBetween(curValue, minValue, maxValue)
+            if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
+                return;
+            }
+            curValue = this.limitValueBetween(curValue, minValue, maxValue);
             if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
 
@@ -1197,7 +1202,12 @@ module.exports = React.createClass({
         tempCtx.restore()
     },
     generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
-        var tempNumValue = String(curValue)
+        var negative = false;
+        if(curValue<0){
+            negative = true;
+        }
+        var tempNumValue = Math.abs(curValue);
+        tempNumValue = tempNumValue.toString();
         //console.log(tempNumValue);
         //配置小数位数
         if (parseInt(decimalCount) > 0) {
@@ -1228,16 +1238,17 @@ module.exports = React.createClass({
         }
 
         //配置正负号
-        if (symbolMode == '1') {
-            var value = parseFloat(tempNumValue)
-            var symbol = ''
-            if (value > 0) {
-                symbol = '+'
-            } else if (value < 0) {
-                symbol = ''
+        if(!negative){
+            var symbol='';
+            if(symbolMode=='1'){
+                symbol ='+';
             }
-            tempNumValue = symbol + tempNumValue
+            tempNumValue = symbol + tempNumValue;
+        }else if(negative){
+            symbol = '-';
+            tempNumValue = symbol + tempNumValue;
         }
+
         return tempNumValue
     },
     drawDigit: function (digit, widget, originX, originY, width, height) {

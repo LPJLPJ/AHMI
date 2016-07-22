@@ -160,11 +160,14 @@ ideServices
                         this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
 
                     }
-
-                    if (this.backgroundImg.element) {
-                        ctx.drawImage(this.backgroundImg.element,
-                            this.backgroundImg.left,
-                            this.backgroundImg.top,
+                    
+                    ctx.drawImage(this.backgroundImg.element,
+                        0,
+                        0,
+                        this.backgroundImg.widht,
+                        this.backgroundImg.height,
+                        this.backgroundImg.left,
+                        this.backgroundImg.top,
 
                             this.backgroundImg.width,
                             this.backgroundImg.height);
@@ -2197,8 +2200,12 @@ ideServices
                         offCtx.textAlign = this.align;
 
                         offCtx.textBaseline='middle';//设置数字垂直居中
-
-                        var tempNumValue= this.numValue.toString();
+                        var negative=false;
+                        if(this.numValue<0){
+                            negative=true;
+                        }
+                        var tempNumValue=Math.abs(this.numValue);
+                        tempNumValue= tempNumValue.toString();
                         var i=0;
                         //配置小数位数
                         if(this.decimalCount){
@@ -2221,21 +2228,22 @@ ideServices
                         if(this.frontZeroMode=='1'){
                             //console.log('minus',this.numOfDigits-tempNumValue.length);
                             var minus=this.numOfDigits-tempNumValue.length;
-                            console.log('minus',minus);
+                            //console.log('minus',minus);
                             if(this.decimalCount){
                                 for(i=0;i<minus+1;i++){
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }else{
                                 for(i=0;i<minus;i++){
-                                    //console.log(i);
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }
                         }
                         //配置正负号
-                        if((this.symbolMode=='1')&&(this.numValue>=0)){
+                        if((this.symbolMode=='1')&&(!negative)){
                             tempNumValue='+'+tempNumValue;
+                        }else if(negative){
+                            tempNumValue='-'+tempNumValue;
                         }
                         ctx.scale(1/this.scaleX,1/this.scaleY);
                         //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
@@ -3992,9 +4000,9 @@ ideServices
         function _getCopyLayer(_layer){
             var copyLayer= _.cloneDeep(_layer);
             copyLayer.id=Math.random().toString(36).substr(2);
-            if (copyLayer && copyLayer.info) {
-                copyLayer.info.left += 10;
-                copyLayer.info.top += 10;
+            if(copyLayer&&copyLayer.info){
+                copyLayer.info.left+=10;
+                copyLayer.info.top+=10;
             }
             _.forEach(copyLayer.subLayers, function (_subLayer) {
                 _subLayer.id=Math.random().toString(36).substr(2);
@@ -4061,9 +4069,9 @@ ideServices
             var copyWidget= _.cloneDeep(_widget);
             var newId=Math.random().toString(36).substr(2);
             copyWidget.id=newId;
-            if (copyWidget && copyWidget.info) {
-                copyWidget.info.left += 5;
-                copyWidget.info.top += 5;
+            if(copyWidget&&copyWidget.info){
+                copyWidget.info.left+=5;
+                copyWidget.info.top+=5;
             }
             return copyWidget;
         }
