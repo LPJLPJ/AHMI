@@ -2124,7 +2124,6 @@ ideServices
                                 }
                             }else{
                                 for(i=0;i<minus;i++){
-                                    //console.log(i);
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }
