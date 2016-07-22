@@ -160,23 +160,18 @@ ideServices
                         this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
 
                     }
-                    if (this.backgroundImg.element) {
-                        ctx.drawImage(this.backgroundImg.element,
-                            0,
-                            0,
-                            this.backgroundImg.width,
-                            this.backgroundImg.height,
-                            this.backgroundImg.left,
-                            this.backgroundImg.top,
-                            this.backgroundImg.width,
-                            this.backgroundImg.height);
-                    }
 
+                    ctx.drawImage(this.backgroundImg.element,
+                        this.backgroundImg.left,
+                        this.backgroundImg.top,
 
+                        this.backgroundImg.width,
+                        this.backgroundImg.height);
 
-                } catch (err) {
+                }
+                catch(err){
                     console.log('错误描述',err);
-                    toastr.warning('渲染Layer出错');
+                    //toastr.warning('渲染Layer出错');
                 }
 
             }
@@ -1051,6 +1046,17 @@ ideServices
                         ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
                         ctx.restore();
                     }
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
                 }
                 catch(err){
                     console.log('错误描述',err);
