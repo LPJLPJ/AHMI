@@ -125,8 +125,8 @@ ideServices
                         this.renderUrlInPage(self);
                     }
                 });
-                this.on('OnRenderUrl', function () {
-                    this.renderUrlInPage(self);
+                this.on('OnRenderUrl', function (cb) {
+                    this.renderUrlInPage(self, cb);
                 });
             },
             toObject: function () {

@@ -75,6 +75,7 @@ ide.controller('AttrCtrl', function ($scope,$timeout,
             }
         });
         logs.push('选择了第'+pageIndex+'个页面');
+        console.log('选择了第' + pageIndex + '个页面');
         ProjectService.OnPageSelected(pageIndex,function () {
             $scope.$emit('ChangeCurrentPage',null, function () {
             });

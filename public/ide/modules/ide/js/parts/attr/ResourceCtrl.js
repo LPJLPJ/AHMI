@@ -37,9 +37,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             }
 
         };
-        ProjectService.getProjectTo($scope);
 
-        $scope.component.top.resources=$scope.project.resourceList;
+        $scope.component.top.resources = ResourceService.getAllResource();
 
         $scope.component.top.basicUrl = ResourceService.getResourceUrl();
         $scope.component.top.maxSize = ResourceService.getMaxTotalSize();
@@ -90,21 +89,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         ResourceService.deleteFileById(resourceId, function () {
             //$scope.component.top.files = ResourceService.getAllImages();
             $scope.$emit('ResourceUpdate');
-            //delete on server
-            //$http({
-            //    method:'DELETE',
-            //    url:'/project/'+$scope.project.projectId+'/deleteresource/'+resourceId
-            //})
-            //.success(function (data, status, xhr) {
-            //    if (data == 'ok'){
-            //        toastr.info('删除成功');
-            //    }
-            //
-            //})
-            //.error(function (err) {
-            //    console.log('delete failed');
-            //    toastr.info('删除失败')
-            //})
+            
         }.bind(this));
         
 

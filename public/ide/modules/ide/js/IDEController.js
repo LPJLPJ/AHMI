@@ -185,18 +185,23 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
             var resourceList = globalProject.resourceList;
             var count = resourceList.length;
-            var coutDown = function(index,e) {
-                console.log(arguments)
+            var globalResources = ResourceService.getGlobalResources();
+            window.globalResources = globalResources;
+
+            var coutDown = function (e, resourceObj) {
                 if (e.type === 'error'){
                     // console.log(e)
-                    toastr.warning('图片加载失败: '+resourceList[index].name);
+                    toastr.warning('图片加载失败: ' + resourceObj.name);
+                    resourceObj.complete = false;
+                } else {
+                    resourceObj.complete = true;
                 }
                 count = count - 1;
                 if (count<=0){
                     // toastr.info('loaded');
                     TemplateProvider.saveProjectFromGlobal(globalProject);
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
-                        syncServices(globalProject)
+                        syncServices(globalProject);
                         $scope.$broadcast('GlobalProjectReceived');
 
                     });
@@ -204,12 +209,11 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             }.bind(this);
             if (count>0){
                 for (var i=0;i<resourceList.length;i++){
-                    var img = new Image();
-                    img.src = resourceList[i].src;
-                    img.onload = coutDown.bind(this,i);
-                    img.onerror = coutDown.bind(this,i);
+                    var curRes = resourceList[i];
+                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 }
             }else{
+                console.log(globalProject);
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     syncServices(globalProject)
@@ -370,14 +374,19 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     };
 
     function refreshLoginStatus() {
-        setInterval(function () {
-            $http({
-                method:'GET',
-                url:baseUrl+'/api/refreshlogin'
-            }).success(function (data) {
-                console.log(data);
-            });
-        },10*60*1000)
+        if (!window.local) {
+            setInterval(function () {
+                $http({
+                    method: 'GET',
+                    url: baseUrl + '/api/refreshlogin'
+                }).success(function (data) {
+                    console.log(data);
+                }).error(function (err) {
+                    console.log(err)
+                });
+            }, 10 * 60 * 1000)
+        }
+
     }
 
     function receiveProject(pid) {
