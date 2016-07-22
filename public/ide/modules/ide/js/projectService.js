@@ -2950,6 +2950,7 @@ ideServices
             _successCallback && _successCallback();
         };
 
+        //get project copy to
 
         this.getProjectCopyTo = function (scope, scb) {
             scope.project = _.cloneDeep(project);
