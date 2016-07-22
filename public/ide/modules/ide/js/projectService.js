@@ -164,18 +164,15 @@ ideServices
                     ctx.drawImage(this.backgroundImg.element,
                         0,
                         0,
-                        this.backgroundImg.widht,
+                        this.backgroundImg.width,
                         this.backgroundImg.height,
                         this.backgroundImg.left,
                         this.backgroundImg.top,
-
                             this.backgroundImg.width,
                             this.backgroundImg.height);
-                    }
+                    
 
-
-                }
-                catch(err){
+                } catch (err) {
                     console.log('错误描述',err);
                     toastr.warning('渲染Layer出错');
                 }
