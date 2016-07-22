@@ -160,6 +160,7 @@ ideServices
                         this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
 
                     }
+                    
                     ctx.drawImage(this.backgroundImg.element,
                         0,
                         0,
