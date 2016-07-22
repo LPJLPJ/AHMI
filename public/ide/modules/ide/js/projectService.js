@@ -160,23 +160,18 @@ ideServices
                         this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
 
                     }
-                    if (this.backgroundImg.element) {
-                        ctx.drawImage(this.backgroundImg.element,
-                            0,
-                            0,
-                            this.backgroundImg.width,
-                            this.backgroundImg.height,
-                            this.backgroundImg.left,
-                            this.backgroundImg.top,
-                            this.backgroundImg.width,
-                            this.backgroundImg.height);
-                    }
 
+                    ctx.drawImage(this.backgroundImg.element,
+                        this.backgroundImg.left,
+                        this.backgroundImg.top,
 
+                        this.backgroundImg.width,
+                        this.backgroundImg.height);
 
-                } catch (err) {
+                }
+                catch(err){
                     console.log('错误描述',err);
-                    toastr.warning('渲染Layer出错');
+                    //toastr.warning('渲染Layer出错');
                 }
 
             }
@@ -197,18 +192,17 @@ ideServices
 
 
             if (layer.showSubLayer.url==''){
-                backgroundImg = null;
+                backgroundImg.src=TemplateProvider.getDefaultSubLayer().url
             }else{
                 backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
-                backgroundImg.onload = (function () {
-                    this.width = layerWidth;
-                    this.height = layerHeight;
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
-                }).bind(this);
             }
-
+            backgroundImg.onload = (function () {
+                this.width = layerWidth;
+                this.height = layerHeight;
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }).bind(this);
             this.backgroundImg={
                 element:backgroundImg,
                 width:layerWidth,
@@ -222,40 +216,29 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
-        fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
+        fabric.MyLayer.prototype.renderUrlInPage= function (self) {
 
 
             var currentLayer=getLevelById(self.id);
             var backgroundImg = new Image();
 
-
-            backgroundImg.onload = function () {
-                self.backgroundImg.element = backgroundImg;
-
-                self.backgroundImg.width = self.width;
-                self.backgroundImg.height = self.height;
-                self.backgroundImg.left = -self.width / 2;
-                self.backgroundImg.top = -self.height / 2;
+            backgroundImg.src = _.cloneDeep(currentLayer.showSubLayer.url);
 
 
-                self.initPosition.left = _.cloneDeep(self.getLeft());
-                self.initPosition.top = _.cloneDeep(self.getTop());
-                var pageNode = CanvasService.getPageNode();
-                pageNode.renderAll();
-                cb && cb();
-            }.bind(self);
+            backgroundImg.onload = (function () {}).bind(self);
 
-            backgroundImg.onerror = function (err) {
-                backgroundImg = null;
-                cb && cb(err);
-            }.bind(self);
+            self.backgroundImg.element=backgroundImg;
 
-            // while(!renderFlag){
-            //
-            // }
-            backgroundImg.src = currentLayer.showSubLayer.url;
+            self.backgroundImg.width=self.width;
+            self.backgroundImg.height=self.height;
+            self.backgroundImg.left=-self.width/2;
+            self.backgroundImg.top=-self.height/2;
 
 
+            self.initPosition.left = _.cloneDeep(self.getLeft());
+            self.initPosition.top = _.cloneDeep(self.getTop());
+            var pageNode=CanvasService.getPageNode();
+            pageNode.renderAll();
         };
         fabric.MyLayer.prototype.toObject = (function (toObject) {
             return function () {
@@ -293,66 +276,55 @@ ideServices
                 }
                 if(this.progressModeId=='0'&&this.cursor=='1'){
                     this.cursorColor=level.texList[2].slices[0].color;
-                    // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                    //     this.cursorImageElement=new Image();
-                    //     this.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
-                    //     this.cursorImageElement.onload=function(){
-                    //
-                    //     }.bind(this);
-                    // }else{
-                    //     this.cursorImageElement=null;
-                    // }
+                    if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                        this.cursorImageElement=new Image();
+                        this.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
+                        this.cursorImageElement.onload=function(){
 
-                    this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
-
+                        }.bind(this);
+                    }else{
+                        this.cursorImageElement=null;
+                    }
                 }
                 if(this.progressModeId=='1'&&this.cursor=='1'){
                     this.cursorColor=level.texList[3].slices[0].color;
-                    // if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
-                    //     this.cursorImageElement=new Image();
-                    //     this.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
-                    //     this.cursorImageElement.onload=function(){
-                    //
-                    //     }.bind(this);
-                    // }else{
-                    //     this.cursorImageElement=null;
-                    // }
-                    this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+                    if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
+                        this.cursorImageElement=new Image();
+                        this.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
+                        this.cursorImageElement.onload=function(){
+
+                        }.bind(this);
+                    }else{
+                        this.cursorImageElement=null;
+                    }
                 }
 
                 this.backgroundColor=level.texList[0].slices[0].color;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }.bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
-                this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.cursorImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = function () {
+
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }.bind(this);
+                }else {
+                    this.backgroundImageElement=null;
                 }
 
                 this.progressColor=level.texList[1].slices[0].color;
-                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                //
-                //     this.progressImageElement=new Image();
-                //     this.progressImageElement.src=level.texList[1].slices[0].imgSrc;
-                //     this.progressImageElement.onload = function () {
-                //
-                //     }.bind(this);
-                // }else {
-                //     this.progressImageElement=null;
-                // }
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
-                this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    this.progressImageElement=new Image();
+                    this.progressImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.progressImageElement.onload = function () {
+
+                    }.bind(this);
+                }else {
+                    this.progressImageElement=null;
+                }
+
 
                 this.arrange=level.info.arrange;
 
@@ -373,64 +345,59 @@ ideServices
                     //console.log(level.texList);
                     if(level.texList[0]&&level.texList[0].name=='进度条底纹'){
                         self.backgroundColor=level.texList[0].slices[0].color;
-                        // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                        //     self.backgroundImageElement=new Image();
-                        //     self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                        //     self.backgroundImageElement.onload = function () {
-                        //
-                        //     }.bind(this);
-                        // }else {
-                        //     self.backgroundImageElement=null;
-                        // }
+                        if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                            self.backgroundImageElement=new Image();
+                            self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                            self.backgroundImageElement.onload = function () {
 
-                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                            }.bind(this);
+                        }else {
+                            self.backgroundImageElement=null;
+                        }
                     }
 
                     if(level.texList[1]&&level.texList[1].name=='进度条'){
                         self.progressColor=level.texList[1].slices[0].color;
-                        // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                        //
-                        //     self.progressImageElement=new Image();
-                        //     self.progressImageElement.src=level.texList[1].slices[0].imgSrc;
-                        //     self.progressImageElement.onload = function () {
-                        //
-                        //     }.bind(this);
-                        // }else {
-                        //     self.progressImageElement=null;
-                        // }
-                        self.progressImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                        if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+
+                            self.progressImageElement=new Image();
+                            self.progressImageElement.src=level.texList[1].slices[0].imgSrc;
+                            self.progressImageElement.onload = function () {
+
+                            }.bind(this);
+                        }else {
+                            self.progressImageElement=null;
+                        }
                     }else if(level.texList[1]&&level.texList[1].name=='初始颜色'){
                         self.initColor=level.texList[1].slices[0].color;
                     }
 
                     if(level.texList[2]&&level.texList[2]&&level.texList[2].name=='光标纹理'){
                         self.cursorColor=level.texList[2].slices[0].color;
-                        // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                        //     self.cursorImageElement=new Image();
-                        //     self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
-                        //     self.cursorImageElement.onload=function(){
-                        //
-                        //     }.bind(this);
-                        // }else{
-                        //     self.cursorImageElement=null;
-                        // }
-                        self.cursorImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                            self.cursorImageElement=new Image();
+                            self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
+                            self.cursorImageElement.onload=function(){
+
+                            }.bind(this);
+                        }else{
+                            self.cursorImageElement=null;
+                        }
                     }else if(level.texList[2]&&level.texList[2].name=='结束颜色'){
                         self.endColor=level.texList[2].slices[0].color;
                     }
 
                     if(level.texList[3]&&level.texList[3]&&level.texList[3].name=='光标纹理'){
                         self.cursorColor=level.texList[3].slices[0].color;
-                        // if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
-                        //     self.cursorImageElement=new Image();
-                        //     self.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
-                        //     self.cursorImageElement.onload=function(){
-                        //
-                        //     }.bind(this);
-                        // }else{
-                        //     self.cursorImageElement=null;
-                        // }
-                        self.cursorImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+                        if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
+                            self.cursorImageElement=new Image();
+                            self.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
+                            self.cursorImageElement.onload=function(){
+
+                            }.bind(this);
+                        }else{
+                            self.cursorImageElement=null;
+                        }
                     }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -606,71 +573,57 @@ ideServices
                 this.setScaleY((((this.maxValue-this.minValue)/this.gridUnitY+1/2)*this.spacing+this.blankY)/this.height);
 
                 this.backgroundColor=level.texList[0].slices[0].color;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }.bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = function () {
 
-                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.backgroundImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }.bind(this);
+                }else {
+                    this.backgroundImageElement=null;
                 }
 
-
                 this.oscilloscopeColor=level.texList[1].slices[0].color;
-                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                //
-                //     this.oscilloscopeImageElement=new Image();
-                //     this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
-                //     this.oscilloscopeImageElement.onload = function () {
-                //     }.bind(this);
-                // }else {
-                //     this.oscilloscopeImageElement=null;
-                // }
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
-                this.oscilloscopeImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    this.oscilloscopeImageElement=new Image();
+                    this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.oscilloscopeImageElement.onload = function () {
+                    }.bind(this);
+                }else {
+                    this.oscilloscopeImageElement=null;
+                }
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
                     self.backgroundColor=level.texList[0].slices[0].color;
-                    // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    //     self.backgroundImageElement=new Image();
-                    //     self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                    //     self.backgroundImageElement.onload = function () {
-                    //
-                    //     }.bind(this);
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                        self.backgroundImageElement=new Image();
+                        self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                        self.backgroundImageElement.onload = function () {
 
-                    this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        }.bind(this);
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
 
 
 
                     self.oscilloscopeColor=level.texList[1].slices[0].color;
-                    // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                    //
-                    //     self.oscilloscopeImageElement=new Image();
-                    //     self.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
-                    //     self.oscilloscopeImageElement.onload = function () {
-                    //
-                    //     }.bind(this);
-                    // }else {
-                    //     self.oscilloscopeImageElement=null;
-                    // }
+                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
-                    this.oscilloscopeImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                        self.oscilloscopeImageElement=new Image();
+                        self.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                        self.oscilloscopeImageElement.onload = function () {
+
+                        }.bind(this);
+                    }else {
+                        self.oscilloscopeImageElement=null;
+                    }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -811,54 +764,43 @@ ideServices
           
 
                 this.backgroundColor=level.texList[0].slices[0].color;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }.bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = function () {
 
-                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.backgroundImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }.bind(this);
+                }else {
+                    this.backgroundImageElement=null;
                 }
 
-
                 this.pointerColor=level.texList[1].slices[0].color;
-                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                //
-                //     this.pointerImageElement=new Image();
-                //     this.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
-                //     this.pointerImageElement.onload = function () {
-                //
-                //     }.bind(this);
-                // }else {
-                //     this.pointerImageElement=null;
-                // }
-                this.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+
+                    this.pointerImageElement=new Image();
+                    this.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.pointerImageElement.onload = function () {
+
+                    }.bind(this);
+                }else {
+                    this.pointerImageElement=null;
+                }
 
                 //初始化光带
                 if(level.texList[2]){
                     //this.lightBandColor=level.texList[2].slices[0].color;
-                    // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                    //     this.lightBandImageElement =new Image();
-                    //     this.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
-                    //     this.lightBandImageElement.onload = function(){
-                    //
-                    //     }.bind(this);
-                    // }else{
-                    //     this.lightBandImageElement=null;
-                    // }
+                    if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                        this.lightBandImageElement =new Image();
+                        this.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
+                        this.lightBandImageElement.onload = function(){
 
-                    this.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        }.bind(this);
+                    }else{
+                        this.lightBandImageElement=null;
+                    }
                 }
 
 
@@ -937,17 +879,15 @@ ideServices
                     var level=arg.level;
                     var _callback=arg.callback;
                     self.backgroundColor=level.texList[0].slices[0].color;
-                    // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    //     self.backgroundImageElement=new Image();
-                    //     self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                    //     self.backgroundImageElement.onload = function () {
-                    //
-                    //     }.bind(this);
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                        self.backgroundImageElement=new Image();
+                        self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                        self.backgroundImageElement.onload = function () {
 
-                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        }.bind(this);
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
 
                     self.pointerColor=level.texList[1].slices[0].color;
                     if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
@@ -961,21 +901,18 @@ ideServices
                         self.pointerImageElement=null;
                     }
 
-                    self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
-
                     //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
                     if(level.texList[2]){
                         //self.lightBandColor=level.texList[2].slices[0].color;
-                        // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                        //     self.lightBandImageElement=new Image();
-                        //     self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
-                        //     self.lightBandImageElement.onload = function () {
-                        //
-                        //     }.bind(this);
-                        // }else {
-                        //     self.lightBandImageElement = null;
-                        // }
-                        self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                            self.lightBandImageElement=new Image();
+                            self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
+                            self.lightBandImageElement.onload = function () {
+
+                            }.bind(this);
+                        }else {
+                            self.lightBandImageElement = null;
+                        }
                     }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -1051,6 +988,17 @@ ideServices
                         ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
                         ctx.restore();
                     }
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
                 }
                 catch(err){
                     console.log('错误描述',err);
@@ -1094,40 +1042,31 @@ ideServices
 
 
                 this.backgroundColor=level.texList[0].slices[0].color;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }.bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = function () {
 
-                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-
-                if (this.backgroundImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }.bind(this);
+                }else {
+                    this.backgroundImageElement=null;
                 }
 
                 this.knobColor=level.texList[1].slices[0].color;
-                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                //
-                //     this.knobImageElement=new Image();
-                //     this.knobImageElement.src=level.texList[1].slices[0].imgSrc;
-                //     this.knobImageElement.onload = function () {
-                //
-                //     }.bind(this);
-                // }else {
-                //     this.knobImageElement=null;
-                // }
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
 
-                this.knobImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    this.knobImageElement=new Image();
+                    this.knobImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.knobImageElement.onload = function () {
+
+                    }.bind(this);
+                }else {
+                    this.knobImageElement=null;
+                }
+
 
 
 
@@ -1161,30 +1100,26 @@ ideServices
                     var level=arg.level;
                     var _callback=arg.callback;
                     self.backgroundColor=level.texList[0].slices[0].color;
-                    // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    //     self.backgroundImageElement=new Image();
-                    //     self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                    //     self.backgroundImageElement.onload = function () {
-                    //
-                    //     }.bind(this);
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
+                    if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                        self.backgroundImageElement=new Image();
+                        self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                        self.backgroundImageElement.onload = function () {
 
-                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        }.bind(this);
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
 
                     self.knobColor=level.texList[1].slices[0].color;
-                    // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                    //     self.knobImageElement=new Image();
-                    //     self.knobImageElement.src=level.texList[1].slices[0].imgSrc;
-                    //     self.knobImageElement.onload = function () {
-                    //
-                    //     }.bind(this);
-                    // }else {
-                    //     self.knobImageElement=null;
-                    // }
+                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                        self.knobImageElement=new Image();
+                        self.knobImageElement.src=level.texList[1].slices[0].imgSrc;
+                        self.knobImageElement.onload = function () {
 
-                    self.knobImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                        }.bind(this);
+                    }else {
+                        self.knobImageElement=null;
+                    }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -1264,26 +1199,18 @@ ideServices
                 this.hasRotatingPoint=false;
                 this.backgroundColor=level.texList[0].slices[0].color;
                 this.bindBit=level.info.bindBit;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.imageElement=new Image();
-                //     this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.imageElement.onload = function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }.bind(this);
-                // }else {
-                //     this.imageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.imageElement=new Image();
+                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.imageElement.onload = function () {
 
-                this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.imageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }.bind(this);
+                }else {
+                    this.imageElement=null;
                 }
-
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
@@ -1291,17 +1218,15 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.imageElement=currentImageElement;
-                    // }else {
-                    //     self.imageElement=null;
-                    // }
-
-                    self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    if (tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.imageElement=currentImageElement;
+                    }else {
+                        self.imageElement=null;
+                    }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -1389,24 +1314,17 @@ ideServices
                 this.minValue=level.info.minValue;
                 this.maxValue=level.info.maxValue;
                 this.initValue=level.info.initValue;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.imageElement=new Image();
-                //     this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.imageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.imageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.imageElement=new Image();
+                    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.imageElement.onload = (function () {
 
-                this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.imageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.imageElement=null;
                 }
 
                 this.on('changeTex', function (arg) {
@@ -1415,17 +1333,15 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = function () {
-                    //     }.bind(this);
-                    //     self.imageElement=currentImageElement;
-                    // }else {
-                    //     self.imageElement=null;
-                    // }
-
-                    self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    if (tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = function () {
+                        }.bind(this);
+                        self.imageElement=currentImageElement;
+                    }else {
+                        self.imageElement=null;
+                    }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -1492,45 +1408,31 @@ ideServices
                 this.arrange=level.info.arrange;
 
                 this.backgroundColor=level.texList[0].slices[0].color;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
 
-                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.backgroundImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
                 }
 
                 this.slideColor=level.texList[1].slices[0].color;
-                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                //     this.slideImageElement=new Image();
-                //     this.slideImageElement.src=level.texList[1].slices[0].imgSrc;
-                //     this.slideImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.slideImageElement=null;
-                // }
+                if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    this.slideImageElement=new Image();
+                    this.slideImageElement.src=level.texList[1].slices[0].imgSrc;
+                    this.slideImageElement.onload = (function () {
 
-                this.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
-                if (this.slideImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.slideImageElement=null;
                 }
 
                 this.on('changeTex', function (arg) {
@@ -1539,32 +1441,28 @@ ideServices
 
                     if(level.texList&&level.texList[0]){
                         self.backgroundColor=level.texList[0].slices[0].color;
-                        // if (level.texList[0].slices[0].imgSrc!='') {
-                        //     var backgroundImageElement=new Image();
-                        //     backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                        //     backgroundImageElement.onload = function () {
-                        //     }.bind(this);
-                        //     self.backgroundImageElement=backgroundImageElement;
-                        // }else {
-                        //     self.backgroundImageElement=null;
-                        // }
-
-                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        if (level.texList[0].slices[0].imgSrc!='') {
+                            var backgroundImageElement=new Image();
+                            backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                            backgroundImageElement.onload = function () {
+                            }.bind(this);
+                            self.backgroundImageElement=backgroundImageElement;
+                        }else {
+                            self.backgroundImageElement=null;
+                        }
                     }
 
                     if(level.texList&&level.texList[1]){
                         self.slideColor=level.texList[1].slices[0].color;
-                        // if (level.texList[1].slices[0].imgSrc!='') {
-                        //     var slideImageElement=new Image();
-                        //     slideImageElement.src=level.texList[1].slices[0].imgSrc
-                        //     slideImageElement.onload = function () {
-                        //     }.bind(this);
-                        //     self.slideImageElement=slideImageElement;
-                        // }else {
-                        //     self.slideImageElement=null;
-                        // }
-
-                        self.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                        if (level.texList[1].slices[0].imgSrc!='') {
+                            var slideImageElement=new Image();
+                            slideImageElement.src=level.texList[1].slices[0].imgSrc
+                            slideImageElement.onload = function () {
+                            }.bind(this);
+                            self.slideImageElement=slideImageElement;
+                        }else {
+                            self.slideImageElement=null;
+                        }
                     }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -1659,7 +1557,39 @@ ideServices
                 this.fontColor=level.info.fontColor;
                 this.align=level.info.align;
                 this.initValue=level.info.initValue;
-                
+                //if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //    this.imageElement=new Image();
+                //    this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                //    this.imageElement.onload = (function () {
+                //
+                //        this.loaded = true;
+                //        this.setCoords();
+                //        this.fire('image:loaded');
+                //    }).bind(this);
+                //}else {
+                //    this.imageElement=null;
+                //}
+
+                //this.on('changeTex', function (arg) {
+                //    var level=arg.level;
+                //    var _callback=arg.callback;
+                //
+                //    var tex=level.texList[0];
+                //    self.backgroundColor=tex.slices[0].color;
+                //    if (tex.slices[0].imgSrc!='') {
+                //        var currentImageElement=new Image();
+                //        currentImageElement.src=tex.slices[0].imgSrc;
+                //        currentImageElement.onload = (function () {
+                //        }).bind(this);
+                //        self.imageElement=currentImageElement;
+                //    }else {
+                //        self.imageElement=null;
+                //    }
+                //
+                //    var subLayerNode=CanvasService.getSubLayerNode();
+                //    subLayerNode.renderAll();
+                //    _callback&&_callback();
+                //});
                 this.on('changeDateTimeModeId',function(arg){
                     var dateTimeModeId=arg.dateTimeModeId;
                     var _callback=arg.callback;
@@ -1745,26 +1675,17 @@ ideServices
                 this.fontBold=level.info.fontBold;
                 this.fontItalic=level.info.fontItalic;
 
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.normalImageElement=new Image();
-                //     this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.normalImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                //
-                //
-                // }else {
-                //     this.normalImageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.normalImageElement=new Image();
+                    this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.normalImageElement.onload = (function () {
 
-                this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc)
-                if (this.normalImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.normalImageElement=null;
                 }
 
                 this.on('changeTex', function (arg) {
@@ -1773,17 +1694,15 @@ ideServices
 
                     var tex=level.texList[0];
                     self.normalColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.normalImageElement=currentImageElement;
-                    // }else {
-                    //     self.normalImageElement=null;
-                    // }
-
-                    self.normalImageElement = ResourceService.getResourceFromCache(tex.slices[0].imgSrc);
+                    if (tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.normalImageElement=currentImageElement;
+                    }else {
+                        self.normalImageElement=null;
+                    }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -1904,26 +1823,18 @@ ideServices
                     this.setHeight(this.fontSize*2);
                 }
 
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
 
-                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.backgroundImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
                 }
-
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
@@ -1931,18 +1842,15 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.backgroundImageElement=currentImageElement;
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
-
-                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-
+                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.backgroundImageElement=currentImageElement;
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -2079,23 +1987,16 @@ ideServices
                     this.setHeight(this.fontSize*1.5);
                 }
 
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = (function () {
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
-
-                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.backgroundImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    this.backgroundImageElement=new Image();
+                    this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    this.backgroundImageElement.onload = (function () {
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.backgroundImageElement=null;
                 }
 
                 this.on('changeTex', function (arg) {
@@ -2104,16 +2005,15 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.backgroundImageElement=currentImageElement;
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
-                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[0].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.backgroundImageElement=currentImageElement;
+                    }else {
+                        self.backgroundImageElement=null;
+                    }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -2300,20 +2200,17 @@ ideServices
                 self.normalImageElements=[];
                 _.forEach(level.texList, function (_tex) {
                     self.normalColors.push(_tex.slices[0].color);
-                    // if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
-                    //     var normalImageElement=new Image();
-                    //     normalImageElement.src=level.normalImg;
-                    //     normalImageElement.onload = (function () {
-                    //
-                    //     }).bind(this);
-                    //     self.normalImageElements.push(normalImageElement);
-                    // }else {
-                    //     self.normalImageElements.push(null);
-                    //
-                    // }
+                    if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
+                        var normalImageElement=new Image();
+                        normalImageElement.src=_tex.slices[0].imgSrc;
+                        normalImageElement.onload = (function () {
 
-                    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
+                        }).bind(this);
+                        self.normalImageElements.push(normalImageElement);
+                    }else {
+                        self.normalImageElements.push(null);
 
+                    }
                 });
 
                 this.on('changeArrange', function (arg) {
@@ -2342,19 +2239,17 @@ ideServices
                     //console.log(level.texList);
                     _.forEach(level.texList, function (_tex) {
                         self.normalColors.push(_tex.slices[0].color);
-                        // if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
-                        //     var normalImageElement=new Image();
-                        //     normalImageElement.src=_tex.slices[0].imgSrc;
-                        //     normalImageElement.onload = (function () {
-                        //
-                        //     }).bind(this);
-                        //     self.normalImageElements.push(normalImageElement);
-                        // }else {
-                        //     self.normalImageElements.push(null);
-                        //
-                        // }
+                        if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
+                            var normalImageElement=new Image();
+                            normalImageElement.src=_tex.slices[0].imgSrc;
+                            normalImageElement.onload = (function () {
 
-                        self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
+                            }).bind(this);
+                            self.normalImageElements.push(normalImageElement);
+                        }else {
+                            self.normalImageElements.push(null);
+
+                        }
                     });
 
                     var subLayerNode=CanvasService.getSubLayerNode();
@@ -2660,24 +2555,17 @@ ideServices
                 this.currentColor=tex.slices[tex.currentSliceIdx].color;
 
                 //如果没有url,element置为空
-                // if (tex.slices[tex.currentSliceIdx].imgSrc!=''){
-                //     this.currentImageElement=new Image();
-                //     this.currentImageElement.src=tex.slices[tex.currentSliceIdx].imgSrc;
-                //     this.currentImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.currentImageElement=null;
-                // }
+                if (tex.slices[tex.currentSliceIdx].imgSrc!=''){
+                    this.currentImageElement=new Image();
+                    this.currentImageElement.src=tex.slices[tex.currentSliceIdx].imgSrc;
+                    this.currentImageElement.onload = (function () {
 
-                this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
-                if (this.currentImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }).bind(this);
+                }else {
+                    this.currentImageElement=null;
                 }
 
 
@@ -2689,17 +2577,15 @@ ideServices
 
                     var tex=level.texList[0];
                     self.currentColor=tex.slices[tex.currentSliceIdx].color;
-                    // if (tex.slices[tex.currentSliceIdx].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[tex.currentSliceIdx].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.currentImageElement=currentImageElement;
-                    // }else {
-                    //     self.currentImageElement=null;
-                    // }
-
-                    self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                    if (tex.slices[tex.currentSliceIdx].imgSrc!='') {
+                        var currentImageElement=new Image();
+                        currentImageElement.src=tex.slices[tex.currentSliceIdx].imgSrc;
+                        currentImageElement.onload = (function () {
+                        }).bind(this);
+                        self.currentImageElement=currentImageElement;
+                    }else {
+                        self.currentImageElement=null;
+                    }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -2951,12 +2837,6 @@ ideServices
         };
 
         //get project copy to
-
-        this.getProjectCopyTo = function (scope, scb) {
-            scope.project = _.cloneDeep(project);
-            scb && scb();
-        };
-
 
         /**
          * 获得当前Page
@@ -4553,6 +4433,7 @@ ideServices
 
             if (currentPage.mode==0&&editInSamePage&&!forceReload){
                 _self.OnPageClicked(pageIndex,null,skipClean);
+
                 pageNode.deactivateAll();
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
@@ -4563,15 +4444,14 @@ ideServices
             }else if (currentPage.mode==1){
                 _backToPage(currentPage, function () {
                     _self.OnPageClicked(pageIndex,null,skipClean);
-                    pageNode.deactivateAll();
 
+                    pageNode.deactivateAll();
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-
                     currentPage.mode=0;
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                    _successCallback && _successCallback();
 
+                    _successCallback && _successCallback();
                 });
             }else{
                 pageNode.setBackgroundImage(null, function () {
@@ -5365,14 +5245,11 @@ ideServices
         this.UpdateCurrentThumb = function (_callback) {
             var pageNode = CanvasService.getPageNode();
             var currentPage=_self.getCurrentPage();
-            // $timeout(function () {
-            //
-            //     currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-            //     _callback && _callback();
-            // })
+            $timeout(function () {
 
-            currentPage.url = pageNode.toDataURL({format: 'jpeg', quality: '0.2'});
-            _callback && _callback();
+                currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                _callback && _callback();
+            })
         };
 
         this.updateCurrentThumbInPage = function () {
@@ -6835,7 +6712,8 @@ ideServices
          * @param _successCallback
          * @private
          */
-        var _leaveFromSubLayer = function (currentSubLayer, _successCallback) {
+        var _leaveFromSubLayer= function (_subLayer,_successCallback) {
+            var currentSubLayer=_subLayer;
             if (!currentSubLayer){
                 console.warn('找不到SubLayer');
                 return;
@@ -6849,28 +6727,10 @@ ideServices
 
             currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
 
-
-            var pageNodeObjs = pageNode.getObjects();
-            var totalNum = pageNodeObjs.length;
-            if (totalNum > 0) {
-                var cb = function () {
-                    totalNum -= 1;
-                    if (totalNum <= 0) {
-                        _successCallback && _successCallback();
-
-                    }
-                }.bind(this);
-                _.forEach(pageNodeObjs, function (_fabLayer) {
-                    _fabLayer.fire('OnRenderUrl', cb);
-
-                }.bind(this));
-            } else {
-                _successCallback && _successCallback();
-            }
-
-
-
-
+            _.forEach(pageNode.getObjects(), function (_fabLayer) {
+                _fabLayer.fire('OnRenderUrl')
+            });
+            _successCallback&&_successCallback();
 
 
         }
