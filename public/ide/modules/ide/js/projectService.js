@@ -125,8 +125,8 @@ ideServices
                         this.renderUrlInPage(self);
                     }
                 });
-                this.on('OnRenderUrl', function () {
-                    this.renderUrlInPage(self);
+                this.on('OnRenderUrl', function (cb) {
+                    this.renderUrlInPage(self, cb);
                 });
             },
             toObject: function () {
@@ -220,29 +220,39 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
-        fabric.MyLayer.prototype.renderUrlInPage= function (self) {
+        fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
 
 
             var currentLayer=getLevelById(self.id);
             var backgroundImg = new Image();
 
-            backgroundImg.src = _.cloneDeep(currentLayer.showSubLayer.url);
+
+            backgroundImg.onload = function () {
+                self.backgroundImg.element = backgroundImg;
+
+                self.backgroundImg.width = self.width;
+                self.backgroundImg.height = self.height;
+                self.backgroundImg.left = -self.width / 2;
+                self.backgroundImg.top = -self.height / 2;
 
 
-            backgroundImg.onload = (function () {}).bind(self);
+                self.initPosition.left = _.cloneDeep(self.getLeft());
+                self.initPosition.top = _.cloneDeep(self.getTop());
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
+                cb && cb();
+            }.bind(self);
 
-            self.backgroundImg.element=backgroundImg;
+            backgroundImg.onerror = function (err) {
+                cb && cb(err);
+            }.bind(self);
 
-            self.backgroundImg.width=self.width;
-            self.backgroundImg.height=self.height;
-            self.backgroundImg.left=-self.width/2;
-            self.backgroundImg.top=-self.height/2;
+            // while(!renderFlag){
+            //
+            // }
+            backgroundImg.src = currentLayer.showSubLayer.url;
 
 
-            self.initPosition.left = _.cloneDeep(self.getLeft());
-            self.initPosition.top = _.cloneDeep(self.getTop());
-            var pageNode=CanvasService.getPageNode();
-            pageNode.renderAll();
         };
         fabric.MyLayer.prototype.toObject = (function (toObject) {
             return function () {
@@ -4534,7 +4544,6 @@ ideServices
 
             if (currentPage.mode==0&&editInSamePage&&!forceReload){
                 _self.OnPageClicked(pageIndex,null,skipClean);
-
                 pageNode.deactivateAll();
                 pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
@@ -4545,14 +4554,15 @@ ideServices
             }else if (currentPage.mode==1){
                 _backToPage(currentPage, function () {
                     _self.OnPageClicked(pageIndex,null,skipClean);
-
                     pageNode.deactivateAll();
+
                     pageNode.renderAll();
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+
                     currentPage.mode=0;
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-
                     _successCallback && _successCallback();
+
                 });
             }else{
                 pageNode.setBackgroundImage(null, function () {
@@ -5346,11 +5356,14 @@ ideServices
         this.UpdateCurrentThumb = function (_callback) {
             var pageNode = CanvasService.getPageNode();
             var currentPage=_self.getCurrentPage();
-            $timeout(function () {
+            // $timeout(function () {
+            //
+            //     currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+            //     _callback && _callback();
+            // })
 
-                currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                _callback && _callback();
-            })
+            currentPage.url = pageNode.toDataURL({format: 'jpeg', quality: '0.2'});
+            _callback && _callback();
         };
 
         this.updateCurrentThumbInPage = function () {
@@ -6813,8 +6826,7 @@ ideServices
          * @param _successCallback
          * @private
          */
-        var _leaveFromSubLayer= function (_subLayer,_successCallback) {
-            var currentSubLayer=_subLayer;
+        var _leaveFromSubLayer = function (currentSubLayer, _successCallback) {
             if (!currentSubLayer){
                 console.warn('找不到SubLayer');
                 return;
@@ -6828,10 +6840,28 @@ ideServices
 
             currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
 
-            _.forEach(pageNode.getObjects(), function (_fabLayer) {
-                _fabLayer.fire('OnRenderUrl')
-            });
-            _successCallback&&_successCallback();
+
+            var pageNodeObjs = pageNode.getObjects();
+            var totalNum = pageNodeObjs.length;
+            if (totalNum > 0) {
+                var cb = function () {
+                    totalNum -= 1;
+                    if (totalNum <= 0) {
+                        _successCallback && _successCallback();
+
+                    }
+                }.bind(this);
+                _.forEach(pageNodeObjs, function (_fabLayer) {
+                    _fabLayer.fire('OnRenderUrl', cb);
+
+                }.bind(this));
+            } else {
+                _successCallback && _successCallback();
+            }
+
+
+
+
 
 
         }
