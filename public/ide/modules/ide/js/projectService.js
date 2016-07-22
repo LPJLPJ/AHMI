@@ -160,17 +160,19 @@ ideServices
                         this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
 
                     }
-                    
-                    ctx.drawImage(this.backgroundImg.element,
-                        0,
-                        0,
-                        this.backgroundImg.width,
-                        this.backgroundImg.height,
-                        this.backgroundImg.left,
-                        this.backgroundImg.top,
+                    if (this.backgroundImg.element) {
+                        ctx.drawImage(this.backgroundImg.element,
+                            0,
+                            0,
+                            this.backgroundImg.width,
+                            this.backgroundImg.height,
+                            this.backgroundImg.left,
+                            this.backgroundImg.top,
                             this.backgroundImg.width,
                             this.backgroundImg.height);
-                    
+                    }
+
+
 
                 } catch (err) {
                     console.log('错误描述',err);
