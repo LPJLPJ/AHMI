@@ -12,5 +12,4 @@
         body.appendChild(versionTag);
     }
 
-    
 })();
