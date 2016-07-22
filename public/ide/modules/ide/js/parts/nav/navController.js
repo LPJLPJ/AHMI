@@ -202,7 +202,7 @@
                     curScope.project.customTags = TagService.getAllCustomTags();
                     curScope.project.timerTags = TagService.getAllTimerTags();
                     curScope.project.timers = TimerService.getTimerNum();
-                    
+
                     var currentProject = curScope.project;
                     // console.log(currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
@@ -554,7 +554,7 @@
         /**
          * 生成符合格式的数据结构
          */
-        
+
         function generateDataFile(format){
             generateData(format);
             if (window.local){
@@ -602,7 +602,7 @@
             }
 
         }
-        
+
         function generateData(format){
             var temp = {};
             ProjectService.getProjectCopyTo(temp);
