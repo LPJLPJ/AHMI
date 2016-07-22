@@ -244,6 +244,7 @@ ideServices
             }.bind(self);
 
             backgroundImg.onerror = function (err) {
+                backgroundImg = null;
                 cb && cb(err);
             }.bind(self);
 
