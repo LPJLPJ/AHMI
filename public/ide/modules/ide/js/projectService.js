@@ -163,6 +163,10 @@ ideServices
 
 
                     ctx.drawImage(this.backgroundImg.element,
+                        0,
+                        0,
+                        this.backgroundImg.widht,
+                        this.backgroundImg.height,
                         this.backgroundImg.left,
                         this.backgroundImg.top,
 
