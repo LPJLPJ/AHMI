@@ -2951,7 +2951,7 @@ ideServices
         };
 
         //get project copy to
-
+        
         this.getProjectCopyTo = function (scope, scb) {
             scope.project = _.cloneDeep(project);
             scb && scb();
