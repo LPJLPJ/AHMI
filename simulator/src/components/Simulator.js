@@ -1202,7 +1202,12 @@ module.exports = React.createClass({
         tempCtx.restore()
     },
     generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
-        var tempNumValue = String(curValue)
+        var negative = false;
+        if(curValue<0){
+            negative = true;
+        }
+        var tempNumValue = Math.abs(curValue);
+        tempNumValue = tempNumValue.toString();
         //console.log(tempNumValue);
         //配置小数位数
         if (parseInt(decimalCount) > 0) {
@@ -1233,16 +1238,17 @@ module.exports = React.createClass({
         }
 
         //配置正负号
-        if (symbolMode == '1') {
-            var value = parseFloat(tempNumValue)
-            var symbol = ''
-            if (value > 0) {
-                symbol = '+'
-            } else if (value < 0) {
-                symbol = ''
+        if(!negative){
+            var symbol='';
+            if(symbolMode=='1'){
+                symbol ='+';
             }
-            tempNumValue = symbol + tempNumValue
+            tempNumValue = symbol + tempNumValue;
+        }else if(negative){
+            symbol = '-';
+            tempNumValue = symbol + tempNumValue;
         }
+
         return tempNumValue
     },
     drawDigit: function (digit, widget, originX, originY, width, height) {

@@ -72,7 +72,7 @@
                     play:play,
                     openPanel:openPanel,
                     closeSimulator:closeSimulator,
-                    saveProject:saveProject,
+                    saveProject: saveProject.bind(null, null, true),
                     showLeft:showLeft,
                     showRight:showRight,
                     showBottom:showBottom
@@ -85,18 +85,25 @@
 
         function initProject(){
             ProjectService.getProjectTo($scope);
-            $scope.project.resourceList = ResourceService.getAllResource();
-
-            $scope.project.customTags = TagService.getAllCustomTags();
-            $scope.project.timerTags = TagService.getAllTimerTags();
-            $scope.project.timers = TimerService.getTimerNum();
-
             $scope.$on('NavStatusChanged', onNavStatusChanged);
 
             // setInterval(function () {
             //     saveProject();
             // }.bind(this),5*60*1000)
 
+        }
+
+        //spinner
+
+        function showSpinner() {
+            if (window.spinner) {
+                window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                window.spinner.show();
+            }
+        }
+
+        function hideSpinner() {
+            window.spinner && window.spinner.hide();
         }
 
 
@@ -173,11 +180,14 @@
         }
 
 
-        function saveProject(_saveCb) {
+        function saveProject(_saveCb, useSpinner) {
             // ProjectService.getProjectTo($scope);
 
+            if (useSpinner) {
+                showSpinner();
+            }
             //edit by lixiang
-            $scope.project.timers = TimerService.getTimerNum();
+
 
             var projectClone=ProjectService.SaveCurrentOperate();
 
@@ -185,7 +195,15 @@
             ProjectService.changeCurrentPageIndex(0,
 
                 function () {
-                    var currentProject= _.cloneDeep($scope.project);
+                    var curScope = {};
+                    ProjectService.getProjectCopyTo(curScope);
+                    curScope.project.resourceList = ResourceService.getAllResource();
+
+                    curScope.project.customTags = TagService.getAllCustomTags();
+                    curScope.project.timerTags = TagService.getAllTimerTags();
+                    curScope.project.timers = TimerService.getTimerNum();
+                    
+                    var currentProject = curScope.project;
                     // console.log(currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
                     scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
@@ -219,30 +237,28 @@
                                     fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
                                     //success
                                     toastr.info('保存成功');
-                                    $timeout(function () {
-
-                                        ProjectService.LoadCurrentOperate(projectClone, function () {
-                                            $scope.$emit('UpdateProject');
-                                            _saveCb && _saveCb();
-                                        });
-
-                                    })
+                                    ProjectService.LoadCurrentOperate(projectClone, function () {
+                                        $scope.$emit('UpdateProject');
+                                        _saveCb && _saveCb();
+                                    });
                                 } catch (e) {
                                     //fail
                                     toastr.warning('保存失败');
-                                    $timeout(function () {
-                                        ProjectService.LoadCurrentOperate(projectClone, function () {
-                                            $scope.$emit('UpdateProject');
-                                        });
-                                    })
+                                    ProjectService.LoadCurrentOperate(projectClone, function () {
+                                        $scope.$emit('UpdateProject');
+                                    });
 
                                 }
+                                if (useSpinner) {
+                                    hideSpinner();
+                                }
+
 
 
                             });
                         } else {
                             uploadThumb(scaledThumb, function () {
-                                // console.log(currentProject)
+                                console.log(currentProject)
                                 $http({
                                     method: 'PUT',
                                     url: '/project/' + currentProject.projectId + '/save',
@@ -255,33 +271,26 @@
                                     .success(function (t) {
                                         if (t == 'ok') {
                                             toastr.info('保存成功');
-                                            $timeout(function () {
-
-                                                ProjectService.LoadCurrentOperate(projectClone, function () {
-                                                    $scope.$emit('UpdateProject');
-                                                    _saveCb && _saveCb();
-                                                });
-
-                                            })
                                         } else {
                                             toastr.warning('保存失败')
-                                            $timeout(function () {
-
-                                                ProjectService.LoadCurrentOperate(projectClone, function () {
-                                                    $scope.$emit('UpdateProject');
-                                                });
-
-                                            })
                                         }
+                                        if (useSpinner) {
+                                            hideSpinner();
+                                        }
+                                        ProjectService.LoadCurrentOperate(projectClone, function () {
+                                            $scope.$emit('UpdateProject');
+                                            _saveCb && _saveCb();
+                                        });
                                     })
                                     .error(function (err) {
                                         console.log(err);
                                         toastr.warning('保存失败');
-                                        $timeout(function () {
-                                            ProjectService.LoadCurrentOperate(projectClone, function () {
-                                                $scope.$emit('UpdateProject');
-                                            });
-                                        })
+                                        if (useSpinner) {
+                                            hideSpinner();
+                                        }
+                                        ProjectService.LoadCurrentOperate(projectClone, function () {
+                                            $scope.$emit('UpdateProject');
+                                        });
 
                                     });
                             });
@@ -562,11 +571,7 @@
                 });
             }else{
                 saveProject(function () {
-                    if (window.spinner){
-                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                        window.spinner.show();
-                    }
-
+                    showSpinner();
                     $http({
                         method:'POST',
                         url:'/project/'+$scope.project.projectId+'/generate',
@@ -575,7 +580,7 @@
                         }
                     })
                         .success(function (data,status,xhr) {
-                            window.spinner&&window.spinner.hide();
+                            hideSpinner();
                             if (data == 'ok'){
                                 toastr.info('生成成功');
                                 //download
@@ -588,7 +593,7 @@
 
                         })
                         .error(function (err,status,xhr) {
-                            window.spinner&&window.spinner.hide();
+                            hideSpinner();
                             console.log(err);
                             toastr.info('生成失败')
 
@@ -600,7 +605,7 @@
         
         function generateData(format){
             var temp = {};
-            ProjectService.getProjectTo(temp);
+            ProjectService.getProjectCopyTo(temp);
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
@@ -608,16 +613,10 @@
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
             temp.project.tagList = TagService.getAllTags();
             temp.project.timers = TimerService.getTimerNum();
-            window.projectData = _.cloneDeep(temp.project);
+            window.projectData = temp.project;
 
-            //$http.post('http://localhost:3000/api/angularproject',$scope.project).success(function (data) {
-            //    console.log('success');
-            //    console.log(data);
-            //}).error(function (err) {
-            //    console.log('error');
-            //    console.log(err);
-            //});
         }
+
 
         function play(){
             generateData()

@@ -3,14 +3,44 @@
  */
 ideServices
     .service('ResourceService', function () {
-
-
+        var blankImg = new Image();
+        blankImg.src = '';
+        var globalResources = [{
+            id: 'blank',
+            src: 'blank',
+            name: 'blank',
+            content: blankImg,
+            complete: true
+        }];
         var  files= [];
         var size = 0;
         //var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
         var resourceUrl = '';
         var resourceNWUrl = '';
         var projectUrl = '';
+
+        this.getGlobalResources = function () {
+            return globalResources;
+        };
+
+        this.setGlobalResources = function (glres) {
+            globalResources = glres;
+        };
+
+
+        this.getResourceFromCache = function (key, type) {
+            type = type || 'src';
+            for (var i = 0; i < globalResources.length; i++) {
+                if (globalResources[i][type] == key) {
+                    if (globalResources[i].complete) {
+                        return globalResources[i].content;
+                    } else {
+                        return null;
+                    }
+                }
+            }
+            return null;
+        }
         this.setResourceNWUrl = function (_url) {
             resourceNWUrl = _url;
         };
@@ -90,13 +120,42 @@ ideServices
             }
         };
 
+
+        //cache file to targetarray
+        this.cacheFile = function (file, targetArray, scb, fcb) {
+
+            var resourceObj = {};
+            resourceObj.id = file.id;
+            resourceObj.type = file.type;
+            resourceObj.name = file.name;
+            resourceObj.src = file.src;
+            if (file.type.match(/image/)) {
+                var img = new Image();
+                resourceObj.content = img;
+                img.onload = function (e) {
+                    resourceObj.complete = true;
+                    scb && scb(e, resourceObj);
+                };
+                img.onerror = function (err) {
+                    resourceObj.complete = false;
+                    fcb && fcb(err, resourceObj);
+                };
+                img.src = file.src;
+                globalResources.push(resourceObj);
+            }
+
+        };
+
+        this.cacheFileToGlobalResources = function (file, scb, fcb) {
+            this.cacheFile(file, globalResources, scb, fcb);
+        };
+
         this.appendFileUnique = function (file, noDuplication, cb) {
             if (noDuplication(file,files)) {
                 files.push(file);
+                cb && cb();
             }
-            if (cb) {
-                cb();
-            }
+
             console.log(files)
 
         };
@@ -180,17 +239,19 @@ ideServices
     }])
     .factory('idService', [function () {
         var generateIdFromNameAndDate = function (name, date) {
-            var str = '';
+            var str = 0;
             for (var i = 0; i < name.length; i++) {
-                str += parseInt(name.charCodeAt(0), 10).toString(16);
+                str += parseInt(name.charCodeAt(0), 10);
             }
-            return str + String(date);
+            str = (str + Number(date)).toString(16);
+            return str;
         };
         var generateIdFromName = function (name) {
-            var str = '';
+            var str = 0;
             for (var i = 0; i < name.length; i++) {
-                str += parseInt(name.charCodeAt(i), 10).toString(16);
+                str += parseInt(name.charCodeAt(0), 10);
             }
+            str = (str + Number(date)).toString(16);
             return str;
         };
         return {
@@ -367,12 +428,16 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                                 }
                             }
                             return true;
-                        });
-                        //删除scope.uploadingArray中该项
-                        deleteUploadingItem(translatedFile);
-                        //update
-                        //scope.component.top.files = ResourceService.getAllImages();
-                        scope.$emit('ResourceUpdate');
+                        }, function () {
+                            ResourceService.cacheFileToGlobalResources(translatedFile, function () {
+                                //删除scope.uploadingArray中该项
+                                deleteUploadingItem(translatedFile);
+                                //update
+                                //scope.component.top.files = ResourceService.getAllImages();
+                                scope.$emit('ResourceUpdate');
+                            }.bind(this));
+                        }.bind(this));
+
                     }
                 }
 

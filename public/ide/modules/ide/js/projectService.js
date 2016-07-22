@@ -125,8 +125,8 @@ ideServices
                         this.renderUrlInPage(self);
                     }
                 });
-                this.on('OnRenderUrl', function () {
-                    this.renderUrlInPage(self);
+                this.on('OnRenderUrl', function (cb) {
+                    this.renderUrlInPage(self, cb);
                 });
             },
             toObject: function () {
@@ -161,7 +161,6 @@ ideServices
 
                     }
 
-
                     ctx.drawImage(this.backgroundImg.element,
                         this.backgroundImg.left,
                         this.backgroundImg.top,
@@ -172,7 +171,7 @@ ideServices
                 }
                 catch(err){
                     console.log('错误描述',err);
-                    toastr.warning('渲染Layer出错');
+                    //toastr.warning('渲染Layer出错');
                 }
 
             }
@@ -989,6 +988,17 @@ ideServices
                         ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
                         ctx.restore();
                     }
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
                 }
                 catch(err){
                     console.log('错误描述',err);
@@ -2089,8 +2099,12 @@ ideServices
                         offCtx.textAlign = this.align;
 
                         offCtx.textBaseline='middle';//设置数字垂直居中
-
-                        var tempNumValue= this.numValue.toString();
+                        var negative=false;
+                        if(this.numValue<0){
+                            negative=true;
+                        }
+                        var tempNumValue=Math.abs(this.numValue);
+                        tempNumValue= tempNumValue.toString();
                         var i=0;
                         //配置小数位数
                         if(this.decimalCount){
@@ -2113,21 +2127,22 @@ ideServices
                         if(this.frontZeroMode=='1'){
                             //console.log('minus',this.numOfDigits-tempNumValue.length);
                             var minus=this.numOfDigits-tempNumValue.length;
-                            console.log('minus',minus);
+                            //console.log('minus',minus);
                             if(this.decimalCount){
                                 for(i=0;i<minus+1;i++){
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }else{
                                 for(i=0;i<minus;i++){
-                                    //console.log(i);
                                     tempNumValue='0'+tempNumValue;
                                 }
                             }
                         }
                         //配置正负号
-                        if((this.symbolMode=='1')&&(this.numValue>=0)){
+                        if((this.symbolMode=='1')&&(!negative)){
                             tempNumValue='+'+tempNumValue;
+                        }else if(negative){
+                            tempNumValue='-'+tempNumValue;
                         }
                         ctx.scale(1/this.scaleX,1/this.scaleY);
                         //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
