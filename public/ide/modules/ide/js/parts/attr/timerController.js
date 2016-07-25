@@ -11,6 +11,12 @@ ide.controller('TimerCtrl',function (TimerService,TagService,$scope,$timeout) {
         if(ev.keyCode!==13){
             return;
         }
+        var initNum = TimerService.getTimerNum();
+        if($scope.num>10){
+            toastr.warning('超出范围');
+            $scope.num=initNum;
+            return;
+        }
         TimerService.setTimerNum($scope.num);
         $scope.setNum();
     };

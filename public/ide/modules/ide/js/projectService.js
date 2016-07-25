@@ -1852,6 +1852,17 @@ ideServices
                         ctx.fillText(this.text,0,0);
                         ctx.restore();
                     }
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
                 }
                 catch(err){
                     console.log('错误描述',err);

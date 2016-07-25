@@ -4,7 +4,7 @@ ideServices
             {
                 text:'标题',
                 fontName: '标题',
-                fontFamily:'Arial',
+                fontFamily:'宋体',
                 fontSize:25,
                 fontColor:"#000000",
                 fontBold:"bold",
@@ -17,7 +17,7 @@ ideServices
             {
                 text:'正文',
                 fontName: '正文',
-                fontFamily:'Arial',
+                fontFamily:'宋体',
                 fontSize:15,
                 fontColor:'#000000',
                 fontBold:'100',

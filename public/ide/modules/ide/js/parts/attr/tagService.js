@@ -19,6 +19,10 @@ ideServices
             return _.cloneDeep(defaultTag);
         }
         this.setUniqueTags= function (tag,noDuplication,cb) {
+            if((tags.length+timerTags.length)>255){
+                toastr.warning('超出tag数量限制');
+                return;
+            }
 
             if(noDuplication(tag,tags)){
 

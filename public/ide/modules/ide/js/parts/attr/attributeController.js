@@ -214,6 +214,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
 		ProjectService.getProjectTo($scope);
 
+        //edit by lixiang
+        $scope.maxWidth = $scope.project.initSize.width||1280;
+        $scope.maxHeight = $scope.project.initSize.height||1080;
+
 		onAttributeChanged();
 		updateImageList();
 		$scope.$on('ResourceChanged', function () {
@@ -445,6 +449,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
+            if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
+                toastr.warning('超出画布范围');
+                restore();
+                return;
+            }
 			//判断是否有变化
 			if ($scope.component.object.level.info.left==initObject.level.info.left){
 				toastr.warning('未改变值'+$scope.component.object.level.info.left);
@@ -470,6 +479,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
+            if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
+                toastr.warning('超出画布范围');
+                restore();
+                return;
+            }
 			//判断是否有变化
 			if ($scope.component.object.level.info.top==initObject.level.info.top){
 				return;
@@ -488,12 +502,17 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 	function enterWidth(e){
 		if (e.keyCode==13){
 			//判断输入是否合法
-			var integer=parseInt($scope.component.object.level.info.width);
+			var integer=Number($scope.component.object.level.info.width);
 			if (!_.isInteger(integer)||integer<1){
 				toastr.warning('输入不合法');
 				restore();
 				return;
 			}
+            if($scope.component.object.level.info.width<0||$scope.component.object.level.info.width>$scope.maxWidth){
+                toastr.warning('超出画布范围');
+                restore();
+                return;
+            }
 			//判断是否有变化
 			if ($scope.component.object.level.info.width==initObject.level.info.width){
 				console.log('没有变化');
@@ -518,6 +537,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
+            if($scope.component.object.level.info.height<0||$scope.component.object.level.info.height>$scope.maxHeight){
+                toastr.warning('超出画布范围');
+                restore();
+                return;
+            }
 			//判断是否有变化
 			if ($scope.component.object.level.info.height==initObject.level.info.height){
 				console.log('没有变化');
@@ -747,6 +771,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
     function changeButtonFontSize(e){
         if(e.keyCode==13){
+            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>150){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
             if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
                 return;
             }
@@ -1392,6 +1421,16 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
     function changeFontSize(e){
         if(e.keyCode==13){
+            if(!_.isInteger(Number($scope.component.object.level.info.fontSize))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>150){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
             if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
                 return;
             }
@@ -1399,6 +1438,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 fontSize:$scope.component.object.level.info.fontSize
             };
 
+            toastr.info('修改成功');
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
@@ -1573,13 +1613,18 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
     function changeNumSize(e){
         if(e.keyCode==13){
+            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>150){
+                toastr.warning('超出最大值');
+                restore();
+                return;
+            }
             if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
                 return;
             }
+
             var option = {
                 fontSize:$scope.component.object.level.info.fontSize
             };
-
             var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
