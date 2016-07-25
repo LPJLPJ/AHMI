@@ -161,17 +161,18 @@ ideServices
 
                     }
 
-                    ctx.drawImage(this.backgroundImg.element,
-                        this.backgroundImg.left,
-                        this.backgroundImg.top,
+                    if(this.backgroundImg.element){
+                        ctx.drawImage(this.backgroundImg.element,
+                            this.backgroundImg.left,
+                            this.backgroundImg.top,
 
-                        this.backgroundImg.width,
-                        this.backgroundImg.height);
-
+                            this.backgroundImg.width,
+                            this.backgroundImg.height);
+                    }
                 }
                 catch (err) {
                     console.log('错误描述',err);
-                    //toastr.warning('渲染Layer出错');
+                    toastr.warning('渲染Layer出错');
                 }
 
             }
