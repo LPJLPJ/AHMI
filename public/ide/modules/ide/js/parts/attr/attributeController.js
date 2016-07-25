@@ -535,7 +535,19 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 	}
 	function enterColor(op) {
         var oldOperate=null,
-            option=null;
+            option=null,
+            colorValue,
+            i;
+        colorValue = op.value.slice(5,op.value.length-1);
+        colorValue = colorValue.split(",");
+        for(i=0;i<colorValue.length;i++){
+            if(parseInt(colorValue[i])>255|| !_.isInteger(Number(colorValue[i]))){
+                toastr.warning('格式错误');
+                restore();
+                return;
+            }
+        }
+
 		if (op.name=='component.object.level.backgroundColor'){
 
 			if (initObject.level.backgroundColor==op.value){
@@ -1066,8 +1078,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxValue<(-Math.pow(2,31))){
-                toastr.warning('低于最小值');
+            if($scope.component.object.level.info.minValue<(-Math.pow(10,10))){
+                toastr.warning('小于最小临界值');
                 restore();
                 return;
             }
@@ -1135,8 +1147,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxValue>Math.pow(2,31)){
-                toastr.warning('超过最大值');
+            if($scope.component.object.level.info.maxValue>Math.pow(10,10)){
+                toastr.warning('超过最大临界值');
                 restore();
                 return;
             }
@@ -1244,6 +1256,12 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
+            if($scope.component.object.level.info.lowAlarmValue<(-Math.pow(10,10))){
+                toastr.warning('小于最小临界值');
+                restore();
+                return;
+            }
+
             //判断是否有变化
             if ($scope.component.object.level.info.lowAlarmValue==initObject.level.info.lowAlarmValue){
                 return;
@@ -1265,6 +1283,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             //判断输入是否合法
             if (!_.isInteger(parseInt($scope.component.object.level.info.highAlarmValue))){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.highAlarmValue>Math.pow(10,10)){
+                toastr.warning('大于最大临界值');
                 restore();
                 return;
             }

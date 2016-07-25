@@ -596,7 +596,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title">背景颜色</span>
 
-                            <input class='dengPage-input dengPage-color-input form-control' colorpicker="rgb"
+                            <input class='dengPage-input dengPage-color-input form-control' colorpicker="rgba"
                                    type="text" ng-model="component.object.level.backgroundColor"/>
 
 
@@ -1915,7 +1915,7 @@
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
-                                               ng-model="slice.color" ng-disabled="slice.name=='光标纹理'"/></td>
+                                               ng-model="slice.color" ng-disabled="slice.name=='光标纹理'||slice.name=='开关图片'"/></td>
                                     <td>
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
