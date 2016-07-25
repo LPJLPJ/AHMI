@@ -535,7 +535,19 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 	}
 	function enterColor(op) {
         var oldOperate=null,
-            option=null;
+            option=null,
+            colorValue,
+            i;
+        colorValue = op.value.slice(5,op.value.length-1);
+        colorValue = colorValue.split(",");
+        for(i=0;i<colorValue.length;i++){
+            if(parseInt(colorValue[i])>255|| !_.isInteger(Number(colorValue[i]))){
+                toastr.warning('格式错误');
+                restore();
+                return;
+            }
+        }
+
 		if (op.name=='component.object.level.backgroundColor'){
 
 			if (initObject.level.backgroundColor==op.value){
@@ -925,8 +937,14 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterDashboardOffsetValue(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.offsetValue))){
+            if (!_.isInteger(Number($scope.component.object.level.info.offsetValue))){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.offsetValue<$scope.component.object.level.info.minAngle||
+                $scope.component.object.level.info.offsetValue>$scope.component.object.level.info.maxAngle){
+                toastr.warning('超出最小最大角度范围');
                 restore();
                 return;
             }
@@ -987,8 +1005,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterPointerLength(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.pointerLength))){
+            if (!_.isInteger(Number($scope.component.object.level.info.pointerLength))){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.pointerLength<0||$scope.component.object.level.info.pointerLength>800){
+                toastr.warning('指针长度超出范围');
                 restore();
                 return;
             }
@@ -997,14 +1020,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 return;
             }
 
-            //判断是否在范围内
-            //if ($scope.component.object.level.info.value<$scope.component.object.level.info.minValue
-            //    ||$scope.component.object.level.info.value>$scope.component.object.level.info.maxValue){
-            //    toastr.warning('超出范围');
-            //
-            //    restore();
-            //    return;
-            //}
             var option={
                 pointerLength:$scope.component.object.level.info.pointerLength
             };
@@ -1066,8 +1081,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxValue<(-Math.pow(2,31))){
-                toastr.warning('低于最小值');
+            if($scope.component.object.level.info.minValue<(-Math.pow(10,10))){
+                toastr.warning('小于最小临界值');
                 restore();
                 return;
             }
@@ -1135,8 +1150,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxValue>Math.pow(2,31)){
-                toastr.warning('超过最大值');
+            if($scope.component.object.level.info.maxValue>Math.pow(10,10)){
+                toastr.warning('超过最大临界值');
                 restore();
                 return;
             }
@@ -1188,8 +1203,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterMinAngle(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.minAngle))){
+            if (!_.isInteger(Number($scope.component.object.level.info.minAngle))){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.minAngle<-360){
+                toastr.warning('最小角度不能小于负360');
                 restore();
                 return;
             }
@@ -1214,6 +1234,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             //判断输入是否合法
             if (!_.isInteger(parseInt($scope.component.object.level.info.maxAngle))){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.maxAngle>360){
+                toastr.warning('最大角度不能大于360');
                 restore();
                 return;
             }
@@ -1244,6 +1269,12 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
+            if($scope.component.object.level.info.lowAlarmValue<(-Math.pow(10,10))){
+                toastr.warning('小于最小临界值');
+                restore();
+                return;
+            }
+
             //判断是否有变化
             if ($scope.component.object.level.info.lowAlarmValue==initObject.level.info.lowAlarmValue){
                 return;
@@ -1265,6 +1296,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             //判断输入是否合法
             if (!_.isInteger(parseInt($scope.component.object.level.info.highAlarmValue))){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.highAlarmValue>Math.pow(10,10)){
+                toastr.warning('大于最大临界值');
                 restore();
                 return;
             }

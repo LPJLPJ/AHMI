@@ -1308,7 +1308,7 @@ module.exports = React.createClass({
                 this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                 //draw light strip
                 var lightStripTex = widget.texList[2].slices[0]
-                this.drawLightStrip(curX, curY, width, height, minArc + 90 + offset, curArc + 90 + offset, widget.texList[2].slices[0].imgSrc)
+                this.drawLightStrip(curX, curY, width, height, clockwise*(minArc + offset) + 90, clockwise*(curArc + offset) + 90, widget.texList[2].slices[0].imgSrc,clockwise);
                 //draw pointer
                 this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise*(curArc + offset)+arcPhase, widget.texList[1].slices[0]);
 
@@ -1523,9 +1523,14 @@ module.exports = React.createClass({
         offctx.stroke();
         offctx.restore();
     },
-    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image) {
+    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image,clockWise) {
         //clip a fan shape
         // console.log(minArc, curArc);
+        var wise = false;
+        if(clockWise==-1){
+            wise=true;
+        }
+
         if (Math.abs(curArc - minArc) > 360) {
             //no need to clip
             this.drawBg(curX, curY, width, height, image, null)
@@ -1541,7 +1546,7 @@ module.exports = React.createClass({
             offctx.rotate(Math.PI * minArc / 180)
             offctx.lineTo(0.5 * width, 0)
             offctx.restore()
-            offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, false)
+            offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
 
             offctx.lineTo(curX + 0.5 * width, curY + 0.5 * height)
 
