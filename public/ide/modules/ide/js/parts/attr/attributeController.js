@@ -1015,7 +1015,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            
+
             if ($scope.component.object.level.info.pointerLength==initObject.level.info.pointerLength){
                 return;
             }
@@ -1304,7 +1304,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            //判断是否有变化
+
             if ($scope.component.object.level.info.highAlarmValue==initObject.level.info.highAlarmValue){
                 return;
             }
