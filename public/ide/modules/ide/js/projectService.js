@@ -169,7 +169,7 @@ ideServices
                         this.backgroundImg.height);
 
                 }
-                catch(err){
+                catch (err) {
                     console.log('错误描述',err);
                     //toastr.warning('渲染Layer出错');
                 }
@@ -1047,7 +1047,7 @@ ideServices
                         ctx.restore();
                     }
                     //将图片超出canvas的部分裁剪
-                    this.clipTo=function(ctx){
+                    this.clipTo = function (ctx) {
                         ctx.save();
                         ctx.beginPath();
                         ctx.rect(-this.width / 2,
