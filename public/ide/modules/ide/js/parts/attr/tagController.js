@@ -250,7 +250,7 @@ ide.
                 case Type.MyNum:
                 case Type.MyKnob:
                 case Type.MyOscilloscope:
-                case Type.MyTextArea:
+                //case Type.MyTextArea:
                 case Type.MyImage:
                 case Type.MySwitch:
                 //case Type.MyDateTime:
