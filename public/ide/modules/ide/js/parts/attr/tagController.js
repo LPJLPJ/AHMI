@@ -253,7 +253,7 @@ ide.
                 case Type.MyTextArea:
                 case Type.MyImage:
                 case Type.MySwitch:
-                case Type.MyDateTime:
+                //case Type.MyDateTime:
                 case Type.MyRotateImg:
                 case Type.MyScriptTrigger:
                 case Type.MySlideBlock:
