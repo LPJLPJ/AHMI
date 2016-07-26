@@ -1992,6 +1992,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if($scope.component.object.level.info.initValue<$scope.component.object.level.info.minValue||
                 $scope.component.object.level.info.initValue>$scope.component.object.level.info.maxValue){
                 toastr.warning('超出最大或最小范围');
+                restore();
+                return;
             }
             var option={
               initValue:$scope.component.object.level.info.initValue
