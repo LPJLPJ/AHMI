@@ -1110,7 +1110,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.minValue<(-Math.pow(10,10))){
+            if($scope.component.object.level.info.minValue<(-Math.pow(10,9)+1)){
                 toastr.warning('小于最小临界值');
                 restore();
                 return;
@@ -1179,7 +1179,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxValue>Math.pow(10,10)){
+            if($scope.component.object.level.info.maxValue>(Math.pow(10,9)-1)){
                 toastr.warning('超过最大临界值');
                 restore();
                 return;
@@ -1298,7 +1298,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.lowAlarmValue<(-Math.pow(10,10))){
+            if($scope.component.object.level.info.lowAlarmValue<(-Math.pow(10,9)+1)){
                 toastr.warning('小于最小临界值');
                 restore();
                 return;
@@ -1328,7 +1328,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.highAlarmValue>Math.pow(10,10)){
+            if($scope.component.object.level.info.highAlarmValue>(Math.pow(10,9)-1)){
                 toastr.warning('大于最大临界值');
                 restore();
                 return;
@@ -1657,15 +1657,15 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
     function changeDecimalCount(e){
         if(e.keyCode==13){
-            console.log('enter decimalCount');
             if($scope.component.object.level.info.decimalCount==initObject.level.info.decimalCount){
                 return;
             }
-            //判断小数的位数是否小于0，或者是否大于字符数
-            if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>$scope.component.object.level.info.numOfDigits-1)){
+            //判断小数的位数是否小于0，或者是否大于字符数减numValue位数
+            if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>$scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.numValue.toString().length)){
                 toastr.warning('超出范围');
                 return;
             }
+
             var option={
                 decimalCount:$scope.component.object.level.info.decimalCount,
             }

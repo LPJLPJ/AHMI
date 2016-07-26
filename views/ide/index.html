@@ -1358,12 +1358,14 @@
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.numOfDigits"
                                    ng-keypress="component.num.changeNumOfDigits($event)"
+                                   ng-blur="component.restore()"
                                    type="number">
                         </div><div class="my-attr-item">
                             <span class="my-attr-title">小数位数</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.decimalCount"
                                    ng-keypress="component.num.changeDecimalCount($event)"
+                                   ng-blur="component.restore()"
                                    type="number">
                         </div>
 
