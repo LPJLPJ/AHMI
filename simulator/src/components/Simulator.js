@@ -415,6 +415,7 @@ module.exports = React.createClass({
         var subCanvasList = canvasData.subCanvasList || [];
         var canvasTag = this.findTagByName(canvasData.tag);
         var nextSubCanvasIdx = (canvasTag && canvasTag.value) || 0;
+        nextSubCanvasIdx = nextSubCanvasIdx >= subCanvasList.length ? subCanvasList.length-1:nextSubCanvasIdx;
         var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
         canvasData.curSubCanvasIdx = nextSubCanvasIdx;
         //handle UnLoad subcanvas
