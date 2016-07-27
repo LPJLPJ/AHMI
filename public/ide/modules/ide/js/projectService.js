@@ -1674,6 +1674,21 @@ ideServices
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
+                });
+                this.on('changeDateTimeText',function(arg){
+                    var _callback = arg.callback;
+                    if(arg.hasOwnProperty('fontFamily')){
+                        self.fontFamily = arg.fontFamily;
+                    }
+                    if(arg.hasOwnProperty('fontSize')){
+                        self.fontSize=arg.fontSize;
+                    }
+                    if(arg.hasOwnProperty('fontColor')){
+                        self.fontColor=arg.fontColor;
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
                 })
             },
             toObject: function () {
@@ -6011,6 +6026,28 @@ ideServices
                 callback:_successCallback
             };
             selectObj.target.fire('changeDateTimeModeId',arg);
+        };
+        this.ChangeAttributeDateTimeText = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var arg={
+                    level:selectObj.level,
+                    callback:_successCallback
+                }
+
+            if(_option.hasOwnProperty('fontFamily')){
+                selectObj.level.info.fontFamily=_option.fontFamily;
+                arg.fontFamily = _option.fontFamily;
+            }
+            if(_option.hasOwnProperty('fontSize')){
+                selectObj.level.info.fontSize=_option.fontSize;
+                arg.fontSize = _option.fontSize;
+            }
+            if(_option.hasOwnProperty('fontColor')){
+                selectObj.level.info.fontColor=_option.fontColor;
+                arg.fontColor = _option.fontColor;
+            }
+
+            selectObj.target.fire('changeDateTimeText',arg);
         };
 
         //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容

@@ -186,6 +186,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     {id:'1',name:'日期模式'}
                 ],
                 enterDateTimeMode:enterDateTimeMode,
+                changeDateTimeFontFamily:changeDateTimeFontFamily,
+                changeDateTimeFontSize:changeDateTimeFontSize,
             },
             //滑块
             slideBlock:{
@@ -605,6 +607,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 })
             }else if(selectObj.type==Type.MyButton){
                 ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
+            }else if(selectObj.type==Type.MyDateTime){
+                ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 })
             }
@@ -2023,6 +2029,35 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         ProjectService.ChangeAttributeDateTimeModeId(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
+    }
+    function changeDateTimeFontFamily(e){
+        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
+            return;
+        }
+        var option = {
+            fontFamily:$scope.component.object.level.info.fontFamily
+        };
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function changeDateTimeFontSize(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
+                return;
+            }
+            var option = {
+                fontSize:$scope.component.object.level.info.fontSize
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+
     }
 
     function _getRandomColor(){

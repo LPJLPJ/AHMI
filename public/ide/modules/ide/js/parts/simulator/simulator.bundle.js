@@ -20556,6 +20556,9 @@
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var dateTimeModeId = widget.info.dateTimeModeId;
+	        var fontFamily = widget.info.fontFamily;
+	        var fontSize = widget.info.fontSize;
+	        var fontColor = widget.info.fontColor;
 	        var curDate = new Date();
 	        var dateTimeString = '';
 	        if (dateTimeModeId == '0') {
@@ -20577,7 +20580,8 @@
 	        tempctx.textAlign = 'center';
 	        tempctx.textBaseline = 'middle';
 	        //font style
-	        tempctx.font = '24px arial';
+	        tempctx.fillStyle = fontColor;
+	        tempctx.font = fontSize + 'px ' + fontFamily;
 	        tempctx.fillText(dateTimeString, 0.5 * width, 0.5 * height);
 	        tempctx.restore();
 	        offctx.drawImage(tempcanvas, curX, curY, width, height);
