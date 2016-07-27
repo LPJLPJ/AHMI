@@ -725,6 +725,12 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if ($scope.component.object.level.info.text==initObject.level.info.text){
                 return;
             }
+            var textLength = $scope.component.object.level.info.text.length||null;
+            if(textLength>20){
+                toastr.warning('字数最大20');
+                restore();
+                return;
+            }
             var option = {
                 text:$scope.component.object.level.info.text
             };
@@ -798,8 +804,16 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterInterval(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.interval))||_.isInteger(parseInt($scope.component.object.level.info.interval))<0){
+            if (!_.isInteger(Number($scope.component.object.level.info.interval))||(parseInt($scope.component.object.level.info.interval))<0){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            var interval = $scope.component.object.level.info.interval||0;
+            var count = $scope.component.object.level.info.count||0;
+            var width = $scope.component.object.level.info.width||0;
+            if(interval*(count-1)>width){
+                toastr.warning('配置不合理');
                 restore();
                 return;
             }
@@ -824,8 +838,16 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterButtonCount(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.count))||_.isInteger(parseInt($scope.component.object.level.info.interval))<0){
+            if (!_.isInteger(parseInt($scope.component.object.level.info.count))||(parseInt($scope.component.object.level.info.interval)<0)){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            var interval = $scope.component.object.level.info.interval||0;
+            var count = $scope.component.object.level.info.count||0;
+            var width = $scope.component.object.level.info.width||0;
+            if(interval*(count-1)>width){
+                toastr.warning('配置不合理');
                 restore();
                 return;
             }
