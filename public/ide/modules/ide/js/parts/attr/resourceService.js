@@ -324,19 +324,22 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
                 var successHandler = function () {
 
-                    ResourceService.appendFileUnique(translatedFile, function (file, files) {
-                        for (var i in files) {
-                            if (files[i].id == file.id) {
+                    ResourceService.appendFileUnique(translatedFile, function (file,files) {
+                        for (var i in files){
+                            if (files[i].id == file.id ){
                                 return false;
                             }
                         }
                         return true;
-                    });
-                    //删除scope.uploadingArray中该项
-                    deleteUploadingItem(translatedFile);
-                    //update
-                    //scope.component.top.files = ResourceService.getAllImages();
-                    scope.$emit('ResourceUpdate');
+                    }, function () {
+                        ResourceService.cacheFileToGlobalResources(translatedFile, function () {
+                            //删除scope.uploadingArray中该项
+                            deleteUploadingItem(translatedFile);
+                            //update
+                            //scope.component.top.files = ResourceService.getAllImages();
+                            scope.$emit('ResourceUpdate');
+                        }.bind(this));
+                    }.bind(this));
                 }
 
                 var errHandler = function () {
