@@ -1708,7 +1708,7 @@ ideServices
                     arrDate.push(dateObj.getMonth()+1);
                     arrDate.push(dateObj.getDate());
 
-                    ctx.fillStyle=this.fontColor;//颜色可选？？大小字体固定？？
+                    ctx.fillStyle=this.fontColor;
                     fontString=this.fontSize+'px'+" "+this.fontFamily;
                     if(this.dateTimeModeId=='0'){
                         //显示时间
