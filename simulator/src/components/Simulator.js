@@ -17,7 +17,8 @@ var defaultState = {
 
 try{
     eval("var os = require('os')");
-    sep = '\\';
+    var path = require('path');
+    sep = path.sep;
 }catch (e){
     //console.log(e);
 }
@@ -130,16 +131,19 @@ module.exports = React.createClass({
                             //update loading progress
                             this.drawLoadingProgress(this.state.totalResourceNum, num, true, projectWidth, projectHeight)
                             if (num == 0) {
+                                window.imageList = imageList;
+                                console.log(imageList)
                                 callBack(data);
                             }
                         }.bind(this);
                         newImg.onerror = function (e) {
-
+                            console.log(e);
                             newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII="
 
                         }.bind(this);
                         newResource.content = newImg;
                         imageList.push(newResource)
+
                         break;
                     default:
                         num = num - 1
@@ -153,6 +157,7 @@ module.exports = React.createClass({
                 resourceList.push(newResource);
 
             }.bind(this));
+
         } else {
             callBack(data)
         }
