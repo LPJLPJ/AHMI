@@ -534,7 +534,7 @@ ideServices
                 width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
-                bindBit:-1 //绑定某tag的第几位
+                bindBit:null //绑定某tag的第几位
             };
             return {
                 id: Math.random().toString(36).substr(2),

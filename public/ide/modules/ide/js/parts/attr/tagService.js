@@ -7,7 +7,7 @@ ideServices
         var defaultTag ={
             name: "",
             register: false,
-            indexOfRegister: -1,
+            indexOfRegister: null,
             writeOrRead:'false',
             value: null
         };
@@ -121,7 +121,7 @@ ideServices
             if(timerTags.length==0){
                 return;
             }
-            var newTag=[];
+            var newTag={};
             _.assignIn(newTag,tag);
             timerTags.splice(index,1,newTag);
             cb && cb();

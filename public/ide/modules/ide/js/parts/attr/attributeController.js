@@ -1997,6 +1997,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if($scope.component.object.level.info.bindBit==initObject.level.info.bindBit){
                 return;
             };
+            if($scope.component.object.level.info.bindBit<0||$scope.component.object.level.info.bindBit>30){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
             toastr.info('修改成功');
             var option= {
                 bindBit:$scope.component.object.level.info.bindBit,

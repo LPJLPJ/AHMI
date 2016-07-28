@@ -13,6 +13,7 @@ ide.controller('TimerCtrl',function (TimerService,TagService,$scope,$timeout) {
         }
         var initNum = TimerService.getTimerNum();
         if($scope.num>10){
+
             toastr.warning('超出范围');
             $scope.num=initNum;
             return;
