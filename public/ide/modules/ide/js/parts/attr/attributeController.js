@@ -186,6 +186,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     {id:'1',name:'日期模式'}
                 ],
                 enterDateTimeMode:enterDateTimeMode,
+                changeDateTimeFontFamily:changeDateTimeFontFamily,
+                changeDateTimeFontSize:changeDateTimeFontSize,
             },
             //滑块
             slideBlock:{
@@ -607,6 +609,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 })
+            }else if(selectObj.type==Type.MyDateTime){
+                ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
             }
         }
         if(op.name=='component.object.level.info.lineColor'){
@@ -719,6 +725,12 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if ($scope.component.object.level.info.text==initObject.level.info.text){
                 return;
             }
+            var textLength = $scope.component.object.level.info.text.length||null;
+            if(textLength>20){
+                toastr.warning('字数最大20');
+                restore();
+                return;
+            }
             var option = {
                 text:$scope.component.object.level.info.text
             };
@@ -792,8 +804,16 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterInterval(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.interval))||_.isInteger(parseInt($scope.component.object.level.info.interval))<0){
+            if (!_.isInteger(Number($scope.component.object.level.info.interval))||(parseInt($scope.component.object.level.info.interval))<0){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            var interval = $scope.component.object.level.info.interval||0;
+            var count = $scope.component.object.level.info.count||0;
+            var width = $scope.component.object.level.info.width||0;
+            if(interval*(count-1)>width){
+                toastr.warning('配置不合理');
                 restore();
                 return;
             }
@@ -818,8 +838,16 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterButtonCount(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.count))||_.isInteger(parseInt($scope.component.object.level.info.interval))<0){
+            if (!_.isInteger(parseInt($scope.component.object.level.info.count))||(parseInt($scope.component.object.level.info.interval)<0)){
                 toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            var interval = $scope.component.object.level.info.interval||0;
+            var count = $scope.component.object.level.info.count||0;
+            var width = $scope.component.object.level.info.width||0;
+            if(interval*(count-1)>width){
+                toastr.warning('配置不合理');
                 restore();
                 return;
             }
@@ -2023,6 +2051,35 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         ProjectService.ChangeAttributeDateTimeModeId(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
+    }
+    function changeDateTimeFontFamily(e){
+        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
+            return;
+        }
+        var option = {
+            fontFamily:$scope.component.object.level.info.fontFamily
+        };
+
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function changeDateTimeFontSize(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
+                return;
+            }
+            var option = {
+                fontSize:$scope.component.object.level.info.fontSize
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+
     }
 
     function _getRandomColor(){
