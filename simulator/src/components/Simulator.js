@@ -1279,6 +1279,7 @@ module.exports = React.createClass({
             // var curArc = widget.info.value;
             var curDashboardTag = this.findTagByName(widget.tag);
             var curArc = parseInt((maxArc-minArc)/(maxValue-minValue)*(curDashboardTag&&curDashboardTag.value||0));
+            var currentValue = curDashboardTag&&curDashboardTag.value||0
             //console.log('keke',curArc);
             var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
@@ -1323,9 +1324,8 @@ module.exports = React.createClass({
 
             }
 
-
-            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
-            widget.oldValue = curArc;
+            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
+            widget.oldValue = currentValue;
 
         }
     },
