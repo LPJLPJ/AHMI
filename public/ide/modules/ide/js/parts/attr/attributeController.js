@@ -650,10 +650,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         if ($scope.component.object.type==Type.MyPage){
             selectImage=$scope.component.page.selectImage;
             if(selectImage=='/public/images/blank.png'){
-                $scope.component.object.level.backgroundColor=_getRandomColor();
+                $scope.component.object.level.backgroundColor='rgb(54,71,92)';
             }
             else{
-                $scope.component.object.level.backgroundColor='rgba(0,0,0,0)'
+                $scope.component.object.level.backgroundColor='rgb(0,0,0)'
             }
 
             var currentPage=ProjectService.getCurrentPage();
