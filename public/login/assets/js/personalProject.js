@@ -30,12 +30,28 @@ $(function(){
     }catch (e){
 
     }
+
+    function mkdirSync(dist) {
+        dist = path.resolve(dist);
+        try{
+            var stats = fs.statSync(dist)
+            if (!stats.isDirectory()) {
+                mkdir.sync(path.dirname(dist));
+                fs.mkdirSync(dist);
+            }
+        }catch(e){
+            mkdirSync(path.dirname(dist));
+            fs.mkdirSync(dist);
+        }
+
+    }
     
     if (local){
         //create localproject folder
         fs = require('fs');
         path = require('path');
-        mkdir = require('mkdir-p');
+        mkdir = {};
+        mkdir.sync = mkdirSync;
         __dirname = global.__dirname;
         console.log(__dirname, process)
         console.log(window.location);
