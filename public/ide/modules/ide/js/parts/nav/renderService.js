@@ -63,8 +63,13 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                 case 'jpg':
                 case 'jpeg':
                     return 'image/jpeg';
+                    break;
                 case 'png':
                     return 'image/png';
+                    break;
+                case 'bmp':
+                    return 'image/bmp';
+                    break;
                 default:
                     return 'image/png';
             }
