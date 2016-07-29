@@ -543,8 +543,10 @@
             <table width="100%" height="100%">
                 <tr>
                     <td align="center" valign="middle">
-                        <canvas id="c1" context-menu="component.menuOptions.contextMenu()"></canvas>
-
+                        <div class="subCanvas">
+                            <canvas id="backgroundCanvas"></canvas>
+                            <canvas id="c1" context-menu="component.menuOptions.contextMenu()" ></canvas>
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -697,24 +699,24 @@
                                    ng-keypress="component.enterName($event)">
                         </div>
 
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">颜色</span>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">颜色</span>-->
 
-                            <input colorpicker="rgba"
-                                   type="text"
-                                   class="my-attr-number-input form-control"
-                                   ng-model="component.object.level.backgroundColor"/>
-                        </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">图片</span>
+                            <!--<input colorpicker="rgba"-->
+                                   <!--type="text"-->
+                                   <!--class="my-attr-number-input form-control"-->
+                                   <!--ng-model="component.object.level.backgroundColor"/>-->
+                        <!--</div>-->
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">图片</span>-->
 
-                            <select class="my-attr-number-input form-control" ng-model="component.subLayer.selectImage"
-                                    ng-change="component.subLayer.enterImage($event)">
-                                <option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}
-                                </option>
+                            <!--<select class="my-attr-number-input form-control" ng-model="component.subLayer.selectImage"-->
+                                    <!--ng-change="component.subLayer.enterImage($event)">-->
+                                <!--<option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}-->
+                                <!--</option>-->
 
-                            </select>
-                        </div>
+                            <!--</select>-->
+                        <!--</div>-->
                     </div>
                     <div ng-show="component.object.type=='MySlide'">
                         <div class="my-attr-item lg">
