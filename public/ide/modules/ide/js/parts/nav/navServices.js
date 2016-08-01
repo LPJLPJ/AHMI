@@ -133,31 +133,16 @@ ideServices.
 
         var currentObject=ProjectService.getCurrentSelectObject();
         if (currentObject.type==Type.MyLayer||(currentObject.type==Type.MyGroup&&currentObject.mode==0)){
-            ProjectService.DeleteActiveLayers( function () {
+
+            ProjectService.MoveActiveObjects('layers',direction,step, function () {
 
                 _callback&&_callback();
-                deleting=false;
 
             })
-
-            ProjectService.DeleteActiveLayers( function () {
-
-                _callback&&_callback();
-                deleting=false;
-
-            })
-        }else if(currentObject.type==Type.MySubLayer){
-
-            ProjectService.DeleteCurrentSubLayer(function () {
-                _callback&&_callback();
-                deleting=false;
-
-            });
         }else if (Type.isWidget(currentObject.type)||(currentObject.type==Type.MyGroup&&currentObject.mode==1)){
-            ProjectService.DeleteActiveWidgets( function () {
-                //$scope.$emit('ChangeCurrentPage',oldOperate)
+            ProjectService.MoveActiveObjects('widgets',direction,step, function () {
+
                 _callback&&_callback();
-                deleting=false;
 
             })
 

@@ -4038,60 +4038,88 @@ ideServices
 
 
 
+
         /**
          * 主要操作
          * Move Layer
          * @param _successCallback
          * @constructor
          */
-        this.MoveActiveLayers = function (direction_successCallback) {
-            var pageNode = CanvasService.getPageNode();
-            var currentPage=_self.getCurrentPage();
-            var currentPageIndex= _indexById(project.pages,currentPage);
-            var activeGroup = pageNode.getActiveGroup();
-            var activeObject = pageNode.getActiveObject();
+        this.MoveActiveObjects = function (type,direction,step,_successCallback) {
+            var fabNode;
+            var layerMode = true;
+            if (type === 'layers'){
+                fabNode = CanvasService.getPageNode();
+            }else if (type === 'widgets'){
+                fabNode = CanvasService.getSubLayerNode();
+                layerMode = false;
+            }else{
+                return;
+            }
 
+            var activeGroup = fabNode.getActiveGroup();
+            var activeObject = fabNode.getActiveObject();
+
+            step = step || 0;
+            var leftStep  = 0;
+            var topStep = 0;
+            switch (direction){
+                case 'up':
+                    topStep = 0-step;
+                    break;
+                case 'down':
+                    topStep = step;
+                    break;
+                case 'left':
+                    leftStep = 0-step;
+                    break;
+                case 'right':
+                    leftStep = step;
+                    break;
+            }
+            var tempLeft;
+            var tempTop;
 
             if (activeGroup && activeGroup.objects.length > 0) {
-                _.forEach(activeGroup.getObjects(), function (_fabLayer) {
-                    pageNode.fxRemove(_fabLayer,{
-                        onComplete: function () {
-                            deleteLayerFromJson(_fabLayer);
-                        }
-                    });
-                });
-                pageNode.fxRemove(activeGroup, {
-                    onComplete: function () {
-                        pageNode.deactivateAll();
-                        pageNode.renderAll();
+                tempLeft = activeGroup.get('left') + leftStep;
+                tempTop = activeGroup.get('top')+topStep;
+                activeGroup.set('left',tempLeft);
+                activeGroup.set('top',tempTop);
 
-                        _self.OnPageSelected(currentPageIndex,_successCallback);
-                    }
-                });
 
+            }else if (activeObject) {
+
+                tempLeft = activeObject.get('left') + leftStep;
+                tempTop = activeObject.get('top')+topStep;
+                activeObject.set('left',tempLeft);
+                activeObject.set('top',tempTop);
 
             }
-            else if (activeObject) {
 
-                pageNode.fxRemove(activeObject, {
-                    onComplete: function () {
-                        deleteLayerFromJson(activeObject);
-                        _self.OnPageSelected(currentPageIndex,_successCallback);
+            fabNode.renderAll();
 
-
+            if (layerMode){
+                var layer=_self.getCurrentLayer();
+                if (layer){
+                    var fabLayer=_self.getFabricObject(layer.id);
+                    if (fabLayer){
+                        _self.SyncLevelFromFab(layer,fabLayer);
                     }
-                });
-            }
-
-            function deleteLayerFromJson(object) {
-                var layers = _self.getCurrentPage().layers;
-                for (var i = 0; i < layers.length; i++) {
-                    var layer = layers[i];
-                    if (layer.id == object.id) {
-                        layers.splice(i, 1);
+                }
+            }else{
+                var widget=_self.getCurrentWidget();
+                if (widget){
+                    var fabWidget=_self.getFabricObject(widget.id,true);
+                    if (fabWidget){
+                        _self.SyncLevelFromFab(widget,fabWidget);
                     }
                 }
             }
+
+            _self.UpdateCurrentThumb();
+
+            _successCallback && _successCallback();
+
 
 
         };
