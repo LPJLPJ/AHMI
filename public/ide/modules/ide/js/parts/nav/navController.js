@@ -731,7 +731,11 @@
         }
 
         function getSaveStatus(){
-            return status=document.getElementById("saveFlag").value;
+            var status = false;//未save
+            if(document.getElementById("saveFlag").value=="true"){
+                status=true;
+            }
+            return status;
         }
 
 
