@@ -680,6 +680,7 @@
                 templateUrl: 'navModalCloseWindow.html',
                 controller: 'NavModalCloseWindwoCtl',
                 size: 'md',
+                backdrop:'static',
                 resolve: {
 
                 }
