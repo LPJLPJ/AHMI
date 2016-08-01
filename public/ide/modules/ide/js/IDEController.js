@@ -535,7 +535,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             $scope.$broadcast('NavStatusChanged');
             $scope.$broadcast('AttributeChanged');
 
-
+            document.getElementById("saveFlag").value = 1;//一表示表单值已经被修改过
         });
 
         $scope.$on('ChangeCurrentSubLayer', function (event,operate, callback) {
@@ -573,6 +573,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
         $scope.$on('UpdateProject', function (event) {
             $scope.$broadcast('ProjectUpdated');
+
+            document.getElementById("saveFlag").value = 0;//表示以保存，无最新修改
         });
 
 
