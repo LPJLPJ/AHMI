@@ -4035,6 +4035,67 @@ ideServices
             }
         }
 
+
+
+
+        /**
+         * 主要操作
+         * Move Layer
+         * @param _successCallback
+         * @constructor
+         */
+        this.MoveActiveLayers = function (direction_successCallback) {
+            var pageNode = CanvasService.getPageNode();
+            var currentPage=_self.getCurrentPage();
+            var currentPageIndex= _indexById(project.pages,currentPage);
+            var activeGroup = pageNode.getActiveGroup();
+            var activeObject = pageNode.getActiveObject();
+
+
+            if (activeGroup && activeGroup.objects.length > 0) {
+                _.forEach(activeGroup.getObjects(), function (_fabLayer) {
+                    pageNode.fxRemove(_fabLayer,{
+                        onComplete: function () {
+                            deleteLayerFromJson(_fabLayer);
+                        }
+                    });
+                });
+                pageNode.fxRemove(activeGroup, {
+                    onComplete: function () {
+                        pageNode.deactivateAll();
+                        pageNode.renderAll();
+
+                        _self.OnPageSelected(currentPageIndex,_successCallback);
+                    }
+                });
+
+
+            }
+            else if (activeObject) {
+
+                pageNode.fxRemove(activeObject, {
+                    onComplete: function () {
+                        deleteLayerFromJson(activeObject);
+                        _self.OnPageSelected(currentPageIndex,_successCallback);
+
+
+                    }
+                });
+            }
+
+            function deleteLayerFromJson(object) {
+                var layers = _self.getCurrentPage().layers;
+                for (var i = 0; i < layers.length; i++) {
+                    var layer = layers[i];
+                    if (layer.id == object.id) {
+                        layers.splice(i, 1);
+                    }
+                }
+            }
+
+
+        };
+
         /**
          * 辅助
          * 获得一个Layer对象的拷贝

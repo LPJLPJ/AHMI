@@ -72,6 +72,21 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
                     case 'Ctrl-Z':
                         console.log('撤销');
+                        var oldOperate=ProjectService.SaveCurrentOperate();
+
+                        NavService.DoUndo(function () {
+                            $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                        });
+                        break;
+                    case 'Up':
+                        break;
+                    case 'Down':
+                        break;
+                    case 'Left':
+                        break;
+                    case 'Right':
+                        console.log('right',e,e.target)
                         break;
 
                 }

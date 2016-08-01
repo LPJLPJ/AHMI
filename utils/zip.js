@@ -4,6 +4,11 @@
 var fs = require('fs'),
     spawn = require('child_process').spawn;
 
+var platform = require('os').platform==='win32'?'win':'other';
+var zipCommand = 'zip';
+if (platform === 'win'){
+    zipCommand = '.\\7z\\7z.exe'
+}
 module.exports = function() {
 
     var _file,
@@ -14,8 +19,8 @@ module.exports = function() {
     var zip = function() {
         var params = _arguments.concat(_fileList);
         params.unshift(_file);
+        var command = spawn(zipCommand, params);
 
-        var command = spawn('zip', params);
 
         command.stdout.on('data', function(data) {
             // TODO: stdout
@@ -70,22 +75,6 @@ module.exports = function() {
         _arguments = arguments;
         _callback = callback;
 
-        //fs.exists(file, function(exists) {
-        //
-        //    if (exists) {
-        //
-        //        fs.unlink(file, function (err) {
-        //            if (err) {
-        //                _callback(err);
-        //            }
-        //
-        //            zip();
-        //        });
-        //    } else {
-        //        zip();
-        //    }
-        //
-        //});
 
         fs.stat(file, function (err, stats) {
             if (stats&&stats.isFile()){
