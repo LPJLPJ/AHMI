@@ -81,6 +81,7 @@
                     show:false
                 }
             };
+            
         }
 
         function initProject(){
