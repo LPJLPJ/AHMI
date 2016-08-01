@@ -17,6 +17,7 @@
         var path, fs, __dirname;
         initLocalPref();
         initUserInterface();
+        confirmForClosingWindow();
 
         $scope.$on('GlobalProjectReceived', function () {
 
@@ -81,7 +82,7 @@
                     show:false
                 }
             };
-            
+
         }
 
         function initProject(){
@@ -117,6 +118,39 @@
         function showBottom(){
             $scope.$emit('ChangeShownArea',2);
         }
+
+
+        //listen for nw.win.close
+        function confirmForClosingWindow() {
+            if (window.local){
+                var win = nw.Window.get();
+                var shouldClose = false;
+                win.on('close',function (e) {
+
+                    openCloseWindowPanel(function () {
+                        //sc
+                        saveProject(function () {
+                            //real close
+                            this.close(true);
+                        }.bind(this), true)
+                    }.bind(this),function () {
+                        //fc
+                        this.close(true);
+                    }.bind(this));
+
+
+                }.bind(this));
+            }
+        }
+
+        function getPlatform() {
+            if (window.local){
+                return process.platform;
+            }else{
+                return null;
+            }
+        }
+
 
         /**
          * Scale a dataUrl to target size
@@ -631,6 +665,38 @@
 
         }
 
+
+        //modal for closing window
+        function openCloseWindowPanel(sc,fc) {
+
+
+            /**
+             * 利用$uiModal服务，制作模态窗口
+             */
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'navModalCloseWindow.html',
+                controller: 'NavModalCloseWindwoCtl',
+                size: 'md',
+                resolve: {
+
+                }
+            });
+
+            /**
+             * result.then接收两个匿名函数参数
+             * calling $uibModalInstance.close will trigger the former function
+             * when clicking at the background, pressing the esc button on keyboard, or calling $modalInstance.dismiss will trigger the latter one
+             */
+            modalInstance.result.then(function (result) {
+                //save
+                sc && sc();
+            }, function () {
+                fc && fc();
+            });
+        }
+
+
         function openPanel() {
 
 
@@ -664,6 +730,9 @@
 
 
 
+
+
+
     });
 
 
@@ -683,6 +752,19 @@ ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uib
         $uibModalInstance.close({
             format:$scope.generateFormat
         });
+    };
+
+    //取消
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+}]);
+
+
+ide.controller('NavModalCloseWindwoCtl',['$scope','$uibModalInstance',function ($scope,$uibModalInstance) {
+
+    $scope.ok = function () {
+        $uibModalInstance.close();
     };
 
     //取消

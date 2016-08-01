@@ -211,6 +211,15 @@
                         <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
                     </div>
                 </script>
+                <script type="text/ng-template" id="navModalCloseWindow.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">关闭前保存工程?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">是</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">否</button>
+                    </div>
+                </script>
             </div>
             <div class="my-tool-content-item" ng-show="component.nav.currentNav==1">
                 <a ng-click="component.tool.undo()" class="my-cmd-item"

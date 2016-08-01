@@ -53,8 +53,6 @@ $(function(){
         mkdir = {};
         mkdir.sync = mkdirSync;
         __dirname = global.__dirname;
-        console.log(__dirname, process)
-        console.log(window.location);
         localProjectDir = path.join(__dirname,'localproject');
         function getResourceRelativePath(resourceFilePath) {
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
@@ -103,7 +101,7 @@ $(function(){
             console.log(newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
-            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
+            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
 
             addProjectButton.after(html);
         }
