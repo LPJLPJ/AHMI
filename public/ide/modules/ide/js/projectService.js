@@ -5009,6 +5009,8 @@ ideServices
                 return;
             }
 
+            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height);
+
             var editInSameSubLayer=false;
             if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
                 editInSameSubLayer=true;
@@ -7107,6 +7109,27 @@ ideServices
             ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
             ctx.stroke();
             ctx.restore();
+        }
+
+        /**
+         *
+         * @param width
+         * @param height
+         */
+        function drawBackgroundCanvas(width,height){
+            var backgroundCanvas=document.getElementById('backgroundCanvas');
+            //window.c2 = c2;
+            backgroundCanvas.width=width;
+            backgroundCanvas.height=height;
+            var ctx=backgroundCanvas.getContext('2d');
+            ctx.beginPath();
+
+            ctx.rect(0,0,width,height);
+            ctx.fillStyle='rgba(54,71,92,0.3)';
+            ctx.fill();
+            //ctx.lineWidth = 1;
+            //ctx.strokeStyle = 'rgba(102,153,255,0.75)';
+            //ctx.stroke();
         }
 
     });

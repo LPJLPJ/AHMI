@@ -59,3 +59,11 @@
 .my-stage>table>tbody>tr>td{
     background-color: lightgray;
 }
+
+.my-stage .subCanvas{
+    position:relative;
+    display:inline-block
+}
+.my-stage .subCanvas>canvas{
+    position:absolute;left:0;top:0
+}

@@ -19,9 +19,9 @@ ideServices
          * @returns {{url, id, proJsonStr, layers}}
          */
         this.getRandomPage = function () {
-            var r = 42;
-            var g = 172;
-            var b = 246;
+            var r = 54;
+            var g = 71;
+            var b = 92;
             var jsonStr = '{"objects":[],"background":"rgb(' + r + ',' + g + ',' + b + ')"}';
             return {
                 url: '',
@@ -69,7 +69,7 @@ ideServices
         };
 
         this.getDefaultSubLayer = function () {
-            var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',1.0)"}';
+            var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
             return {
                 url: '',
                 id: Math.random().toString(36).substr(2),
@@ -81,7 +81,7 @@ ideServices
                 height: 0,
                 expand:true,
                 backgroundImage:'',
-                backgroundColor:"rgba(255,255,255,1.0)"
+                backgroundColor:"rgba(255,255,255,0.0)"
 
             }
         };
