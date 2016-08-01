@@ -4,10 +4,10 @@
  window.addEventListener("beforeunload", function(event) {
      var flag =  document.getElementById("saveFlag").value;
      console.log(flag,typeof  flag);
-     if(flag=='1'){
+     if(flag=='true'){
          event.returnValue="请确定已保存您的工程";
      }
      else{
-         console.log('flag is not 0');
+         console.log('projects have been saved');
      }
  });

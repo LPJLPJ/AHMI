@@ -730,6 +730,10 @@
             });
         }
 
+        function getSaveStatus(){
+            return status=document.getElementById("saveFlag").value;
+        }
+
 
 
 
