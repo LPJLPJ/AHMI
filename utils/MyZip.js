@@ -18,8 +18,8 @@ function zipSingleDir(zipFile,realDir, metaDir, cb) {
       return;
     }
     var totalNum = files.length;
-    for (var i=0;i<files.length;i++){
-      var curFile = files[i];
+    files.map(function (file) {
+      var curFile = file;
       var curFilePath = path.join(realDir,curFile);
 
       var stats = fs.statSync(curFilePath);
@@ -44,9 +44,8 @@ function zipSingleDir(zipFile,realDir, metaDir, cb) {
           }
         });
       }
-
-
-    }
+    }.bind(this));
+    
 
   })
 }
@@ -65,9 +64,6 @@ MyZip.zipDir = function (realDir, output,cb) {
     }
 
   })
-
-
-
 };
 
 module.exports = MyZip;
