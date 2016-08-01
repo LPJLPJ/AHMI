@@ -3,8 +3,9 @@
  */
  window.addEventListener("beforeunload", function(event) {
      var status =  document.getElementById("saveFlag").value;
-     console.log(flag,typeof  flag);
-     if(status=='false'){
+     //event.returnValue="请确定已保存您的工程";
+     console.log(status,typeof  status);
+     if(status=="false"){
          event.returnValue="请确定已保存您的工程";
      }
      else{
