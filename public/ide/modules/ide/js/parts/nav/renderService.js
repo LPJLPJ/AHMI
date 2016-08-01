@@ -16,7 +16,85 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
     if (local){
 
         // my zip
+        var spawn = require('child_process').spawn;
 
+
+        function MyZipClass() {
+            var _arguments;
+            var platform = require('os').platform()==='win32'?'win':'other';
+            var zipCommand = 'zip';
+            if (platform === 'win'){
+                zipCommand = '.\\utils\\7z\\7z.exe';
+                _arguments = ['a']
+            }else{
+                _arguments = ['-rj'];
+            }
+
+            var _file,
+                _fileList,
+                _callback;
+
+            var zip = function() {
+
+                var params = _arguments.concat(_file).concat(_fileList);
+                var command = spawn(zipCommand, params);
+                console.log('command',zipCommand,params)
+
+                command.stdout.on('data', function(data) {
+                    // TODO: stdout
+
+                });
+
+                command.stderr.on('data', function(data) {
+                    // TODO: stderr
+
+                });
+                command.on('error',function (err) {
+                    console.log(err);
+                    _callback(err);
+                })
+                command.on('exit', function(code) {
+                    if(code === 0) {
+                        _callback();
+                    } else {
+                        _callback(new Error(code));
+                    }
+                });
+            }
+
+
+
+            this.compress = function(file, fileList, callback) {
+                // TODO: extract method fs.exists
+                // TODO: extract method fs.unlink
+
+                _file = file;
+                _fileList = fileList;
+                _callback = callback;
+
+
+                fs.stat(file, function (err, stats) {
+                    if (stats&&stats.isFile()){
+                        fs.unlink(file, function (err) {
+                            if (err){
+                                _callback(err);
+                            }else{
+                                zip();
+                            }
+                        });
+                        // zip();
+                    }else{
+                        zip();
+                    }
+                })
+            }
+
+
+        };
+
+
+        var MyZip = new MyZipClass();
+        console.log('myzip',MyZip)
         function Canvas(width, height) {
             this.width = width;
             this.height = height;
@@ -669,6 +747,20 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                 console.log('zip ok');
                 sCb && sCb();
             }
+
+
+            function zipResources(dst,src) {
+                // var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                // var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                console.log(dst,src)
+                MyZip.compress(dst,src,['-rj'],function (err) {
+                    if (err) {
+                        errHandler(err);
+                    } else {
+                        successHandler();
+                    }
+                }.bind(this));
+            }
             var ProjectBaseUrl = ResourceService.getProjectUrl();
             var ResourceUrl = ResourceService.getResourceUrl();
             var DataFileUrl = path.join(ResourceUrl,'data.json');
@@ -704,7 +796,10 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                                     }else{
                                         //write ok
                                         console.log('write ok');
-                                        successHandler();
+                                        // successHandler();
+                                        var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                                        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                                        zipResources(DistUrl,SrcUrl);
                                     }
                                 })
                             }else{
@@ -725,7 +820,10 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                         errHandler(res,500,err);
                     }else{
                         //write ok
-                        successHandler();
+                        // successHandler();
+                        var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                        zipResources(DistUrl,SrcUrl);
                     }
                 })
             }

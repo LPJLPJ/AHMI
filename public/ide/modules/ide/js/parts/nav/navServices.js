@@ -127,6 +127,33 @@ ideServices.
         }
     };
 
+    //moving widgets
+    this.DoMove= function (direction, step,_callback) {
+
+
+        var currentObject=ProjectService.getCurrentSelectObject();
+        if (currentObject.type==Type.MyLayer||(currentObject.type==Type.MyGroup&&currentObject.mode==0)){
+
+            ProjectService.MoveActiveObjects('layers',direction,step, function () {
+
+                _callback&&_callback();
+
+            })
+        }else if (Type.isWidget(currentObject.type)||(currentObject.type==Type.MyGroup&&currentObject.mode==1)){
+            ProjectService.MoveActiveObjects('widgets',direction,step, function () {
+
+                _callback&&_callback();
+
+            })
+
+        }
+        else {
+            deleting=false;
+
+            console.warn('不可删除');
+        }
+    };
+
     var undoing=false;
     this.DoUndo= function (_callback) {
         if(!_self.getOperateQueStatus().undoEnable){

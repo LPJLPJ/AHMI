@@ -4035,6 +4035,95 @@ ideServices
             }
         }
 
+
+
+
+
+        /**
+         * 主要操作
+         * Move Layer
+         * @param _successCallback
+         * @constructor
+         */
+        this.MoveActiveObjects = function (type,direction,step,_successCallback) {
+            var fabNode;
+            var layerMode = true;
+            if (type === 'layers'){
+                fabNode = CanvasService.getPageNode();
+            }else if (type === 'widgets'){
+                fabNode = CanvasService.getSubLayerNode();
+                layerMode = false;
+            }else{
+                return;
+            }
+
+            var activeGroup = fabNode.getActiveGroup();
+            var activeObject = fabNode.getActiveObject();
+
+            step = step || 0;
+            var leftStep  = 0;
+            var topStep = 0;
+            switch (direction){
+                case 'up':
+                    topStep = 0-step;
+                    break;
+                case 'down':
+                    topStep = step;
+                    break;
+                case 'left':
+                    leftStep = 0-step;
+                    break;
+                case 'right':
+                    leftStep = step;
+                    break;
+            }
+            var tempLeft;
+            var tempTop;
+
+            if (activeGroup && activeGroup.objects.length > 0) {
+                tempLeft = activeGroup.get('left') + leftStep;
+                tempTop = activeGroup.get('top')+topStep;
+                activeGroup.set('left',tempLeft);
+                activeGroup.set('top',tempTop);
+
+
+            }else if (activeObject) {
+
+                tempLeft = activeObject.get('left') + leftStep;
+                tempTop = activeObject.get('top')+topStep;
+                activeObject.set('left',tempLeft);
+                activeObject.set('top',tempTop);
+
+            }
+
+            fabNode.renderAll();
+
+            if (layerMode){
+                var layer=_self.getCurrentLayer();
+                if (layer){
+                    var fabLayer=_self.getFabricObject(layer.id);
+                    if (fabLayer){
+                        _self.SyncLevelFromFab(layer,fabLayer);
+                    }
+                }
+            }else{
+                var widget=_self.getCurrentWidget();
+                if (widget){
+                    var fabWidget=_self.getFabricObject(widget.id,true);
+                    if (fabWidget){
+                        _self.SyncLevelFromFab(widget,fabWidget);
+                    }
+                }
+            }
+
+            _self.UpdateCurrentThumb();
+
+            _successCallback && _successCallback();
+
+
+
+        };
+
         /**
          * 辅助
          * 获得一个Layer对象的拷贝
