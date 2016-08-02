@@ -125,21 +125,37 @@
             if (window.local){
                 var win = nw.Window.get();
                 var shouldClose = false;
+                var closing = false;
                 win.on('close',function (e) {
-
-                    openCloseWindowPanel(function () {
-                        //sc
-                        saveProject(function () {
-                            //real close
-                            this.close(true);
-                        }.bind(this), true)
-                    }.bind(this),function () {
-                        //fc
-                        this.close(true);
-                    }.bind(this));
-
+                    if (!closing){
+                        closing = true;
+                        if (!getSaveStatus()){
+                            closing = true;
+                            openCloseWindowPanel(function () {
+                                //sc
+                                saveProject(function () {
+                                    //real close
+                                    win.close(true);
+                                }.bind(this), true)
+                            }.bind(this),function () {
+                                //fc
+                                win.close(true);
+                            }.bind(this));
+                        }else{
+                            win.close(true);
+                        }
+                    }
 
                 }.bind(this));
+            }else {
+                window.addEventListener("beforeunload", function(event) {
+
+                    if(!getSaveStatus()){
+                        event.returnValue="请确定已保存您的工程";
+                    }else{
+                        console.log('projects have been saved');
+                    }
+                });
             }
         }
 
@@ -680,6 +696,7 @@
                 templateUrl: 'navModalCloseWindow.html',
                 controller: 'NavModalCloseWindwoCtl',
                 size: 'md',
+                backdrop:'static',
                 resolve: {
 
                 }
@@ -732,7 +749,7 @@
 
         function getSaveStatus(){
             var status = false;//未save
-            if(document.getElementById("saveFlag").value=="true"){
+            if(document.getElementById("saveFlag").value==="true"){
                 status=true;
             }
             return status;

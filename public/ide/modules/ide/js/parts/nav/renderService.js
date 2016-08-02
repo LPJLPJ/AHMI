@@ -752,8 +752,8 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
             function zipResources(dst,src) {
                 // var SrcUrl = path.join(ProjectBaseUrl,'resources');
                 // var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                console.log(dst,src)
-                MyZip.compress(dst,src,['-rj'],function (err) {
+
+                MyZip.compress(dst,src,function (err) {
                     if (err) {
                         errHandler(err);
                     } else {
