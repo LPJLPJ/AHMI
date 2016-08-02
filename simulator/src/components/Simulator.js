@@ -16,9 +16,11 @@ var defaultState = {
 };
 
 try{
-    eval("var os = require('os')");
-    var path = require('path');
-    sep = path.sep;
+    var os = require('os');
+    var platform = os.platform();
+    if (platform === 'win32'){
+        sep = '\\'
+    }
 }catch (e){
     //console.log(e);
 }
