@@ -329,8 +329,8 @@ ideServices
                 // }else {
                 //     this.backgroundImageElement=null;
                 // }
-                this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.cursorImageElement) {
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
                     this.loaded = true;
                     this.setCoords();
                     this.fire('image:loaded');
@@ -348,7 +348,7 @@ ideServices
                 //     this.progressImageElement=null;
                 // }
 
-                this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                this.progressImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
 
                 this.arrange=level.info.arrange;
 
