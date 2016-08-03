@@ -12,9 +12,9 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
 
     var tBlank = new Trigger();
     var tPress = new Trigger('按下','Press');
-    var tRelease = new Trigger('抬起','Release');
+    var tRelease = new Trigger('释放','Release');
     var tLoad = new Trigger('加载','Load');
-    var tUnload = new Trigger('卸载','UnLoad');
+    var tUnload = new Trigger('离开','UnLoad');
     var tEnterLowAlarm = new Trigger('进入低警报','EnterLowAlarm');
     var tLeaveLowAlarm = new Trigger('离开低警报','LeaveLowAlarm');
     var tEnterHighAlarm = new Trigger('进入高警报','EnterHighAlarm');

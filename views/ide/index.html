@@ -230,10 +230,10 @@
                         class="iconfont icon">&#xe616;</span><span class="caption">重做</span></a>
                 <a ng-click="component.tool.addLayer()" class="my-cmd-item"
                    ng-class="{false:'inactive'}[component.tool.layerStatus]"><span class="iconfont icon">&#xe635;</span><span
-                        class="caption">添加图层</span></a>
+                        class="caption">添加画布</span></a>
                 <a ng-click="component.tool.addSubLayer()" class="my-cmd-item"
                    ng-class="{false:'inactive'}[component.tool.sublayerStatus]"><span
-                        class="iconfont icon">&#xe635;</span><span class="caption">添加子图层</span></a>
+                        class="iconfont icon">&#xe635;</span><span class="caption">添加图层</span></a>
 
                 <a ng-click="component.tool.deleteObject()" class="my-cmd-item"
                    ng-class="{false:'inactive'}[component.tool.deleteStatus]"><span
@@ -1953,7 +1953,7 @@
 
                 </div>
                 <div ng-controller="TagCtrl" ng-show="showTagPanel" class="my-attr-item lg deng-bgTags">
-                    <span class="my-attr-title ">Tag</span>
+                    <span class="my-attr-title ">变量</span>
                     <select ng-model="component.selectedTag" ng-change="component.selectedTagFun()"
                             class="my-attr-number-input form-control ng-pristine ng-untouched ng-valid ng-not-empty form-control">
                         <option value="">---</option>
@@ -1987,16 +1987,16 @@
 
                     <script type="text/ng-template" id="actionPanelModal.html">
                         <div class="modal-header">
-                            <h3 class="modal-title">Action</h3>
+                            <h3 class="modal-title">动作</h3>
                         </div>
                         <div class="modal-body dengModel-body">
                             <div class="modal-title form-group modelPart">
-                                <label for="actionName">Action Name</label>
+                                <label for="actionName">动作名称</label>
                                 <input class="form-control" id="actionName" type="text" ng-model="action.title">
                             </div>
 
                             <div class="modal-title form-group modelPart">
-                                <span>Triger</span>
+                                <span>触发条件</span>
                                 <select class="form-control dengModel-trigger" ng-model="action.trigger"
                                         ng-options="trigger.value as trigger.name for trigger in triggers"></select>
                             </div>
@@ -2006,7 +2006,7 @@
                                 <tr>
                                     <td>
                                         <div class="form-group modelPart">
-                                            <span>Operation</span>
+                                            <span>操作</span>
                                             <select class="form-control" ng-model="chosenCmd[0]"
                                                     ng-options="op as op.symbol for op in ops"></select>
                                         </div>
@@ -2014,7 +2014,7 @@
 
                                     <td>
                                         <div class="form-group modelPart">
-                                            <span>Tag</span>
+                                            <span>变量</span>
                                             <select class="form-control" ng-model="chosenCmd[1].tag">
                                                 <option value="">--</option>
                                                 <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
@@ -2027,7 +2027,7 @@
 
                                     <td>
                                         <div class="form-group modelPart">
-                                            <span>Value</span>
+                                            <span>值</span>
                                             <select class="form-control" ng-model="chosenCmd[2].tag">
                                                 <option value="">--</option>
                                                 <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
@@ -2161,7 +2161,7 @@
             <!-- 变量栏-->
             <div class="my-panel-item deng-pannel-item" style="overflow: auto;" ng-show="component.top.currentNav==2">
                 <div ng-controller="TimerCtrl" class="TimeCtrl">
-                    <span>Timer</span>
+                    <span>定时器</span>
                     <input class="form-control" type="number" ng-model="num" ng-keypress="enter($event)"
                            ng-blur="setNum()">
                 </div>
