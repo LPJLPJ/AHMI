@@ -5,6 +5,26 @@
 ideServices.service('ActionService',['ProjectService','Type',function (ProjectService,Type) {
     var actions = [];
 
+    function Trigger(name,value) {
+        this.name = name||'';
+        this.value = value||'';
+    }
+
+    var tBlank = new Trigger();
+    var tPress = new Trigger('按下','Press');
+    var tRelease = new Trigger('抬起','Release');
+    var tLoad = new Trigger('加载','Load');
+    var tUnload = new Trigger('卸载','UnLoad');
+    var tEnterLowAlarm = new Trigger('进入低警报','EnterLowAlarm');
+    var tLeaveLowAlarm = new Trigger('离开低警报','LeaveLowAlarm');
+    var tEnterHighAlarm = new Trigger('进入高警报','EnterHighAlarm');
+    var tLeaveHighAlarm = new Trigger('离开高警报','LeaveHighAlarm');
+    var tEnter = new Trigger('进入','Enter');
+    var tLeave = new Trigger('离开','Leave');
+
+
+
+
     var defaultActions = [{
         title:'action0',
         trigger:'Press',
@@ -13,7 +33,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
         ]
     }];
 
-    var triggers = ['Press','Release'];
+    var triggers = [tPress,tRelease];
 
     /**
      * 返回所有的actions
@@ -25,28 +45,25 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
     this.getTriggers = function (type) {
         switch (type){
             case Type.MyPage:
-                triggers = ['Load','UnLoad'];
+                triggers = [tLoad,tUnload];
                 break;
             case Type.MyLayer:
-                triggers = ['Load','UnLoad'];
+                triggers = [tLoad,tUnload];
                 break;
             case Type.MySubLayer:
                 break;
             case Type.MyButton:
-                triggers = ['Press','Release'];
-                break;
-            case Type.MyNumber:
-                triggers = ['MaxOverflow','MinOverflow'];
+                triggers = [tPress,tRelease];
                 break;
             case Type.MyScriptTrigger:
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyNum:
             case Type.MySlideBlock:
-                triggers = ['EnterLowAlarm','LeaveLowAlarm','EnterHighAlarm','LeaveHighAlarm'];
+                triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm];
                 break;
             default:
-                triggers = ['Enter','Leave']
+                triggers = [tEnter,tLeave]
         }
         return triggers;
     };
@@ -97,7 +114,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
     this.getNewAction = function () {
         return {
             title:'default',
-            trigger:'',
+            trigger:tBlank,
             commands :[]
         }
     }

@@ -1998,7 +1998,7 @@
                             <div class="modal-title form-group modelPart">
                                 <span>Triger</span>
                                 <select class="form-control dengModel-trigger" ng-model="action.trigger"
-                                        ng-options="trigger for trigger in triggers"></select>
+                                        ng-options="trigger.value as trigger.name for trigger in triggers"></select>
                             </div>
 
                             <table class="table dengModal-table">

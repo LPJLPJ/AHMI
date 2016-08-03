@@ -37,8 +37,9 @@ ideServices.service('OperationService',[function () {
         ['XOR','^'],
         ['NOT','!'],
         ['SL','<<'],
-        ['SR','>>']
-    ]
+        ['SR','>>'],
+        ['RWDATA','rwData']
+    ];
 
     for (var i=0;i<opsRaw.length;i++ ){
         var curOp = new Operation(opsRaw[i][0],opsRaw[i][1]);

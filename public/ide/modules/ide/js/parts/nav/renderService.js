@@ -35,7 +35,11 @@ ideServices.service('RenderSerive',['ResourceService',function (ResourceService)
                 _callback;
 
             var zip = function() {
-
+                if (platform === 'win') {
+                    if (_fileList[_fileList.length-1]!=='\\') {
+                        _fileList = _fileList + '\\*';
+                    }
+                }
                 var params = _arguments.concat(_file).concat(_fileList);
                 var command = spawn(zipCommand, params);
                 console.log('command',zipCommand,params)
