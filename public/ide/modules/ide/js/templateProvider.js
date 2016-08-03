@@ -5,7 +5,36 @@ ideServices
     .service('TemplateProvider', function (Type,CanvasService,Preference) {
 
 
-        var project;
+        var project,
+            defaultButton,
+            defaultSwitch,
+            defaultProgress,
+            defaultDashboard,
+            defaultRotateImage,
+            defaultSlideBlock,
+            defaultButtonGroup;
+
+        this.setDefaultWidget=function(widget){
+            if(widget.defaultButton){
+                defaultButton=widget.defaultButton;
+            }
+            if(widget.defaultSwitch){
+                defaultSwitch=widget.defaultSwitch;
+            }
+            if(widget.defaultProgress){
+                defaultProgress=widget.defaultProgress;
+            }
+            if(widget.defaultDashboard){
+                defaultDashboard=widget.defaultDashboard;
+            }
+            if(widget.defaultRotateImage){
+                defaultRotateImage=widget.defaultRotateImage;
+            }
+            if(widget.defaultSlideBlock){
+                defaultSlideBlock=widget.defaultSlideBlock
+            }
+        };
+
         this.saveProjectFromGlobal= function (_project) {
             project=_project;
             
@@ -111,7 +140,7 @@ ideServices
         this.getDefaultSlide = function () {
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:200, height: 150,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center'
             };
@@ -137,10 +166,11 @@ ideServices
             }
         }
 
+
         this.getDefaultButton= function () {
             var subLayerNode=CanvasService.getSubLayerNode();
 
-            var info={
+            var defaultInfo={
                 width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
@@ -153,6 +183,21 @@ ideServices
                 fontBold:"100",
                 fontItalic:'',
             };
+            var defaultTexList = [{
+                name:'按钮纹理',
+                currentSliceIdx:0,
+                slices:[{
+                    color:'rgba(52,100,169,1)',
+                    imgSrc:'',
+                    name:'按下前'
+                },{
+                    color:'rgba(47,132,85,1)',
+                    imgSrc:'',
+                    name:'按下后'
+                }]
+            }];
+            var info = defaultButton.info||defaultInfo;
+            var texList = defaultButton.texList||defaultTexList;
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -164,19 +209,7 @@ ideServices
                 url:'',
                 buttonModeId:'0',
                 zIndex:0,
-                texList:[{
-                    name:'按钮纹理',
-                    currentSliceIdx:0,
-                    slices:[{
-                        color:'rgba(52,100,169,1)',
-                        imgSrc:'',
-                        name:'按下前'
-                    },{
-                        color:'rgba(47,132,85,1)',
-                        imgSrc:'',
-                        name:'按下后'
-                    }]
-                }]
+                texList:texList
             }
         };
         this.getDefaultKnob=function(){
@@ -333,21 +366,24 @@ ideServices
         }
 
         this.getDefaultProgress= function () {
-            var subLayerNode=CanvasService.getSubLayerNode();
+            //var subLayerNode=CanvasService.getSubLayerNode();
+            //
+            //var info={
+            //    width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
+            //    height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+            //
+            //    left: 0, top: 0,
+            //    originX: 'center', originY: 'center',
+            //    minValue:0,maxValue:100,
+            //    lowAlarmValue:0,highAlarmValue:100,
+            //    progressValue:50,
+            //    arrange:"horizontal" ,  //horizontal:水平   vertical:竖直
+            //    cursor:"0",   //光标设置，0:无光标，1:有光标
+            //    progressModeId:'0'//0:普通进度条，1:变色进度条，2:脚本进度条
+            //};
+            var info = defaultProgress.info;
+            var texList = defaultProgress.texList;
 
-            var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
-                height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-                left: 0, top: 0,
-                originX: 'center', originY: 'center',
-                minValue:0,maxValue:100,
-                lowAlarmValue:0,highAlarmValue:100,
-                progressValue:50,
-                arrange:"horizontal" ,  //horizontal:水平   vertical:竖直
-                cursor:"0",   //光标设置，0:无光标，1:有光标
-                progressModeId:'0'//0:普通进度条，1:变色进度条，2:脚本进度条
-            };
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -358,44 +394,30 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:[{
-                    currentSliceIdx:0,
-                    name:'进度条底纹',
-                    slices:[{
-                        color:'rgba(33,46,41,1)',
-                        imgSrc:'',
-                        name:'进度条底纹'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'进度条',
-                    slices:[{
-                        color:'rgba(41,144,229,1)',
-                        imgSrc:'',
-                        name:'进度条'
-                    }]
-                }]
+                texList:texList
 
             }
         };
 
 
         this.getDefaultDashboard= function () {
-            var subLayerNode=CanvasService.getSubLayerNode();
-
-            var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
-                height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
-                left: 0, top: 0,
-                originX: 'center', originY: 'center',
-                clockwise:'1',//1代表顺时针，0代表逆时针
-                minValue:0,maxValue:360,//最小值和最大值
-                minAngle:0,maxAngle:360,//最小角度和最大角度
-                lowAlarmValue:0,highAlarmValue:360,
-                value:45,
-                offsetValue:0,
-                pointerLength:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
-            };
+            //var subLayerNode=CanvasService.getSubLayerNode();
+            //
+            //var info={
+            //    width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
+            //    height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
+            //    left: 0, top: 0,
+            //    originX: 'center', originY: 'center',
+            //    clockwise:'1',//1代表顺时针，0代表逆时针
+            //    minValue:0,maxValue:360,//最小值和最大值
+            //    minAngle:0,maxAngle:360,//最小角度和最大角度
+            //    lowAlarmValue:0,highAlarmValue:360,
+            //    value:45,
+            //    offsetValue:0,
+            //    pointerLength:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
+            //};
+            var info = defaultDashboard.info;
+            var texList = defaultDashboard.texList;
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -405,23 +427,7 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:[{
-                    currentSliceIdx:0,
-                    name:'仪表盘背景',
-                    slices:[{
-                        color:'rgba(52,53,46,1)',
-                        imgSrc:'',
-                        name:'仪表盘背景'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'仪表盘指针',
-                    slices:[{
-                        color:'rgba(77,80,82,1)',
-                        imgSrc:'',
-                        name:'仪表盘指针'
-                    }]
-                }]
+                texList:texList,
 
             }
         };
@@ -530,12 +536,14 @@ ideServices
         this.getDefaultSwitch=function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
-            var info={
+            var defaultInfo={
                 width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 bindBit:null //绑定某tag的第几位
             };
+            var info=defaultSwitch.info||defaultInfo;
+            var texList=defaultSwitch.texList;
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -544,29 +552,23 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:[{
-                    currentSliceIdx:0,
-                    name:'开关图片',
-                    slices:[{
-                        color:'rgba(97,161,92,1)',
-                        imgSrc:'',
-                        name:'开关图片'
-                    }]
-                }]
+                texList:texList,
 
             }
         };
         this.getDefaultRotateImg=function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
-
-            var info={
-                width: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
-                height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
-                left: 0, top: 0,
-                originX: 'center', originY: 'center',
-                minValue:0,maxValue:360,
-                initValue:0
-            };
+            //var subLayerNode=CanvasService.getSubLayerNode();
+            //
+            //var info={
+            //    width: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
+            //    height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
+            //    left: 0, top: 0,
+            //    originX: 'center', originY: 'center',
+            //    minValue:0,maxValue:360,
+            //    initValue:0
+            //};
+            var info = defaultRotateImage.info;
+            var texList=defaultRotateImage.texList;
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -575,15 +577,7 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:[{
-                    currentSliceIdx:0,
-                    name:'旋转图片',
-                    slices:[{
-                        color:'rgba(229,203,139,1)',
-                        imgSrc:'',
-                        name:'旋转图片'
-                    }]
-                }]
+                texList:texList,
 
             }
         };
@@ -642,19 +636,21 @@ ideServices
             }
         };
         this.getDefaultSlideBlock = function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
+            //var subLayerNode=CanvasService.getSubLayerNode();
 
-            var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
-                height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-                left: 0, top: 0,
-                originX: 'center', originY: 'center',
-                minValue:0,maxValue:100,
-                lowAlarmValue:0,highAlarmValue:100,
-                initValue:0,
-                arrange:"horizontal"   //horizontal:水平   vertical:竖直
-            };
+            //var info={
+            //    width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
+            //    height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+            //
+            //    left: 0, top: 0,
+            //    originX: 'center', originY: 'center',
+            //    minValue:0,maxValue:100,
+            //    lowAlarmValue:0,highAlarmValue:100,
+            //    initValue:0,
+            //    arrange:"horizontal"   //horizontal:水平   vertical:竖直
+            //};
+            var info = defaultSlideBlock.info;
+            var texList = defaultSlideBlock.texList;
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -663,23 +659,7 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:[{
-                    currentSliceIdx:0,
-                    name:'滑块背景',
-                    slices:[{
-                        color:'rgba(63,63,63,1)',
-                        imgSrc:'',
-                        name:'滑块背景'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'滑块',
-                    slices:[{
-                        color:'rgba(128,45,47,1)',
-                        imgSrc:'',
-                        name:'滑块'
-                    }]
-                }]
+                texList:texList
 
             }
         };

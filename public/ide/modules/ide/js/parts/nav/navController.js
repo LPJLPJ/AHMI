@@ -673,6 +673,8 @@
 
         function play(){
             generateData()
+            window.cachedResourceList = _.cloneDeep(ResourceService.getGlobalResources());
+
             $scope.component.simulator.show = true;
 
         }

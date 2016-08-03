@@ -1782,7 +1782,7 @@ ideServices
                 //     this.normalImageElement=null;
                 // }
 
-                this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc)
+                this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.normalImageElement) {
                     this.loaded = true;
                     this.setCoords();
@@ -5724,11 +5724,11 @@ ideServices
                 if(_option.progressModeId=='1'){
                     selectObj.level.texList=[{
                         currentSliceIdx:0,
-                        name:'进度条底纹',
+                        name:'进度条背景',
                         slices:[{
                             color:'rgba(120,120,120,1)',
                             imgSrc:'',
-                            name:'进度条底纹'
+                            name:'进度条背景'
                         }]
                     },{
                         currentSliceIdx:0,

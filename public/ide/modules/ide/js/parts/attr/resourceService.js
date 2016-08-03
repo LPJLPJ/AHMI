@@ -13,6 +13,7 @@ ideServices
             complete: true
         }];
         var  files= [];
+        var  templateFiles = [];
         var size = 0;
         //var resourceUrl = "/project/"+window.localStorage.getItem('projectId')+'/resources/';
         var resourceUrl = '';
@@ -27,6 +28,9 @@ ideServices
             globalResources = glres;
         };
 
+        this.setTemplateFiles = function(templates){
+            templateFiles=templates;
+        };
 
         this.getResourceFromCache = function (key, type) {
             type = type || 'src';
@@ -87,6 +91,17 @@ ideServices
             // console.log(files);
             // console.log(images);
             return images;
+        };
+
+        this.getAllImagesAndTemplates = function(){
+            var images = _.filter(files, function (file) {
+                if (file.type && file.type.split('/')[0]=='image'&&file.id!='blank.png'){
+                    return true;
+                }else{
+                    return false;
+                }
+            });
+            return images = images.concat(templateFiles);
         };
 
         this.ResourcesLength = function () {

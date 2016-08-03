@@ -114,55 +114,70 @@ module.exports = React.createClass({
         var imageList = []
         var allResources = data.resourceList || [];
         this.state.resourceList = resourceList
-        this.state.imageList = imageList
+        //this.state.imageList = imageList
         var basicUrl = data.basicUrl;
         var num = allResources.length;
         this.state.totalResourceNum = num;
-        if (num > 0) {
-            allResources.map(function (resource) {
-                var newResource = {};
-                newResource.id = resource.id;
-                newResource.name = resource.name;
-                newResource.type = resource.type;
-                switch (resource.type.split('/')[0]) {
-                    case 'image':
-                        var newImg = new Image();
-                        newImg.src = resource.src;
-                        newImg.onload = function () {
-                            num = num - 1;
-                            //update loading progress
-                            this.drawLoadingProgress(this.state.totalResourceNum, num, true, projectWidth, projectHeight)
-                            if (num == 0) {
-                                window.imageList = imageList;
-                                console.log(imageList)
-                                callBack(data);
-                            }
-                        }.bind(this);
-                        newImg.onerror = function (e) {
-                            console.log(e);
-                            newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII="
 
-                        }.bind(this);
-                        newResource.content = newImg;
-                        imageList.push(newResource)
+        // process window.cachedResourceList
 
-                        break;
-                    default:
-                        num = num - 1
-                        this.drawLoadingProgress(this.state.totalResourceNum, num, true)
 
-                        //update loading progress
-                        break;
+        //if resource.complete == false  content set to be blank
 
-                }
+        imageList = window.cachedResourceList;
+        this.state.imageList = imageList;
+        console.log('imageList',imageList);
+        //this.drawLoadingProgress(this.state.totalResourceNum, num, true, projectWidth, projectHeight)
+        //console.log('haha',resourceList);
+        callBack(data);
 
-                resourceList.push(newResource);
 
-            }.bind(this));
-
-        } else {
-            callBack(data)
-        }
+        //if (num > 0) {
+        //    allResources.map(function (resource) {
+        //        var newResource = {};
+        //        newResource.id = resource.id;
+        //        newResource.name = resource.name;
+        //        newResource.type = resource.type;
+        //        switch (resource.type.split('/')[0]) {
+        //            case 'image':
+        //                var newImg = new Image();
+        //                newImg.src = resource.src;
+        //                newImg.onload = function () {
+        //                    num = num - 1;
+        //                    //update loading progress
+        //                    this.drawLoadingProgress(this.state.totalResourceNum, num, true, projectWidth, projectHeight)
+        //                    if (num == 0) {
+        //                        window.imageList = imageList;
+        //                        console.log(imageList)
+        //                        callBack(data);
+        //                    }
+        //                }.bind(this);
+        //                newImg.onerror = function (e) {
+        //                    console.log(e);
+        //                    newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII="
+        //
+        //                }.bind(this);
+        //                newResource.content = newImg;
+        //                imageList.push(newResource)
+        //
+        //                break;
+        //            default:
+        //                num = num - 1
+        //                this.drawLoadingProgress(this.state.totalResourceNum, num, true)
+        //
+        //                //update loading progress
+        //                break;
+        //
+        //        }
+        //
+        //        resourceList.push(newResource);
+        //        console.log('resourceList',resourceList);
+        //
+        //    }.bind(this));
+        //
+        //} else {
+        //    callBack(data)
+        //}
     },
     initProject: function () {
 
@@ -1645,7 +1660,7 @@ module.exports = React.createClass({
     },
     drawBgImg: function (x, y, w, h, imageName, ctx) {
         //console.log('x: '+x+' y: '+y+' w: '+w+' h: '+h);
-        var imageName = this.getImageName(imageName)
+        var imageName = this.getImageName(imageName);
         var offcanvas, offctx;
         if (!ctx) {
             offcanvas = this.refs.offcanvas;
@@ -1656,7 +1671,6 @@ module.exports = React.createClass({
         var imageList = this.state.imageList;
         for (var i = 0; i < imageList.length; i++) {
             if (imageList[i].id == imageName) {
-
                 // offctx.drawImage(imageList[i].content,0,0,w,h,x,y,w,h);
                 offctx.drawImage(imageList[i].content, x, y, w, h);
                 break;

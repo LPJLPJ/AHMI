@@ -4,7 +4,7 @@
 ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalInstance,Type, ResourceService,widgetInfo,TexService) {
 
 
-    $scope.images = ResourceService.getAllImages();
+    $scope.images = ResourceService.getAllImagesAndTemplates();
     $scope.images.unshift({
         name:'---',
         src:''

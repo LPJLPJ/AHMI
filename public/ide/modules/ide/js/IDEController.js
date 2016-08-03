@@ -160,7 +160,41 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         }
     }
 
+
+
+    function LoadWithTemplate(data, id){
+        //var templateId = data.content.templateId || 'defaultTemplate';
+
+        $http({
+            method:'GET',
+            url:'/public/templates/defaultTemplate/defaultTemplate.json'
+        }).success(function (tdata) {
+            console.log('get json success',tdata);
+            setTemplate(tdata,function(){
+                loadFromContent(data,id);
+            }.bind(this));
+        }).error(function (msg) {
+            //toastr.warning('读取错误');
+            //loadFromBlank({},id);
+            console.log('get json failed');
+        })
+    }
+
     function loadFromContent(data,id) {
+        //$http({
+        //    method:'GET',
+        //    url:'/public/templates/defaultTemplate/defaultTemplate.json'
+        //}).success(function (data) {
+        //    console.log('get json success',data);
+        //    setTemplate(data);
+        //}).error(function (msg) {
+        //    //toastr.warning('读取错误');
+        //    //loadFromBlank({},id);
+        //    console.log('get json failed');
+        //})
+
+
+
         if (data.content){
 
             //var globalProject = GlobalService.getBlankProject()
@@ -306,7 +340,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             url:baseUrl+'/project/'+id+'/content'
         }).success(function (data) {
             //console.log(data);
-            loadFromContent(data,id);
+            LoadWithTemplate(data,id);
 
         }).error(function (msg) {
             toastr.warning('读取错误');
@@ -680,6 +714,43 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         TagService.syncCustomTags(globalProject.customTags)
         TagService.syncTimerTags(globalProject.timerTags)
         TimerService.setTimerNum(globalProject.timers)
+    }
+
+    function setTemplate(date,cb){
+        var template = _.cloneDeep(date);
+        console.log(template);
+        ResourceService.setTemplateFiles(template.templateResourcesList);
+        TemplateProvider.setDefaultWidget(template);
+
+        var templateList = template.templateResourcesList||[];
+        var totalNum = templateList.length;
+        var coutDown = function (e, resourceObj) {
+            if (e.type === 'error') {
+                // console.log(e)
+                toastr.warning('图片加载失败: ' + resourceObj.name);
+                resourceObj.complete = false;
+            } else {
+                resourceObj.complete = true;
+            }
+            totalNum--;
+            if(totalNum<=0){
+                //cb
+                cb && cb();
+            }
+        };
+        //for(var i=0;i<templateList.length;i++){
+        //    var curRes = templateList[i];
+        //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+        //}
+        if(totalNum>0){
+            templateList.map(function(curRes,index){
+                ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+            });
+        }else{
+            cb && cb();
+        }
+
+
     }
 
 
