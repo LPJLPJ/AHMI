@@ -5098,7 +5098,7 @@ ideServices
                 return;
             }
 
-            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height);
+            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
 
             var editInSameSubLayer=false;
             if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
@@ -5707,8 +5707,8 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:'rgba(120,120,120,1)',
-                        imgSrc:'',
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/templates/defaultTemplate/defaultResources/barBackground.png',
                         name:'进度条底纹'
                     }]
                 },{
@@ -5716,7 +5716,7 @@ ideServices
                     name:'进度条',
                     slices:[{
                         color:'rgba(80,80,80,1)',
-                        imgSrc:'',
+                        imgSrc:'/public/templates/defaultTemplate/defaultResources/barAll.png',
                         name:'进度条'
                     }]
                 }];
@@ -6085,7 +6085,7 @@ ideServices
         this.ChangeAttributeOscilloscope = function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
             if(_option.hasOwnProperty("lineColor")){
-                console.log('keke',_option.lineColor);
+                //console.log('keke',_option.lineColor);
                 selectObj.level.info.lineColor= _option.lineColor;
             }
         };
@@ -6152,8 +6152,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘背景',
                         slices:[{
-                                color:'rgba(120,120,120,1)',
-                                imgSrc:'',
+                                color:'rgba(0,0,0,0)',
+                                imgSrc:'/public/templates/defaultTemplate/defaultResources/dashboard.png',
                                 name:'仪表盘背景'
                             }]
                     },
@@ -6161,8 +6161,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘指针',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:'/public/templates/defaultTemplate/defaultResources/pointer.png',
                         name:'仪表盘指针'
                             }]
                     }
@@ -6174,7 +6174,7 @@ ideServices
                         name:'仪表盘背景',
                         slices:[{
                             color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            imgSrc:'/public/templates/defaultTemplate/defaultResources/dashboard.png',
                             name:'仪表盘背景'
                         }]
                     },
@@ -6183,7 +6183,7 @@ ideServices
                         name:'仪表盘指针',
                         slices:[{
                             color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            imgSrc:'/public/templates/defaultTemplate/defaultResources/pointer.png',
                             name:'仪表盘指针'
                         }]
                     },
@@ -6191,8 +6191,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'光带效果',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:'/public/templates/defaultTemplate/defaultResources/lightBand.png',
                             name:'光带效果'
                         }]
 
@@ -6882,6 +6882,7 @@ ideServices
                 var subLayerNode=CanvasService.getSubLayerNode();
                 _scale=ViewService.getScaleFloat('subCanvas');
 
+                drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
                 subLayerNode.setZoom(_scale);
 
                 subLayerNode.setWidth(currentLayer.info.width*_scale);
@@ -7205,17 +7206,40 @@ ideServices
          * @param width
          * @param height
          */
-        function drawBackgroundCanvas(width,height){
+        function drawBackgroundCanvas(width,height,x,y,scale){
+            var _scale = scale||1;
+            var _width = parseInt(width*_scale);
+            var _height = parseInt(height*_scale);
+            var currentPage = _self.getCurrentPage();
+            var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
+            var pageBackgroundImgSrc = currentPage.backgroundImage||"";
+            var pageFromJson = JSON.parse(currentPage.proJsonStr);
+            var pageWidth = pageFromJson.backgroundImage.width;
+            var pageHeight = pageFromJson.backgroundImage.height;
+
             var backgroundCanvas=document.getElementById('backgroundCanvas');
             //window.c2 = c2;
-            backgroundCanvas.width=width;
-            backgroundCanvas.height=height;
+            backgroundCanvas.width=_width;
+            backgroundCanvas.height=_height;
             var ctx=backgroundCanvas.getContext('2d');
-            ctx.beginPath();
 
-            ctx.rect(0,0,width,height);
-            ctx.fillStyle='rgba(54,71,92,0.3)';
-            ctx.fill();
+            if(pageBackgroundImgSrc!=""&&pageBackgroundImgSrc!="/public/images/blank.png"){
+                pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
+                var sourceX = parseInt(pageBackgroundImg.width/pageWidth*x);
+                var sourceY = parseInt(pageBackgroundImg.height/pageHeight*y);
+                var sourceWidth =parseInt(pageBackgroundImg.width/pageWidth*width);
+                var sourceHeight =parseInt(pageBackgroundImg.height/pageHeight*height);
+                //console.log('keke',sourceX,sourceY,sourceWidth,sourceHeight);
+                ctx.drawImage(pageBackgroundImg,sourceX,sourceY,sourceWidth,sourceHeight,0,0,_width,_height);
+            }else{
+                ctx.beginPath();
+
+                //console.log('keke',parseInt(width*_scale));
+                ctx.rect(0,0,_width,_height);
+                ctx.fillStyle=pageColor;
+                ctx.fill();
+                ctx.closePath();
+            }
             //ctx.lineWidth = 1;
             //ctx.strokeStyle = 'rgba(102,153,255,0.75)';
             //ctx.stroke();

@@ -718,8 +718,10 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     function setTemplate(date,cb){
         var template = _.cloneDeep(date);
-        console.log(template);
+
+        //add template resource to resource list
         ResourceService.setTemplateFiles(template.templateResourcesList);
+        //add template attribute to widget
         TemplateProvider.setDefaultWidget(template);
 
         var templateList = template.templateResourcesList||[];
