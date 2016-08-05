@@ -37,6 +37,7 @@ try {
 var router = require('./routes/index');
 
 //init db
+console.log('dbConfig.dbPath',dbConfig.dbPath);
 mongoose.connect(dbConfig.dbPath);
 var db = mongoose.connection;
 // console.log(db);
