@@ -7234,8 +7234,6 @@ ideServices
                 ctx.drawImage(pageBackgroundImg,sourceX,sourceY,sourceWidth,sourceHeight,0,0,_width,_height);
             }else{
                 ctx.beginPath();
-
-                //console.log('keke',parseInt(width*_scale));
                 ctx.rect(0,0,_width,_height);
                 ctx.fillStyle=pageColor;
                 ctx.fill();
