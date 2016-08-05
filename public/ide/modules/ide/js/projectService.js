@@ -5098,7 +5098,7 @@ ideServices
                 return;
             }
 
-            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
+            //drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
 
             var editInSameSubLayer=false;
             if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
@@ -6882,7 +6882,7 @@ ideServices
                 var subLayerNode=CanvasService.getSubLayerNode();
                 _scale=ViewService.getScaleFloat('subCanvas');
 
-                drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
+                //drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
                 subLayerNode.setZoom(_scale);
 
                 subLayerNode.setWidth(currentLayer.info.width*_scale);
