@@ -201,7 +201,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             var globalProject = JSON.parse(data.content);
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
-            })
+            });
+            ProjectService.setResolution(resolution);
             globalProject.initSize = {
                 width : resolution[0],
                 height :resolution[1]

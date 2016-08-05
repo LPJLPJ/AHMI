@@ -5098,7 +5098,7 @@ ideServices
                 return;
             }
 
-            //drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
+            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
 
             var editInSameSubLayer=false;
             if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
@@ -6882,7 +6882,7 @@ ideServices
                 var subLayerNode=CanvasService.getSubLayerNode();
                 _scale=ViewService.getScaleFloat('subCanvas');
 
-                //drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
+                drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
                 subLayerNode.setZoom(_scale);
 
                 subLayerNode.setWidth(currentLayer.info.width*_scale);
@@ -7211,11 +7211,12 @@ ideServices
             var _width = parseInt(width*_scale);
             var _height = parseInt(height*_scale);
             var currentPage = _self.getCurrentPage();
+
             var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
             var pageBackgroundImgSrc = currentPage.backgroundImage||"";
-            var pageFromJson = JSON.parse(currentPage.proJsonStr);
-            var pageWidth = pageFromJson.backgroundImage.width;
-            var pageHeight = pageFromJson.backgroundImage.height;
+            //var pageFromJson = JSON.parse(currentPage.proJsonStr);
+            var pageWidth = _resolution[0]||1280;
+            var pageHeight = _resolution[1]||400;
 
             var backgroundCanvas=document.getElementById('backgroundCanvas');
             //window.c2 = c2;
@@ -7243,6 +7244,11 @@ ideServices
             //ctx.lineWidth = 1;
             //ctx.strokeStyle = 'rgba(102,153,255,0.75)';
             //ctx.stroke();
+        }
+
+        var _resolution = null;
+        this.setResolution = function(resolution){
+            _resolution=resolution;
         }
 
     });
