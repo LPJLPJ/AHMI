@@ -7214,9 +7214,10 @@ ideServices
 
             var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
             var pageBackgroundImgSrc = currentPage.backgroundImage||"";
-            //var pageFromJson = JSON.parse(currentPage.proJsonStr);
-            var pageWidth = _resolution[0]||1280;
-            var pageHeight = _resolution[1]||400;
+            var pageFromJson = JSON.parse(currentPage.proJsonStr);
+            console.log('keke',pageFromJson);
+            var pageWidth = 1280;
+            var pageHeight = 400;
 
             var backgroundCanvas=document.getElementById('backgroundCanvas');
             backgroundCanvas.width=_width;
@@ -7245,10 +7246,10 @@ ideServices
             //ctx.stroke();
         }
 
-        var _resolution = null;
-        this.setResolution = function(resolution){
-            _resolution=resolution;
-            console.log('haha',_resolution);
-        }
+        //var _resolution = null;
+        //this.setResolution = function(resolution){
+        //    _resolution=resolution;
+        //    console.log('haha',_resolution);
+        //}
 
     });
