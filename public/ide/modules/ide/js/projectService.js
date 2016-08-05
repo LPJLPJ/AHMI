@@ -7219,7 +7219,6 @@ ideServices
             var pageHeight = _resolution[1]||400;
 
             var backgroundCanvas=document.getElementById('backgroundCanvas');
-            //window.c2 = c2;
             backgroundCanvas.width=_width;
             backgroundCanvas.height=_height;
             var ctx=backgroundCanvas.getContext('2d');
