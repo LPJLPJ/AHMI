@@ -7248,6 +7248,7 @@ ideServices
         var _resolution = null;
         this.setResolution = function(resolution){
             _resolution=resolution;
+            console.log('haha',_resolution);
         }
 
     });
