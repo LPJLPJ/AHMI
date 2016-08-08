@@ -789,6 +789,12 @@ ideServices
         }
 
 
-
+        var templateId=null;
+        this.setTemplateId = function(id){
+            templateId=id;
+        }
+        this.getTemplateId = function(){
+            return templateId;
+        }
 
     });
