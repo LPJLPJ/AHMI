@@ -6173,7 +6173,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘背景',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
+                            color:'rgba(0,0,0,0)',
                             imgSrc:'/public/templates/defaultTemplate/defaultResources/dashboard.png',
                             name:'仪表盘背景'
                         }]
@@ -6182,7 +6182,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘指针',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
+                            color:'rgba(0,0,0,0)',
                             imgSrc:'/public/templates/defaultTemplate/defaultResources/pointer.png',
                             name:'仪表盘指针'
                         }]
@@ -7217,7 +7217,7 @@ ideServices
             //var pageFromJson = JSON.parse(currentPage.proJsonStr);
             var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
             var pageHeight = (project.currentSize&&project.currentSize.height)||480;
-            console.log('keke',pageWidth,pageHeight);
+            console.log('got page width and height',pageWidth,pageHeight);
 
             var backgroundCanvas=document.getElementById('backgroundCanvas');
             backgroundCanvas.width=_width;
