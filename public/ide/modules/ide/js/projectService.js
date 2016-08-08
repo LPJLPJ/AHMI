@@ -1657,6 +1657,17 @@ ideServices
             initialize: function (level, options) {
                 var self=this;
                 this.callSuper('initialize',options);
+                var ctrlOptions={
+                    bl:false,
+                    br:false,
+                    mb:false,
+                    ml:false,
+                    mr:false,
+                    mt:false,
+                    tl:false,
+                    tr:false
+                };
+                this.setControlsVisibility(ctrlOptions);//使时间控件不能拉伸
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 //this.backgroundColor=level.texList[0].slices[0].color;
@@ -1666,6 +1677,12 @@ ideServices
                 this.fontColor=level.info.fontColor;
                 this.align=level.info.align;
                 this.initValue=level.info.initValue;
+
+                //设置canvas的宽度和高度
+                if(this.fontSize){
+                    this.setWidth(8*this.fontSize);
+                    this.setHeight(this.fontSize*1.5);
+                }
                 
                 this.on('changeDateTimeModeId',function(arg){
                     var dateTimeModeId=arg.dateTimeModeId;
@@ -1682,6 +1699,8 @@ ideServices
                     }
                     if(arg.hasOwnProperty('fontSize')){
                         self.fontSize=arg.fontSize;
+                        self.setWidth(6*self.fontSize);
+                        self.setHeight(self.fontSize*1.5);
                     }
                     if(arg.hasOwnProperty('fontColor')){
                         self.fontColor=arg.fontColor;
@@ -2101,7 +2120,7 @@ ideServices
                 };
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
-                this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
+                this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
                 this.hasRotatingPoint=false;
                 this.backgroundColor=level.texList[0].slices[0].color;
 
