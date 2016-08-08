@@ -7262,7 +7262,6 @@ ideServices
                 var sourceY = parseInt(pageBackgroundImg.height/pageHeight*y);
                 var sourceWidth =parseInt(pageBackgroundImg.width/pageWidth*width);
                 var sourceHeight =parseInt(pageBackgroundImg.height/pageHeight*height);
-                //console.log('keke',sourceX,sourceY,sourceWidth,sourceHeight);
                 ctx.drawImage(pageBackgroundImg,sourceX,sourceY,sourceWidth,sourceHeight,0,0,_width,_height);
             }else{
                 ctx.beginPath();
