@@ -170,7 +170,7 @@ $(function(){
         .on('click','.projectpanel', function (e) {
         curPanel = $(this)
         curSelectedPanel = curPanel
-
+        $('#basicinfo-template').attr('disabled',false);
 
         var project = $(this).attr('data-project');
         project = JSON.parse(project);
@@ -202,6 +202,7 @@ $(function(){
             author.val(project.author);
             resolution.val(project.resolution)
             template.val(project.template);
+            template.attr('disabled',true);
         }else if (curNodeName == 'I'){
             //delete
             // if(confirm('确认删除?')){
@@ -234,6 +235,7 @@ $(function(){
 
 
     $('#addproject').on('click', function (e) {
+        $('#basicinfo-template').attr('disabled',false);
         $('#modal-ok').html('创建')
 
     })

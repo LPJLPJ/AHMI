@@ -16,6 +16,7 @@ module.exports = function (req, res) {
                 info.userId = project.userId;
                 info.resolution = project.resolution
                 info.name = project.name;
+                info.template = project.template;
                 info.lastModifiedTime = project.lastModifiedTime;
                 var thumbnail = project.thumbnail;
                 return {
