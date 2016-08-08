@@ -14,6 +14,7 @@ var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
 //rendering
 var Renderer = require('../utils/render/renderer');
+var fse = require('fs-extra');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -83,10 +84,17 @@ projectRoute.createProject = function (req, res) {
             var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources')
             fs.stat(targetDir, function (err, stats) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
-                    //exists
-                    var newProjectInfo = _.cloneDeep(newProject)
-                    delete newProjectInfo.content;
-                    res.end(JSON.stringify(newProjectInfo))
+
+                    //copy template
+                    cpTemplates('defaultTemplate',path.join(targetDir,'template',function (err) {
+                        //exists
+                        var newProjectInfo = _.cloneDeep(newProject)
+                        delete newProjectInfo.content;
+                        res.end(JSON.stringify(newProjectInfo))
+                    }));
+
+
+
                 }else{
                     //create new directory
                     console.log('create new directory',targetDir);
@@ -96,10 +104,12 @@ projectRoute.createProject = function (req, res) {
                             errHandler(res, 500,'mkdir error')
                         }else{
                             console.log('ok')
-                            //create resources
-                            var newProjectInfo = _.cloneDeep(newProject)
-                            delete newProjectInfo.content;
-                            res.end(JSON.stringify(newProjectInfo))
+                            //copy template
+                            cpTemplates('defaultTemplate',path.join(targetDir,'template'),function (err) {
+                                var newProjectInfo = _.cloneDeep(newProject)
+                                delete newProjectInfo.content;
+                                res.end(JSON.stringify(newProjectInfo))
+                            });
                         }
 
                     })
@@ -211,9 +221,19 @@ projectRoute.saveProject = function (req, res) {
 
                                     var diffResources = _.difference(files,resourceNames);
                                     //console.log(diffResources)
-                                    for (var i=0;i<diffResources.length;i++){
-                                        fs.unlink(path.join(url,diffResources[i]));
-                                    }
+                                    // for (var i=0;i<diffResources.length;i++){
+                                    //     fs.unlink(path.join(url,diffResources[i]));
+                                    // }
+
+                                    //filter
+                                    diffResources.map(function (dFile) {
+                                        var dFilePath = path.join(url,dFile);
+                                        fs.stat(dFilePath,function (stats) {
+                                            if (stats && stats.isFile()){
+                                                fs.unlink(dFilePath);
+                                            }
+                                        })
+                                    });
                                 }
                             })
 
@@ -384,6 +404,24 @@ projectRoute.generateProject = function (req, res) {
         errHandler(res,500,'projectId error');
     }
 }
+
+
+//cp templates
+function cpTemplates(templateName,dstDir,cb) {
+    var srcDir = path.join(__dirname,'../public/templates/',templateName,'defaultResources');
+    fse.copy(srcDir,dstDir,function (err) {
+        console.log(err);
+        if (err){
+            cb && cb(err);
+        }else{
+            cb && cb();
+        }
+    })
+}
+
+
+
+
 
 projectRoute.downloadProject = function (req, res) {
     var projectId = req.params.id;
