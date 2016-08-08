@@ -292,6 +292,7 @@ $(function(){
 
 
             }else{
+                console.log('haha',project);
                 $.ajax({
                     type:'POST',
                     url:'/project/create',

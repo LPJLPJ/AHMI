@@ -164,7 +164,6 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     function LoadWithTemplate(data, id){
         var templateId = data.template;
-        console.log(templateId)
         if (templateId && templateId!==''){
             $http({
                 method:'GET',
