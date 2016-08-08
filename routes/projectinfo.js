@@ -76,7 +76,7 @@ projectRoute.createProject = function (req, res) {
         var newProject = new ProjectModel(data)
         newProject.save(function (err) {
             if (err){
-                console.log('project save error')
+                console.log('project save error',err)
                 //res.status(500).end('save error')
                 errHandler(res,500,'save error');
             }

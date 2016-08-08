@@ -163,21 +163,27 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
 
     function LoadWithTemplate(data, id){
-        //var templateId = data.content.templateId || 'defaultTemplate';
+        var templateId = data.template;
+        console.log(templateId)
+        if (templateId && templateId!==''){
+            $http({
+                method:'GET',
+                url:'/public/templates/defaultTemplate/defaultTemplate.json'
+            }).success(function (tdata) {
+                console.log('get json success',tdata);
+                setTemplate(tdata,function(){
+                    loadFromContent(data,id);
+                }.bind(this));
+            }).error(function (msg) {
+                //toastr.warning('读取错误');
+                //loadFromBlank({},id);
+                console.log('get json failed');
+            })
+        }else{
+            loadFromContent(data,id);
+        }
 
-        $http({
-            method:'GET',
-            url:'/public/templates/defaultTemplate/defaultTemplate.json'
-        }).success(function (tdata) {
-            console.log('get json success',tdata);
-            setTemplate(tdata,function(){
-                loadFromContent(data,id);
-            }.bind(this));
-        }).error(function (msg) {
-            //toastr.warning('读取错误');
-            //loadFromBlank({},id);
-            console.log('get json failed');
-        })
+
     }
 
     function loadFromContent(data,id) {
