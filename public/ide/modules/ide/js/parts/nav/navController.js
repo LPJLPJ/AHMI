@@ -529,7 +529,7 @@
                 newWidget.info.top=$scope.oldWidget.coordinate;
             }else{
                 $scope.oldWidget.name=newWidget.name;
-                $scope.oldWidget.coordinate=0;
+                $scope.oldWidget.coordinate = 0;
             }
             ProjectService.AddNewWidgetInCurrentSubLayer(newWidget, function () {
                 toastr.info('添加Widget成功');
