@@ -164,7 +164,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     function LoadWithTemplate(data, id){
         var templateId = data.template;
-        console.log(templateId)
+        //add templateId to template
+        TemplateProvider.setTemplateId(templateId);
         if (templateId && templateId!==''){
             $http({
                 method:'GET',
@@ -729,6 +730,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         ResourceService.setTemplateFiles(template.templateResourcesList);
         //add template attribute to widget
         TemplateProvider.setDefaultWidget(template);
+
+
 
         var templateList = template.templateResourcesList||[];
         var totalNum = templateList.length;

@@ -910,12 +910,20 @@ ideServices
 
                 //change dashboard mode
                 this.on('changeDashboardMode',function(arg){
+                    var level=arg.level;
                     var _callback=arg.callback;
-                    self.backgroundColor=arg.backgroundColor;
                     //若改变模式，重置已经画好的仪表盘控件
-                    self.backgroundImageElement=null;
-                    self.pointerImageElement=null;
-                    self.lightBandImageElement=null;
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    self.backgroundColor = level.texList[0].slices[0].color;
+
+                    self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    self.pointerColor=level.texList[1].slices[0].color;
+
+                    if(level.texList[2]){
+                        self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                    }else{
+                        self.lightBandImageElement=null;
+                    }
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -945,17 +953,17 @@ ideServices
 
                     self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
 
-                    self.pointerColor=level.texList[1].slices[0].color;
-                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-
-                        self.pointerImageElement=new Image();
-                        self.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
-                        self.pointerImageElement.onload = function () {
-
-                        }.bind(this);
-                    }else {
-                        self.pointerImageElement=null;
-                    }
+                    //self.pointerColor=level.texList[1].slices[0].color;
+                    //if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    //
+                    //    self.pointerImageElement=new Image();
+                    //    self.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
+                    //    self.pointerImageElement.onload = function () {
+                    //
+                    //    }.bind(this);
+                    //}else {
+                    //    self.pointerImageElement=null;
+                    //}
 
                     self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
 
@@ -6162,8 +6170,10 @@ ideServices
 
         //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
         this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
+            var templateId = TemplateProvider.getTemplateId();
             var selectObj = _self.getCurrentSelectObject();
             selectObj.level.dashboardModeId = _option.dashboardModeId;
+            console.log('keke',_option.dashboardModeId);
             if(selectObj.level.dashboardModeId=='0')
             {
                 selectObj.level.texList=[
@@ -6171,8 +6181,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘背景',
                         slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:'/public/templates/defaultTemplate/defaultResources/dashboard.png',
+                                color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
+                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
                                 name:'仪表盘背景'
                             }]
                     },
@@ -6181,7 +6191,7 @@ ideServices
                         name:'仪表盘指针',
                         slices:[{
                             color:'rgba(0,0,0,0)',
-                            imgSrc:'/public/templates/defaultTemplate/defaultResources/pointer.png',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
                         name:'仪表盘指针'
                             }]
                     }
@@ -6192,8 +6202,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘背景',
                         slices:[{
-                            color:'rgba(0,0,0,0)',
-                            imgSrc:'/public/templates/defaultTemplate/defaultResources/dashboard.png',
+                            color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
                             name:'仪表盘背景'
                         }]
                     },
@@ -6202,7 +6212,7 @@ ideServices
                         name:'仪表盘指针',
                         slices:[{
                             color:'rgba(0,0,0,0)',
-                            imgSrc:'/public/templates/defaultTemplate/defaultResources/pointer.png',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
                             name:'仪表盘指针'
                         }]
                     },
@@ -6211,7 +6221,7 @@ ideServices
                         name:'光带效果',
                         slices:[{
                             color:'rgba(0,0,0,0)',
-                            imgSrc:'/public/templates/defaultTemplate/defaultResources/lightBand.png',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
                             name:'光带效果'
                         }]
 
@@ -6219,8 +6229,11 @@ ideServices
                 ]
             }
             //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
+            var level = _.cloneDeep(selectObj.level);
             arg={
+                level:level,
                 backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
+                dashboardModeId:_option.dashboardModeId,
                 callback:_successCallback
             };
             selectObj.target.fire('changeDashboardMode',arg);
