@@ -25,12 +25,12 @@ ideServices
                     name:'按钮纹理',
                     currentSliceIdx:0,
                     slices:[{
-                        color:'rgba(0,0,0,0)',
-                        imgSrc:'/public/templates/defaultTemplate/defaultResources/button1.png',
+                        color:'rgba(220,82,74,1)',
+                        imgSrc:'',
                         name:'按下前'
                     },{
-                        color:'rgba(0,0,0,0)',
-                        imgSrc:'/public/templates/defaultTemplate/defaultResources/button2.png',
+                        color:'rgba(254,205,82,1)',
+                        imgSrc:'',
                         name:'按下后'
                     }]
                 }]
