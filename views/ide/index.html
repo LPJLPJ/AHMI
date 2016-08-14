@@ -2214,6 +2214,12 @@
                                                name="writeOrRead" ng-model="tag.writeOrRead" value="true"
                                                class="col-sm-8"/>
                                     </fieldset>
+                                    <fieldset>
+                                        <label for="readRegister" class="col-sm-4 tag-modal-label">读写寄存器</label>
+                                        <input ng-disabled="!tag.register" id="readRegister" type="radio"
+                                               name="writeOrRead" ng-model="tag.writeOrRead" value="readAndWrite"
+                                               class="col-sm-8"/>
+                                    </fieldset>
 
 
                                 </div>
