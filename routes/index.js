@@ -72,7 +72,6 @@ router.route('/private/space')
 //router.route('/private/info')
 //    .get(route_personalInfo)
 
-
 router.route('/api/*')
     .all(sessionTouch);
 
