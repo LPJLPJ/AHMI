@@ -163,21 +163,28 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
 
     function LoadWithTemplate(data, id){
-        //var templateId = data.content.templateId || 'defaultTemplate';
+        var templateId = data.template;
+        //add templateId to template
+        TemplateProvider.setTemplateId(templateId);
+        if (templateId && templateId!==''){
+            $http({
+                method:'GET',
+                url:'/public/templates/defaultTemplate/defaultTemplate.json'
+            }).success(function (tdata) {
+                console.log('get json success',tdata);
+                setTemplate(tdata,function(){
+                    loadFromContent(data,id);
+                }.bind(this));
+            }).error(function (msg) {
+                //toastr.warning('读取错误');
+                //loadFromBlank({},id);
+                console.log('get json failed');
+            })
+        }else{
+            loadFromContent(data,id);
+        }
 
-        $http({
-            method:'GET',
-            url:'/public/templates/defaultTemplate/defaultTemplate.json'
-        }).success(function (tdata) {
-            console.log('get json success',tdata);
-            setTemplate(tdata,function(){
-                loadFromContent(data,id);
-            }.bind(this));
-        }).error(function (msg) {
-            //toastr.warning('读取错误');
-            //loadFromBlank({},id);
-            console.log('get json failed');
-        })
+
     }
 
     function loadFromContent(data,id) {
@@ -201,7 +208,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             var globalProject = JSON.parse(data.content);
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
-            })
+            });
             globalProject.initSize = {
                 width : resolution[0],
                 height :resolution[1]
@@ -718,9 +725,13 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     function setTemplate(date,cb){
         var template = _.cloneDeep(date);
-        console.log(template);
+
+        //add template resource to resource list
         ResourceService.setTemplateFiles(template.templateResourcesList);
+        //add template attribute to widget
         TemplateProvider.setDefaultWidget(template);
+
+
 
         var templateList = template.templateResourcesList||[];
         var totalNum = templateList.length;

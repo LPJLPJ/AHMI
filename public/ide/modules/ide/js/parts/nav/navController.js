@@ -27,6 +27,11 @@
 
         });
 
+        $scope.oldWidget={
+            name:'',
+            coordinate:0,
+        }
+
         /**
          * 初始化Nav界面
          */
@@ -517,6 +522,14 @@
             }
             else {
                 return;
+            }
+            if(newWidget.name==$scope.oldWidget.name){
+                $scope.oldWidget.coordinate+=20;
+                newWidget.info.left=$scope.oldWidget.coordinate;
+                newWidget.info.top=$scope.oldWidget.coordinate;
+            }else{
+                $scope.oldWidget.name=newWidget.name;
+                $scope.oldWidget.coordinate = 0;
             }
             ProjectService.AddNewWidgetInCurrentSubLayer(newWidget, function () {
                 toastr.info('添加Widget成功');

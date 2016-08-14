@@ -250,7 +250,7 @@
                                 ng-class="{false:'inactive'}[widget.enable]">
                                 <span class="iconfont icon-widget" ng-click="addWidget($index)" widget-icon
                                       iconfont="{{widget.icon}}"></span>
-                                <span class="caption">{{widget.name}}</span>
+                                <span class="caption" ng-click="addWidget($index)">{{widget.name}}</span>
                             </li>
                         </ul>
                     </div>
@@ -1969,7 +1969,7 @@
                 <!--Actions-->
                 <div ng-controller="ActionCtl" ng-show="showActionPanel">
                     <div>
-                        <span class="dengPage-Action-Title">Actions</span>
+                        <span class="dengPage-Action-Title">动作列表</span>
                         <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)">
                             添加新动作
                         </button>
@@ -2048,9 +2048,9 @@
                                     <thead>
                                     <tr>
                                         <td class="col-xs-1">#</td>
-                                        <td class="col-xs-1">Option</td>
-                                        <td class="col-xs-1">Tag</td>
-                                        <td class="col-xs-1">value</td>
+                                        <td class="col-xs-1">操作</td>
+                                        <td class="col-xs-1">变量</td>
+                                        <td class="col-xs-1">值</td>
                                         <td class="col-xs-1"></td>
                                     </tr>
                                     </thead>
@@ -2184,8 +2184,7 @@
                         <div class="modal-body">
                             <form class="deng-tagModel">
                                 <fieldset>
-                                    <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">Tag
-                                        name</label>
+                                    <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
                                     <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8"/>
                                 </fieldset>
 
@@ -2213,6 +2212,12 @@
                                         <label for="readRegister" class="col-sm-4 tag-modal-label">读寄存器</label>
                                         <input ng-disabled="!tag.register" id="readRegister" type="radio"
                                                name="writeOrRead" ng-model="tag.writeOrRead" value="true"
+                                               class="col-sm-8"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <label for="readRegister" class="col-sm-4 tag-modal-label">读写寄存器</label>
+                                        <input ng-disabled="!tag.register" id="readRegister" type="radio"
+                                               name="writeOrRead" ng-model="tag.writeOrRead" value="readAndWrite"
                                                class="col-sm-8"/>
                                     </fieldset>
 

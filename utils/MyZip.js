@@ -32,7 +32,7 @@ function zipSingleDir(zipFile,realDir, metaDir, cb) {
         }
       }else{
         //dir
-        zipSingleDir(zipFile,curFilePath,path.join(metaDir,curFile),function (err) {
+        zipSingleDir(zipFile,curFilePath,metaDir,function (err) {
           if (err) {
             cb && cb(err);
           }else{

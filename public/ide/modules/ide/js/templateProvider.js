@@ -6,13 +6,166 @@ ideServices
 
 
         var project,
-            defaultButton,
-            defaultSwitch,
-            defaultProgress,
-            defaultDashboard,
-            defaultRotateImage,
-            defaultSlideBlock,
-            defaultButtonGroup;
+            defaultButton={
+                info :{
+                    width:100,
+                    height: 50,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    arrange:true,
+
+                    text:'button',
+                    fontFamily:"宋体",
+                    fontSize:20,
+                    fontColor:'rgba(0,0,0,1)',
+                    fontBold:"100",
+                    fontItalic:'',
+                },
+                texList:[{
+                    name:'按钮纹理',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(220,82,74,1)',
+                        imgSrc:'',
+                        name:'按下前'
+                    },{
+                        color:'rgba(254,205,82,1)',
+                        imgSrc:'',
+                        name:'按下后'
+                    }]
+                }]
+            },
+            defaultSwitch={
+                info:{
+                    width:50, height: 50,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    bindBit:null
+                    },
+                texList:[{
+                        currentSliceIdx:0,
+                         name:'开关图片',
+                        slices:[{
+                            color:'rgba(40,40,40,1)',
+                            imgSrc:'',
+                            name:'开关图片'
+                    }]
+                }]
+            },
+            defaultProgress={
+                info:{
+                    width:177,
+                    height: 44,
+
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    minValue:0,maxValue:100,
+                    lowAlarmValue:0,highAlarmValue:100,
+                    progressValue:50,
+                    arrange:"horizontal" ,
+                    cursor:"0",
+                    progressModeId:'0'
+                    },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'进度条底纹',
+                    slices:[{
+                        color:'rgba(60,60,60,1)',
+                        imgSrc:'',
+                        name:'进度条底纹'
+                    }]
+                 },{
+                    currentSliceIdx:0,
+                    name:'进度条',
+                    slices:[{
+                        color:'rgba(70,70,70,1)',
+                        imgSrc:'',
+                        name:'进度条'
+                    }]
+                }]
+            },
+            defaultDashboard={
+                info:{
+                    width:250,
+                    height: 250,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    clockwise:'1',
+                    minValue:0,maxValue:360,
+                    minAngle:0,maxAngle:360,
+                    lowAlarmValue:0,highAlarmValue:360,
+                    value:45,
+                    offsetValue:0,
+                    pointerLength:185
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'仪表盘背景',
+                    slices:[{
+                        color:'rgba(100,100,100,1)',
+                        imgSrc:'',
+                        name:'仪表盘背景'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'仪表盘指针',
+                    slices:[{
+                        color:'rgba(120,120,120,1)',
+                        imgSrc:'',
+                        name:'仪表盘指针'
+                    }]
+                }]
+            },
+            defaultRotateImage={
+                info:{
+                    width: 100,
+                    height: 100,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    minValue:0,maxValue:360,
+                    initValue:0
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'旋转图片',
+                    slices:[{
+                        color:'rgba(150,150,150,1)',
+                        imgSrc:'',
+                        name:'旋转图片'
+                    }]
+                }]
+            },
+            defaultSlideBlock={
+                info:{
+                    width:160,
+                    height:50,
+
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    minValue:0,maxValue:100,
+                    lowAlarmValue:0,highAlarmValue:100,
+                    initValue:0,
+                    arrange:"horizontal"
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'滑块背景',
+                    slices:[{
+                        color:'rgba(63,63,63,1)',
+                        imgSrc:'',
+                        name:'滑块背景'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'滑块',
+                    slices:[{
+                        color:'rgba(180,180,180,1)',
+                        imgSrc:'',
+                        name:'滑块'
+                    }]
+                }]
+            },
+            defaultButtonGroup={};
 
         this.setDefaultWidget=function(widget){
             if(widget.defaultButton){
@@ -234,23 +387,7 @@ ideServices
                 url:'',
                 buttonModeId:'0',
                 zIndex:0,
-                texList:[{
-                    currentSliceIdx:0,
-                    name:'旋钮背景',
-                    slices:[{
-                        color:'rgba(97,217,86,1)',
-                        imgSrc:'',
-                        name:'旋钮背景'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'旋钮',
-                    slices:[{
-                        color:'rgba(70,70,70,1)',
-                        imgSrc:'',
-                        name:'旋钮'
-                    }]
-                }]
+
             }
         };
         this.getDefaultTextArea = function(){
@@ -366,21 +503,6 @@ ideServices
         }
 
         this.getDefaultProgress= function () {
-            //var subLayerNode=CanvasService.getSubLayerNode();
-            //
-            //var info={
-            //    width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
-            //    height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-            //
-            //    left: 0, top: 0,
-            //    originX: 'center', originY: 'center',
-            //    minValue:0,maxValue:100,
-            //    lowAlarmValue:0,highAlarmValue:100,
-            //    progressValue:50,
-            //    arrange:"horizontal" ,  //horizontal:水平   vertical:竖直
-            //    cursor:"0",   //光标设置，0:无光标，1:有光标
-            //    progressModeId:'0'//0:普通进度条，1:变色进度条，2:脚本进度条
-            //};
             var info = defaultProgress.info;
             var texList = defaultProgress.texList;
 
@@ -536,13 +658,7 @@ ideServices
         this.getDefaultSwitch=function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
-            var defaultInfo={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-                left: 0, top: 0,
-                originX: 'center', originY: 'center',
-                bindBit:null //绑定某tag的第几位
-            };
-            var info=defaultSwitch.info||defaultInfo;
+            var info=defaultSwitch.info;
             var texList=defaultSwitch.texList;
             return {
                 id: Math.random().toString(36).substr(2),
@@ -673,6 +789,12 @@ ideServices
         }
 
 
-
+        var templateId=null;
+        this.setTemplateId = function(id){
+            templateId=id;
+        }
+        this.getTemplateId = function(){
+            return templateId;
+        }
 
     });

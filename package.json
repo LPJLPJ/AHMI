@@ -19,6 +19,7 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "formidable": "^1.0.17",
+    "fs-extra": "^0.30.0",
     "lodash": "^4.11.2",
     "mkdir-p": "0.0.7",
     "mongoose": "^4.4.13",

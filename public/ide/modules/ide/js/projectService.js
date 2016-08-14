@@ -369,31 +369,11 @@ ideServices
                     //console.log(level.texList);
                     if(level.texList[0]&&level.texList[0].name=='进度条底纹'){
                         self.backgroundColor=level.texList[0].slices[0].color;
-                        // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                        //     self.backgroundImageElement=new Image();
-                        //     self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                        //     self.backgroundImageElement.onload = function () {
-                        //
-                        //     }.bind(this);
-                        // }else {
-                        //     self.backgroundImageElement=null;
-                        // }
-
                         self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                     }
 
                     if(level.texList[1]&&level.texList[1].name=='进度条'){
                         self.progressColor=level.texList[1].slices[0].color;
-                        // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                        //
-                        //     self.progressImageElement=new Image();
-                        //     self.progressImageElement.src=level.texList[1].slices[0].imgSrc;
-                        //     self.progressImageElement.onload = function () {
-                        //
-                        //     }.bind(this);
-                        // }else {
-                        //     self.progressImageElement=null;
-                        // }
                         self.progressImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
                     }else if(level.texList[1]&&level.texList[1].name=='初始颜色'){
                         self.initColor=level.texList[1].slices[0].color;
@@ -401,15 +381,6 @@ ideServices
 
                     if(level.texList[2]&&level.texList[2]&&level.texList[2].name=='光标纹理'){
                         self.cursorColor=level.texList[2].slices[0].color;
-                        // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                        //     self.cursorImageElement=new Image();
-                        //     self.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
-                        //     self.cursorImageElement.onload=function(){
-                        //
-                        //     }.bind(this);
-                        // }else{
-                        //     self.cursorImageElement=null;
-                        // }
                         self.cursorImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
                     }else if(level.texList[2]&&level.texList[2].name=='结束颜色'){
                         self.endColor=level.texList[2].slices[0].color;
@@ -456,9 +427,23 @@ ideServices
                         self.endColor=arg.endColor;
                     }
 
-                    self.backgroundImageElement=null;
-                    self.progressImageElement=null;
-                    self.cursorImageElement=null;
+                    if(level.texList[0]&&level.texList[0].name=='进度条底纹'){
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    }else{
+                        self.backgroundImageElement=null;
+                    }
+
+                    if(level.texList[1]&&level.texList[1].name=='进度条'){
+                        self.progressImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    }else{
+                        self.progressImageElement=null
+                    }
+
+                    if(level.texList[3]&&level.texList[3]&&level.texList[3].name=='光标纹理'){
+                        self.cursorImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+                    }else{
+                        self.cursorImageElement=null;
+                    }
 
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -517,9 +502,7 @@ ideServices
                     }else if(this.progressModeId=='1'){
                         //变色进度条
                         var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
-                        if(this.backgroundImageElement){
-                            ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                        }
+
                         //console.log(progressColor);
                         if(this.arrange=='horizontal'){
                             if(this.cursorImageElement){
@@ -533,6 +516,9 @@ ideServices
                             if(this.cursorImageElement){
                                 ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                             }
+                        }
+                        if(this.backgroundImageElement){
+                            ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                         }
                     }else if(this.progressModeId=='2'){
                         //脚本进度条，啥也不画！
@@ -910,12 +896,20 @@ ideServices
 
                 //change dashboard mode
                 this.on('changeDashboardMode',function(arg){
+                    var level=arg.level;
                     var _callback=arg.callback;
-                    self.backgroundColor=arg.backgroundColor;
                     //若改变模式，重置已经画好的仪表盘控件
-                    self.backgroundImageElement=null;
-                    self.pointerImageElement=null;
-                    self.lightBandImageElement=null;
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    self.backgroundColor = level.texList[0].slices[0].color;
+
+                    self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    self.pointerColor=level.texList[1].slices[0].color;
+
+                    if(level.texList[2]){
+                        self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                    }else{
+                        self.lightBandImageElement=null;
+                    }
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -945,17 +939,17 @@ ideServices
 
                     self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
 
-                    self.pointerColor=level.texList[1].slices[0].color;
-                    if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-
-                        self.pointerImageElement=new Image();
-                        self.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
-                        self.pointerImageElement.onload = function () {
-
-                        }.bind(this);
-                    }else {
-                        self.pointerImageElement=null;
-                    }
+                    //self.pointerColor=level.texList[1].slices[0].color;
+                    //if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    //
+                    //    self.pointerImageElement=new Image();
+                    //    self.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
+                    //    self.pointerImageElement.onload = function () {
+                    //
+                    //    }.bind(this);
+                    //}else {
+                    //    self.pointerImageElement=null;
+                    //}
 
                     self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
 
@@ -1657,6 +1651,17 @@ ideServices
             initialize: function (level, options) {
                 var self=this;
                 this.callSuper('initialize',options);
+                var ctrlOptions={
+                    bl:false,
+                    br:false,
+                    mb:false,
+                    ml:false,
+                    mr:false,
+                    mt:false,
+                    tl:false,
+                    tr:false
+                };
+                this.setControlsVisibility(ctrlOptions);//使时间控件不能拉伸
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 //this.backgroundColor=level.texList[0].slices[0].color;
@@ -1666,6 +1671,12 @@ ideServices
                 this.fontColor=level.info.fontColor;
                 this.align=level.info.align;
                 this.initValue=level.info.initValue;
+
+                //设置canvas的宽度和高度
+                if(this.fontSize){
+                    this.setWidth(8*this.fontSize);
+                    this.setHeight(this.fontSize*1.5);
+                }
                 
                 this.on('changeDateTimeModeId',function(arg){
                     var dateTimeModeId=arg.dateTimeModeId;
@@ -1682,6 +1693,8 @@ ideServices
                     }
                     if(arg.hasOwnProperty('fontSize')){
                         self.fontSize=arg.fontSize;
+                        self.setWidth(6*self.fontSize);
+                        self.setHeight(self.fontSize*1.5);
                     }
                     if(arg.hasOwnProperty('fontColor')){
                         self.fontColor=arg.fontColor;
@@ -2101,7 +2114,7 @@ ideServices
                 };
                 this.callSuper('initialize',options);
                 this.lockRotation=true;
-                this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
+                this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
                 this.hasRotatingPoint=false;
                 this.backgroundColor=level.texList[0].slices[0].color;
 
@@ -5098,7 +5111,7 @@ ideServices
                 return;
             }
 
-            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height);
+            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
 
             var editInSameSubLayer=false;
             if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
@@ -5696,6 +5709,7 @@ ideServices
 
         //改变所选进度条的光标和 模式
         this.ChangeAttributeCursor = function(_option,_successCallback){
+            var templateId = TemplateProvider.getTemplateId();
             var arg={};
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.info.cursor=_option.cursor;
@@ -5707,16 +5721,16 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:'rgba(120,120,120,1)',
-                        imgSrc:'',
+                        color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barBackground.png':'',
                         name:'进度条底纹'
                     }]
                 },{
                     currentSliceIdx:0,
                     name:'进度条',
                     slices:[{
-                        color:'rgba(80,80,80,1)',
-                        imgSrc:'',
+                        color:templateId?'rgba(0,0,0,0)':'rgba(125,27,27,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barAll.png':'',
                         name:'进度条'
                     }]
                 }];
@@ -5726,7 +5740,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'进度条背景',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
+                            color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
                             imgSrc:'',
                             name:'进度条背景'
                         }]
@@ -5734,7 +5748,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'初始颜色',
                         slices:[{
-                            color:'rgba(80,80,80,1)',
+                            color:'rgba(170,80,80,1)',
                             imgSrc:'',
                             name:'初始颜色'
                         }]
@@ -5742,7 +5756,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'结束颜色',
                         slices:[{
-                            color:'rgba(80,80,80,1)',
+                            color:'rgba(243,204,82,1)',
                             imgSrc:'',
                             name:'结束颜色'
                         }]
@@ -5757,23 +5771,23 @@ ideServices
                     currentSliceIdx:0,
                     name:'进度条底纹',
                     slices:[{
-                        color:'rgba(120,120,120,1)',
-                        imgSrc:'',
+                        color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barBackground.png':'',
                         name:'进度条底纹'
                     }]
                 },{
                     currentSliceIdx:0,
                     name:'进度条',
                     slices:[{
-                        color:'rgba(80,80,80,1)',
-                        imgSrc:'',
+                        color:templateId?'rgba(0,0,0,0)':'rgba(125,27,27,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barAll.png':'',
                         name:'进度条'
                     }]
                 },{
                     currentSliceIdx:0,
                     name:'光标纹理',
                     slices:[{
-                        color:'rgba(120,120,120,1)',
+                        color:'rgba(0,0,0,0)',
                         imgSrc:'',
                         name:'光标纹理'
                     }]
@@ -5784,7 +5798,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'进度条底纹',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
+                            color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
                             imgSrc:'',
                             name:'进度条底纹'
                         }]
@@ -5792,7 +5806,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'初始颜色',
                         slices:[{
-                            color:'rgba(80,80,80,1)',
+                            color:'rgba(170,80,80,1)',
                             imgSrc:'',
                             name:'初始颜色'
                         }]
@@ -5800,7 +5814,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'结束颜色',
                         slices:[{
-                            color:'rgba(80,80,80,1)',
+                            color:'rgba(243,204,82,1)',
                             imgSrc:'',
                             name:'结束颜色'
                         }]
@@ -5808,7 +5822,7 @@ ideServices
                         currentSliceIdx:0,
                         name:'光标纹理',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
+                            color:'rgba(0,0,0,0)',
                             imgSrc:'',
                             name:'光标纹理'
                         }]
@@ -5820,6 +5834,7 @@ ideServices
             arg.backgroundColor= selectObj.level.texList[0].slices[0].color;
             arg.progressColor=selectObj.level.texList[1].slices[0].color;
             arg.progressModeId=selectObj.level.info.progressModeId;
+            arg.level=_.cloneDeep(selectObj.level);
 
             _successCallback&&_successCallback();
             selectObj.target.fire('changeAttributeCursor',arg);
@@ -6085,7 +6100,7 @@ ideServices
         this.ChangeAttributeOscilloscope = function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
             if(_option.hasOwnProperty("lineColor")){
-                console.log('keke',_option.lineColor);
+                //console.log('keke',_option.lineColor);
                 selectObj.level.info.lineColor= _option.lineColor;
             }
         };
@@ -6143,8 +6158,10 @@ ideServices
 
         //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
         this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
+            var templateId = TemplateProvider.getTemplateId();
             var selectObj = _self.getCurrentSelectObject();
             selectObj.level.dashboardModeId = _option.dashboardModeId;
+            console.log('keke',_option.dashboardModeId);
             if(selectObj.level.dashboardModeId=='0')
             {
                 selectObj.level.texList=[
@@ -6152,8 +6169,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘背景',
                         slices:[{
-                                color:'rgba(120,120,120,1)',
-                                imgSrc:'',
+                                color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
+                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
                                 name:'仪表盘背景'
                             }]
                     },
@@ -6161,8 +6178,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘指针',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
                         name:'仪表盘指针'
                             }]
                     }
@@ -6173,8 +6190,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘背景',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
                             name:'仪表盘背景'
                         }]
                     },
@@ -6182,8 +6199,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'仪表盘指针',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
                             name:'仪表盘指针'
                         }]
                     },
@@ -6191,8 +6208,8 @@ ideServices
                         currentSliceIdx:0,
                         name:'光带效果',
                         slices:[{
-                            color:'rgba(120,120,120,1)',
-                            imgSrc:'',
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
                             name:'光带效果'
                         }]
 
@@ -6200,8 +6217,11 @@ ideServices
                 ]
             }
             //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
+            var level = _.cloneDeep(selectObj.level);
             arg={
+                level:level,
                 backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
+                dashboardModeId:_option.dashboardModeId,
                 callback:_successCallback
             };
             selectObj.target.fire('changeDashboardMode',arg);
@@ -6882,6 +6902,7 @@ ideServices
                 var subLayerNode=CanvasService.getSubLayerNode();
                 _scale=ViewService.getScaleFloat('subCanvas');
 
+                drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
                 subLayerNode.setZoom(_scale);
 
                 subLayerNode.setWidth(currentLayer.info.width*_scale);
@@ -7205,20 +7226,42 @@ ideServices
          * @param width
          * @param height
          */
-        function drawBackgroundCanvas(width,height){
-            var backgroundCanvas=document.getElementById('backgroundCanvas');
-            //window.c2 = c2;
-            backgroundCanvas.width=width;
-            backgroundCanvas.height=height;
-            var ctx=backgroundCanvas.getContext('2d');
-            ctx.beginPath();
+        function drawBackgroundCanvas(width,height,x,y,scale){
+            var _scale = scale||1;
+            var _width = parseInt(width*_scale);
+            var _height = parseInt(height*_scale);
+            var currentPage = _self.getCurrentPage();
 
-            ctx.rect(0,0,width,height);
-            ctx.fillStyle='rgba(54,71,92,0.3)';
-            ctx.fill();
+            var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
+            var pageBackgroundImgSrc = currentPage.backgroundImage||"";
+            //var pageFromJson = JSON.parse(currentPage.proJsonStr);
+            var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
+            var pageHeight = (project.currentSize&&project.currentSize.height)||480;
+            //console.log('got page width and height',pageWidth,pageHeight);
+
+            var backgroundCanvas=document.getElementById('backgroundCanvas');
+            backgroundCanvas.width=_width;
+            backgroundCanvas.height=_height;
+            var ctx=backgroundCanvas.getContext('2d');
+
+            if(pageBackgroundImgSrc!=""&&pageBackgroundImgSrc!="/public/images/blank.png"){
+                pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
+                var sourceX = parseInt(pageBackgroundImg.width/pageWidth*x);
+                var sourceY = parseInt(pageBackgroundImg.height/pageHeight*y);
+                var sourceWidth =parseInt(pageBackgroundImg.width/pageWidth*width);
+                var sourceHeight =parseInt(pageBackgroundImg.height/pageHeight*height);
+                ctx.drawImage(pageBackgroundImg,sourceX,sourceY,sourceWidth,sourceHeight,0,0,_width,_height);
+            }else{
+                ctx.beginPath();
+                ctx.rect(0,0,_width,_height);
+                ctx.fillStyle=pageColor;
+                ctx.fill();
+                ctx.closePath();
+            }
             //ctx.lineWidth = 1;
             //ctx.strokeStyle = 'rgba(102,153,255,0.75)';
             //ctx.stroke();
         }
+
 
     });

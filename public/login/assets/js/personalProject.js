@@ -170,7 +170,7 @@ $(function(){
         .on('click','.projectpanel', function (e) {
         curPanel = $(this)
         curSelectedPanel = curPanel
-
+        $('#basicinfo-template').attr('disabled',false);
 
         var project = $(this).attr('data-project');
         project = JSON.parse(project);
@@ -196,9 +196,13 @@ $(function(){
             var title = $('#basicinfo-title')
             var author = $('#basicinfo-author')
             var resolution = $('#basicinfo-resolution')
+            var template = $('#basicinfo-template');
+
             title.val(project.name);
             author.val(project.author);
             resolution.val(project.resolution)
+            template.val(project.template);
+            template.attr('disabled',true);
         }else if (curNodeName == 'I'){
             //delete
             // if(confirm('确认删除?')){
@@ -231,6 +235,7 @@ $(function(){
 
 
     $('#addproject').on('click', function (e) {
+        $('#basicinfo-template').attr('disabled',false);
         $('#modal-ok').html('创建')
 
     })
@@ -252,10 +257,12 @@ $(function(){
         var title = $('#basicinfo-title')
         var author = $('#basicinfo-author')
         var resolution = $('#basicinfo-resolution')
+        var template = $('#basicinfo-template');
         if (title.val().trim()!=''&&resolution.val().trim()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
+            project.template = template.val().trim();
             if (!checkName(project.name,project.author)){
                 //invalid name
                 toastr.error('名称只能是汉字、英文和数字');
@@ -285,6 +292,7 @@ $(function(){
 
 
             }else{
+                console.log('haha',project);
                 $.ajax({
                     type:'POST',
                     url:'/project/create',
@@ -360,6 +368,7 @@ $(function(){
         var title = $('#basicinfo-title')
         var author = $('#basicinfo-author')
         var resolution = $('#basicinfo-resolution')
+        var template = $('#basicinfo-template');
         var thumbnailDOM = curPanel.find('img');
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
         if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
