@@ -20,7 +20,7 @@ $(function(){
 	var formVerify = {
 		username:false,
 		password:false,
-		captcha:false,
+        captcha: false
 	};
 
 	var submit = document.getElementById('submit');

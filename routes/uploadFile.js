@@ -106,7 +106,7 @@ function uploadSingleFile(req, res){
         res.end('success')
     })
     form.on('error',function(err){
-        errHandler(res,500,'upload error')
+        errHandler(res, 500, 'upload error' + err)
     })
     form.on('aborted',function(){
         res.end('aborted')
