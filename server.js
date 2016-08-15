@@ -92,10 +92,10 @@ app.use(Session({
 
 
 // parse application/x-www-form-urlencoded 
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.urlencoded({limit: '50000kb', extended: true}));
  
 // parse application/json 
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({limit: '50000kb'}));
 
 //public
 app.use('/public',express.static('public'));
