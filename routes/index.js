@@ -209,5 +209,4 @@ router.route('/delete-user')
 //    .all(function (req,res,next) {
 //        res.render('login/404.html');
 //    });
-
 module.exports = router;
