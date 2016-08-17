@@ -790,58 +790,39 @@ ideServices
                 this.maxAngle=level.info.maxAngle;
                 this.pointerLength = level.info.pointerLength;
                 this.clockwise=level.info.clockwise;
+                this.dashboardModeId=level.dashboardModeId;
           
+                if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
+                    this.backgroundColor=level.texList[0].slices[0].color;
 
-                this.backgroundColor=level.texList[0].slices[0].color;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }.bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
+                    this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    if (this.backgroundImageElement) {
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }
 
-                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                if (this.backgroundImageElement) {
-                    this.loaded = true;
-                    this.setCoords();
-                    this.fire('image:loaded');
+                    this.pointerColor=level.texList[1].slices[0].color;
+
+                    this.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                    //初始化光带
+                    if(level.texList[2]){
+                        this.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                    }
+                }else if(this.dashboardModeId=='2'){
+                    this.backgroundColor=level.texList[0].slices[0].color;
+                    this.backgroundImageElement=null;
+                    this.pointerColor=null;
+                    this.pointerImageElement=null;
+                    this.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    if(this.lightBandImageElement){
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }
                 }
 
-
-                this.pointerColor=level.texList[1].slices[0].color;
-                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                //
-                //     this.pointerImageElement=new Image();
-                //     this.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
-                //     this.pointerImageElement.onload = function () {
-                //
-                //     }.bind(this);
-                // }else {
-                //     this.pointerImageElement=null;
-                // }
-                this.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
-
-                //初始化光带
-                if(level.texList[2]){
-                    //this.lightBandColor=level.texList[2].slices[0].color;
-                    // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                    //     this.lightBandImageElement =new Image();
-                    //     this.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
-                    //     this.lightBandImageElement.onload = function(){
-                    //
-                    //     }.bind(this);
-                    // }else{
-                    //     this.lightBandImageElement=null;
-                    // }
-
-                    this.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
-                }
 
 
                 this.on('changeDashboardOffsetValue', function (arg) {
@@ -898,18 +879,28 @@ ideServices
                 this.on('changeDashboardMode',function(arg){
                     var level=arg.level;
                     var _callback=arg.callback;
+                    self.dashboardModeId = arg. dashboardModeId;
                     //若改变模式，重置已经画好的仪表盘控件
-                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                    self.backgroundColor = level.texList[0].slices[0].color;
+                    if(self.dashboardModeId=='0'||self.dashboardModeId=='1'){
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        self.backgroundColor = level.texList[0].slices[0].color;
 
-                    self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
-                    self.pointerColor=level.texList[1].slices[0].color;
+                        self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                        self.pointerColor=level.texList[1].slices[0].color;
 
-                    if(level.texList[2]){
-                        self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
-                    }else{
-                        self.lightBandImageElement=null;
+                        if(level.texList[2]){
+                            self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        }else{
+                            self.lightBandImageElement=null;
+                        }
+                    }else if(self.dashboardModeId=='2'){
+                        self.backgroundImageElement=null;
+                        self.backgroundColor=level.texList[0].slices[0].color;
+                        self.pointerImageElement=null;
+                        self.pointerColor=null;
+                        self.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                     }
+
                     var subLayerNode = CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -925,48 +916,27 @@ ideServices
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
+                    var dashboardModeId=level.dashboardModeId;
                     var _callback=arg.callback;
-                    self.backgroundColor=level.texList[0].slices[0].color;
-                    // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                    //     self.backgroundImageElement=new Image();
-                    //     self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
-                    //     self.backgroundImageElement.onload = function () {
-                    //
-                    //     }.bind(this);
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
+                    if(dashboardModeId=='0'||dashboardModeId=='1'){
+                        self.backgroundColor=level.texList[0].slices[0].color;
 
-                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
 
-                    //self.pointerColor=level.texList[1].slices[0].color;
-                    //if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                    //
-                    //    self.pointerImageElement=new Image();
-                    //    self.pointerImageElement.src=level.texList[1].slices[0].imgSrc;
-                    //    self.pointerImageElement.onload = function () {
-                    //
-                    //    }.bind(this);
-                    //}else {
-                    //    self.pointerImageElement=null;
-                    //}
+                        self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
 
-                    self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
-
-                    //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
-                    if(level.texList[2]){
-                        //self.lightBandColor=level.texList[2].slices[0].color;
-                        // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
-                        //     self.lightBandImageElement=new Image();
-                        //     self.lightBandImageElement.src=level.texList[2].slices[0].imgSrc;
-                        //     self.lightBandImageElement.onload = function () {
-                        //
-                        //     }.bind(this);
-                        // }else {
-                        //     self.lightBandImageElement = null;
-                        // }
-                        self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
+                        if(level.texList[2]){
+                            self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        }
+                    }else if(dashboardModeId=='2'){
+                        self.backgroundImageElement=null;
+                        self.backgroundColor=level.texList[0].slices[0].color;
+                        self.pointerImageElement=null;
+                        self.pointerColor=null;
+                        self.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                     }
+
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -998,18 +968,26 @@ ideServices
                         var minAngle=translateAngle(this.minAngle+this.offsetValue,this.scaleX,this.scaleY);
                         ctx.save();
                         ctx.beginPath();
-                        var radius=Math.max(this.width,this.height)/2;
                         ctx.moveTo(0,0);
+                        var radius=Math.max(this.width,this.height)/2;
+                        //ctx.moveTo(0,0);
                         //如果是逆时针，则反方向旋转
                         if(this.clockwise=='0'){
                             minAngle=-minAngle+Math.PI/2;
                             angle=-angle+Math.PI/2;
                             ctx.arc(0,0,radius,minAngle,angle,true);
+                            if(this.dashboardModeId=='2'){
+                                ctx.arc(0,0,3*radius/4,angle,minAngle,false);
+                            }
                         }
                         else if(this.clockwise=='1'){
                             minAngle=minAngle+Math.PI/2;
                             angle=angle+Math.PI/2;
                             ctx.arc(0,0,radius,minAngle,angle,false);
+                            if(this.dashboardModeId=='2'){
+                                ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                            }
+                            //ctx.stroke();
                         }
                         ctx.closePath();
                         ctx.clip();
@@ -6215,6 +6193,18 @@ ideServices
 
                     }
                 ]
+            }else if(selectObj.level.dashboardModeId=='2'){
+                selectObj.level.texList=[
+                    {
+                        currentSliceIdx:0,
+                        name:'光带效果',
+                        slices:[{
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
+                            name:'光带效果'
+                        }]
+                    }
+                ];
             }
             //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
             var level = _.cloneDeep(selectObj.level);

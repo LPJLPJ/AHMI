@@ -1280,16 +1280,16 @@
                                 </option>
                             </select>
                         </div>
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">转动方向</span>-->
-                            <!--<select class="my-attr-number-input form-control"-->
-                                    <!--ng-model="component.dashboard.clockwise"-->
-                                    <!--ng-change="component.dashboard.enterDashboardClockwise($event)">-->
-                                <!--<option ng-repeat="clockwise in component.dashboard.dashboardClockwise"-->
-                                        <!--value="{{clockwise.wise}}">{{clockwise.name}}-->
-                                <!--</option>-->
-                            <!--</select>-->
-                        <!--</div>-->
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">转动方向</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.dashboard.clockwise"
+                                    ng-change="component.dashboard.enterDashboardClockwise($event)">
+                                <option ng-repeat="clockwise in component.dashboard.dashboardClockwise"
+                                        value="{{clockwise.wise}}">{{clockwise.name}}
+                                </option>
+                            </select>
+                        </div>
 
                     </div>
                     <div ng-show="component.object.type=='MyNum'">

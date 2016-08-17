@@ -543,7 +543,7 @@ ideServices
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
-                dashboardModeId:'0',//0-简单模式，1-复杂模式
+                dashboardModeId:'0',//0-简单模式，1-复杂模式,2-精简模式
                 name: 'NewDashboard',
                 type: Type.MyDashboard,
                 expand:true,

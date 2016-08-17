@@ -92,7 +92,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 clockwise:'1',
                 dashboardModes:[
                     {id:'0',name:'简单模式'},
-                    {id:'1',name:'复杂模式'}
+                    {id:'1',name:'复杂模式'},
+                    {id:'2',name:'精简模式'}
                 ],
                 dashboardClockwise:[
                     {wise:'1',name:'顺时针'},

@@ -1302,14 +1302,13 @@ module.exports = React.createClass({
             var curDashboardTag = this.findTagByName(widget.tag);
             var curArc = parseInt((maxArc-minArc)/(maxValue-minValue)*(curDashboardTag&&curDashboardTag.value||0));
             var currentValue = curDashboardTag&&curDashboardTag.value||0
-            //console.log('keke',curArc);
             var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
             var highAlarm = widget.info.highAlarmValue;
             var pointerLength = widget.info.pointerLength;
             var pointerWidth,pointerHeight;
             pointerWidth=pointerLength / Math.sqrt(2);
-            pointerHeight = pointerWidth;
+            pointerHeight = pointerLength / Math.sqrt(2);
 
 
             if (curArc > maxArc) {
@@ -1329,14 +1328,14 @@ module.exports = React.createClass({
                 //draw circle
                 // var circleTex = widget.texList[2].slices[0]
                 // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-            } else {
+            } else if(widget.dashboardModeId=='1'){
                 // complex mode
                 //background
                 var bgTex = widget.texList[0].slices[0];
                 this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                 //draw light strip
                 var lightStripTex = widget.texList[2].slices[0]
-                this.drawLightStrip(curX, curY, width, height, clockwise*(minArc + offset) + 90, clockwise*(curArc + offset) + 90, widget.texList[2].slices[0].imgSrc,clockwise);
+                this.drawLightStrip(curX, curY, width, height, clockwise*(minArc + offset) + 90, clockwise*(curArc + offset) + 90, widget.texList[2].slices[0].imgSrc,clockwise,widget.dashboardModeId);
                 //draw pointer
                 this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise*(curArc + offset)+arcPhase, widget.texList[1].slices[0]);
 
@@ -1344,6 +1343,9 @@ module.exports = React.createClass({
                 // var circleTex = widget.texList[3].slices[0]
                 // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 
+            } else if(widget.dashboardModeId=='2'){
+                var lightStripTex = widget.texList[0].slices[0];
+                this.drawLightStrip(curX, curY, width, height, clockwise*(minArc + offset) + 90, clockwise*(curArc + offset) + 90, widget.texList[0].slices[0].imgSrc,clockwise,widget.dashboardModeId);
             }
 
             this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
@@ -1550,7 +1552,7 @@ module.exports = React.createClass({
         offctx.stroke();
         offctx.restore();
     },
-    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image,clockWise) {
+    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image,clockWise,dashboardModeId) {
         //clip a fan shape
         // console.log(minArc, curArc);
         var wise = false;
@@ -1562,25 +1564,31 @@ module.exports = React.createClass({
             //no need to clip
             this.drawBg(curX, curY, width, height, image, null)
         } else {
-            //clip
             var offcanvas = this.refs.offcanvas;
             var offctx = offcanvas.getContext('2d');
             offctx.save();
-            offctx.beginPath()
-            offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height)
-            offctx.save()
-            offctx.translate(curX + 0.5 * width, curY + 0.5 * height)
-            offctx.rotate(Math.PI * minArc / 180)
-            offctx.lineTo(0.5 * width, 0)
-            offctx.restore()
-            offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
+            offctx.beginPath();
+            if(dashboardModeId=='1'){
+                //clip
+                offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
+                offctx.save();
+                offctx.translate(curX + 0.5 * width, curY + 0.5 * height);
+                offctx.rotate(Math.PI * minArc / 180)
+                offctx.lineTo(0.5 * width, 0)
+                offctx.restore()
+                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
 
-            offctx.lineTo(curX + 0.5 * width, curY + 0.5 * height)
+                offctx.lineTo(curX + 0.5 * width, curY + 0.5 * height)
 
-            offctx.clip()
+            }else if(dashboardModeId=='2'){
+                offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
+                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
+                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width * 3 / 4,Math.PI * curArc / 180, Math.PI * minArc / 180, !wise);
+                offctx.closePath();
+            }
+            offctx.clip();
             this.drawBg(curX, curY, width, height, image, null)
             offctx.restore()
-
         }
     },
     handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
