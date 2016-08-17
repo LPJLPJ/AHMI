@@ -1000,8 +1000,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.offsetValue<$scope.component.object.level.info.minAngle||
-                $scope.component.object.level.info.offsetValue>$scope.component.object.level.info.maxAngle){
+            if($scope.component.object.level.info.offsetValue<-180||
+                $scope.component.object.level.info.offsetValue>180){
                 toastr.warning('超出最小最大角度范围');
                 restore();
                 return;
