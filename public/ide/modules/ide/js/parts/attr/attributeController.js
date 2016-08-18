@@ -1145,7 +1145,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 return;
             }
             //判断是否有变化
-            if ($scope.component.object.level.info.maxValue==initObject.level.info.minValue){
+            if ($scope.component.object.level.info.minValue==initObject.level.info.minValue){
                 return;
             }
             //判断范围
@@ -1177,15 +1177,18 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if($scope.component.object.level.type==Type.Mynum){
                 //默认是数字框
                 if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
-
                     toastr.warning('不能比当前值大');
-
-
                     restore();
                     return;
                 }
             }
-
+            if($scope.component.object.level.type==Type.MySlideBlock){
+                if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
+                    toastr.warning('不能比初始值大');
+                    restore();
+                    return;
+                }
+            }
 
             var option={
                 minValue:$scope.component.object.level.info.minValue
@@ -1244,6 +1247,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     return;
                 }
 
+            }
+            if($scope.component.object.level.type==Type.MySlideBlock){
+                if ($scope.component.object.level.info.maxValue<$scope.component.object.level.info.initValue){
+                    toastr.warning('不能比初始值小');
+                    restore();
+                    return;
+                }
             }
 
             var option={

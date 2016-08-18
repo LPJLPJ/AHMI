@@ -1851,6 +1851,21 @@
                                type="number">
                     </div>
                         <div class="my-attr-item">
+                            <span class="my-attr-title">最小值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.minValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMinValue($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
                             <span class="my-attr-title">低警报</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.lowAlarmValue"
