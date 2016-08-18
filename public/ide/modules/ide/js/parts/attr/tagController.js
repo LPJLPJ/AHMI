@@ -357,6 +357,14 @@ ide.controller('TagInstanceCtrl', function ($scope, $uibModalInstance, tag,type)
         $uibModalInstance.dismiss('cancel');
     };
 
+    //检查tag编号
+    $scope.checkTagIndex = function(){
+        if($scope.tag.indexOfRegister>65535||$scope.tag.indexOfRegister<0){
+            toastr.warning('序号超出范围');
+            $scope.tag.indexOfRegister=0;
+        }
+    }
+
 
     function checkEmpty(){
         if (!tag.name || tag.name == ''){

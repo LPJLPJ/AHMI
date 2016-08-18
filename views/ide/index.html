@@ -2185,7 +2185,7 @@
                             <form class="deng-tagModel">
                                 <fieldset>
                                     <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
-                                    <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8"/>
+                                    <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15"/>
                                 </fieldset>
 
                                 <fieldset>
@@ -2199,8 +2199,8 @@
                                 <div class="register-option">
                                     <fieldset>
                                         <label for="indexOfRegister" class="col-sm-4 tag-modal-label">寄存器序号</label>
-                                        <input ng-disabled="!tag.register" id='indexOfRegister' type="number"
-                                               ng-model="tag.indexOfRegister" class="col-sm-8"/>
+                                        <input ng-disabled="!tag.register" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
+                                               ng-model="tag.indexOfRegister" class="col-sm-8" />
                                     </fieldset>
                                     <fieldset>
                                         <label for="writeRegister" class="col-sm-4 tag-modal-label">写寄存器</label>
