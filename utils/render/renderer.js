@@ -231,12 +231,14 @@ renderer.prototype.renderDashboard = function (widget,srcRootDir,dstDir,imgUrlPr
     var info = widget.info;
     if (!!info){
         //trans each slide
-        var width = info.width;
-        var height = info.height;
+        var _width = info.width;
+        var _height = info.height;
 
         var texList = widget.texList;
         var totalSlices = texList.length;
         texList.map(function (tex,i) {
+            var width = _width;
+            var height = _height;
             if (i===1){
                 //pointer
                 width = height = info.pointerLength/Math.sqrt(2);
