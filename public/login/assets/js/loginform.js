@@ -25,6 +25,16 @@ $(function(){
 
 	var submit = document.getElementById('submit');
 
+    var username = $('#username');
+    var password = $('#password');
+    if (username.val().length) {
+        formVerify.username = true;
+    }
+    if (password.val().length) {
+        formVerify.password = true;
+    }
+
+    checkSubmit();
 
 	$('#captcha-img').attr('src','/captcha');
 
