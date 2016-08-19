@@ -1511,38 +1511,18 @@ ideServices
                     this.setCoords();
                     this.fire('image:loaded');
                 }
-
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
 
                     if(level.texList&&level.texList[0]){
                         self.backgroundColor=level.texList[0].slices[0].color;
-                        // if (level.texList[0].slices[0].imgSrc!='') {
-                        //     var backgroundImageElement=new Image();
-                        //     backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                        //     backgroundImageElement.onload = function () {
-                        //     }.bind(this);
-                        //     self.backgroundImageElement=backgroundImageElement;
-                        // }else {
-                        //     self.backgroundImageElement=null;
-                        // }
 
                         self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                     }
 
                     if(level.texList&&level.texList[1]){
                         self.slideColor=level.texList[1].slices[0].color;
-                        // if (level.texList[1].slices[0].imgSrc!='') {
-                        //     var slideImageElement=new Image();
-                        //     slideImageElement.src=level.texList[1].slices[0].imgSrc
-                        //     slideImageElement.onload = function () {
-                        //     }.bind(this);
-                        //     self.slideImageElement=slideImageElement;
-                        // }else {
-                        //     self.slideImageElement=null;
-                        // }
-
                         self.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
                     }
 
@@ -1552,7 +1532,16 @@ ideServices
                 });
                 this.on('changeInitValue',function(arg){
                     var _callback=arg.callback;
-                    self.initValue=arg.initValue;
+                    console.log('haha',arg);
+                    if(arg.hasOwnProperty('minValue')){
+                        self.minValue=arg.minValue;
+                    }
+                    if(arg.hasOwnProperty('maxValue')){
+                        self.maxValue=arg.maxValue;
+                    }
+                    if(arg.hasOwnProperty('initValue')){
+                        self.initValue=arg.initValue;
+                    }
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -1565,13 +1554,14 @@ ideServices
                     subLayerNode.renderAll();
                     _callback&&_callback();
                 });
+
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
                 try{
-                    var progress = this.initValue/(this.maxValue-this.minValue);
+                    var progress = (this.initValue-this.minValue)/(this.maxValue-this.minValue);
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -(this.width / 2),
@@ -6425,7 +6415,7 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
             var arg=null;
             var progress=null;
-
+            
             var selectObj=getCurrentSelectObject();
             if (_option.hasOwnProperty('maxValue')){
                 selectObj.level.info.maxValue=_option.maxValue;
@@ -6452,6 +6442,13 @@ ideServices
                         callback:_successCallback
                     };
                     selectObj.target.fire('ChangeAttributeOscilloscope',arg);
+                }
+                if(selectObj.type==Type.MySlideBlock){
+                    arg={
+                        maxValue:_option.maxValue,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeInitValue',arg);
                 }
 
             }
@@ -6480,6 +6477,13 @@ ideServices
                         callback:_successCallback
                     }
                     selectObj.target.fire('ChangeAttributeOscilloscope',arg);
+                }
+                if(selectObj.type==Type.MySlideBlock){
+                    arg={
+                        minValue:_option.minValue,
+                        callback:_successCallback
+                    }
+                    selectObj.target.fire('changeInitValue',arg);
                 }
             }
             if(_option.hasOwnProperty('minAngle')){
