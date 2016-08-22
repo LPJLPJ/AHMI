@@ -951,6 +951,7 @@ ideServices
                 try{
                     var newValue = parseInt((this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value);
                     ctx.fillStyle=this.backgroundColor;
+                    console.log('keke',this.width);
                     ctx.fillRect(
                         -this.width / 2,
                         -this.height / 2,
@@ -5425,10 +5426,11 @@ ideServices
         }
         var SyncLevelFromFab=this.SyncLevelFromFab=function(level,fabNode){
 
-            level.info.width=fabNode.getWidth();
-            level.info.height=fabNode.getHeight();
-            level.info.left=fabNode.getLeft();
-            level.info.top=fabNode.getTop();
+            console.log('haha',fabNode.getWidth());
+            level.info.width=parseInt((fabNode.getWidth()).toFixed(0));
+            level.info.height=parseInt((fabNode.getHeight()).toFixed(0));
+            level.info.left=parseInt((fabNode.getLeft()).toFixed(0));
+            level.info.top=parseInt((fabNode.getTop()).toFixed(0));
 
             if (level.type==Type.MyButtonGroup){
                 //如果是按钮组,要同步放大其间距
@@ -6670,10 +6672,12 @@ ideServices
                 var currentPage = _self.getCurrentPage();
                 if (_option.width) {
                     fabLayer.setScaleX(_option.width / fabLayer.width);
+                    //fabLayer.set({width:_option.width});
                     currentLayer.info.width = _option.width;
                 }
                 if (_option.height) {
                     fabLayer.setScaleY(_option.height / fabLayer.height);
+                    //fabLayer.set({height:_option.height});
                     currentLayer.info.height = _option.height;
                 }
 
@@ -6709,6 +6713,7 @@ ideServices
                 }
                 if (_option.height) {
                     fabWidget.setScaleY(_option.height / fabWidget.height);
+                    //fabWidget.set({height:_option.height});
                     currentWidget.info.height = _option.height;
                 }
                 subLayerNode.renderAll();
@@ -7228,5 +7233,37 @@ ideServices
             //ctx.stroke();
         }
 
+        /**
+         * to resize widget
+         * @param self
+         */
+        function setWidthAndHeight(self){
+            var w = parseInt((self.width*self.scaleX).toFixed(0)),
+                h = parseInt((self.height*self.scaleY).toFixed(0));
+            self.set({
+                'height' :h,
+                'width'  :w,
+                'scaleX'  :1,
+                'scaleY'  :1,
+            });
+
+        }
+
+        /**
+         * to reset top and left
+         * @param self
+         */
+        function setTopAndLeft(self){
+            var t = parseInt((self.top).toFixed(0));
+            var l = parseInt((self.left).toFixed(0));
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.top=t;
+            selectObj.level.info.left=l;
+            self.set({
+                top:t,
+                left:l
+            })
+
+        }
 
     });
