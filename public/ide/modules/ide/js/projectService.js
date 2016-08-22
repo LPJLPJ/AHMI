@@ -1945,15 +1945,6 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.backgroundImageElement=currentImageElement;
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
 
                     self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
 
@@ -2097,24 +2088,13 @@ ideServices
                 this.numOfDigits=level.info.numOfDigits;
                 this.decimalCount=level.info.decimalCount;
                 this.symbolMode=level.info.symbolMode;
-                this.frontZeroMode=level.info.frontZeroMode;
+                this.fontZeroMode=level.info.frontZeroMode;
                 //设置canvas的宽度和高度
                 if(this.numOfDigits&&this.fontSize){
-                    this.setWidth(this.numOfDigits*this.fontSize);
-                    this.setHeight(this.fontSize*1.5);
+                    this.setWidth(this.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                    this.setHeight(this.fontSize*1.2);
                 }
 
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = (function () {
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
 
                 this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.backgroundImageElement) {
@@ -2129,15 +2109,6 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.backgroundImageElement=currentImageElement;
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
                     self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -2179,8 +2150,8 @@ ideServices
 
                     //设置宽高
                     if(self.numOfDigits&&self.fontSize){
-                        self.setWidth(self.numOfDigits*self.fontSize);
-                        self.setHeight(self.fontSize*1.5);
+                        self.setWidth(self.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                        self.setHeight(self.fontSize*1.2);
                     }
 
                     var _callback=arg.callback;
@@ -6415,7 +6386,7 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
             var arg=null;
             var progress=null;
-            
+
             var selectObj=getCurrentSelectObject();
             if (_option.hasOwnProperty('maxValue')){
                 selectObj.level.info.maxValue=_option.maxValue;

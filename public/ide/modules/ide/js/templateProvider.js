@@ -567,7 +567,7 @@ ideServices
 
                 numModeId:'0',//显示模式标志，0:普通模式 1:动画模式
                 frontZeroMode:'0',//前导0模式标志，0：无前导0模式，1：有前导0模式
-                symbolMode:'0',//符号模式标志，1：无符号位，1：有符号位
+                symbolMode:'0',//符号模式标志，0：无符号位，1：有符号位
                 decimalCount:0,//保留的小数位数
                 numOfDigits:3,//数字的位数，最小1，最大未定
                 overFlowStyle:'0',//指数字大于最大值时是否继续显示,0不显示，1显示
