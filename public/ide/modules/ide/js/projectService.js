@@ -951,7 +951,6 @@ ideServices
                 try{
                     var newValue = parseInt((this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value);
                     ctx.fillStyle=this.backgroundColor;
-                    console.log('keke',this.width);
                     ctx.fillRect(
                         -this.width / 2,
                         -this.height / 2,
@@ -6102,7 +6101,6 @@ ideServices
             var templateId = TemplateProvider.getTemplateId();
             var selectObj = _self.getCurrentSelectObject();
             selectObj.level.dashboardModeId = _option.dashboardModeId;
-            console.log('keke',_option.dashboardModeId);
             if(selectObj.level.dashboardModeId=='0')
             {
                 selectObj.level.texList=[

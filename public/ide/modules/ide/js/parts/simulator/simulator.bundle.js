@@ -21014,6 +21014,7 @@
 	            widget.oldValue = currentValue;
 	        }
 	    },
+
 	    drawRotateImg: function (curX, curY, widget, options) {
 
 	        var width = widget.info.width;
@@ -21272,6 +21273,10 @@
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        offctx.save();
+	        offctx.rect(x, y, w, h);
+	        offctx.clip();
+
+	        //offctx.save();
 	        offctx.translate(x + 0.5 * w, y + 0.5 * h);
 	        offctx.rotate(Math.PI * arc / 180);
 	        offctx.translate(transXratio * elemWidth, transYratio * elemHeight);
@@ -21293,6 +21298,7 @@
 	                }
 	            };
 	        }
+	        //offctx.restore();
 
 	        offctx.restore();
 	    },
