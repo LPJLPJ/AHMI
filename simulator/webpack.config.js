@@ -30,7 +30,11 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /(node_modules|bower_components)/,
-                loaders: ['babel?presets=react']
+                loader: 'babel',
+                query: {
+                    compact: false,
+                    presets: ['react']
+                }
             }
 
 

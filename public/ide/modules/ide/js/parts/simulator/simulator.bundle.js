@@ -19791,8 +19791,8 @@
 	        //draw initialization
 
             //initialize inputkeyboard
-            var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0.3 * projectHeight);
-            console.log(keyboardData);
+            var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
+            // console.log(keyboardData);
             data.pageList.push(keyboardData);
 
             //remember inputkeyboard page and widget
@@ -19857,58 +19857,77 @@
 
 	        imageList = window.cachedResourceList;
 	        this.state.imageList = imageList;
-	        console.log('imageList', imageList);
-	        //this.drawLoadingProgress(this.state.totalResourceNum, num, true, projectWidth, projectHeight)
-	        //console.log('haha',resourceList);
-	        callBack(data);
+            var requiredResourceList = [];
+            //handle required resources like key tex
+            requiredResourceList = requiredResourceList.concat(InputKeyboard.texList);
+            // console.log(requiredResourceList)
 
-	        //if (num > 0) {
-	        //    allResources.map(function (resource) {
-	        //        var newResource = {};
-	        //        newResource.id = resource.id;
-	        //        newResource.name = resource.name;
-	        //        newResource.type = resource.type;
-	        //        switch (resource.type.split('/')[0]) {
-	        //            case 'image':
-	        //                var newImg = new Image();
-	        //                newImg.src = resource.src;
-	        //                newImg.onload = function () {
-	        //                    num = num - 1;
-	        //                    //update loading progress
-	        //                    this.drawLoadingProgress(this.state.totalResourceNum, num, true, projectWidth, projectHeight)
-	        //                    if (num == 0) {
-	        //                        window.imageList = imageList;
-	        //                        console.log(imageList)
-	        //                        callBack(data);
-	        //                    }
-	        //                }.bind(this);
-	        //                newImg.onerror = function (e) {
-	        //                    console.log(e);
-	        //                    newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII="
-	        //
-	        //                }.bind(this);
-	        //                newResource.content = newImg;
-	        //                imageList.push(newResource)
-	        //
-	        //                break;
-	        //            default:
-	        //                num = num - 1
-	        //                this.drawLoadingProgress(this.state.totalResourceNum, num, true)
-	        //
-	        //                //update loading progress
-	        //                break;
-	        //
-	        //        }
-	        //
-	        //        resourceList.push(newResource);
-	        //        console.log('resourceList',resourceList);
-	        //
-	        //    }.bind(this));
-	        //
-	        //} else {
-	        //    callBack(data)
-	        //}
+            var requiredResourceNum = requiredResourceList.length;
+            this.totalRequiredResourceNum = requiredResourceNum;
+
+            this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
+	        //console.log('haha',resourceList);
+            // callBack(data);
+
+            if (requiredResourceNum > 0) {
+                requiredResourceList.map(function (resource) {
+                    if (this.isIn(resource, imageList, 'id')) {
+                        requiredResourceNum -= 1;
+                        this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
+                        if (requiredResourceNum <= 0) {
+                            callBack(data);
+                        }
+                        return;
+                    }
+                    var newResource = {};
+                    newResource.id = resource.id;
+                    newResource.name = resource.name;
+                    newResource.type = resource.type;
+                    switch (resource.type.split('/')[0]) {
+                        case 'image':
+                            var newImg = new Image();
+                            newImg.src = resource.src;
+                            newImg.onload = function () {
+                                requiredResourceNum = requiredResourceNum - 1;
+                                //update loading progress
+                                this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
+                                if (requiredResourceNum <= 0) {
+                                    // console.log(imageList);
+                                    callBack(data);
+                                }
+                            }.bind(this);
+                            newImg.onerror = function (e) {
+                                console.log(e);
+                                newImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=";
+                            }.bind(this);
+                            newResource.content = newImg;
+                            imageList.push(newResource);
+
+                            break;
+                        default:
+                            num = num - 1;
+                            this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
+                            if (requiredResourceNum == 0) {
+                                callBack(data);
+                                return;
+                            }
+                            //update loading progress
+                            break;
+
+                    }
+                }.bind(this));
+            } else {
+                callBack(data);
+            }
 	    },
+        isIn: function (res, resList, key) {
+            for (var i = 0; i < resList.length; i++) {
+                if (res[key] === resList[i][key]) {
+                    return true;
+                }
+            }
+            return false;
+        },
 	    initProject: function () {
 
 	        if (this.state.project && this.state.project.size) {
@@ -19938,9 +19957,9 @@
 	    drawLoadingProgress: function (total, currentValue, countDown, projectWidth, projectHeight) {
 	        var progress = '0.0%';
 	        if (countDown && countDown == true) {
-	            progress = '' + (total - currentValue) * 100.0 / total + '%';
+                progress = '' + ((total - currentValue) * 100.0 / total).toFixed(2) + '%';
 	        } else {
-	            progress = '' + currentValue * 100.0 / total + '%';
+                progress = '' + (currentValue * 100.0 / total).toFixed(2) + '%';
 	        }
 	        var canvas = this.refs.canvas;
 	        var ctx = canvas.getContext('2d');
@@ -20027,7 +20046,7 @@
 	        return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
 	    },
 	    drawPage: function (page, options) {
-            console.log(page);
+            // console.log(page);
 	        //will load
 	        if (!page.state || page.state == LoadState.notLoad) {
 	            page.state = LoadState.willLoad;
@@ -20322,20 +20341,6 @@
                 offCtx.drawImage(tempcanvas, curX + curKey.x, curY + curKey.y, curKey.width, curKey.height);
             }
             tempCtx.restore();
-        },
-        drawInputKey(curX, curY, curKey, options) {
-            // var tempcanvas = this.refs.tempcanvas;
-            // tempcanvas.width = curKey.width;
-            // tempcanvas.height = curKey.height;
-            // var tempCtx = tempcanvas.getContext('2d');
-            // tempCtx.save();
-            // tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height);
-            // this.drawBg(0,0,curKey.width,curKey.height,'','rgba(0,255,0,1.0)',tempCtx);
-            // tempCtx.textAlign = 'center';
-            // tempCtx.fillText(curKey.name,0.5*curKey.width,0.5*curKey.height);
-            //
-            // tempCtx.restore();
-
         },
 	    drawSlide: function (curX, curY, widget, options) {
 	        var slideSlices = widget.texList[0].slices;
@@ -21577,16 +21582,47 @@
 	        }
 	    },
         handleInputKeyboardKeyPressed: function (curKey, widget) {
+            var project = this.state.project;
             switch (curKey.value) {
+                case '0':
                 case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
                     if (widget.curValue == '0') {
                         widget.curValue = curKey.value;
                     } else {
                         widget.curValue += curKey.value;
                     }
                     break;
+                case 'back':
+                    if (widget.curValue.length === 1) {
+                        widget.curValue = '0';
+                    } else if (widget.curValue.length === 2 && widget.curValue[0] === '-') {
+                        widget.curValue = '0';
+                    } else {
+                        widget.curValue = widget.curValue.slice(0, -1);
+                    }
+                    break;
+                case 'pm':
+                    if (widget.curValue[0] === '-') {
+                        widget.curValue = widget.curValue.slice(1, widget.curValue.length);
+                    } else {
+                        widget.curValue = '-' + widget.curValue;
+                    }
+                    break;
+                case 'esc':
+                    this.setTagByName(project.tag, widget.returnPageId);
+                    this.draw(null, {
+                        updatedTagName: project.tag
+                    });
+                    break;
                 case 'enter':
-                    var project = this.state.project;
                     this.setTagByName(widget.targetTag, Number(widget.curValue));
                     this.draw(null, {
                         updatedTagName: widget.targetTag
@@ -21981,7 +22017,7 @@
                             //input keyboard
                             this.inputKeyboard.widget.returnPageId = curPageTag.value;
                             this.inputKeyboard.widget.targetTag = param1.tag;
-                            this.inputKeyboard.widget.curValue = this.getParamValue(param1);
+                            this.inputKeyboard.widget.curValue = '' + this.getParamValue(param1);
                             this.setTagByTag(curPageTag, project.pageList.length);
                             this.draw(null, {
                                 updatedTagName: project.tag
@@ -48704,19 +48740,123 @@
         var keys = [{
             name: '1',
             value: '1',
-            x: 0,
-            y: 0,
-            width: 0.1,
-            height: 0.1,
-            slices: [new KeyTexObj('1', '', '', 'rgba(0,255,0,1.0)'), new KeyTexObj('1')]
+            x: 2 / 28,
+            y: 0.25,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b1release', ''), new KeyTexObj('', '', 'b1press', '')]
+        }, {
+            name: '2',
+            value: '2',
+            x: 7 / 28,
+            y: 0.25,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b2release', ''), new KeyTexObj('', '', 'b2press', '')]
+        }, {
+            name: '3',
+            value: '3',
+            x: 12 / 28,
+            y: 0.25,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b3release', ''), new KeyTexObj('', '', 'b3press', '')]
+        }, {
+            name: 'Back',
+            value: 'back',
+            x: 17 / 28,
+            y: 0.25,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'bbackrelease', ''), new KeyTexObj('', '', 'bbackpress', '')]
+        }, {
+            name: 'Esc',
+            value: 'esc',
+            x: 22 / 28,
+            y: 0.25,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'bbackrelease', ''), new KeyTexObj('', '', 'bbackpress', '')]
+        }, {
+            name: '4',
+            value: '4',
+            x: 2 / 28,
+            y: 0.5,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b4release', ''), new KeyTexObj('', '', 'b4press', '')]
+        }, {
+            name: '5',
+            value: '5',
+            x: 7 / 28,
+            y: 0.5,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b5release', ''), new KeyTexObj('', '', 'b5press', '')]
+        }, {
+            name: '6',
+            value: '6',
+            x: 12 / 28,
+            y: 0.5,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b6release', ''), new KeyTexObj('', '', 'b6press', '')]
+        }, {
+            name: '0',
+            value: '0',
+            x: 17 / 28,
+            y: 0.5,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b0release', ''), new KeyTexObj('', '', 'b0press', '')]
+        }, {
+            name: 'Esc',
+            value: 'esc',
+            x: 22 / 28,
+            y: 0.25,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'bescrelease', ''), new KeyTexObj('', '', 'bescpress', '')]
         }, {
             name: 'ENTER',
             value: 'enter',
-            x: 0.1,
-            y: 0.1,
-            width: 0.1,
-            height: 0.1,
-            slices: [new KeyTexObj('Enter', '', '', 'rgba(0,255,0,1.0)'), new KeyTexObj('Enter')]
+            x: 22 / 28,
+            y: 0.5,
+            width: 1 / 7,
+            height: 3 / 8,
+            slices: [new KeyTexObj('', '', 'benterrelease', ''), new KeyTexObj('', '', 'benterpress', '')]
+        }, {
+            name: '7',
+            value: '7',
+            x: 2 / 28,
+            y: 0.75,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b7release', ''), new KeyTexObj('', '', 'b7press', '')]
+        }, {
+            name: '8',
+            value: '8',
+            x: 7 / 28,
+            y: 0.75,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b8release', ''), new KeyTexObj('', '', 'b8press', '')]
+        }, {
+            name: '9',
+            value: '9',
+            x: 12 / 28,
+            y: 0.75,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'b9release', ''), new KeyTexObj('', '', 'b9press', '')]
+        }, {
+            name: '+/-',
+            value: 'pm',
+            x: 17 / 28,
+            y: 0.75,
+            width: 1 / 7,
+            height: 3 / 16,
+            slices: [new KeyTexObj('', '', 'bpmrelease', ''), new KeyTexObj('', '', 'bpmpress', '')]
         }];
 
         var num = {
@@ -48762,6 +48902,17 @@
         };
 
         InputKeyboard.getInputKeyboard = getInputKeyboard;
+        function TexRes(name) {
+            this.id = name;
+            this.name = name;
+            this.type = 'image/bmp';
+            this.src = '/public/images/' + name + '.bmp';
+        }
+
+        var defaultKeyTexList = ['b0press', 'b0release', 'b1press', 'b1release', 'b2press', 'b2release', 'b3press', 'b3release', 'b4press', 'b4release', 'b5press', 'b5release', 'b6press', 'b6release', 'b7press', 'b7release', 'b8press', 'b8release', 'b9press', 'b9release', 'bbackpress', 'bbackrelease', 'benterpress', 'benterrelease', 'bescpress', 'bescrelease', 'bpmpress', 'bpmrelease'];
+        InputKeyboard.texList = defaultKeyTexList.map(function (name) {
+            return new TexRes(name);
+        });
 
         module.exports = InputKeyboard;
 
