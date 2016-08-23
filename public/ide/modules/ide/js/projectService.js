@@ -969,7 +969,8 @@ ideServices
                         ctx.save();
                         ctx.beginPath();
                         ctx.moveTo(0,0);
-                        var radius=Math.max(this.width,this.height)/2;
+                        var radius=calculateRadius(this.dashboardModeId,this.width,this.height);
+                        //console.log('radius,width,height',radius,this.width,this.height);
                         //ctx.moveTo(0,0);
                         //如果是逆时针，则反方向旋转
                         if(this.clockwise=='0'){
@@ -5424,8 +5425,6 @@ ideServices
             }
         }
         var SyncLevelFromFab=this.SyncLevelFromFab=function(level,fabNode){
-
-            console.log('haha',fabNode.getWidth());
             level.info.width=parseInt((fabNode.getWidth()).toFixed(0));
             level.info.height=parseInt((fabNode.getHeight()).toFixed(0));
             level.info.left=parseInt((fabNode.getLeft()).toFixed(0));
@@ -7262,6 +7261,19 @@ ideServices
                 left:l
             })
 
+        }
+
+        /**
+         * calculate dashboard lightBand radius
+         * @param mode
+         * @param width
+         * @param height
+         * @returns {number}
+         */
+        function calculateRadius(mode,width,height){
+            var radius = mode=='1'?Math.sqrt(width*width+height*height)/2:Math.max(width,height)/2;
+            radius= Math.floor(radius);
+            return radius;
         }
 
     });

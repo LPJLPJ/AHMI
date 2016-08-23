@@ -1561,6 +1561,7 @@ module.exports = React.createClass({
             wise=true;
         }
 
+        var radius = this.calculateRadius(dashboardModeId,width,height);
         if (Math.abs(curArc - minArc) > 360) {
             //no need to clip
             this.drawBg(curX, curY, width, height, image, null)
@@ -1577,20 +1578,25 @@ module.exports = React.createClass({
                 offctx.rotate(Math.PI * minArc / 180)
                 offctx.lineTo(0.5 * width, 0)
                 offctx.restore()
-                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
+                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
 
                 offctx.lineTo(curX + 0.5 * width, curY + 0.5 * height)
 
             }else if(dashboardModeId=='2'){
                 offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
-                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
-                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, 0.5 * width * 3 / 4,Math.PI * curArc / 180, Math.PI * minArc / 180, !wise);
+                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
+                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius * 3 / 4,Math.PI * curArc / 180, Math.PI * minArc / 180, !wise);
                 offctx.closePath();
             }
             offctx.clip();
             this.drawBg(curX, curY, width, height, image, null)
             offctx.restore()
         }
+    },
+    calculateRadius:function (mode,width,height){
+        var radius = mode=='1'?Math.sqrt(width*width+height*height)/2:Math.max(width,height)/2;
+        radius= Math.floor(radius);
+        return radius;
     },
     handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
         //handle action
