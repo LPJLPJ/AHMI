@@ -19725,6 +19725,8 @@
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
 	var LoadState = __webpack_require__(164);
+        var InputKeyboard = __webpack_require__(165);
+
 	var sep = '/';
 	var defaultState = {
 	    loadDone: false,
@@ -19738,7 +19740,7 @@
 	};
 
 	try {
-	    var os = __webpack_require__(165);
+        var os = __webpack_require__(166);
 	    var platform = os.platform();
 	    if (platform === 'win32') {
 	        sep = '\\';
@@ -19787,6 +19789,16 @@
 	        canvas.width = projectWidth;
 	        canvas.height = projectHeight;
 	        //draw initialization
+
+            //initialize inputkeyboard
+            var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0.3 * projectHeight);
+            console.log(keyboardData);
+            data.pageList.push(keyboardData);
+
+            //remember inputkeyboard page and widget
+            this.inputKeyboard = {};
+            this.inputKeyboard.page = keyboardData;
+            this.inputKeyboard.widget = keyboardData.canvasList[0].subCanvasList[0].widgetList[0];
 
 	        var ctx = canvas.getContext('2d');
 	        ctx.font = "italic bold 48px serif";
@@ -20015,6 +20027,7 @@
 	        return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
 	    },
 	    drawPage: function (page, options) {
+            console.log(page);
 	        //will load
 	        if (!page.state || page.state == LoadState.notLoad) {
 	            page.state = LoadState.willLoad;
@@ -20244,8 +20257,86 @@
 	            case 'MyScriptTrigger':
 	                this.drawScriptTrigger(curX, curY, widget, options);
 	                break;
+                case 'MyInputKeyboard':
+                    this.drawInputKeyboard(curX, curY, widget, options);
+                    break;
 	        }
 	    },
+        drawInputKeyboard(curX, curY, widget, options) {
+            var offcanvas = this.refs.offcanvas;
+            var offCtx = offcanvas.getContext('2d');
+            var tempcanvas = this.refs.tempcanvas;
+
+            var tempCtx = tempcanvas.getContext('2d');
+            var width = widget.info.width;
+            var height = widget.info.height;
+            var curSlice = widget.texList[0].slices[0];
+            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+
+            //draw num
+            var num = widget.info.num;
+
+            this.drawBg(curX + num.x, curY + num.y, num.width, num.height, '', 'rgba(255,0,0,1.0)');
+            //num display
+            if (widget.curValue === undefined) {
+                //no cur value
+                widget.curValue = '0';
+            }
+
+            offCtx.save();
+            offCtx.textAlign = 'center';
+            offCtx.textBaseline = 'middle';
+            offCtx.fillText(widget.curValue, curX + num.x + 0.5 * num.width, curY + num.y + 0.5 * num.height);
+            offCtx.restore();
+
+            //draw key
+
+            tempCtx.save();
+            tempCtx.textAlign = 'center';
+            tempCtx.textBaseline = 'middle';
+            var keys = widget.info.keys;
+            var curKey;
+            var keyState = false;
+            var keySlice;
+            for (var i = 0; i < keys.length; i++) {
+                keyState = false;
+                curKey = keys[i];
+                tempcanvas.width = curKey.width;
+                tempcanvas.height = curKey.height;
+                tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
+
+                if (curKey == widget.curPressedKey) {
+                    keyState = true;
+                }
+
+                if (!keyState) {
+                    keySlice = curKey.slices[0];
+                } else {
+                    keySlice = curKey.slices[1];
+                }
+
+                this.drawBg(0, 0, curKey.width, curKey.height, keySlice.imgSrc, keySlice.color, tempCtx);
+                tempCtx.font = keySlice.display.style;
+                tempCtx.fillText(keySlice.display.value, 0.5 * curKey.width, 0.5 * curKey.height);
+
+                offCtx.drawImage(tempcanvas, curX + curKey.x, curY + curKey.y, curKey.width, curKey.height);
+            }
+            tempCtx.restore();
+        },
+        drawInputKey(curX, curY, curKey, options) {
+            // var tempcanvas = this.refs.tempcanvas;
+            // tempcanvas.width = curKey.width;
+            // tempcanvas.height = curKey.height;
+            // var tempCtx = tempcanvas.getContext('2d');
+            // tempCtx.save();
+            // tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height);
+            // this.drawBg(0,0,curKey.width,curKey.height,'','rgba(0,255,0,1.0)',tempCtx);
+            // tempCtx.textAlign = 'center';
+            // tempCtx.fillText(curKey.name,0.5*curKey.width,0.5*curKey.height);
+            //
+            // tempCtx.restore();
+
+        },
 	    drawSlide: function (curX, curY, widget, options) {
 	        var slideSlices = widget.texList[0].slices;
 	        var tag = this.findTagByName(widget.tag);
@@ -20312,9 +20403,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	            // console.log(tex);
-	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	        }
+                // console.log(tex);
+                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20992,23 +21083,23 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else if (widget.dashboardModeId == '1') {
-	                // complex mode
-	                //background
-	                var bgTex = widget.texList[0].slices[0];
-	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                //draw light strip
-	                var lightStripTex = widget.texList[2].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                //draw pointer
-	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+                    // complex mode
+                    //background
+                    var bgTex = widget.texList[0].slices[0];
+                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                    //draw light strip
+                    var lightStripTex = widget.texList[2].slices[0];
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                    //draw pointer
+                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                //draw circle
-	                // var circleTex = widget.texList[3].slices[0]
-	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	            } else if (widget.dashboardModeId == '2') {
-	                var lightStripTex = widget.texList[0].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	            }
+                    //draw circle
+                    // var circleTex = widget.texList[3].slices[0]
+                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+                } else if (widget.dashboardModeId == '2') {
+                    var lightStripTex = widget.texList[0].slices[0];
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                }
 
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -21311,8 +21402,10 @@
 
 	        //console.log(color);
 	        if (color && color != '') {
+                offctx.save();
 	            offctx.fillStyle = color;
 	            offctx.fillRect(x, y, w, h);
+                offctx.restore();
 	        }
 	    },
 	    drawBgImg: function (x, y, w, h, imageName, ctx) {
@@ -21369,6 +21462,13 @@
 	            }
 	        }
 	    },
+        inRawRect: function (x, y, offsetX, offsetY, width, height) {
+            if (x >= offsetX && x <= offsetX + width && y >= offsetY && y <= offsetY + height) {
+                return true;
+            } else {
+                return false;
+            }
+        },
 	    findClickTargets: function (x, y) {
 	        var project = this.state.project;
 	        var targets = [];
@@ -21458,8 +21558,46 @@
 	                this.handleSlideBlockInnerPress(widget, x, y);
 
 	                break;
+                case 'MyInputKeyboard':
+                    //relative pos
+                    var keys = widget.info.keys;
+                    var curKey;
+                    for (var i = 0; i < keys.length; i++) {
+                        curKey = keys[i];
+                        if (this.inRawRect(x, y, curKey.x, curKey.y, curKey.width, curKey.height)) {
+                            //hit
+                            widget.curPressedKey = curKey;
+                            this.handleInputKeyboardKeyPressed(curKey, widget);
+                            break;
+                        }
+                    }
+                    x = x - left;
+                    y = y - top;
+                    break;
 	        }
 	    },
+        handleInputKeyboardKeyPressed: function (curKey, widget) {
+            switch (curKey.value) {
+                case '1':
+                    if (widget.curValue == '0') {
+                        widget.curValue = curKey.value;
+                    } else {
+                        widget.curValue += curKey.value;
+                    }
+                    break;
+                case 'enter':
+                    var project = this.state.project;
+                    this.setTagByName(widget.targetTag, Number(widget.curValue));
+                    this.draw(null, {
+                        updatedTagName: widget.targetTag
+                    });
+                    this.setTagByName(project.tag, widget.returnPageId);
+                    this.draw(null, {
+                        updatedTagName: project.tag
+                    });
+                    break;
+            }
+        },
 	    handleSlideBlockInnerPress: function (widget, x, y) {
 	        var left = widget.info.left;
 	        var top = widget.info.top;
@@ -21479,9 +21617,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+                bgRange = height - widget.slideSize.h || 1;
+                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+            }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -21569,20 +21707,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                    //switch
-	                    //if (widget.switchState) {
-	                    //	widget.switchState = !widget.switch
-	                    //}else{
-	                    //	widget.switchState = 1;
-	                    //}
-	                    //update its tag
-	                    var targetTag = this.findTagByName(widget.tag);
-	                    if (targetTag) {
-	                        targetTag.value = parseInt(targetTag.value);
-	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+                        //switch
+                        //if (widget.switchState) {
+                        //	widget.switchState = !widget.switch
+                        //}else{
+                        //	widget.switchState = 1;
+                        //}
+                        //update its tag
+                        var targetTag = this.findTagByName(widget.tag);
+                        if (targetTag) {
+                            targetTag.value = parseInt(targetTag.value);
+                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+                        }
 	                    }
-	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
@@ -21606,6 +21744,8 @@
 	                needRedraw = true;
 
 	                break;
+                // case 'MyInputKeyboard':
+
 	            default:
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
@@ -21654,6 +21794,11 @@
 	                        elem.mouseState = mouseState;
 	                        needRedraw = true;
 	                        break;
+                        case 'MyInputKeyboard':
+                            elem.mouseState = mouseState;
+                            elem.curPressedKey = null;
+                            needRedraw = true;
+                            break;
 	                }
 	                break;
 	        }
@@ -21832,6 +21977,15 @@
 	                        this.draw(null, {
 	                            updatedTagName: project.tag
 	                        });
+                        } else if (param2Value === -2) {
+                            //input keyboard
+                            this.inputKeyboard.widget.returnPageId = curPageTag.value;
+                            this.inputKeyboard.widget.targetTag = param1.tag;
+                            this.inputKeyboard.widget.curValue = this.getParamValue(param1);
+                            this.setTagByTag(curPageTag, project.pageList.length);
+                            this.draw(null, {
+                                updatedTagName: project.tag
+                            });
 	                    }
 	                }
 	                //next
@@ -48489,6 +48643,131 @@
 
 /***/ },
 /* 165 */
+    /***/ function (module, exports, __webpack_require__) {
+
+        /**
+         * Created by ChangeCheng on 16/8/22.
+         * visual input keyboard
+         */
+        var kWidth = 0;
+        var kHeight = 0;
+        var kOffsetX = 0;
+        var kOffsetY = 0;
+        var InputKeyboard = {};
+        var _ = __webpack_require__(161);
+        var inputKeybaordStruct = {
+            backgroundColor: 'rbga(255,255,255,1)',
+            backgroundImage: '',
+            actions: undefined,
+            tag: '',
+            triggers: undefined,
+            canvasList: [{
+                curSubCanvasIdx: 0,
+                w: kWidth,
+                h: kHeight,
+                x: kOffsetX,
+                y: kOffsetY,
+                zIndex: 0,
+                subCanvasList: [{
+                    widgetList: [{
+                        type: 'widget',
+                        subType: 'MyInputKeyboard',
+                        info: {
+                            width: kWidth,
+                            height: kHeight,
+                            left: 0,
+                            top: 0
+                        },
+                        texList: [{
+                            slices: [{
+                                imgSrc: '',
+                                color: 'rgba(255,255,0,1)'
+                            }]
+                        }]
+                    }]
+                }]
+
+            }]
+
+        };
+
+        function KeyTexObj(showValue, style, imgSrc, color) {
+            this.display = {
+                value: showValue || '',
+                style: style || ''
+            };
+
+            this.imgSrc = imgSrc || '';
+            this.color = color || '';
+        }
+
+        var keys = [{
+            name: '1',
+            value: '1',
+            x: 0,
+            y: 0,
+            width: 0.1,
+            height: 0.1,
+            slices: [new KeyTexObj('1', '', '', 'rgba(0,255,0,1.0)'), new KeyTexObj('1')]
+        }, {
+            name: 'ENTER',
+            value: 'enter',
+            x: 0.1,
+            y: 0.1,
+            width: 0.1,
+            height: 0.1,
+            slices: [new KeyTexObj('Enter', '', '', 'rgba(0,255,0,1.0)'), new KeyTexObj('Enter')]
+        }];
+
+        var num = {
+            x: 0,
+            y: 0,
+            width: 1,
+            height: 0.2
+        };
+
+        var getInputKeyboard = function (width, height, offsetX, offsetY) {
+            kWidth = width || kWidth;
+            kHeight = height || kHeight;
+            kOffsetX = offsetX || kOffsetX;
+            kOffsetY = offsetY || kOffsetY;
+            var curCanvas = inputKeybaordStruct.canvasList[0];
+            curCanvas.w = kWidth;
+            curCanvas.h = kHeight;
+            curCanvas.x = kOffsetX;
+            curCanvas.y = kOffsetY;
+            var inputWidget = curCanvas.subCanvasList[0].widgetList[0];
+            inputWidget.info.width = kWidth;
+            inputWidget.info.height = kHeight;
+            var curKeys = keys.map(function (key) {
+                var curKey = _.cloneDeep(key);
+                curKey.x = key.x * kWidth;
+                curKey.y = key.y * kHeight;
+                curKey.width = key.width * kWidth;
+                curKey.height = key.height * kHeight;
+                return curKey;
+            });
+
+            inputWidget.info.keys = curKeys;
+
+            var curNum = _.cloneDeep(num);
+            curNum.x *= kWidth;
+            curNum.y *= kHeight;
+            curNum.width *= kWidth;
+            curNum.height *= kHeight;
+
+            inputWidget.info.num = curNum;
+
+            return inputKeybaordStruct;
+        };
+
+        InputKeyboard.getInputKeyboard = getInputKeyboard;
+
+        module.exports = InputKeyboard;
+
+        /***/
+    },
+    /* 166 */
 /***/ function(module, exports) {
 
 	exports.endianness = function () { return 'LE' };
