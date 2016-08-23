@@ -969,7 +969,8 @@ ideServices
                         ctx.save();
                         ctx.beginPath();
                         ctx.moveTo(0,0);
-                        var radius=Math.max(this.width,this.height)/2;
+                        var radius=calculateRadius(this.dashboardModeId,this.width,this.height);
+                        //console.log('radius,width,height',radius,this.width,this.height);
                         //ctx.moveTo(0,0);
                         //如果是逆时针，则反方向旋转
                         if(this.clockwise=='0'){
@@ -1945,15 +1946,6 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.backgroundImageElement=currentImageElement;
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
 
                     self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
 
@@ -2097,24 +2089,13 @@ ideServices
                 this.numOfDigits=level.info.numOfDigits;
                 this.decimalCount=level.info.decimalCount;
                 this.symbolMode=level.info.symbolMode;
-                this.frontZeroMode=level.info.frontZeroMode;
+                this.fontZeroMode=level.info.frontZeroMode;
                 //设置canvas的宽度和高度
                 if(this.numOfDigits&&this.fontSize){
-                    this.setWidth(this.numOfDigits*this.fontSize);
-                    this.setHeight(this.fontSize*1.5);
+                    this.setWidth(this.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                    this.setHeight(this.fontSize*1.2);
                 }
 
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = (function () {
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
 
                 this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.backgroundImageElement) {
@@ -2129,15 +2110,6 @@ ideServices
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc&&tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.backgroundImageElement=currentImageElement;
-                    // }else {
-                    //     self.backgroundImageElement=null;
-                    // }
                     self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -2179,8 +2151,8 @@ ideServices
 
                     //设置宽高
                     if(self.numOfDigits&&self.fontSize){
-                        self.setWidth(self.numOfDigits*self.fontSize);
-                        self.setHeight(self.fontSize*1.5);
+                        self.setWidth(self.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                        self.setHeight(self.fontSize*1.2);
                     }
 
                     var _callback=arg.callback;
@@ -5453,11 +5425,10 @@ ideServices
             }
         }
         var SyncLevelFromFab=this.SyncLevelFromFab=function(level,fabNode){
-
-            level.info.width=fabNode.getWidth();
-            level.info.height=fabNode.getHeight();
-            level.info.left=fabNode.getLeft();
-            level.info.top=fabNode.getTop();
+            level.info.width=parseInt((fabNode.getWidth()).toFixed(0));
+            level.info.height=parseInt((fabNode.getHeight()).toFixed(0));
+            level.info.left=parseInt((fabNode.getLeft()).toFixed(0));
+            level.info.top=parseInt((fabNode.getTop()).toFixed(0));
 
             if (level.type==Type.MyButtonGroup){
                 //如果是按钮组,要同步放大其间距
@@ -6129,7 +6100,6 @@ ideServices
             var templateId = TemplateProvider.getTemplateId();
             var selectObj = _self.getCurrentSelectObject();
             selectObj.level.dashboardModeId = _option.dashboardModeId;
-            console.log('keke',_option.dashboardModeId);
             if(selectObj.level.dashboardModeId=='0')
             {
                 selectObj.level.texList=[
@@ -6415,7 +6385,7 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
             var arg=null;
             var progress=null;
-            
+
             var selectObj=getCurrentSelectObject();
             if (_option.hasOwnProperty('maxValue')){
                 selectObj.level.info.maxValue=_option.maxValue;
@@ -6699,10 +6669,12 @@ ideServices
                 var currentPage = _self.getCurrentPage();
                 if (_option.width) {
                     fabLayer.setScaleX(_option.width / fabLayer.width);
+                    //fabLayer.set({width:_option.width});
                     currentLayer.info.width = _option.width;
                 }
                 if (_option.height) {
                     fabLayer.setScaleY(_option.height / fabLayer.height);
+                    //fabLayer.set({height:_option.height});
                     currentLayer.info.height = _option.height;
                 }
 
@@ -6738,6 +6710,7 @@ ideServices
                 }
                 if (_option.height) {
                     fabWidget.setScaleY(_option.height / fabWidget.height);
+                    //fabWidget.set({height:_option.height});
                     currentWidget.info.height = _option.height;
                 }
                 subLayerNode.renderAll();
@@ -7257,5 +7230,50 @@ ideServices
             //ctx.stroke();
         }
 
+        /**
+         * to resize widget
+         * @param self
+         */
+        function setWidthAndHeight(self){
+            var w = parseInt((self.width*self.scaleX).toFixed(0)),
+                h = parseInt((self.height*self.scaleY).toFixed(0));
+            self.set({
+                'height' :h,
+                'width'  :w,
+                'scaleX'  :1,
+                'scaleY'  :1,
+            });
+
+        }
+
+        /**
+         * to reset top and left
+         * @param self
+         */
+        function setTopAndLeft(self){
+            var t = parseInt((self.top).toFixed(0));
+            var l = parseInt((self.left).toFixed(0));
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.top=t;
+            selectObj.level.info.left=l;
+            self.set({
+                top:t,
+                left:l
+            })
+
+        }
+
+        /**
+         * calculate dashboard lightBand radius
+         * @param mode
+         * @param width
+         * @param height
+         * @returns {number}
+         */
+        function calculateRadius(mode,width,height){
+            var radius = mode=='1'?Math.sqrt(width*width+height*height)/2:Math.max(width,height)/2;
+            radius= Math.floor(radius);
+            return radius;
+        }
 
     });
