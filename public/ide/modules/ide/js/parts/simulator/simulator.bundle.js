@@ -21217,7 +21217,8 @@
 	            wise = true;
 	        }
 
-	        var radius = this.calculateRadius(dashboardModeId, width, height);
+	        //var radius = this.calculateRadius(dashboardModeId,width,height);
+	        var radius = Math.max(width, height) / 2;
 	        if (Math.abs(curArc - minArc) > 360) {
 	            //no need to clip
 	            this.drawBg(curX, curY, width, height, image, null);
