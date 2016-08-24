@@ -38,7 +38,7 @@ var inputKeybaordStruct = {
                                 {
                                     slices: [{
                                         imgSrc: '',
-                                        color: 'rgba(255,255,0,1)'
+                                        color: 'rgba(0,0,0,1)'
                                     }]
                                 }
                             ]
@@ -250,7 +250,10 @@ var num = {
     x: 0,
     y: 0,
     width: 1,
-    height: 0.2
+    height: 0.2,
+    slices: [
+        new KeyTexObj('', '', '', 'rgba(255,255,255,1.0)'),
+    ]
 }
 
 

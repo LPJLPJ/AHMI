@@ -603,7 +603,7 @@ module.exports = React.createClass({
         //draw num
         var num = widget.info.num;
 
-        this.drawBg(curX + num.x, curY + num.y, num.width, num.height, '', 'rgba(255,0,0,1.0)');
+        this.drawBg(curX + num.x, curY + num.y, num.width, num.height, num.slices[0].imgSrc, num.slices[0].color);
         //num display
         if (widget.curValue === undefined) {
             //no cur value
@@ -613,6 +613,9 @@ module.exports = React.createClass({
         offCtx.save();
         offCtx.textAlign = 'center';
         offCtx.textBaseline = 'middle';
+        //font
+        var fontSize = 0.5 * num.height + 'px Helvetica';
+        offCtx.font = fontSize;
         offCtx.fillText(widget.curValue, curX + num.x + 0.5 * num.width, curY + num.y + 0.5 * num.height);
         offCtx.restore();
 
