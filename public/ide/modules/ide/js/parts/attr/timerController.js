@@ -12,6 +12,11 @@ ide.controller('TimerCtrl',function (TimerService,TagService,$scope,$timeout) {
             return;
         }
         var initNum = TimerService.getTimerNum();
+        if (!_.isInteger(parseInt($scope.num))){
+            toastr.warning('输入不合法');
+            $scope.num=initNum;
+            return;
+        }
         if($scope.num>10||$scope.num<0){
 
             toastr.warning('超出范围');
