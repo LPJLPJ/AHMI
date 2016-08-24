@@ -349,8 +349,8 @@ ideServices
                     name:'按下后'
                 }]
             }];
-            var info = defaultButton.info||defaultInfo;
-            var texList = defaultButton.texList||defaultTexList;
+            var info = _.cloneDeep(defaultButton.info)||defaultInfo;
+            var texList = _.cloneDeep(defaultButton.texList)||defaultTexList;
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -503,8 +503,8 @@ ideServices
         }
 
         this.getDefaultProgress= function () {
-            var info = defaultProgress.info;
-            var texList = defaultProgress.texList;
+            var info = _.cloneDeep(defaultProgress.info);
+            var texList = _.cloneDeep(defaultProgress.texList);
 
             return {
                 id: Math.random().toString(36).substr(2),
@@ -538,8 +538,8 @@ ideServices
             //    offsetValue:0,
             //    pointerLength:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
             //};
-            var info = defaultDashboard.info;
-            var texList = defaultDashboard.texList;
+            var info = _.cloneDeep(defaultDashboard.info);
+            var texList = _.cloneDeep(defaultDashboard.texList);
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -658,8 +658,8 @@ ideServices
         this.getDefaultSwitch=function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
-            var info=defaultSwitch.info;
-            var texList=defaultSwitch.texList;
+            var info=_.cloneDeep(defaultSwitch.info);
+            var texList=_.cloneDeep(defaultSwitch.texList);
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -683,8 +683,8 @@ ideServices
             //    minValue:0,maxValue:360,
             //    initValue:0
             //};
-            var info = defaultRotateImage.info;
-            var texList=defaultRotateImage.texList;
+            var info = _.cloneDeep(defaultRotateImage.info);
+            var texList=_.cloneDeep(defaultRotateImage.texList);
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -765,8 +765,8 @@ ideServices
             //    initValue:0,
             //    arrange:"horizontal"   //horizontal:水平   vertical:竖直
             //};
-            var info = defaultSlideBlock.info;
-            var texList = defaultSlideBlock.texList;
+            var info = _.cloneDeep(defaultSlideBlock.info);
+            var texList = _.cloneDeep(defaultSlideBlock.texList);
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
