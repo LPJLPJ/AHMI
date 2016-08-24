@@ -19735,7 +19735,8 @@
 	    resourceList: [],
 	    imageList: [],
 	    timerList: [],
-	    currentPressedTargets: []
+        currentPressedTargets: [],
+        registers: {}
 
 	};
 
@@ -19823,6 +19824,27 @@
 	        // this.state.tagList = data.tagList;
 	        this.setState({ tagList: data.tagList });
 	        console.log('tagList loaded', data.tagList);
+
+            //initialize registers
+            this.registers = {};
+            var curTag;
+            var curRegIdx;
+            for (var i = 0; i < data.tagList.length; i++) {
+                curTag = data.tagList[i];
+                curRegIdx = curTag.indexOfRegister;
+                if (curTag.register && curRegIdx) {
+                    if (this.registers[curRegIdx]) {
+                        this.registers[curRegIdx].tags.push(curTag);
+                    } else {
+                        this.registers[curRegIdx] = {
+                            tags: [curTag],
+                            value: 0
+                        };
+                    }
+                }
+            }
+            console.log(this.registers);
+            this.setState({registers: this.registers});
 
 	        //initialize timer
 	        var timerList = this.state.timerList;
@@ -19922,12 +19944,21 @@
 	        }
 	    },
 	    isIn: function (res, resList, key) {
-	        for (var i = 0; i < resList.length; i++) {
-	            if (res[key] === resList[i][key]) {
-	                return true;
+            if (key) {
+                for (var i = 0; i < resList.length; i++) {
+                    if (res[key] === resList[i][key]) {
+                        return true;
+                    }
 	            }
+                return false;
+            } else {
+                for (var i = 0; i < resList.length; i++) {
+                    if (res === resList[i]) {
+                        return true;
+                    }
+                }
+                return false;
 	        }
-	        return false;
 	    },
 	    initProject: function () {
 
@@ -21171,7 +21202,7 @@
 	                widget.curPoints = [];
 	            }
 
-	            if (options && options.updatedTagName == widget.tag) {
+                if (options && (options.updatedTagName == widget.tag || this.isIn(widget.tag, options.updatedTagNames))) {
 	                newPoint = true;
 	                curValue = this.getValueByTagName(widget.tag, 0);
 	                curValue = this.limitValueBetween(curValue, minValue, maxValue);
@@ -22232,6 +22263,41 @@
 	                break;
 	            case 'END':
 	                break;
+                case 'RWDATA':
+                    var firstValue = Number(this.getParamValue(param1));
+                    var secondValue = Number(this.getParamValue(param2));
+                    var fileType = firstValue & 240;
+                    if (fileType === 16) {
+                        fileType = 'can';
+                    } else if (fileType === 0) {
+                        fileType = 'modbus';
+                    } else {
+                        fileType = null;
+                    }
+                    var rwType = firstValue & 15;
+                    if (rwType === 1) {
+                        rwType = 'write';
+                    } else if (rwType === 0) {
+                        rwType = 'read';
+                    } else {
+                        rwType = null;
+                    }
+
+                    var readNum, readStartId, canId;
+                    if (fileType === 'modbus') {
+                        readNum = secondValue >> 16;
+                        readStartId = secondValue - (readNum << 16);
+                        var j;
+                        for (var i = readStartId; i < readStartId + readNum; i++) {
+                            if (this.registers[i]) {
+                                this.rwRegister(i, rwType);
+                            }
+                        }
+                    } else if (fileType === 'can') {
+                        canId = secondValue;
+                    }
+
+                    break;
 
 	        }
 	        //handle timer
@@ -22242,6 +22308,42 @@
 	        //process next
 	        if (nextStep.process) {
 	            this.process(cmds, index + nextStep.step);
+            }
+        },
+        rwRegister: function (registerIdx, rwType) {
+            var registers = this.state.registers;
+            var register = registers[registerIdx];
+            var tags = register.tags;
+            var tag;
+            var i;
+            var updatedTagNames = [];
+            if (rwType == 'write') {
+                //valid
+
+                for (i = 0; i < tags.length; i++) {
+                    tag = tags[i];
+                    if (tag.writeOrRead == 'true') {
+                        //write
+                        register.value = tag.value;
+                    }
+                }
+                //update
+                // this.updateRegisters();
+                console.log(this.registers);
+                this.setState({registers: registers});
+            } else if (rwType == 'read') {
+                for (i = 0; i < tags.length; i++) {
+                    tag = tags[i];
+                    if (tag.writeOrRead == 'false') {
+                        //read
+                        updatedTagNames.push(tag.name);
+                        this.setTagByTag(tag, register.value);
+                    }
+                }
+                //update
+                this.draw(null, {
+                    updatedTagNames: updatedTagNames
+                });
 	        }
 	    },
 	    updateTag: function (curTagIdx, value) {
