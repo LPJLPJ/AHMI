@@ -19833,7 +19833,7 @@
             for (var i = 0; i < data.tagList.length; i++) {
                 curTag = data.tagList[i];
                 curRegIdx = curTag.indexOfRegister;
-                if (curTag.register && curRegIdx) {
+                if (curTag.register && curRegIdx !== undefined && curRegIdx !== '' && curRegIdx !== null) {
                     if (this.registers[curRegIdx]) {
                         this.registers[curRegIdx].tags.push(curTag);
                     } else {
