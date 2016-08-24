@@ -570,6 +570,10 @@ body{
 
 }
 
+.canvas-wrapper {
+    overflow: auto;
+}
+
 
 /*modal*/
 

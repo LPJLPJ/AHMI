@@ -2,7 +2,8 @@ var React = require('react');
 var $ = require('jquery');
 var _ = require('lodash');
 var TagList = require('./TagList');
-var LoadState = require('./LoadState')
+var RegisterList = require('./RegisterList');
+var LoadState = require('./LoadState');
 var InputKeyboard = require('./inputKeyboard');
 
 
@@ -123,7 +124,7 @@ module.exports = React.createClass({
                 }
             }
         }
-        console.log(this.registers);
+        // console.log(this.registers);
         this.setState({registers: this.registers});
 
         //initialize timer
@@ -530,7 +531,7 @@ module.exports = React.createClass({
         }
 
         if (subCanvasUnloadIdx !== null){
-            console.log('handle unload sc')
+            // console.log('handle unload sc')
             this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
         }
         var subCanvas = subCanvasList[nextSubCanvasIdx];
@@ -861,7 +862,7 @@ module.exports = React.createClass({
             curScale = (curScale <= 1 ? curScale : 1.0);
 
             var progressSlice = widget.texList[1].slices[0];
-            console.log('drawing color progress',widget.info.progressModeId);
+            // console.log('drawing color progress',widget.info.progressModeId);
             switch (widget.info.progressModeId){
                 case '0':
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
@@ -2359,7 +2360,7 @@ module.exports = React.createClass({
         //     this.process(cmds[i]);
         // }
         if (cmds && cmds.length){
-            console.log(cmds);
+            // console.log(cmds);
             this.process(cmds,0);
         }
 
@@ -2403,8 +2404,8 @@ module.exports = React.createClass({
         }
 
         var inst = cmds[index].cmd;
-        console.log('inst: ',inst[0],inst[1],inst[2]);
-
+        // console.log('inst: ',inst[0],inst[1],inst[2]);
+        //
         var op = inst[0].name;
         var param1 = inst[1];
         var param2 = inst[2];
@@ -2701,19 +2702,19 @@ module.exports = React.createClass({
 
             for (i = 0; i < tags.length; i++) {
                 tag = tags[i];
-                if (tag.writeOrRead == 'true') {
+                if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
                     //write
                     register.value = tag.value;
                 }
             }
             //update
             // this.updateRegisters();
-            console.log(this.registers);
+            // console.log(this.registers);
             this.setState({registers: registers});
         } else if (rwType == 'read') {
             for (i = 0; i < tags.length; i++) {
                 tag = tags[i];
-                if (tag.writeOrRead == 'false') {
+                if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
                     //read
                     updatedTagNames.push(tag.name);
                     this.setTagByTag(tag, register.value);
@@ -2736,7 +2737,13 @@ module.exports = React.createClass({
             })
         }
     },
+    handleRegisterChange: function (key, value) {
+        var registers = this.state.registers;
+        registers[key].value = value;
+        this.setState({registers: registers});
+    },
     render: function () {
+        // console.log('registers',this.state.registers);
         return (
             < div className='simulator'>
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>
@@ -2745,6 +2752,7 @@ module.exports = React.createClass({
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
                 < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
+                <RegisterList registers={this.state.registers || {}} handleRegisterChange={this.handleRegisterChange}/>
             </div >);
     }
 });

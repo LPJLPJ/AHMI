@@ -97,7 +97,7 @@ module.exports = React.createClass({
                                                    onFocus={this.handleValueInputFocus}
                                                    onBlur={this.handleValueInputBlur}
                                                    onKeyDown={this.handleValueInputEnter}
-                                                   onChange={this.handleValueInputChange}/>
+                                            />
                                         </td>
                                     </tr>
                                 );

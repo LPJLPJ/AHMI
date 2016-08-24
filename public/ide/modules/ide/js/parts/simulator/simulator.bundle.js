@@ -19724,6 +19724,7 @@
 	var $ = __webpack_require__(160);
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
+        var RegisterList = __webpack_require__(167);
 	var LoadState = __webpack_require__(164);
 	var InputKeyboard = __webpack_require__(165);
 
@@ -19843,7 +19844,7 @@
                     }
                 }
             }
-            console.log(this.registers);
+            // console.log(this.registers);
             this.setState({registers: this.registers});
 
 	        //initialize timer
@@ -20222,7 +20223,7 @@
 	        }
 
 	        if (subCanvasUnloadIdx !== null) {
-	            console.log('handle unload sc');
+                // console.log('handle unload sc')
 	            this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
 	        }
 	        var subCanvas = subCanvasList[nextSubCanvasIdx];
@@ -20546,7 +20547,7 @@
 	            curScale = curScale <= 1 ? curScale : 1.0;
 
 	            var progressSlice = widget.texList[1].slices[0];
-	            console.log('drawing color progress', widget.info.progressModeId);
+                // console.log('drawing color progress',widget.info.progressModeId);
 	            switch (widget.info.progressModeId) {
 	                case '0':
 	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
@@ -21984,7 +21985,7 @@
 	        //     this.process(cmds[i]);
 	        // }
 	        if (cmds && cmds.length) {
-	            console.log(cmds);
+                // console.log(cmds);
 	            this.process(cmds, 0);
 	        }
 	    },
@@ -22027,8 +22028,8 @@
 	        }
 
 	        var inst = cmds[index].cmd;
-	        console.log('inst: ', inst[0], inst[1], inst[2]);
-
+            // console.log('inst: ',inst[0],inst[1],inst[2]);
+            //
 	        var op = inst[0].name;
 	        var param1 = inst[1];
 	        var param2 = inst[2];
@@ -22322,19 +22323,19 @@
 
                 for (i = 0; i < tags.length; i++) {
                     tag = tags[i];
-                    if (tag.writeOrRead == 'true') {
+                    if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
                         //write
                         register.value = tag.value;
                     }
                 }
                 //update
                 // this.updateRegisters();
-                console.log(this.registers);
+                // console.log(this.registers);
                 this.setState({registers: registers});
             } else if (rwType == 'read') {
                 for (i = 0; i < tags.length; i++) {
                     tag = tags[i];
-                    if (tag.writeOrRead == 'false') {
+                    if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
                         //read
                         updatedTagNames.push(tag.name);
                         this.setTagByTag(tag, register.value);
@@ -22356,7 +22357,13 @@
 	            });
 	        }
 	    },
+        handleRegisterChange: function (key, value) {
+            var registers = this.state.registers;
+            registers[key].value = value;
+            this.setState({registers: registers});
+        },
 	    render: function () {
+            // console.log('registers',this.state.registers);
 	        return React.createElement(
 	            'div',
 	            { className: 'simulator' },
@@ -22367,7 +22374,11 @@
 	                React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
 	                React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
 	            ),
-	            React.createElement(TagList, { tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag })
+                React.createElement(TagList, {tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag}),
+                React.createElement(RegisterList, {
+                    registers: this.state.registers || {},
+                    handleRegisterChange: this.handleRegisterChange
+                })
 	        );
 	    }
 	});
@@ -48751,8 +48762,8 @@
 	                                        value: tag.value,
 	                                        onFocus: this.handleValueInputFocus,
 	                                        onBlur: this.handleValueInputBlur,
-	                                        onKeyDown: this.handleValueInputEnter,
-	                                        onChange: this.handleValueInputChange })
+                                            onKeyDown: this.handleValueInputEnter
+                                        })
 	                                )
 	                            );
 	                        }
@@ -49067,6 +49078,81 @@
 
 	exports.EOL = '\n';
 
+
+        /***/
+    },
+    /* 167 */
+    /***/ function (module, exports, __webpack_require__) {
+
+        /**
+         * Created by ChangeCheng on 16/8/24.
+         */
+        var React = __webpack_require__(1);
+        module.exports = React.createClass({
+            displayName: 'exports',
+
+            getInitialState: function () {
+                return {};
+            },
+            handleValueInputChange: function (key, e) {
+                this.props.handleRegisterChange(key, Number(e.target.value));
+            },
+            render: function () {
+                // console.log('curRegisters',this.props.registers);
+                return React.createElement(
+                    'div',
+                    {className: 'tag-table-wrapper col-md-3'},
+                    React.createElement(
+                        'table',
+                        {className: 'tag-table table table-responsive'},
+                        React.createElement(
+                            'thead',
+                            {className: 'tag-table-header'},
+                            React.createElement(
+                                'tr',
+                                {className: 'tag-table-row'},
+                                React.createElement(
+                                    'td',
+                                    {className: 'tag-table-col'},
+                                    ' 寄存器号'
+                                ),
+                                React.createElement(
+                                    'td',
+                                    {className: 'tag-table-col'},
+                                    ' 值'
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            'tbody',
+                            {className: 'tag-table-body'},
+                            Object.keys(this.props.registers).map(function (registerKey, index) {
+                                var register = this.props.registers[registerKey];
+                                return React.createElement(
+                                    'tr',
+                                    {key: index, className: 'tag-table-row'},
+                                    React.createElement(
+                                        'td',
+                                        {className: 'tag-table-col'},
+                                        ' ',
+                                        registerKey
+                                    ),
+                                    React.createElement(
+                                        'td',
+                                        {className: 'tag-table-col'},
+                                        React.createElement('input', {
+                                            className: 'value', name: registerKey, type: 'text',
+                                            value: register.value,
+                                            onChange: this.handleValueInputChange.bind(this, registerKey)
+                                        })
+                                    )
+                                );
+                            }.bind(this))
+                        )
+                    )
+                );
+            }
+        });
 
 /***/ }
 /******/ ]);
