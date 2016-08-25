@@ -19724,9 +19724,9 @@
 	var $ = __webpack_require__(160);
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
-        var RegisterList = __webpack_require__(167);
-	var LoadState = __webpack_require__(164);
-	var InputKeyboard = __webpack_require__(165);
+        var RegisterList = __webpack_require__(164);
+        var LoadState = __webpack_require__(165);
+        var InputKeyboard = __webpack_require__(166);
 
 	var sep = '/';
 	var defaultState = {
@@ -19742,7 +19742,7 @@
 	};
 
 	try {
-	    var os = __webpack_require__(166);
+        var os = __webpack_require__(167);
 	    var platform = os.platform();
 	    if (platform === 'win32') {
 	        sep = '\\';
@@ -22265,30 +22265,29 @@
 	                break;
 	            case 'END':
 	                break;
-                case 'RWDATA':
+                case 'READ_DATA_MODBUS':
+                case 'WRITE_DATA_MODBUS':
+                case 'READ_DATA_CAN':
+                case 'WRITE_DATA_CAN':
                     var firstValue = Number(this.getParamValue(param1));
                     var secondValue = Number(this.getParamValue(param2));
-                    var fileType = firstValue & 240;
-                    if (fileType === 16) {
+                    var fileType, rwType;
+                    if (op === 'READ_DATA_CAN' || op === 'WRITE_DATA_CAN') {
                         fileType = 'can';
-                    } else if (fileType === 0) {
-                        fileType = 'modbus';
                     } else {
-                        fileType = null;
+                        fileType = 'modbus';
                     }
-                    var rwType = firstValue & 15;
-                    if (rwType === 1) {
-                        rwType = 'write';
-                    } else if (rwType === 0) {
+
+                    if (op === 'READ_DATA_MODBUS' || op === 'READ_DATA_CAN') {
                         rwType = 'read';
                     } else {
-                        rwType = null;
+                        rwType = 'write';
                     }
 
                     var readNum, readStartId, canId;
                     if (fileType === 'modbus') {
-                        readNum = secondValue >> 16;
-                        readStartId = secondValue - (readNum << 16);
+                        readNum = firstValue;
+                        readStartId = secondValue;
                         var j;
                         for (var i = readStartId; i < readStartId + readNum; i++) {
                             if (this.registers[i]) {
@@ -48777,6 +48776,81 @@
 
 /***/ },
 /* 164 */
+    /***/ function (module, exports, __webpack_require__) {
+
+        /**
+         * Created by ChangeCheng on 16/8/24.
+         */
+        var React = __webpack_require__(1);
+        module.exports = React.createClass({
+            displayName: 'exports',
+
+            getInitialState: function () {
+                return {};
+            },
+            handleValueInputChange: function (key, e) {
+                this.props.handleRegisterChange(key, Number(e.target.value));
+            },
+            render: function () {
+                // console.log('curRegisters',this.props.registers);
+                return React.createElement(
+                    'div',
+                    {className: 'tag-table-wrapper col-md-3'},
+                    React.createElement(
+                        'table',
+                        {className: 'tag-table table table-responsive'},
+                        React.createElement(
+                            'thead',
+                            {className: 'tag-table-header'},
+                            React.createElement(
+                                'tr',
+                                {className: 'tag-table-row'},
+                                React.createElement(
+                                    'td',
+                                    {className: 'tag-table-col'},
+                                    ' 寄存器号'
+                                ),
+                                React.createElement(
+                                    'td',
+                                    {className: 'tag-table-col'},
+                                    ' 值'
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            'tbody',
+                            {className: 'tag-table-body'},
+                            Object.keys(this.props.registers).map(function (registerKey, index) {
+                                var register = this.props.registers[registerKey];
+                                return React.createElement(
+                                    'tr',
+                                    {key: index, className: 'tag-table-row'},
+                                    React.createElement(
+                                        'td',
+                                        {className: 'tag-table-col'},
+                                        ' ',
+                                        registerKey
+                                    ),
+                                    React.createElement(
+                                        'td',
+                                        {className: 'tag-table-col'},
+                                        React.createElement('input', {
+                                            className: 'value', name: registerKey, type: 'text',
+                                            value: register.value,
+                                            onChange: this.handleValueInputChange.bind(this, registerKey)
+                                        })
+                                    )
+                                );
+                            }.bind(this))
+                        )
+                    )
+                );
+            }
+        });
+
+        /***/
+    },
+    /* 165 */
 /***/ function(module, exports) {
 
 	var state = {
@@ -48790,7 +48864,7 @@
 	module.exports = state;
 
 /***/ },
-/* 165 */
+    /* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -49031,7 +49105,7 @@
 	module.exports = InputKeyboard;
 
 /***/ },
-/* 166 */
+    /* 167 */
 /***/ function(module, exports) {
 
 	exports.endianness = function () { return 'LE' };
@@ -49080,81 +49154,6 @@
 
 	exports.EOL = '\n';
 
-
-        /***/
-    },
-    /* 167 */
-    /***/ function (module, exports, __webpack_require__) {
-
-        /**
-         * Created by ChangeCheng on 16/8/24.
-         */
-        var React = __webpack_require__(1);
-        module.exports = React.createClass({
-            displayName: 'exports',
-
-            getInitialState: function () {
-                return {};
-            },
-            handleValueInputChange: function (key, e) {
-                this.props.handleRegisterChange(key, Number(e.target.value));
-            },
-            render: function () {
-                // console.log('curRegisters',this.props.registers);
-                return React.createElement(
-                    'div',
-                    {className: 'tag-table-wrapper col-md-3'},
-                    React.createElement(
-                        'table',
-                        {className: 'tag-table table table-responsive'},
-                        React.createElement(
-                            'thead',
-                            {className: 'tag-table-header'},
-                            React.createElement(
-                                'tr',
-                                {className: 'tag-table-row'},
-                                React.createElement(
-                                    'td',
-                                    {className: 'tag-table-col'},
-                                    ' 寄存器号'
-                                ),
-                                React.createElement(
-                                    'td',
-                                    {className: 'tag-table-col'},
-                                    ' 值'
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'tbody',
-                            {className: 'tag-table-body'},
-                            Object.keys(this.props.registers).map(function (registerKey, index) {
-                                var register = this.props.registers[registerKey];
-                                return React.createElement(
-                                    'tr',
-                                    {key: index, className: 'tag-table-row'},
-                                    React.createElement(
-                                        'td',
-                                        {className: 'tag-table-col'},
-                                        ' ',
-                                        registerKey
-                                    ),
-                                    React.createElement(
-                                        'td',
-                                        {className: 'tag-table-col'},
-                                        React.createElement('input', {
-                                            className: 'value', name: registerKey, type: 'text',
-                                            value: register.value,
-                                            onChange: this.handleValueInputChange.bind(this, registerKey)
-                                        })
-                                    )
-                                );
-                            }.bind(this))
-                        )
-                    )
-                );
-            }
-        });
 
 /***/ }
 /******/ ]);
