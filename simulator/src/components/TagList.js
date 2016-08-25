@@ -8,7 +8,7 @@ module.exports = React.createClass({
         };
     },
     handleValueInputFocus: function (e) {
-        var tagList = this.props.tagList;
+        var tagList = this.state.tagList;
         var curTagName = e.target.name;
         var curTagIdx = -1;
         for (var i = 0; i < tagList.length; i++) {
@@ -21,7 +21,7 @@ module.exports = React.createClass({
     },
     handleValueInputBlur: function (e) {
         var tagOldValue = this.state.tagOldValue;
-        if (tagOldValue != '') {
+        if (tagOldValue !== 'old') {
             //handle blur
             if (this.state.curTagIdx != -1) {
                 var curTag = this.state.tagList[this.state.curTagIdx];
@@ -37,7 +37,7 @@ module.exports = React.createClass({
             //enter
             if (this.state.curTagIdx != -1) {
 
-                this.setState({tagOldValue: ''});
+                this.setState({tagOldValue: 'old'});
                 this.updateTag(this.state.curTagIdx, Number(e.target.value));
             }
         }
