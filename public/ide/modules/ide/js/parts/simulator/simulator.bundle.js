@@ -20336,12 +20336,13 @@
 	        }
 
 	        offCtx.save();
-	        offCtx.textAlign = 'center';
+            offCtx.textAlign = 'right';
 	        offCtx.textBaseline = 'middle';
 	        //font
 	        var fontSize = 0.5 * num.height + 'px Helvetica';
 	        offCtx.font = fontSize;
-	        offCtx.fillText(widget.curValue, curX + num.x + 0.5 * num.width, curY + num.y + 0.5 * num.height);
+            offCtx.fillStyle = num.color;
+            offCtx.fillText(widget.curValue, curX + num.x + 0.9 * num.width, curY + num.y + 0.5 * num.height);
 	        offCtx.restore();
 
 	        //draw key
@@ -22323,7 +22324,7 @@
 
                 for (i = 0; i < tags.length; i++) {
                     tag = tags[i];
-                    if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
+                    if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
                         //write
                         register.value = tag.value;
                     }
@@ -22335,7 +22336,7 @@
             } else if (rwType == 'read') {
                 for (i = 0; i < tags.length; i++) {
                     tag = tags[i];
-                    if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
+                    if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
                         //read
                         updatedTagNames.push(tag.name);
                         this.setTagByTag(tag, register.value);
@@ -48738,7 +48739,7 @@
 	                    { className: 'tag-table-body' },
 	                    this.props.tagList.map(function (tag, index) {
 	                        if (tag.register) {
-	                            var disabled = !(tag.writeOrRead == 'true');
+                                var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
 
 	                            return React.createElement(
 	                                'tr',
@@ -48934,7 +48935,7 @@
 	    x: 22 / 28,
 	    y: 0.5,
 	    width: 1 / 7,
-	    height: 3 / 8,
+        height: 3 / 16,
 	    slices: [new KeyTexObj('', '', 'benterrelease', ''), new KeyTexObj('', '', 'benterpress', '')]
 	}, {
 	    name: '7',
@@ -48975,7 +48976,8 @@
 	    y: 0,
 	    width: 1,
 	    height: 0.2,
-	    slices: [new KeyTexObj('', '', '', 'rgba(255,255,255,1.0)')]
+        color: 'rgba(255,0,0,1.0)',
+        slices: [new KeyTexObj('', '', '', 'rgba(0,0,0,1.0)')]
 	};
 
 	var getInputKeyboard = function (width, height, offsetX, offsetY) {
@@ -49018,7 +49020,7 @@
 	    this.id = name;
 	    this.name = name;
 	    this.type = 'image/bmp';
-	    this.src = '/public/images/' + name + '.bmp';
+        this.src = '/public/images/' + name + '.png';
 	}
 
 	var defaultKeyTexList = ['b0press', 'b0release', 'b1press', 'b1release', 'b2press', 'b2release', 'b3press', 'b3release', 'b4press', 'b4release', 'b5press', 'b5release', 'b6press', 'b6release', 'b7press', 'b7release', 'b8press', 'b8release', 'b9press', 'b9release', 'bbackpress', 'bbackrelease', 'benterpress', 'benterrelease', 'bescpress', 'bescrelease', 'bpmpress', 'bpmrelease'];

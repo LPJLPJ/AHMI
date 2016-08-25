@@ -645,12 +645,13 @@ module.exports = React.createClass({
         }
 
         offCtx.save();
-        offCtx.textAlign = 'center';
+        offCtx.textAlign = 'right';
         offCtx.textBaseline = 'middle';
         //font
         var fontSize = 0.5 * num.height + 'px Helvetica';
         offCtx.font = fontSize;
-        offCtx.fillText(widget.curValue, curX + num.x + 0.5 * num.width, curY + num.y + 0.5 * num.height);
+        offCtx.fillStyle = num.color;
+        offCtx.fillText(widget.curValue, curX + num.x + 0.9 * num.width, curY + num.y + 0.5 * num.height);
         offCtx.restore();
 
         //draw key
@@ -2641,30 +2642,30 @@ module.exports = React.createClass({
                 break;
             case 'END':
                 break;
-            case 'RWDATA':
+            case 'READ_DATA_MODBUS':
+            case 'WRITE_DATA_MODBUS':
+            case 'READ_DATA_CAN':
+            case 'WRITE_DATA_CAN':
                 var firstValue = Number(this.getParamValue(param1));
                 var secondValue = Number(this.getParamValue(param2));
-                var fileType = (firstValue & 240);
-                if (fileType === 16) {
+                var fileType, rwType;
+                if (op === 'READ_DATA_CAN' || op === 'WRITE_DATA_CAN') {
                     fileType = 'can';
-                } else if (fileType === 0) {
-                    fileType = 'modbus';
                 } else {
-                    fileType = null;
+                    fileType = 'modbus';
                 }
-                var rwType = (firstValue & 15);
-                if (rwType === 1) {
-                    rwType = 'write';
-                } else if (rwType === 0) {
+
+                if (op === 'READ_DATA_MODBUS' || op === 'READ_DATA_CAN') {
                     rwType = 'read';
                 } else {
-                    rwType = null;
+                    rwType = 'write';
                 }
+
 
                 var readNum, readStartId, canId;
                 if (fileType === 'modbus') {
-                    readNum = secondValue >> 16;
-                    readStartId = secondValue - (readNum << 16);
+                    readNum = firstValue;
+                    readStartId = secondValue;
                     var j;
                     for (var i = readStartId; i < readStartId + readNum; i++) {
                         if (this.registers[i]) {
@@ -2702,7 +2703,7 @@ module.exports = React.createClass({
 
             for (i = 0; i < tags.length; i++) {
                 tag = tags[i];
-                if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
+                if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
                     //write
                     register.value = tag.value;
                 }
@@ -2714,7 +2715,7 @@ module.exports = React.createClass({
         } else if (rwType == 'read') {
             for (i = 0; i < tags.length; i++) {
                 tag = tags[i];
-                if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
+                if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
                     //read
                     updatedTagNames.push(tag.name);
                     this.setTagByTag(tag, register.value);

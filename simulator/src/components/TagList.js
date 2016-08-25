@@ -85,7 +85,7 @@ module.exports = React.createClass({
                     {
                         this.props.tagList.map(function (tag, index) {
                             if (tag.register) {
-                                var disabled = !(tag.writeOrRead == 'true');
+                                var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
 
                                 return (
                                     <tr key={index} className='tag-table-row'>
