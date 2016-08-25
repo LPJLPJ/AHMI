@@ -48646,7 +48646,6 @@
 	        };
 	    },
 	    handleValueInputFocus: function (e) {
-	        var tagOldValue = this.state.tagOldValue;
 	        var tagList = this.props.tagList;
 	        var curTagName = e.target.name;
 	        var curTagIdx = -1;
@@ -48698,9 +48697,8 @@
 	        }
 	    },
 	    componentWillReceiveProps: function (nextProps) {
-	        // var tagList = this.state.tagList;
-	        // tagList = nextProps.tagList;
-	        // this.setState({tagList: tagList});
+
+            this.setState({tagList: nextProps.tagList});
 	    },
 	    render: function () {
 
@@ -48736,7 +48734,7 @@
 	                React.createElement(
 	                    'tbody',
 	                    { className: 'tag-table-body' },
-	                    this.props.tagList.map(function (tag, index) {
+                        this.state.tagList.map(function (tag, index) {
 	                        if (tag.register) {
                                 var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
 
@@ -48762,7 +48760,8 @@
 	                                        value: tag.value,
 	                                        onFocus: this.handleValueInputFocus,
 	                                        onBlur: this.handleValueInputBlur,
-                                            onKeyDown: this.handleValueInputEnter
+                                            onKeyDown: this.handleValueInputEnter,
+                                            onChange: this.handleValueInputChange
                                         })
 	                                )
 	                            );

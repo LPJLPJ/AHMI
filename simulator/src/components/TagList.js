@@ -8,7 +8,6 @@ module.exports = React.createClass({
         };
     },
     handleValueInputFocus: function (e) {
-        var tagOldValue = this.state.tagOldValue;
         var tagList = this.props.tagList;
         var curTagName = e.target.name;
         var curTagIdx = -1;
@@ -62,9 +61,8 @@ module.exports = React.createClass({
         }
     },
     componentWillReceiveProps: function (nextProps) {
-        // var tagList = this.state.tagList;
-        // tagList = nextProps.tagList;
-        // this.setState({tagList: tagList});
+
+        this.setState({tagList: nextProps.tagList});
     },
     render: function () {
 
@@ -83,7 +81,7 @@ module.exports = React.createClass({
                     </thead>
                     <tbody className='tag-table-body'>
                     {
-                        this.props.tagList.map(function (tag, index) {
+                        this.state.tagList.map(function (tag, index) {
                             if (tag.register) {
                                 var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
 
@@ -97,6 +95,7 @@ module.exports = React.createClass({
                                                    onFocus={this.handleValueInputFocus}
                                                    onBlur={this.handleValueInputBlur}
                                                    onKeyDown={this.handleValueInputEnter}
+                                                   onChange={this.handleValueInputChange}
                                             />
                                         </td>
                                     </tr>
