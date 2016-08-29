@@ -1745,9 +1745,15 @@
                                    <!--ng-keypress=""/>-->
                         <!--</div>-->
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title">模式</span>
+                            <span class="my-attr-title">显示模式</span>
                             <select class="my-attr-number-input form-control" ng-model="component.dateTime.dateTimeModeId" ng-change="component.dateTime.enterDateTimeMode($event)">
                                 <option ng-repeat="mode in component.dateTime.dateTimeModes" value="{{mode.id}}">{{mode.name}}</option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">时钟来源</span>
+                            <select class="my-attr-number-input form-control" ng-model="component.dateTime.RTCModeId" ng-change="component.dateTime.enterDateTimeMode($event)">
+                                <option ng-repeat="mode in component.dateTime.RTCModes" value="{{mode.id}}">{{mode.name}}</option>
                             </select>
                         </div>
                     </div>
@@ -1985,7 +1991,7 @@
                 <div ng-controller="ActionCtl" ng-show="showActionPanel">
                     <div>
                         <span class="dengPage-Action-Title">动作列表</span>
-                        <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)">
+                        <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)" ng-show="showAddActionPanel">
                             添加新动作
                         </button>
                     </div>

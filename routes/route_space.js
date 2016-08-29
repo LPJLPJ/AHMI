@@ -10,6 +10,7 @@ module.exports = function (req, res) {
                 console.log(err)
                 res.status(500).end()
             }
+            projects.reverse();
             var processedProjects = _.cloneDeep(projects).map(function (project) {
                 var info = {}
                 info._id = project._id;

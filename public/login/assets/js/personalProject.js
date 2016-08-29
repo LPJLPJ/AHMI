@@ -14,6 +14,7 @@ $(function(){
     var fs,path,mkdir,__dirname;
     var closeModalConfirmButton = $('#closeModalConfirm');
     var localProjectDir='';
+
     closeModalConfirmButton.on('click',function (e) {
        deleteProject(curProject,curPanel);
     });
@@ -235,10 +236,17 @@ $(function(){
 
 
     $('#addproject').on('click', function (e) {
+        $('#addproject').siblings().each(function (index,elem) {
+           //console.log('index',index);
+            console.log('elem',elem.val());
+        });
         $('#basicinfo-template').attr('disabled',false);
         $('#modal-ok').html('创建')
 
-    })
+    });
+    $('#basicinfo-title').on('click',function(e){
+        console.log('input title');
+    });
 
     $('#modal-ok').on('click',changeProject);
 

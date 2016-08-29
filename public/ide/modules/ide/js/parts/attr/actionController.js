@@ -72,6 +72,14 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 
         }
 
+        switch (currentSelectedObject.type){
+            case Type.MyPage:
+                $scope.showAddActionPanel = true;
+                break;
+            default :
+                $scope.showAddActionPanel = false;
+        }
+
 
     }
 
