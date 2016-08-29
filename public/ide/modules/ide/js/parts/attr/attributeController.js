@@ -389,7 +389,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     break;
                 case Type.MyDateTime:
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
-                    $scope.component.RTCModeId = $scope.component.object.level.info.RTCModeId;
+                    $scope.component.dateTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
                     break;
                 case Type.MySlideBlock:
                     $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
