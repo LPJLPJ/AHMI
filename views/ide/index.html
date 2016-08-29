@@ -2043,6 +2043,8 @@
                                                     {{timerTag}}
                                                 </option>
                                             </select>
+                                            <input class="form-control modelPart" type="text"
+                                                   ng-model="chosenCmd[1].value"/>
                                         </div>
                                     </td>
 
@@ -2080,7 +2082,7 @@
                                         ng-repeat="cmd in action.commands" ng-click="chooseCmd($index)">
                                         <td>{{$index+1}}</td>
                                         <td>{{cmd[0].symbol}}</td>
-                                        <td><p>{{cmd[1].tag}}</p></td>
+                                        <td><p>{{cmd[1].tag||cmd[1].value}}</p></td>
                                         <td><p>{{cmd[2].tag||cmd[2].value}}</p></td>
                                         <td><img src="../../public/ide/modules/ide/img-web/icon_close.png"
                                                  ng-click="deleteCmd($index)"></td>

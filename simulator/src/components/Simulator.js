@@ -2,7 +2,8 @@ var React = require('react');
 var $ = require('jquery');
 var _ = require('lodash');
 var TagList = require('./TagList');
-var LoadState = require('./LoadState')
+var RegisterList = require('./RegisterList');
+var LoadState = require('./LoadState');
 var InputKeyboard = require('./inputKeyboard');
 
 
@@ -14,7 +15,8 @@ var defaultState = {
     resourceList: [],
     imageList: [],
     timerList: [],
-    currentPressedTargets: []
+    currentPressedTargets: [],
+    registers: {}
 
 };
 
@@ -100,8 +102,30 @@ module.exports = React.createClass({
         data.tag = '当前页面序号';
         // this.state.tagList = data.tagList
         // this.setState({tagList: data.tagList})
-        this.state.tagList = data.tagList;
+        // this.state.tagList = data.tagList;
+        this.setState({tagList: data.tagList});
         console.log('tagList loaded', data.tagList)
+
+        //initialize registers
+        this.registers = {};
+        var curTag;
+        var curRegIdx;
+        for (var i = 0; i < data.tagList.length; i++) {
+            curTag = data.tagList[i];
+            curRegIdx = curTag.indexOfRegister;
+            if (curTag.register && curRegIdx !== undefined && curRegIdx !== '' && curRegIdx !== null) {
+                if (this.registers[curRegIdx]) {
+                    this.registers[curRegIdx].tags.push(curTag)
+                } else {
+                    this.registers[curRegIdx] = {
+                        tags: [curTag],
+                        value: 0
+                    }
+                }
+            }
+        }
+        // console.log(this.registers);
+        this.setState({registers: this.registers});
 
         //initialize timer
         var timerList = this.state.timerList;
@@ -207,12 +231,22 @@ module.exports = React.createClass({
         }
     },
     isIn: function (res, resList, key) {
-        for (var i = 0; i < resList.length; i++) {
-            if (res[key] === resList[i][key]) {
-                return true;
+        if (key) {
+            for (var i = 0; i < resList.length; i++) {
+                if (res[key] === resList[i][key]) {
+                    return true;
+                }
             }
+            return false;
+        } else {
+            for (var i = 0; i < resList.length; i++) {
+                if (res === resList[i]) {
+                    return true;
+                }
+            }
+            return false;
         }
-        return false;
+
     },
     initProject: function () {
 
@@ -497,7 +531,7 @@ module.exports = React.createClass({
         }
 
         if (subCanvasUnloadIdx !== null){
-            console.log('handle unload sc')
+            // console.log('handle unload sc')
             this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
         }
         var subCanvas = subCanvasList[nextSubCanvasIdx];
@@ -611,12 +645,13 @@ module.exports = React.createClass({
         }
 
         offCtx.save();
-        offCtx.textAlign = 'center';
+        offCtx.textAlign = 'right';
         offCtx.textBaseline = 'middle';
         //font
         var fontSize = 0.5 * num.height + 'px Helvetica';
         offCtx.font = fontSize;
-        offCtx.fillText(widget.curValue, curX + num.x + 0.5 * num.width, curY + num.y + 0.5 * num.height);
+        offCtx.fillStyle = num.color;
+        offCtx.fillText(widget.curValue, curX + num.x + 0.9 * num.width, curY + num.y + 0.5 * num.height);
         offCtx.restore();
 
         //draw key
@@ -828,7 +863,7 @@ module.exports = React.createClass({
             curScale = (curScale <= 1 ? curScale : 1.0);
 
             var progressSlice = widget.texList[1].slices[0];
-            console.log('drawing color progress',widget.info.progressModeId);
+            // console.log('drawing color progress',widget.info.progressModeId);
             switch (widget.info.progressModeId){
                 case '0':
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
@@ -1519,7 +1554,7 @@ module.exports = React.createClass({
                 widget.curPoints = [];
             }
 
-            if (options && (options.updatedTagName==widget.tag)){
+            if (options && (options.updatedTagName == widget.tag || this.isIn(widget.tag, options.updatedTagNames))) {
                 newPoint = true;
                 curValue = this.getValueByTagName(widget.tag,0);
                 curValue = this.limitValueBetween(curValue,minValue,maxValue);
@@ -2326,7 +2361,7 @@ module.exports = React.createClass({
         //     this.process(cmds[i]);
         // }
         if (cmds && cmds.length){
-            console.log(cmds);
+            // console.log(cmds);
             this.process(cmds,0);
         }
 
@@ -2370,8 +2405,8 @@ module.exports = React.createClass({
         }
 
         var inst = cmds[index].cmd;
-        console.log('inst: ',inst[0],inst[1],inst[2]);
-
+        // console.log('inst: ',inst[0],inst[1],inst[2]);
+        //
         var op = inst[0].name;
         var param1 = inst[1];
         var param2 = inst[2];
@@ -2607,8 +2642,42 @@ module.exports = React.createClass({
                 break;
             case 'END':
                 break;
+            case 'READ_DATA_MODBUS':
+            case 'WRITE_DATA_MODBUS':
+            case 'READ_DATA_CAN':
+            case 'WRITE_DATA_CAN':
+                var firstValue = Number(this.getParamValue(param1));
+                var secondValue = Number(this.getParamValue(param2));
+                var fileType, rwType;
+                if (op === 'READ_DATA_CAN' || op === 'WRITE_DATA_CAN') {
+                    fileType = 'can';
+                } else {
+                    fileType = 'modbus';
+                }
+
+                if (op === 'READ_DATA_MODBUS' || op === 'READ_DATA_CAN') {
+                    rwType = 'read';
+                } else {
+                    rwType = 'write';
+                }
 
 
+                var readNum, readStartId, canId;
+                if (fileType === 'modbus') {
+                    readNum = firstValue;
+                    readStartId = secondValue;
+                    var j;
+                    for (var i = readStartId; i < readStartId + readNum; i++) {
+                        if (this.registers[i]) {
+                            this.rwRegister(i, rwType);
+                        }
+                    }
+                } else if (fileType === 'can') {
+                    canId = secondValue;
+                }
+
+
+                break;
 
         }
         //handle timer
@@ -2622,6 +2691,43 @@ module.exports = React.createClass({
         }
 
     },
+    rwRegister: function (registerIdx, rwType) {
+        var registers = this.state.registers;
+        var register = registers[registerIdx];
+        var tags = register.tags;
+        var tag;
+        var i;
+        var updatedTagNames = [];
+        if (rwType == 'write') {
+            //valid
+
+            for (i = 0; i < tags.length; i++) {
+                tag = tags[i];
+                if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
+                    //write
+                    register.value = tag.value;
+                }
+            }
+            //update
+            // this.updateRegisters();
+            // console.log(this.registers);
+            this.setState({registers: registers});
+        } else if (rwType == 'read') {
+            for (i = 0; i < tags.length; i++) {
+                tag = tags[i];
+                if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
+                    //read
+                    updatedTagNames.push(tag.name);
+                    this.setTagByTag(tag, register.value);
+                }
+            }
+            //update
+            this.draw(null, {
+                updatedTagNames: updatedTagNames
+            })
+
+        }
+    },
     updateTag: function (curTagIdx, value) {
         var tagList = this.state.tagList;
         if (curTagIdx >= 0 && curTagIdx < tagList.length) {
@@ -2632,8 +2738,13 @@ module.exports = React.createClass({
             })
         }
     },
+    handleRegisterChange: function (key, value) {
+        var registers = this.state.registers;
+        registers[key].value = value;
+        this.setState({registers: registers});
+    },
     render: function () {
-
+        // console.log('registers',this.state.registers);
         return (
             < div className='simulator'>
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>
@@ -2642,6 +2753,7 @@ module.exports = React.createClass({
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
                 < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
+                <RegisterList registers={this.state.registers || {}} handleRegisterChange={this.handleRegisterChange}/>
             </div >);
     }
 });

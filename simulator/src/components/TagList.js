@@ -8,7 +8,6 @@ module.exports = React.createClass({
         };
     },
     handleValueInputFocus: function (e) {
-        var tagOldValue = this.state.tagOldValue;
         var tagList = this.props.tagList;
         var curTagName = e.target.name;
         var curTagIdx = -1;
@@ -62,79 +61,50 @@ module.exports = React.createClass({
         }
     },
     componentWillReceiveProps: function (nextProps) {
-        var tagList = this.state.tagList;
-        tagList = nextProps.tagList;
-        this.setState({tagList: tagList});
+
+        this.setState({tagList: nextProps.tagList});
     },
     render: function () {
 
         return (
-            < div
-        className = 'tag-table-wrapper col-md-3' >
-            < table
-        className = 'tag-table table table-responsive' >
-            < thead
-        className = 'tag-table-header' >
-            < tr
-        className = 'tag-table-row' >
-            < td
-        className = 'tag-table-col' > 名称 < / td >
-            < td
-        className = 'tag-table-col' > 寄存器号 < / td >
-            < td
-        className = 'tag-table-col' > 值 < / td >
-            < / tr >
-            < / thead >
-            < tbody
-        className = 'tag-table-body' >
-            {
-                this.state.tagList.map(function (tag, index) {
-                if (tag.register) {
-                    var disabled = !(tag.writeOrRead == 'true');
+            <div className='tag-table-wrapper col-md-3'>
+                <table className='tag-table table table-responsive'>
+                    <thead className='tag-table-header'>
+                    <tr className='tag-table-row'>
+                        <td className='tag-table-col'> 名称
+                        </td>
+                        <td className='tag-table-col'> 寄存器号
+                        </td>
+                        <td className='tag-table-col'> 值
+                        </td>
+                    </tr >
+                    </thead>
+                    <tbody className='tag-table-body'>
+                    {
+                        this.state.tagList.map(function (tag, index) {
+                            if (tag.register) {
+                                var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
 
-                    return (
-                        < tr
-                    key = {index}
-                    className = 'tag-table-row' >
-                        < td
-                    className = 'tag-table-col' > {tag.name
-                }</
-                    td >
-                    < td
-                    className = 'tag-table-col' > {tag.indexOfRegister
-                }</
-                    td >
-                    < td
-                    className = 'tag-table-col' > < input
-                    className = 'value'
-                    name = {tag.name
-                }
-                    type = 'text'
-                    disabled = {disabled}
-                    value = {tag.value
-                }
-                    onFocus = {this.handleValueInputFocus
-                }
-                    onBlur = {this.handleValueInputBlur
-                }
-                    onKeyDown = {this.handleValueInputEnter
-                }
-                    onChange = {this.handleValueInputChange
-                } /></
-                    td >
-                    < / tr >
-                )
-                    ;
-                }
-
-
-            }.bind(this))
-    }
-        </
-        tbody >
-        < / table >
-        < / div >
-        )
-        ;
+                                return (
+                                    <tr key={index} className='tag-table-row'>
+                                        <td className='tag-table-col'> {tag.name}</td>
+                                        <td className='tag-table-col'> {tag.indexOfRegister}</td>
+                                        <td className='tag-table-col'>
+                                            <input className='value' name={tag.name} type='text' disabled={disabled}
+                                                   value={tag.value}
+                                                   onFocus={this.handleValueInputFocus}
+                                                   onBlur={this.handleValueInputBlur}
+                                                   onKeyDown={this.handleValueInputEnter}
+                                                   onChange={this.handleValueInputChange}
+                                            />
+                                        </td>
+                                    </tr>
+                                );
+                            }
+                        }.bind(this))}
+                    </tbody>
+                </table>
+            </div>
+        );
     }
 });
