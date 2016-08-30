@@ -2136,21 +2136,32 @@ module.exports = React.createClass({
         }
 
     },
-    handleOk: function () {
+    handleOk: function (type) {
         var page = this.state.project.pageList[this.state.curPageIdx];
         if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
             //has highlight
             var curLinkWidget = page.linkedWidgets[page.curHighlightIdx];
             switch (curLinkWidget.type) {
                 case 'MyButtonGroup':
-                    curLinkWidget.target.curButtonIdx = curLinkWidget.value;
+                    curLinkWidget.target.curButtonIdx = curLinkWidget.value + 1;
                     break;
             }
-            this.mouseState.state = 'press';
+
             this.mouseState.position.x = 0;
             this.mouseState.position.y = 0;
-            this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
-            this.handleTargetAction(curLinkWidget.target, 'Press');
+            if (type === 'press') {
+                this.mouseState.state = 'press';
+                this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
+                this.handleTargetAction(curLinkWidget.target, 'Press');
+            } else if (type === 'release') {
+                this.mouseState.state = 'release';
+                this.handleElementRelease(curLinkWidget.target, _.cloneDeep(this.mouseState));
+                this.handleTargetAction(curLinkWidget.target, 'Release');
+            }
+
+
+
+
 
         }
     },
@@ -2849,7 +2860,9 @@ module.exports = React.createClass({
                 </div>
                 <div className="phical-keyboard-wrapper">
                     <button onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
-                    <button onClick={this.handleOk}>OK</button>
+                    <button onMouseDown={this.handleOk.bind(null, 'press')}
+                            onMouseUp={this.handleOk.bind(null, 'release')}>OK
+                    </button>
                     <button onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </button>
 
                 </div>

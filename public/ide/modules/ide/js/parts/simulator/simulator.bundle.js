@@ -19724,10 +19724,10 @@
 	var $ = __webpack_require__(160);
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
-        var RegisterList = __webpack_require__(164);
-        var LoadState = __webpack_require__(165);
-        var InputKeyboard = __webpack_require__(166);
-        var Utils = __webpack_require__(168);
+	var RegisterList = __webpack_require__(164);
+	var LoadState = __webpack_require__(165);
+	var InputKeyboard = __webpack_require__(166);
+	var Utils = __webpack_require__(167);
 
 	var sep = '/';
 	var defaultState = {
@@ -19737,13 +19737,13 @@
 	    resourceList: [],
 	    imageList: [],
 	    timerList: [],
-        currentPressedTargets: [],
-        registers: {}
+	    currentPressedTargets: [],
+	    registers: {}
 
 	};
 
 	try {
-        var os = __webpack_require__(167);
+	    var os = __webpack_require__(168);
 	    var platform = os.platform();
 	    if (platform === 'win32') {
 	        sep = '\\';
@@ -19776,7 +19776,7 @@
 	        }.bind(this));
 	    },
 	    initCanvas: function (data, callBack) {
-            var i;
+	        var i;
 	        this.mouseState = {
 	            state: 'release',
 	            position: {
@@ -19812,24 +19812,24 @@
 	        //initialize tagList
 	        //check curPage tag
 
-            // var curPageTag = {
-            //     name: '当前页面序号',
-            //     register: true,
-            //     writeOrRead: 'true',
-            //     indexOfRegister: -1,
-            //     value: 0
-            // };
-            //
-            // var hasCurPageTag = false;
-            // for (i=0;i<data.tagList.length;i++){
-            //     if (data.tagList[i].name === curPageTag.name){
-            //         hasCurPageTag = true;
-            //         break;
-            //     }
-            // }
-            // if (!hasCurPageTag){
-            //     data.tagList.push(curPageTag);
-            // }
+	        // var curPageTag = {
+	        //     name: '当前页面序号',
+	        //     register: true,
+	        //     writeOrRead: 'true',
+	        //     indexOfRegister: -1,
+	        //     value: 0
+	        // };
+	        //
+	        // var hasCurPageTag = false;
+	        // for (i=0;i<data.tagList.length;i++){
+	        //     if (data.tagList[i].name === curPageTag.name){
+	        //         hasCurPageTag = true;
+	        //         break;
+	        //     }
+	        // }
+	        // if (!hasCurPageTag){
+	        //     data.tagList.push(curPageTag);
+	        // }
 
 	        data.tag = '当前页面序号';
 	        // this.state.tagList = data.tagList
@@ -19838,26 +19838,26 @@
 	        this.setState({ tagList: data.tagList });
 	        console.log('tagList loaded', data.tagList);
 
-            //initialize registers
-            this.registers = {};
-            var curTag;
-            var curRegIdx;
-            for (var i = 0; i < data.tagList.length; i++) {
-                curTag = data.tagList[i];
-                curRegIdx = curTag.indexOfRegister;
-                if (curTag.register && curRegIdx !== undefined && curRegIdx !== '' && curRegIdx !== null) {
-                    if (this.registers[curRegIdx]) {
-                        this.registers[curRegIdx].tags.push(curTag);
-                    } else {
-                        this.registers[curRegIdx] = {
-                            tags: [curTag],
-                            value: 0
-                        };
-                    }
-                }
-            }
-            // console.log(this.registers);
-            this.setState({registers: this.registers});
+	        //initialize registers
+	        this.registers = {};
+	        var curTag;
+	        var curRegIdx;
+	        for (var i = 0; i < data.tagList.length; i++) {
+	            curTag = data.tagList[i];
+	            curRegIdx = curTag.indexOfRegister;
+	            if (curTag.register && curRegIdx !== undefined && curRegIdx !== '' && curRegIdx !== null) {
+	                if (this.registers[curRegIdx]) {
+	                    this.registers[curRegIdx].tags.push(curTag);
+	                } else {
+	                    this.registers[curRegIdx] = {
+	                        tags: [curTag],
+	                        value: 0
+	                    };
+	                }
+	            }
+	        }
+	        // console.log(this.registers);
+	        this.setState({ registers: this.registers });
 
 	        //initialize timer
 	        var timerList = this.state.timerList;
@@ -19957,28 +19957,28 @@
 	        }
 	    },
 	    isIn: function (res, resList, key) {
-            if (key) {
-                for (var i = 0; i < resList.length; i++) {
-                    if (res[key] === resList[i][key]) {
-                        return true;
-                    }
+	        if (key) {
+	            for (var i = 0; i < resList.length; i++) {
+	                if (res[key] === resList[i][key]) {
+	                    return true;
+	                }
 	            }
-                return false;
-            } else {
-                for (var i = 0; i < resList.length; i++) {
-                    if (res === resList[i]) {
-                        return true;
-                    }
-                }
-                return false;
+	            return false;
+	        } else {
+	            for (var i = 0; i < resList.length; i++) {
+	                if (res === resList[i]) {
+	                    return true;
+	                }
+	            }
+	            return false;
 	        }
 	    },
 	    initProject: function () {
 
 	        if (this.state.project && this.state.project.size) {
-                this.initCanvas(this.state.project, this.draw.bind(this, null, {reLinkWidgets: true}));
+	            this.initCanvas(this.state.project, this.draw.bind(this, null, { reLinkWidgets: true }));
 	        } else {
-                this.draw.bind(this, null, {reLinkWidgets: true});
+	            this.draw.bind(this, null, { reLinkWidgets: true });
 	        }
 	    },
 	    componentDidMount: function () {
@@ -20096,10 +20096,10 @@
 	        if (!page.state || page.state == LoadState.notLoad) {
 	            page.state = LoadState.willLoad;
 	            //generate load trigger
-                if (!options) {
-                    options = {};
-                }
-                options.reLinkWidgets = true;
+	            if (!options) {
+	                options = {};
+	            }
+	            options.reLinkWidgets = true;
 	            this.handleTargetAction(page, 'Load');
 	        }
 	        page.state = LoadState.loading;
@@ -20123,10 +20123,10 @@
 
 	        page.state = LoadState.loaded;
 
-            if (options && options.reLinkWidgets) {
-                Utils.linkPageWidgets(page);
-                console.log('page', page);
-            }
+	        if (options && options.reLinkWidgets) {
+	            Utils.linkPageWidgets(page);
+	            console.log('page', page);
+	        }
 	    },
 	    handleTimers: function (num) {
 
@@ -20236,10 +20236,10 @@
 	                if (nextSubCanvasIdx != i) {
 	                    //another sc loaded
 	                    //UnLoad sc of i
-                        if (!options) {
-                            options = {};
-                        }
-                        options.reLinkWidgets = true;
+	                    if (!options) {
+	                        options = {};
+	                    }
+	                    options.reLinkWidgets = true;
 	                    subCanvasUnloadIdx = i;
 	                    subCanvasList[i].state = LoadState.notLoad;
 	                    break;
@@ -20248,7 +20248,7 @@
 	        }
 
 	        if (subCanvasUnloadIdx !== null) {
-                // console.log('handle unload sc')
+	            // console.log('handle unload sc')
 	            this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
 	        }
 	        var subCanvas = subCanvasList[nextSubCanvasIdx];
@@ -20361,13 +20361,13 @@
 	        }
 
 	        offCtx.save();
-            offCtx.textAlign = 'right';
+	        offCtx.textAlign = 'right';
 	        offCtx.textBaseline = 'middle';
 	        //font
 	        var fontSize = 0.5 * num.height + 'px Helvetica';
 	        offCtx.font = fontSize;
-            offCtx.fillStyle = num.color;
-            offCtx.fillText(widget.curValue, curX + num.x + 0.9 * num.width, curY + num.y + 0.5 * num.height);
+	        offCtx.fillStyle = num.color;
+	        offCtx.fillText(widget.curValue, curX + num.x + 0.9 * num.width, curY + num.y + 0.5 * num.height);
 	        offCtx.restore();
 
 	        //draw key
@@ -20452,10 +20452,10 @@
 	        //draw tint
 	        this.drawTextByTempCanvas(curX, curY, width, height, text, font);
 
-            //draw highlight
-            if (widget.highlight) {
-                this.drawHighLight(curX, curY, width, height);
-            }
+	        //draw highlight
+	        if (widget.highlight) {
+	            this.drawHighLight(curX, curY, width, height);
+	        }
 	    },
 	    drawSwitch: function (curX, curY, widget, options) {
 	        // console.log(widget);
@@ -20542,10 +20542,10 @@
 	                    //normal tex
 	                    this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
 	                }
-                    //draw highlight
-                    if (widget.highlight) {
-                        this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height);
-                    }
+	                //draw highlight
+	                if (widget.highlight) {
+	                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height);
+	                }
 	            }
 	        } else {
 	            //vertical
@@ -20559,9 +20559,9 @@
 	                    //normal tex
 	                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
 	                }
-                    if (widget.highlight) {
-                        this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight);
-                    }
+	                if (widget.highlight) {
+	                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight);
+	                }
 	            }
 	        }
 	    },
@@ -20585,7 +20585,7 @@
 	            curScale = curScale <= 1 ? curScale : 1.0;
 
 	            var progressSlice = widget.texList[1].slices[0];
-                // console.log('drawing color progress',widget.info.progressModeId);
+	            // console.log('drawing color progress',widget.info.progressModeId);
 	            switch (widget.info.progressModeId) {
 	                case '0':
 	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
@@ -20824,9 +20824,9 @@
 	        // this.drawBg(childX,childY,childWidth,childHeight,imageName,color);
 	        offctx.restore();
 	    },
-        drawHighLight: function (curX, curY, width, height) {
-            this.drawBgColor(curX, curY, width, height, 'rgba(0,255,255,0.3)');
-        },
+	    drawHighLight: function (curX, curY, width, height) {
+	        this.drawBgColor(curX, curY, width, height, 'rgba(0,255,255,0.3)');
+	    },
 	    findValue: function (array, key1, value, key2) {
 	        for (var i = 0; i < array.length; i++) {
 	            if (array[i][key1] == value) {
@@ -21244,7 +21244,7 @@
 	                widget.curPoints = [];
 	            }
 
-                if (options && (options.updatedTagName == widget.tag || this.isIn(widget.tag, options.updatedTagNames))) {
+	            if (options && (options.updatedTagName == widget.tag || this.isIn(widget.tag, options.updatedTagNames))) {
 	                newPoint = true;
 	                curValue = this.getValueByTagName(widget.tag, 0);
 	                curValue = this.limitValueBetween(curValue, minValue, maxValue);
@@ -21771,55 +21771,62 @@
 	            }
 	        }
 	    },
-        handleOk: function () {
-            var page = this.state.project.pageList[this.state.curPageIdx];
-            if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
-                //has highlight
-                var curLinkWidget = page.linkedWidgets[page.curHighlightIdx];
-                switch (curLinkWidget.type) {
-                    case 'MyButtonGroup':
-                        curLinkWidget.target.curButtonIdx = curLinkWidget.value;
-                        break;
-                }
-                this.mouseState.state = 'press';
-                this.mouseState.position.x = 0;
-                this.mouseState.position.y = 0;
-                this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
-                this.handleTargetAction(curLinkWidget.target, 'Press');
-            }
-        },
-        handleMoveNext: function (direction) {
-            var page = this.state.project.pageList[this.state.curPageIdx];
-            var curDirection;
-            if (direction === 'left') {
-                curDirection = 'left';
-            } else {
-                curDirection = 'right';
-            }
-            // console.log(page);
-            if (page && page.linkedWidgets) {
-                if (page.curHighlightIdx === undefined) {
-                    page.curHighlightIdx = 0;
-                } else {
-                    page.linkedWidgets[page.curHighlightIdx].target.highlight = false;
-                    if (curDirection === 'right') {
-                        page.curHighlightIdx = page.curHighlightIdx + 1;
-                        if (page.curHighlightIdx >= page.linkedWidgets.length) {
-                            page.curHighlightIdx = page.linkedWidgets.length - 1;
-                        }
-                    } else {
-                        page.curHighlightIdx = page.curHighlightIdx - 1;
-                        if (page.curHighlightIdx < 0) {
-                            page.curHighlightIdx = 0;
-                        }
-                    }
-                }
-                page.linkedWidgets[page.curHighlightIdx].target.highlight = true;
-                page.linkedWidgets[page.curHighlightIdx].target.highlightValue = page.linkedWidgets[page.curHighlightIdx].value;
-                // console.log('highlighting',page);
-                this.draw();
-            }
-        },
+	    handleOk: function (type) {
+	        var page = this.state.project.pageList[this.state.curPageIdx];
+	        if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
+	            //has highlight
+	            var curLinkWidget = page.linkedWidgets[page.curHighlightIdx];
+	            switch (curLinkWidget.type) {
+	                case 'MyButtonGroup':
+	                    curLinkWidget.target.curButtonIdx = curLinkWidget.value + 1;
+	                    break;
+	            }
+
+	            this.mouseState.position.x = 0;
+	            this.mouseState.position.y = 0;
+	            if (type === 'press') {
+	                this.mouseState.state = 'press';
+	                this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
+	                this.handleTargetAction(curLinkWidget.target, 'Press');
+	            } else if (type === 'release') {
+	                this.mouseState.state = 'release';
+	                this.handleElementRelease(curLinkWidget.target, _.cloneDeep(this.mouseState));
+	                this.handleTargetAction(curLinkWidget.target, 'Release');
+	            }
+	        }
+	    },
+	    handleMoveNext: function (direction) {
+	        var page = this.state.project.pageList[this.state.curPageIdx];
+	        var curDirection;
+	        if (direction === 'left') {
+	            curDirection = 'left';
+	        } else {
+	            curDirection = 'right';
+	        }
+	        // console.log(page);
+	        if (page && page.linkedWidgets) {
+	            if (page.curHighlightIdx === undefined) {
+	                page.curHighlightIdx = 0;
+	            } else {
+	                page.linkedWidgets[page.curHighlightIdx].target.highlight = false;
+	                if (curDirection === 'right') {
+	                    page.curHighlightIdx = page.curHighlightIdx + 1;
+	                    if (page.curHighlightIdx >= page.linkedWidgets.length) {
+	                        page.curHighlightIdx = page.linkedWidgets.length - 1;
+	                    }
+	                } else {
+	                    page.curHighlightIdx = page.curHighlightIdx - 1;
+	                    if (page.curHighlightIdx < 0) {
+	                        page.curHighlightIdx = 0;
+	                    }
+	                }
+	            }
+	            page.linkedWidgets[page.curHighlightIdx].target.highlight = true;
+	            page.linkedWidgets[page.curHighlightIdx].target.highlightValue = page.linkedWidgets[page.curHighlightIdx].value;
+	            // console.log('highlighting',page);
+	            this.draw();
+	        }
+	    },
 	    getRelativeRect: function (e) {
 	        var clientRect = e.target.getBoundingClientRect();
 	        var x = Math.round(e.pageX - clientRect.left);
@@ -22075,7 +22082,7 @@
 	        //     this.process(cmds[i]);
 	        // }
 	        if (cmds && cmds.length) {
-                // console.log(cmds);
+	            // console.log(cmds);
 	            this.process(cmds, 0);
 	        }
 	    },
@@ -22118,8 +22125,8 @@
 	        }
 
 	        var inst = cmds[index].cmd;
-            // console.log('inst: ',inst[0],inst[1],inst[2]);
-            //
+	        // console.log('inst: ',inst[0],inst[1],inst[2]);
+	        //
 	        var op = inst[0].name;
 	        var param1 = inst[1];
 	        var param2 = inst[2];
@@ -22354,40 +22361,40 @@
 	                break;
 	            case 'END':
 	                break;
-                case 'READ_DATA_MODBUS':
-                case 'WRITE_DATA_MODBUS':
-                case 'READ_DATA_CAN':
-                case 'WRITE_DATA_CAN':
-                    var firstValue = Number(this.getParamValue(param1));
-                    var secondValue = Number(this.getParamValue(param2));
-                    var fileType, rwType;
-                    if (op === 'READ_DATA_CAN' || op === 'WRITE_DATA_CAN') {
-                        fileType = 'can';
-                    } else {
-                        fileType = 'modbus';
-                    }
+	            case 'READ_DATA_MODBUS':
+	            case 'WRITE_DATA_MODBUS':
+	            case 'READ_DATA_CAN':
+	            case 'WRITE_DATA_CAN':
+	                var firstValue = Number(this.getParamValue(param1));
+	                var secondValue = Number(this.getParamValue(param2));
+	                var fileType, rwType;
+	                if (op === 'READ_DATA_CAN' || op === 'WRITE_DATA_CAN') {
+	                    fileType = 'can';
+	                } else {
+	                    fileType = 'modbus';
+	                }
 
-                    if (op === 'READ_DATA_MODBUS' || op === 'READ_DATA_CAN') {
-                        rwType = 'read';
-                    } else {
-                        rwType = 'write';
-                    }
+	                if (op === 'READ_DATA_MODBUS' || op === 'READ_DATA_CAN') {
+	                    rwType = 'read';
+	                } else {
+	                    rwType = 'write';
+	                }
 
-                    var readNum, readStartId, canId;
-                    if (fileType === 'modbus') {
-                        readNum = firstValue;
-                        readStartId = secondValue;
-                        var j;
-                        for (var i = readStartId; i < readStartId + readNum; i++) {
-                            if (this.registers[i]) {
-                                this.rwRegister(i, rwType);
-                            }
-                        }
-                    } else if (fileType === 'can') {
-                        canId = secondValue;
-                    }
+	                var readNum, readStartId, canId;
+	                if (fileType === 'modbus') {
+	                    readNum = firstValue;
+	                    readStartId = secondValue;
+	                    var j;
+	                    for (var i = readStartId; i < readStartId + readNum; i++) {
+	                        if (this.registers[i]) {
+	                            this.rwRegister(i, rwType);
+	                        }
+	                    }
+	                } else if (fileType === 'can') {
+	                    canId = secondValue;
+	                }
 
-                    break;
+	                break;
 
 	        }
 	        //handle timer
@@ -22398,42 +22405,42 @@
 	        //process next
 	        if (nextStep.process) {
 	            this.process(cmds, index + nextStep.step);
-            }
-        },
-        rwRegister: function (registerIdx, rwType) {
-            var registers = this.state.registers;
-            var register = registers[registerIdx];
-            var tags = register.tags;
-            var tag;
-            var i;
-            var updatedTagNames = [];
-            if (rwType == 'write') {
-                //valid
+	        }
+	    },
+	    rwRegister: function (registerIdx, rwType) {
+	        var registers = this.state.registers;
+	        var register = registers[registerIdx];
+	        var tags = register.tags;
+	        var tag;
+	        var i;
+	        var updatedTagNames = [];
+	        if (rwType == 'write') {
+	            //valid
 
-                for (i = 0; i < tags.length; i++) {
-                    tag = tags[i];
-                    if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
-                        //write
-                        register.value = tag.value;
-                    }
-                }
-                //update
-                // this.updateRegisters();
-                // console.log(this.registers);
-                this.setState({registers: registers});
-            } else if (rwType == 'read') {
-                for (i = 0; i < tags.length; i++) {
-                    tag = tags[i];
-                    if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
-                        //read
-                        updatedTagNames.push(tag.name);
-                        this.setTagByTag(tag, register.value);
-                    }
-                }
-                //update
-                this.draw(null, {
-                    updatedTagNames: updatedTagNames
-                });
+	            for (i = 0; i < tags.length; i++) {
+	                tag = tags[i];
+	                if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
+	                    //write
+	                    register.value = tag.value;
+	                }
+	            }
+	            //update
+	            // this.updateRegisters();
+	            // console.log(this.registers);
+	            this.setState({ registers: registers });
+	        } else if (rwType == 'read') {
+	            for (i = 0; i < tags.length; i++) {
+	                tag = tags[i];
+	                if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
+	                    //read
+	                    updatedTagNames.push(tag.name);
+	                    this.setTagByTag(tag, register.value);
+	                }
+	            }
+	            //update
+	            this.draw(null, {
+	                updatedTagNames: updatedTagNames
+	            });
 	        }
 	    },
 	    updateTag: function (curTagIdx, value) {
@@ -22446,13 +22453,13 @@
 	            });
 	        }
 	    },
-        handleRegisterChange: function (key, value) {
-            var registers = this.state.registers;
-            registers[key].value = value;
-            this.setState({registers: registers});
-        },
+	    handleRegisterChange: function (key, value) {
+	        var registers = this.state.registers;
+	        registers[key].value = value;
+	        this.setState({ registers: registers });
+	    },
 	    render: function () {
-            // console.log('registers',this.state.registers);
+	        // console.log('registers',this.state.registers);
 	        return React.createElement(
 	            'div',
 	            { className: 'simulator' },
@@ -22463,30 +22470,28 @@
 	                React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
 	                React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
 	            ),
-                React.createElement(
-                    'div',
-                    {className: 'phical-keyboard-wrapper'},
-                    React.createElement(
-                        'button',
-                        {onClick: this.handleMoveNext.bind(null, 'left')},
-                        ' < '
-                    ),
-                    React.createElement(
-                        'button',
-                        {onClick: this.handleOk},
-                        'OK'
-                    ),
-                    React.createElement(
-                        'button',
-                        {onClick: this.handleMoveNext.bind(null, 'right')},
-                        ' > '
-                    )
-                ),
-                React.createElement(TagList, {tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag}),
-                React.createElement(RegisterList, {
-                    registers: this.state.registers || {},
-                    handleRegisterChange: this.handleRegisterChange
-                })
+	            React.createElement(
+	                'div',
+	                { className: 'phical-keyboard-wrapper' },
+	                React.createElement(
+	                    'button',
+	                    { onClick: this.handleMoveNext.bind(null, 'left') },
+	                    ' < '
+	                ),
+	                React.createElement(
+	                    'button',
+	                    { onMouseDown: this.handleOk.bind(null, 'press'),
+	                        onMouseUp: this.handleOk.bind(null, 'release') },
+	                    'OK'
+	                ),
+	                React.createElement(
+	                    'button',
+	                    { onClick: this.handleMoveNext.bind(null, 'right') },
+	                    ' > '
+	                )
+	            ),
+	            React.createElement(TagList, { tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag }),
+	            React.createElement(RegisterList, { registers: this.state.registers || {}, handleRegisterChange: this.handleRegisterChange })
 	        );
 	    }
 	});
@@ -48754,7 +48759,7 @@
 	        };
 	    },
 	    handleValueInputFocus: function (e) {
-            var tagList = this.state.tagList;
+	        var tagList = this.state.tagList;
 	        var curTagName = e.target.name;
 	        var curTagIdx = -1;
 	        for (var i = 0; i < tagList.length; i++) {
@@ -48767,7 +48772,7 @@
 	    },
 	    handleValueInputBlur: function (e) {
 	        var tagOldValue = this.state.tagOldValue;
-            if (tagOldValue !== 'old') {
+	        if (tagOldValue !== 'old') {
 	            //handle blur
 	            if (this.state.curTagIdx != -1) {
 	                var curTag = this.state.tagList[this.state.curTagIdx];
@@ -48782,7 +48787,7 @@
 	            //enter
 	            if (this.state.curTagIdx != -1) {
 
-                    this.setState({tagOldValue: 'old'});
+	                this.setState({ tagOldValue: 'old' });
 	                this.updateTag(this.state.curTagIdx, Number(e.target.value));
 	            }
 	        }
@@ -48806,7 +48811,7 @@
 	    },
 	    componentWillReceiveProps: function (nextProps) {
 
-            this.setState({tagList: nextProps.tagList});
+	        this.setState({ tagList: nextProps.tagList });
 	    },
 	    render: function () {
 
@@ -48842,9 +48847,9 @@
 	                React.createElement(
 	                    'tbody',
 	                    { className: 'tag-table-body' },
-                        this.state.tagList.map(function (tag, index) {
+	                    this.state.tagList.map(function (tag, index) {
 	                        if (tag.register) {
-                                var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
+	                            var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
 
 	                            return React.createElement(
 	                                'tr',
@@ -48868,9 +48873,9 @@
 	                                        value: tag.value,
 	                                        onFocus: this.handleValueInputFocus,
 	                                        onBlur: this.handleValueInputBlur,
-                                            onKeyDown: this.handleValueInputEnter,
-                                            onChange: this.handleValueInputChange
-                                        })
+	                                        onKeyDown: this.handleValueInputEnter,
+	                                        onChange: this.handleValueInputChange
+	                                    })
 	                                )
 	                            );
 	                        }
@@ -48883,81 +48888,78 @@
 
 /***/ },
 /* 164 */
-    /***/ function (module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
-        /**
-         * Created by ChangeCheng on 16/8/24.
-         */
-        var React = __webpack_require__(1);
-        module.exports = React.createClass({
-            displayName: 'exports',
+	/**
+	 * Created by ChangeCheng on 16/8/24.
+	 */
+	var React = __webpack_require__(1);
+	module.exports = React.createClass({
+	    displayName: 'exports',
 
-            getInitialState: function () {
-                return {};
-            },
-            handleValueInputChange: function (key, e) {
-                this.props.handleRegisterChange(key, Number(e.target.value));
-            },
-            render: function () {
-                // console.log('curRegisters',this.props.registers);
-                return React.createElement(
-                    'div',
-                    {className: 'tag-table-wrapper col-md-3'},
-                    React.createElement(
-                        'table',
-                        {className: 'tag-table table table-responsive'},
-                        React.createElement(
-                            'thead',
-                            {className: 'tag-table-header'},
-                            React.createElement(
-                                'tr',
-                                {className: 'tag-table-row'},
-                                React.createElement(
-                                    'td',
-                                    {className: 'tag-table-col'},
-                                    ' 寄存器号'
-                                ),
-                                React.createElement(
-                                    'td',
-                                    {className: 'tag-table-col'},
-                                    ' 值'
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'tbody',
-                            {className: 'tag-table-body'},
-                            Object.keys(this.props.registers).map(function (registerKey, index) {
-                                var register = this.props.registers[registerKey];
-                                return React.createElement(
-                                    'tr',
-                                    {key: index, className: 'tag-table-row'},
-                                    React.createElement(
-                                        'td',
-                                        {className: 'tag-table-col'},
-                                        ' ',
-                                        registerKey
-                                    ),
-                                    React.createElement(
-                                        'td',
-                                        {className: 'tag-table-col'},
-                                        React.createElement('input', {
-                                            className: 'value', name: registerKey, type: 'text',
-                                            value: register.value,
-                                            onChange: this.handleValueInputChange.bind(this, registerKey)
-                                        })
-                                    )
-                                );
-                            }.bind(this))
-                        )
-                    )
-                );
-            }
-        });
+	    getInitialState: function () {
+	        return {};
+	    },
+	    handleValueInputChange: function (key, e) {
+	        this.props.handleRegisterChange(key, Number(e.target.value));
+	    },
+	    render: function () {
+	        // console.log('curRegisters',this.props.registers);
+	        return React.createElement(
+	            'div',
+	            { className: 'tag-table-wrapper col-md-3' },
+	            React.createElement(
+	                'table',
+	                { className: 'tag-table table table-responsive' },
+	                React.createElement(
+	                    'thead',
+	                    { className: 'tag-table-header' },
+	                    React.createElement(
+	                        'tr',
+	                        { className: 'tag-table-row' },
+	                        React.createElement(
+	                            'td',
+	                            { className: 'tag-table-col' },
+	                            ' 寄存器号'
+	                        ),
+	                        React.createElement(
+	                            'td',
+	                            { className: 'tag-table-col' },
+	                            ' 值'
+	                        )
+	                    )
+	                ),
+	                React.createElement(
+	                    'tbody',
+	                    { className: 'tag-table-body' },
+	                    Object.keys(this.props.registers).map(function (registerKey, index) {
+	                        var register = this.props.registers[registerKey];
+	                        return React.createElement(
+	                            'tr',
+	                            { key: index, className: 'tag-table-row' },
+	                            React.createElement(
+	                                'td',
+	                                { className: 'tag-table-col' },
+	                                ' ',
+	                                registerKey
+	                            ),
+	                            React.createElement(
+	                                'td',
+	                                { className: 'tag-table-col' },
+	                                React.createElement('input', { className: 'value', name: registerKey, type: 'text',
+	                                    value: register.value,
+	                                    onChange: this.handleValueInputChange.bind(this, registerKey) })
+	                            )
+	                        );
+	                    }.bind(this))
+	                )
+	            )
+	        );
+	    }
+	});
 
-        /***/
-    },
-    /* 165 */
+/***/ },
+/* 165 */
 /***/ function(module, exports) {
 
 	var state = {
@@ -48971,7 +48973,7 @@
 	module.exports = state;
 
 /***/ },
-    /* 166 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -49116,7 +49118,7 @@
 	    x: 22 / 28,
 	    y: 0.5,
 	    width: 1 / 7,
-        height: 3 / 16,
+	    height: 3 / 16,
 	    slices: [new KeyTexObj('', '', 'benterrelease', ''), new KeyTexObj('', '', 'benterpress', '')]
 	}, {
 	    name: '7',
@@ -49157,8 +49159,8 @@
 	    y: 0,
 	    width: 1,
 	    height: 0.2,
-        color: 'rgba(255,0,0,1.0)',
-        slices: [new KeyTexObj('', '', '', 'rgba(0,0,0,1.0)')]
+	    color: 'rgba(255,0,0,1.0)',
+	    slices: [new KeyTexObj('', '', '', 'rgba(0,0,0,1.0)')]
 	};
 
 	var getInputKeyboard = function (width, height, offsetX, offsetY) {
@@ -49201,7 +49203,7 @@
 	    this.id = name;
 	    this.name = name;
 	    this.type = 'image/bmp';
-        this.src = '/public/images/' + name + '.png';
+	    this.src = '/public/images/' + name + '.png';
 	}
 
 	var defaultKeyTexList = ['b0press', 'b0release', 'b1press', 'b1release', 'b2press', 'b2release', 'b3press', 'b3release', 'b4press', 'b4release', 'b5press', 'b5release', 'b6press', 'b6release', 'b7press', 'b7release', 'b8press', 'b8release', 'b9press', 'b9release', 'bbackpress', 'bbackrelease', 'benterpress', 'benterrelease', 'bescpress', 'bescrelease', 'bpmpress', 'bpmrelease'];
@@ -49212,7 +49214,138 @@
 	module.exports = InputKeyboard;
 
 /***/ },
-    /* 167 */
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Created by ChangeCheng on 16/8/29.
+	 */
+	var Utils = {};
+	var _ = __webpack_require__(161);
+	Utils.linkPageWidgets = linkPageWidgets;
+
+	function linkPageWidgets(page) {
+	    page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
+	}
+
+	function LinkedWidget(type, target, value, left, top) {
+	    this.type = type;
+	    this.target = target;
+	    this.value = value;
+	    this.left = left || 0;
+	    this.top = top || 0;
+	}
+
+	function linkWidgets(widgetList) {
+	    var i;
+	    var curWidget;
+	    var linkedWidgetList = [];
+	    for (i = 0; i < widgetList.length; i++) {
+	        curWidget = widgetList[i];
+	        switch (curWidget.subType) {
+	            case 'MyButtonGroup':
+	                var interval = curWidget.info.interval;
+	                var count = curWidget.info.count;
+	                var width = curWidget.info.width;
+	                var height = curWidget.info.height;
+	                var singleWidth = 0;
+	                var singleHeight = 0;
+	                var hori = false;
+	                if (curWidget.info.arrange == 'horizontal') {
+	                    singleWidth = (width - interval * (count - 1)) / count;
+	                    hori = true;
+	                } else {
+
+	                    singleHeight = (height - interval * (count - 1)) / count;
+	                }
+	                for (var j = 0; j < curWidget.info.count; j++) {
+
+	                    // linkedWidget.type = 'MyButtonGroup';
+	                    // linkedWidget.target = curWidget;
+	                    // linkedWidget.value = j;
+	                    // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
+	                    // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? j * (singleWidth + interval) : 0), curWidget.info.absoluteTop + (hori ? 0 : j * (singleHeight + interval))));
+	                }
+
+	                break;
+	            default:
+	                // linkedWidget.type = curWidget.subType;
+	                // linkedWidget.target = curWidget;
+	                // linkedWidget.value = 0;
+	                // linkedWidget.left=curWidget.info.left;
+	                // linkedWidget.top=curWidget.info.top;
+	                linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+
+	        }
+	    }
+	    linkedWidgetList.sort(function (a, b) {
+	        return a.top - b.top;
+	    });
+	    return linkedWidgetList;
+	}
+
+	function getPageAllInteractiveWidgets(page) {
+	    var allInteractiveWidgets = [];
+	    var allWidgets = [];
+	    var curSubCanvas;
+	    var curCanvas;
+	    for (var i = 0; i < page.canvasList.length; i++) {
+	        //get all widgets
+	        curCanvas = page.canvasList[i];
+	        for (var j = 0; j < curCanvas.subCanvasList.length; j++) {
+	            curSubCanvas = curCanvas.subCanvasList[j];
+	            curSubCanvas.widgetList.map(function (widget) {
+	                widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+	                widget.info.absoluteTop = widget.info.top + curCanvas.y;
+	            });
+	            allWidgets = allWidgets.concat(curSubCanvas.widgetList);
+	        }
+	    }
+
+	    allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
+	    // console.log(allInteractiveWidgets,allWidgets);
+	    return allInteractiveWidgets;
+	}
+
+	function getPageInteractiveWidgets(page) {
+	    var allInteractiveWidgets = [];
+	    var allWidgets = [];
+	    var curSubCanvas;
+	    var curCanvas;
+	    for (var i = 0; i < page.canvasList.length; i++) {
+	        //get all widgets
+	        curCanvas = page.canvasList[i];
+	        curSubCanvas = curCanvas.subCanvasList[curCanvas.curSubCanvasIdx || 0];
+	        curSubCanvas.widgetList.map(function (widget) {
+	            widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+	            widget.info.absoluteTop = widget.info.top + curCanvas.y;
+	        });
+	        allWidgets = allWidgets.concat(curSubCanvas.widgetList);
+	    }
+
+	    allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
+	    // console.log(allInteractiveWidgets,allWidgets);
+	    return allInteractiveWidgets;
+	}
+
+	function isInteractiveWidget(widget) {
+	    var is = false;
+	    switch (widget.subType) {
+	        case 'MyButton':
+	        case 'MyButtonGroup':
+	            is = true;
+	            break;
+	        default:
+	            is = false;
+	    }
+	    return is;
+	}
+
+	module.exports = Utils;
+
+/***/ },
+/* 168 */
 /***/ function(module, exports) {
 
 	exports.endianness = function () { return 'LE' };
@@ -49261,115 +49394,6 @@
 
 	exports.EOL = '\n';
 
-
-        /***/
-    },
-    /* 168 */
-    /***/ function (module, exports, __webpack_require__) {
-
-        /**
-         * Created by ChangeCheng on 16/8/29.
-         */
-        var Utils = {};
-        var _ = __webpack_require__(161);
-        Utils.linkPageWidgets = linkPageWidgets;
-
-        function linkPageWidgets(page) {
-            page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
-        }
-
-        function LinkedWidget(type, target, value, left, top) {
-            this.type = type;
-            this.target = target;
-            this.value = value;
-            this.left = left || 0;
-            this.top = top || 0;
-        }
-
-        function linkWidgets(widgetList) {
-            var i;
-            var curWidget;
-            var linkedWidgetList = [];
-            for (i = 0; i < widgetList.length; i++) {
-                curWidget = widgetList[i];
-                switch (curWidget.subType) {
-                    case 'MyButtonGroup':
-                        var interval = curWidget.info.interval;
-                        var count = curWidget.info.count;
-                        var width = curWidget.info.width;
-                        var height = curWidget.info.height;
-                        var singleWidth = 0;
-                        var singleHeight = 0;
-                        var hori = false;
-                        if (curWidget.info.arrange == 'horizontal') {
-                            singleWidth = (width - interval * (count - 1)) / count;
-                            hori = true;
-                        } else {
-
-                            singleHeight = (height - interval * (count - 1)) / count;
-                        }
-                        for (var j = 0; j < curWidget.info.count; j++) {
-
-                            // linkedWidget.type = 'MyButtonGroup';
-                            // linkedWidget.target = curWidget;
-                            // linkedWidget.value = j;
-                            // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
-                            // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
-                            linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + hori ? j * (singleWidth + interval) : 0, curWidget.info.absoluteTop + hori ? 0 : j * (singleHeight + interval)));
-                        }
-
-                        break;
-                    default:
-                        // linkedWidget.type = curWidget.subType;
-                        // linkedWidget.target = curWidget;
-                        // linkedWidget.value = 0;
-                        // linkedWidget.left=curWidget.info.left;
-                        // linkedWidget.top=curWidget.info.top;
-                        linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-
-                }
-            }
-            linkedWidgetList.sort(function (a, b) {
-                return a.top - b.top;
-            });
-            return linkedWidgetList;
-        }
-
-        function getPageInteractiveWidgets(page) {
-            var allInteractiveWidgets = [];
-            var allWidgets = [];
-            var curSubCanvas;
-            var curCanvas;
-            for (var i = 0; i < page.canvasList.length; i++) {
-                //get all widgets
-                curCanvas = page.canvasList[i];
-                curSubCanvas = curCanvas.subCanvasList[curCanvas.curSubCanvasIdx || 0];
-                curSubCanvas.widgetList.map(function (widget) {
-                    widget.info.absoluteLeft = widget.info.left + curCanvas.x;
-                    widget.info.absoluteTop = widget.info.top + curCanvas.y;
-                });
-                allWidgets = allWidgets.concat(curSubCanvas.widgetList);
-            }
-
-            allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
-            // console.log(allInteractiveWidgets,allWidgets);
-            return allInteractiveWidgets;
-        }
-
-        function isInteractiveWidget(widget) {
-            var is = false;
-            switch (widget.subType) {
-                case 'MyButton':
-                case 'MyButtonGroup':
-                    is = true;
-                    break;
-                default:
-                    is = false;
-            }
-            return is;
-        }
-
-        module.exports = Utils;
 
 /***/ }
 /******/ ]);

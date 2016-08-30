@@ -12,7 +12,7 @@
                                         Type,
                                         CanvasService,
                                         $uibModal,
-                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService,RenderSerive) {
+                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService) {
 
         var path, fs, __dirname;
         initLocalPref();
@@ -679,6 +679,10 @@
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
             temp.project.tagList = TagService.getAllTags();
             temp.project.timers = TimerService.getTimerNum();
+            //link widgets
+            for (var i = 0; i < temp.project.pageList.length; i++) {
+                LinkPageWidgetsService.linkPageAllWidgets(temp.project.pageList[i]);
+            }
             window.projectData = temp.project;
 
         }

@@ -23,12 +23,12 @@
 
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
-    <script src="../../public/ide/lib/jquery.min.js"></script>
+    <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
 
-    <script src="../../public/ide/lib/angular.js"></script>
-    <script src="../../public/ide/lib/angular-animate.js"></script>
+    <script src="../../public/ide/lib/angular.min.js"></script>
+    <script src="../../public/ide/lib/angular-animate.min.js"></script>
     <script src="../../public/ide/lib/fabric/fabric.min.js"></script>
     <script src="../../public/ide/lib/angular-ui-tree/angular-ui-tree.js"></script>
     <script src="../../public/ide/lib/angular-bootstrap-contextmenu/contextMenu.js"></script>
@@ -72,6 +72,7 @@
     <script src="../../public/ide/modules/ide/js/parts/nav/projectFileManage.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/thumb/thumbService.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/stage/CanvasService.js"></script>
+    <script src="../../public/ide/modules/ide/js/parts/nav/linkPageWidgetsService.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/nav/navServices.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/nav/viewService.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/nav/projectFileManage.js"></script>
@@ -128,19 +129,7 @@
 <body ng-app="ide" style="height: 100%" ng-controller="IDECtrl">
 <!--loading spinner-->
 <script src="../../public/ide/lib/spinner.bundle.js"></script>
-<!--<div class="my-mask"-->
-     <!--style="position: absolute;left: 0;right: 0;top:0;bottom: 0;z-index: 1000;background: rgba(28, 43, 75, 1)"-->
-     <!--ng-class="{true:'my-hidden'}[ide.loaded]">-->
-    <!--<div class="sk-wave">-->
-        <!--<div class="sk-rect sk-rect1"></div>-->
-        <!--<div class="sk-rect sk-rect2"></div>-->
-        <!--<div class="sk-rect sk-rect3"></div>-->
-        <!--<div class="sk-rect sk-rect4"></div>-->
-        <!--<div class="sk-rect sk-rect5"></div>-->
 
-    <!--</div>-->
-
-<!--</div>-->
 <input type="hidden" value="true" id="saveFlag">
 <div class="container-fluid" tabindex="-1" ng-controller="ContainerCtl" ng-keydown="handleKeyDown($event)"
      ng-keyup="handleKeyUp($event)"
@@ -255,108 +244,7 @@
                         </ul>
                     </div>
                 </a>
-                <!--<a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal"-->
-                <!--data-target="#projectFileModal">-->
-                <!--<span class="iconfont icon">&#xe612;</span><span class="caption">打开</span>-->
-                <!--<script type="text/ng-template" id="projectFile.html">-->
-                <!--<div class="modal-header">-->
-                <!--<button type="button" class="close" ng-click="cancel()"><span-->
-                <!--aria-hidden="true">&times;</span></button>-->
-                <!--<h4 class="modal-title">打开项目</h4>-->
-                <!--</div>-->
-                <!--<div class="modal-body">-->
-                <!--<div>-->
-                <!--<div class="sk-rect-grid" ng-show="!itemsGetted">-->
-                <!--<div class="sk-rect sk-rect1"></div>-->
-                <!--<div class="sk-rect sk-rect2"></div>-->
-                <!--<div class="sk-rect sk-rect3"></div>-->
-                <!--<div class="sk-rect sk-rect4"></div>-->
-                <!--<div class="sk-rect sk-rect5"></div>-->
-                <!--<div class="sk-rect sk-rect6"></div>-->
-                <!--<div class="sk-rect sk-rect7"></div>-->
-                <!--<div class="sk-rect sk-rect8"></div>-->
-                <!--<div class="sk-rect sk-rect9"></div>-->
-                <!--</div>-->
-                <!--<div ng-show="itemsGetted">-->
-                <!--<div ng-repeat="item in items" style="display: inline-block">-->
-                <!--<div ng-class="{'modal-selected-bg':item == selected.item }"-->
-                <!--style="position: relative;height: 150px;width: 130px">-->
-                <!--<div href="#" ng-click="changeState(item)" class="modal-project-div">-->
-                <!--<img ng-src="{{item.thumb}}" class="modal-project-img"-->
-                <!--ng-class="{'modal-downloading-alpha':downloading.item==item}">-->
-                <!--<uib-progressbar ng-show="isStartDownloaded && downloading.item==item"-->
-                <!--class="modal-project-progressbar"-->
-                <!--max="downloadProgress.max"-->
-                <!--value="downloadProgress.value">-->
-                <!--<span style="color:white; white-space:nowrap;position: absolute">{{downloadProgress.value}} / {{downloadProgress.max}}</span>-->
-                <!--</uib-progressbar>-->
-                <!--</div>-->
-                <!--</div>-->
 
-                <!--<p style="padding-left: 50%">{{item.name}}</p>-->
-                <!--</div>-->
-
-                <!--<br>-->
-                <!--Selection: {{selected.item.name}}-->
-                <!--</div>-->
-                <!--</div>-->
-
-                <!--</div>-->
-                <!--<div class="modal-footer">-->
-                <!--<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>-->
-                <!--<button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>-->
-                <!--</div>-->
-                <!--</script>-->
-
-                <!--</a>-->
-
-                <!--<a ng-controller="TemplateFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#templateFileModal">-->
-                <!--<span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>-->
-                <!--<script type="text/ng-template" id="templateFile.html">-->
-                <!--<div class="modal-header">-->
-                <!--<button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>-->
-                <!--<h4 class="modal-title" >打开模板</h4>-->
-                <!--</div>-->
-                <!--<div class="modal-body">-->
-                <!--<div >-->
-                <!--&lt;!&ndash;<div class="sk-rect-grid" ng-show="!itemsGetted">&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect1"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect2"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect3"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect4"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect5"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect6"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect7"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect8"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="sk-rect sk-rect9"></div>&ndash;&gt;-->
-                <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                <!--<div ng-show="itemsGetted">-->
-                <!--<div ng-repeat="item in items" style="display: inline-block" >-->
-                <!--<div ng-class="{'modal-selected-bg':item == selected.item }" style="position: relative;height: 150px;width: 130px">-->
-                <!--<div  href="#" ng-click="changeState(item)" class="modal-project-div" >-->
-                <!--<img ng-src="{{item}}" class="modal-project-img" ng-class="{'modal-downloading-alpha':downloading.item==item}">-->
-                <!--<uib-progressbar ng-show="isStartDownloaded && downloading.item==item" class="modal-project-progressbar"  max="downloadProgress.max" value="downloadProgress.value">-->
-                <!--<span style="color:white; white-space:nowrap;position: absolute">{{downloadProgress.value}} / {{downloadProgress.max}}</span>-->
-                <!--</uib-progressbar>-->
-                <!--</div>-->
-                <!--</div>-->
-
-                <!--<p style="padding-left: 50%">{{item[0]}}</p>-->
-                <!--</div>-->
-
-                <!--<br>-->
-                <!--Selection: {{selected.item}}-->
-                <!--</div>-->
-                <!--</div>-->
-
-                <!--</div>-->
-                <!--<div class="modal-footer">-->
-                <!--<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>-->
-                <!--<button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>-->
-                <!--</div>-->
-                <!--</script>-->
-
-                <!--</a>-->
 
                 <a ng-click="component.tool.copy()" class="my-cmd-item"
                    ng-class="{false:'inactive'}[component.tool.copyStatus]"><span

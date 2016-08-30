@@ -48,7 +48,7 @@ function linkWidgets(widgetList) {
                     // linkedWidget.value = j;
                     // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
                     // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + hori ? (j * (singleWidth + interval)) : 0, curWidget.info.absoluteTop + hori ? 0 : (j * (singleHeight + interval))));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? (j * (singleWidth + interval)) : 0), curWidget.info.absoluteTop + (hori ? 0 : (j * (singleHeight + interval)))));
                 }
 
                 break;
@@ -68,6 +68,29 @@ function linkWidgets(widgetList) {
     return linkedWidgetList;
 }
 
+
+function getPageAllInteractiveWidgets(page) {
+    var allInteractiveWidgets = [];
+    var allWidgets = [];
+    var curSubCanvas;
+    var curCanvas;
+    for (var i = 0; i < page.canvasList.length; i++) {//get all widgets
+        curCanvas = page.canvasList[i];
+        for (var j = 0; j < curCanvas.subCanvasList.length; j++) {
+            curSubCanvas = curCanvas.subCanvasList[j];
+            curSubCanvas.widgetList.map(function (widget) {
+                widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+                widget.info.absoluteTop = widget.info.top + curCanvas.y;
+            });
+            allWidgets = allWidgets.concat(curSubCanvas.widgetList);
+        }
+
+    }
+
+    allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
+    // console.log(allInteractiveWidgets,allWidgets);
+    return allInteractiveWidgets;
+}
 
 function getPageInteractiveWidgets(page) {
     var allInteractiveWidgets = [];
