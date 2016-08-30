@@ -38,7 +38,6 @@
         if (curAgent.type){
             switch (curAgent.type){
                 case 'sougou':
-                case 'safari':
                     browerOk = false;
                     break;
                 case 'ie':
