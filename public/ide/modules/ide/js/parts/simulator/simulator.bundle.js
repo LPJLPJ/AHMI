@@ -19727,6 +19727,7 @@
         var RegisterList = __webpack_require__(164);
         var LoadState = __webpack_require__(165);
         var InputKeyboard = __webpack_require__(166);
+        var Utils = __webpack_require__(168);
 
 	var sep = '/';
 	var defaultState = {
@@ -19775,6 +19776,7 @@
 	        }.bind(this));
 	    },
 	    initCanvas: function (data, callBack) {
+            var i;
 	        this.mouseState = {
 	            state: 'release',
 	            position: {
@@ -19810,15 +19812,25 @@
 	        //initialize tagList
 	        //check curPage tag
 
-	        var curPageTag = {
-	            name: '当前页面序号',
-	            register: true,
-	            writeOrRead: 'true',
-	            indexOfRegister: -1,
-	            value: 0
-	        };
+            // var curPageTag = {
+            //     name: '当前页面序号',
+            //     register: true,
+            //     writeOrRead: 'true',
+            //     indexOfRegister: -1,
+            //     value: 0
+            // };
+            //
+            // var hasCurPageTag = false;
+            // for (i=0;i<data.tagList.length;i++){
+            //     if (data.tagList[i].name === curPageTag.name){
+            //         hasCurPageTag = true;
+            //         break;
+            //     }
+            // }
+            // if (!hasCurPageTag){
+            //     data.tagList.push(curPageTag);
+            // }
 
-	        data.tagList.push(curPageTag);
 	        data.tag = '当前页面序号';
 	        // this.state.tagList = data.tagList
 	        // this.setState({tagList: data.tagList})
@@ -19964,9 +19976,9 @@
 	    initProject: function () {
 
 	        if (this.state.project && this.state.project.size) {
-	            this.initCanvas(this.state.project, this.draw);
+                this.initCanvas(this.state.project, this.draw.bind(this, null, {reLinkWidgets: true}));
 	        } else {
-	            this.draw();
+                this.draw.bind(this, null, {reLinkWidgets: true});
 	        }
 	    },
 	    componentDidMount: function () {
@@ -20084,6 +20096,10 @@
 	        if (!page.state || page.state == LoadState.notLoad) {
 	            page.state = LoadState.willLoad;
 	            //generate load trigger
+                if (!options) {
+                    options = {};
+                }
+                options.reLinkWidgets = true;
 	            this.handleTargetAction(page, 'Load');
 	        }
 	        page.state = LoadState.loading;
@@ -20106,6 +20122,11 @@
 	        }
 
 	        page.state = LoadState.loaded;
+
+            if (options && options.reLinkWidgets) {
+                Utils.linkPageWidgets(page);
+                console.log('page', page);
+            }
 	    },
 	    handleTimers: function (num) {
 
@@ -20215,6 +20236,10 @@
 	                if (nextSubCanvasIdx != i) {
 	                    //another sc loaded
 	                    //UnLoad sc of i
+                        if (!options) {
+                            options = {};
+                        }
+                        options.reLinkWidgets = true;
 	                    subCanvasUnloadIdx = i;
 	                    subCanvasList[i].state = LoadState.notLoad;
 	                    break;
@@ -20426,6 +20451,11 @@
 
 	        //draw tint
 	        this.drawTextByTempCanvas(curX, curY, width, height, text, font);
+
+            //draw highlight
+            if (widget.highlight) {
+                this.drawHighLight(curX, curY, width, height);
+            }
 	    },
 	    drawSwitch: function (curX, curY, widget, options) {
 	        // console.log(widget);
@@ -20512,6 +20542,10 @@
 	                    //normal tex
 	                    this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
 	                }
+                    //draw highlight
+                    if (widget.highlight) {
+                        this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height);
+                    }
 	            }
 	        } else {
 	            //vertical
@@ -20525,6 +20559,9 @@
 	                    //normal tex
 	                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
 	                }
+                    if (widget.highlight) {
+                        this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight);
+                    }
 	            }
 	        }
 	    },
@@ -20787,6 +20824,9 @@
 	        // this.drawBg(childX,childY,childWidth,childHeight,imageName,color);
 	        offctx.restore();
 	    },
+        drawHighLight: function (curX, curY, width, height) {
+            this.drawBgColor(curX, curY, width, height, 'rgba(0,255,255,0.3)');
+        },
 	    findValue: function (array, key1, value, key2) {
 	        for (var i = 0; i < array.length; i++) {
 	            if (array[i][key1] == value) {
@@ -21731,6 +21771,55 @@
 	            }
 	        }
 	    },
+        handleOk: function () {
+            var page = this.state.project.pageList[this.state.curPageIdx];
+            if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
+                //has highlight
+                var curLinkWidget = page.linkedWidgets[page.curHighlightIdx];
+                switch (curLinkWidget.type) {
+                    case 'MyButtonGroup':
+                        curLinkWidget.target.curButtonIdx = curLinkWidget.value;
+                        break;
+                }
+                this.mouseState.state = 'press';
+                this.mouseState.position.x = 0;
+                this.mouseState.position.y = 0;
+                this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
+                this.handleTargetAction(curLinkWidget.target, 'Press');
+            }
+        },
+        handleMoveNext: function (direction) {
+            var page = this.state.project.pageList[this.state.curPageIdx];
+            var curDirection;
+            if (direction === 'left') {
+                curDirection = 'left';
+            } else {
+                curDirection = 'right';
+            }
+            // console.log(page);
+            if (page && page.linkedWidgets) {
+                if (page.curHighlightIdx === undefined) {
+                    page.curHighlightIdx = 0;
+                } else {
+                    page.linkedWidgets[page.curHighlightIdx].target.highlight = false;
+                    if (curDirection === 'right') {
+                        page.curHighlightIdx = page.curHighlightIdx + 1;
+                        if (page.curHighlightIdx >= page.linkedWidgets.length) {
+                            page.curHighlightIdx = page.linkedWidgets.length - 1;
+                        }
+                    } else {
+                        page.curHighlightIdx = page.curHighlightIdx - 1;
+                        if (page.curHighlightIdx < 0) {
+                            page.curHighlightIdx = 0;
+                        }
+                    }
+                }
+                page.linkedWidgets[page.curHighlightIdx].target.highlight = true;
+                page.linkedWidgets[page.curHighlightIdx].target.highlightValue = page.linkedWidgets[page.curHighlightIdx].value;
+                // console.log('highlighting',page);
+                this.draw();
+            }
+        },
 	    getRelativeRect: function (e) {
 	        var clientRect = e.target.getBoundingClientRect();
 	        var x = Math.round(e.pageX - clientRect.left);
@@ -22374,6 +22463,25 @@
 	                React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
 	                React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
 	            ),
+                React.createElement(
+                    'div',
+                    {className: 'phical-keyboard-wrapper'},
+                    React.createElement(
+                        'button',
+                        {onClick: this.handleMoveNext.bind(null, 'left')},
+                        ' < '
+                    ),
+                    React.createElement(
+                        'button',
+                        {onClick: this.handleOk},
+                        'OK'
+                    ),
+                    React.createElement(
+                        'button',
+                        {onClick: this.handleMoveNext.bind(null, 'right')},
+                        ' > '
+                    )
+                ),
                 React.createElement(TagList, {tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag}),
                 React.createElement(RegisterList, {
                     registers: this.state.registers || {},
@@ -49153,6 +49261,115 @@
 
 	exports.EOL = '\n';
 
+
+        /***/
+    },
+    /* 168 */
+    /***/ function (module, exports, __webpack_require__) {
+
+        /**
+         * Created by ChangeCheng on 16/8/29.
+         */
+        var Utils = {};
+        var _ = __webpack_require__(161);
+        Utils.linkPageWidgets = linkPageWidgets;
+
+        function linkPageWidgets(page) {
+            page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
+        }
+
+        function LinkedWidget(type, target, value, left, top) {
+            this.type = type;
+            this.target = target;
+            this.value = value;
+            this.left = left || 0;
+            this.top = top || 0;
+        }
+
+        function linkWidgets(widgetList) {
+            var i;
+            var curWidget;
+            var linkedWidgetList = [];
+            for (i = 0; i < widgetList.length; i++) {
+                curWidget = widgetList[i];
+                switch (curWidget.subType) {
+                    case 'MyButtonGroup':
+                        var interval = curWidget.info.interval;
+                        var count = curWidget.info.count;
+                        var width = curWidget.info.width;
+                        var height = curWidget.info.height;
+                        var singleWidth = 0;
+                        var singleHeight = 0;
+                        var hori = false;
+                        if (curWidget.info.arrange == 'horizontal') {
+                            singleWidth = (width - interval * (count - 1)) / count;
+                            hori = true;
+                        } else {
+
+                            singleHeight = (height - interval * (count - 1)) / count;
+                        }
+                        for (var j = 0; j < curWidget.info.count; j++) {
+
+                            // linkedWidget.type = 'MyButtonGroup';
+                            // linkedWidget.target = curWidget;
+                            // linkedWidget.value = j;
+                            // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
+                            // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
+                            linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + hori ? j * (singleWidth + interval) : 0, curWidget.info.absoluteTop + hori ? 0 : j * (singleHeight + interval)));
+                        }
+
+                        break;
+                    default:
+                        // linkedWidget.type = curWidget.subType;
+                        // linkedWidget.target = curWidget;
+                        // linkedWidget.value = 0;
+                        // linkedWidget.left=curWidget.info.left;
+                        // linkedWidget.top=curWidget.info.top;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+
+                }
+            }
+            linkedWidgetList.sort(function (a, b) {
+                return a.top - b.top;
+            });
+            return linkedWidgetList;
+        }
+
+        function getPageInteractiveWidgets(page) {
+            var allInteractiveWidgets = [];
+            var allWidgets = [];
+            var curSubCanvas;
+            var curCanvas;
+            for (var i = 0; i < page.canvasList.length; i++) {
+                //get all widgets
+                curCanvas = page.canvasList[i];
+                curSubCanvas = curCanvas.subCanvasList[curCanvas.curSubCanvasIdx || 0];
+                curSubCanvas.widgetList.map(function (widget) {
+                    widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+                    widget.info.absoluteTop = widget.info.top + curCanvas.y;
+                });
+                allWidgets = allWidgets.concat(curSubCanvas.widgetList);
+            }
+
+            allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
+            // console.log(allInteractiveWidgets,allWidgets);
+            return allInteractiveWidgets;
+        }
+
+        function isInteractiveWidget(widget) {
+            var is = false;
+            switch (widget.subType) {
+                case 'MyButton':
+                case 'MyButtonGroup':
+                    is = true;
+                    break;
+                default:
+                    is = false;
+            }
+            return is;
+        }
+
+        module.exports = Utils;
 
 /***/ }
 /******/ ]);

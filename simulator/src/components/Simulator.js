@@ -5,7 +5,7 @@ var TagList = require('./TagList');
 var RegisterList = require('./RegisterList');
 var LoadState = require('./LoadState');
 var InputKeyboard = require('./inputKeyboard');
-
+var Utils = require('../utils/utils');
 
 var sep = '/';
 var defaultState = {
@@ -52,6 +52,7 @@ module.exports = React.createClass({
       }.bind(this))
     },
     initCanvas: function (data, callBack) {
+        var i;
         this.mouseState = {
             state: 'release',
             position: {
@@ -89,16 +90,26 @@ module.exports = React.createClass({
         //check curPage tag
 
 
-        var curPageTag = {
-            name: '当前页面序号',
-            register: true,
-            writeOrRead: 'true',
-            indexOfRegister: -1,
-            value: 0
-        };
+        // var curPageTag = {
+        //     name: '当前页面序号',
+        //     register: true,
+        //     writeOrRead: 'true',
+        //     indexOfRegister: -1,
+        //     value: 0
+        // };
+        //
+        // var hasCurPageTag = false;
+        // for (i=0;i<data.tagList.length;i++){
+        //     if (data.tagList[i].name === curPageTag.name){
+        //         hasCurPageTag = true;
+        //         break;
+        //     }
+        // }
+        // if (!hasCurPageTag){
+        //     data.tagList.push(curPageTag);
+        // }
 
 
-        data.tagList.push(curPageTag);
         data.tag = '当前页面序号';
         // this.state.tagList = data.tagList
         // this.setState({tagList: data.tagList})
@@ -251,9 +262,9 @@ module.exports = React.createClass({
     initProject: function () {
 
         if (this.state.project && this.state.project.size) {
-            this.initCanvas(this.state.project, this.draw);
+            this.initCanvas(this.state.project, this.draw.bind(this, null, {reLinkWidgets: true}));
         } else {
-            this.draw();
+            this.draw.bind(this, null, {reLinkWidgets: true})
         }
     },
     componentDidMount: function () {
@@ -379,6 +390,10 @@ module.exports = React.createClass({
         if (!page.state || page.state == LoadState.notLoad) {
             page.state = LoadState.willLoad
             //generate load trigger
+            if (!options) {
+                options = {};
+            }
+            options.reLinkWidgets = true;
             this.handleTargetAction(page, 'Load')
         }
         page.state = LoadState.loading
@@ -402,8 +417,14 @@ module.exports = React.createClass({
         }
 
 
+        page.state = LoadState.loaded;
 
-        page.state = LoadState.loaded
+
+        if (options && options.reLinkWidgets) {
+            Utils.linkPageWidgets(page);
+            console.log('page', page);
+        }
+
 
 
     },
@@ -523,6 +544,10 @@ module.exports = React.createClass({
                 if ((nextSubCanvasIdx ) != i) {
                     //another sc loaded
                     //UnLoad sc of i
+                    if (!options) {
+                        options = {};
+                    }
+                    options.reLinkWidgets = true;
                     subCanvasUnloadIdx = i;
                     subCanvasList[i].state = LoadState.notLoad;
                     break
@@ -739,6 +764,11 @@ module.exports = React.createClass({
 
         //draw tint
         this.drawTextByTempCanvas(curX,curY,width,height,text,font);
+
+        //draw highlight
+        if (widget.highlight) {
+            this.drawHighLight(curX, curY, width, height);
+        }
     },
     drawSwitch: function (curX, curY, widget, options) {
         // console.log(widget);
@@ -826,6 +856,10 @@ module.exports = React.createClass({
                     //normal tex
                     this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
                 }
+                //draw highlight
+                if (widget.highlight) {
+                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height);
+                }
             }
         } else {
             //vertical
@@ -839,6 +873,9 @@ module.exports = React.createClass({
                 } else {
                     //normal tex
                     this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
+                }
+                if (widget.highlight) {
+                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight);
                 }
             }
         }
@@ -1116,6 +1153,9 @@ module.exports = React.createClass({
         // this.drawBg(childX,childY,childWidth,childHeight,imageName,color);
         offctx.restore();
 
+    },
+    drawHighLight: function (curX, curY, width, height) {
+        this.drawBgColor(curX, curY, width, height, 'rgba(0,255,255,0.3)');
     },
     findValue: function (array, key1, value, key2) {
         for (var i = 0; i < array.length; i++) {
@@ -2096,6 +2136,61 @@ module.exports = React.createClass({
         }
 
     },
+    handleOk: function () {
+        var page = this.state.project.pageList[this.state.curPageIdx];
+        if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
+            //has highlight
+            var curLinkWidget = page.linkedWidgets[page.curHighlightIdx];
+            switch (curLinkWidget.type) {
+                case 'MyButtonGroup':
+                    curLinkWidget.target.curButtonIdx = curLinkWidget.value;
+                    break;
+            }
+            this.mouseState.state = 'press';
+            this.mouseState.position.x = 0;
+            this.mouseState.position.y = 0;
+            this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
+            this.handleTargetAction(curLinkWidget.target, 'Press');
+
+        }
+    },
+    handleMoveNext: function (direction) {
+        var page = this.state.project.pageList[this.state.curPageIdx];
+        var curDirection;
+        if (direction === 'left') {
+            curDirection = 'left';
+        } else {
+            curDirection = 'right';
+        }
+        // console.log(page);
+        if (page && page.linkedWidgets) {
+            if (page.curHighlightIdx === undefined) {
+                page.curHighlightIdx = 0;
+            } else {
+                page.linkedWidgets[page.curHighlightIdx].target.highlight = false;
+                if (curDirection === 'right') {
+                    page.curHighlightIdx = (page.curHighlightIdx + 1);
+                    if (page.curHighlightIdx >= page.linkedWidgets.length) {
+                        page.curHighlightIdx = page.linkedWidgets.length - 1;
+                    }
+                } else {
+                    page.curHighlightIdx = (page.curHighlightIdx - 1);
+                    if (page.curHighlightIdx < 0) {
+                        page.curHighlightIdx = 0;
+                    }
+                }
+
+
+            }
+            page.linkedWidgets[page.curHighlightIdx].target.highlight = true;
+            page.linkedWidgets[page.curHighlightIdx].target.highlightValue = page.linkedWidgets[page.curHighlightIdx].value;
+            // console.log('highlighting',page);
+            this.draw();
+
+
+        }
+
+    },
     getRelativeRect:function (e) {
         var clientRect = e.target.getBoundingClientRect()
         var x = Math.round(e.pageX - clientRect.left);
@@ -2751,6 +2846,12 @@ module.exports = React.createClass({
                     <canvas ref='canvas' className='simulator-canvas' />
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
+                </div>
+                <div className="phical-keyboard-wrapper">
+                    <button onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
+                    <button onClick={this.handleOk}>OK</button>
+                    <button onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </button>
+
                 </div>
                 < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
                 <RegisterList registers={this.state.registers || {}} handleRegisterChange={this.handleRegisterChange}/>

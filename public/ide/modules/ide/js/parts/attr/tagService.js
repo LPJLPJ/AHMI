@@ -3,7 +3,17 @@
  */
 ideServices
     .service('TagService', function () {
-        var tags=[];
+
+
+        function Tag(name, register, indexOfRegister, writeOrRead, value, type) {
+            this.name = name;
+            this.register = register;
+            this.indexOfRegister = indexOfRegister;
+            this.writeOrRead = writeOrRead;
+            this.value = value;
+            this.type = type || 'custom'; //custom, system, timer
+        }
+
         var defaultTag ={
             name: "",
             register: false,
@@ -11,9 +21,37 @@ ideServices
             writeOrRead:'false',
             value: null
         };
+        var curPageTag = new Tag('当前页面序号', true, -1, 'true', 0, 'system');
+        var RTCTag1 = new Tag('时钟变量1', true, -2, 'true', 0, 'system');
+        var RTCTag2 = new Tag('时钟变量2', true, -2, 'true', 0, 'system');
+        var sysTags = [curPageTag, RTCTag1, RTCTag2];
+        var tags = sysTags;
         var timerTags=[];
         //var templateTimerTags= [{ name:"", register: false, indexOfRegister: null, writeOrRead:false, value: 0}];
 
+
+        function addSysTags(tagList) {
+            var sysTagFlags = sysTags.map(function (tag) {
+                return false;
+            });
+
+            for (var j = 0; j < sysTags.length; j++) {
+                for (var i = 0; i < tagList.length; i++) {
+                    if (tagList[i].name === sysTags[j].name) {
+                        //has
+                        sysTagFlags[j] = true;
+                        break;
+                    }
+                }
+            }
+
+            for (j = 0; j < sysTagFlags.length; j++) {
+                if (!sysTagFlags[j]) {
+                    tagList.push(sysTags[j]);
+                }
+            }
+
+        }
         //新增一个tag
         this.getNewTag = function(){
             return _.cloneDeep(defaultTag);
@@ -47,6 +85,18 @@ ideServices
                 }
             }
 
+
+            // var hasCurPage = false;
+            // for (var i=0;i<_tags.length;i++){
+            //     if (_tags[i].name === '当前页面序号'){
+            //         hasCurPage = true;
+            //         break;
+            //     }
+            // }
+            // if (!hasCurPage){
+            //     _tags.push(curPageTag);
+            // }
+            addSysTags(_tags);
             tags = _tags;
             timerTags = _timerTags
 
@@ -54,7 +104,18 @@ ideServices
 
 
         this.syncCustomTags = function (_customTags) {
-            tags = _customTags||[]
+            // var hasCurPage = false;
+            // for (var i=0;i<_customTags.length;i++){
+            //     if (_customTags[i].name === '当前页面序号'){
+            //         hasCurPage = true;
+            //         break;
+            //     }
+            // }
+            // if (!hasCurPage){
+            //     _customTags.push(curPageTag);
+            // }
+            addSysTags(_customTags || [])
+            tags = _customTags
         };
 
         this.syncTimerTags = function (_timerTags) {
