@@ -170,9 +170,9 @@ $(function(){
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
         curPanel = $(this)
-        curSelectedPanel = curPanel
+        curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
-
+        $('#basicinfo-supportTouch').attr('disabled',false);
         var project = $(this).attr('data-project');
         project = JSON.parse(project);
         curProject = project;
@@ -198,12 +198,15 @@ $(function(){
             var author = $('#basicinfo-author')
             var resolution = $('#basicinfo-resolution')
             var template = $('#basicinfo-template');
+            var supportTouch = $('#basicinfo-supportTouch');
 
             title.val(project.name);
             author.val(project.author);
             resolution.val(project.resolution)
             template.val(project.template);
             template.attr('disabled',true);
+            supportTouch.val(project.supportTouch);
+            supportTouch.attr('disabled',true);
         }else if (curNodeName == 'I'){
             //delete
             // if(confirm('确认删除?')){
@@ -236,17 +239,12 @@ $(function(){
 
 
     $('#addproject').on('click', function (e) {
-        $('#addproject').siblings().each(function (index,elem) {
-           //console.log('index',index);
-            console.log('elem',elem.val());
-        });
         $('#basicinfo-template').attr('disabled',false);
+        $('#basicinfo-supportTouch').attr('disabled',false);
         $('#modal-ok').html('创建')
 
     });
-    $('#basicinfo-title').on('click',function(e){
-        console.log('input title');
-    });
+
 
     $('#modal-ok').on('click',changeProject);
 
@@ -266,11 +264,13 @@ $(function(){
         var author = $('#basicinfo-author')
         var resolution = $('#basicinfo-resolution')
         var template = $('#basicinfo-template');
-        if (title.val().trim()!=''&&resolution.val().trim()!=''){
+        var supportTouch = $('#basicinfo-supportTouch');
+        if (title.val().trim()!=''&&resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
+            project.supportTouch = supportTouch.val().trim();
             if (!checkName(project.name,project.author)){
                 //invalid name
                 toastr.error('名称只能是汉字、英文和数字');
@@ -300,7 +300,6 @@ $(function(){
 
 
             }else{
-                console.log('haha',project);
                 $.ajax({
                     type:'POST',
                     url:'/project/create',
@@ -377,6 +376,7 @@ $(function(){
         var author = $('#basicinfo-author')
         var resolution = $('#basicinfo-resolution')
         var template = $('#basicinfo-template');
+        var supportTouch = $('#basicinfo-supportTouch');
         var thumbnailDOM = curPanel.find('img');
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
         if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
@@ -389,7 +389,8 @@ $(function(){
                 toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
-            project.resolution = resolution.val().trim()
+            project.resolution = resolution.val().trim();
+            project.supportTouch = supportTouch.val().trim();
             var updateSuccess = false;
             if (local){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');
@@ -426,7 +427,7 @@ $(function(){
     function addNewProject(newProject){
         console.log(newProject)
         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
-        console.log(html)
+        //console.log(html)
         $('#addproject').after(html)
     }
 })
