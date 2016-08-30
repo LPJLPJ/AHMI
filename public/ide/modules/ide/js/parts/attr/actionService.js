@@ -53,7 +53,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MySubLayer:
                 break;
             case Type.MyButton:
-                triggers = [tPress,tRelease];
+                triggers = [tRelease];
                 break;
             case Type.MyScriptTrigger:
             case Type.MyProgress:
