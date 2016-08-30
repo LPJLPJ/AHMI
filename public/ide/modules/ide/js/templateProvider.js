@@ -706,6 +706,7 @@ ideServices
                 originX: 'center', originY: 'center',
                 initValue:0,
                 dateTimeModeId:'0',//0表示时间，1表示日期
+                RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
                 fontFamily:'宋体',
                 fontSize:20,
                 fontColor:'rgba(0,0,0,1)',

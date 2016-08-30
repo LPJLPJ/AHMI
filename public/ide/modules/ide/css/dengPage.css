@@ -384,13 +384,27 @@
     background-color: #e0e0e0;
 }
 .deng-attr-item .listTable td{
-    padding-top:4px;
-    padding-bottom:4px ;
+    /*padding-top:4px;*/
+    /*padding-bottom:4px ;*/
+    padding: 4px;
+}
+.deng-attr-item .listTable td:nth-child(2) {
+    /*background: #cccc99;*/
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
 }
 .deng-attr-item .listTable tr .tagName{
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 125px;
+    width:120px;
+    white-space: nowrap;
+}
+.deng-attr-item .listTable tr .tagReg{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+    width:100px;
     white-space: nowrap;
 }
 .deng-attr-item .listTable tr .icon-close {

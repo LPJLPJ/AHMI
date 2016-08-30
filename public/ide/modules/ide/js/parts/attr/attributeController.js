@@ -186,6 +186,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     {id:'0',name:'时间模式'},
                     {id:'1',name:'日期模式'}
                 ],
+                RTCModes:[
+                    {id:'0',name:'使用内部时钟'},
+                    {id:'1',name:'使用外部时钟'}
+                ],
                 enterDateTimeMode:enterDateTimeMode,
                 changeDateTimeFontFamily:changeDateTimeFontFamily,
                 changeDateTimeFontSize:changeDateTimeFontSize,
@@ -385,6 +389,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     break;
                 case Type.MyDateTime:
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
+                    $scope.component.dateTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
                     break;
                 case Type.MySlideBlock:
                     $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
@@ -1062,26 +1067,29 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
     function enterPointerLength(e){
         if (e.keyCode==13){
+            var pointerLength = $scope.component.object.level.info.pointerLength;
+            var width = $scope.component.object.level.info.width;
+            var maxLengthOfPointer = width/Math.SQRT2+10;
             //判断输入是否合法
-            if (!_.isInteger(Number($scope.component.object.level.info.pointerLength))){
+            if (!_.isInteger(Number(pointerLength))){
                 toastr.warning('输入不合法');
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.pointerLength<0||$scope.component.object.level.info.pointerLength>800){
+            if(pointerLength<0||pointerLength>maxLengthOfPointer){
                 toastr.warning('指针长度超出范围');
                 restore();
                 return;
             }
 
-            if ($scope.component.object.level.info.pointerLength==initObject.level.info.pointerLength){
+            if (pointerLength==initObject.level.info.pointerLength){
                 return;
             }
 
             var option={
-                pointerLength:$scope.component.object.level.info.pointerLength
+                pointerLength:pointerLength
             };
-            console.log(option);
+            //console.log(option);
             var oldOperate=ProjectService.SaveCurrentOperate();
 
             ProjectService.ChangeAttributeDashboardPointerLength(option, function () {
@@ -2054,7 +2062,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         var selectDateTimeModeId=null;
         if (selectObj.type==Type.MyDateTime){
             selectDateTimeModeId=$scope.component.dateTime.dateTimeModeId;
-
+            selectRTCModeId=$scope.component.dateTime.RTCModeId;
         }else {
             return;
         }
@@ -2062,7 +2070,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         var oldOperate=ProjectService.SaveCurrentOperate();
 
         var option={
-            dateTimeModeId:selectDateTimeModeId
+            dateTimeModeId:selectDateTimeModeId,
+            RTCModeId:selectRTCModeId
         };
         ProjectService.ChangeAttributeDateTimeModeId(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);

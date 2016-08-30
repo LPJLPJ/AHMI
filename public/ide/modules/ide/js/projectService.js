@@ -824,7 +824,8 @@ ideServices
                 }
 
 
-
+                //this.on('mouseup',function(arg){
+                //});
                 this.on('changeDashboardOffsetValue', function (arg) {
                     if(arg.offsetValue||arg.offsetValue==0){
                         self.offsetValue=arg.offsetValue;
@@ -920,9 +921,9 @@ ideServices
                     var _callback=arg.callback;
                     if(dashboardModeId=='0'||dashboardModeId=='1'){
                         self.backgroundColor=level.texList[0].slices[0].color;
+                        self.pointerColor=level.texList[1].slices[0].color;
 
                         self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-
                         self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
 
                         //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
@@ -1122,7 +1123,6 @@ ideServices
                 });
 
 
-                //changeDashboardPointerLength
 
                 this.on('changeKnobSize', function (arg) {
                     self.knobSize=arg.knobSize;
@@ -6064,8 +6064,10 @@ ideServices
         //改变时间控件的显示模式
         this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){
             var dateTimeModeId = _option.dateTimeModeId;
+            var RTCModeId = _option.RTCModeId;
             var selectObj= _self.getCurrentSelectObject();
-            selectObj.level.info.dateTimeModeId=_option.dateTimeModeId;
+            selectObj.level.info.dateTimeModeId=dateTimeModeId;
+            selectObj.level.info.RTCModeId=RTCModeId;
             arg={
                 dateTimeModeId:dateTimeModeId,
                 callback:_successCallback
