@@ -413,12 +413,10 @@ ideServices
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
-                buttonImg:'',
                 name: 'NewTextArea',
                 type: Type.MyTextArea,
                 expand:true,
                 url:'',
-                buttonModeId:'0',
                 zIndex:0,
                 texList:[{
                     name:'文本框',
@@ -705,7 +703,7 @@ ideServices
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
-                dateTimeModeId:'0',//0表示时间，1表示日期
+                dateTimeModeId:'0',//0表示时间秒，1表示时分，2表示斜杠日期，3表示减号日期
                 RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
                 fontFamily:'宋体',
                 fontSize:20,

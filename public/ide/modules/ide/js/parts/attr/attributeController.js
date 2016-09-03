@@ -183,8 +183,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             },
             dateTime:{
                 dateTimeModes:[
-                    {id:'0',name:'时间模式'},
-                    {id:'1',name:'日期模式'}
+                    {id:'0',name:'时分秒模式'},
+                    {id:'1',name:'时分模式'},
+                    {id:'2',name:'斜杠日期'},
+                    {id:'3',name:'减号日期'}
                 ],
                 RTCModes:[
                     {id:'0',name:'使用内部时钟'},

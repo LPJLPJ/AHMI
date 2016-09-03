@@ -1032,6 +1032,7 @@ ideServices
                         ctx.closePath();
                         ctx.restore();
                     };
+
                 }
                 catch(err){
                     console.log('错误描述',err);
@@ -1679,36 +1680,9 @@ ideServices
             _render: function (ctx) {
                 try{
                     var fontString = null;
-                    var dateObj = new Date(),
-                        arrTime = [],
-                        arrDate = [];
-                    arrTime.push(dateObj.getHours());
-                    arrTime.push(dateObj.getMinutes());
-                    arrTime.push(dateObj.getSeconds());
-
-                    arrDate.push(dateObj.getFullYear());
-                    arrDate.push(dateObj.getMonth()+1);
-                    arrDate.push(dateObj.getDate());
-
-                    ctx.fillStyle=this.fontColor;
+                    //ctx.fillStyle=this.fontColor;
                     fontString=this.fontSize+'px'+" "+this.fontFamily;
-                    if(this.dateTimeModeId=='0'){
-                        //显示时间
-                        ctx.scale(1/this.scaleX,1/this.scaleY);
-                        ctx.font=fontString;
-                        ctx.textAlign=this.align;
-                        ctx.textBaseline='middle';
-                        ctx.fillText(arrTime.join(":"),0,0);
-                        ctx.scale(this.scaleX,this.scaleY);
-                    }else if(this.dateTimeModeId=='1'){
-                        //显示日期
-                        ctx.scale(1/this.scaleX,1/this.scaleY);
-                        ctx.font=fontString;
-                        ctx.textAlign=this.align;
-                        ctx.textBaseline='middle';
-                        ctx.fillText(arrDate.join("/"),0,0);
-                        ctx.scale(this.scaleX,this.scaleY);
-                    }
+                    drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
                 }
                 catch(err){
                     console.log('错误描述',err);
@@ -7277,5 +7251,63 @@ ideServices
             radius= Math.floor(radius);
             return radius;
         }
+
+        /**
+         *
+         * @param mode
+         * @param ctx
+         * @param scaleX
+         * @param scaleY
+         * @param fontString
+         * @param align
+         * @param fontColor
+         */
+        function drawDateTime(mode,ctx,scaleX,scaleY,fontString,align,fontColor){
+            ctx.fillStyle=fontColor;
+            var dateObj = new Date(),
+                arrTime = [],
+                arrDate = [];
+            arrTime.push(dateObj.getHours());
+            arrTime.push(dateObj.getMinutes());
+            arrTime.push(dateObj.getSeconds());
+
+            arrDate.push(dateObj.getFullYear());
+            arrDate.push(dateObj.getMonth()+1);
+            arrDate.push(dateObj.getDate());
+            if(mode=='0'){
+                //时分秒
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrTime.join(":"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }else if(mode=='1'){
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrTime.slice(0,2).join(":"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }
+            else if(mode=='2'){
+                //斜杠日期
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrDate.join("/"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }else if(mode=='3'){
+                //减号日期
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrDate.join("-"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }
+        }
+
 
     });
