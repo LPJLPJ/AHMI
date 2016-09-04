@@ -16,6 +16,7 @@ ide.
                 allTimerTags:null,
                 visibleOfList:true,
                 indexOfTagInList:null,
+                timerNum:null,
 
                 setTag:setTag,
                 enterTag:enterTag,
@@ -24,7 +25,10 @@ ide.
                 editTag:editTag,
                 displayTagByIndex:displayTagByIndex,
                 displayTimerTagByIndex:displayTimerTagByIndex,
-                selectedTagFun:selectedTagFun
+                selectedTagFun:selectedTagFun,
+
+                setTimerNum:setTimerNum,
+                restoreTimerNum:restoreTimerNum
             };
             readTagsInfo();
             //判断属性type，用于在选择了多组canvas或多个控件时，不显示tag和action
@@ -136,6 +140,7 @@ ide.
             $scope.component.allCustomTags = TagService.getAllCustomTags();
             $scope.component.allTimerTags = TagService.getAllTimerTags();
             $scope.component.allTags = TagService.getAllTags();
+            $scope.component.timerNum = TagService.getTimerNum();
         }
         function noDuplication(tag,tags){
             for(var i=0;i<tags.length;i++){
@@ -335,6 +340,30 @@ ide.
         function selectedTagFun(){
             ProjectService.ChangeAttributeTag($scope.component.selectedTag);
 
+        }
+
+        function setTimerNum(ev){
+            if(ev.keyCode!==13){
+                return;
+            }
+            var initNum = TagService.getTimerNum();
+            if (!_.isInteger(parseInt($scope.component.timerNum))){
+                toastr.warning('输入不合法');
+                $scope.component.timerNum=initNum;
+                return;
+            }
+            if($scope.component.timerNum>10||$scope.component.timerNum<0){
+
+                toastr.warning('超出范围');
+                $scope.component.timerNum=initNum;
+                return;
+            }
+            TagService.setTimerNum($scope.component.timerNum);
+            TagService.setTimerTags($scope.component.timerNum);
+        }
+
+        function restoreTimerNum(){
+            $scope.component.timerNum=TagService.getTimerNum();
         }
 
     }]);

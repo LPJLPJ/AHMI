@@ -679,7 +679,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             $scope.project.resourceList = ResourceService.getAllResource()
             $scope.project.customTags = TagService.getAllCustomTags()
             $scope.project.timerTags = TagService.getAllTimerTags()
-            $scope.project.timers = TimerService.getTimerNum()
+            $scope.project.timers = TagService.getTimerNum()
             var pid=PID;
             console.log($scope.project)
             window.localStorage.setItem('projectCache'+pid,JSON.stringify($scope.project));
@@ -720,7 +720,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
         //tags tbc
         TagService.syncCustomTags(globalProject.customTags)
         TagService.syncTimerTags(globalProject.timerTags)
-        TimerService.setTimerNum(globalProject.timers)
+        TagService.setTimerNum(globalProject.timers)
     }
 
     function setTemplate(date,cb){

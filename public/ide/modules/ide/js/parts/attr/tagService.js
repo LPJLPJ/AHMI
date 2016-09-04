@@ -27,6 +27,7 @@ ideServices
         var sysTags = [curPageTag, RTCTag1, RTCTag2];
         var tags = sysTags;
         var timerTags=[];
+        var timerNum=0;
         //var templateTimerTags= [{ name:"", register: false, indexOfRegister: null, writeOrRead:false, value: 0}];
 
 
@@ -132,6 +133,10 @@ ideServices
             return timerTags;
         };
 
+        this.getAllTimerTags_Cur = function(){
+
+        }
+
         //返回所有的tags，包括自定义tags和timerTags
         this.getAllTags=function(){
 
@@ -214,6 +219,13 @@ ideServices
                 timerTags[5+(i*6)].name="SysTmr_"+i+"_Mode";
 
             }
+        };
+
+        this.setTimerNum=function(num){
+            timerNum=num;
+        };
+        this.getTimerNum=function(){
+            return timerNum;
         }
 
     });

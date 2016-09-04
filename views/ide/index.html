@@ -2071,10 +2071,10 @@
             </div>
             <!-- 变量栏-->
             <div class="my-panel-item deng-pannel-item" style="overflow: auto;" ng-show="component.top.currentNav==2">
-                <div ng-controller="TimerCtrl" class="TimeCtrl">
+                <div ng-controller="TagCtrl" class="TimeCtrl">
                     <span>定时器</span>
-                    <input class="form-control" type="number" ng-model="num" ng-keypress="enter($event)"
-                           ng-blur="setNum()">
+                    <input class="form-control" type="number" ng-model="component.timerNum" ng-keypress="component.setTimerNum($event)"
+                           ng-blur="component.restoreTimerNum()">
                 </div>
 
                 <div ng-controller="TagCtrl" class="my-attr-item deng-attr-item lg deng-tags">

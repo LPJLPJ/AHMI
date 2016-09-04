@@ -259,7 +259,7 @@
 
                     curScope.project.customTags = TagService.getAllCustomTags();
                     curScope.project.timerTags = TagService.getAllTimerTags();
-                    curScope.project.timers = TimerService.getTimerNum();
+                    curScope.project.timers = TagService.getTimerNum();
 
                     var currentProject = curScope.project;
                     // console.log(currentProject);
@@ -678,7 +678,7 @@
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
             temp.project.tagList = TagService.getAllTags();
-            temp.project.timers = TimerService.getTimerNum();
+            temp.project.timers = TagService.getTimerNum();
             //link widgets
             for (var i = 0; i < temp.project.pageList.length; i++) {
                 LinkPageWidgetsService.linkPageAllWidgets(temp.project.pageList[i]);
