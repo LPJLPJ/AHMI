@@ -19868,7 +19868,7 @@
 	            newTimer['SysTmr_' + i + '_Start'] = 0;
 	            newTimer['SysTmr_' + i + '_Stop'] = 0;
 	            newTimer['SysTmr_' + i + '_Step'] = 0;
-	            newTimer['SysTmr_' + i + '_CurVal'] = 0;
+	            newTimer['SysTmr_' + i + '_t'] = 0;
 	            newTimer['SysTmr_' + i + '_Interval'] = 0;
 	            newTimer['SysTmr_' + i + '_Mode'] = 0;
 	            timerList.push(newTimer);
@@ -20128,18 +20128,28 @@
 	            console.log('page', page);
 	        }
 	    },
-	    handleTimers: function (num) {
+	    handleTimers: function (num, postfix, value) {
 
 	        var timerList = this.state.timerList;
 	        var timer = timerList[num];
 	        //update timer
-	        var postfix = ['Start', 'Stop', 'Step', 'Interval', 'CurVal', 'Mode'];
-	        for (var i = 0; i < postfix.length; i++) {
-	            var key = 'SysTmr_' + num + '_' + postfix[i];
+	        // var postfix = ['Start', 'Stop', 'Step', 'Interval', 't', 'Mode'];
+	        // for (var i = 0; i < postfix.length; i++) {
+	        //     var key = 'SysTmr_' + num + '_' + postfix[i];
+	        //     var curTag = this.findTagByName(key);
+	        //     //console.log(curTag,timerList);
+	        //     timer[key] = (curTag&&curTag.value) || 0;
+	        //     // timer[key] = this.findTagByName(key)['value'] || 0;
+	        // }
+	        var key;
+	        if (postfix === 't' || postfix === 'CurVal') {
+	            //curval
+	            key = 'SysTmr_' + num + '_' + 't';
 	            var curTag = this.findTagByName(key);
-	            //console.log(curTag,timerList);
 	            timer[key] = curTag && curTag.value || 0;
-	            // timer[key] = this.findTagByName(key)['value'] || 0;
+	        } else {
+	            key = 'SysTmr_' + num + '_' + postfix;
+	            timer[key] = value;
 	        }
 
 	        // console.log(timer);
@@ -20159,7 +20169,7 @@
 	            var loop = (timer['SysTmr_' + num + '_Mode'] & 2) == 2;
 	            console.log('start', loop);
 	            // timer['SysTmr_'+num+'_CurVal'] = timer['SysTmr_'+num+'_Start'];
-	            var targetTag = this.findTagByName('SysTmr_' + num + '_CurVal');
+	            var targetTag = this.findTagByName('SysTmr_' + num + '_t');
 	            var startValue = timer['SysTmr_' + num + '_Start'];
 	            if (cont) {
 	                if (targetTag.value > startValue) {
@@ -20475,9 +20485,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	            // console.log(tex);
-	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	        }
+	                // console.log(tex);
+	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20956,6 +20966,7 @@
 	        var offctx = offcanvas.getContext('2d');
 	        //get current value
 	        var curValue = this.getValueByTagName(widget.tag);
+	        // console.log(curValue)
 	        if (curValue === null || curValue === 'undefined') {
 	            curValue = widget.info.numValue;
 	        }
@@ -21180,23 +21191,23 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else if (widget.dashboardModeId == '1') {
-	                // complex mode
-	                //background
-	                var bgTex = widget.texList[0].slices[0];
-	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                //draw light strip
-	                var lightStripTex = widget.texList[2].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                //draw pointer
-	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                    // complex mode
+	                    //background
+	                    var bgTex = widget.texList[0].slices[0];
+	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    //draw light strip
+	                    var lightStripTex = widget.texList[2].slices[0];
+	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    //draw pointer
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                //draw circle
-	                // var circleTex = widget.texList[3].slices[0]
-	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	            } else if (widget.dashboardModeId == '2') {
-	                var lightStripTex = widget.texList[0].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	            }
+	                    //draw circle
+	                    // var circleTex = widget.texList[3].slices[0]
+	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                } else if (widget.dashboardModeId == '2') {
+	                        var lightStripTex = widget.texList[0].slices[0];
+	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    }
 
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -21758,9 +21769,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+	                bgRange = height - widget.slideSize.h || 1;
+	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -21904,20 +21915,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                    //switch
-	                    //if (widget.switchState) {
-	                    //	widget.switchState = !widget.switch
-	                    //}else{
-	                    //	widget.switchState = 1;
-	                    //}
-	                    //update its tag
-	                    var targetTag = this.findTagByName(widget.tag);
-	                    if (targetTag) {
-	                        targetTag.value = parseInt(targetTag.value);
-	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        //switch
+	                        //if (widget.switchState) {
+	                        //	widget.switchState = !widget.switch
+	                        //}else{
+	                        //	widget.switchState = 1;
+	                        //}
+	                        //update its tag
+	                        var targetTag = this.findTagByName(widget.tag);
+	                        if (targetTag) {
+	                            targetTag.value = parseInt(targetTag.value);
+	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        }
 	                    }
-	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
@@ -22147,6 +22158,7 @@
 	        var param2 = inst[2];
 	        //timer?
 	        var timerFlag = -1;
+	        var curTimer;
 	        timerFlag = this.timerFlag(param1);
 	        var nextStep = {
 	            process: true,
@@ -22376,6 +22388,91 @@
 	                break;
 	            case 'END':
 	                break;
+	            case 'SET_TIMER_START':
+	                if (timerFlag != -1) {
+	                    // var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Start');
+	                    //
+	                    // if (targetTag) {
+	                    //     // targetTag.value = parseInt(param2);
+	                    //     this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+	                    //     this.draw(null,{
+	                    //         updatedTagName:param1.tag
+	                    //     });
+	                    // }
+	                    this.handleTimers(timerFlag, 'Start', Number(this.getParamValue(param2)));
+	                }
+
+	                break;
+	            case 'SET_TIMER_STOP':
+	                if (timerFlag != -1) {
+	                    // var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Stop');
+	                    //
+	                    // if (targetTag) {
+	                    //     // targetTag.value = parseInt(param2);
+	                    //     this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+	                    //     this.draw(null,{
+	                    //         updatedTagName:param1.tag
+	                    //     });
+	                    // }
+	                    this.handleTimers(timerFlag, 'Stop', Number(this.getParamValue(param2)));
+	                }
+	                break;
+	            case 'SET_TIMER_STEP':
+	                if (timerFlag != -1) {
+	                    // var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Step');
+	                    //
+	                    // if (targetTag) {
+	                    //     // targetTag.value = parseInt(param2);
+	                    //     this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+	                    //     this.draw(null,{
+	                    //         updatedTagName:param1.tag
+	                    //     });
+	                    // }
+	                    this.handleTimers(timerFlag, 'Step', Number(this.getParamValue(param2)));
+	                }
+	                break;
+	            case 'SET_TIMER_INTERVAL':
+	                if (timerFlag != -1) {
+	                    // var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Interval');
+	                    //
+	                    // if (targetTag) {
+	                    //     // targetTag.value = parseInt(param2);
+	                    //     this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+	                    //     this.draw(null,{
+	                    //         updatedTagName:param1.tag
+	                    //     });
+	                    // }
+	                    this.handleTimers(timerFlag, 'Interval', Number(this.getParamValue(param2)));
+	                }
+	                break;
+	            case 'SET_TIMER_CURVAL':
+	                if (timerFlag != -1) {
+	                    var targetTag = this.findTagByName('SysTmr_' + timerFlag + '_t');
+
+	                    if (targetTag) {
+	                        // targetTag.value = parseInt(param2);
+	                        this.setTagByTag(targetTag, Number(this.getParamValue(param2)));
+	                        this.draw(null, {
+	                            updatedTagName: param1.tag
+	                        });
+	                    }
+	                    // this.handleTimers(timerFlag,'CurVal',Number(this.getParamValue(param2)))
+	                }
+	                break;
+	            case 'SET_TIMER_MODE':
+	                if (timerFlag != -1) {
+	                    // var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Mode');
+	                    //
+	                    // if (targetTag) {
+	                    //     // targetTag.value = parseInt(param2);
+	                    //     this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+	                    //     this.draw(null,{
+	                    //         updatedTagName:param1.tag
+	                    //     });
+	                    // }
+	                    this.handleTimers(timerFlag, 'Mode', Number(this.getParamValue(param2)));
+	                }
+	                break;
 	            case 'READ_DATA_MODBUS':
 	            case 'WRITE_DATA_MODBUS':
 	            case 'READ_DATA_CAN':
@@ -22413,9 +22510,9 @@
 
 	        }
 	        //handle timer
-	        if (timerFlag != -1) {
-	            this.handleTimers(timerFlag);
-	        }
+	        // if (timerFlag != -1) {
+	        //     this.handleTimers(timerFlag);
+	        // }
 
 	        //process next
 	        if (nextStep.process) {
