@@ -7273,7 +7273,7 @@ ideServices
             arrTime.push(dateObj.getSeconds());
             for(i=0;i<arrTime.length;i++){
                 if(arrTime[i]<10){
-                    arrTime[i]='0'+arrTime;
+                    arrTime[i]='0'+arrTime[i];
                 }
             }
 
