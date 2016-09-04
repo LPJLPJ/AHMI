@@ -195,23 +195,26 @@ ideServices
             console.log(timerTags);
             for(var i=0;i<num;i++){
 
-                timerTags[0+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                timerTags[0+(i*6)].name="SysTmr_"+i+"_Start";
+                // timerTags[0+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                // timerTags[0+(i*6)].name="SysTmr_"+i+"_Start";
+                //
+                // timerTags[1+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                // timerTags[1+(i*6)].name="SysTmr_"+i+"_Stop";
+                //
+                // timerTags[2+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                // timerTags[2+(i*6)].name="SysTmr_"+i+"_Step";
+                //
+                // timerTags[3+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                // timerTags[3+(i*6)].name="SysTmr_"+i+"_Interval";
+                //
+                // timerTags[4+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                // timerTags[4+(i*6)].name="SysTmr_"+i+"_CurVal";
+                //
+                // timerTags[5+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                // timerTags[5+(i*6)].name="SysTmr_"+i+"_Mode";
+                timerTags[i]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                timerTags[i].name="SysTmr_"+i+"_t";
 
-                timerTags[1+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                timerTags[1+(i*6)].name="SysTmr_"+i+"_Stop";
-
-                timerTags[2+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                timerTags[2+(i*6)].name="SysTmr_"+i+"_Step";
-
-                timerTags[3+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                timerTags[3+(i*6)].name="SysTmr_"+i+"_Interval";
-
-                timerTags[4+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                timerTags[4+(i*6)].name="SysTmr_"+i+"_CurVal";
-
-                timerTags[5+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                timerTags[5+(i*6)].name="SysTmr_"+i+"_Mode";
 
             }
         }
