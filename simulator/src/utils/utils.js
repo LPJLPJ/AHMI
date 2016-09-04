@@ -52,6 +52,9 @@ function linkWidgets(widgetList) {
                 }
 
                 break;
+            case 'MyDateTime':
+                var mode = curWidget.info.dateTimeModeId;
+                break;
             default:
                 // linkedWidget.type = curWidget.subType;
                 // linkedWidget.target = curWidget;
@@ -117,6 +120,7 @@ function isInteractiveWidget(widget) {
     switch (widget.subType) {
         case 'MyButton':
         case 'MyButtonGroup':
+        case 'MyDateTime':
             is = true;
             break;
         default:

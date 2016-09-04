@@ -20790,22 +20790,22 @@
 	    },
 	    getCurTime: function (date) {
 	        var date = date || new Date();
-	        var hour = date.getHours();
-	        var minute = date.getMinutes();
-	        var second = date.getSeconds();
+	        var hour = date.getHours() < 10 ? '0' + date.getHours : date.getHours();
+	        var minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+	        var second = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
 	        return '' + hour + ':' + minute + ':' + second;
 	    },
 	    getCurTimeHM: function (date) {
 	        var date = date || new Date();
-	        var hour = date.getHours();
-	        var minute = date.getMinutes();
+	        var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+	        var minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 	        return '' + hour + ':' + minute;
 	    },
 	    getCurDate: function (date, mode) {
 	        var date = date || new Date();
 	        var year = date.getFullYear();
-	        var month = date.getMonth() + 1;
-	        var day = date.getDate();
+	        var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth + 1;
+	        var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
 	        var dateString;
 	        if (mode == '2') {
 	            dateString = '' + year + '/' + month + '/' + day;
@@ -49284,6 +49284,9 @@
 	                }
 
 	                break;
+	            case 'MyDateTime':
+	                var mode = curWidget.info.dateTimeModeId;
+	                break;
 	            default:
 	                // linkedWidget.type = curWidget.subType;
 	                // linkedWidget.target = curWidget;
@@ -49349,6 +49352,7 @@
 	    switch (widget.subType) {
 	        case 'MyButton':
 	        case 'MyButtonGroup':
+	        case 'MyDateTime':
 	            is = true;
 	            break;
 	        default:

@@ -1644,7 +1644,7 @@ ideServices
 
                 //设置canvas的宽度和高度
                 if(this.fontSize){
-                    this.setWidth(8*this.fontSize);
+                    this.setWidth(6*this.fontSize);
                     this.setHeight(this.fontSize*1.5);
                 }
                 
@@ -7267,13 +7267,25 @@ ideServices
             var dateObj = new Date(),
                 arrTime = [],
                 arrDate = [];
+            var i=0;
             arrTime.push(dateObj.getHours());
             arrTime.push(dateObj.getMinutes());
             arrTime.push(dateObj.getSeconds());
+            for(i=0;i<arrTime.length;i++){
+                if(arrTime[i]<10){
+                    arrTime='0'+arrTime;
+                }
+            }
 
             arrDate.push(dateObj.getFullYear());
             arrDate.push(dateObj.getMonth()+1);
             arrDate.push(dateObj.getDate());
+
+            for(i=0;i<arrDate.length;i++){
+                if(arrDate[i]<10){
+                    arrDate[i]='0'+arrDate[i];
+                }
+            }
             if(mode=='0'){
                 //时分秒
                 ctx.scale(1/scaleX,1/scaleY);
