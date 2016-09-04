@@ -2533,6 +2533,7 @@ module.exports = React.createClass({
         var param2 = inst[2];
         //timer?
         var timerFlag = -1;
+        var curTimer;
         timerFlag = this.timerFlag(param1);
         var nextStep = {
             process:true,
@@ -2762,6 +2763,85 @@ module.exports = React.createClass({
                 nextStep.step = Number(this.getParamValue(param2));
                 break;
             case 'END':
+                break;
+            case 'SET_TIMER_START':
+                if (timerFlag){
+                    var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Start');
+
+                    if (targetTag) {
+                        // targetTag.value = parseInt(param2);
+                        this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+                        this.draw(null,{
+                            updatedTagName:param1.tag
+                        });
+                    }
+                }
+
+                break;
+            case 'SET_TIMER_STOP':
+                if (timerFlag){
+                    var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Stop');
+
+                    if (targetTag) {
+                        // targetTag.value = parseInt(param2);
+                        this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+                        this.draw(null,{
+                            updatedTagName:param1.tag
+                        });
+                    }
+                }
+                break;
+            case 'SET_TIMER_STEP':
+                if (timerFlag){
+                    var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Step');
+
+                    if (targetTag) {
+                        // targetTag.value = parseInt(param2);
+                        this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+                        this.draw(null,{
+                            updatedTagName:param1.tag
+                        });
+                    }
+                }
+                break;
+            case 'SET_TIMER_INTERVAL':
+                if (timerFlag){
+                    var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Interval');
+
+                    if (targetTag) {
+                        // targetTag.value = parseInt(param2);
+                        this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+                        this.draw(null,{
+                            updatedTagName:param1.tag
+                        });
+                    }
+                }
+                break;
+            case 'SET_TIMER_CURVAL':
+                if (timerFlag){
+                    var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_CurVal');
+
+                    if (targetTag) {
+                        // targetTag.value = parseInt(param2);
+                        this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+                        this.draw(null,{
+                            updatedTagName:param1.tag
+                        });
+                    }
+                }
+                break;
+            case 'SET_TIMER_MODE':
+                if (timerFlag){
+                    var targetTag = this.findTagByName('SysTmr_'+timerFlag+'_Mode');
+
+                    if (targetTag) {
+                        // targetTag.value = parseInt(param2);
+                        this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
+                        this.draw(null,{
+                            updatedTagName:param1.tag
+                        });
+                    }
+                }
                 break;
             case 'READ_DATA_MODBUS':
             case 'WRITE_DATA_MODBUS':
