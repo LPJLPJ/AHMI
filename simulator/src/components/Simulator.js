@@ -1083,9 +1083,11 @@ module.exports = React.createClass({
         if (dateTimeModeId == '0'){
             //time
             dateTimeString = this.getCurTime(curDate);
+        }else if(dateTimeModeId=='1'){
+            dateTimeString = this.getCurTimeHM(curDate);
         }else{
             //date
-            dateTimeString = this.getCurDate(curDate);
+            dateTimeString = this.getCurDate(curDate,dateTimeModeId);
         }
         //draw
         var offcanvas = this.refs.offcanvas;
@@ -1119,13 +1121,26 @@ module.exports = React.createClass({
         var second = date.getSeconds();
         return ''+hour+':'+minute+':'+second;
     },
-    getCurDate:function (date) {
+    getCurTimeHM:function(date){
+        var date = date||new Date();
+        var hour = date.getHours();
+        var minute = date.getMinutes();
+        return ''+hour+':'+minute;
+    },
+    getCurDate:function (date,mode) {
         var date = date||new Date();
         var year = date.getFullYear();
         var month = date.getMonth()+1;
-        var day = date.getDay();
-        return ''+year+'/'+month+'/'+day;
+        var day = date.getDate();
+        var dateString;
+        if(mode=='2'){
+            dateString=''+year+'/'+month+'/'+day;
+        }else{
+            dateString=''+year+'-'+month+'-'+day;
+        }
+        return dateString
     },
+
     drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');

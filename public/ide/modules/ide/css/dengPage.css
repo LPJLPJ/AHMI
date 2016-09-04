@@ -397,18 +397,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 125px;
-    width:120px;
+    width: 90px;
     white-space: nowrap;
 }
 .deng-attr-item .listTable tr .tagReg{
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100px;
-    width:100px;
+    width: 60px;
     white-space: nowrap;
 }
 .deng-attr-item .listTable tr .icon-close {
-    width: 20px;
+    width:20px;
     float: right;
     opacity: .5;
 }

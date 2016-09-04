@@ -20475,9 +20475,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	                // console.log(tex);
-	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	            }
+	            // console.log(tex);
+	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	        }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20757,9 +20757,11 @@
 	        if (dateTimeModeId == '0') {
 	            //time
 	            dateTimeString = this.getCurTime(curDate);
+	        } else if (dateTimeModeId == '1') {
+	            dateTimeString = this.getCurTimeHM(curDate);
 	        } else {
 	            //date
-	            dateTimeString = this.getCurDate(curDate);
+	            dateTimeString = this.getCurDate(curDate, dateTimeModeId);
 	        }
 	        //draw
 	        var offcanvas = this.refs.offcanvas;
@@ -20793,13 +20795,26 @@
 	        var second = date.getSeconds();
 	        return '' + hour + ':' + minute + ':' + second;
 	    },
-	    getCurDate: function (date) {
+	    getCurTimeHM: function (date) {
+	        var date = date || new Date();
+	        var hour = date.getHours();
+	        var minute = date.getMinutes();
+	        return '' + hour + ':' + minute;
+	    },
+	    getCurDate: function (date, mode) {
 	        var date = date || new Date();
 	        var year = date.getFullYear();
 	        var month = date.getMonth() + 1;
-	        var day = date.getDay();
-	        return '' + year + '/' + month + '/' + day;
+	        var day = date.getDate();
+	        var dateString;
+	        if (mode == '2') {
+	            dateString = '' + year + '/' + month + '/' + day;
+	        } else {
+	            dateString = '' + year + '-' + month + '-' + day;
+	        }
+	        return dateString;
 	    },
+
 	    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
@@ -21165,23 +21180,23 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else if (widget.dashboardModeId == '1') {
-	                    // complex mode
-	                    //background
-	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                    //draw light strip
-	                    var lightStripTex = widget.texList[2].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                // complex mode
+	                //background
+	                var bgTex = widget.texList[0].slices[0];
+	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                //draw light strip
+	                var lightStripTex = widget.texList[2].slices[0];
+	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                //draw pointer
+	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                    //draw circle
-	                    // var circleTex = widget.texList[3].slices[0]
-	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	                } else if (widget.dashboardModeId == '2') {
-	                        var lightStripTex = widget.texList[0].slices[0];
-	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    }
+	                //draw circle
+	                // var circleTex = widget.texList[3].slices[0]
+	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	            } else if (widget.dashboardModeId == '2') {
+	                var lightStripTex = widget.texList[0].slices[0];
+	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	            }
 
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -21743,9 +21758,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	                bgRange = height - widget.slideSize.h || 1;
-	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	            }
+	            bgRange = height - widget.slideSize.h || 1;
+	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	        }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -21889,20 +21904,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                        //switch
-	                        //if (widget.switchState) {
-	                        //	widget.switchState = !widget.switch
-	                        //}else{
-	                        //	widget.switchState = 1;
-	                        //}
-	                        //update its tag
-	                        var targetTag = this.findTagByName(widget.tag);
-	                        if (targetTag) {
-	                            targetTag.value = parseInt(targetTag.value);
-	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
-	                        }
+	                    //switch
+	                    //if (widget.switchState) {
+	                    //	widget.switchState = !widget.switch
+	                    //}else{
+	                    //	widget.switchState = 1;
+	                    //}
+	                    //update its tag
+	                    var targetTag = this.findTagByName(widget.tag);
+	                    if (targetTag) {
+	                        targetTag.value = parseInt(targetTag.value);
+	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
 	                    }
+	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
