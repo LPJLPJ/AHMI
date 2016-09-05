@@ -1127,7 +1127,7 @@ module.exports = React.createClass({
     },
     getCurTime:function (date) {
         var date = date||new Date();
-        var hour = (date.getHours()<10)?('0'+date.getHours):date.getHours();
+        var hour = (date.getHours()<10)?('0'+date.getHours()):date.getHours();
         var minute = (date.getMinutes()<10)?('0'+date.getMinutes()):date.getMinutes();
         var second = (date.getSeconds()<10)?('0'+date.getSeconds()):date.getSeconds();
         return ''+hour+':'+minute+':'+second;

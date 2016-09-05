@@ -1643,15 +1643,25 @@ ideServices
                 this.initValue=level.info.initValue;
 
                 //设置canvas的宽度和高度
-                if(this.fontSize){
+                this.setHeight(this.fontSize*1.5);
+                if(this.dateTimeModeId=='0'){
+                    this.setWidth(4*this.fontSize);
+                }else if(this.dateTimeModeId=='1'){
+                    this.setWidth(3*this.fontSize);
+                }else
                     this.setWidth(6*this.fontSize);
-                    this.setHeight(this.fontSize*1.5);
-                }
                 
                 this.on('changeDateTimeModeId',function(arg){
                     var dateTimeModeId=arg.dateTimeModeId;
                     var _callback=arg.callback;
                     self.dateTimeModeId=dateTimeModeId;
+                    self.setHeight(self.fontSize*1.5);
+                    if(self.dateTimeModeId=='0'){
+                        self.setWidth(4*self.fontSize);
+                    }else if(self.dateTimeModeId=='1'){
+                        self.setWidth(3*self.fontSize);
+                    }else
+                        self.setWidth(6*self.fontSize);
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -1663,8 +1673,13 @@ ideServices
                     }
                     if(arg.hasOwnProperty('fontSize')){
                         self.fontSize=arg.fontSize;
-                        self.setWidth(6*self.fontSize);
                         self.setHeight(self.fontSize*1.5);
+                        if(self.dateTimeModeId=='0'){
+                            self.setWidth(4*self.fontSize);
+                        }else if(self.dateTimeModeId=='1'){
+                            self.setWidth(3*self.fontSize);
+                        }else
+                            self.setWidth(6*self.fontSize);
                     }
                     if(arg.hasOwnProperty('fontColor')){
                         self.fontColor=arg.fontColor;

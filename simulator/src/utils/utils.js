@@ -54,6 +54,11 @@ function linkWidgets(widgetList) {
                 break;
             case 'MyDateTime':
                 var mode = curWidget.info.dateTimeModeId;
+                var fontSize = curWidget.info.fontSize;
+                if(mode=='0'){
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft+fontSize,curWidget.info.absouteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*fontSize))
+                }
                 break;
             default:
                 // linkedWidget.type = curWidget.subType;
