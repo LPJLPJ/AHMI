@@ -81,6 +81,27 @@ function linkWidgets(widgetList) {
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2,curWidget.info.absoluteTop))
+                }else if (mode == '1'){
+                    delimiterWidth = measureMetrics(':',fontStr);
+                    curWidget.delimiterWidth = delimiterWidth;
+                    var eachWidth = (curWidget.info.width-delimiterWidth)/2;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+
+                }else if (mode == '2'){
+                    delimiterWidth = measureMetrics('/',fontStr);
+                    curWidget.delimiterWidth = delimiterWidth;
+                    var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
+                }else if (mode == '3'){
+                    delimiterWidth = measureMetrics('-',fontStr);
+                    curWidget.delimiterWidth = delimiterWidth;
+                    var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
                 }
                 break;
             default:

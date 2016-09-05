@@ -20813,15 +20813,21 @@
 	        var delimiterWidth = 0;
 
 	        if (widget.highlight) {
-	            console.log(widget);
+	            // console.log(widget)
 	            delimiterWidth = widget.delimiterWidth;
 	            if (dateTimeModeId == '0') {
 	                eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
 	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height);
 	            } else if (dateTimeModeId == '1') {
 	                eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
+	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height);
 	            } else {
 	                eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
+	                if (widget.highlightValue == 0) {
+	                    this.drawHighLight(curX, curY, eachWidth * 2, height);
+	                } else {
+	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height);
+	                }
 	            }
 	        }
 
@@ -20848,7 +20854,7 @@
 	    getCurDate: function (date, mode) {
 	        var date = date || new Date();
 	        var year = date.getFullYear();
-	        var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth + 1;
+	        var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
 	        var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
 	        var dateString;
 	        if (mode == '2') {
@@ -21880,6 +21886,8 @@
 	                var curOffset = 0;
 	                var curWidgetDate = new Date(curDate.getTime() + (widget.timeOffset || 0)); // cur displaying time
 	                var oldWidgetDateStr = curWidgetDate.toString();
+	                var oldWidgetDateTime = curWidgetDate.getTime();
+	                // console.log(curWidgetDate,oldWidgetDateStr);
 	                //changed to time
 	                var changedDateTypes = ['year', 'month', 'day', 'hour', 'minute', 'second'];
 	                var changedType;
@@ -21916,7 +21924,8 @@
 
 	                        break;
 	                }
-	                curOffset = curWidgetDate - new Date(oldWidgetDateStr);
+	                curOffset = curWidgetDate.getTime() - oldWidgetDateTime;
+	                // console.log(curWidgetDate,oldWidgetDateStr,curOffset);
 	                widget.timeOffset = widget.timeOffset || 0;
 	                widget.timeOffset += curOffset;
 
@@ -49522,6 +49531,26 @@
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + delimiterWidth, curWidget.info.absoluteTop));
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2, curWidget.info.absoluteTop));
+	                } else if (mode == '1') {
+	                    delimiterWidth = measureMetrics(':', fontStr);
+	                    curWidget.delimiterWidth = delimiterWidth;
+	                    var eachWidth = (curWidget.info.width - delimiterWidth) / 2;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+	                } else if (mode == '2') {
+	                    delimiterWidth = measureMetrics('/', fontStr);
+	                    curWidget.delimiterWidth = delimiterWidth;
+	                    var eachWidth = (curWidget.info.width - 2 * delimiterWidth) / 4;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
+	                } else if (mode == '3') {
+	                    delimiterWidth = measureMetrics('-', fontStr);
+	                    curWidget.delimiterWidth = delimiterWidth;
+	                    var eachWidth = (curWidget.info.width - 2 * delimiterWidth) / 4;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
 	                }
 	                break;
 	            default:
