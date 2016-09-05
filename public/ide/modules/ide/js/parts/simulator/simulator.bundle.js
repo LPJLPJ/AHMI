@@ -19774,6 +19774,7 @@
 	            var curTimeID = timer.timerID;
 	            clearInterval(curTimeID);
 	        }.bind(this));
+	        this.simState = {};
 	    },
 	    initCanvas: function (data, callBack) {
 	        var i;
@@ -19836,7 +19837,7 @@
 	        // this.setState({tagList: data.tagList})
 	        // this.state.tagList = data.tagList;
 	        this.setState({ tagList: data.tagList });
-	        console.log('tagList loaded', data.tagList);
+	        console.log('tagList loaded', data.tagList, this.state.tagList);
 
 	        //initialize registers
 	        this.registers = {};
@@ -19986,7 +19987,7 @@
 	        this.state = _.cloneDeep(defaultSimulator);
 	        this.state.project = _.cloneDeep(this.props.projectData);
 	        console.log('receive new project data', this.state.project);
-
+	        this.simState = {};
 	        this.initProject();
 	    },
 	    componentWillReceiveProps: function (newProps) {
@@ -19994,6 +19995,7 @@
 	            var curTimeID = timer.timerID;
 	            clearInterval(curTimeID);
 	        }.bind(this));
+	        this.simState = {};
 	        this.state = _.cloneDeep(defaultSimulator);
 	        this.state.project = _.cloneDeep(newProps.projectData);
 	        this.initProject();
@@ -20190,7 +20192,7 @@
 	                if (direction >= 0) {
 	                    //decrease
 
-	                    if (targetTag.name != '') {
+	                    if (targetTag && targetTag.name != '') {
 	                        targetTag.value -= timer['SysTmr_' + num + '_Step'];
 	                        if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
 	                            //clear timer
@@ -20206,7 +20208,7 @@
 	                        }
 	                    }
 	                } else {
-	                    if (targetTag.name != '') {
+	                    if (targetTag && targetTag.name != '') {
 	                        targetTag.value += timer['SysTmr_' + num + '_Step'];
 	                        if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
 	                            //clear timer
@@ -20485,9 +20487,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	            // console.log(tex);
-	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	        }
+	                // console.log(tex);
+	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20755,6 +20757,21 @@
 	        });
 	        return colorArray;
 	    },
+	    getCurDateOriginalData: function (widget, source, offset) {
+	        if (source === 'outer') {} else {
+	            var curDate;
+	            // if (widget.baseDate===undefined){
+	            //     widget.baseDate = new Date();
+	            // }
+	            // curDate = widget.baseDate;
+	            curDate = new Date();
+	            if (offset !== undefined) {
+	                curDate = new Date(curDate.getTime() + offset);
+	            }
+	        }
+
+	        return curDate;
+	    },
 	    drawTime: function (curX, curY, widget, options) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -20762,7 +20779,7 @@
 	        var fontFamily = widget.info.fontFamily;
 	        var fontSize = widget.info.fontSize;
 	        var fontColor = widget.info.fontColor;
-	        var curDate = new Date();
+	        var curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
 	        var dateTimeString = '';
 	        if (dateTimeModeId == '0') {
 	            //time
@@ -20790,6 +20807,23 @@
 	        tempctx.fillText(dateTimeString, 0.5 * width, 0.5 * height);
 	        tempctx.restore();
 	        offctx.drawImage(tempcanvas, curX, curY, width, height);
+
+	        //hightlight
+	        var eachWidth = 0;
+	        var delimiterWidth = 0;
+
+	        if (widget.highlight) {
+	            console.log(widget);
+	            delimiterWidth = widget.delimiterWidth;
+	            if (dateTimeModeId == '0') {
+	                eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
+	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height);
+	            } else if (dateTimeModeId == '1') {
+	                eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
+	            } else {
+	                eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
+	            }
+	        }
 
 	        //timer 1 s
 	        if (!(widget.timerId && widget.timerId !== 0)) {
@@ -21191,23 +21225,23 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else if (widget.dashboardModeId == '1') {
-	                // complex mode
-	                //background
-	                var bgTex = widget.texList[0].slices[0];
-	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                //draw light strip
-	                var lightStripTex = widget.texList[2].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                //draw pointer
-	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                    // complex mode
+	                    //background
+	                    var bgTex = widget.texList[0].slices[0];
+	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    //draw light strip
+	                    var lightStripTex = widget.texList[2].slices[0];
+	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    //draw pointer
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                //draw circle
-	                // var circleTex = widget.texList[3].slices[0]
-	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	            } else if (widget.dashboardModeId == '2') {
-	                var lightStripTex = widget.texList[0].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	            }
+	                    //draw circle
+	                    // var circleTex = widget.texList[3].slices[0]
+	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                } else if (widget.dashboardModeId == '2') {
+	                        var lightStripTex = widget.texList[0].slices[0];
+	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    }
 
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -21769,9 +21803,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+	                bgRange = height - widget.slideSize.h || 1;
+	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -21806,6 +21840,17 @@
 	                case 'MyButtonGroup':
 	                    curLinkWidget.target.curButtonIdx = curLinkWidget.value + 1;
 	                    break;
+	                case 'MyDateTime':
+
+	                    if (type === 'release') {
+
+	                        if (this.simState.inModifingState) {
+	                            this.simState.inModifingState = false;
+	                        } else {
+	                            this.simState.inModifingState = true;
+	                        }
+	                    }
+	                    break;
 	            }
 
 	            this.mouseState.position.x = 0;
@@ -21821,6 +21866,65 @@
 	            }
 	        }
 	    },
+	    handleModifyHighlightingWidget: function (widget, direction) {
+	        switch (widget.subType) {
+	            case 'MyDateTime':
+
+	                if (direction == 'right') {
+	                    direction = 1;
+	                } else {
+	                    direction = -1;
+	                }
+	                //handle time modifing
+	                var curDate = new Date();
+	                var curOffset = 0;
+	                var curWidgetDate = new Date(curDate.getTime() + (widget.timeOffset || 0)); // cur displaying time
+	                var oldWidgetDateStr = curWidgetDate.toString();
+	                //changed to time
+	                var changedDateTypes = ['year', 'month', 'day', 'hour', 'minute', 'second'];
+	                var changedType;
+	                if (widget.info.dateTimeModeId == '0') {
+	                    changedType = changedDateTypes[widget.highlightValue + 3];
+	                } else if (widget.info.dateTimeModeId == '1') {
+	                    changedType = changedDateTypes[widget.highlightValue + 3];
+	                } else {
+	                    changedType = changedDateTypes[widget.highlightValue];
+	                }
+	                switch (changedType) {
+	                    case 'year':
+	                        curWidgetDate.setFullYear(curWidgetDate.getFullYear() + direction);
+
+	                        break;
+	                    case 'month':
+	                        curWidgetDate.setMonth(curWidgetDate.getMonth() + direction);
+
+	                        break;
+	                    case 'day':
+	                        curWidgetDate.setDate(curWidgetDate.getDate() + direction);
+
+	                        break;
+	                    case 'hour':
+	                        curWidgetDate.setHours(curWidgetDate.getHours() + direction);
+
+	                        break;
+	                    case 'minute':
+	                        curWidgetDate.setMinutes(curWidgetDate.getMinutes() + direction);
+
+	                        break;
+	                    case 'second':
+	                        curWidgetDate.setSeconds(curWidgetDate.getSeconds() + direction);
+
+	                        break;
+	                }
+	                curOffset = curWidgetDate - new Date(oldWidgetDateStr);
+	                widget.timeOffset = widget.timeOffset || 0;
+	                widget.timeOffset += curOffset;
+
+	                this.draw();
+
+	                break;
+	        }
+	    },
 	    handleMoveNext: function (direction) {
 	        var page = this.state.project.pageList[this.state.curPageIdx];
 	        var curDirection;
@@ -21830,27 +21934,35 @@
 	            curDirection = 'right';
 	        }
 	        // console.log(page);
-	        if (page && page.linkedWidgets) {
-	            if (page.curHighlightIdx === undefined) {
-	                page.curHighlightIdx = 0;
-	            } else {
-	                page.linkedWidgets[page.curHighlightIdx].target.highlight = false;
-	                if (curDirection === 'right') {
-	                    page.curHighlightIdx = page.curHighlightIdx + 1;
-	                    if (page.curHighlightIdx >= page.linkedWidgets.length) {
-	                        page.curHighlightIdx = page.linkedWidgets.length - 1;
-	                    }
+	        if (this.simState.inModifingState) {
+	            //handle modifing highlighted widget
+	            if (page && page.linkedWidgets) {
+	                var targetWidget = page.linkedWidgets[page.curHighlightIdx].target;
+	                this.handleModifyHighlightingWidget(targetWidget, direction);
+	            }
+	        } else {
+	            if (page && page.linkedWidgets) {
+	                if (page.curHighlightIdx === undefined) {
+	                    page.curHighlightIdx = 0;
 	                } else {
-	                    page.curHighlightIdx = page.curHighlightIdx - 1;
-	                    if (page.curHighlightIdx < 0) {
-	                        page.curHighlightIdx = 0;
+	                    page.linkedWidgets[page.curHighlightIdx].target.highlight = false;
+	                    if (curDirection === 'right') {
+	                        page.curHighlightIdx = page.curHighlightIdx + 1;
+	                        if (page.curHighlightIdx >= page.linkedWidgets.length) {
+	                            page.curHighlightIdx = page.linkedWidgets.length - 1;
+	                        }
+	                    } else {
+	                        page.curHighlightIdx = page.curHighlightIdx - 1;
+	                        if (page.curHighlightIdx < 0) {
+	                            page.curHighlightIdx = 0;
+	                        }
 	                    }
 	                }
+	                page.linkedWidgets[page.curHighlightIdx].target.highlight = true;
+	                page.linkedWidgets[page.curHighlightIdx].target.highlightValue = page.linkedWidgets[page.curHighlightIdx].value;
+	                // console.log('highlighting',page);
+	                this.draw();
 	            }
-	            page.linkedWidgets[page.curHighlightIdx].target.highlight = true;
-	            page.linkedWidgets[page.curHighlightIdx].target.highlightValue = page.linkedWidgets[page.curHighlightIdx].value;
-	            // console.log('highlighting',page);
-	            this.draw();
 	        }
 	    },
 	    getRelativeRect: function (e) {
@@ -21915,20 +22027,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                    //switch
-	                    //if (widget.switchState) {
-	                    //	widget.switchState = !widget.switch
-	                    //}else{
-	                    //	widget.switchState = 1;
-	                    //}
-	                    //update its tag
-	                    var targetTag = this.findTagByName(widget.tag);
-	                    if (targetTag) {
-	                        targetTag.value = parseInt(targetTag.value);
-	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        //switch
+	                        //if (widget.switchState) {
+	                        //	widget.switchState = !widget.switch
+	                        //}else{
+	                        //	widget.switchState = 1;
+	                        //}
+	                        //update its tag
+	                        var targetTag = this.findTagByName(widget.tag);
+	                        if (targetTag) {
+	                            targetTag.value = parseInt(targetTag.value);
+	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        }
 	                    }
-	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
@@ -49334,10 +49446,26 @@
 	 */
 	var Utils = {};
 	var _ = __webpack_require__(161);
+	var ctx;
 	Utils.linkPageWidgets = linkPageWidgets;
 
 	function linkPageWidgets(page) {
 	    page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
+	}
+
+	function measureMetrics(text, font) {
+	    if (!ctx) {
+	        var curCanvas = document.createElement('canvas');
+	        ctx = curCanvas.getContext('2d');
+	    }
+	    ctx.save();
+	    if (font) {
+	        ctx.font = font;
+	    }
+
+	    var metrics = ctx.measureText(text);
+	    ctx.restore();
+	    return metrics.width;
 	}
 
 	function LinkedWidget(type, target, value, left, top) {
@@ -49384,9 +49512,16 @@
 	            case 'MyDateTime':
 	                var mode = curWidget.info.dateTimeModeId;
 	                var fontSize = curWidget.info.fontSize;
+	                var fontFamily = curWidget.info.fontFamily;
+	                var fontStr = fontSize + 'px ' + fontFamily;
+	                var delimiterWidth;
 	                if (mode == '0') {
-	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft + fontSize, curWidget.info.absouteTop));
-	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * fontSize));
+	                    delimiterWidth = measureMetrics(':', fontStr);
+	                    curWidget.delimiterWidth = delimiterWidth;
+	                    var eachWidth = (curWidget.info.width - 2 * delimiterWidth) / 3;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2, curWidget.info.absoluteTop));
 	                }
 	                break;
 	            default:

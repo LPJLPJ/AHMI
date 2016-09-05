@@ -3,12 +3,28 @@
  */
 var Utils = {};
 var _ = require('lodash');
+var ctx;
 Utils.linkPageWidgets = linkPageWidgets;
 
 function linkPageWidgets(page) {
     page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
 }
 
+
+function measureMetrics(text,font) {
+    if (!ctx){
+        var curCanvas = document.createElement('canvas');
+        ctx = curCanvas.getContext('2d');
+    }
+    ctx.save();
+    if (font){
+        ctx.font = font;
+    }
+
+    var metrics = ctx.measureText(text);
+    ctx.restore();
+    return  metrics.width;
+}
 
 function LinkedWidget(type, target, value, left, top) {
     this.type = type;
@@ -55,9 +71,16 @@ function linkWidgets(widgetList) {
             case 'MyDateTime':
                 var mode = curWidget.info.dateTimeModeId;
                 var fontSize = curWidget.info.fontSize;
+                var fontFamily = curWidget.info.fontFamily;
+                var fontStr = fontSize+'px '+fontFamily;
+                var delimiterWidth;
                 if(mode=='0'){
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft+fontSize,curWidget.info.absouteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*fontSize))
+                    delimiterWidth = measureMetrics(':',fontStr);
+                    curWidget.delimiterWidth = delimiterWidth;
+                    var eachWidth = (curWidget.info.width-2*delimiterWidth)/3;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2,curWidget.info.absoluteTop))
                 }
                 break;
             default:
