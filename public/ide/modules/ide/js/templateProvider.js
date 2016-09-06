@@ -778,6 +778,31 @@ ideServices
 
             }
         };
+        this.getDefaultVideo = function(){
+            var info = {
+                width:215,height:110,
+                left:0,top:0,
+                originX: 'center', originY: 'center',
+            };
+            return {
+                id:Math.random().toString(36).substr(2),
+                info:info,
+                name:'NewVideo',
+                type:Type.MyVideo,
+                expand:true,
+                zIndex:0,
+                texList:[{
+                        currentSliceIdx:0,
+                        name:'影像',
+                        slices:[{
+                            color:'rgba(252,94,34,1)',
+                            imgSrc:'',
+                            name:'影像'
+                        }]
+                    }]
+
+            }
+        };
 
 
         function _getRandomColor(){
