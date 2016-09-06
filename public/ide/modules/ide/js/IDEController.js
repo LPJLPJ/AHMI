@@ -346,7 +346,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             method:'GET',
             url:baseUrl+'/project/'+id+'/content'
         }).success(function (data) {
-            //console.log(data);
+            // console.log(data);
             LoadWithTemplate(data,id);
 
         }).error(function (msg) {
