@@ -3,7 +3,7 @@
  */
 
 ideServices.service('LinkPageWidgetsService', [function () {
-
+    var ctx;
     this.linkPageAllWidgets = linkPageAllWidgets;
 
     function linkPageWidgets(page) {
