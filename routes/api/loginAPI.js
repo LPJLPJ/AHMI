@@ -44,7 +44,7 @@ loginAPI.post = function(req, res){
     }
     req.session.captcha = null;
 
-
+    
 };
 
 module.exports = loginAPI;

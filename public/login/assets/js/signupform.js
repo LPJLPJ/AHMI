@@ -37,6 +37,16 @@ $(function () {
 
     init();
 
+    function isMailValid(_mail) {
+        if (_mail.match(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    window.isMailValid = isMailValid;
+
     function get(name) {
         return document.getElementById(name)
     }
@@ -152,6 +162,8 @@ $(function () {
                 mailVerify.innerHTML = ErrMessages.mail.wrong
             }
         })
+
+
 
         mail.addEventListener('blur', function () {
             var _mail = mail.value

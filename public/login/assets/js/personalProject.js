@@ -423,6 +423,12 @@ $(function(){
         }
     }
 
+    window.generateNewProjectView = generateNewProjectView;
+
+    function generateNewProjectView(project,thumbnail){
+       return new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+    }
+
 
     function addNewProject(newProject){
         console.log(newProject)
