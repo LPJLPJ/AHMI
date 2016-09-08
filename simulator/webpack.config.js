@@ -11,7 +11,7 @@ module.exports = {
         //register:"./src/js/register.js",
         //login:"./src/js/login.js",
         //personal:"./src/js/personal.js",
-        //test:"./src/js/test.js",
+        // test:"./src/js/test.js",
         simulator: "./src/js/simulator.js",
         // simulator:"../public/ide/modules/ide/js/parts/simulator"
     },

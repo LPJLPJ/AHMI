@@ -37,7 +37,8 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
     var loadStep=0;     //加载到了第几步,共8步
     var fs,path,__dirname;
-    
+
+    // showIDE();
 
 
     //var params=getUrlParams();
