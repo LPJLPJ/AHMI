@@ -286,7 +286,8 @@
                 <div class="navbar navbar-default">
                     <div class="collapse navbar-collapse">
                         <div class="nav navbar-nav navbar-right">
-                            <button id="play" type="button" class=" btn btn-default navbar-btn">运行</button>
+                            <button id="play" type="button" class=" btn btn-default navbar-btn"
+                                    ng-click="component.tool.runSimulator()">运行</button>
                             <button id="close" type="button" class=" btn btn-default navbar-btn"
                                     ng-click="component.tool.closeSimulator()">关闭
                             </button>
@@ -2442,7 +2443,6 @@
 
 <script language="javascript">
     for (i in document.images)document.images[i].ondragstart = imgdragstart;
-
 
 </script>
 <script type="text/javascript" src="../../public/ide/modules/ide/js/parts/simulator/simulator.bundle.js">

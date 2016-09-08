@@ -239,6 +239,8 @@ $(function(){
 
 
     $('#addproject').on('click', function (e) {
+        $('#basicinfo-title').val('');
+        $('#basicinfo-author').val('');
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         $('#modal-ok').html('创建')
@@ -408,6 +410,7 @@ $(function(){
                         console.log('success',data)
                         //update panel
                         updateSuccess = true;
+                        console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
                         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
                         curPanel.replaceWith(html)
 
@@ -431,9 +434,10 @@ $(function(){
 
 
     function addNewProject(newProject){
-        console.log(newProject)
+        // console.log(newProject)
+        // console.log(newProject,JSON.stringify(newProject));
         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
-        //console.log(html)
+        // console.log(html,JSON.stringify(html));
         $('#addproject').after(html)
     }
 })

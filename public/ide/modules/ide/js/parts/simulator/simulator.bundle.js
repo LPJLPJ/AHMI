@@ -44,34 +44,25 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	window.fucku = 'fucku';
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-
+	//
 	var Simulator = __webpack_require__(159);
 	var playButton = document.getElementById('play');
 	var simulatorContainer = document.getElementById('simulator-container');
-
-	//custom event
-	//(function () {
 	//
-	//    if ( typeof window.CustomEvent === "function" ) return false;
-	//
-	//    function CustomEvent ( event, params ) {
-	//        params = params || { bubbles: false, cancelable: false, detail: undefined };
-	//        var evt = document.createEvent( 'CustomEvent' );
-	//        evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-	//        return evt;
-	//    }
-	//
-	//    CustomEvent.prototype = window.Event.prototype;
-	//
-	//    window.CustomEvent = CustomEvent;
-	//})();
-	//
-	//var event = new CustomEvent("resetSimulator");
-
 	var closeButton = document.getElementById('close');
-
+	// window.runSimulator = runSimulator;
+	// function runSimulator(projectData) {
+	//     ReactDOM.render( < Simulator
+	//             projectData = {projectData||window.projectData
+	//             } />
+	//         ,
+	//         simulatorContainer
+	//     )
+	//     ;
+	// }
 	playButton.addEventListener('click', function () {
 
 	    ReactDOM.render(React.createElement(Simulator, {
@@ -19989,6 +19980,7 @@
 	        console.log('receive new project data', this.state.project);
 	        this.simState = {};
 	        this.initProject();
+	        window.inRawRect = this.inRawRect;
 	    },
 	    componentWillReceiveProps: function (newProps) {
 	        this.state.timerList.map(function (timer, i) {
@@ -20351,7 +20343,7 @@
 	                break;
 	        }
 	    },
-	    drawInputKeyboard(curX, curY, widget, options) {
+	    drawInputKeyboard: function (curX, curY, widget, options) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offCtx = offcanvas.getContext('2d');
 	        var tempcanvas = this.refs.tempcanvas;
@@ -20764,12 +20756,12 @@
 	            var time2 = parseInt(this.getValueByTagName('时钟变量2', 0)) || 0;
 	            var year, month, day, hour, minute, seconds;
 	            year = parseInt(time1 / 10000);
-	            month = parseInt((time1 - year * 10000) / 100);
+	            month = parseInt((time1 - year * 10000) / 100) - 1;
 	            day = time1 - year * 10000 - month * 100;
 
 	            hour = parseInt(time2 / 10000);
 	            minute = parseInt((time2 - hour * 10000) / 100);
-	            seconds = time2 - hour * 100 - minute * 100;
+	            seconds = time2 - hour * 10000 - minute * 100;
 
 	            curDate = new Date(year, month, day, hour, minute, seconds);
 	            console.log(year, month, day, hour, minute, seconds, curDate);
@@ -20911,7 +20903,7 @@
 	        offctx.restore();
 	    },
 	    drawHighLight: function (curX, curY, width, height) {
-	        this.drawBgColor(curX, curY, width, height, 'rgba(0,255,255,0.3)');
+	        this.drawBgColor(curX, curY, width, height, 'rgba(0,0,0,0.5)');
 	    },
 	    findValue: function (array, key1, value, key2) {
 	        for (var i = 0; i < array.length; i++) {

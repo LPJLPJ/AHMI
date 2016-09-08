@@ -4630,7 +4630,7 @@ ideServices
                 _self.OnPageClicked(pageIndex,null,skipClean);
                 pageNode.deactivateAll();
                 pageNode.renderAll();
-                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                currentPage.proJsonStr=pageNode.toJSON();
 
                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
@@ -4641,7 +4641,7 @@ ideServices
                     pageNode.deactivateAll();
 
                     pageNode.renderAll();
-                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    currentPage.proJsonStr=pageNode.toJSON();
 
                     currentPage.mode=0;
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -4655,7 +4655,7 @@ ideServices
 
                         pageNode.deactivateAll();
                         pageNode.renderAll();
-                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                        currentPage.proJsonStr=pageNode.toJSON();
 
 
                         currentPage.mode=0;
@@ -5128,7 +5128,7 @@ ideServices
 
                             subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
-                        currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                        currentSubLayer.proJsonStr=subLayerNode.toJSON();
 
                         currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                         renderingSubLayer=false;
@@ -5157,7 +5157,7 @@ ideServices
 
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
-                            currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                            currentSubLayer.proJsonStr= subLayerNode.toJSON();
                             currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
 
                             renderingSubLayer = false;

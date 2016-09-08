@@ -77,6 +77,7 @@
                     generateDataFile:generateDataFile,
                     play:play,
                     openPanel:openPanel,
+                    runSimulator:runSimulator,
                     closeSimulator:closeSimulator,
                     saveProject: saveProject.bind(null, null, true),
                     showLeft:showLeft,
@@ -700,6 +701,10 @@
 
             $scope.component.simulator.show = false;
 
+        }
+        
+        function runSimulator() {
+            // console.log(window.runSimulator);
         }
 
 
