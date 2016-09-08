@@ -3,7 +3,7 @@
  */
 
 ideServices.service('LinkPageWidgetsService', [function () {
-
+    var ctx;
     this.linkPageAllWidgets = linkPageAllWidgets;
 
     function linkPageWidgets(page) {
@@ -14,6 +14,21 @@ ideServices.service('LinkPageWidgetsService', [function () {
         page.linkedAllWidgets = linkWidgets(getPageAllInteractiveWidgets(page));
     }
 
+
+    function measureMetrics(text,font) {
+        if (!ctx){
+            var curCanvas = document.createElement('canvas');
+            ctx = curCanvas.getContext('2d');
+        }
+        ctx.save();
+        if (font){
+            ctx.font = font;
+        }
+
+        var metrics = ctx.measureText(text);
+        ctx.restore();
+        return  metrics.width;
+    }
 
     function LinkedWidget(type, target, value, left, top) {
         this.type = type;
@@ -48,11 +63,57 @@ ideServices.service('LinkPageWidgetsService', [function () {
                     }
                     for (var j = 0; j < curWidget.info.count; j++) {
 
+                        // linkedWidget.type = 'MyButtonGroup';
+                        // linkedWidget.target = curWidget;
+                        // linkedWidget.value = j;
+                        // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
+                        // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
                         linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? (j * (singleWidth + interval)) : 0), curWidget.info.absoluteTop + (hori ? 0 : (j * (singleHeight + interval)))));
                     }
 
                     break;
+                case 'MyDateTime':
+                    var mode = curWidget.info.dateTimeModeId;
+                    var fontSize = curWidget.info.fontSize;
+                    var fontFamily = curWidget.info.fontFamily;
+                    var fontStr = fontSize+'px '+fontFamily;
+                    var delimiterWidth;
+                    if(mode=='0'){
+                        delimiterWidth = measureMetrics(':',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-2*delimiterWidth)/3;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2,curWidget.info.absoluteTop))
+                    }else if (mode == '1'){
+                        delimiterWidth = measureMetrics(':',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-delimiterWidth)/2;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+
+                    }else if (mode == '2'){
+                        delimiterWidth = measureMetrics('/',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
+                    }else if (mode == '3'){
+                        delimiterWidth = measureMetrics('-',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
+                    }
+                    break;
                 default:
+                    // linkedWidget.type = curWidget.subType;
+                    // linkedWidget.target = curWidget;
+                    // linkedWidget.value = 0;
+                    // linkedWidget.left=curWidget.info.left;
+                    // linkedWidget.top=curWidget.info.top;
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
 
             }
@@ -120,6 +181,7 @@ ideServices.service('LinkPageWidgetsService', [function () {
         switch (widget.subType) {
             case 'MyButton':
             case 'MyButtonGroup':
+            case 'MyDateTime':
                 is = true;
                 break;
             default:

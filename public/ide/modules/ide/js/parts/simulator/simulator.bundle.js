@@ -20770,8 +20770,23 @@
 	        return colorArray;
 	    },
 	    getCurDateOriginalData: function (widget, source, offset) {
-	        if (source === 'outer') {} else {
-	            var curDate;
+	        var curDate;
+	        if (source === 'outer') {
+	            var time1 = parseInt(this.getValueByTagName('时钟变量1', 0)) || 0;
+	            var time2 = parseInt(this.getValueByTagName('时钟变量2', 0)) || 0;
+	            var year, month, day, hour, minute, seconds;
+	            year = parseInt(time1 / 10000);
+	            month = parseInt((time1 - year * 10000) / 100);
+	            day = time1 - year * 10000 - month * 100;
+
+	            hour = parseInt(time2 / 10000);
+	            minute = parseInt((time2 - hour * 10000) / 100);
+	            seconds = time2 - hour * 100 - minute * 100;
+
+	            curDate = new Date(year, month, day, hour, minute, seconds);
+	            console.log(year, month, day, hour, minute, seconds, curDate);
+	        } else {
+
 	            // if (widget.baseDate===undefined){
 	            //     widget.baseDate = new Date();
 	            // }
@@ -20791,7 +20806,13 @@
 	        var fontFamily = widget.info.fontFamily;
 	        var fontSize = widget.info.fontSize;
 	        var fontColor = widget.info.fontColor;
-	        var curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
+	        var curDate;
+	        if (widget.info.RTCModeId == '0') {
+	            curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
+	        } else {
+	            curDate = this.getCurDateOriginalData(widget, 'outer');
+	        }
+
 	        var dateTimeString = '';
 	        if (dateTimeModeId == '0') {
 	            //time
@@ -49586,15 +49607,23 @@
 	    var allWidgets = [];
 	    var curSubCanvas;
 	    var curCanvas;
+	    var count = 0;
+	    var widget;
 	    for (var i = 0; i < page.canvasList.length; i++) {
 	        //get all widgets
 	        curCanvas = page.canvasList[i];
 	        for (var j = 0; j < curCanvas.subCanvasList.length; j++) {
 	            curSubCanvas = curCanvas.subCanvasList[j];
-	            curSubCanvas.widgetList.map(function (widget) {
+	            // curSubCanvas.widgetList.map(function (widget) {
+	            //     widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+	            //     widget.info.absoluteTop = widget.info.top + curCanvas.y;
+	            // });
+	            for (var k = 0; k < curSubCanvas.widgetList.length; k++) {
+	                widget = curSubCanvas.widgetList[k];
+	                widget.wId = count++;
 	                widget.info.absoluteLeft = widget.info.left + curCanvas.x;
 	                widget.info.absoluteTop = widget.info.top + curCanvas.y;
-	            });
+	            }
 	            allWidgets = allWidgets.concat(curSubCanvas.widgetList);
 	        }
 	    }

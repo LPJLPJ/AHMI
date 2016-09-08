@@ -55,6 +55,9 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyButton:
                 triggers = [tRelease];
                 break;
+            case Type.MyButtonGroup:
+                triggers = [tRelease];
+                break;
             case Type.MyScriptTrigger:
             case Type.MyProgress:
             case Type.MyDashboard:

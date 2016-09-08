@@ -126,14 +126,22 @@ function getPageAllInteractiveWidgets(page) {
     var allWidgets = [];
     var curSubCanvas;
     var curCanvas;
+    var count = 0;
+    var widget;
     for (var i = 0; i < page.canvasList.length; i++) {//get all widgets
         curCanvas = page.canvasList[i];
         for (var j = 0; j < curCanvas.subCanvasList.length; j++) {
             curSubCanvas = curCanvas.subCanvasList[j];
-            curSubCanvas.widgetList.map(function (widget) {
+            // curSubCanvas.widgetList.map(function (widget) {
+            //     widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+            //     widget.info.absoluteTop = widget.info.top + curCanvas.y;
+            // });
+            for (var k=0;k<curSubCanvas.widgetList.length;k++){
+                widget = curSubCanvas.widgetList[k];
+                widget.wId = count++;
                 widget.info.absoluteLeft = widget.info.left + curCanvas.x;
                 widget.info.absoluteTop = widget.info.top + curCanvas.y;
-            });
+            }
             allWidgets = allWidgets.concat(curSubCanvas.widgetList);
         }
 
