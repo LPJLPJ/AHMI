@@ -88,7 +88,16 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
 
 
         if (Type.isWidget(currentSelectedObject.type)){
-            $scope.showTexPanel = true;
+            //$scope.showTexPanel = true;
+            switch (currentSelectedObject.type){
+                case "MyDateTime" :
+                case "MyVideo":
+                case "MyNum":
+                    $scope.showTexPanel=false;
+                    break;
+                default :
+                    $scope.showTexPanel = true;
+            }
         }else{
             $scope.showTexPanel = false;
         }

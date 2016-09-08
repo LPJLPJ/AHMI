@@ -657,6 +657,9 @@ module.exports =   React.createClass({
             case 'MyScriptTrigger':
                 this.drawScriptTrigger(curX,curY,widget,options);
                 break;
+            case 'MyVideo':
+                this.drawVideo(curX,curY,widget,options);
+                break;
             case 'MyInputKeyboard':
                 this.drawInputKeyboard(curX, curY, widget, options);
                 break;
@@ -1050,6 +1053,15 @@ module.exports =   React.createClass({
         this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
         widget.oldValue = curScriptTrigger;
     },
+    drawVideo:function(curX,curY,widget,options){
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var offcanvas = this.refs.offcanvas;
+        var offctx = offcanvas.getContext('2d');
+        offctx.fillStyle=widget.texList[0].slices[0].color;
+        offctx.fillRect(curX,curY,width,height);
+    },
+
     drawCursor:function(beginX, beginY, width, height, align,alignLimit, img,color) {
 
         var cursorImg  = this.getImage(img);

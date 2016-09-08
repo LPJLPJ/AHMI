@@ -2137,6 +2137,9 @@ ideServices
                     if(arg.align){
                         self.align=arg.align;
                     }
+                    if(arg.fontColor){
+                        self.fontColor=arg.fontColor;
+                    }
 
                     //设置宽高
                     if(self.numOfDigits&&self.fontSize){
@@ -2170,7 +2173,7 @@ ideServices
 
 
 
-                    offCtx.fillStyle=this.backgroundColor;
+                    offCtx.fillStyle=this.fontColor;
                     offCtx.fillRect(0,0,this.width,this.height);
                     if (this.backgroundImageElement) {
                         offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
@@ -2634,6 +2637,49 @@ ideServices
 
 
 
+        fabric.MyVideo = fabric.util.createClass(fabric.Object, {
+            type: Type.MyVideo,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染Slide出错');
+                }
+            }
+        });
+        fabric.MyVideo.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyVideo(level, option));
+        }
+        fabric.MyVideo.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundColor:this.backgroundColor,
+                });
+            }
+        })(fabric.MyVideo.prototype.toObject);
+        fabric.MyVideo.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyVideo(level, object));
+        };
+        fabric.MyVideo.async = true;
+
         fabric.MySlide = fabric.util.createClass(fabric.Object, {
             type: Type.MySlide,
             initialize: function (level, options) {
@@ -2645,29 +2691,12 @@ ideServices
                 var tex=level.texList[0];
                 this.currentColor=tex.slices[tex.currentSliceIdx].color;
 
-                //如果没有url,element置为空
-                // if (tex.slices[tex.currentSliceIdx].imgSrc!=''){
-                //     this.currentImageElement=new Image();
-                //     this.currentImageElement.src=tex.slices[tex.currentSliceIdx].imgSrc;
-                //     this.currentImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.currentImageElement=null;
-                // }
-
                 this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
                 if (this.currentImageElement) {
                     this.loaded = true;
                     this.setCoords();
                     this.fire('image:loaded');
                 }
-
-
-
                 this.on('changeTex', function (arg) {
 
                     var level=arg.level;
@@ -2675,18 +2704,7 @@ ideServices
 
                     var tex=level.texList[0];
                     self.currentColor=tex.slices[tex.currentSliceIdx].color;
-                    // if (tex.slices[tex.currentSliceIdx].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[tex.currentSliceIdx].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.currentImageElement=currentImageElement;
-                    // }else {
-                    //     self.currentImageElement=null;
-                    // }
-
                     self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
-
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -3727,6 +3745,22 @@ ideServices
             }else if(_newWidget.type==Type.MySlideBlock){
                 fabric.MySlideBlock.fromLevel(_newWidget,function(fabWidget){
                     _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                    currentSubLayer.widgets.push(_newWidget);
+                    currentSubLayer.currentFabWidget=fabWidget;
+
+                    OnWidgetSelected(_newWidget,_successCallback);
+                },initiator);
+            }else if(_newWidget.type==Type.MyVideo){
+                fabric.MyVideo.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabLayerIdList=[fabWidget.id];
                     fabWidget.urls=_newWidget.subSlides;
                     subLayerNode.add(fabWidget);
                     subLayerNode.renderAll.bind(subLayerNode)();
@@ -5934,6 +5968,11 @@ ideServices
                 var tempFontItalic=_option.fontItalic;
                 selectObj.level.info.fontItalic=tempFontItalic;
                 arg.fontItalic=tempFontItalic;
+            }
+            if(_option.hasOwnProperty('fontColor')){
+                var tempFontColor=_option.fontColor;
+                selectObj.level.info.fontColor=tempFontColor;
+                arg.fontColor=tempFontColor;
             }
 
             //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式
