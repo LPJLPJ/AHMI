@@ -92,6 +92,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
             switch (currentSelectedObject.type){
                 case "MyDateTime" :
                 case "MyVideo":
+                case "MyNum":
                     $scope.showTexPanel=false;
                     break;
                 default :

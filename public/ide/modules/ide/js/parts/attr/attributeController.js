@@ -621,6 +621,10 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 })
+            }else if(selectObj.type==Type.MyNum){
+                ProjectService.ChangeAttributeNumContent(option,function(oldOperate){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
             }
         }
         if(op.name=='component.object.level.info.lineColor'){

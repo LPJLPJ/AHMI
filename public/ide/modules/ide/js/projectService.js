@@ -2137,6 +2137,9 @@ ideServices
                     if(arg.align){
                         self.align=arg.align;
                     }
+                    if(arg.fontColor){
+                        self.fontColor=arg.fontColor;
+                    }
 
                     //设置宽高
                     if(self.numOfDigits&&self.fontSize){
@@ -2170,7 +2173,7 @@ ideServices
 
 
 
-                    offCtx.fillStyle=this.backgroundColor;
+                    offCtx.fillStyle=this.fontColor;
                     offCtx.fillRect(0,0,this.width,this.height);
                     if (this.backgroundImageElement) {
                         offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
@@ -5965,6 +5968,11 @@ ideServices
                 var tempFontItalic=_option.fontItalic;
                 selectObj.level.info.fontItalic=tempFontItalic;
                 arg.fontItalic=tempFontItalic;
+            }
+            if(_option.hasOwnProperty('fontColor')){
+                var tempFontColor=_option.fontColor;
+                selectObj.level.info.fontColor=tempFontColor;
+                arg.fontColor=tempFontColor;
             }
 
             //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式
