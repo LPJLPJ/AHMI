@@ -18,7 +18,7 @@ ideServices
             name: "",
             register: false,
             indexOfRegister: null,
-            writeOrRead:'false',
+            //writeOrRead:'false',
             value: null
         };
         var curPageTag = new Tag('当前页面序号', true, -1, 'true', 0, 'system');
@@ -217,7 +217,7 @@ ideServices
                 //
                 // timerTags[5+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
                 // timerTags[5+(i*6)].name="SysTmr_"+i+"_Mode";
-                timerTags[i]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
+                timerTags[i]={ name: "", register: false, indexOfRegister: null, value: 0};
                 timerTags[i].name="SysTmr_"+i+"_t";
 
 
