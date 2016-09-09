@@ -588,15 +588,15 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                //texList:[{
-                //    name:'数字',
-                //    currentSliceIdx:0,
-                //    slices:[{
-                //        color:'rgba(120,120,120,1)',
-                //        imgSrc:'',
-                //        name:'数字背景'
-                //    }]
-                //}]
+                texList:[{
+                    name:'数字',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(120,120,120,1)',
+                        imgSrc:'',
+                        name:'数字背景'
+                    }]
+                }]
             }
         };
 

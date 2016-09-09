@@ -2065,7 +2065,9 @@ ideServices
                 this.lockRotation=true;
                 this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
                 this.hasRotatingPoint=false;
-                this.backgroundColor=level.texList[0].slices[0].color;
+                //this.backgroundColor=level.texList[0].slices[0].color;
+                this.backgroundColor=level.info.fontColor;
+
 
                 this.numValue=level.info.numValue;
                 this.fontFamily=level.info.fontFamily;
