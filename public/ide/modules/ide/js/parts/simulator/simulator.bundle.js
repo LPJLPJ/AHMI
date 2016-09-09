@@ -20801,15 +20801,15 @@
 	            var time2 = parseInt(this.getValueByTagName('时钟变量2', 0)) || 0;
 	            var year, month, day, hour, minute, seconds;
 	            year = parseInt(time1 / 10000);
-	            month = parseInt((time1 - year * 10000) / 100) - 1;
+	            month = parseInt((time1 - year * 10000) / 100);
 	            day = time1 - year * 10000 - month * 100;
 
 	            hour = parseInt(time2 / 10000);
 	            minute = parseInt((time2 - hour * 10000) / 100);
 	            seconds = time2 - hour * 10000 - minute * 100;
-
-	            curDate = new Date(year, month, day, hour, minute, seconds);
-	            console.log(year, month, day, hour, minute, seconds, curDate);
+	            var realMonth = month - 1;
+	            curDate = new Date(year, realMonth, day, hour, minute, seconds);
+	            console.log(year, realMonth, day, hour, minute, seconds, curDate);
 	        } else {
 
 	            // if (widget.baseDate===undefined){
@@ -21814,7 +21814,17 @@
 	                if (widget.curValue == '0') {
 	                    widget.curValue = curKey.value;
 	                } else {
-	                    widget.curValue += curKey.value;
+	                    if (widget.curValue[0] === '-') {
+	                        // -
+	                        if (widget.curValue.length < 10) {
+	                            widget.curValue += curKey.value;
+	                        }
+	                    } else {
+	                        // +
+	                        if (widget.curValue.length < 9) {
+	                            widget.curValue += curKey.value;
+	                        }
+	                    }
 	                }
 	                break;
 	            case 'back':
