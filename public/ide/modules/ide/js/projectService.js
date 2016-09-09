@@ -6107,8 +6107,11 @@ ideServices
         this.ChangeAttributeDateTimeText = function(_option,_successCallback){
             var selectObj=_self.getCurrentSelectObject();
             var arg={
-                    level:selectObj.level,
-                    callback:_successCallback
+                level:selectObj.level,
+                callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
                 }
 
             if(_option.hasOwnProperty('fontFamily')){
