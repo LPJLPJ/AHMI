@@ -4,6 +4,7 @@
 ;(function () {
     window.onload = function () {
         var versionNum = 'beta: 1.1.2';
+        window.ideVersion = versionNum;
         var versionTag = document.createElement('div');
         versionTag.id = 'version-tag';
         versionTag.innerHTML = versionNum;

@@ -267,6 +267,7 @@ $(function(){
         var resolution = $('#basicinfo-resolution')
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
+
         if (title.val().trim()!=''&&resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
             //create
             project.name = title.val().trim();
