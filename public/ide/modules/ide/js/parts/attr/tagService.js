@@ -173,6 +173,9 @@ ideServices
 
         //通过index删除一个tag
         this.deleteTagByIndex=function(index,cb){
+            if(tags[index].indexOfRegister!=(-1)){
+                index=index+2;
+            }
             if((index>=0)&&(index<=tags.length-1)){
                 tags.splice(index,1);
                 cb && cb();

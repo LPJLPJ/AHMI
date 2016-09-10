@@ -284,6 +284,7 @@ ide.
                 }
             }
             TagService.deleteTagByIndex(index);
+            readTagsInfo();
         }
 
         //点击list里的自定义tag名称，将其先显示编辑面板上。
