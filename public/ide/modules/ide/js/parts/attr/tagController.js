@@ -137,7 +137,7 @@ ide.
         }
 
         function readTagsInfo(){
-            $scope.component.allCustomTags = TagService.getAllCustomTags();
+            $scope.component.allCustomTags = TagService.getAllCustomTagsExceptTimer();
             $scope.component.allTimerTags = TagService.getAllTimerTags();
             $scope.component.allTags = TagService.getAllTags();
             $scope.component.timerNum = TagService.getTimerNum();

@@ -127,6 +127,14 @@ ideServices
         this.getAllCustomTags=function(){
             return tags;
         };
+        this.getAllCustomTagsExceptTimer=function(){
+            var newTags = tags.filter(function(item){
+                if(item.indexOfRegister!=(-2)){
+                    return item;
+                }
+            });
+            return newTags;
+        };
 
         //返回所有的timerTags
         this.getAllTimerTags=function(){
