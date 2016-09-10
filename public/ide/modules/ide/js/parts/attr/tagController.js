@@ -262,6 +262,7 @@ ide.
                 case Type.MyRotateImg:
                 case Type.MyScriptTrigger:
                 case Type.MySlideBlock:
+                case Type.MyVideo:
                     $scope.showTagPanel = true;
                     break;
                 default:

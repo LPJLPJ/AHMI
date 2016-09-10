@@ -6,6 +6,7 @@ var RegisterList = require('./RegisterList');
 var LoadState = require('./LoadState');
 var InputKeyboard = require('./inputKeyboard');
 var Utils = require('../utils/utils');
+var VideoSource = require('./VideoSource');
 
 var sep = '/';
 var defaultState = {
@@ -38,6 +39,7 @@ var defaultSimulator = {
     resourceList: [],
     imageList: [],
     timerList: [],
+    innerTimerList:[],
     currentPressedTargets: [],
     totalResourceNum: 0
 }
@@ -50,7 +52,11 @@ module.exports =   React.createClass({
               var curTimeID = timer.timerID;
               clearInterval(curTimeID);
           }.bind(this));
+        this.state.innerTimerList.map(function (timerId) {
+            clearInterval(timerId);
+        }.bind(this));
         this.simState = {};
+        VideoSource.pause();
     },
     initCanvas: function (data, callBack) {
         var i;
@@ -154,7 +160,9 @@ module.exports =   React.createClass({
             timerList.push(newTimer);
         }
 
-        this.state.timerList = timerList
+        this.setState({timerList:timerList});
+
+
         console.log('timerList loaded', timerList)
 
         //loading resources
@@ -284,6 +292,7 @@ module.exports =   React.createClass({
             clearInterval(curTimeID);
         }.bind(this));
         this.simState = {};
+        VideoSource.setVideoSrc('');
         this.state = _.cloneDeep(defaultSimulator);
         this.state.project = _.cloneDeep(newProps.projectData);
         this.initProject();
@@ -373,12 +382,20 @@ module.exports =   React.createClass({
 
 
     },
+    getRawValueByTagName:function (name) {
+        var curTag = this.findTagByName(name);
+        if (curTag) {
+            return curTag.value;
+        } else{
+            return null;
+        }
+    },
     getValueByTagName: function (name, defaultValue) {
         var curTag = this.findTagByName(name);
         if (curTag && curTag.value != undefined) {
-            return curTag.value;
+            return Number(curTag.value);
         } else if (defaultValue) {
-            return defaultValue;
+            return Number(defaultValue);
         } else {
             return null
         }
@@ -1060,6 +1077,23 @@ module.exports =   React.createClass({
         var offctx = offcanvas.getContext('2d');
         offctx.fillStyle=widget.texList[0].slices[0].color;
         offctx.fillRect(curX,curY,width,height);
+        //draw video
+        var videoSrc = this.getRawValueByTagName(widget.tag);
+        // var videoSrc = 'http://blog.zzen1ss.me/media/video/saraba.mp4';
+        if(VideoSource.setVideoSrc(videoSrc)){
+            //first set
+            VideoSource.play();
+        }
+        //draw video
+        offctx.drawImage(VideoSource.videoObj,curX,curY,width,height);
+        if (!(widget.timerId && widget.timerId!==0)){
+            widget.timerId = setInterval(function () {
+                this.draw();
+            }.bind(this),40);
+            var innerTimerList = this.state.innerTimerList;
+            innerTimerList.push(widget.timerId);
+            this.setState({innerTimerList:innerTimerList});
+        }
     },
 
     drawCursor:function(beginX, beginY, width, height, align,alignLimit, img,color) {
@@ -1104,15 +1138,15 @@ module.exports =   React.createClass({
             var time2 = parseInt(this.getValueByTagName('时钟变量2',0))||0;
             var year,month,day,hour,minute,seconds;
             year = parseInt(time1/10000);
-            month = parseInt((time1-year*10000)/100)-1;
+            month = parseInt((time1-year*10000)/100);
             day = (time1-year*10000-month*100);
 
             hour = parseInt(time2/10000);
             minute = parseInt((time2-hour*10000)/100);
             seconds = (time2-hour*10000-minute*100);
-
-            curDate = new Date(year,month,day,hour,minute,seconds);
-            console.log(year,month,day,hour,minute,seconds,curDate)
+            var realMonth = month - 1;
+            curDate = new Date(year,realMonth,day,hour,minute,seconds);
+            console.log(year,realMonth,day,hour,minute,seconds,curDate)
 
         }else{
 
@@ -1199,6 +1233,9 @@ module.exports =   React.createClass({
             widget.timerId = setInterval(function () {
                 this.draw();
             }.bind(this),1000)
+            var innerTimerList = this.state.innerTimerList;
+            innerTimerList.push(widget.timerId);
+            this.setState({innerTimerList:innerTimerList});
         }
     },
     getCurTime:function (date) {
@@ -1257,7 +1294,7 @@ module.exports =   React.createClass({
 
     },
     drawHighLight: function (curX, curY, width, height) {
-        this.drawBgColor(curX, curY, width, height, 'rgba(0,0,0,0.5)');
+        this.drawBgColor(curX, curY, width, height, 'rgba(244,244,244,0.3)');
     },
     findValue: function (array, key1, value, key2) {
         for (var i = 0; i < array.length; i++) {
@@ -2152,7 +2189,17 @@ module.exports =   React.createClass({
                 if (widget.curValue == '0') {
                     widget.curValue = curKey.value;
                 } else {
-                    widget.curValue += curKey.value;
+                    if (widget.curValue[0]==='-'){
+                        // -
+                        if (widget.curValue.length<10){
+                            widget.curValue += curKey.value;
+                        }
+                    }else{
+                        // +
+                        if (widget.curValue.length<9){
+                            widget.curValue += curKey.value;
+                        }
+                    }
                 }
                 break;
             case 'back':

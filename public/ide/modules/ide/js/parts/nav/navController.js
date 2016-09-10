@@ -261,7 +261,7 @@
                     curScope.project.customTags = TagService.getAllCustomTags();
                     curScope.project.timerTags = TagService.getAllTimerTags();
                     curScope.project.timers = TagService.getTimerNum();
-
+                    curScope.project.version = window.ideVersion;
                     var currentProject = curScope.project;
                     // console.log(currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);

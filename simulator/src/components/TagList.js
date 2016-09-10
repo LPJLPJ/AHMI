@@ -38,7 +38,7 @@ module.exports = React.createClass({
             if (this.state.curTagIdx != -1) {
 
                 this.setState({tagOldValue: 'old'});
-                this.updateTag(this.state.curTagIdx, Number(e.target.value));
+                this.updateTag(this.state.curTagIdx, e.target.value);
             }
         }
     },
@@ -54,7 +54,7 @@ module.exports = React.createClass({
             if (e.target.value == '') {
                 curTag.value = '';
             } else {
-                curTag.value = Number(e.target.value);
+                curTag.value = e.target.value;
             }
 
             this.setState({curTag: curTag});
