@@ -137,7 +137,7 @@ ide.
         }
 
         function readTagsInfo(){
-            $scope.component.allCustomTags = TagService.getAllCustomTagsExceptTimer();
+            $scope.component.allCustomTags = TagService.getAllCustomTags();
             $scope.component.allTimerTags = TagService.getAllTimerTags();
             $scope.component.allTags = TagService.getAllTags();
             $scope.component.timerNum = TagService.getTimerNum();
@@ -284,8 +284,9 @@ ide.
                     return;
                 }
             }
-            TagService.deleteTagByIndex(index);
-            readTagsInfo();
+            TagService.deleteTagByIndex(index,function(){
+                readTagsInfo();
+            }.bind(this));
         }
 
         //点击list里的自定义tag名称，将其先显示编辑面板上。

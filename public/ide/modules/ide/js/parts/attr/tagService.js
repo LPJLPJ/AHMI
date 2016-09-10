@@ -24,7 +24,7 @@ ideServices
         var curPageTag = new Tag('当前页面序号', true, -1, 'true', 0, 'system');
         var RTCTag1 = new Tag('时钟变量1', true, -2, 'true', 0, 'system');
         var RTCTag2 = new Tag('时钟变量2', true, -2, 'true', 0, 'system');
-        var sysTags = [curPageTag, RTCTag1, RTCTag2];
+        var sysTags = [curPageTag];
         var tags = sysTags;
         var timerTags=[];
         var timerNum=0;
@@ -127,6 +127,8 @@ ideServices
         this.getAllCustomTags=function(){
             return tags;
         };
+
+        //用户返回除了time的所有tag，现在不需要了
         this.getAllCustomTagsExceptTimer=function(){
             var newTags = tags.filter(function(item){
                 if(item.indexOfRegister!=(-2)){
@@ -173,9 +175,9 @@ ideServices
 
         //通过index删除一个tag
         this.deleteTagByIndex=function(index,cb){
-            if(tags[index].indexOfRegister!=(-1)){
-                index=index+2;
-            }
+            //if(tags[index].indexOfRegister!=(-1)){
+            //    index=index+2;
+            //}
             if((index>=0)&&(index<=tags.length-1)){
                 tags.splice(index,1);
                 cb && cb();
