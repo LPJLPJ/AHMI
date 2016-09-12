@@ -1134,8 +1134,8 @@ module.exports =   React.createClass({
     getCurDateOriginalData:function (widget,source,offset) {
         var curDate;
         if (source === 'outer'){
-            var time1 = parseInt(this.getValueByTagName('时钟变量1',0))||0;
-            var time2 = parseInt(this.getValueByTagName('时钟变量2',0))||0;
+            var time1 = parseInt(this.getValueByTagName('时钟变量年月日',0))||0;
+            var time2 = parseInt(this.getValueByTagName('时钟变量时分秒',0))||0;
             var year,month,day,hour,minute,seconds;
             year = parseInt(time1/10000);
             month = parseInt((time1-year*10000)/100);

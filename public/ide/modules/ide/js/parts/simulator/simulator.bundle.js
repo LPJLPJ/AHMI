@@ -19719,7 +19719,7 @@
 	var LoadState = __webpack_require__(165);
 	var InputKeyboard = __webpack_require__(166);
 	var Utils = __webpack_require__(167);
-	var VideoSource = __webpack_require__(169);
+	var VideoSource = __webpack_require__(168);
 
 	var sep = '/';
 	var defaultState = {
@@ -19735,7 +19735,7 @@
 	};
 
 	try {
-	    var os = __webpack_require__(168);
+	    var os = __webpack_require__(169);
 	    var platform = os.platform();
 	    if (platform === 'win32') {
 	        sep = '\\';
@@ -20797,8 +20797,8 @@
 	    getCurDateOriginalData: function (widget, source, offset) {
 	        var curDate;
 	        if (source === 'outer') {
-	            var time1 = parseInt(this.getValueByTagName('时钟变量1', 0)) || 0;
-	            var time2 = parseInt(this.getValueByTagName('时钟变量2', 0)) || 0;
+	            var time1 = parseInt(this.getValueByTagName('时钟变量年月日', 0)) || 0;
+	            var time2 = parseInt(this.getValueByTagName('时钟变量时分秒', 0)) || 0;
 	            var year, month, day, hour, minute, seconds;
 	            year = parseInt(time1 / 10000);
 	            month = parseInt((time1 - year * 10000) / 100);
@@ -49712,6 +49712,35 @@
 /* 168 */
 /***/ function(module, exports) {
 
+	/**
+	 * Created by ChangeCheng on 16/9/8.
+	 */
+	var curVideo = document.createElement('video');
+	curVideo.setAttribute('muted', true);
+	var VideoSource = {};
+	VideoSource.videoObj = curVideo;
+	VideoSource.setVideoSrc = function (src) {
+	    if (curVideo.src != src) {
+	        curVideo.src = src;
+	        return true;
+	    } else {
+	        return false;
+	    }
+	};
+	VideoSource.play = function () {
+	    curVideo.play();
+	};
+
+	VideoSource.pause = function () {
+	    curVideo.pause();
+	};
+
+	module.exports = VideoSource;
+
+/***/ },
+/* 169 */
+/***/ function(module, exports) {
+
 	exports.endianness = function () { return 'LE' };
 
 	exports.hostname = function () {
@@ -49758,35 +49787,6 @@
 
 	exports.EOL = '\n';
 
-
-/***/ },
-/* 169 */
-/***/ function(module, exports) {
-
-	/**
-	 * Created by ChangeCheng on 16/9/8.
-	 */
-	var curVideo = document.createElement('video');
-	curVideo.setAttribute('muted', true);
-	var VideoSource = {};
-	VideoSource.videoObj = curVideo;
-	VideoSource.setVideoSrc = function (src) {
-	    if (curVideo.src != src) {
-	        curVideo.src = src;
-	        return true;
-	    } else {
-	        return false;
-	    }
-	};
-	VideoSource.play = function () {
-	    curVideo.play();
-	};
-
-	VideoSource.pause = function () {
-	    curVideo.pause();
-	};
-
-	module.exports = VideoSource;
 
 /***/ }
 /******/ ]);
