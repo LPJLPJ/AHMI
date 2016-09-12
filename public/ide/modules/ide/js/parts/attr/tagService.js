@@ -128,14 +128,13 @@ ideServices
             return tags;
         };
 
-        //用户返回除了time的所有tag，现在不需要了
-        this.getAllCustomTagsExceptTimer=function(){
-            var newTags = tags.filter(function(item){
-                if(item.indexOfRegister!=(-2)){
+        //用户返回除了time的所有tag，
+        this.getAllCustomTagsExceptSys=function(){
+            return tags.filter(function(item){
+                if(item.type!='system'){
                     return item;
                 }
             });
-            return newTags;
         };
 
         //返回所有的timerTags

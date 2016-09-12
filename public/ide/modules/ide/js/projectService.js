@@ -6098,9 +6098,13 @@ ideServices
             var selectObj= _self.getCurrentSelectObject();
             selectObj.level.info.dateTimeModeId=dateTimeModeId;
             selectObj.level.info.RTCModeId=RTCModeId;
-            arg={
+            var arg={
+                level:selectObj.level,
                 dateTimeModeId:dateTimeModeId,
-                callback:_successCallback
+                callback:function(){
+                    var currentWidget=selectObj.level;
+                    OnWidgetSelected(currentWidget,_successCallback);
+                }
             };
             selectObj.target.fire('changeDateTimeModeId',arg);
         };

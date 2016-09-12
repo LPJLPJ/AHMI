@@ -13,6 +13,7 @@ ide.
             $scope.component={
                 selectedTag:{},
                 allCustomTags:null,
+                allTagsExceptSys:null,
                 allTimerTags:null,
                 visibleOfList:true,
                 indexOfTagInList:null,
@@ -28,7 +29,9 @@ ide.
                 selectedTagFun:selectedTagFun,
 
                 setTimerNum:setTimerNum,
-                restoreTimerNum:restoreTimerNum
+                restoreTimerNum:restoreTimerNum,
+
+                readTags:readTags
             };
             readTagsInfo();
             //判断属性type，用于在选择了多组canvas或多个控件时，不显示tag和action
@@ -141,6 +144,7 @@ ide.
             $scope.component.allTimerTags = TagService.getAllTimerTags();
             $scope.component.allTags = TagService.getAllTags();
             $scope.component.timerNum = TagService.getTimerNum();
+            $scope.component.allTagsExceptSys = TagService.getAllCustomTagsExceptSys();
         }
         function noDuplication(tag,tags){
             for(var i=0;i<tags.length;i++){
@@ -349,7 +353,10 @@ ide.
          */
         function selectedTagFun(){
             ProjectService.ChangeAttributeTag($scope.component.selectedTag);
+        }
 
+        function readTags(){
+            readTagsInfo();
         }
 
         function setTimerNum(ev){
