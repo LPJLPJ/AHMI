@@ -80,10 +80,10 @@ ide.
             }else {
                 if (type == 'timer'){
                     //timer tag
-                    targetTag = $scope.component.allTimerTags[index];
+                    targetTag =_.cloneDeep($scope.component.allTimerTags[index]);
                 }else{
                     //custom tag
-                    targetTag = $scope.component.allCustomTags[index];
+                    targetTag =_.cloneDeep($scope.component.allCustomTags[index]);
 
                 }
             }
@@ -131,7 +131,7 @@ ide.
                         readTagsInfo();
                     }.bind(this));
                 }
-            }, function () {
+            }, function (newTag) {
                 console.log('Modal dismissed at: ' + new Date());
             });
         }
