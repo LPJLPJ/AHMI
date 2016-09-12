@@ -21,10 +21,10 @@ ideServices
             //writeOrRead:'false',
             value: null
         };
-        var curPageTag = new Tag('当前页面序号', true, -1, 'true', 0, 'system');
-        var RTCTag1 = new Tag('时钟变量1', true, -2, 'true', 0, 'system');
-        var RTCTag2 = new Tag('时钟变量2', true, -2, 'true', 0, 'system');
-        var sysTags = [curPageTag];
+        var curPageTag = new Tag('当前页面序号', true, 1, 'true', 0, 'system');
+        var RTCTag1 = new Tag('时钟变量年月日', true, 2, 'true', 0, 'system');
+        var RTCTag2 = new Tag('时钟变量时分秒', true, 3, 'true', 0, 'system');
+        var sysTags = [curPageTag,RTCTag1,RTCTag2];
         var tags = sysTags;
         var timerTags=[];
         var timerNum=0;

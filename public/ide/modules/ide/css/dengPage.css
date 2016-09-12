@@ -397,7 +397,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 125px;
-    width: 90px;
+    width: 100px;
     white-space: nowrap;
 }
 .deng-attr-item .listTable tr .tagReg{
