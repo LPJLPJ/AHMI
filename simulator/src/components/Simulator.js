@@ -1445,6 +1445,7 @@ module.exports =   React.createClass({
         //offCtx.scale(1/this.scaleX,1/this.scaleY);
         var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
         //offCtx.fillStyle = this.numColor;
+        console.log('keke',numColor);
         tempCtx.font = numString;
         tempCtx.textAlign=widget.info.align;
         tempCtx.textAlign = tempCtx.textAlign||'center';
@@ -1466,7 +1467,11 @@ module.exports =   React.createClass({
 
 
                 //drawbackground
-                var bgTex = widget.texList[0].slices[0]
+                var bgTex = {
+                    color:numColor,
+                    imgSrc:'',
+                    name:'数字背景'
+                }
                 // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
                 // tempCtx.globalCompositeOperation = "destination-in";
                 // console.log(tempNumValue);
