@@ -2138,7 +2138,7 @@
                             <form class="deng-tagModel">
                                 <fieldset>
                                     <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
-                                    <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15"/>
+                                    <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type=='system'"/>
                                 </fieldset>
 
                                 <fieldset>

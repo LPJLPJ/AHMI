@@ -284,6 +284,13 @@ ide.
                     return;
                 }
             }
+            switch ($scope.component.allCustomTags[index].type){
+                case "system":
+                    toastr.warning('系统变量不可删除');
+                    return;
+                default: break;
+            }
+
             TagService.deleteTagByIndex(index,function(){
                 readTagsInfo();
             }.bind(this));
