@@ -1445,7 +1445,6 @@ module.exports =   React.createClass({
         //offCtx.scale(1/this.scaleX,1/this.scaleY);
         var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
         //offCtx.fillStyle = this.numColor;
-        console.log('keke',numColor);
         tempCtx.font = numString;
         tempCtx.textAlign=widget.info.align;
         tempCtx.textAlign = tempCtx.textAlign||'center';
