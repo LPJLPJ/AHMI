@@ -131,9 +131,7 @@ ideServices
         //用户返回除了time的所有tag，
         this.getAllCustomTagsExceptSys=function(){
             return tags.filter(function(item){
-                if(item.type!='system'){
-                    return item;
-                }
+                return item.type!='system';
             });
         };
 

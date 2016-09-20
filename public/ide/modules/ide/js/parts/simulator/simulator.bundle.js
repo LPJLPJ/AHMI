@@ -21532,22 +21532,14 @@
 	            offctx.save();
 	            offctx.beginPath();
 	            if (dashboardModeId == '1') {
-	                //clip
 	                offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
-	                offctx.save();
-	                offctx.translate(curX + 0.5 * width, curY + 0.5 * height);
-	                offctx.rotate(Math.PI * minArc / 180);
-	                offctx.lineTo(0.5 * width, 0);
-	                offctx.restore();
 	                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
-
-	                offctx.lineTo(curX + 0.5 * width, curY + 0.5 * height);
 	            } else if (dashboardModeId == '2') {
 	                offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
 	                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
 	                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius * 3 / 4, Math.PI * curArc / 180, Math.PI * minArc / 180, !wise);
-	                offctx.closePath();
 	            }
+	            offctx.closePath();
 	            offctx.clip();
 	            this.drawBg(curX, curY, width, height, image, null);
 	            offctx.restore();
@@ -21584,10 +21576,10 @@
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        offctx.save();
+	        offctx.beginPath();
 	        offctx.rect(x, y, w, h);
 	        offctx.clip();
 
-	        //offctx.save();
 	        offctx.translate(x + 0.5 * w, y + 0.5 * h);
 	        offctx.rotate(Math.PI * arc / 180);
 	        offctx.translate(transXratio * elemWidth, transYratio * elemHeight);
@@ -21607,10 +21599,8 @@
 	                    // offctx.drawImage(imageList[i].content,x,y,w,h)
 	                    break;
 	                }
-	            };
+	            }
 	        }
-	        //offctx.restore();
-
 	        offctx.restore();
 	    },
 	    drawBg: function (x, y, w, h, imageName, color, ctx) {

@@ -52,7 +52,6 @@ $(function () {
     }
 
     function init() {
-        console.log('heheheheh')
         var userInfo = {
             username: '',
             mail: '',

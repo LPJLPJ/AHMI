@@ -6218,11 +6218,11 @@ ideServices
         //改变仪表盘的转动方向
         this.ChangeAttributeDashboardClockwise=function(_option,_successCallback){
             var selectObj = _self.getCurrentSelectObject();
-            selectObj.level.info.clockwise = _option.clockwise
+            selectObj.level.info.clockwise = _option.clockwise;
             arg={
-                clockwise: _.cloneDeep(selectObj.level.info.clockwise),
+                clockwise: _option.clockwise,
+                callback:_successCallback
             };
-            _successCallback&&_successCallback();
             selectObj.target.fire('changeDashboardClockwise',arg);
         };
         this.ChangeAttributeInterval= function (_option, _successCallback) {

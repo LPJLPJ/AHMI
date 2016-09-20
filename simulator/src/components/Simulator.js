@@ -1659,7 +1659,7 @@ module.exports =   React.createClass({
                 var bgTex = widget.texList[0].slices[0];
                 this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                 //draw light strip
-                var lightStripTex = widget.texList[2].slices[0]
+                var lightStripTex = widget.texList[2].slices[0];
                 this.drawLightStrip(curX, curY, width, height, clockwise*(minArc + offset) + 90, clockwise*(curArc + offset) + 90, widget.texList[2].slices[0].imgSrc,clockwise,widget.dashboardModeId);
                 //draw pointer
                 this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise*(curArc + offset)+arcPhase, widget.texList[1].slices[0]);
@@ -1897,26 +1897,18 @@ module.exports =   React.createClass({
             offctx.save();
             offctx.beginPath();
             if(dashboardModeId=='1'){
-                //clip
                 offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
-                offctx.save();
-                offctx.translate(curX + 0.5 * width, curY + 0.5 * height);
-                offctx.rotate(Math.PI * minArc / 180)
-                offctx.lineTo(0.5 * width, 0)
-                offctx.restore()
-                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
-
-                offctx.lineTo(curX + 0.5 * width, curY + 0.5 * height)
+                offctx.arc(curX + 0.5 * width, curY + 0.5 * height,radius,Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
 
             }else if(dashboardModeId=='2'){
                 offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
                 offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
                 offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius * 3 / 4,Math.PI * curArc / 180, Math.PI * minArc / 180, !wise);
-                offctx.closePath();
             }
+            offctx.closePath();
             offctx.clip();
-            this.drawBg(curX, curY, width, height, image, null)
-            offctx.restore()
+            this.drawBg(curX, curY, width, height, image, null);
+            offctx.restore();
         }
     },
     calculateRadius:function (mode,width,height){
@@ -1951,10 +1943,10 @@ module.exports =   React.createClass({
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
         offctx.save();
+        offctx.beginPath();
         offctx.rect(x,y,w,h);
         offctx.clip();
 
-        //offctx.save();
         offctx.translate(x + 0.5 * w , y + 0.5 * h );
         offctx.rotate(Math.PI * arc / 180);
         offctx.translate(transXratio * elemWidth,transYratio * elemHeight);
@@ -1975,11 +1967,9 @@ module.exports =   React.createClass({
                     // offctx.drawImage(imageList[i].content,x,y,w,h)
                     break;
                 }
-            };
+            }
 
         }
-        //offctx.restore();
-
         offctx.restore();
     },
     drawBg: function (x, y, w, h, imageName, color, ctx) {
