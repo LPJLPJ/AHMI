@@ -459,7 +459,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
+            if($scope.component.object.level.info.left<-9999||$scope.component.object.level.info.left>9999){
                 toastr.warning('超出画布范围');
                 restore();
                 return;
@@ -489,8 +489,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
-                toastr.warning('超出画布范围');
+            if($scope.component.object.level.info.top<-9999||$scope.component.object.level.info.top>9999){
+                toastr.warning('超出范围');
                 restore();
                 return;
             }
@@ -513,13 +513,13 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 		if (e.keyCode==13){
 			//判断输入是否合法
 			var integer=Number($scope.component.object.level.info.width);
-			if (!_.isInteger(integer)||integer<1){
+			if (!_.isInteger(integer)){
 				toastr.warning('输入不合法');
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.width<0||$scope.component.object.level.info.width>$scope.maxWidth){
-                toastr.warning('超出画布范围');
+            if($scope.component.object.level.info.width<1||$scope.component.object.level.info.width>9999){
+                toastr.warning('超出范围');
                 restore();
                 return;
             }
@@ -547,8 +547,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.height<0||$scope.component.object.level.info.height>$scope.maxHeight){
-                toastr.warning('超出画布范围');
+            if($scope.component.object.level.info.height<1||$scope.component.object.level.info.height>9999){
+                toastr.warning('超出范围');
                 restore();
                 return;
             }
