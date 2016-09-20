@@ -13,6 +13,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 
     });
 
+
     function initUserInterface(){
         $scope.status={
             collapsed : false
@@ -177,9 +178,11 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 
         var blankCmd = ['', {tag: '', value: ''}, {tag: '', value: ''}];
         $scope.ops = OperationService.getOperations();
-        $scope.tags = _.map(tags, function (tag) {
-            return tag.name;
-        });
+
+        $scope.tags=_.map(tags.filter(function(item){
+            return item.bindMod=='default';
+
+        }),'name');
         $scope.timerTags = _.map(timerTags,function(timerTags){
           return timerTags.name;
         });

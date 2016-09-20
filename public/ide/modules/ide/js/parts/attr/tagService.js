@@ -5,26 +5,32 @@ ideServices
     .service('TagService', function () {
 
 
-        function Tag(name, register, indexOfRegister, writeOrRead, value, type) {
+        function Tag(name, register, indexOfRegister, writeOrRead, value, type,bindMod) {
             this.name = name;
             this.register = register;
             this.indexOfRegister = indexOfRegister;
             this.writeOrRead = writeOrRead;
             this.value = value;
             this.type = type || 'custom'; //custom, system, timer
+            this.bindMod = bindMod||'default';
         }
 
-        var defaultTag ={
-            name: "",
-            register: false,
-            indexOfRegister: null,
-            //writeOrRead:'false',
-            value: null
-        };
-        var curPageTag = new Tag('当前页面序号', true, 1, 'true', 0, 'system');
-        var RTCTag1 = new Tag('时钟变量年月日', true, 2, 'true', 0, 'system');
-        var RTCTag2 = new Tag('时钟变量时分秒', true, 3, 'true', 0, 'system');
-        var sysTags = [curPageTag,RTCTag1,RTCTag2];
+        //var defaultTag ={
+        //    name: "",
+        //    register: false,
+        //    indexOfRegister: null,
+        //    //writeOrRead:'false',
+        //    value: null
+        //};
+        var defaultTag = new Tag('',false,null,'true',null,'custom','default');
+        var keyCode = new Tag('传递按键编码',false,null,'true',0,'system','forbidden');
+        var videoTag = new Tag('视频',false,null,'true',0,'system','forbidden');
+        var curPageTag = new Tag('当前页面序号', false, null, 'true', 0, 'system','forbidden');
+        var RTCTag1 = new Tag('时钟变量年月日', false, null, 'true', 0,'system');
+        var RTCTag2 = new Tag('时钟变量时分秒', false, null, 'true', 0,'system');
+        var backLight = new Tag('背光',false,null,'true',0,'system');
+        var buzzer =new Tag('蜂鸣器',false,null,'true',0,'system');
+        var sysTags = [keyCode,videoTag,curPageTag,RTCTag1,RTCTag2,backLight,buzzer];
         var tags = sysTags;
         var timerTags=[];
         var timerNum=0;
@@ -128,12 +134,6 @@ ideServices
             return tags;
         };
 
-        //用户返回除了time的所有tag，
-        this.getAllCustomTagsExceptSys=function(){
-            return tags.filter(function(item){
-                return item.type!='system';
-            });
-        };
 
         //返回所有的timerTags
         this.getAllTimerTags=function(){

@@ -13,7 +13,6 @@ ide.
             $scope.component={
                 selectedTag:{},
                 allCustomTags:null,
-                allTagsExceptSys:null,
                 allTimerTags:null,
                 visibleOfList:true,
                 indexOfTagInList:null,
@@ -144,7 +143,6 @@ ide.
             $scope.component.allTimerTags = TagService.getAllTimerTags();
             $scope.component.allTags = TagService.getAllTags();
             $scope.component.timerNum = TagService.getTimerNum();
-            $scope.component.allTagsExceptSys = TagService.getAllCustomTagsExceptSys();
         }
         function noDuplication(tag,tags){
             for(var i=0;i<tags.length;i++){
