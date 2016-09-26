@@ -5454,10 +5454,10 @@ ideServices
                 height = level.info.height,
                 left = level.info.left,
                 top = level.info.top;
-            level.info.width = (Math.abs(fabNode.getWidth()-width)<=1)?width:Math.floor(fabNode.getWidth());
-            level.info.height = (Math.abs(fabNode.getHeight()-height)<=1)?height:Math.floor(fabNode.getHeight());
-            level.info.left = fabNode.getLeft();
-            level.info.top = fabNode.getTop();
+            level.info.width = (Math.abs(fabNode.getWidth()-width)<=1)?width:Math.round(fabNode.getWidth());
+            level.info.height = (Math.abs(fabNode.getHeight()-height)<=1)?height:Math.round(fabNode.getHeight());
+            level.info.left = Math.round(fabNode.getLeft());
+            level.info.top = Math.round(fabNode.getTop());
 
             if (level.type==Type.MyButtonGroup){
                 //如果是按钮组,要同步放大其间距
