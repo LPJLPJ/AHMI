@@ -5450,10 +5450,14 @@ ideServices
             }
         }
         var SyncLevelFromFab=this.SyncLevelFromFab=function(level,fabNode){
-            level.info.width=parseInt((fabNode.getWidth()).toFixed(0));
-            level.info.height=parseInt((fabNode.getHeight()).toFixed(0));
-            level.info.left=parseInt((fabNode.getLeft()).toFixed(0));
-            level.info.top=parseInt((fabNode.getTop()).toFixed(0));
+            var width = level.info.width,
+                height = level.info.height,
+                left = level.info.left,
+                top = level.info.top;
+            level.info.width = (Math.abs(fabNode.getWidth()-width)<=1)?width:Math.floor(fabNode.getWidth());
+            level.info.height = (Math.abs(fabNode.getHeight()-height)<=1)?height:Math.floor(fabNode.getHeight());
+            level.info.left = fabNode.getLeft();
+            level.info.top = fabNode.getTop();
 
             if (level.type==Type.MyButtonGroup){
                 //如果是按钮组,要同步放大其间距
