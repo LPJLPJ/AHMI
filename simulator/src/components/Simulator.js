@@ -1078,7 +1078,7 @@ module.exports =   React.createClass({
         offctx.fillStyle=widget.texList[0].slices[0].color;
         offctx.fillRect(curX,curY,width,height);
         //draw video
-        var videoSrc = this.getRawValueByTagName(widget.tag);
+        var videoSrc = this.getRawValueByTagName(widget.tag)||'';
         // var videoSrc = 'http://blog.zzen1ss.me/media/video/saraba.mp4';
         if(VideoSource.setVideoSrc(videoSrc)){
             //first set

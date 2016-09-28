@@ -6,7 +6,7 @@ curVideo.setAttribute('muted',true);
 var VideoSource = {};
 VideoSource.videoObj = curVideo;
 VideoSource.setVideoSrc = function (src) {
-    if(curVideo.src != src){
+    if(curVideo.src != src && src && src!==''){
         curVideo.src = src;
         return true;
     }else{
