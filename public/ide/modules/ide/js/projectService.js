@@ -4117,7 +4117,7 @@ ideServices
             }
             _.forEach(copyLayer.subLayers, function (_subLayer) {
                 _subLayer.id=Math.random().toString(36).substr(2);
-                var proJson1=JSON.parse(_subLayer.proJsonStr);
+                var proJson1=_subLayer.proJsonStr;
 
                 _.forEach(proJson1.objects, function (_fabWidget) {
                     _.forEach(_subLayer.widgets, function (_widget) {
@@ -4129,7 +4129,7 @@ ideServices
                         }
                     })
                 });
-                _subLayer.proJsonStr=JSON.stringify(proJson1);
+                _subLayer.proJsonStr=proJson1;
 
             });
             return copyLayer;
