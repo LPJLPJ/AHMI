@@ -79,10 +79,10 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
                         });
                         break;
-                    case 'Up':
-                    case 'Down':
-                    case 'Left':
-                    case 'Right':
+                    case 'Ctrl-Up':
+                    case 'Ctrl-Down':
+                    case 'Ctrl-Left':
+                    case 'Ctrl-Right':
                         var oldOperate=ProjectService.SaveCurrentOperate();
                         NavService.DoMove(currentKey.toLowerCase(), 1, function () {
                             $scope.$emit('ChangeCurrentPage',oldOperate);

@@ -3,7 +3,7 @@
  */
 ideServices.service('KeydownService',[function () {
     var actionKeys = ['Ctrl-C','Cmd-C','Ctrl-V','Cmd-V',
-        'Ctrl-Delete','Cmd-Delete','Ctrl-BackSpace','Cmd-BackSpace','Ctrl-Z','Up','Down','Left','Right'];
+        'Ctrl-Delete','Cmd-Delete','Ctrl-BackSpace','Cmd-BackSpace','Ctrl-Z','Ctrl-Up','Ctrl-Down','Ctrl-Left','Ctrl-Right'];
     var keyAttrs = ['shiftKey','ctrlKey','altKey','metaKey','keyCode'];
     var currentPressingKey = '';
     var keyAbbrs = {
