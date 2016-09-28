@@ -193,16 +193,28 @@ $(function(){
         }else if (curNodeName == 'SPAN'){
             //span
             //show modal
-            $('#modal-ok').html('确认')
-            var title = $('#basicinfo-title')
-            var author = $('#basicinfo-author')
-            var resolution = $('#basicinfo-resolution')
+            $('#modal-ok').html('确认');
+            var title = $('#basicinfo-title');
+            var author = $('#basicinfo-author');
+            var resolution = $('#basicinfo-resolution');
+            var customWidth = $('#customWidth');
+            var customHeight = $('#customHeight');
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
 
             title.val(project.name);
             author.val(project.author);
-            resolution.val(project.resolution)
+            if(identifyCustomResolution(project.resolution)){
+                resolution.val(project.resolution);
+                $('#basicinfo-customResolution').hide();
+            }else{
+                //console.log('custom');
+                resolution.val('custom');
+                $('#basicinfo-customResolution').show();
+                var arr=project.resolution.split('*');
+                customWidth.val(arr[0]);
+                customHeight.val(arr[1]);
+            }
             template.val(project.template);
             template.attr('disabled',true);
             supportTouch.val(project.supportTouch);
@@ -218,6 +230,19 @@ $(function(){
 
         }
     });
+
+    function identifyCustomResolution(resolution){
+        var result=false;
+        $("#basicinfo-resolution option").each(function(){
+            if($(this).val().trim()==resolution){
+                console.log('haha',$(this).val().trim());
+                result=true;
+            }
+        });
+        return result;
+    }
+
+
 
     $('#projectlist').on('mouseenter','.projectpanel',function (e) {
         //console.log('hover',e)
@@ -243,16 +268,30 @@ $(function(){
         $('#basicinfo-author').val('');
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
-        $('#modal-ok').html('创建')
+        $('#basicinfo-resolution').val('800*480');
+        $('#basicinfo-customResolution').hide();
+        $('#customWidth').val('');
+        $('#customHeight').val('');
+        $('#modal-ok').html('创建');
+    });
 
+    $('#basicinfo-resolution').on('change',function(e){
+        var resolution = $('#basicinfo-resolution').val().trim();
+        if(resolution==="custom"){
+            $('#basicinfo-customResolution').show();
+            //$('#customWidth').val('');
+            //$('#customHeight').val('');
+        }else{
+            $('#basicinfo-customResolution').hide();
+        }
     });
 
 
     $('#modal-ok').on('click',changeProject);
 
     function changeProject(e){
-        var op = $('#modal-ok').html()
-        console.log(op)
+        var op = $('#modal-ok').html();
+        console.log(op);
         if (op == '确认'){
             updateProject(e,local)
         }else{
@@ -260,13 +299,15 @@ $(function(){
         }
     }
     function createProject(e,local) {
-        console.log('create')
-        var project = {}
-        var title = $('#basicinfo-title')
-        var author = $('#basicinfo-author')
-        var resolution = $('#basicinfo-resolution')
+        console.log('create');
+        var project = {};
+        var title = $('#basicinfo-title');
+        var author = $('#basicinfo-author');
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
+        var resolution = $('#basicinfo-resolution');
+        var customWidth = $('#customWidth');
+        var customHeight = $('#customHeight');
 
         if (title.val().trim()!=''&&resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
             //create
@@ -279,7 +320,16 @@ $(function(){
                 toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
-            project.resolution = resolution.val().trim()
+            if(resolution.val().trim()==="custom"){
+                if(!checkCustomResolution(customWidth.val().trim(),customHeight.val().trim())){
+                    toastr.error('分辨率有误');
+                    return;
+                }else
+                    project.resolution = customWidth.val().trim()+"*"+customHeight.val().trim();
+            }else {
+                project.resolution = resolution.val().trim();
+            }
+
 
             if (local){
                 project.createdTime = Date.now();
@@ -370,14 +420,27 @@ $(function(){
         }
     }
 
+    function checkCustomResolution(){
+        var width = arguments[0]||0;
+        var height = arguments[1]||0;
+        if(width.match(/^[0-9]*[1-9][0-9]*$/)&&height.match(/^[0-9]*[1-9][0-9]*$/)){
+            if(width<=1920&&height<=1920){
+                return true;
+            }
+        }
+        return false;
+    }
+
     function updateProject(e,local) {
-        var curPanel = curSelectedPanel
-        var project = curPanel.attr('data-project')
-        project = JSON.parse(project)
-        console.log(project)
-        var title = $('#basicinfo-title')
-        var author = $('#basicinfo-author')
-        var resolution = $('#basicinfo-resolution')
+        var curPanel = curSelectedPanel;
+        var project = curPanel.attr('data-project');
+        project = JSON.parse(project);
+        //console.log(project);
+        var title = $('#basicinfo-title');
+        var author = $('#basicinfo-author');
+        var resolution = $('#basicinfo-resolution');
+        var customWidth = $('#customWidth');
+        var customHeight = $('#customHeight');
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
         var thumbnailDOM = curPanel.find('img');
@@ -392,7 +455,16 @@ $(function(){
                 toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
-            project.resolution = resolution.val().trim();
+            //check resolution
+            if(resolution.val().trim()=='custom'){
+                if(!checkCustomResolution(customWidth.val().trim(),customHeight.val().trim())){
+                    toastr.error('分辨率有误');
+                    return;
+                }else
+                    project.resolution=customWidth.val().trim()+"*"+customHeight.val().trim();
+            }else{
+                project.resolution = resolution.val().trim();
+            }
             project.supportTouch = supportTouch.val().trim();
             var updateSuccess = false;
             if (local){
