@@ -6575,42 +6575,15 @@ ideServices
                 }
                 if (_option.index==0){
                     fabLayer.bringForward();
-                    //var isTop=true;
-                    //_.forEach(currentPage.layers, function (_layer) {
-                    //    if (currentLayer.zIndex<=_layer.zIndex&&currentLayer.id!=_layer.id){
-                    //        isTop=false;
-                    //    }
-                    //});
-                    //if (!isTop){
-                    //    currentLayer.zIndex=currentLayer.zIndex+1;
-                    //}
 
 
                 }else {
                     fabLayer.sendBackwards();
-                    //var isBottom=true;
-                    //_.forEach(currentPage.layers, function (_layer) {
-                    //    if (currentLayer.zIndex>=_layer.zIndex&&currentLayer.id!=_layer.id){
-                    //        isBottom=false;
-                    //    }
-                    //});
-                    //if (!isBottom){
-                    //    currentLayer.zIndex=currentLayer.zIndex-1;
-                    //}
-
                 }
-                //pageNode.deactivateAll();
-                //pageNode.renderAll();
                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
-                //currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                //console.log(currentPage.layers);
                 var layers = pageNode.getObjects();
                 _.forEach(currentPage.layers, function (_layer,index) {
-                    // if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
-                    //     isTop=false;
-                    // }
-
                     for (var i=0;i<layers.length;i++){
                         if (layers[i].id == _layer.id){
                             _layer.zIndex = i;
@@ -6618,10 +6591,9 @@ ideServices
                         }
                     }
                 });
-                //currentPage.layers.map(function (layer,idx) {
-                //    console.log(layer.id,layer.zIndex);
-                //})
-
+                currentPage.layers.sort(function(item1,item2){
+                    return item1.zIndex-item2.zIndex;
+                });
             }
             else if (Type.isWidget(object.type)){
                 var subLayerNode = CanvasService.getSubLayerNode();
@@ -6640,42 +6612,12 @@ ideServices
                 }
                 if (_option.index==0){
                     fabWidget.bringForward();
-                    // var isTop=true;
-                    // _.forEach(currentSubLayer.widgets, function (_widget) {
-                    //     if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
-                    //         isTop=false;
-                    //     }
-                    // });
-                    // if (!isTop){
-                    //     currentWidget.zIndex=currentWidget.zIndex+1;
-                    // }
-
-
-                    // console.log('上移至'+currentWidget.zIndex);
-
                 }else {
                     fabWidget.sendBackwards();
-                    // var isBottom=true;
-                    // _.forEach(currentSubLayer.widgets, function (_widget) {
-                    //     if (currentWidget.zIndex>=_widget.zIndex&&currentWidget.id!=_widget.id){
-                    //         isBottom=false;
-                    //     }
-                    // });
-                    // if (!isBottom){
-                    //     currentWidget.zIndex=currentWidget.zIndex-1;
-                    // }
-                    // console.log('下移至'+currentWidget.zIndex);
-
                 }
-
-                //console.log(subLayerNode.getObjects())
                 currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                 var widgetObjs = subLayerNode.getObjects();
                 _.forEach(currentSubLayer.widgets, function (_widget,index) {
-                    // if (currentWidget.zIndex<=_widget.zIndex&&currentWidget.id!=_widget.id){
-                    //     isTop=false;
-                    // }
-
                     for (var i=0;i<widgetObjs.length;i++){
                         if (widgetObjs[i].id == _widget.id){
                             _widget.zIndex = i;
@@ -6683,9 +6625,9 @@ ideServices
                         }
                     }
                 });
-                //currentSubLayer.widgets.map(function (widget,idx) {
-                //    console.log(widget.id,widget.zIndex);
-                //})
+                currentSubLayer.widgets.sort(function(item1,item2){
+                    return  item1.zIndex-item2.zIndex;
+                });
             }
 
             _successCallback&&_successCallback(currentOperate);
