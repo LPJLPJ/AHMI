@@ -950,7 +950,7 @@ ideServices
             },
             _render: function (ctx) {
                 try{
-                    var newValue = parseInt((this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value);
+                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,

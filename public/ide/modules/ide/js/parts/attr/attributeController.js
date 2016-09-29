@@ -19,7 +19,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
     //edit by lixiang for select of textArea show or hide
     $scope.$on('ToolShowChanged', function (event, toolShow) {
-        //console.log('keke',toolShow);
         $scope.component.textArea.toolShow=toolShow;
     });
 
@@ -459,7 +458,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.left<-9999||$scope.component.object.level.info.left>9999){
+            if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
                 toastr.warning('超出画布范围');
                 restore();
                 return;
@@ -489,7 +488,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.top<-9999||$scope.component.object.level.info.top>9999){
+            if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
                 toastr.warning('超出范围');
                 restore();
                 return;
@@ -518,7 +517,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.width<1||$scope.component.object.level.info.width>9999){
+            if($scope.component.object.level.info.width<1||$scope.component.object.level.info.width>$scope.maxWidth){
                 toastr.warning('超出范围');
                 restore();
                 return;
@@ -547,7 +546,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.height<1||$scope.component.object.level.info.height>9999){
+            if($scope.component.object.level.info.height<1||$scope.component.object.level.info.height>$scope.maxHeight){
                 toastr.warning('超出范围');
                 restore();
                 return;
@@ -1038,7 +1037,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function enterDashboardValue(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.value))){
+            if (!_.isNumber($scope.component.object.level.info.value)){
                 toastr.warning('输入不合法');
                 restore();
                 return;
