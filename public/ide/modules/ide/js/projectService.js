@@ -2164,32 +2164,29 @@ ideServices
             },
             _render: function (ctx) {
                 try{
-                    var offCanvas = CanvasService.getOffCanvas();
+                    //var offCanvas = CanvasService.getOffCanvas();
 
-                    offCanvas.width = this.width;
-                    offCanvas.height = this.height;
+                    //offCanvas.width = this.width;
+                    //offCanvas.height = this.height;
                     //获取offCanvas
-                    var offCtx = offCanvas.getContext('2d');
-                    offCtx.clearRect(0,0,this.width,this.height);
+                    //var offCtx = offCanvas.getContext('2d');
+                    //offCtx.clearRect(0,0,this.width,this.height);
 
-
-
-
-                    offCtx.fillStyle=this.fontColor;
-                    offCtx.fillRect(0,0,this.width,this.height);
-                    if (this.backgroundImageElement) {
-                        offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
-                    }
+                    ctx.fillStyle=this.fontColor;
+                    //ctx.fillRect(0,0,this.width,this.height);
+                    //if (this.backgroundImageElement) {
+                    //    offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
+                    //}
 
                     //在数字框里展示数字预览效果
-                    if(this.numValue||this.numValue==0) {
+                    if(!isNaN(this.numValue)) {
                         //offCtx.save();
 
-                        offCtx.globalCompositeOperation = "destination-in";
-                        offCtx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
-                        offCtx.textAlign = this.align;
+                        //offCtx.globalCompositeOperation = "destination-in";
+                        ctx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
+                        ctx.textAlign = this.align;
 
-                        offCtx.textBaseline='middle';//设置数字垂直居中
+                        ctx.textBaseline='middle';//设置数字垂直居中
                         var negative=false;
                         if(this.numValue<0){
                             negative=true;
@@ -2235,20 +2232,20 @@ ideServices
                         }else if(negative){
                             tempNumValue='-'+tempNumValue;
                         }
-                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        //ctx.scale(1/this.scaleX,1/this.scaleY);
                         //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
                         if(this.align=='center'){
-                            offCtx.fillText(tempNumValue, this.width/2, this.height/2);
+                            ctx.fillText(tempNumValue, 0, 0);
 
                         }else if(this.align=='left') {
-                            offCtx.fillText(tempNumValue, 0, this.height/2);
+                            ctx.fillText(tempNumValue, -this.width/2, 0);
                         }else if(this.align=='right'){
-                            offCtx.fillText(tempNumValue,this.width,this.height/2);
+                            ctx.fillText(tempNumValue,this.width/2,0);
                         }
                         //offCtx.restore();
                     }
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
+                    //ctx.scale(1/this.scaleX,1/this.scaleY);
+                    //ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
                 }
                 catch(err){
                     console.log('错误描述',err);
