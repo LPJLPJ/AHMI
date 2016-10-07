@@ -1701,7 +1701,7 @@ module.exports =   React.createClass({
             } else if (curArc < minArc) {
                 curArc = minArc;
             }
-            this.drawRotateElem(curX, curY, width, height, width, height, curArc+initValue , widget.texList[0].slices[0],-0.5,-0.5);
+            this.drawRotateElem(curX, curY, width, height, width, height, curArc+initValue , widget.texList[0].slices[0],-0.5,-0.5,widget.subType);
 
 
             this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
@@ -1937,15 +1937,18 @@ module.exports =   React.createClass({
             this.handleTargetAction(widget, 'EnterLowAlarm');
         }
     },
-    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice,transXratio,transYratio) {
+    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice,transXratio,transYratio,type) {
         var transXratio = transXratio || 0;
         var transYratio = transYratio || 0;
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
         offctx.save();
-        offctx.beginPath();
-        offctx.rect(x,y,w,h);
-        offctx.clip();
+        if(!(type&&type=='MyRotateImg')){
+            offctx.beginPath();
+            offctx.rect(x,y,w,h);
+            offctx.clip();
+        }
+
 
         offctx.translate(x + 0.5 * w , y + 0.5 * h );
         offctx.rotate(Math.PI * arc / 180);
