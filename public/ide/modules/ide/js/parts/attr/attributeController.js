@@ -1686,15 +1686,21 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     function changeNumOfDigits(e){
         if(e.keyCode==13){
             //console.log('enter numOfDigits');
+            if($scope.component.object.level.info.numOfDigits.toString().indexOf('.')>-1){
+                restore();
+                return;
+            }
             if($scope.component.object.level.info.numOfDigits==initObject.level.info.numOfDigits){
                 return;
             }
             if($scope.component.object.level.info.numOfDigits<1||$scope.component.object.level.info.numOfDigits>16){
+                restore()
                 toastr.warning('超出范围');
                 return;
             }
             var length=$scope.component.object.level.info.numValue.toString().length+$scope.component.object.level.info.decimalCount;
             if($scope.component.object.level.info.numOfDigits<=$scope.component.object.level.info.decimalCount||$scope.component.object.level.info.numOfDigits<length){
+                restore();
                 toastr.warning('超出范围');
                 return;
             }
@@ -1709,11 +1715,16 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
     }
     function changeDecimalCount(e){
         if(e.keyCode==13){
+            if($scope.component.object.level.info.decimalCount.toString().indexOf('.')>-1){
+                restore();
+                return;
+            }
             if($scope.component.object.level.info.decimalCount==initObject.level.info.decimalCount){
                 return;
             }
             //判断小数的位数是否小于0，或者是否大于字符数减numValue位数
             if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>$scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.numValue.toString().length)){
+                restore();
                 toastr.warning('超出范围');
                 return;
             }
@@ -1843,7 +1854,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             }else{
                 toastr.warning('超出范围');
                 restore();
-                return;
             }
 
 
