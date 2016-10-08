@@ -1693,7 +1693,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             if($scope.component.object.level.info.numOfDigits==initObject.level.info.numOfDigits){
                 return;
             }
-            if($scope.component.object.level.info.numOfDigits<1||$scope.component.object.level.info.numOfDigits>16){
+            if($scope.component.object.level.info.numOfDigits<1||$scope.component.object.level.info.numOfDigits>10){
                 restore();
                 toastr.warning('超出范围');
                 return;
