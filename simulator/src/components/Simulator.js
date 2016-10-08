@@ -1533,10 +1533,11 @@ module.exports =   React.createClass({
     drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
         tempCtx.clearRect(0, 0, curWidth, curHeight);
         tempCtx.save()
-        this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
-        tempCtx.globalCompositeOperation = "destination-in";
+        //this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
+        //tempCtx.globalCompositeOperation = "destination-in";
         // console.log(tempNumValue);
         //tempCtx.textBaseline="middle"
+        tempCtx.fillStyle=bgTex.color;
         tempCtx.font=font;
         switch(tempCtx.textAlign){
             case 'left':
