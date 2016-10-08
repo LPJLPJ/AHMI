@@ -21331,7 +21331,7 @@
 	            var maxArc = widget.info.maxValue;
 	            var initValue = widget.info.initValue;
 	            // var curArc = widget.info.value;
-	            var curArc = this.getValueByTagName(widget.tag, 0);
+	            var curArc = this.getValueByTagName(widget.tag, 0) % 360;
 
 	            var lowAlarm = widget.info.lowAlarmValue;
 	            var highAlarm = widget.info.highAlarmValue;

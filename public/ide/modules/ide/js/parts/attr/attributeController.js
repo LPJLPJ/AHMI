@@ -1186,18 +1186,22 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
-            }
-            if($scope.component.object.level.type==Type.Mynum){
+            }else if($scope.component.object.level.type==Type.Mynum){
                 //默认是数字框
                 if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
                     toastr.warning('不能比当前值大');
                     restore();
                     return;
                 }
-            }
-            if($scope.component.object.level.type==Type.MySlideBlock){
+            }else if($scope.component.object.level.type==Type.MySlideBlock){
                 if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
                     toastr.warning('不能比初始值大');
+                    restore();
+                    return;
+                }
+            }else if($scope.component.object.level.type==Type.MyRotateImg){
+                if($scope.component.object.level.info.minValue<0){
+                    toastr.warning('不能小于0');
                     restore();
                     return;
                 }
@@ -1249,8 +1253,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
-            }
-            if($scope.component.object.level.type==Type.Mynum){
+            }else if($scope.component.object.level.type==Type.Mynum){
                 //默认是数字框
                 if ($scope.component.object.level.info.maxValue<$scope.component.object.level.info.initValue){
 
@@ -1260,10 +1263,15 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     return;
                 }
 
-            }
-            if($scope.component.object.level.type==Type.MySlideBlock){
+            }else if($scope.component.object.level.type==Type.MySlideBlock){
                 if ($scope.component.object.level.info.maxValue<$scope.component.object.level.info.initValue){
                     toastr.warning('不能比初始值小');
+                    restore();
+                    return;
+                }
+            }else if($scope.component.object.level.type==Type.MyRotateImg){
+                if($scope.component.object.level.info.maxValue>360){
+                    toastr.warning('不能超过360');
                     restore();
                     return;
                 }
@@ -1289,6 +1297,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
+
             if($scope.component.object.level.info.minAngle<-360){
                 toastr.warning('最小角度不能小于负360');
                 restore();
