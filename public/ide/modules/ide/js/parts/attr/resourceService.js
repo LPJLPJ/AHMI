@@ -19,6 +19,23 @@ ideServices
         var resourceUrl = '';
         var resourceNWUrl = '';
         var projectUrl = '';
+        var fontSheet = (function() {
+            // 创建 <style> 标签
+            var style = document.createElement("style");
+
+            // 可以添加一个媒体(/媒体查询,media query)属性
+            // style.setAttribute("media", "screen")
+            // style.setAttribute("media", "only screen and (max-width : 1024px)")
+
+            // 对WebKit hack :(
+            style.appendChild(document.createTextNode(""));
+
+
+            // 将 <style> 元素加到页面中
+            document.head.appendChild(style);
+
+            return style.sheet;
+        })();
 
         this.getGlobalResources = function () {
             return globalResources;
@@ -75,8 +92,19 @@ ideServices
             files=_files||[];
         }
 
+        this.getExt = function (fileName) {
+            var extArray = fileName.split('.');
+            var ext = extArray[extArray.length-1];
+            return ext;
+        }
+
         this.syncFiles = function (_files) {
             files = _files||[]
+        }
+
+        this.getAllCustomResources = function () {
+            var res = files.slice();
+            return res;
         }
 
         this.getAllImages = function(){
@@ -135,6 +163,14 @@ ideServices
             }
         };
 
+        this.addWebFont = function (fontFile,type) {
+            var fontName = fontFile.name.split('.')[0];
+            var curRule = "@font-face {font-family: '"+fontName+ "';"+"url('https://localhost"+fontFile.src+"') format('"+type+"') } ";
+            fontSheet.insertRule(curRule, 0);
+            fontSheet.insertRule(".web-font{ font-family:\""+fontName+"\" !important; }",1);
+            console.log('added font: ',fontFile,fontSheet,curRule)
+        }
+
 
         //cache file to targetarray
         this.cacheFile = function (file, targetArray, scb, fcb) {
@@ -157,6 +193,24 @@ ideServices
                 };
                 img.src = file.src;
                 globalResources.push(resourceObj);
+            }else if (this.getExt(file.id)==='ttf'||this.getExt(file.id)==='woff'){
+                //ttf
+                //font
+                var ext = this.getExt(file.id);
+                var type;
+                console.log(ext)
+                if (ext==='ttf'){
+                    type = 'truetype'
+                }else if (ext === 'woff'){
+                    type = 'woff'
+                }
+                this.addWebFont(file,type);
+                globalResources.push(resourceObj);
+                scb && scb({type:'ok'},resourceObj);
+
+            }else{
+                //other
+                scb && scb({type:'ok'},{})
             }
 
         };
@@ -299,13 +353,33 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
             var baseUrl = ResourceService.getResourceUrl()
 
             scope.uploadFiles = function (files) {
+
                 if (files && files.length){
+                    files = files.filter(isValidFile);
                     for (var i=0;i<files.length;i++){
                         //加入等待上传数组
                         var translatedFile = transFile(files[i]);
                         scope.component.top.uploadingArray.push(translatedFile);
                         upload(files[i],translatedFile);
                     }
+                }
+            }
+
+            function isValidFile(file) {
+                var fileExtArray = file.name.split('.');
+                var fileExt = fileExtArray[fileExtArray.length-1].toLowerCase();
+                switch (fileExt){
+                    case 'png':
+                    case 'jpg':
+                    case 'bmp':
+                    case 'jpeg':
+                    case 'tiff':
+                    case 'ttf':
+                    case 'woff':
+                        return true;
+                    default:
+                        return false;
+
                 }
             }
 
@@ -340,7 +414,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 var successHandler = function () {
 
                     ResourceService.appendFileUnique(translatedFile, function (file,files) {
-                        for (var i in files){
+                        for (var i =0;i< files.length;i++){
                             if (files[i].id == file.id ){
                                 return false;
                             }
@@ -440,7 +514,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     if (e.status == 200){
                         //success
                         ResourceService.appendFileUnique(translatedFile, function (file,files) {
-                            for (var i in files){
+                            for (var i =0;i< files.length;i++){
                                 if (files[i].id == file.id ){
                                     return false;
                                 }
@@ -456,12 +530,16 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                             }.bind(this));
                         }.bind(this));
 
+                    }else{
+                        console.error(e)
+                        deleteUploadingItem(translatedFile);
+                        scope.$emit('ResourceUpdate');
                     }
                 }
 
                 var errHandler = function (e) {
-                    console.log('err');
-                    console.log(e);
+
+                    console.error(e);
                     translatedFile.progress ='上传失败';
                     switch (e.data.errMsg){
                         case 'not logged in':

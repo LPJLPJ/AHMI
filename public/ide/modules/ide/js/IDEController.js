@@ -252,6 +252,7 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             if (count>0){
                 for (var i=0;i<resourceList.length;i++){
                     var curRes = resourceList[i];
+                    console.log('caching ',i)
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 }
             }else{
