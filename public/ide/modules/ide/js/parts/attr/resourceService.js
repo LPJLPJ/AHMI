@@ -99,6 +99,7 @@ ideServices
         }
 
         this.syncFiles = function (_files) {
+            console.log('_files',_files)
             files = _files||[]
         }
 
@@ -106,6 +107,8 @@ ideServices
             var res = files.slice();
             return res;
         }
+
+
 
         this.getAllImages = function(){
 
@@ -131,6 +134,18 @@ ideServices
             });
             return images = images.concat(templateFiles);
         };
+
+        this.getAllFontResources = function () {
+            // console.log(files)
+            return _.filter(files,function (file) {
+                var ext = this.getExt(file.id);
+                if (ext==='ttf'||ext==='woff'){
+                    return true;
+                }else{
+                    return false;
+                }
+            }.bind(this))
+        }
 
         this.ResourcesLength = function () {
             return files.length;
@@ -165,10 +180,10 @@ ideServices
 
         this.addWebFont = function (fontFile,type) {
             var fontName = fontFile.name.split('.')[0];
-            var curRule = "@font-face {font-family: '"+fontName+ "';"+"url('https://localhost"+fontFile.src+"') format('"+type+"') } ";
+            var curRule = "@font-face {font-family: '"+fontName+ "';"+"url('"+fontFile.src+"') format('"+type+"') } ";
             fontSheet.insertRule(curRule, 0);
-            fontSheet.insertRule(".web-font{ font-family:\""+fontName+"\" !important; }",1);
-            console.log('added font: ',fontFile,fontSheet,curRule)
+            //fontSheet.insertRule(".web-font{ font-family:\""+fontName+"\" !important; }",1);
+            //console.log('added font: ',fontFile,fontSheet,curRule)
         }
 
 
@@ -205,7 +220,9 @@ ideServices
                     type = 'woff'
                 }
                 this.addWebFont(file,type);
+                resourceObj.type = 'font/'+type;
                 globalResources.push(resourceObj);
+                console.log('added',globalResources)
                 scb && scb({type:'ok'},resourceObj);
 
             }else{

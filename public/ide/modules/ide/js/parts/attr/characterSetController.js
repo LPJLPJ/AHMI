@@ -24,12 +24,21 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
                 fontItalic:null,
                 fontAlignment:null
             },
+            fontFamilies:[],
 
             enableInput:enableInput,
             disableInput:disableInput,
             allCharacters:[],
             selectCharacterByIndex:selectCharacterByIndex,
         };
+    }
+
+    function syncFontFamilies() {
+        var customFonts = ResourceService.getAllFontResources().map(function (fRes) {
+            return fRes.name;
+        });
+        console.log(customFonts)
+        $scope.componentOfChar.fontFamilies = ['宋体','times'].concat(customFonts)
     }
 
     function initProject(){
@@ -42,6 +51,12 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
         //});
 
         $scope.componentOfChar.allCharacters=characterSetService.getCharacterSet();
+
+        syncFontFamilies();
+
+        $scope.$on('ResourceUpdate',function (e) {
+            syncFontFamilies();
+        })
     }
 
     function enableInput(index){
