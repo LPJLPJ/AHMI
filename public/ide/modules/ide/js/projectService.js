@@ -1831,7 +1831,7 @@ ideServices
                     if(this.text){
                         ctx.save();
                         var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
-                        console.log('button font',fontString)
+                        // console.log('button font',fontString)
                         ctx.scale(1/this.scaleX,1/this.scaleY);
                         ctx.font=fontString;
                         ctx.textAlign='center';

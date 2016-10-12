@@ -2271,7 +2271,7 @@
                                     ng-change="component.textArea.changeFontFamily()">
                                 <!--<option value="宋体" ng-selected="true">宋体</option>-->
                                 <!--<option value="times">Times</option>-->
-                                <!--<option ng-repeat="fontF in componentOfChar.fontFamilies" value="{{fontF}}">{{fontF}}</option>-->
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
                             <a class="my-cmd-item"
@@ -2301,14 +2301,13 @@
                     </div>
 
                     <div ng-show="component.object.type=='MyNum'">
-                        <div class="my-attr-item xiangPage-fontfamily">
+                        <div class="my-attr-item xiangPage-fontfamily" ng-controller="characterSetCtrl">
                             <span class="my-attr-title xiangPage-title">数字字体</span>
 
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.num.changeNumFamily()">
-                                <option value="宋体" ng-selected="true">宋体</option>
-                                <option value="times">Times</option>
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
                             <a class="my-cmd-item"
@@ -2357,7 +2356,7 @@
                                 <!--<option value="宋体" ng-selected="true">宋体</option>-->
                                 <!--<option value="times">Times</option>-->
                                 <!--<option value="-">-&#45;&#45;</option>-->
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" >{{fontF}}</option>
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
                                 <!--<option>{{componentOfChar.character.fontName}}</option>-->
                                 <!--<option >xxxxxx</option>-->
                             </select>
@@ -2386,14 +2385,15 @@
                         </div>
                     </div>
                     <div ng-show="component.object.type=='MyDateTime'">
-                        <div class="my-attr-item lg">
+                        <div class="my-attr-item lg" ng-controller="characterSetCtrl">
                             <span class="my-attr-title xiangPage-title">时间字体</span>
 
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.dateTime.changeDateTimeFontFamily()">
-                                <option value="宋体" ng-selected="true">宋体</option>
-                                <option value="times">Times</option>
+                                <!--<option value="宋体" ng-selected="true">宋体</option>-->
+                                <!--<option value="times">Times</option>-->
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
                             </select>
                         </div>
                         <div class="y-attr-item lg">

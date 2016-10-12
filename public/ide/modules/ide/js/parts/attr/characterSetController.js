@@ -35,10 +35,10 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
 
     function syncFontFamilies() {
         var customFonts = ResourceService.getAllFontResources().map(function (fRes) {
-            return fRes.name;
+            return {name:fRes.name};
         });
-        console.log(customFonts)
-        $scope.componentOfChar.fontFamilies = ['宋体','times'].concat(customFonts)
+        // console.log(customFonts)
+        $scope.componentOfChar.fontFamilies = [{name:'宋体'},{name:'times'}].concat(customFonts)
     }
 
     function initProject(){
@@ -54,7 +54,8 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
 
         syncFontFamilies();
 
-        $scope.$on('ResourceUpdate',function (e) {
+        $scope.$on('ResourceChanged',function (e) {
+            console.log('Fonts changed!!')
             syncFontFamilies();
         })
     }
