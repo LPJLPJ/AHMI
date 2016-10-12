@@ -801,7 +801,7 @@ module.exports =   React.createClass({
 
         //draw highlight
         if (widget.highlight) {
-            this.drawHighLight(curX, curY, width, height);
+            this.drawHighLight(curX, curY, width, height,tex.slices[2]);
         }
     },
     drawSwitch: function (curX, curY, widget, options) {
@@ -892,7 +892,7 @@ module.exports =   React.createClass({
                 }
                 //draw highlight
                 if (widget.highlight) {
-                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height);
+                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height,curButtonTex.slices[2]);
                 }
             }
         } else {
@@ -909,7 +909,7 @@ module.exports =   React.createClass({
                     this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
                 }
                 if (widget.highlight) {
-                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight);
+                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight,curButtonTex.slices[2]);
                 }
             }
         }
@@ -1169,6 +1169,7 @@ module.exports =   React.createClass({
         var fontFamily = widget.info.fontFamily;
         var fontSize = widget.info.fontSize;
         var fontColor = widget.info.fontColor;
+        var tex = widget.texList[0];
         var curDate;
             if (widget.info.RTCModeId=='0'){
                curDate =  this.getCurDateOriginalData(widget,'inner',widget.timeOffset);
@@ -1213,16 +1214,16 @@ module.exports =   React.createClass({
             delimiterWidth = widget.delimiterWidth;
             if (dateTimeModeId=='0'){
                 eachWidth = (widget.info.width - 2*delimiterWidth)/3;
-                this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height);
+                this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,tex.slices[0]);
             }else if(dateTimeModeId=='1'){
                 eachWidth = (widget.info.width - widget.delimiterWidth)/2;
-                this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height);
+                this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,tex.slices[0]);
             }else{
                 eachWidth = (widget.info.width - 2*widget.delimiterWidth)/4;
                 if (widget.highlightValue == 0){
-                    this.drawHighLight(curX,curY,eachWidth*2,height);
+                    this.drawHighLight(curX,curY,eachWidth*2,height,tex.slices[0]);
                 }else{
-                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue+eachWidth,curY,eachWidth,height);
+                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue+eachWidth,curY,eachWidth,height,tex.slices[0]);
                 }
 
             }
@@ -1293,8 +1294,13 @@ module.exports =   React.createClass({
         offctx.restore();
 
     },
-    drawHighLight: function (curX, curY, width, height) {
-        this.drawBgColor(curX, curY, width, height, 'rgba(244,244,244,0.3)');
+    drawHighLight: function (curX, curY, width, height,slice) {
+        if (slice){
+            this.drawBg(curX,curY,width,height,slice.imgSrc,slice.color);
+        }else{
+            this.drawBgColor(curX, curY, width, height, 'rgba(244,244,244,0.3)');
+        }
+
     },
     findValue: function (array, key1, value, key2) {
         for (var i = 0; i < array.length; i++) {
