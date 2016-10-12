@@ -948,7 +948,7 @@ module.exports =   React.createClass({
                             if (cursor){
                                 var cursorSlice = widget.texList[2].slices[0];
                                 this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
-                                this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
+                                //this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
                         case 'horizontal':
@@ -1111,7 +1111,7 @@ module.exports =   React.createClass({
                 var Ymin = beginY-imgH;
                 if(Ymin<limitY)
                     Ymin=limitY;
-                this.drawBgClip(beginX - (imgW - width) * 0.5, Ymin, imgW, imgH, beginX, Ymin, width, Math.min(imgH,alignLimit), img, color);
+                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY-imgH, imgW, imgH, beginX, Ymin, width, Math.min(imgH,alignLimit), img, color);
             }
         }
     },
