@@ -21287,7 +21287,8 @@
 	            var maxValue = widget.info.maxValue;
 	            // var curArc = widget.info.value;
 	            var curDashboardTag = this.findTagByName(widget.tag);
-	            var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTag && curDashboardTag.value || 0);
+	            var curDashboardTagValue = parseInt(curDashboardTag && curDashboardTag.value || 0);
+	            var curArc = (maxArc - minArc) / (maxValue - minValue) * curDashboardTagValue;
 	            var currentValue = curDashboardTag && curDashboardTag.value || 0;
 	            var clockwise = widget.info.clockwise == '1' ? 1 : -1;
 	            var lowAlarm = widget.info.lowAlarmValue;
@@ -21297,10 +21298,10 @@
 	            pointerWidth = pointerLength / Math.sqrt(2);
 	            pointerHeight = pointerLength / Math.sqrt(2);
 
-	            if (curArc > maxArc) {
-	                curArc = maxArc;
-	            } else if (curArc < minArc) {
-	                curArc = minArc;
+	            if (curArc > maxArc - offset) {
+	                curArc = maxArc - offset;
+	            } else if (curArc < minArc - offset) {
+	                curArc = minArc - offset;
 	            }
 	            // console.log(curArc,widget.oldValue);
 	            var arcPhase = 45;

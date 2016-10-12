@@ -1645,8 +1645,9 @@ module.exports =   React.createClass({
             var maxValue = widget.info.maxValue;
             // var curArc = widget.info.value;
             var curDashboardTag = this.findTagByName(widget.tag);
-            var curArc = (maxArc-minArc)/(maxValue-minValue)*(curDashboardTag&&curDashboardTag.value||0);
-            var currentValue = curDashboardTag&&curDashboardTag.value||0
+            var curDashboardTagValue=parseInt((curDashboardTag&&curDashboardTag.value)||0);
+            var curArc = (maxArc-minArc)/(maxValue-minValue)*(curDashboardTagValue);
+            var currentValue = curDashboardTag&&curDashboardTag.value||0;
             var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
             var highAlarm = widget.info.highAlarmValue;
@@ -1656,10 +1657,10 @@ module.exports =   React.createClass({
             pointerHeight = pointerLength / Math.sqrt(2);
 
 
-            if (curArc > maxArc) {
-                curArc = maxArc
-            } else if (curArc < minArc) {
-                curArc = minArc;
+            if (curArc > (maxArc-offset)) {
+                curArc = (maxArc-offset);
+            } else if (curArc < (minArc-offset)) {
+                curArc = minArc-offset;
             }
             // console.log(curArc,widget.oldValue);
             var arcPhase = 45;
@@ -1968,7 +1969,6 @@ module.exports =   React.createClass({
             offctx.rect(x,y,w,h);
             offctx.clip();
         }
-
 
         offctx.translate(x + 0.5 * w , y + 0.5 * h );
         offctx.rotate(Math.PI * arc / 180);

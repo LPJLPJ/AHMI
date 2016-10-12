@@ -950,7 +950,7 @@ ideServices
             },
             _render: function (ctx) {
                 try{
-                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
+                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value);
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,
@@ -1784,7 +1784,6 @@ ideServices
                 });
 
                 this.on('changeButtonText',function(arg){
-                    console.log('切换字体');
                     if(arg.hasOwnProperty('text')){
                         self.text=arg.text;
 
@@ -1829,7 +1828,6 @@ ideServices
                         ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
                     ctx.restore();
-                    console.log('渲染');
                     if(this.text){
                         ctx.save();
                         var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;

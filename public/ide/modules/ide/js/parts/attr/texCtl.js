@@ -35,6 +35,16 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     slices:[]
                 };
             }else{
+                if($scope.widgetType==Type.MyButton||$scope.widgetType==Type.MyButtonGroup){
+                    if(!$scope.texList[index].slices[2]){
+                        $scope.texList[index].slices[2]={
+                            color:'rgba(244,244,244,0.3)',
+                            imgSrc:'',
+                            name:'高亮'
+                        }
+                    }
+
+                }
                 transTex = _.cloneDeep($scope.texList[index]);
             }
             var modalInstance = $uibModal.open({
