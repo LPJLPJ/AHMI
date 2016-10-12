@@ -32,6 +32,10 @@ ideServices
                         color:'rgba(254,205,82,1)',
                         imgSrc:'',
                         name:'按下后'
+                    },{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
                     }]
                 }]
             },
@@ -347,6 +351,10 @@ ideServices
                     color:'rgba(47,132,85,1)',
                     imgSrc:'',
                     name:'按下后'
+                },{
+                    color:'rgba(244,244,244,0.3)',
+                    imgSrc:'',
+                    name:'高亮'
                 }]
             }];
             var info = _.cloneDeep(defaultButton.info)||defaultInfo;
@@ -467,6 +475,10 @@ ideServices
                         color:_getRandomColor(),
                         imgSrc:'',
                         name:'按下后'
+                    },{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
                     }]
                 },{
                     name:'按钮纹理',
@@ -479,6 +491,10 @@ ideServices
                         color:_getRandomColor(),
                         imgSrc:'',
                         name:'按下后'
+                    },{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
                     }]
                 }]
             }
@@ -496,6 +512,10 @@ ideServices
                     color:_getRandomColor(),
                     imgSrc:'',
                     name:'按下后'
+                },{
+                    color:'rgba(244,244,244,0.3)',
+                    imgSrc:'',
+                    name:'高亮'
                 }]
             }
         }
@@ -718,15 +738,15 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                //texList:[{
-                //    currentSliceIdx:0,
-                //    name:'时间日期',
-                //    slices:[{
-                //        color:_getRandomColor(),
-                //        imgSrc:'',
-                //        name:'时间日期'
-                //    }]
-                //}]
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'时间日期',
+                    slices:[{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
+                    }]
+                }]
 
             }
         };

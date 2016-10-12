@@ -20621,7 +20621,8 @@
 	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
 	                            if (cursor) {
 	                                var cursorSlice = widget.texList[2].slices[0];
-	                                this.drawCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+	                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY);
+	                                //this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
 	                            }
 	                            break;
 	                        case 'horizontal':
@@ -20760,7 +20761,24 @@
 	            this.setState({ innerTimerList: innerTimerList });
 	        }
 	    },
+	    drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
 
+	        var cursorImg = this.getImage(img);
+	        cursorImg = cursorImg && cursorImg.content || null;
+	        if (cursorImg) {
+	            var imgW = cursorImg.width;
+	            var imgH = cursorImg.height;
+	            if (align) {
+	                //horizontal
+	                this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
+	            } else {
+	                //vertical
+	                var Ymin = beginY - imgH;
+	                if (Ymin < limitY) Ymin = limitY;
+	                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, Ymin, width, Math.min(imgH, alignLimit), img, color);
+	            }
+	        }
+	    },
 	    drawCursor: function (beginX, beginY, width, height, align, alignLimit, img, color) {
 
 	        var cursorImg = this.getImage(img);
