@@ -947,7 +947,8 @@ module.exports =   React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
                             if (cursor){
                                 var cursorSlice = widget.texList[2].slices[0];
-                                this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
+                                //this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
                         case 'horizontal':
@@ -1095,7 +1096,25 @@ module.exports =   React.createClass({
             this.setState({innerTimerList:innerTimerList});
         }
     },
+    drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color,limitY) {
 
+        var cursorImg = this.getImage(img);
+        cursorImg = cursorImg && cursorImg.content || null;
+        if (cursorImg) {
+            var imgW = cursorImg.width;
+            var imgH = cursorImg.height;
+            if (align) {
+                //horizontal
+                this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
+            } else {
+                //vertical
+                var Ymin = beginY-imgH;
+                if(Ymin<limitY)
+                    Ymin=limitY;
+                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY-imgH, imgW, imgH, beginX, Ymin, width, Math.min(imgH,alignLimit), img, color);
+            }
+        }
+    },
     drawCursor:function(beginX, beginY, width, height, align,alignLimit, img,color) {
 
         var cursorImg  = this.getImage(img);
@@ -1539,10 +1558,11 @@ module.exports =   React.createClass({
     drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
         tempCtx.clearRect(0, 0, curWidth, curHeight);
         tempCtx.save()
-        this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
-        tempCtx.globalCompositeOperation = "destination-in";
+        //this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
+        //tempCtx.globalCompositeOperation = "destination-in";
         // console.log(tempNumValue);
         //tempCtx.textBaseline="middle"
+        tempCtx.fillStyle=bgTex.color;
         tempCtx.font=font;
         switch(tempCtx.textAlign){
             case 'left':
@@ -1696,7 +1716,7 @@ module.exports =   React.createClass({
             var maxArc = widget.info.maxValue;
             var initValue = widget.info.initValue;
             // var curArc = widget.info.value;
-            var curArc = this.getValueByTagName(widget.tag,0);
+            var curArc = this.getValueByTagName(widget.tag,0)%360;
 
             var lowAlarm = widget.info.lowAlarmValue;
             var highAlarm = widget.info.highAlarmValue;
