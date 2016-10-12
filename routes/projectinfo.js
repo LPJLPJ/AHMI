@@ -220,7 +220,7 @@ projectRoute.saveProject = function (req, res) {
                                 if (files && files.length){
 
                                     var diffResources = _.difference(files,resourceNames);
-                                    //console.log(diffResources)
+                                    // console.log(diffResources)
                                     // for (var i=0;i<diffResources.length;i++){
                                     //     fs.unlink(path.join(url,diffResources[i]));
                                     // }
@@ -228,7 +228,9 @@ projectRoute.saveProject = function (req, res) {
                                     //filter
                                     diffResources.map(function (dFile) {
                                         var dFilePath = path.join(url,dFile);
-                                        fs.stat(dFilePath,function (stats) {
+                                        // console.log(dFilePath)
+                                        fs.stat(dFilePath,function (err,stats) {
+                                            // console.log(stats)
                                             if (stats && stats.isFile()){
                                                 fs.unlink(dFilePath);
                                             }

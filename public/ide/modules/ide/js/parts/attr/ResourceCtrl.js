@@ -14,7 +14,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     });
 
     $scope.$on('ResourceChanged', function () {
-        $scope.component.top.files = ResourceService.getAllImages();
+        $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
     });
 
@@ -42,7 +42,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
         $scope.component.top.basicUrl = ResourceService.getResourceUrl();
         $scope.component.top.maxSize = ResourceService.getMaxTotalSize();
-        $scope.component.top.files = ResourceService.getAllImages();
+        $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
 
 

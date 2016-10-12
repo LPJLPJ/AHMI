@@ -188,6 +188,7 @@ module.exports.getProjectFile = function (req, res) {
     var fileId = req.params.rid;
     if (projectId!=''&&fileId!=''){
         //valid
+        // console.log(projectId,fileId)
         res.sendFile(path.join(__dirname,'../project/',String(projectId),'/resources/',String(fileId)), function (err) {
             if (err){
                 console.log(err);

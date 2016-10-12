@@ -1,5 +1,5 @@
 ideServices
-    .service('characterSetService', function () {
+    .service('characterSetService', function (ResourceService) {
         var characterSet = [
             {
                 text:'标题',
@@ -41,6 +41,8 @@ ideServices
                 underlineBtnToggle:false
             }
         ];
+
+
 
 
         this.getCharacterSet = function () {
