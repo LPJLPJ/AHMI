@@ -950,7 +950,7 @@ ideServices
             },
             _render: function (ctx) {
                 try{
-                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value);
+                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,
@@ -965,8 +965,8 @@ ideServices
 
                     if(this.lightBandImageElement){
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                        var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
-                        var minAngle=translateAngle(this.minAngle+this.offsetValue,this.scaleX,this.scaleY);
+                        var angle=translateAngle(newValue+this.offsetValue,this.scaleX,this.scaleY);
+                        var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
                         ctx.save();
                         ctx.beginPath();
                         ctx.moveTo(0,0);
@@ -1002,7 +1002,7 @@ ideServices
                         var sqrt2 = Math.sqrt(2);
                         var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                         var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
-                        var angleOfPointer = newValue+this.offsetValue+this.minAngle;
+                        var angleOfPointer = newValue+this.offsetValue;
                         if(this.clockwise=='0'){
                             angleOfPointer=-angleOfPointer;
                         }

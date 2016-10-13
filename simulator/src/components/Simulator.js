@@ -1652,7 +1652,7 @@ module.exports =   React.createClass({
             // var curArc = widget.info.value;
             var curDashboardTag = this.findTagByName(widget.tag);
             var curDashboardTagValue=parseInt((curDashboardTag&&curDashboardTag.value)||0);
-            var curArc = (maxArc-minArc)/(maxValue-minValue)*(curDashboardTagValue);
+            var curArc = (maxArc-minArc)/(maxValue-minValue)*curDashboardTagValue;
             var currentValue = curDashboardTag&&curDashboardTag.value||0;
             var clockwise = widget.info.clockwise == '1'?1:-1;
             var lowAlarm = widget.info.lowAlarmValue;
@@ -1663,10 +1663,10 @@ module.exports =   React.createClass({
             pointerHeight = pointerLength / Math.sqrt(2);
 
 
-            if (curArc > (maxArc-offset)) {
-                curArc = (maxArc-offset);
-            } else if (curArc < (minArc-offset)) {
-                curArc = minArc-offset;
+            if (curArc > maxArc) {
+                curArc = maxArc;
+            } else if (curArc < minArc) {
+                curArc = minArc;
             }
             // console.log(curArc,widget.oldValue);
             var arcPhase = 45;

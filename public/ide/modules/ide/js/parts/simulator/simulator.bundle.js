@@ -20498,9 +20498,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	                // console.log(tex);
-	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	            }
+	            // console.log(tex);
+	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	        }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -20567,7 +20567,7 @@
 	                }
 	                //draw highlight
 	                if (widget.highlight) {
-	                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height);
+	                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[2]);
 	                }
 	            }
 	        } else {
@@ -20583,7 +20583,7 @@
 	                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
 	                }
 	                if (widget.highlight) {
-	                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight);
+	                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight, curButtonTex.slices[2]);
 	                }
 	            }
 	        }
@@ -20849,6 +20849,7 @@
 	        var fontFamily = widget.info.fontFamily;
 	        var fontSize = widget.info.fontSize;
 	        var fontColor = widget.info.fontColor;
+	        var tex = widget.texList[0];
 	        var curDate;
 	        if (widget.info.RTCModeId == '0') {
 	            curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
@@ -20893,16 +20894,16 @@
 	            delimiterWidth = widget.delimiterWidth;
 	            if (dateTimeModeId == '0') {
 	                eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
-	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height);
+	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
 	            } else if (dateTimeModeId == '1') {
 	                eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
-	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height);
+	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
 	            } else {
 	                eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
 	                if (widget.highlightValue == 0) {
-	                    this.drawHighLight(curX, curY, eachWidth * 2, height);
+	                    this.drawHighLight(curX, curY, eachWidth * 2, height, tex.slices[0]);
 	                } else {
-	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height);
+	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, tex.slices[0]);
 	                }
 	            }
 	        }
@@ -21302,10 +21303,10 @@
 	            pointerWidth = pointerLength / Math.sqrt(2);
 	            pointerHeight = pointerLength / Math.sqrt(2);
 
-	            if (curArc > maxArc - offset) {
-	                curArc = maxArc - offset;
-	            } else if (curArc < minArc - offset) {
-	                curArc = minArc - offset;
+	            if (curArc > maxArc) {
+	                curArc = maxArc;
+	            } else if (curArc < minArc) {
+	                curArc = minArc;
 	            }
 	            // console.log(curArc,widget.oldValue);
 	            var arcPhase = 45;
@@ -21320,23 +21321,23 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else if (widget.dashboardModeId == '1') {
-	                    // complex mode
-	                    //background
-	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                    //draw light strip
-	                    var lightStripTex = widget.texList[2].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                // complex mode
+	                //background
+	                var bgTex = widget.texList[0].slices[0];
+	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                //draw light strip
+	                var lightStripTex = widget.texList[2].slices[0];
+	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                //draw pointer
+	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                    //draw circle
-	                    // var circleTex = widget.texList[3].slices[0]
-	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	                } else if (widget.dashboardModeId == '2') {
-	                        var lightStripTex = widget.texList[0].slices[0];
-	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    }
+	                //draw circle
+	                // var circleTex = widget.texList[3].slices[0]
+	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	            } else if (widget.dashboardModeId == '2') {
+	                var lightStripTex = widget.texList[0].slices[0];
+	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	            }
 
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -21900,9 +21901,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	                bgRange = height - widget.slideSize.h || 1;
-	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	            }
+	            bgRange = height - widget.slideSize.h || 1;
+	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	        }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -22127,20 +22128,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                        //switch
-	                        //if (widget.switchState) {
-	                        //	widget.switchState = !widget.switch
-	                        //}else{
-	                        //	widget.switchState = 1;
-	                        //}
-	                        //update its tag
-	                        var targetTag = this.findTagByName(widget.tag);
-	                        if (targetTag) {
-	                            targetTag.value = parseInt(targetTag.value);
-	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
-	                        }
+	                    //switch
+	                    //if (widget.switchState) {
+	                    //	widget.switchState = !widget.switch
+	                    //}else{
+	                    //	widget.switchState = 1;
+	                    //}
+	                    //update its tag
+	                    var targetTag = this.findTagByName(widget.tag);
+	                    if (targetTag) {
+	                        targetTag.value = parseInt(targetTag.value);
+	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
 	                    }
+	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
