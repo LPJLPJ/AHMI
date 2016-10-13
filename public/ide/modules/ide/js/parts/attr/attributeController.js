@@ -458,11 +458,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
-                toastr.warning('超出画布范围');
-                restore();
-                return;
-            }
+            //if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
+            //    toastr.warning('超出画布范围');
+            //    restore();
+            //    return;
+            //}
 			//判断是否有变化
 			if ($scope.component.object.level.info.left==initObject.level.info.left){
 				toastr.warning('未改变值'+$scope.component.object.level.info.left);
@@ -488,11 +488,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
-                toastr.warning('超出范围');
-                restore();
-                return;
-            }
+            //if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
+            //    toastr.warning('超出范围');
+            //    restore();
+            //    return;
+            //}
 			//判断是否有变化
 			if ($scope.component.object.level.info.top==initObject.level.info.top){
 				return;
@@ -517,7 +517,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.width<1||$scope.component.object.level.info.width>$scope.maxWidth){
+            if($scope.component.object.level.info.width<1){
                 toastr.warning('超出范围');
                 restore();
                 return;
@@ -546,7 +546,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.height<1||$scope.component.object.level.info.height>$scope.maxHeight){
+            if($scope.component.object.level.info.height<1){
                 toastr.warning('超出范围');
                 restore();
                 return;
