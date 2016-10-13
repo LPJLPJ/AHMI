@@ -2285,23 +2285,16 @@ ideServices
                 //初始化列表
                 self.normalColors=[];
                 self.normalImageElements=[];
-                _.forEach(level.texList, function (_tex) {
-                    self.normalColors.push(_tex.slices[0].color);
-                    // if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
-                    //     var normalImageElement=new Image();
-                    //     normalImageElement.src=level.normalImg;
-                    //     normalImageElement.onload = (function () {
-                    //
-                    //     }).bind(this);
-                    //     self.normalImageElements.push(normalImageElement);
-                    // }else {
-                    //     self.normalImageElements.push(null);
-                    //
-                    // }
-
-                    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
-
-                });
+                for(var i=0;i<level.texList.length-1;i++){
+                    self.normalColors.push(level.texList[i].slices[0].color);
+                    self.normalImageElements.push(ResourceService.getResourceFromCache(level.texList[i].slices[0].imgSrc));
+                }
+                //_.forEach(level.texList, function (_tex) {
+                //    self.normalColors.push(_tex.slices[0].color);
+                //
+                //    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
+                //
+                //});
 
                 this.on('changeArrange', function (arg) {
                     self.arrange=arg.arrange;
@@ -2327,22 +2320,14 @@ ideServices
                     self.normalColors=[];
                     self.normalImageElements=[];
                     //console.log(level.texList);
-                    _.forEach(level.texList, function (_tex) {
-                        self.normalColors.push(_tex.slices[0].color);
-                        // if (_tex.slices[0].imgSrc&&_tex.slices[0].imgSrc!=''){
-                        //     var normalImageElement=new Image();
-                        //     normalImageElement.src=_tex.slices[0].imgSrc;
-                        //     normalImageElement.onload = (function () {
-                        //
-                        //     }).bind(this);
-                        //     self.normalImageElements.push(normalImageElement);
-                        // }else {
-                        //     self.normalImageElements.push(null);
-                        //
-                        // }
-
-                        self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
-                    });
+                    //_.forEach(level.texList, function (_tex) {
+                    //    self.normalColors.push(_tex.slices[0].color);
+                    //    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
+                    //});
+                    for(var i=0;i<level.texList.length-1;i++){
+                        self.normalColors.push(level.texList[i].slices[0].color);
+                        self.normalImageElements.push(ResourceService.getResourceFromCache(level.texList[i].slices[0].imgSrc));
+                    }
 
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
@@ -6269,11 +6254,11 @@ ideServices
              * @param _callback 回调函数
              */
             function checkTexList(_level,_count,_callback){
-                if (_level.texList.length<_count){
-                    _level.texList.push(TemplateProvider.getDefaultButtonTex());
+                if (_level.texList.length<_count+1){
+                    _level.texList.splice(_level.texList.length-1,0,TemplateProvider.getDefaultButtonTex());
                     checkTexList(_level,_count,_callback);
-                }else if (_level.texList.length>_count){
-                    _level.texList.pop();
+                }else if (_level.texList.length>_count+1){
+                    _level.texList.splice(_level.texList.length-2,1);
                     checkTexList(_level,_count,_callback);
 
                 }else {

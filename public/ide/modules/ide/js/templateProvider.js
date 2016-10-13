@@ -475,10 +475,6 @@ ideServices
                         color:_getRandomColor(),
                         imgSrc:'',
                         name:'按下后'
-                    },{
-                        color:'rgba(244,244,244,0.3)',
-                        imgSrc:'',
-                        name:'高亮'
                     }]
                 },{
                     name:'按钮纹理',
@@ -491,7 +487,11 @@ ideServices
                         color:_getRandomColor(),
                         imgSrc:'',
                         name:'按下后'
-                    },{
+                    }]
+                },{
+                    name:'高亮',
+                    currentSliceIdx:0,
+                    slices:[{
                         color:'rgba(244,244,244,0.3)',
                         imgSrc:'',
                         name:'高亮'
@@ -512,10 +512,6 @@ ideServices
                     color:_getRandomColor(),
                     imgSrc:'',
                     name:'按下后'
-                },{
-                    color:'rgba(244,244,244,0.3)',
-                    imgSrc:'',
-                    name:'高亮'
                 }]
             }
         }
