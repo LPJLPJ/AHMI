@@ -877,10 +877,11 @@ module.exports =   React.createClass({
         var tag = this.findTagByName(widget.tag);
         var curButtonIdx = (tag && tag.value) || 0;
         var texList = widget.texList;
+        var highlightTex = texList[texList.length-1];
         if (widget.info.arrange == 'horizontal') {
             //horizontal
             var singleWidth = (width - interval * (count - 1)) / count;
-            for (var i = 0; i < texList.length; i++) {
+            for (var i = 0; i < texList.length-1; i++) {
                 var curButtonTex = texList[i];
                 if (i == curButtonIdx-1) {
                     //pressed tex
@@ -892,13 +893,13 @@ module.exports =   React.createClass({
                 }
                 //draw highlight
                 if (widget.highlight) {
-                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height,curButtonTex.slices[2]);
+                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height,highlightTex.slices[0]);
                 }
             }
         } else {
             //vertical
             var singleHeight = (height - interval * (count - 1)) / count;
-            for (var i = 0; i < texList.length; i++) {
+            for (var i = 0; i < texList.length-1; i++) {
                 var curButtonTex = texList[i];
                 if (i == curButtonIdx-1) {
                     //pressed tex
@@ -909,7 +910,7 @@ module.exports =   React.createClass({
                     this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
                 }
                 if (widget.highlight) {
-                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight,curButtonTex.slices[2]);
+                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight,highlightTex.slices[0]);
                 }
             }
         }
