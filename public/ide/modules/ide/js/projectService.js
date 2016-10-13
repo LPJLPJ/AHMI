@@ -961,8 +961,6 @@ ideServices
                     if (this.backgroundImageElement){
                         ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
-
-
                     if(this.lightBandImageElement){
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
                         var angle=translateAngle(newValue+this.offsetValue,this.scaleX,this.scaleY);
