@@ -458,11 +458,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
-                toastr.warning('超出画布范围');
-                restore();
-                return;
-            }
+            //if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
+            //    toastr.warning('超出画布范围');
+            //    restore();
+            //    return;
+            //}
 			//判断是否有变化
 			if ($scope.component.object.level.info.left==initObject.level.info.left){
 				toastr.warning('未改变值'+$scope.component.object.level.info.left);
@@ -488,11 +488,11 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
-                toastr.warning('超出范围');
-                restore();
-                return;
-            }
+            //if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
+            //    toastr.warning('超出范围');
+            //    restore();
+            //    return;
+            //}
 			//判断是否有变化
 			if ($scope.component.object.level.info.top==initObject.level.info.top){
 				return;
@@ -517,7 +517,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.width<1||$scope.component.object.level.info.width>$scope.maxWidth){
+            if($scope.component.object.level.info.width<1){
                 toastr.warning('超出范围');
                 restore();
                 return;
@@ -546,7 +546,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.height<1||$scope.component.object.level.info.height>$scope.maxHeight){
+            if($scope.component.object.level.info.height<1){
                 toastr.warning('超出范围');
                 restore();
                 return;
@@ -1010,8 +1010,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.offsetValue<-180||
-                $scope.component.object.level.info.offsetValue>180){
+            if($scope.component.object.level.info.offsetValue<-360||
+                $scope.component.object.level.info.offsetValue>360){
                 toastr.warning('超出最小最大角度范围');
                 restore();
                 return;
@@ -1049,7 +1049,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
 
             //判断是否在范围内
             if ($scope.component.object.level.info.value<$scope.component.object.level.info.minValue
-                ||$scope.component.object.level.info.value>$scope.component.object.level.info.maxValue||$scope.component.object.level.info.value<0){
+                ||$scope.component.object.level.info.value>$scope.component.object.level.info.maxValue){
                 toastr.warning('超出范围');
 
                 restore();
@@ -1181,11 +1181,6 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     restore();
                     return;
                 }
-                if($scope.component.object.level.info.minValue<0){
-                    toastr.warning('不能小于0');
-                    restore();
-                    return;
-                }
             }else if($scope.component.object.level.type==Type.Mynum){
                 //默认是数字框
                 if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
@@ -1298,8 +1293,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 return;
             }
 
-            if($scope.component.object.level.info.minAngle<-360){
-                toastr.warning('最小角度不能小于负360');
+            if($scope.component.object.level.info.minAngle<-360||$scope.component.object.level.info.minAngle>360){
+                toastr.warning('最小角度应在-360到360之间');
                 restore();
                 return;
             }
@@ -1327,8 +1322,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxAngle>360){
-                toastr.warning('最大角度不能大于360');
+            if($scope.component.object.level.info.maxAngle>360||$scope.component.object.level.info.maxAngle<$scope.component.object.level.info.minAngle){
+                toastr.warning('最大角度不能大于360且不小于最小角');
                 restore();
                 return;
             }

@@ -961,12 +961,10 @@ ideServices
                     if (this.backgroundImageElement){
                         ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
-
-
                     if(this.lightBandImageElement){
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                        var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
-                        var minAngle=translateAngle(this.minAngle+this.offsetValue,this.scaleX,this.scaleY);
+                        var angle=translateAngle(newValue+this.offsetValue,this.scaleX,this.scaleY);
+                        var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
                         ctx.save();
                         ctx.beginPath();
                         ctx.moveTo(0,0);
@@ -1002,7 +1000,7 @@ ideServices
                         var sqrt2 = Math.sqrt(2);
                         var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                         var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
-                        var angleOfPointer = newValue+this.offsetValue+this.minAngle;
+                        var angleOfPointer = newValue+this.offsetValue;
                         if(this.clockwise=='0'){
                             angleOfPointer=-angleOfPointer;
                         }
@@ -1784,7 +1782,6 @@ ideServices
                 });
 
                 this.on('changeButtonText',function(arg){
-                    console.log('切换字体');
                     if(arg.hasOwnProperty('text')){
                         self.text=arg.text;
 
@@ -1829,7 +1826,6 @@ ideServices
                         ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
                     ctx.restore();
-                    console.log('渲染');
                     if(this.text){
                         ctx.save();
                         var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;

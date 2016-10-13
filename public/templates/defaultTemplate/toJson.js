@@ -26,6 +26,10 @@ var defaultTemplate ={
                         color:'rgba(0,0,0,0)',
                         imgSrc:'/public/templates/defaultTemplate/defaultResources/button2.png',
                         name:'按下后'
+                    },{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
                     }]
         }]
 	},
