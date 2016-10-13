@@ -21292,7 +21292,8 @@
 	            var maxValue = widget.info.maxValue;
 	            // var curArc = widget.info.value;
 	            var curDashboardTag = this.findTagByName(widget.tag);
-	            var curDashboardTagValue = parseInt(curDashboardTag && curDashboardTag.value || 0);
+	            var curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
+	            console.log('tagValue:', curDashboardTagValue);
 	            var curArc = (maxArc - minArc) / (maxValue - minValue) * curDashboardTagValue;
 	            var currentValue = curDashboardTag && curDashboardTag.value || 0;
 	            var clockwise = widget.info.clockwise == '1' ? 1 : -1;
