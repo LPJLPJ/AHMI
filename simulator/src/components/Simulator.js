@@ -374,8 +374,8 @@ module.exports =   React.createClass({
             this.drawPage(page, options);
 
             //update
-            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+            // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
         } else {
             ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
         }
@@ -404,7 +404,55 @@ module.exports =   React.createClass({
     compareZIndex: function (canvasA, canvasB) {
         return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
     },
-    drawPage: function (page, options) {
+    drawPage:function (page,options) {
+        //default animation
+        var offcanvas = this.refs.offcanvas;
+        var offctx = offcanvas.getContext('2d');
+        var canvas = this.refs.canvas;
+        var ctx = canvas.getContext('2d');
+        var duration = 1000;
+        var frames = 30;
+        var count = frames;
+        var maxD = -100;
+        if (!page.state || page.state == LoadState.notLoad) {
+            page.state = LoadState.willLoad
+            //generate load trigger
+            if (!options) {
+                options = {};
+            }
+            options.reLinkWidgets = true;
+            this.handleTargetAction(page, 'Load')
+
+            offctx.save();
+            offctx.translate(offcanvas.width,0)
+            var animationKey = setInterval(function () {
+                // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+                // offctx.save();
+                offctx.translate(-offcanvas.width/frames,0)
+                this.paintPage(page,options);
+                // offctx.restore();
+
+                // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+                ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+
+                count--;
+                if (count<=0){
+                    //finished
+                    clearInterval(animationKey);
+                    console.log('page draw finished')
+                    offctx.restore();
+                }
+            }.bind(this),duration/frames)
+        }else{
+            this.paintPage(page,options)
+            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+        }
+
+
+    },
+    paintPage: function (page, options) {
         // console.log(page);
         //will load
         if (!page.state || page.state == LoadState.notLoad) {
@@ -1189,7 +1237,7 @@ module.exports =   React.createClass({
         var fontFamily = widget.info.fontFamily;
         var fontSize = widget.info.fontSize;
         var fontColor = widget.info.fontColor;
-        var tex = widget.texList[0];
+        var tex = widget.textList&&widget.texList[0];
         var curDate;
             if (widget.info.RTCModeId=='0'){
                curDate =  this.getCurDateOriginalData(widget,'inner',widget.timeOffset);
