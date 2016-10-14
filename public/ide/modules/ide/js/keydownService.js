@@ -30,6 +30,7 @@ ideServices.service('KeydownService',[function () {
         keyAbbrs[i] = String.fromCharCode(i);
     }
 
+
     this.currentKeydown = function(e){
         // console.log(e)
         var keyStr = '';

@@ -8,6 +8,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
         initInterface();
         initListeningKeyDown();
+        initListeningMouseWheel();
         $scope.$emit('LoadUp');
     });
 
@@ -21,14 +22,30 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
         // })
     }
 
+    function initListeningMouseWheel() {
+        var target = document.getElementsByClassName('container-fluid')[0];
+        target.addEventListener('mousewheel',function (e) {
+            console.log($scope.currentKey)
+            if ($scope.currentKey === 'Shift-'||$scope.currentKey==='Ctrl-'){
+                //change view ratio
+                e.preventDefault();
+
+                /**handle mousewheel event */
+                console.log('mouse wheeling',e)
+            }
+        })
+    }
+
     function initListeningKeyDown(){
         $scope.handleKeyUp = function (e) {
             KeydownService.keyUp();
+            $scope.currentKey = '';
         };
 
         $scope.handleKeyDown = function (e) {
 
             var currentKey = KeydownService.currentKeydown(e);
+            $scope.currentKey = currentKey;
             // console.log(currentKey)
             if(_.indexOf(KeydownService.getActionKeys(),currentKey)>=0){
                 //如果点击的键是热键,则屏蔽浏览器的默认按键
