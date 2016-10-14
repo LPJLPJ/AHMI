@@ -29,6 +29,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
         $scope.handleKeyDown = function (e) {
 
             var currentKey = KeydownService.currentKeydown(e);
+            // console.log(currentKey)
             if(_.indexOf(KeydownService.getActionKeys(),currentKey)>=0){
                 //如果点击的键是热键,则屏蔽浏览器的默认按键
                 e.preventDefault();
@@ -36,6 +37,8 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
             }
             //console.log(KeydownService.isCtrlPressed());
             if (KeydownService.isValidKeyPair(currentKey)){
+
+                // console.log(currentKey)
                 //emit
                 //$scope.$emit('ActionKeyPressed',currentKey);
                 switch (currentKey){
@@ -83,8 +86,16 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
                     case 'Ctrl-Down':
                     case 'Ctrl-Left':
                     case 'Ctrl-Right':
+                    case 'Shift-Up':
+                    case 'Shift-Down':
+                    case 'Shift-Left':
+                    case 'Shift-Right':
                         var oldOperate=ProjectService.SaveCurrentOperate();
-                        NavService.DoMove(currentKey.toLowerCase(), 1, function () {
+                        // console.log('shifting')
+                        var keys = currentKey.toLowerCase().split('-');
+                        var orientation = keys[keys.length-1];
+                        NavService.DoMove(orientation, 1, function () {
+                            // console.log('shifted')
                             $scope.$emit('ChangeCurrentPage',oldOperate);
 
                         }.bind(this));

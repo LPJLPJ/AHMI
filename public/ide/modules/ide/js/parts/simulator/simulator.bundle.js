@@ -19720,6 +19720,7 @@
 	var InputKeyboard = __webpack_require__(166);
 	var Utils = __webpack_require__(167);
 	var VideoSource = __webpack_require__(168);
+	var EasingFunctions = __webpack_require__(169);
 
 	var sep = '/';
 	var defaultState = {
@@ -19735,7 +19736,7 @@
 	};
 
 	try {
-	    var os = __webpack_require__(169);
+	    var os = __webpack_require__(170);
 	    var platform = os.platform();
 	    if (platform === 'win32') {
 	        sep = '\\';
@@ -20121,10 +20122,14 @@
 
 	            offctx.save();
 	            offctx.translate(offcanvas.width, 0);
+	            var lastValue = 0;
+	            var curValue = 0;
 	            var animationKey = setInterval(function () {
 	                // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
 	                // offctx.save();
-	                offctx.translate(-offcanvas.width / frames, 0);
+	                curValue = EasingFunctions.easeInOutCubic((frames - count) / frames);
+	                offctx.translate(-offcanvas.width * (curValue - lastValue), 0);
+	                lastValue = curValue;
 	                this.paintPage(page, options);
 	                // offctx.restore();
 
@@ -49807,6 +49812,72 @@
 
 /***/ },
 /* 169 */
+/***/ function(module, exports) {
+
+	/**
+	 * Created by ChangeCheng on 2016/10/14.
+	 */
+	/* easing functions for animation */
+
+	EasingFunctions = {
+	    // no easing, no acceleration
+	    linear: function (t) {
+	        return t;
+	    },
+	    // accelerating from zero velocity
+	    easeInQuad: function (t) {
+	        return t * t;
+	    },
+	    // decelerating to zero velocity
+	    easeOutQuad: function (t) {
+	        return t * (2 - t);
+	    },
+	    // acceleration until halfway, then deceleration
+	    easeInOutQuad: function (t) {
+	        return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+	    },
+	    // accelerating from zero velocity
+	    easeInCubic: function (t) {
+	        return t * t * t;
+	    },
+	    // decelerating to zero velocity
+	    easeOutCubic: function (t) {
+	        return --t * t * t + 1;
+	    },
+	    // acceleration until halfway, then deceleration
+	    easeInOutCubic: function (t) {
+	        return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+	    },
+	    // accelerating from zero velocity
+	    easeInQuart: function (t) {
+	        return t * t * t * t;
+	    },
+	    // decelerating to zero velocity
+	    easeOutQuart: function (t) {
+	        return 1 - --t * t * t * t;
+	    },
+	    // acceleration until halfway, then deceleration
+	    easeInOutQuart: function (t) {
+	        return t < .5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+	    },
+	    // accelerating from zero velocity
+	    easeInQuint: function (t) {
+	        return t * t * t * t * t;
+	    },
+	    // decelerating to zero velocity
+	    easeOutQuint: function (t) {
+	        return 1 + --t * t * t * t * t;
+	    },
+	    // acceleration until halfway, then deceleration
+	    easeInOutQuint: function (t) {
+	        return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+	    }
+	};
+
+	module.exports = EasingFunctions;
+
+/***/ },
+/* 170 */
 /***/ function(module, exports) {
 
 	exports.endianness = function () { return 'LE' };

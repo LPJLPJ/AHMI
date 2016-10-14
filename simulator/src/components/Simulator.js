@@ -7,6 +7,7 @@ var LoadState = require('./LoadState');
 var InputKeyboard = require('./inputKeyboard');
 var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
+var EasingFunctions = require('../utils/easing');
 
 var sep = '/';
 var defaultState = {
@@ -424,11 +425,15 @@ module.exports =   React.createClass({
             this.handleTargetAction(page, 'Load')
 
             offctx.save();
-            offctx.translate(offcanvas.width,0)
+            offctx.translate(offcanvas.width,0);
+            var lastValue = 0;
+            var curValue =0;
             var animationKey = setInterval(function () {
                 // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
                 // offctx.save();
-                offctx.translate(-offcanvas.width/frames,0)
+                curValue = EasingFunctions.easeInOutCubic((frames-count)/frames);
+                offctx.translate(-offcanvas.width*(curValue-lastValue),0);
+                lastValue = curValue;
                 this.paintPage(page,options);
                 // offctx.restore();
 

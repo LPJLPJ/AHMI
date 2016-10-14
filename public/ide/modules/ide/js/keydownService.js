@@ -3,7 +3,7 @@
  */
 ideServices.service('KeydownService',[function () {
     var actionKeys = ['Ctrl-C','Cmd-C','Ctrl-V','Cmd-V',
-        'Ctrl-Delete','Cmd-Delete','Ctrl-BackSpace','Cmd-BackSpace','Ctrl-Z','Ctrl-Up','Ctrl-Down','Ctrl-Left','Ctrl-Right'];
+        'Ctrl-Delete','Cmd-Delete','Ctrl-BackSpace','Cmd-BackSpace','Ctrl-Z','Ctrl-Up','Ctrl-Down','Ctrl-Left','Ctrl-Right','Shift-Up','Shift-Down','Shift-Left','Shift-Right'];
     var keyAttrs = ['shiftKey','ctrlKey','altKey','metaKey','keyCode'];
     var currentPressingKey = '';
     var keyAbbrs = {
@@ -31,6 +31,7 @@ ideServices.service('KeydownService',[function () {
     }
 
     this.currentKeydown = function(e){
+        // console.log(e)
         var keyStr = '';
         //handle key prefix
         for (var i=0;i<keyAttrs.length-1;i++){
