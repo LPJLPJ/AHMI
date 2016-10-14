@@ -374,7 +374,19 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     break;
                 case Type.MyButtonGroup:
                     $scope.component.buttonGroup.arrangeModel=$scope.component.object.level.info.arrange;
-
+                    var texListLength = $scope.component.object.level.texList.length;
+                    if($scope.component.object.level.texList[texListLength-1].name!=="高亮"){
+                        console.log('为旧的buttonGroup添加高亮纹理，容错！');
+                        $scope.component.object.level.texList.push({
+                            name:'高亮',
+                            currentSliceIdx:0,
+                            slices:[{
+                                color:'rgba(244,244,244,0.3)',
+                                imgSrc:'',
+                                name:'高亮'
+                            }]
+                        });
+                    }
                     break;
 
                 case Type.MyNumber:
