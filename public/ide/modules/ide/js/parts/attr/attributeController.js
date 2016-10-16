@@ -684,7 +684,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             pageNode.setBackgroundColor($scope.component.object.level.backgroundColor, function () {
                 pageNode.renderAll();
                 currentPage.backgroundColor=$scope.component.object.level.backgroundColor;
-                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                currentPage.proJsonStr=pageNode.toJSON();
             });
         }else if ($scope.component.object.type==Type.MySubLayer){
             selectImage=$scope.component.subLayer.selectImage;
@@ -701,7 +701,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 subLayerNode.renderAll();
                 currentSubLayer.backgroundColor=$scope.component.object.level.backgroundColor;
 
-                currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                currentSubLayer.proJsonStr=subLayerNode.toJSON();
             })
 
         }else{
