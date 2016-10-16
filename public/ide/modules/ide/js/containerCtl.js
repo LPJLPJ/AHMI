@@ -2,7 +2,7 @@
  * Created by ChangeCheng on 16/4/5.
  */
 
-ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'ProjectService', '$document', function ($scope, KeydownService, NavService, ProjectService, $document) {
+ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'ProjectService', '$document', function ($scope, KeydownService, NavService, ProjectService, $document,ViewService) {
     $scope.$on('GlobalProjectReceived', function () {
 
 
@@ -24,16 +24,19 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
     function initListeningMouseWheel() {
         var target = document.getElementsByClassName('container-fluid')[0];
-        target.addEventListener('mousewheel',function (e) {
-            console.log($scope.currentKey)
+        target.addEventListener('wheel',function (e) {
+            //console.log($scope.currentKey)
             if ($scope.currentKey === 'Shift-'||$scope.currentKey==='Ctrl-'){
                 //change view ratio
                 e.preventDefault();
 
                 /**handle mousewheel event */
-                console.log('mouse wheeling',e)
+                //console.log('mouse wheeling',parseInt(e.deltaY));
+                if(parseInt(e.delatY)!==0){
+                    $scope.$broadcast('wheelScale',parseInt(e.deltaY));
+                }
             }
-        })
+        },false);
     }
 
     function initListeningKeyDown(){
@@ -46,7 +49,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
             var currentKey = KeydownService.currentKeydown(e);
             $scope.currentKey = currentKey;
-            // console.log(currentKey)
+            //console.log('this is current keyStr',currentKey);
             if(_.indexOf(KeydownService.getActionKeys(),currentKey)>=0){
                 //如果点击的键是热键,则屏蔽浏览器的默认按键
                 e.preventDefault();

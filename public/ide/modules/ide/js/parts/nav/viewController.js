@@ -64,14 +64,38 @@ ide.controller('ViewCtl',['$scope','ViewService','ProjectService',function($scop
         //    }
         //};
 
+        /**
+         * 用来将滚轮的值转换为放大或缩小的比例
+         * @param data
+         */
+        function translateWheelScale(data){
+            var scaleNum = parseInt($scope.viewRatio);
+            var scaleStr;
+            if(data<0){
+                if(scaleNum<250){
+                    scaleNum=scaleNum+25;
+                }
+            }else if(data>0){
+                if(scaleNum>25){
+                    scaleNum=scaleNum-25;
+                }
+            }
+            scaleStr=scaleNum+'%';
+            $scope.viewRatio=scaleStr;
+
+        }
 
 
         $scope.$on('AttributeChanged', function () {
             readDefaultScale();
         });
+        $scope.$on('wheelScale',function(event,data){
+            translateWheelScale(data);
+        })
 
         $scope.$watch('viewRatio', function () {
             //call view change
+            console.log($scope.viewRatio,typeof $scope.viewRatio);
             var type = $scope.isEditingPage? 'page':'subCanvas';
             ViewService.setScale($scope.viewRatio,type);
             $scope.$emit('changeCanvasScale',type);
