@@ -128,11 +128,17 @@ ideServices
                 this.on('OnRenderUrl', function (cb) {
                     this.renderUrlInPage(self, cb);
                 });
+
+                this.on('OnRefresh',function () {
+                    this.refresh();
+                })
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                // console.log('rendering my layer')
+                this.loadAll(this.id);
                 try{
                     ctx.fillStyle =this.backgroundColor;
                     ctx.fillRect(
@@ -178,12 +184,14 @@ ideServices
 
             }
         });
+
         fabric.MyLayer.prototype.loadAll= function (layerId) {
+
             var backgroundImg = new Image();
             var layerNode=getFabricObject(layerId);
 
             var layer=getLevelById(layerId);
-
+            // console.log('loadall',layer.showSubLayer.url)
 
             var layerWidth=layer.info.width/this.initScale.X;
             var layerHeight=layer.info.height/this.initScale.Y;
@@ -220,6 +228,11 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
+        fabric.MyLayer.prototype.refresh = function () {
+            if (this.id){
+                this.loadAll(this.id);
+            }
+        }
         fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
 
 
@@ -3247,17 +3260,19 @@ ideServices
                     //pageNode.setWidth(project.currentSize.width);
                     //pageNode.setHeight(project.currentSize.height);
                     if (isInit){
-                        console.log('init layer');
+                        // console.log('init layer');
                         updateLayerImage(0,function () {
                             _self.ScaleCanvas('page');
 
-                            // console.log(_pageIndex,currentPage)
+                            console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
                             pageNode.deactivateAll();
                             pageNode.renderAll();
-                            console.log('page pro',JSON.stringify(pageNode.toJSON()));
+                            // console.log('page pro',JSON.stringify(pageNode.toJSON()));
 
                             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                            console.log('pageurl',''+currentPage.url)
+                            // console.log('pageurl',''+currentPage.url,currentPage)
+                            // window.currentPage = currentPage
+                            // _successCallback && _successCallback();
                             _self.OnPageSelected(_pageIndex,_successCallback,true);
                         })
 
@@ -5196,7 +5211,7 @@ ideServices
 
                     subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
 
-                            subLayerNode.deactivateAll();
+                        subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
                         currentSubLayer.proJsonStr=subLayerNode.toJSON();
 
@@ -5229,9 +5244,9 @@ ideServices
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
                             currentSubLayer.proJsonStr= subLayerNode.toJSON();
-                            console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
+                            // console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
                             currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
-                            console.log('sublayer url',''+currentSubLayer.url)
+                            // console.log('sublayer url',''+currentSubLayer.url)
 
                             renderingSubLayer = false;
                             _successCallback && _successCallback();

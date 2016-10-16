@@ -242,8 +242,9 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
                 if (count<=0){
                     // toastr.info('loaded');
                     TemplateProvider.saveProjectFromGlobal(globalProject);
+                    syncServices(globalProject);
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
-                        syncServices(globalProject);
+
                         $scope.$broadcast('GlobalProjectReceived');
 
                     });
@@ -258,8 +259,9 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
             }else{
                 console.log(globalProject);
                 TemplateProvider.saveProjectFromGlobal(globalProject);
+                syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
-                    syncServices(globalProject)
+
                     $scope.$broadcast('GlobalProjectReceived');
 
                 });
@@ -293,8 +295,9 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
 
 
             TemplateProvider.saveProjectFromGlobal(globalProject);
+            syncServices(globalProject)
             ProjectService.saveProjectFromGlobal(globalProject, function () {
-                syncServices(globalProject)
+
                 $scope.$broadcast('GlobalProjectReceived');
 
             });
