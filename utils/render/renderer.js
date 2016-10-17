@@ -66,10 +66,14 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+('\"'+font['font-family']+'\"'||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
-        var beforePressSlice = widget.texList[0].slices[0];
-        var afterPressSlice = widget.texList[0].slices[1];
-        var slices = [beforePressSlice,afterPressSlice];
+        // var beforePressSlice = widget.texList[0].slices[0];
+        // var afterPressSlice = widget.texList[0].slices[1];
+        var slices = widget.texList[0].slices;
         var totalSlices = slices.length;
+        var hasHighlight = false;
+        if (totalSlices>2){
+            hasHighlight = true;
+        }
         slices.map(function (slice,index) {
             var canvas = new Canvas(info.width,info.height);
             var ctx = canvas.getContext('2d');
@@ -98,7 +102,10 @@ renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefi
                 renderingX.renderImage(ctx,new Size(info.width,info.height),new Pos(),targetImageObj,new Pos(),new Size(info.width,info.height));
             }
             //draw text
-            renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
+            if (index<2){
+                renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
+            }
+
             //generate file
             var imgName = widget.id.split('.').join('');
             var outputFilename = imgName +'-'+ index+'.png';
@@ -162,18 +169,25 @@ renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrl
         }
 
         var texList = widget.texList;
-        var totalSlices = 2*texList.length;
+        var totalSlices = 0;
         var slices = [];
-        for (var i=0;i<texList.length;i++){
+        for (var i=0;i<count;i++){
             for (var j=0;j<2;j++){
                 slices.push(texList[i].slices[j]);
             }
         }
+        totalSlices = 2*count;
+        if (texList[count]){
+            //has highlight
+            slices.push(texList[count].slices[0]);
+            totalSlices++;
+        }
         slices.map(function (slice,i) {
+            // console.log('drawing slice: ',slice)
             var canvas = new Canvas(width,height);
             var ctx = canvas.getContext('2d');
 
-            var curSlice = texList[parseInt(i/2)].slices[i%2];
+            var curSlice = slice;
             ctx.clearRect(0,0,width,height);
             ctx.save();
             //render color

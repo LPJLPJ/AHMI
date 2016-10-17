@@ -12,6 +12,8 @@ var defaultProject = require('../utils/defaultProject')
 var nodejszip = require('../utils/zip');
 var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
+var Canvas = require('canvas');
+var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
 var fse = require('fs-extra');
@@ -376,7 +378,18 @@ projectRoute.generateProject = function (req, res) {
                     }
                 }
             }.bind(this);
-            var renderer = new Renderer();
+            // var fonts = {'Songti':new Font('Songti',this.fontFile('Songti.ttc'))};
+            //init fonts
+            // console.log(dataStructure.resourceList);
+            var fontRes = dataStructure.resourceList.filter(isFont);
+            var customFonts = {};
+            var resBaseUrl = path.join(ProjectBaseUrl,'resources');
+            for (i=0;i<fontRes.length;i++){
+                var curFont = fontRes[i];
+                customFonts[curFont.name] = fontFile(curFont.name,resBaseUrl,curFont.id);
+            }
+
+            var renderer = new Renderer(null);
             for (var m=0;m<allWidgets.length;m++){
                 var curWidget = allWidgets[m];
                 renderer.renderWidget(curWidget,path.join(__dirname,'..'),path.join(ProjectBaseUrl,'resources'),path.join('project',String(projectId),'resources'),cb);
@@ -405,6 +418,20 @@ projectRoute.generateProject = function (req, res) {
     }else{
         errHandler(res,500,'projectId error');
     }
+}
+
+function isFont(font) {
+    var names = font.src.split('.');
+    var ext = names[names.length-1];
+    if (ext==='ttf'||ext==='woff'){
+        return true;
+    }else{
+        return false;
+    }
+}
+function fontFile(name,baseUrl,id) {
+    // var fonts = {'Songti':new Font('Songti',this.fontFile('Songti.ttc'))};
+    return new Font(name,path.join(baseUrl,id));
 }
 
 

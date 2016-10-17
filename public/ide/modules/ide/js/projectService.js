@@ -168,7 +168,7 @@ ideServices
                     }
 
                     if(this.backgroundImg.element){
-                        console.log('drawing background element')
+                        // console.log('drawing background element')
                         ctx.drawImage(this.backgroundImg.element,
                             this.backgroundImg.left,
                             this.backgroundImg.top,
@@ -3264,7 +3264,7 @@ ideServices
                         updateLayerImage(0,function () {
                             _self.ScaleCanvas('page');
 
-                            console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
+                            // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
                             pageNode.deactivateAll();
                             pageNode.renderAll();
                             // console.log('page pro',JSON.stringify(pageNode.toJSON()));

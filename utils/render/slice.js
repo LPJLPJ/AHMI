@@ -122,6 +122,7 @@ var TextSlice = exports.TextSlice = (function (_Slice) {
                 ctx.addFont(customFonts[i]);
             }
             ctx.textDrawingMode = 'path';
+            // console.log('translated: ',this.originPos.x,this.originPos.y);
 
             ctx.translate(this.originPos.x, this.originPos.y);
             //clip
@@ -129,22 +130,28 @@ var TextSlice = exports.TextSlice = (function (_Slice) {
 
             ctx.font = this.style.font;
             // ctx.font = '40px helvetica';
-            console.log('font', this.style.font);
+            // console.log('font', this.style);
             // console.log(this.style.font);
             ctx.textAlign = this.style.textAlign;
             ctx.textBaseline = this.style.textBaseline;
             // console.log(this.offsetPos);
             ctx.fillStyle = this.style.color;
+            // console.log('ctx',ctx,ctx.font,ctx.textAlign,ctx.textBaseline);
             ctx.strokeStyle = this.style.color;
+            // console.log('point ',this.offsetPos.x,this.offsetPos.y);
             if (this.fillOrStroke) {
                 ctx.fillText(this.text, this.offsetPos.x, this.offsetPos.y);
             } else {
                 ctx.strokeText(this.text, this.offsetPos.x, this.offsetPos.y);
             }
+            // ctx.beginPath();
+            // ctx.moveTo(0,this.offsetPos.y);
+            // ctx.lineTo(this.offsetPos.x,this.offsetPos.y);
+            // ctx.stroke();
 
             ctx.restore();
             var stopTime = new Date();
-            console.log('Text Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
+            // console.log('Text Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
 
             cb && cb();
         }
