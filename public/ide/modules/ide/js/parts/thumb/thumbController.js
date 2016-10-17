@@ -14,6 +14,8 @@ ide.controller('ThumbCtrl', function ($scope, $timeout,
         initUserInterface();
         initProject();
         $scope.$emit('LoadUp');
+        // window.thumbScope = $scope;
+        // window.thumbUpdate = updateThumbImgs;
     });
 
     function initUserInterface() {

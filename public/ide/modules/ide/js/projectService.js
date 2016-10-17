@@ -128,11 +128,17 @@ ideServices
                 this.on('OnRenderUrl', function (cb) {
                     this.renderUrlInPage(self, cb);
                 });
+
+                this.on('OnRefresh',function () {
+                    this.refresh();
+                })
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
             },
             _render: function (ctx) {
+                // console.log('rendering my layer')
+                this.loadAll(this.id);
                 try{
                     ctx.fillStyle =this.backgroundColor;
                     ctx.fillRect(
@@ -162,6 +168,7 @@ ideServices
                     }
 
                     if(this.backgroundImg.element){
+                        console.log('drawing background element')
                         ctx.drawImage(this.backgroundImg.element,
                             this.backgroundImg.left,
                             this.backgroundImg.top,
@@ -177,12 +184,14 @@ ideServices
 
             }
         });
+
         fabric.MyLayer.prototype.loadAll= function (layerId) {
+
             var backgroundImg = new Image();
             var layerNode=getFabricObject(layerId);
 
             var layer=getLevelById(layerId);
-
+            // console.log('loadall',layer.showSubLayer.url)
 
             var layerWidth=layer.info.width/this.initScale.X;
             var layerHeight=layer.info.height/this.initScale.Y;
@@ -195,7 +204,7 @@ ideServices
             if (layer.showSubLayer.url==''){
                 backgroundImg = null;
             }else{
-                backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
+
                 backgroundImg.onload = (function () {
                     this.width = layerWidth;
                     this.height = layerHeight;
@@ -203,6 +212,7 @@ ideServices
                     this.setCoords();
                     this.fire('image:loaded');
                 }).bind(this);
+                backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
             }
 
             this.backgroundImg={
@@ -218,6 +228,11 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
+        fabric.MyLayer.prototype.refresh = function () {
+            if (this.id){
+                this.loadAll(this.id);
+            }
+        }
         fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
 
 
@@ -3202,37 +3217,81 @@ ideServices
 
                 var pageCount=currentPage.layers.length;
 
-                pageNode.setBackgroundImage(null, function () {
-                    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                        //pageNode.setWidth(project.currentSize.width);
-                        //pageNode.setHeight(project.currentSize.height);
-                        if (isInit){
-                            //console.log('更新layer');
-                            updateLayerImage(0,function () {
-                                _self.ScaleCanvas('page');
+                // pageNode.setBackgroundImage(null, function () {
+                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                //         //pageNode.setWidth(project.currentSize.width);
+                //         //pageNode.setHeight(project.currentSize.height);
+                //         if (isInit){
+                //             console.log('init layer');
+                //             updateLayerImage(0,function () {
+                //                 _self.ScaleCanvas('page');
+                //
+                //                 console.log(_pageIndex,currentPage)
+                //
+                //                 pageNode.renderAll();
+                //
+                //
+                //                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                //                 // console.log(''+currentPage.url)
+                //                 _self.OnPageSelected(_pageIndex,_successCallback,true);
+                //             })
+                //
+                //
+                //
+                //
+                //         }else{
+                //             //console.log('不更新layer');
+                //             _self.ScaleCanvas('page');
+                //
+                //             pageNode.renderAll();
+                //
+                //
+                //             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                //             _self.OnPageSelected(_pageIndex,_successCallback);
+                //         }
+                //
+                //
+                //     })
+                //
+                // });
 
-                                pageNode.renderAll();
 
-
-                                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                                _self.OnPageSelected(_pageIndex,_successCallback,true);
-                            })
-
-                        }else{
-                            //console.log('不更新layer');
+                pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                    //pageNode.setWidth(project.currentSize.width);
+                    //pageNode.setHeight(project.currentSize.height);
+                    if (isInit){
+                        // console.log('init layer');
+                        updateLayerImage(0,function () {
                             _self.ScaleCanvas('page');
 
+                            console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
+                            pageNode.deactivateAll();
                             pageNode.renderAll();
-
+                            // console.log('page pro',JSON.stringify(pageNode.toJSON()));
 
                             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                            _self.OnPageSelected(_pageIndex,_successCallback);
-                        }
+                            // console.log('pageurl',''+currentPage.url,currentPage)
+                            // window.currentPage = currentPage
+                            // _successCallback && _successCallback();
+                            _self.OnPageSelected(_pageIndex,_successCallback,true);
+                        })
 
 
-                    })
 
-                });
+
+                    }else{
+                        //console.log('不更新layer');
+                        _self.ScaleCanvas('page');
+
+                        pageNode.renderAll();
+
+
+                        currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                        _self.OnPageSelected(_pageIndex,_successCallback);
+                    }
+
+
+                })
 
                 function updateLayerImage(_index,_successCallback) {
                     if (_index==pageCount){
@@ -3245,6 +3304,15 @@ ideServices
                         })
                     }
                 }
+
+                // function updateLayerImage(_index,_successCallback) {
+                //     if (_index==pageCount){
+                //         _successCallback&&_successCallback();
+                //     }else{
+                //
+                //     }
+                // }
+
             }
         }
 
@@ -4120,7 +4188,7 @@ ideServices
             var pageCopy= _.cloneDeep(_page);
             pageCopy.id=Math.random().toString(36).substr(2);   //重置id
             pageCopy.mode=0;    //显示page模式
-            var proJson=JSON.parse(pageCopy.proJsonStr);    //改proJson
+            var proJson=pageCopy.proJsonStr;    //改proJson
             _.forEach(proJson.objects, function (_fabLayer) {
                 _.forEach(pageCopy.layers, function (_layer) {
                     if (_layer.id==_fabLayer.id){
@@ -4131,11 +4199,11 @@ ideServices
                     }
                 })
             });
-            pageCopy.proJsonStr=JSON.stringify(proJson);
+            pageCopy.proJsonStr=proJson;
             _.forEach(pageCopy.layers, function (_layer) {
                 _.forEach(_layer.subLayers, function (_subLayer) {
                     _subLayer.id=Math.random().toString(36).substr(2);
-                    var proJson1=JSON.parse(_subLayer.proJsonStr);
+                    var proJson1=_subLayer.proJsonStr;
                     _.forEach(proJson1.objects, function (_fabWidget) {
                         _.forEach(_subLayer.widgets, function (_widget) {
                             if (_widget.id==_fabWidget.id){
@@ -4145,7 +4213,7 @@ ideServices
                             }
                         })
                     });
-                    _subLayer.proJsonStr=JSON.stringify(proJson1);
+                    _subLayer.proJsonStr=proJson1;
                 })
             });
             return pageCopy;
@@ -5143,9 +5211,10 @@ ideServices
 
                     subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
 
-                            subLayerNode.deactivateAll();
+                        subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
                         currentSubLayer.proJsonStr=subLayerNode.toJSON();
+
 
                         currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                         renderingSubLayer=false;
@@ -5175,7 +5244,9 @@ ideServices
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
                             currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                            // console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
                             currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+                            // console.log('sublayer url',''+currentSubLayer.url)
 
                             renderingSubLayer = false;
                             _successCallback && _successCallback();
