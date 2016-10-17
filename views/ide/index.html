@@ -265,8 +265,8 @@
                             <span class="caption">排列</span>
                         </div>
                         <ul class="dropdown-menu" uib-dropdown-menu>
-                            <li ng-click="changeZIndex(0)">上移一层</li>
-                            <li ng-click="changeZIndex(1)">下移一层</li>
+                            <li ng-click="changeZIndex($index)">上移一层</li>
+                            <li ng-click="changeZIndex($index)">下移一层</li>
                         </ul>
                     </div>
                 </a>
@@ -585,6 +585,16 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">对齐</span>
+                            <select class="my-attr-number-input form-control" ng-model="component.group.alignModeId"
+                                    ng-change="component.group.changeGroupAlign()">
+                                <option ng-repeat="align in component.group.align"
+                                        value="{{align.id}}">{{align.name}}
+                                </option>
+
+                            </select>
                         </div>
                     </div>
                     <div ng-show="component.object.type=='MySubLayer'">
