@@ -200,6 +200,14 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterInitValue:enterInitValue,
                 enterArrange:enterArrange
             },
+            group:{
+                align:[
+                    {id:'top',name:'上对齐'},
+                    {id:'left',name:'左对齐'},
+                ],
+                alignModeId:null,
+                changeGroupAlign:changeGroupAlign,
+            },
 
             enterName:enterName,
 			enterColor:enterColor,
@@ -303,6 +311,7 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                     //让Group无法旋转和放大
                     var controlsVisibility=Preference.GROUP_CONTROL_VISIBLE;
                     selectObject.target.setControlsVisibility(controlsVisibility);
+                    $scope.component.group.alignModeId=null;
                     break;
 
                 case Type.MyProgress:
@@ -2136,6 +2145,16 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             })
         }
 
+    }
+
+    function changeGroupAlign(){
+        var option = {
+            align :$scope.component.group.alignModeId
+        };
+        var oldOperate = ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeGroupAlign(option,function(oldOperate){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        });
     }
 
     function _getRandomColor(){
