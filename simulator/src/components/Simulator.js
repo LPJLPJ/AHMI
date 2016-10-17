@@ -8,6 +8,7 @@ var InputKeyboard = require('./inputKeyboard');
 var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
+var AnimationManager = require('../utils/animationManager')
 
 var sep = '/';
 var defaultState = {
@@ -164,7 +165,9 @@ module.exports =   React.createClass({
         this.setState({timerList:timerList});
 
 
-        console.log('timerList loaded', timerList)
+        console.log('timerList loaded', timerList);
+
+        /*init animation keys */
 
         //loading resources
         var resourceList = [];
@@ -425,29 +428,36 @@ module.exports =   React.createClass({
             this.handleTargetAction(page, 'Load')
 
             offctx.save();
-            offctx.translate(offcanvas.width,0);
-            var lastValue = 0;
-            var curValue =0;
-            var animationKey = setInterval(function () {
-                // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
-                // offctx.save();
-                curValue = EasingFunctions.easeInOutCubic((frames-count)/frames);
-                offctx.translate(-offcanvas.width*(curValue-lastValue),0);
-                lastValue = curValue;
+            offctx.translate(offcanvas.width,offcanvas.height);
+
+            AnimationManager.moving(offctx,-offcanvas.width,-offcanvas.height,1000,30,'easeInOutCubic',function (deltas) {
+                offctx.translate(deltas.deltaX,deltas.deltaY);
                 this.paintPage(page,options);
-                // offctx.restore();
-
-                // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
                 ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+            }.bind(this),function () {
+                offctx.restore();
+            })
 
-                count--;
-                if (count<=0){
-                    //finished
-                    clearInterval(animationKey);
-                    console.log('page draw finished')
-                    offctx.restore();
-                }
-            }.bind(this),duration/frames)
+            // var animationKey = setInterval(function () {
+            //     // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+            //     // offctx.save();
+            //     curValue = EasingFunctions.easeInOutCubic((frames-count)/frames);
+            //     offctx.translate(-offcanvas.width*(curValue-lastValue),0);
+            //     lastValue = curValue;
+            //     this.paintPage(page,options);
+            //     // offctx.restore();
+            //
+            //     // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+            //     ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+            //
+            //     count--;
+            //     if (count<=0){
+            //         //finished
+            //         clearInterval(animationKey);
+            //         console.log('page draw finished')
+            //         offctx.restore();
+            //     }
+            // }.bind(this),duration/frames)
         }else{
             this.paintPage(page,options)
             // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
