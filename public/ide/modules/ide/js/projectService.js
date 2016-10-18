@@ -980,6 +980,8 @@ ideServices
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
                         var angle=translateAngle(newValue+this.offsetValue,this.scaleX,this.scaleY);
                         var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
+                        var nowangle=translateAngle(newValue,this.scaleX,this.scaleY);
+                        var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY);
                         ctx.save();
                         ctx.beginPath();
                         ctx.moveTo(0,0);
@@ -1011,7 +1013,7 @@ ideServices
                                 angle=angle+Math.PI/2;
                                 ctx.arc(0,0,radius,minAngle,angle,false);
                                 if(this.dashboardModeId=='2'){
-                                    ctx.arc(0,0,3*radius/4,angle,minAngle,false);
+                                    ctx.arc(0,0,3*radius/4,angle,minAngle,true);
                                 }
                             }
                             //逆向，当前值小于0
@@ -1022,7 +1024,7 @@ ideServices
                                 angle=-nowangle+offsetangle+Math.PI/2;
                                 ctx.arc(0,0,radius,angle,minAngle,false);
                                 if(this.dashboardModeId=='2'){
-                                    ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                                    ctx.arc(0,0,3*radius/4,minAngle,angle,true);
                                 }
                             }
                         }
