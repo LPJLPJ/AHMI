@@ -39,7 +39,9 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             console.warn('空!');
             return;
         }
-        var _actions = _.cloneDeep(ProjectService.getCurrentSelectObject().level).actions;
+        // console.log(ProjectService.getCurrentSelectObject())
+        var curLevel = ProjectService.getCurrentSelectObject().level;
+        var _actions = _.cloneDeep(curLevel.actions);
         ActionService.setActions(_actions);
         $scope.actions = ActionService.getAllActions();
         $scope.triggers = ActionService.getTriggers(ProjectService.getCurrentSelectObject().level.type);

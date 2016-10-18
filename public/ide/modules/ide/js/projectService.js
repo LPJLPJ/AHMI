@@ -2922,6 +2922,8 @@ ideServices
 
             });
 
+            // console.log(type,target,level,mode);
+
             return {
                 type: type,
                 target: target,
@@ -3423,6 +3425,7 @@ ideServices
             setRendering(true);
 
             var newPage = _.cloneDeep(_newPage);
+            console.log(newPage);
             var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
             var newPageIndex=-1;
             if (currentPageIndex == project.pages.length - 1) {
@@ -3433,10 +3436,11 @@ ideServices
                 newPageIndex=currentPageIndex + 1;
 
             }
+            console.log(project);
             _self.changeCurrentPageIndex(newPageIndex, function () {
                 _cleanPageHashKey();
                 _successCallback && _successCallback();
-            });
+            },true);
 
 
         };
@@ -4219,7 +4223,7 @@ ideServices
                         var newId=Math.random().toString(36).substr(2);
                         _layer.id=newId;
                         _fabLayer.id=newId;
-                        _fabLayer.layer= _.cloneDeep(_layer);
+                        // _fabLayer.layer= _.cloneDeep(_layer);
                     }
                 })
             });
@@ -4240,6 +4244,8 @@ ideServices
                     _subLayer.proJsonStr=proJson1;
                 })
             });
+
+            // console.log('pagecopy',pageCopy)
             return pageCopy;
         }
 
@@ -4471,7 +4477,7 @@ ideServices
             }
 
             var pastePage = _getCopyPage(shearPagePlate.objects[0]);
-
+            console.log('pastePage',pastePage)
 
             pastePage.id = Math.random().toString(36).substr(2);
             pastePage.$$hashKey = undefined;
