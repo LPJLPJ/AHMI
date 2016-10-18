@@ -1794,7 +1794,13 @@ module.exports =   React.createClass({
 
                     }
                     else if(widget.dashboardModeId == '2'){
-
+                        var lightStripTex = widget.texList[0].slices[0];
+                        if(curArc>=0){  
+                            this.drawLightStrip(curX, curY, width, height,offset + 90,(curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                        }
+                        else if(curArc<0){
+                            this.drawLightStrip(curX, curY, width, height,offset + 90,(curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId,curArc);
+                        }
                     }
                 }
                 this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
