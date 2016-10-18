@@ -3401,6 +3401,7 @@ ideServices
             setRendering(true);
 
             var newPage = _.cloneDeep(_newPage);
+            console.log(newPage);
             var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
             var newPageIndex=-1;
             if (currentPageIndex == project.pages.length - 1) {
@@ -3411,10 +3412,11 @@ ideServices
                 newPageIndex=currentPageIndex + 1;
 
             }
+            console.log(project);
             _self.changeCurrentPageIndex(newPageIndex, function () {
                 _cleanPageHashKey();
                 _successCallback && _successCallback();
-            });
+            },true);
 
 
         };

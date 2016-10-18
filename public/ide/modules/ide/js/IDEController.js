@@ -25,6 +25,7 @@ console.log = (function (console) {
     if (mode === 'DEBUG'){
         return console.log;
     }else{
+        console.oldLog = console.log;
         return function () {
             
         }
