@@ -73,14 +73,15 @@ ide.controller('ViewCtl',['$scope','ViewService','ProjectService',function($scop
             var scaleStr;
             if(data<0){
                 if(scaleNum<250){
-                    scaleNum=scaleNum+25;
+                    scaleNum=scaleNum+5;
                 }
             }else if(data>0){
                 if(scaleNum>25){
-                    scaleNum=scaleNum-25;
+                    scaleNum=scaleNum-5;
                 }
             }
             scaleStr=scaleNum+'%';
+            $scope.defaultRatios.splice(10,1,scaleStr);
             $scope.viewRatio=scaleStr;
 
         }

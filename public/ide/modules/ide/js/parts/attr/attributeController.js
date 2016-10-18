@@ -96,7 +96,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 ],
                 dashboardClockwise:[
                     {wise:'1',name:'顺时针'},
-                    {wise:'0',name:'逆时针'}
+                    {wise:'0',name:'逆时针'},
+                    {wise:'2',name:'双向'}
                 ],
                 backgroundImage:'blank.png',
                 pointerImg:'blank.png',

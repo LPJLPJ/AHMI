@@ -1004,6 +1004,28 @@ ideServices
                             }
                             //ctx.stroke();
                         }
+                        else if(this.clockwise=='2'){
+                            //正向，当前值大于0
+                            if(newValue>=0){
+                                minAngle=offsetangle+Math.PI/2;
+                                angle=angle+Math.PI/2;
+                                ctx.arc(0,0,radius,minAngle,angle,false);
+                                if(this.dashboardModeId=='2'){
+                                    ctx.arc(0,0,3*radius/4,angle,minAngle,false);
+                                }
+                            }
+                            //逆向，当前值小于0
+                            else if(newValue<0){
+                                var curValue = -newValue;
+                                var nowangle=translateAngle(curValue,this.scaleX,this.scaleY);
+                                minAngle=offsetangle+Math.PI/2;
+                                angle=-nowangle+offsetangle+Math.PI/2;
+                                ctx.arc(0,0,radius,angle,minAngle,false);
+                                if(this.dashboardModeId=='2'){
+                                    ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                                }
+                            }
+                        }
                         ctx.closePath();
                         ctx.clip();
                         ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
