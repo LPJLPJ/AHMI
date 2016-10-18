@@ -23,14 +23,8 @@ var defaultState = {
 
 };
 
-try{
-    var os = require('os');
-    var platform = os.platform();
-    if (platform === 'win32'){
-        sep = '\\'
-    }
-}catch (e){
-    //console.log(e);
+if (global && global.process && global.process.platform.indexOf('win')!==-1){
+    sep = '\\';
 }
 
 var defaultSimulator = {
@@ -505,7 +499,7 @@ module.exports =   React.createClass({
 
         if (options && options.reLinkWidgets) {
             Utils.linkPageWidgets(page);
-            console.log('page', page);
+            // console.log('page', page);
         }
 
 

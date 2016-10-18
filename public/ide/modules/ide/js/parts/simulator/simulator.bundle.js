@@ -19711,7 +19711,7 @@
 /* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	/* WEBPACK VAR INJECTION */(function(global) {var React = __webpack_require__(1);
 	var $ = __webpack_require__(160);
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
@@ -19721,7 +19721,7 @@
 	var Utils = __webpack_require__(167);
 	var VideoSource = __webpack_require__(168);
 	var EasingFunctions = __webpack_require__(169);
-	var AnimationManager = __webpack_require__(171);
+	var AnimationManager = __webpack_require__(170);
 
 	var sep = '/';
 	var defaultState = {
@@ -19736,14 +19736,8 @@
 
 	};
 
-	try {
-	    var os = __webpack_require__(170);
-	    var platform = os.platform();
-	    if (platform === 'win32') {
-	        sep = '\\';
-	    }
-	} catch (e) {
-	    //console.log(e);
+	if (global && global.process && global.process.platform.indexOf('win') !== -1) {
+	    sep = '\\';
 	}
 
 	var defaultSimulator = {
@@ -20196,7 +20190,7 @@
 
 	        if (options && options.reLinkWidgets) {
 	            Utils.linkPageWidgets(page);
-	            console.log('page', page);
+	            // console.log('page', page);
 	        }
 	    },
 	    handleTimers: function (num, postfix, value) {
@@ -22882,6 +22876,7 @@
 	        );
 	    }
 	});
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 160 */
@@ -49888,57 +49883,6 @@
 
 /***/ },
 /* 170 */
-/***/ function(module, exports) {
-
-	exports.endianness = function () { return 'LE' };
-
-	exports.hostname = function () {
-	    if (typeof location !== 'undefined') {
-	        return location.hostname
-	    }
-	    else return '';
-	};
-
-	exports.loadavg = function () { return [] };
-
-	exports.uptime = function () { return 0 };
-
-	exports.freemem = function () {
-	    return Number.MAX_VALUE;
-	};
-
-	exports.totalmem = function () {
-	    return Number.MAX_VALUE;
-	};
-
-	exports.cpus = function () { return [] };
-
-	exports.type = function () { return 'Browser' };
-
-	exports.release = function () {
-	    if (typeof navigator !== 'undefined') {
-	        return navigator.appVersion;
-	    }
-	    return '';
-	};
-
-	exports.networkInterfaces
-	= exports.getNetworkInterfaces
-	= function () { return {} };
-
-	exports.arch = function () { return 'javascript' };
-
-	exports.platform = function () { return 'browser' };
-
-	exports.tmpdir = exports.tmpDir = function () {
-	    return '/tmp';
-	};
-
-	exports.EOL = '\n';
-
-
-/***/ },
-/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
