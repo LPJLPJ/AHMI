@@ -168,7 +168,7 @@ ideServices
                     }
 
                     if(this.backgroundImg.element){
-                        console.log('drawing background element')
+                        // console.log('drawing background element')
                         ctx.drawImage(this.backgroundImg.element,
                             this.backgroundImg.left,
                             this.backgroundImg.top,
@@ -2856,8 +2856,8 @@ ideServices
                         level={
                             info:{
 
-                                left:target?target.getLeft():null,
-                                top:target?target.getTop():null,
+                                left:target?Math.round(target.getLeft()):null,
+                                top:target?Math.round(target.getTop()):null,
                             }
                         };
                         mode=0;
@@ -2891,8 +2891,8 @@ ideServices
                                         target=subLayerNode.getActiveGroup();
                                         level={
                                             info:{
-                                                left:target?target.getLeft():null,
-                                                top:target?target.getTop():null,
+                                                left:target?Math.round(target.getLeft()):null,
+                                                top:target?Math.round(target.getTop()):null,
                                             }
                                         };
                                         mode=1;
@@ -3286,7 +3286,7 @@ ideServices
                         updateLayerImage(0,function () {
                             _self.ScaleCanvas('page');
 
-                            console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
+                            // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
                             pageNode.deactivateAll();
                             pageNode.renderAll();
                             // console.log('page pro',JSON.stringify(pageNode.toJSON()));
@@ -6211,6 +6211,45 @@ ideServices
 
             selectObj.target.fire('changeDateTimeText',arg);
         };
+        this.ChangeAttributeGroupAlign=function(_option,_successCallback){
+            var currentOperate=SaveCurrentOperate();
+            var pageNode=CanvasService.getPageNode();
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var currentPage=_self.getCurrentPage();
+            var object = _self.getCurrentSelectObject();
+            var fabGroup = object.target;
+            var currentGroup = object.level;
+            var groupWidth = fabGroup.getWidth();
+            var groupHeight = fabGroup.getHeight();
+            switch(_option.align){
+                case 'left':
+                    fabGroup.forEachObject(function(item){
+                        item.setLeft(-groupWidth/2);
+                    });
+                    break;
+                case 'top':
+                    fabGroup.forEachObject(function(item){
+                        item.setTop(-groupHeight/2);
+                    });
+                    break;
+                default :break;
+            }
+            if(getCurrentSubLayer()){
+                var currentSubLayer=getCurrentSubLayer();
+
+                currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+
+
+            }else {
+                currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                //console.log(currentPage.proJsonStr);
+
+            }
+            subLayerNode.renderAll();
+            pageNode.renderAll();
+            _successCallback && _successCallback(currentOperate);
+
+        }
 
         //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
         this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
@@ -7310,8 +7349,8 @@ ideServices
          * @param self
          */
         function setTopAndLeft(self){
-            var t = parseInt((self.top).toFixed(0));
-            var l = parseInt((self.left).toFixed(0));
+            var t = parseInt(self.top);
+            var l = parseInt(self.left);
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.info.top=t;
             selectObj.level.info.left=l;

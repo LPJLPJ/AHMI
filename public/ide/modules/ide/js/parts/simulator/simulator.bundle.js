@@ -19721,6 +19721,7 @@
 	var Utils = __webpack_require__(167);
 	var VideoSource = __webpack_require__(168);
 	var EasingFunctions = __webpack_require__(169);
+	var AnimationManager = __webpack_require__(171);
 
 	var sep = '/';
 	var defaultState = {
@@ -19876,6 +19877,8 @@
 	        this.setState({ timerList: timerList });
 
 	        console.log('timerList loaded', timerList);
+
+	        /*init animation keys */
 
 	        //loading resources
 	        var resourceList = [];
@@ -20077,8 +20080,8 @@
 	            // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
 	        } else {
-	            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-	        }
+	                ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	            }
 	    },
 	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
@@ -20121,35 +20124,42 @@
 	            this.handleTargetAction(page, 'Load');
 
 	            offctx.save();
-	            offctx.translate(offcanvas.width, 0);
-	            var lastValue = 0;
-	            var curValue = 0;
-	            var animationKey = setInterval(function () {
-	                // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
-	                // offctx.save();
-	                curValue = EasingFunctions.easeInOutCubic((frames - count) / frames);
-	                offctx.translate(-offcanvas.width * (curValue - lastValue), 0);
-	                lastValue = curValue;
+	            offctx.translate(offcanvas.width, offcanvas.height);
+
+	            AnimationManager.moving(offctx, -offcanvas.width, -offcanvas.height, 1000, 30, 'easeInOutCubic', function (deltas) {
+	                offctx.translate(deltas.deltaX, deltas.deltaY);
 	                this.paintPage(page, options);
-	                // offctx.restore();
-
-	                // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	                ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+	            }.bind(this), function () {
+	                offctx.restore();
+	            });
 
-	                count--;
-	                if (count <= 0) {
-	                    //finished
-	                    clearInterval(animationKey);
-	                    console.log('page draw finished');
-	                    offctx.restore();
-	                }
-	            }.bind(this), duration / frames);
+	            // var animationKey = setInterval(function () {
+	            //     // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+	            //     // offctx.save();
+	            //     curValue = EasingFunctions.easeInOutCubic((frames-count)/frames);
+	            //     offctx.translate(-offcanvas.width*(curValue-lastValue),0);
+	            //     lastValue = curValue;
+	            //     this.paintPage(page,options);
+	            //     // offctx.restore();
+	            //
+	            //     // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	            //     ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+	            //
+	            //     count--;
+	            //     if (count<=0){
+	            //         //finished
+	            //         clearInterval(animationKey);
+	            //         console.log('page draw finished')
+	            //         offctx.restore();
+	            //     }
+	            // }.bind(this),duration/frames)
 	        } else {
-	            this.paintPage(page, options);
-	            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-	            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-	            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-	        }
+	                this.paintPage(page, options);
+	                // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+	                ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	                ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+	            }
 	    },
 	    paintPage: function (page, options) {
 	        // console.log(page);
@@ -20549,9 +20559,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	            // console.log(tex);
-	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	        }
+	                // console.log(tex);
+	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -21373,23 +21383,23 @@
 	                // var circleTex = widget.texList[2].slices[0]
 	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	            } else if (widget.dashboardModeId == '1') {
-	                // complex mode
-	                //background
-	                var bgTex = widget.texList[0].slices[0];
-	                this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                //draw light strip
-	                var lightStripTex = widget.texList[2].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                //draw pointer
-	                this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
+	                    // complex mode
+	                    //background
+	                    var bgTex = widget.texList[0].slices[0];
+	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    //draw light strip
+	                    var lightStripTex = widget.texList[2].slices[0];
+	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    //draw pointer
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0]);
 
-	                //draw circle
-	                // var circleTex = widget.texList[3].slices[0]
-	                // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	            } else if (widget.dashboardModeId == '2') {
-	                var lightStripTex = widget.texList[0].slices[0];
-	                this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	            }
+	                    //draw circle
+	                    // var circleTex = widget.texList[3].slices[0]
+	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                } else if (widget.dashboardModeId == '2') {
+	                        var lightStripTex = widget.texList[0].slices[0];
+	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    }
 
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -21953,9 +21963,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+	                bgRange = height - widget.slideSize.h || 1;
+	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -22180,20 +22190,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                    //switch
-	                    //if (widget.switchState) {
-	                    //	widget.switchState = !widget.switch
-	                    //}else{
-	                    //	widget.switchState = 1;
-	                    //}
-	                    //update its tag
-	                    var targetTag = this.findTagByName(widget.tag);
-	                    if (targetTag) {
-	                        targetTag.value = parseInt(targetTag.value);
-	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        //switch
+	                        //if (widget.switchState) {
+	                        //	widget.switchState = !widget.switch
+	                        //}else{
+	                        //	widget.switchState = 1;
+	                        //}
+	                        //update its tag
+	                        var targetTag = this.findTagByName(widget.tag);
+	                        if (targetTag) {
+	                            targetTag.value = parseInt(targetTag.value);
+	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        }
 	                    }
-	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
@@ -49926,6 +49936,67 @@
 
 	exports.EOL = '\n';
 
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Created by ChangeCheng on 2016/10/16.
+	 */
+
+	var EasingFunctions = __webpack_require__(169);
+	var AnimationManager = {};
+
+	var animationKeys = [];
+	AnimationManager.animationKeys = animationKeys;
+	AnimationManager.deleteAnimationKey = function (key) {
+	    for (var i = 0; i < this.animationKeys.length; i++) {
+	        if (this.animationKeys[i] === key) {
+	            this.animationKeys.splice(i, 1);
+	            return true;
+	        }
+	    }
+	    return false;
+	};
+	AnimationManager.clearAnimationKey = function (key) {
+	    clearInterval(key);
+	    this.deleteAnimationKey(key);
+	};
+	AnimationManager.clearAllAnimationKeys = function () {
+	    for (var i = 0; i < this.animationKeys.length; i++) {
+	        clearInterval(this.animationKeys[i]);
+	    }
+	    this.animationKeys = [];
+	};
+
+	AnimationManager.moving = function (context, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
+	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
+	    var lastValue = 0;
+	    var curValue = 0;
+	    var count = frames;
+	    var deltaX = 0;
+	    var deltaY = 0;
+	    var animationKey = setInterval(function () {
+	        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+	        // offctx.save();
+	        curValue = easingFunc((frames - count) / frames);
+	        deltaX = dstX * (curValue - lastValue);
+	        deltaY = dstY * (curValue - lastValue);
+	        lastValue = curValue;
+	        intervalCb && intervalCb({ deltaX: deltaX, deltaY: deltaY });
+
+	        count--;
+	        if (count < 0) {
+	            //finished
+	            this.clearAnimationKey(animationKey);
+	            finishCb && finishCb();
+	        }
+	    }.bind(this), duration / frames);
+	    animationKeys.push(animationKey);
+	};
+
+	module.exports = AnimationManager;
 
 /***/ }
 /******/ ]);

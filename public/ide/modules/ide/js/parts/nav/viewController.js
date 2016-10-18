@@ -96,7 +96,6 @@ ide.controller('ViewCtl',['$scope','ViewService','ProjectService',function($scop
 
         $scope.$watch('viewRatio', function () {
             //call view change
-            console.log($scope.viewRatio,typeof $scope.viewRatio);
             var type = $scope.isEditingPage? 'page':'subCanvas';
             ViewService.setScale($scope.viewRatio,type);
             $scope.$emit('changeCanvasScale',type);
