@@ -1319,45 +1319,30 @@ ideServices
                 this.hasRotatingPoint=false;
                 this.backgroundColor=level.texList[0].slices[0].color;
                 this.bindBit=level.info.bindBit;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.imageElement=new Image();
-                //     this.imageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.imageElement.onload = function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }.bind(this);
-                // }else {
-                //     this.imageElement=null;
-                // }
-
                 this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.imageElement) {
                     this.loaded = true;
                     this.setCoords();
                     this.fire('image:loaded');
                 }
-
-
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
 
                     var tex=level.texList[0];
                     self.backgroundColor=tex.slices[0].color;
-                    // if (tex.slices[0].imgSrc!='') {
-                    //     var currentImageElement=new Image();
-                    //     currentImageElement.src=tex.slices[0].imgSrc;
-                    //     currentImageElement.onload = (function () {
-                    //     }).bind(this);
-                    //     self.imageElement=currentImageElement;
-                    // }else {
-                    //     self.imageElement=null;
-                    // }
-
                     self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
 
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeWidgetSize',function(arg){
+                    var _callback=arg.callback;
+                    var widgetWidth=arg.widgetWidth||25;
+                    var widgetHeight=arg.WidgetHeight||25;
+                    self.setWidth(widgetWidth);
+                    self.setHeight(widgetHeight);
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -6436,10 +6421,10 @@ ideServices
                 var arg={
                     level:selectObj.level,
                     callback:_successCallback,
-                }
+                };
                 selectObj.target.fire('changeTex',arg);
 
-            })
+            });
 
             /**
              * 递归函数,根据count改变TexList
@@ -6592,6 +6577,25 @@ ideServices
             selectObj.target.fire('changeTex',arg);
         };
 
+        /**
+         * 用于一键配置控件大小，使控件大小与纹理大小相同
+         * @constructor
+         */
+        this.ChangeAttributeWidgetSize=function(_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var arg={
+                callback:_successCallback,
+            };
+            var image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+            arg.widgetWidth=image.width;
+            arg.WidgetHeight=image.height;
+            if(image.width==selectObj.level.info.width&&image.height==selectObj.level.info.height){
+                return;
+            }
+            selectObj.level.info.width=image.width;
+            selectObj.level.info.height=image.height;
+            selectObj.target.fire('changeWidgetSize',arg);
+        };
 
         this.ChangeAttributeTag= function (_tagObj, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();

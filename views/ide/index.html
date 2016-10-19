@@ -1872,8 +1872,10 @@
                             <span class="iconfont" ng-click="editTex($index)">&#xe64a;</span>
                         </li>
                     </ul>
-                    <!--<button type="button" class="btn btn-sm" ng-click="editTex(0)" >Edit</button>-->
-                    <!--<img ng-src="selectedImageUrl" width="100px" height="100px" />-->
+
+                    <button type="button" class="btn btn-default dengPage-addAction" ng-show="showSizeButtion" ng-click="configWidgetSize()">
+                        匹配此纹理
+                    </button>
                     <script type="text/ng-template" id="imageSelectorModal.html">
                         <div class="modal-header">
                             <h3 class="modal-title">选择图片</h3>

@@ -37,11 +37,8 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
         target.addEventListener('wheel',function (e) {
             //console.log($scope.currentKey)
             if ($scope.currentKey === 'Shift-'||$scope.currentKey==='Ctrl-'){
-                //change view ratio
                 e.preventDefault();
-
                 /**handle mousewheel event */
-                //console.log('mouse wheeling',parseInt(e.deltaY));
                 if(parseInt(e.delatY)!==0){
                     $scope.$broadcast('wheelScale',parseInt(e.deltaY));
                 }

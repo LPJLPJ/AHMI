@@ -71,7 +71,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     //update
                     $scope.texList[$scope.selectedIdx] = newTex;
                 }
-                console.log('texlist',$scope.texList)
+                //console.log('texlist',$scope.texList)
                 var oldOperate=ProjectService.SaveCurrentOperate();
                 ProjectService.ChangeAttributeTexList(_.cloneDeep($scope.texList), function () {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
@@ -83,6 +83,15 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
 
 
         };
+
+        $scope.configWidgetSize=function(){
+            if($scope.texList[0].slices[0].imgSrc!=""){
+                var oldOperate=ProjectService.SaveCurrentOperate();
+                ProjectService.ChangeAttributeWidgetSize(function(){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
+            }
+        }
 
 
     }
@@ -103,12 +112,20 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                 case "MyVideo":
                 case "MyNum":
                     $scope.showTexPanel=false;
+                    $scope.showSizeButtion=fasle;
+                    break;
+                case "MySwitch":
+                    $scope.showTexPanel=true;
+                    $scope.showSizeButtion=true;
                     break;
                 default :
                     $scope.showTexPanel = true;
+                    $scope.showSizeButtion=false;
+                    break
             }
         }else{
             $scope.showTexPanel = false;
+            $scope.showSizeButtion = false;
         }
         $scope.widgetName = currentSelectedObject.name;
         $scope.widgetType = currentSelectedObject.type;
