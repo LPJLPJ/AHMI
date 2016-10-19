@@ -806,6 +806,12 @@ ideServices
                 this.pointerLength = level.info.pointerLength;
                 this.clockwise=level.info.clockwise;
                 this.dashboardModeId=level.dashboardModeId;
+                if(level.info.hasOwnProperty('minCoverAngle')){
+                    this.minCoverAngle=level.info.minCoverAngle;
+                }
+                if(level.info.hasOwnProperty('maxCoverAngle')){
+                    this.maxCoverAngle=level.info.maxCoverAngle;
+                }
           
                 if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
                     this.backgroundColor=level.texList[0].slices[0].color;
@@ -858,16 +864,16 @@ ideServices
                     if(arg.hasOwnProperty('value')){
                         self.value=arg.value;
                     }
-                    if(arg.hasOwnProperty('maxValue')){
+                    else if(arg.hasOwnProperty('maxValue')){
                         self.maxValue=arg.maxValue;
                     }
-                    if(arg.hasOwnProperty('minValue')){
+                    else if(arg.hasOwnProperty('minValue')){
                         self.minValue=arg.minValue;
                     }
-                    if(arg.hasOwnProperty('minAngle')){
+                    else if(arg.hasOwnProperty('minAngle')){
                         self.minAngle=arg.minAngle;
                     }
-                    if(arg.hasOwnProperty('maxAngle')){
+                    else if(arg.hasOwnProperty('maxAngle')){
                         self.maxAngle=arg.maxAngle;
                     }
                     var _callback=arg.callback;
@@ -929,6 +935,18 @@ ideServices
                     subLayerNode.renderAll();
                     _callback&&_callback();
                 });
+                this.on('changeDashboardCoverAngle',function(arg){
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    if(arg.hasOwnProperty('minCoverAngle')){
+                        self.minCoverAngle=arg.minCoverAngle;
+                    }else if(arg.hasOwnProperty('maxCoverAngle')){
+                        self.maxCoverAngle=arg.maxCoverAngle;
+                    }
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                })
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
@@ -965,6 +983,7 @@ ideServices
             },
             _render: function (ctx) {
                 try{
+                    //console.log('converAngle:',this.minCoverAngle,this.maxCoverAngle);
                     var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
@@ -980,6 +999,8 @@ ideServices
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
                         var angle=translateAngle(newValue+this.offsetValue,this.scaleX,this.scaleY);
                         var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
+                        var nowangle=translateAngle(newValue,this.scaleX,this.scaleY);
+                        var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY);
                         ctx.save();
                         ctx.beginPath();
                         ctx.moveTo(0,0);
@@ -1004,6 +1025,28 @@ ideServices
                             }
                             //ctx.stroke();
                         }
+                        else if(this.clockwise=='2'){
+                            //正向，当前值大于0
+                            if(newValue>=0){
+                                minAngle=offsetangle+Math.PI/2;
+                                angle=angle+Math.PI/2;
+                                ctx.arc(0,0,radius,minAngle,angle,false);
+                                if(this.dashboardModeId=='2'){
+                                    ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                                }
+                            }
+                            //逆向，当前值小于0
+                            else if(newValue<0){
+                                var curValue = -newValue;
+                                var nowangle=translateAngle(curValue,this.scaleX,this.scaleY);
+                                minAngle=offsetangle+Math.PI/2;
+                                angle=-nowangle+offsetangle+Math.PI/2;
+                                ctx.arc(0,0,radius,angle,minAngle,false);
+                                if(this.dashboardModeId=='2'){
+                                    ctx.arc(0,0,3*radius/4,minAngle,angle,true);
+                                }
+                            }
+                        }
                         ctx.closePath();
                         ctx.clip();
                         ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
@@ -1021,6 +1064,16 @@ ideServices
                         }
                         angleOfPointer=angleOfPointer+45;
                         //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
+                        if(!(this.minCoverAngle==this.maxCoverAngle)){
+                            var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                            var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                            ctx.beginPath();
+                            ctx.moveTo(0,0);
+                            ctx.arc(0,0,radius,newMaxCoverAngle,newMinCoverAngle,false);
+                            ctx.closePath();
+                            //ctx.stroke();
+                            ctx.clip();
+                        }
                         ctx.scale(1/this.scaleX,1/this.scaleY);
                         ctx.rotate(angleOfPointer*Math.PI/180);
                         ctx.scale(this.scaleX,this.scaleY);
@@ -6326,6 +6379,23 @@ ideServices
             };
             selectObj.target.fire('changeDashboardClockwise',arg);
         };
+        //改变仪表盘的覆盖角度
+        this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            arg={
+                callback:_successCallback
+            };
+            if(_option.hasOwnProperty('minCoverAngle')){
+                arg.minCoverAngle=_option.minCoverAngle;
+                selectObj.level.info.minCoverAngle=_option.minCoverAngle;
+            }
+            else if(_option.hasOwnProperty('maxCoverAngle')){
+                arg.maxCoverAngle=_option.maxCoverAngle;
+                selectObj.level.info.maxCoverAngle=_option.maxCoverAngle;
+            }
+            toastr.info('修改成功!');
+            selectObj.target.fire('changeDashboardCoverAngle',arg);
+        };
         this.ChangeAttributeInterval= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.info.interval=_option.interval;
@@ -6346,7 +6416,7 @@ ideServices
             var arg={
                 interval:fabInterval,
                 callback:_successCallback
-            }
+            };
             selectObj.target.fire('changeInterval',arg);
 
         };

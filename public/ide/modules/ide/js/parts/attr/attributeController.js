@@ -96,7 +96,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 ],
                 dashboardClockwise:[
                     {wise:'1',name:'顺时针'},
-                    {wise:'0',name:'逆时针'}
+                    {wise:'0',name:'逆时针'},
+                    {wise:'2',name:'双向'}
                 ],
                 backgroundImage:'blank.png',
                 pointerImg:'blank.png',
@@ -105,6 +106,8 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 enterDashboardValue:enterDashboardValue,
                 enterDashboardOffsetValue:enterDashboardOffsetValue,
                 enterPointerLength:enterPointerLength,
+                enterMinCoverAngle:enterMinCoverAngle,
+                enterMaxCoverAngle:enterMaxCoverAngle
             },
             textArea:{
                 enterText:enterText,
@@ -337,6 +340,12 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
                 case Type.MyDashboard:
                     $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
                     $scope.component.dashboard.clockwise=$scope.component.object.level.info.clockwise;
+                    if(!($scope.component.object.level.info.minCoverAngle||$scope.component.object.level.info.maxCoverAngle)){
+                        $scope.component.object.level.info.minCoverAngle=0;
+                        $scope.component.object.level.info.maxCoverAngle=0;
+                        selectObject.level.info.minCoverAngle=0;
+                        selectObject.level.info.maxCoverAngle=0;
+                    }
                     if ($scope.component.object.level.backgroundImg==''){
                         $scope.component.dashboard.backgroundImage='blank.png';
                     }else {
@@ -1164,11 +1173,59 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         })
     }
 
+    function enterMinCoverAngle(e){
+        if(e.keyCode==13){
+            if (!_.isInteger($scope.component.object.level.info.minCoverAngle)){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.minCoverAngle<-180||$scope.component.object.level.info.minCoverAngle>180||
+                $scope.component.object.level.info.minCoverAngle>$scope.component.object.level.info.maxCoverAngle){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            var option = {
+                minCoverAngle:$scope.component.object.level.info.minCoverAngle
+            }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardCoverAngle(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function enterMaxCoverAngle(e){
+        if(e.keyCode==13){
+            if (!_.isInteger($scope.component.object.level.info.maxCoverAngle)){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.maxCoverAngle<-180||$scope.component.object.level.info.maxCoverAngle>180||
+                $scope.component.object.level.info.maxCoverAngle<$scope.component.object.level.info.minCoverAngle){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            var option = {
+                maxCoverAngle:$scope.component.object.level.info.maxCoverAngle
+            }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardCoverAngle(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+
+        }
+    }
+
     function enterMinValue(e){
 
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.minValue))){
+            if (!_.isInteger($scope.component.object.level.info.minValue)){
                 toastr.warning('输入不合法');
                 restore();
                 return;
