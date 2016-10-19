@@ -23,6 +23,16 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
     }
 
     function initListeningMouseWheel() {
+        var supportPassive=false;
+        try{
+            var opts = Object.defineProperties({},'passive',{
+                get:function(){
+                    supportPassive = true;
+                }
+            });
+        }catch(e){
+
+        };
         var target = document.getElementsByClassName('container-fluid')[0];
         target.addEventListener('wheel',function (e) {
             //console.log($scope.currentKey)
@@ -36,7 +46,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
                     $scope.$broadcast('wheelScale',parseInt(e.deltaY));
                 }
             }
-        },false);
+        },supportPassive? {passive: true} : false);
     }
 
     function initListeningKeyDown(){
