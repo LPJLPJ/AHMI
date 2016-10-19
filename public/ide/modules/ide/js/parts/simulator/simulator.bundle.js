@@ -20077,8 +20077,8 @@
 	            // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
 	        } else {
-	            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-	        }
+	                ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	            }
 	    },
 	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
@@ -20120,7 +20120,7 @@
 	            options.reLinkWidgets = true;
 	            this.handleTargetAction(page, 'Load');
 
-	            AnimationManager.moving(offctx, offcanvas.width, offcanvas.height, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
+	            AnimationManager.moving(offcanvas.width, offcanvas.height, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
 
 	                // offctx.translate(deltas.curX,deltas.curY);
 	                page.translate = {
@@ -20128,7 +20128,9 @@
 	                    y: deltas.curY
 	                };
 	                this.draw();
-	            }.bind(this), function () {});
+	            }.bind(this), function () {
+	                page.translate = null;
+	            });
 
 	            // var animationKey = setInterval(function () {
 	            //     // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
@@ -20151,11 +20153,11 @@
 	            //     }
 	            // }.bind(this),duration/frames)
 	        } else {
-	            this.paintPage(page, options);
-	            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-	            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-	            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-	        }
+	                this.paintPage(page, options);
+	                // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+	                ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	                ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+	            }
 	    },
 	    paintPage: function (page, options) {
 	        // console.log(page);
@@ -20298,8 +20300,36 @@
 	            }.bind(this), timer['SysTmr_' + num + '_Interval']);
 	        }
 	    },
+	    executeAnimation: function (target, animation) {
+	        AnimationManager.moving(target.w, target.h, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
+
+	            // offctx.translate(deltas.curX,deltas.curY);
+
+	            target.x = deltas.curX;
+	            target.y = deltas.curY;
+	            this.draw();
+	        }.bind(this), function () {});
+	    },
 	    drawCanvas: function (canvasData, options) {
-	        this.paintCanvas(canvasData, options);
+	        var executeAnimation = false;
+	        if (options && options.animation) {
+	            //has animation execute
+	            if (canvasData.tag === options.animation.tag) {
+	                //execute animation which number is number
+	                // for (var i=0;i<canvasData.animations.length;i++){
+	                //     if (canvasData.animations[i].number === options.animation.number){
+	                //         //hit
+	                //         //execute this animation
+	                //         executeAnimation = true;
+	                //         this.executeAnimation(canvasData,canvasData.animations[i]);
+	                //     }
+	                // }
+	                this.executeAnimation(canvasData);
+	            }
+	        }
+	        if (!executeAnimation) {
+	            this.paintCanvas(canvasData, options);
+	        }
 	    },
 	    paintCanvas: function (canvasData, options) {
 	        //draw
@@ -20384,7 +20414,7 @@
 	            // offctx.beginPath();
 	            // offctx.moveTo(0,0);
 	            // offctx.lineTo(100,100);
-	            AnimationManager.moving(offctx, moveX, moveY, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
+	            AnimationManager.moving(moveX, moveY, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
 	                // offctx.save();
 	                // offctx.translate(deltas.curX,deltas.curY);
 	                subCanvas.translate = {
@@ -20629,9 +20659,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	            // console.log(tex);
-	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	        }
+	                // console.log(tex);
+	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -21457,23 +21487,23 @@
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	                } else if (widget.dashboardModeId == '1') {
-	                    // complex mode
-	                    //background
-	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                    //draw light strip
-	                    var lightStripTex = widget.texList[2].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                        // complex mode
+	                        //background
+	                        var bgTex = widget.texList[0].slices[0];
+	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        //draw light strip
+	                        var lightStripTex = widget.texList[2].slices[0];
+	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                        //draw pointer
+	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 
-	                    //draw circle
-	                    // var circleTex = widget.texList[3].slices[0]
-	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	                } else if (widget.dashboardModeId == '2') {
-	                    var lightStripTex = widget.texList[0].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                }
+	                        //draw circle
+	                        // var circleTex = widget.texList[3].slices[0]
+	                        // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                    } else if (widget.dashboardModeId == '2') {
+	                            var lightStripTex = widget.texList[0].slices[0];
+	                            this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                        }
 	            } else {
 	                if (widget.dashboardModeId == '0') {
 	                    //simple mode
@@ -21486,34 +21516,34 @@
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	                } else if (widget.dashboardModeId == '1') {
-	                    // complex mode
-	                    //background
-	                    if (curArc >= 0) {
-	                        var bgTex = widget.texList[0].slices[0];
-	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                        //draw light strip
-	                        var lightStripTex = widget.texList[2].slices[0];
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                        //draw pointer
+	                        // complex mode
+	                        //background
+	                        if (curArc >= 0) {
+	                            var bgTex = widget.texList[0].slices[0];
+	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                            //draw light strip
+	                            var lightStripTex = widget.texList[2].slices[0];
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                            //draw pointer
 
-	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
-	                    } else if (curArc < 0) {
-	                        var bgTex = widget.texList[0].slices[0];
-	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                        //draw light strip
-	                        var lightStripTex = widget.texList[2].slices[0];
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-	                        //draw pointer
-	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], minCoverAngle, maxCoverAngle);
+	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                        } else if (curArc < 0) {
+	                            var bgTex = widget.texList[0].slices[0];
+	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                            //draw light strip
+	                            var lightStripTex = widget.texList[2].slices[0];
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+	                            //draw pointer
+	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], minCoverAngle, maxCoverAngle);
+	                        }
+	                    } else if (widget.dashboardModeId == '2') {
+	                        var lightStripTex = widget.texList[0].slices[0];
+	                        if (curArc >= 0) {
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                        } else if (curArc < 0) {
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+	                        }
 	                    }
-	                } else if (widget.dashboardModeId == '2') {
-	                    var lightStripTex = widget.texList[0].slices[0];
-	                    if (curArc >= 0) {
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    } else if (curArc < 0) {
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-	                    }
-	                }
 	            }
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -22091,9 +22121,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+	                bgRange = height - widget.slideSize.h || 1;
+	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -22318,20 +22348,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                    //switch
-	                    //if (widget.switchState) {
-	                    //	widget.switchState = !widget.switch
-	                    //}else{
-	                    //	widget.switchState = 1;
-	                    //}
-	                    //update its tag
-	                    var targetTag = this.findTagByName(widget.tag);
-	                    if (targetTag) {
-	                        targetTag.value = parseInt(targetTag.value);
-	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        //switch
+	                        //if (widget.switchState) {
+	                        //	widget.switchState = !widget.switch
+	                        //}else{
+	                        //	widget.switchState = 1;
+	                        //}
+	                        //update its tag
+	                        var targetTag = this.findTagByName(widget.tag);
+	                        if (targetTag) {
+	                            targetTag.value = parseInt(targetTag.value);
+	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        }
 	                    }
-	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
@@ -22909,6 +22939,16 @@
 	                    canId = secondValue;
 	                }
 
+	                break;
+	            case 'ANIMATE':
+
+	                var secondValue = Number(this.getParamValue(param2));
+	                this.draw(null, {
+	                    animation: {
+	                        tag: param1.tag,
+	                        number: secondValue
+	                    }
+	                });
 	                break;
 
 	        }
@@ -50048,7 +50088,7 @@
 	    this.animationKeys = [];
 	};
 
-	AnimationManager.moving = function (context, srcX, srcY, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
+	AnimationManager.moving = function (srcX, srcY, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;

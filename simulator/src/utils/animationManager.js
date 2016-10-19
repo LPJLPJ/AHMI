@@ -27,7 +27,7 @@ AnimationManager.clearAllAnimationKeys = function () {
     this.animationKeys = [];
 }
 
-AnimationManager.moving = function (context,srcX,srcY,dstX,dstY,duration,frames,easing,intervalCb,finishCb) {
+AnimationManager.moving = function (srcX,srcY,dstX,dstY,duration,frames,easing,intervalCb,finishCb) {
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue =0;

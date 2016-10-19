@@ -426,7 +426,7 @@ module.exports =   React.createClass({
 
 
 
-            AnimationManager.moving(offctx,offcanvas.width,offcanvas.height,0,0,1000,30,'easeInOutCubic',function (deltas) {
+            AnimationManager.moving(offcanvas.width,offcanvas.height,0,0,1000,30,'easeInOutCubic',function (deltas) {
 
                 // offctx.translate(deltas.curX,deltas.curY);
                 page.translate = {
@@ -437,7 +437,7 @@ module.exports =   React.createClass({
 
 
             }.bind(this),function () {
-
+                page.translate = null;
             })
 
             // var animationKey = setInterval(function () {
@@ -624,8 +624,41 @@ module.exports =   React.createClass({
             }.bind(this), timer['SysTmr_' + num + '_Interval']);
         }
     },
+    executeAnimation:function (target,animation) {
+        AnimationManager.moving(target.w,target.h,0,0,1000,30,'easeInOutCubic',function (deltas) {
+
+            // offctx.translate(deltas.curX,deltas.curY);
+
+            target.x = deltas.curX;
+            target.y = deltas.curY;
+            this.draw();
+
+
+        }.bind(this),function () {
+            
+        })
+    },
     drawCanvas:function (canvasData,options) {
-        this.paintCanvas(canvasData,options);
+        var executeAnimation = false;
+        if (options&&options.animation){
+            //has animation execute
+            if (canvasData.tag === options.animation.tag){
+                //execute animation which number is number
+                // for (var i=0;i<canvasData.animations.length;i++){
+                //     if (canvasData.animations[i].number === options.animation.number){
+                //         //hit
+                //         //execute this animation
+                //         executeAnimation = true;
+                //         this.executeAnimation(canvasData,canvasData.animations[i]);
+                //     }
+                // }
+                this.executeAnimation(canvasData);
+            }
+        }
+        if (!executeAnimation){
+            this.paintCanvas(canvasData,options);
+        }
+
     },
     paintCanvas: function (canvasData, options) {
         //draw
@@ -710,7 +743,7 @@ module.exports =   React.createClass({
             // offctx.beginPath();
             // offctx.moveTo(0,0);
             // offctx.lineTo(100,100);
-            AnimationManager.moving(offctx,moveX,moveY,0,0,1000,30,'easeInOutCubic',function (deltas) {
+            AnimationManager.moving(moveX,moveY,0,0,1000,30,'easeInOutCubic',function (deltas) {
                 // offctx.save();
                 // offctx.translate(deltas.curX,deltas.curY);
                 subCanvas.translate = {
@@ -3325,6 +3358,16 @@ module.exports =   React.createClass({
                 }
 
 
+                break;
+            case 'ANIMATE':
+
+                var secondValue = Number(this.getParamValue(param2));
+                this.draw(null,{
+                    animation:{
+                        tag:param1.tag,
+                        number:secondValue
+                    }
+                })
                 break;
 
         }
