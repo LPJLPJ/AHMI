@@ -53,6 +53,7 @@ module.exports =   React.createClass({
         }.bind(this));
         this.simState = {};
         VideoSource.pause();
+        AnimationManager.clearAllAnimationKeys();
     },
     initCanvas: function (data, callBack) {
         var i;
@@ -291,6 +292,8 @@ module.exports =   React.createClass({
         }.bind(this));
         this.simState = {};
         VideoSource.setVideoSrc('');
+        //init animation keys
+        AnimationManager.clearAllAnimationKeys();
         this.state = _.cloneDeep(defaultSimulator);
         this.state.project = _.cloneDeep(newProps.projectData);
         this.initProject();
@@ -421,15 +424,20 @@ module.exports =   React.createClass({
             options.reLinkWidgets = true;
             this.handleTargetAction(page, 'Load')
 
-            offctx.save();
-            offctx.translate(offcanvas.width,offcanvas.height);
 
-            AnimationManager.moving(offctx,-offcanvas.width,-offcanvas.height,1000,30,'easeInOutCubic',function (deltas) {
-                offctx.translate(deltas.deltaX,deltas.deltaY);
-                this.paintPage(page,options);
-                ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+
+            AnimationManager.moving(offctx,offcanvas.width,offcanvas.height,0,0,1000,30,'easeInOutCubic',function (deltas) {
+
+                // offctx.translate(deltas.curX,deltas.curY);
+                page.translate = {
+                    x:deltas.curX,
+                    y:deltas.curY
+                }
+                this.draw();
+
+
             }.bind(this),function () {
-                offctx.restore();
+
             })
 
             // var animationKey = setInterval(function () {
@@ -464,15 +472,15 @@ module.exports =   React.createClass({
     paintPage: function (page, options) {
         // console.log(page);
         //will load
-        if (!page.state || page.state == LoadState.notLoad) {
-            page.state = LoadState.willLoad
-            //generate load trigger
-            if (!options) {
-                options = {};
-            }
-            options.reLinkWidgets = true;
-            this.handleTargetAction(page, 'Load')
-        }
+        // if (!page.state || page.state == LoadState.notLoad) {
+        //     page.state = LoadState.willLoad
+        //     //generate load trigger
+        //     if (!options) {
+        //         options = {};
+        //     }
+        //     options.reLinkWidgets = true;
+        //     this.handleTargetAction(page, 'Load')
+        // }
         page.state = LoadState.loading
 
         var offcanvas = this.refs.offcanvas;
@@ -480,6 +488,10 @@ module.exports =   React.createClass({
 
 
         //drawPage
+        offctx.save();
+        if (page.translate){
+            offctx.translate(page.translate.x,page.translate.y);
+        }
         offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
         this.drawBgColor(0, 0, offcanvas.width, offcanvas.height, page.backgroundColor);
         this.drawBgImg(0, 0, offcanvas.width, offcanvas.height, page.backgroundImage);
@@ -493,6 +505,7 @@ module.exports =   React.createClass({
             }
         }
 
+        offctx.restore();
 
         page.state = LoadState.loaded;
 
@@ -611,8 +624,14 @@ module.exports =   React.createClass({
             }.bind(this), timer['SysTmr_' + num + '_Interval']);
         }
     },
-    drawCanvas: function (canvasData, options) {
+    drawCanvas:function (canvasData,options) {
+        this.paintCanvas(canvasData,options);
+    },
+    paintCanvas: function (canvasData, options) {
         //draw
+
+        var offcanvas = this.refs.offcanvas;
+        var offctx = offcanvas.getContext('2d');
         var subCanvasList = canvasData.subCanvasList || [];
         var canvasTag = this.findTagByName(canvasData.tag);
         var nextSubCanvasIdx = (canvasTag && canvasTag.value) || 0;
@@ -649,21 +668,82 @@ module.exports =   React.createClass({
         }
         var subCanvas = subCanvasList[nextSubCanvasIdx];
         if (subCanvas) {
+            console.log('painting canvas')
+            offctx.save();
+            this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
             this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
+            offctx.restore();
         } else {
             this.handleTargetAction(oldSubCanvas, 'UnLoad');
         }
     },
-    drawSubCanvas: function (subCanvas, x, y, w, h, options) {
-        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
-            subCanvas.state = LoadState.willLoad
-            //generate load trigger
-            this.handleTargetAction(subCanvas, 'Load')
-        }
-        subCanvas.state = LoadState.loading
-
+    clipToRect:function (ctx,originX,originY,w,h) {
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(originX + w, originY);
+        ctx.lineTo(originX + w, originY + h);
+        ctx.lineTo(originX, originY + h);
+        ctx.closePath();
+        ctx.clip();
+    },
+    drawSubCanvas:function (subCanvas, x, y, w, h, options) {
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
+        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
+            subCanvas.state = LoadState.willLoad;
+            //init subcanvas pos and size
+            // subCanvas.info = {};
+            // subCanvas.info.x = x;
+            // subCanvas.info.y = y;
+            // subCanvas.info.w = w;
+            // subCanvas.info.h = h;
+            //generate load trigger
+            this.handleTargetAction(subCanvas, 'Load')
+            //transition animation
+            var moveX = w;
+            var moveY = 0;
+
+            // subCanvas.info.x += moveX;
+            // subCanvas.info.y += moveY;
+
+            // this.paintSubCanvas(subCanvas, x, y, w, h, options);
+            // offctx.beginPath();
+            // offctx.moveTo(0,0);
+            // offctx.lineTo(100,100);
+            AnimationManager.moving(offctx,moveX,moveY,0,0,1000,30,'easeInOutCubic',function (deltas) {
+                // offctx.save();
+                // offctx.translate(deltas.curX,deltas.curY);
+                subCanvas.translate = {
+                    x:deltas.curX,
+                    y:deltas.curY
+                }
+                // subCanvas.info.x += deltas.deltaX;
+                // subCanvas.info.y += deltas.deltaY;
+                this.draw();
+                // offctx.restore();
+            }.bind(this),function () {
+                // offctx.restore()
+                subCanvas.translate = null;
+            })
+        }else{
+            this.paintSubCanvas(subCanvas, x, y, w, h, options)
+        }
+
+    },
+    paintSubCanvas: function (subCanvas, x, y, w, h, options) {
+
+        subCanvas.state = LoadState.loading;
+        // x = subCanvas.info.x;
+        // y = subCanvas.info.y;
+        // w = subCanvas.info.w;
+        // h = subCanvas.info.h;
+        var offcanvas = this.refs.offcanvas;
+        var offctx = offcanvas.getContext('2d');
+        offctx.save()
+        if (subCanvas.translate){
+
+            offctx.translate(subCanvas.translate.x,subCanvas.translate.y);
+        }
         this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
         this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
         var widgetList = subCanvas.widgetList;
@@ -674,6 +754,8 @@ module.exports =   React.createClass({
             }
 
         }
+
+        offctx.restore();
 
         subCanvas.state = LoadState.loaded
     },
