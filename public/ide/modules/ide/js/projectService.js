@@ -1067,6 +1067,14 @@ ideServices
                         if(!(this.minCoverAngle==this.maxCoverAngle)){
                             var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                             var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.moveTo(0,0);
+                            ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
+                            ctx.closePath();
+                            ctx.fillStyle='rgba(244,244,244,0.3)';
+                            ctx.fill();
+                            ctx.restore();
                             ctx.beginPath();
                             ctx.moveTo(0,0);
                             ctx.arc(0,0,radius,newMaxCoverAngle,newMinCoverAngle,false);
