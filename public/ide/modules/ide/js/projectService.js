@@ -1341,8 +1341,7 @@ ideServices
                     var _callback=arg.callback;
                     var widgetWidth=arg.widgetWidth||25;
                     var widgetHeight=arg.WidgetHeight||25;
-                    self.setWidth(widgetWidth);
-                    self.setHeight(widgetHeight);
+                    self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();
@@ -1353,6 +1352,7 @@ ideServices
             },
             _render: function (ctx) {
                 try{
+                    console.log('scale',this.scaleX,this.scaleY);
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -(this.width / 2),
@@ -6589,12 +6589,11 @@ ideServices
             var image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
             arg.widgetWidth=image.width;
             arg.WidgetHeight=image.height;
-            if(image.width==selectObj.level.info.width&&image.height==selectObj.level.info.height){
+            if(image.width==selectObj.level.info.width&&image.height==selectObj.level.info.height&&selectObj.target.scaleX==1&&selectObj.target.scaleY==1){
                 return;
             }
             selectObj.level.info.width=image.width;
             selectObj.level.info.height=image.height;
-            console.log('selectObj:',selectObj);
             selectObj.target.fire('changeWidgetSize',arg);
         };
 
