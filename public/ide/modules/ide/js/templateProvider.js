@@ -98,6 +98,7 @@ ideServices
                     minValue:0,maxValue:360,
                     minAngle:0,maxAngle:360,
                     lowAlarmValue:0,highAlarmValue:360,
+                    minCoverAngle:0,maxCoverAngle:0,
                     value:45,
                     offsetValue:0,
                     pointerLength:185
