@@ -6594,6 +6594,7 @@ ideServices
             }
             selectObj.level.info.width=image.width;
             selectObj.level.info.height=image.height;
+            console.log('selectObj:',selectObj);
             selectObj.target.fire('changeWidgetSize',arg);
         };
 
