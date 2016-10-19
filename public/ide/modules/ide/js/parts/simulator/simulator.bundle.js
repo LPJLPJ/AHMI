@@ -20120,16 +20120,15 @@
 	            options.reLinkWidgets = true;
 	            this.handleTargetAction(page, 'Load');
 
-	            offctx.save();
-	            offctx.translate(offcanvas.width, offcanvas.height);
+	            AnimationManager.moving(offctx, offcanvas.width, offcanvas.height, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
 
-	            AnimationManager.moving(offctx, -offcanvas.width, -offcanvas.height, 1000, 30, 'easeInOutCubic', function (deltas) {
-	                offctx.translate(deltas.deltaX, deltas.deltaY);
-	                this.paintPage(page, options);
-	                ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-	            }.bind(this), function () {
-	                offctx.restore();
-	            });
+	                // offctx.translate(deltas.curX,deltas.curY);
+	                page.translate = {
+	                    x: deltas.curX,
+	                    y: deltas.curY
+	                };
+	                this.draw();
+	            }.bind(this), function () {});
 
 	            // var animationKey = setInterval(function () {
 	            //     // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
@@ -20176,6 +20175,10 @@
 	        var offctx = offcanvas.getContext('2d');
 
 	        //drawPage
+	        offctx.save();
+	        if (page.translate) {
+	            offctx.translate(page.translate.x, page.translate.y);
+	        }
 	        offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	        this.drawBgColor(0, 0, offcanvas.width, offcanvas.height, page.backgroundColor);
 	        this.drawBgImg(0, 0, offcanvas.width, offcanvas.height, page.backgroundImage);
@@ -20188,6 +20191,8 @@
 	                this.drawCanvas(canvasList[i], options);
 	            }
 	        }
+
+	        offctx.restore();
 
 	        page.state = LoadState.loaded;
 
@@ -20361,38 +20366,57 @@
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
 	            subCanvas.state = LoadState.willLoad;
 	            //init subcanvas pos and size
-	            subCanvas.info = {};
-	            subCanvas.info.x = x;
-	            subCanvas.info.y = y;
-	            subCanvas.info.w = w;
-	            subCanvas.info.h = h;
+	            // subCanvas.info = {};
+	            // subCanvas.info.x = x;
+	            // subCanvas.info.y = y;
+	            // subCanvas.info.w = w;
+	            // subCanvas.info.h = h;
 	            //generate load trigger
 	            this.handleTargetAction(subCanvas, 'Load');
 	            //transition animation
 	            var moveX = w;
 	            var moveY = 0;
 
-	            subCanvas.info.x += moveX;
-	            subCanvas.info.y += moveY;
+	            // subCanvas.info.x += moveX;
+	            // subCanvas.info.y += moveY;
 
-	            AnimationManager.moving(offctx, -moveX, -moveY, 1000, 30, 'easeInOutCubic', function (deltas) {
-	                // offctx.translate(deltas.deltaX,deltas.deltaY);
-	                subCanvas.info.x += deltas.deltaX;
-	                subCanvas.info.y += deltas.deltaY;
+	            // this.paintSubCanvas(subCanvas, x, y, w, h, options);
+	            // offctx.beginPath();
+	            // offctx.moveTo(0,0);
+	            // offctx.lineTo(100,100);
+	            AnimationManager.moving(offctx, moveX, moveY, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
+	                // offctx.save();
+	                // offctx.translate(deltas.curX,deltas.curY);
+	                subCanvas.translate = {
+	                    x: deltas.curX,
+	                    y: deltas.curY
+	                };
+	                // subCanvas.info.x += deltas.deltaX;
+	                // subCanvas.info.y += deltas.deltaY;
 	                this.draw();
-	            }.bind(this), function () {});
+	                // offctx.restore();
+	            }.bind(this), function () {
+	                // offctx.restore()
+	                subCanvas.translate = null;
+	            });
+	        } else {
+	            this.paintSubCanvas(subCanvas, x, y, w, h, options);
 	        }
-	        this.paintSubCanvas(subCanvas, x, y, w, h, options);
 	    },
 	    paintSubCanvas: function (subCanvas, x, y, w, h, options) {
 
 	        subCanvas.state = LoadState.loading;
-	        x = subCanvas.info.x;
-	        y = subCanvas.info.y;
-	        w = subCanvas.info.w;
-	        h = subCanvas.info.h;
+	        // x = subCanvas.info.x;
+	        // y = subCanvas.info.y;
+	        // w = subCanvas.info.w;
+	        // h = subCanvas.info.h;
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
+	        offctx.save();
+	        if (subCanvas.translate) {
+
+	            offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
+	        }
 	        this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
 	        this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
 	        var widgetList = subCanvas.widgetList;
@@ -20402,6 +20426,8 @@
 	                this.drawWidget(widgetList[i], x, y, options);
 	            }
 	        }
+
+	        offctx.restore();
 
 	        subCanvas.state = LoadState.loaded;
 	    },
@@ -49964,21 +49990,25 @@
 	    this.animationKeys = [];
 	};
 
-	AnimationManager.moving = function (context, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
+	AnimationManager.moving = function (context, srcX, srcY, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
+	    var rangeX = dstX - srcX;
+	    var rangY = dstY - srcY;
 	    var animationKey = setInterval(function () {
 	        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
 	        // offctx.save();
 	        curValue = easingFunc((frames - count) / frames);
-	        deltaX = dstX * (curValue - lastValue);
-	        deltaY = dstY * (curValue - lastValue);
+	        deltaX = rangeX * (curValue - lastValue);
+	        deltaY = rangY * (curValue - lastValue);
+	        curX = srcX + rangeX * curValue;
+	        curY = srcY + rangY * curValue;
 	        lastValue = curValue;
-	        intervalCb && intervalCb({ deltaX: deltaX, deltaY: deltaY });
+	        intervalCb && intervalCb({ curX: curX, curY: curY, deltaX: deltaX, deltaY: deltaY });
 
 	        count--;
 	        if (count < 0) {

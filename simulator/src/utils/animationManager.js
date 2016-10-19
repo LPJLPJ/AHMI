@@ -27,21 +27,25 @@ AnimationManager.clearAllAnimationKeys = function () {
     this.animationKeys = [];
 }
 
-AnimationManager.moving = function (context,dstX,dstY,duration,frames,easing,intervalCb,finishCb) {
+AnimationManager.moving = function (context,srcX,srcY,dstX,dstY,duration,frames,easing,intervalCb,finishCb) {
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue =0;
     var count = frames;
     var deltaX=0;
     var deltaY=0;
+    var rangeX = dstX-srcX;
+    var rangY = dstY - srcY;
     var animationKey = setInterval(function () {
         // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
         // offctx.save();
         curValue = easingFunc((frames-count)/frames);
-        deltaX = dstX*(curValue-lastValue);
-        deltaY = dstY*(curValue-lastValue);
+        deltaX = rangeX*(curValue-lastValue);
+        deltaY = rangY*(curValue-lastValue);
+        curX = srcX+rangeX * curValue;
+        curY = srcY+rangY * curValue;
         lastValue = curValue;
-        intervalCb && intervalCb({deltaX:deltaX,deltaY:deltaY});
+        intervalCb && intervalCb({curX:curX,curY:curY,deltaX:deltaX,deltaY:deltaY});
 
         count--;
         if (count<0){
