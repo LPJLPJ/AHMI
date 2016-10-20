@@ -75,7 +75,7 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
                         $scope.animations=AnimationService.getAllAnimations();
                     }.bind(this));
                 }else if($scope.selectIdx>=0&&$scope.selectIdx<$scope.animations.length){
-                    AnimationService.updateAnimationByIndex(newAnimation,$scope.selectedIdx,function(){
+                    AnimationService.updateAnimationByIndex(newAnimation,$scope.selectIdx,function(){
                         $scope.animations=AnimationService.getAllAnimations();
                     }.bind(this));
                 }

@@ -2,20 +2,28 @@
  * Created by lixiang on 2016/10/19.
  */
 ideServices.service('AnimationService',['ProjectService','Type',function(ProjectService,Type){
-    function AnimationType(name,value){
-        this.name=name||'';
-        this.value=value||'';
+    function Animation(title,id,xTranslate,yTranslate,xScale,yScale,duration){
+        this.title=title;
+        this.id=id;
+        this.animationAttrs={
+            translate:{
+                dstPos:{
+                    x:xTranslate,
+                    y:yTranslate
+                }
+            },
+            scale:{
+                dstScale:{
+                    x:xScale,
+                    y:yScale
+                }
+            }
+        };
+        this.duration=duration;
     }
 
-    var typeTranslation = new AnimationType('平移','translation');
-    var typeZoom = new AnimationType('缩放','zoom');
-
-    var defaultAnimation = [{
-        title:'动画1',
-        animationType:typeTranslation,
-        targetPos:{x:0,y:0},
-        duration:0
-    }];
+    var tempAnimation = new Animation('动画',null,0,0,1,1,0);
+    var defaultAnimation = [tempAnimation];
 
     var animations=[];
 
@@ -37,17 +45,12 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
     };
 
     this.getNewAnimation=function(){
-        return{
-            title:'default',
-            animationType:typeTranslation,
-            targetPos:{x:null,y:null},
-            duration:0
-        }
+        return _.cloneDeep(tempAnimation);
     };
 
     this.updateAnimationByIndex=function(animation,index,cb){
         if(index>=0&&index<animations.length){
-            animations[index]=anmiation;
+            animations[index]=animation;
             cb&&cb();
         }
     };
