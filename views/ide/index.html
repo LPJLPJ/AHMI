@@ -2137,6 +2137,10 @@
                         </div>
                         <div class="modal-body dengModel-body">
                             <div class="modal-title form-group modelPart">
+                                <span>动画名称</span>
+                                <input class="form-control dengModel-trigger" type="text" ng-model="animation.title">
+                            </div>
+                            <div class="modal-title form-group modelPart">
                                 <span>动画类型</span>
                                 <select class="form-control dengModel-trigger" ng-model="animation.animationType">
                                     <option value="">平移</option>
@@ -2154,7 +2158,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-primary" type="button" ng-click="save()">保存</button>
+                            <button class="btn btn-primary" type="button" ng-click="confirm()">保存</button>
                             <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                         </div>
                     </script>

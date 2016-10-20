@@ -52,7 +52,7 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
         }
     };
 
-    this.deleteAnimationBuIndex=function(index,sCB,fCB){
+    this.deleteAnimationByIndex=function(index,sCB,fCB){
         if(index<0&&index>=animations.length){
             fCB&&fCB();
             return false;

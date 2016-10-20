@@ -89,7 +89,7 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
     .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','animation',function($scope,$uibModalInstance,animation){
         $scope.animation=animation;
         $scope.confirm = function () {
-            $uibModalInstance.close();
+            $uibModalInstance.close($scope.animation);
         };
         $scope.cancel = function () {
             $uibModalInstance.dismiss();
