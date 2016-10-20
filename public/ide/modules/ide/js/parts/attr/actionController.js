@@ -14,6 +14,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
     });
 
 
+
     function initUserInterface(){
         $scope.status={
             collapsed : false
@@ -150,8 +151,6 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
              * when clicking at the background, pressing the esc button on keyboard, or calling $modalInstance.dismiss will trigger the latter one
              */
             modalInstance.result.then(function (newAction) {
-                // console.log('new action');
-                // console.log(newAction);
                 //process save
                 if ($scope.selectedIdx == -1){
                     //new action

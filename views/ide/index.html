@@ -88,6 +88,7 @@
     <script src="../../public/ide/modules/ide/js/closeBrowser.js"></script>
 
     <script src="../../public/ide/modules/ide/js/parts/render/renderingX.bundle.js"></script>
+    <script src="../../public/ide/modules/ide/js/parts/attr/animationService.js"></script>
 
 
     <!--controllers-->
@@ -113,6 +114,7 @@
     <script src="../../public/ide/modules/ide/js/parts/attr/characterSetController.js"></script>
     <script src="../../public/config/customConfig.js"></script>
     <script src="../../public/general/js/versionTag.js"></script>
+    <script src="../../public/ide/modules/ide/js/parts/attr/animationController.js"></script>
 
     <script src="../../public/ide/modules/ide/js/parts/attr/tagController.js"></script>
     <!--directive-->
@@ -2101,6 +2103,55 @@
                             </div>
                             <button type="button" class="btn btn-default add-option" ng-click="addNewCmd()">添加指令
                             </button>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" type="button" ng-click="save()">保存</button>
+                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        </div>
+                    </script>
+
+                </div>
+
+                <!--Actions-->
+                <div ng-controller="animationCtl" ng-show="showAnimationPanel">
+                    <div>
+                        <span class="dengPage-Action-Title">动画</span>
+                        <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)">
+                            添加新动画
+                        </button>
+                    </div>
+
+                    <!--list of current actions-->
+                    <div class="glyphicon" style="display: block" ng-click="collapse($event)"
+                         ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"></div>
+                    <ul uib-collapse="status.collapsed " class="dengPage-Actionlist">
+                        <li ng-repeat="animation in animations" ng-click="openPanel($index)">
+                            <span>{{animation.title}}</span><i class="iconfont" ng-click="deleteAnimation($index)">
+                            &#xe627;</i>
+                        </li>
+                    </ul>
+
+                    <script type="text/ng-template" id="animationPanelModal.html">
+                        <div class="modal-header">
+                            <h3 class="modal-title">动画配置</h3>
+                        </div>
+                        <div class="modal-body dengModel-body">
+                            <div class="modal-title form-group modelPart">
+                                <span>动画类型</span>
+                                <select class="form-control dengModel-trigger" ng-model="animation.animationType">
+                                    <option value="">平移</option>
+                                    <option value="">缩放</option>
+                                </select>
+                            </div>
+                            <div class="modal-title form-group modelPart">
+                                <span>目标位置</span></br>
+                                <span>X:</span><input class="form-control dengModel-trigger" type="number">
+                                <span>Y:</span><input class="form-control dengModel-trigger" type="number">
+                            </div>
+                            <div class="modal-title form-group modelPart">
+                                <span>持续时间</span>
+                                <input class="form-control dengModel-trigger" type="number">
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" type="button" ng-click="save()">保存</button>

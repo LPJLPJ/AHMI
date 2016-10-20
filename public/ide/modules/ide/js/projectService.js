@@ -1352,7 +1352,6 @@ ideServices
             },
             _render: function (ctx) {
                 try{
-                    console.log('scale',this.scaleX,this.scaleY);
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -(this.width / 2),

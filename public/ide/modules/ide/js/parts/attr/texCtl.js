@@ -112,7 +112,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                 case "MyVideo":
                 case "MyNum":
                     $scope.showTexPanel=false;
-                    $scope.showSizeButtion=fasle;
+                    $scope.showSizeButtion=false;
                     break;
                 case "MySwitch":
                     $scope.showTexPanel=true;
