@@ -579,11 +579,11 @@ module.exports =   React.createClass({
 
             this.draw();
 
-            var direction = timer['SysTmr_' + num + '_Start'] - timer['SysTmr_' + num + '_Stop']
+            var direction = timer['SysTmr_'+num+'_Mode'];
 
             timer.timerID = setInterval(function () {
                 //clock
-                if (direction >= 0) {
+                if (direction >= 4) {
                     //decrease
 
                     if (targetTag&&targetTag.name != '') {
