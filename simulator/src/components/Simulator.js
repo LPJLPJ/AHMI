@@ -625,7 +625,7 @@ module.exports =   React.createClass({
         }
     },
     executeAnimation:function (target,animation) {
-        AnimationManager.moving(target.w,target.h,0,0,1000,30,'easeInOutCubic',function (deltas) {
+        AnimationManager.moving(target.w,target.h,100,100,1000,30,'easeInOutCubic',function (deltas) {
 
             // offctx.translate(deltas.curX,deltas.curY);
 
@@ -2328,7 +2328,7 @@ module.exports =   React.createClass({
             if (page) {
                 targets.push(page);
                 //if canvas clicked
-                var canvas = '';
+                var canvases = [];
                 // console.log(page.canvasList);
                 if (page.canvasList && page.canvasList.length) {
                     var canvasList = page.canvasList;
@@ -2339,35 +2339,38 @@ module.exports =   React.createClass({
                         if (this.inRect(x, y, canvasList[i])) {
                             // console.log('inrect');
                             targets.push(canvasList[i]);
-                            canvas = canvasList[i];
-                            break;
+                            canvases.push(canvasList[i]);
                         }
                     }
 
                 }
 
-                if (canvas == '') {
+                if (canvases.length === 0) {
                     return targets;
                 }
 
                 //if widget clicked
-                var subCanvas = '';
-                //canvas.subCanvasList[canvas.curSubCanvasIdx];
-                if (canvas.subCanvasList && canvas.subCanvasList.length) {
-                    subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
-                    if (subCanvas.widgetList && subCanvas.widgetList.length) {
-                        var widgetList = subCanvas.widgetList;
-                        widgetList.sort(this.compareZIndex);
-                        for (var i = widgetList.length - 1; i >= 0; i--) {
-                            if (this.inRect(x - canvas.x, y - canvas.y, widgetList[i], 'widget')) {
-                                targets.push(widgetList[i]);
-                                //handle widget like buttongroup
-                                // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
-                                this.handleInnerClickedElement(widgetList[i], x - canvas.x, y - canvas.y);
+                for (var j=0;j<canvases.length;j++){
+                    var subCanvas = '';
+                    var canvas = canvases[j];
+                    //canvas.subCanvasList[canvas.curSubCanvasIdx];
+                    if (canvas.subCanvasList && canvas.subCanvasList.length) {
+                        subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
+                        if (subCanvas.widgetList && subCanvas.widgetList.length) {
+                            var widgetList = subCanvas.widgetList;
+                            widgetList.sort(this.compareZIndex);
+                            for (var i = widgetList.length - 1; i >= 0; i--) {
+                                if (this.inRect(x - canvas.x, y - canvas.y, widgetList[i], 'widget')) {
+                                    targets.push(widgetList[i]);
+                                    //handle widget like buttongroup
+                                    // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
+                                    this.handleInnerClickedElement(widgetList[i], x - canvas.x, y - canvas.y);
+                                }
                             }
                         }
                     }
                 }
+
 
                 return targets;
             }
