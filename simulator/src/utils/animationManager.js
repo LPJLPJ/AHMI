@@ -59,4 +59,35 @@ AnimationManager.moving = function (srcX,srcY,dstX,dstY,duration,frames,easing,i
 }
 
 
+AnimationManager.scaling = function (srcX,srcY,dstX,dstY,duration,frames,easing,intervalCb,finishCb) {
+    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
+    var lastValue = 0;
+    var curValue =0;
+    var count = frames;
+    var deltaX=0;
+    var deltaY=0;
+    var rangeX = dstX-srcX;
+    var rangY = dstY - srcY;
+    var animationKey = setInterval(function () {
+        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+        // offctx.save();
+        curValue = easingFunc((frames-count)/frames);
+        deltaX = rangeX*(curValue-lastValue);
+        deltaY = rangY*(curValue-lastValue);
+        curX = srcX+rangeX * curValue;
+        curY = srcY+rangY * curValue;
+        lastValue = curValue;
+        intervalCb && intervalCb({curX:curX,curY:curY,deltaX:deltaX,deltaY:deltaY});
+
+        count--;
+        if (count<0){
+            //finished
+            this.clearAnimationKey(animationKey);
+            finishCb && finishCb();
+        }
+    }.bind(this),duration/frames);
+    animationKeys.push(animationKey);
+
+}
+
 module.exports = AnimationManager;

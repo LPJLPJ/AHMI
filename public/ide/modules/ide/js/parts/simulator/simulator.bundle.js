@@ -20301,14 +20301,68 @@
 	        }
 	    },
 	    executeAnimation: function (target, animation) {
-	        AnimationManager.moving(target.w, target.h, 100, 100, 1000, 30, 'easeInOutCubic', function (deltas) {
+	        // AnimationManager.moving(target.w,target.h,100,100,1000,30,'easeInOutCubic',function (deltas) {
+	        //
+	        //     // offctx.translate(deltas.curX,deltas.curY);
+	        //
+	        //     target.x = deltas.curX;
+	        //     target.y = deltas.curY;
+	        //     this.draw();
+	        //
+	        //
+	        // }.bind(this),function () {
+	        //
+	        // })
+	        AnimationManager.moving(3, 3, 0.5, 0.5, 1000, 30, 'easeInOutCubic', function (deltas) {
 
 	            // offctx.translate(deltas.curX,deltas.curY);
 
-	            target.x = deltas.curX;
-	            target.y = deltas.curY;
+	            target.scale = {
+	                w: deltas.curX,
+	                h: deltas.curY
+	            };
+	            // target.scale = null;
+	            // this.scaleElement(target,{w:deltas.curX,h:deltas.curY});
 	            this.draw();
-	        }.bind(this), function () {});
+	        }.bind(this), function () {
+	            // target.scale = null;
+	            // this.scaleElement(target,{w:0.5,h:0.5});
+	            // this.draw();
+	        }.bind(this));
+	    },
+	    scaleElement: function (target, scaleFactor) {
+	        console.log('scaling element', target);
+	        switch (target.type) {
+	            case 'MyLayer':
+	                this.scaleCanvas(target, scaleFactor);
+	                break;
+	            case 'MyWidget':
+	                this.scaleWidget(target, scaleFactor);
+	                break;
+	        }
+	    },
+	    scaleCanvas: function (target, scaleFactor) {
+	        target.w *= scaleFactor.w;
+	        target.h *= scaleFactor.h;
+	        var subCanvasList = target.subCanvasList;
+	        for (var i = 0; i < subCanvasList.length; i++) {
+	            var curSubCanvas = subCanvasList[i];
+	            for (var j = 0; j < curSubCanvas.widgetList.length; j++) {
+	                var curWidget = curSubCanvas.widgetList[j];
+	                this.scaleWidget(curWidget, scaleFactor);
+	            }
+	        }
+	    },
+	    scaleWidget: function (target, scaleFactor) {
+	        var info = target.info;
+	        switch (target.subType) {
+	            case 'MyButton':
+	                info.width *= scaleFactor.w;
+	                info.height *= scaleFactor.h;
+	                info.left *= scaleFactor.w;
+	                info.top *= scaleFactor.h;
+	                break;
+	        }
 	    },
 	    drawCanvas: function (canvasData, options) {
 	        var executeAnimation = false;
@@ -20374,8 +20428,14 @@
 	        if (subCanvas) {
 	            console.log('painting canvas');
 	            offctx.save();
+
 	            this.clipToRect(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-	            this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
+	            offctx.translate(canvasData.x, canvasData.y);
+	            if (canvasData.scale) {
+	                offctx.scale(canvasData.scale.w, canvasData.scale.h);
+	            }
+
+	            this.drawSubCanvas(subCanvas, 0, 0, canvasData.w, canvasData.h, options);
 	            offctx.restore();
 	        } else {
 	            this.handleTargetAction(oldSubCanvas, 'UnLoad');
@@ -21911,19 +21971,64 @@
 	    },
 	    inRect: function (x, y, target, type) {
 	        // console.log(x, y, target, type);
+	        //additional condition for transformation
+	        var realPoint = {
+	            x: x,
+	            y: y
+	        };
+
 	        if (type && type == 'widget') {
+	            // if (target.translate || target.scale){
+	            //   realPoint =  this.recoverTargetPointFromTransformation({x:x,y:y},{x:target.info.left,y:target.info.top},target.translate,target.scale);
+	            // }
+	            // x = realPoint.x;
+	            // y = realPoint.y;
 	            if (x >= target.info.left && x <= target.info.left + target.info.width && y >= target.info.top && y <= target.info.top + target.info.height) {
 	                return true;
 	            } else {
 	                return false;
 	            }
 	        } else {
+	            // ealPoint.y;
 	            if (x >= target.x && x <= target.x + target.w && y >= target.y && y <= target.y + target.h) {
 	                return true;
 	            } else {
 	                return false;
 	            }
 	        }
+	    },
+	    transformTargetPoint: function (targetPoint, basePoint, translate, scale) {
+	        var dstPoint = {
+	            x: 0,
+	            y: 0
+	        };
+	        dstPoint.x = (targetPoint.x - basePoint.x) * scale.w + basePoint.x + translate.x;
+	        dstPoint.y = (targetPoint.y - basePoint.y) * scale.h + basePoint.y + translate.y;
+	        return dstPoint;
+	    },
+	    recoverTargetPointFromTransformation: function (dstPoint, basePoint, translate, scale) {
+	        if (!translate) {
+	            translate = {
+	                x: 0,
+	                y: 0
+	            };
+	        }
+	        if (!scale) {
+	            scale = {
+	                w: 1.0,
+	                h: 1.0
+	            };
+	        }
+	        if (scale && (scale.w === 0 || scale.h === 0)) {
+	            return {
+	                x: 0,
+	                y: 0
+	            };
+	        }
+	        return {
+	            x: (dstPoint.x - translate.x - basePoint.x) / scale.w + basePoint.x,
+	            y: (dstPoint.y - translate.y - basePoint.y) / scale.h + basePoint.y
+	        };
 	    },
 	    inRawRect: function (x, y, offsetX, offsetY, width, height) {
 	        if (x >= offsetX && x <= offsetX + width && y >= offsetY && y <= offsetY + height) {
@@ -21946,9 +22051,15 @@
 	                    var canvasList = page.canvasList;
 	                    canvasList.sort(this.compareZIndex);
 	                    // console.log(canvasList);
+
 	                    for (var i = canvasList.length - 1; i >= 0; i--) {
 	                        // console.log(canvasList[i]);
-	                        if (this.inRect(x, y, canvasList[i])) {
+	                        var curCanvasRealPoint = { x: x, y: y };
+	                        if (canvasList[i].translate || canvasList[i].scale) {
+	                            curCanvasRealPoint = this.recoverTargetPointFromTransformation({ x: x, y: y }, { x: canvasList[i].x, y: canvasList[i].y }, canvasList[i].translate, canvasList[i].scale);
+	                        }
+	                        // this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
+	                        if (this.inRect(curCanvasRealPoint.x, curCanvasRealPoint.y, canvasList[i])) {
 	                            // console.log('inrect');
 	                            targets.push(canvasList[i]);
 	                            canvases.push(canvasList[i]);
@@ -21964,18 +22075,31 @@
 	                for (var j = 0; j < canvases.length; j++) {
 	                    var subCanvas = '';
 	                    var canvas = canvases[j];
+	                    if (canvas.translate || canvas.scale) {
+	                        curCanvasRealPoint = this.recoverTargetPointFromTransformation({ x: x, y: y }, { x: canvas.x, y: canvas.y }, canvas.translate, canvas.scale);
+	                    }
 	                    //canvas.subCanvasList[canvas.curSubCanvasIdx];
 	                    if (canvas.subCanvasList && canvas.subCanvasList.length) {
 	                        subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
 	                        if (subCanvas.widgetList && subCanvas.widgetList.length) {
 	                            var widgetList = subCanvas.widgetList;
 	                            widgetList.sort(this.compareZIndex);
+	                            var curWidgetRealPoint = {
+	                                x: curCanvasRealPoint.x - canvas.x,
+	                                y: curCanvasRealPoint.y - canvas.y
+	                            };
+
 	                            for (var i = widgetList.length - 1; i >= 0; i--) {
-	                                if (this.inRect(x - canvas.x, y - canvas.y, widgetList[i], 'widget')) {
-	                                    targets.push(widgetList[i]);
+	                                var widget = widgetList[i];
+	                                if (widget.translate || widget.scale) {
+
+	                                    curWidgetRealPoint = this.recoverTargetPointFromTransformation({ x: curWidgetRealPoint.x, y: curWidgetRealPoint.y }, { x: widget.info.left, y: widget.info.top }, widget.translate, widget.scale);
+	                                }
+	                                if (this.inRect(curWidgetRealPoint.x, curWidgetRealPoint.y, widget, 'widget')) {
+	                                    targets.push(widget);
 	                                    //handle widget like buttongroup
 	                                    // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
-	                                    this.handleInnerClickedElement(widgetList[i], x - canvas.x, y - canvas.y);
+	                                    this.handleInnerClickedElement(widget, curWidgetRealPoint.x, curWidgetRealPoint.y);
 	                                }
 	                            }
 	                        }
@@ -50091,6 +50215,36 @@
 	};
 
 	AnimationManager.moving = function (srcX, srcY, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
+	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
+	    var lastValue = 0;
+	    var curValue = 0;
+	    var count = frames;
+	    var deltaX = 0;
+	    var deltaY = 0;
+	    var rangeX = dstX - srcX;
+	    var rangY = dstY - srcY;
+	    var animationKey = setInterval(function () {
+	        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+	        // offctx.save();
+	        curValue = easingFunc((frames - count) / frames);
+	        deltaX = rangeX * (curValue - lastValue);
+	        deltaY = rangY * (curValue - lastValue);
+	        curX = srcX + rangeX * curValue;
+	        curY = srcY + rangY * curValue;
+	        lastValue = curValue;
+	        intervalCb && intervalCb({ curX: curX, curY: curY, deltaX: deltaX, deltaY: deltaY });
+
+	        count--;
+	        if (count < 0) {
+	            //finished
+	            this.clearAnimationKey(animationKey);
+	            finishCb && finishCb();
+	        }
+	    }.bind(this), duration / frames);
+	    animationKeys.push(animationKey);
+	};
+
+	AnimationManager.scaling = function (srcX, srcY, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;
