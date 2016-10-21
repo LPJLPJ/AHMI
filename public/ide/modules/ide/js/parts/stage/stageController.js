@@ -359,7 +359,7 @@
                 return;
             }
             var _target=event.target;
-            console.log('event:',event,'_target',_target);
+            //console.log('event:',event,'_target',_target);
 
             ProjectService.OnLayerClicked(_target, function () {
                 if (!KeydownService.isCtrlPressed()){

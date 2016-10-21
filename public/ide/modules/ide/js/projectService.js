@@ -6261,6 +6261,20 @@ ideServices
                         item.setTop(-groupHeight/2);
                     });
                     break;
+                case 'bottom':
+                    fabGroup.forEachObject(function(item){
+                        var itemHeight=item.getHeight();
+                        var top = groupHeight/2-itemHeight;
+                        item.setTop(top);
+                    });
+                    break;
+                case 'right':
+                    fabGroup.forEachObject(function(item){
+                        var itemWidth=item.getWidth();
+                        var left=groupWidth/2-itemWidth;
+                        item.setLeft(left);
+                    });
+                    break;
                 default :break;
             }
             if(getCurrentSubLayer()){

@@ -206,7 +206,9 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
             group:{
                 align:[
                     {id:'top',name:'上对齐'},
+                    {id:'bottom',name:'下对齐'},
                     {id:'left',name:'左对齐'},
+                    {id:'right',name:'右对齐'}
                 ],
                 alignModeId:null,
                 changeGroupAlign:changeGroupAlign,
