@@ -546,3 +546,33 @@
 .my-bottom-panel .my-layers-panel{
     /*height: 386px;*/
 }
+.animation-input{
+    display: inline-block;
+    margin-left: 0px;
+    margin-bottom: 10px;
+}
+.time-input{
+    display: inline-block;
+    margin-left: -1px;
+    margin-bottom: 10px;
+}
+.choose-animation{
+    display: inline-block;
+    margin-top: 10px;
+}
+.move-and-zoom{
+
+    padding:0px 0px 0px 120px;
+    font-size: 200%;
+}
+.object-position{
+    padding:0px 0px 0px 107px;
+    font-size: 200%;
+}
+.margin-left40px{
+    margin-left: 40px;
+}
+.width150px{
+    width:150px;
+
+}

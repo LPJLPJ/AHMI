@@ -3446,7 +3446,7 @@ ideServices
             setRendering(true);
 
             var newPage = _.cloneDeep(_newPage);
-            console.log(newPage);
+            console.log('newPage',newPage);
             var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
             var newPageIndex=-1;
             if (currentPageIndex == project.pages.length - 1) {
@@ -3457,7 +3457,7 @@ ideServices
                 newPageIndex=currentPageIndex + 1;
 
             }
-            console.log(project);
+            //console.log(project);
             _self.changeCurrentPageIndex(newPageIndex, function () {
                 _cleanPageHashKey();
                 _successCallback && _successCallback();
@@ -6261,6 +6261,20 @@ ideServices
                         item.setTop(-groupHeight/2);
                     });
                     break;
+                case 'bottom':
+                    fabGroup.forEachObject(function(item){
+                        var itemHeight=item.getHeight();
+                        var top = groupHeight/2-itemHeight;
+                        item.setTop(top);
+                    });
+                    break;
+                case 'right':
+                    fabGroup.forEachObject(function(item){
+                        var itemWidth=item.getWidth();
+                        var left=groupWidth/2-itemWidth;
+                        item.setLeft(left);
+                    });
+                    break;
                 default :break;
             }
             if(getCurrentSubLayer()){
@@ -6831,13 +6845,13 @@ ideServices
                 }
                 var currentPage = _self.getCurrentPage();
                 if (_option.width) {
-                    fabLayer.setScaleX(_option.width / fabLayer.width);
-                    //fabLayer.set({width:_option.width});
+                    //fabLayer.setScaleX(_option.width / fabLayer.width);
+                    fabLayer.set({width:_option.width,scaleX:1});
                     currentLayer.info.width = _option.width;
                 }
                 if (_option.height) {
-                    fabLayer.setScaleY(_option.height / fabLayer.height);
-                    //fabLayer.set({height:_option.height});
+                    //fabLayer.setScaleY(_option.height / fabLayer.height);
+                    fabLayer.set({height:_option.height,scaleY:1});
                     currentLayer.info.height = _option.height;
                 }
 
@@ -6868,12 +6882,13 @@ ideServices
                     return;
                 }
                 if (_option.width) {
-                    fabWidget.setScaleX(_option.width / fabWidget.width);
+                    //fabWidget.setScaleX(_option.width / fabWidget.width);
+                    fabWidget.set({width:_option.width,scaleX:1});
                     currentWidget.info.width = _option.width;
                 }
                 if (_option.height) {
-                    fabWidget.setScaleY(_option.height / fabWidget.height);
-                    //fabWidget.set({height:_option.height});
+                    //fabWidget.setScaleY(_option.height / fabWidget.height);
+                    fabWidget.set({height:_option.height,scaleY:1});
                     currentWidget.info.height = _option.height;
                 }
                 subLayerNode.renderAll();

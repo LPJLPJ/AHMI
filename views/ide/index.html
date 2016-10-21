@@ -545,7 +545,7 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title ">动画效果</span>
+                            <span class="my-attr-title dengPage-title ">切换效果</span>
                             <select class="form-control my-attr-number-input form-control dengPage-input">
                                 <option value="horizontal">平移</option>
                                 <option value="vertical">缩放</option>
@@ -1254,7 +1254,7 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title ">动画效果</span>
+                            <span class="my-attr-title dengPage-title ">切换动画</span>
                             <select class="form-control my-attr-number-input form-control dengPage-input">
                                 <option value="horizontal">平移</option>
                                 <option value="vertical">缩放</option>
@@ -2095,8 +2095,10 @@
                                         <td>{{cmd[0].symbol}}</td>
                                         <td><p>{{cmd[1].tag||cmd[1].value}}</p></td>
                                         <td><p>{{cmd[2].tag||cmd[2].value}}</p></td>
-                                        <td><img src="../../public/ide/modules/ide/img-web/icon_close.png"
-                                                 ng-click="deleteCmd($index)"></td>
+                                        <td><i class="iconfont" ng-click="deleteCmd($index)">
+                                            &#xe627;</i></td>
+                                        <!--<td><img src="../../public/ide/modules/ide/img-web/icon_close.png"-->
+                                                 <!--ng-click="deleteCmd($index)"></td>-->
                                     </tr>
                                     </tbody>
                                 </table>
@@ -2137,24 +2139,34 @@
                         </div>
                         <div class="modal-body dengModel-body">
                             <div class="modal-title form-group modelPart">
-                                <span>动画名称</span>
-                                <input class="form-control dengModel-trigger" type="text" ng-model="animation.title">
-                            </div>
-                            <div class="modal-title form-group modelPart">
+                                <span class="my-attr-title  " >动画名称</span>
+                                <input class="width150px form-control time-input" type="text" ng-model="animation.title"><br>
+                                <span class="my-attr-title" >动画序号</span>
+                                <input class="width150px form-control time-input" type="text" ng-model="animation.id"><br>
                                 <span>动画类型</span>
-                                <select class="form-control dengModel-trigger" ng-model="animation.animationType">
-                                    <option value="">平移</option>
-                                    <option value="">缩放</option>
-                                </select>
-                            </div>
-                            <div class="modal-title form-group modelPart">
-                                <span>目标位置</span></br>
-                                <span>X:</span><input class="form-control dengModel-trigger" type="number">
-                                <span>Y:</span><input class="form-control dengModel-trigger" type="number">
-                            </div>
+                                <table>
+                                    <tr>
+                                        <td><span class="move-and-zoom">平移</span></td><td><span class="move-and-zoom">缩放</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="object-position">目标位置</span></td><td><span class="object-position">目标大小</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="margin-left40px">X:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.dstPos.x"></td>
+                                        <td><span class="margin-left40px">W:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.x"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="margin-left40px">Y:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.dstPos.y"></td>
+                                        <td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.x"></td>
+                                    </tr>
+                                </table>
+
+
+
+
                             <div class="modal-title form-group modelPart">
                                 <span>持续时间</span>
-                                <input class="form-control dengModel-trigger" type="number">
+                                <input class="width150px form-control time-input" type="number" ng-model="animation.duration"> s
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -2336,9 +2348,10 @@
                                     <div class="tagName">{{tags.name}}</div>
                                 </td>
                                 <td><div class="tagReg">{{tags.indexOfRegister}}</div></td>
-                                <!--<td><input type="text" ng-model="tags.name" style="width: 80px;border: 0;" /></td>-->
-                                <td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"
-                                         ng-click="component.deleteTag($index)"></td>
+                                <td><i class="iconfont" ng-click="component.deleteTag($index)">
+                                    &#xe627;</i></td>
+                                <!--<td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"-->
+                                         <!--ng-click="component.deleteTag($index)"></td>-->
                             </tr>
                             <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr"
                                 ng-class="{'selected':selected==$id}">
