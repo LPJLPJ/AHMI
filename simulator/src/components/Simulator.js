@@ -2461,6 +2461,10 @@ module.exports =   React.createClass({
                 //if widget clicked
                 for (var j=0;j<canvases.length;j++){
                     var subCanvas = '';
+                    curCanvasRealPoint = {
+                        x:x,
+                        y:y
+                    }
                     var canvas = canvases[j];
                     if (canvas.translate || canvas.scale){
                         curCanvasRealPoint = this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvas.x,y:canvas.y},canvas.translate,canvas.scale);
