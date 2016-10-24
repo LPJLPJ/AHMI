@@ -59,6 +59,80 @@ AnimationManager.moving = function (srcX,srcY,dstX,dstY,duration,frames,easing,i
 }
 
 
+AnimationManager.step = function (srcX,srcY,dstX,dstY,duration,frames,easing,intervalCb,finishCb) {
+    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
+    var lastValue = 0;
+    var curValue =0;
+    var count = frames;
+    var deltaX=0;
+    var deltaY=0;
+    var rangeX = dstX-srcX;
+    var rangY = dstY - srcY;
+    var animationKey = setInterval(function () {
+        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+        // offctx.save();
+        curValue = easingFunc((frames-count)/frames);
+        deltaX = rangeX*(curValue-lastValue);
+        deltaY = rangY*(curValue-lastValue);
+        curX = srcX+rangeX * curValue;
+        curY = srcY+rangY * curValue;
+        lastValue = curValue;
+        intervalCb && intervalCb({curX:curX,curY:curY,deltaX:deltaX,deltaY:deltaY});
+
+        count--;
+        if (count<0){
+            //finished
+            this.clearAnimationKey(animationKey);
+            finishCb && finishCb();
+        }
+    }.bind(this),duration/frames);
+    animationKeys.push(animationKey);
+
+}
+
+AnimationManager.stepObj = function (srcObj,dstObj,duration,frames,easing,intervalCb,finishCb) {
+    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
+    var lastValue = 0;
+    var curValue =0;
+    var count = frames;
+    var deltaX=0;
+    var deltaY=0;
+
+    var attrs = {};
+
+    for (var key in srcObj){
+        if (srcObj.hasOwnProperty(key)){
+            attrs[key] = {};
+            attrs[key].range = dstObj[key] - srcObj[key];
+            attrs[key].delta = 0;
+
+        }
+
+    }
+    var animationKey = setInterval(function () {
+        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+        // offctx.save();
+        curValue = easingFunc((frames-count)/frames);
+        for (var key in attrs){
+            attrs[key].delta = attrs[key].range * (curValue - lastValue);
+            attrs[key].curValue = srcObj[key] + attrs[key].range * curValue;
+        }
+
+        lastValue = curValue;
+        intervalCb && intervalCb(attrs);
+
+        count--;
+        if (count<0){
+            //finished
+            this.clearAnimationKey(animationKey);
+            finishCb && finishCb();
+        }
+    }.bind(this),duration/frames);
+    animationKeys.push(animationKey);
+
+}
+
+
 AnimationManager.scaling = function (srcX,srcY,dstX,dstY,duration,frames,easing,intervalCb,finishCb) {
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
