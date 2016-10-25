@@ -1,8 +1,9 @@
-/**
- * Created by shenaolin on 16/2/28.
- */
 
-ide.controller('ThumbCtrl', function ($scope, $timeout,
+ide.controller('ThumbCtrl', ['$scope', '$timeout',
+    'ProjectService',
+    'GlobalService',
+    'TemplateProvider',
+    'OperateQueService',function ($scope, $timeout,
                                       ProjectService,
                                       GlobalService,
                                       TemplateProvider,
@@ -209,4 +210,4 @@ ide.controller('ThumbCtrl', function ($scope, $timeout,
             }
         })
     }
-});
+}]);

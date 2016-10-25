@@ -1,7 +1,10 @@
 /**
  * Created by lixiang on 16/3/25.
  */
-ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
+ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
+    'ProjectService',
+    'Type', 'Preference',
+    'ResourceService','CanvasService',function($scope,characterSetService,$timeout,
                                            ProjectService,
                                            Type, Preference,
                                            ResourceService,CanvasService){
@@ -81,4 +84,4 @@ ide.controller('characterSetCtrl',function($scope,characterSetService,$timeout,
         $scope.componentOfChar.character=characterSetService.selectCharacterByIndex(index);
     }
 
-});
+}]);

@@ -6,7 +6,14 @@
 var ideServices = angular.module('IDEServices', ['ngFileUpload']);
 ideServices
 //IDE界面共享整个项目资源
-    .service('ProjectService', function ($rootScope,$timeout,
+    .service('ProjectService',['$rootScope','$timeout',
+        'CanvasService',
+        'GlobalService',
+        'Preference',
+        'TemplateProvider',
+        'ViewService',
+        'Type',
+        'ResourceService',function ($rootScope,$timeout,
                                          CanvasService,
                                          GlobalService,
                                          Preference,
@@ -3221,7 +3228,7 @@ ideServices
                         if (__page.id==oldPage.id){
                             oldPageIndex=__pageIndex;
                         }
-                    })
+                    });
                     //console.log(oldPageIndex+'/'+_pageIndex);
                     if (oldPageIndex!=_pageIndex){
                         console.log('页面间切换');
@@ -3263,82 +3270,46 @@ ideServices
                 OnPageClicked(_pageIndex);
 
                 var pageCount=currentPage.layers.length;
+                
+                pageNode.setBackgroundImage(null,function(){
+                    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                        //pageNode.setWidth(project.currentSize.width);
+                        //pageNode.setHeight(project.currentSize.height);
+                        if (isInit){
+                            // console.log('init layer');
+                            updateLayerImage(0,function () {
+                                _self.ScaleCanvas('page');
 
-                // pageNode.setBackgroundImage(null, function () {
-                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                //         //pageNode.setWidth(project.currentSize.width);
-                //         //pageNode.setHeight(project.currentSize.height);
-                //         if (isInit){
-                //             console.log('init layer');
-                //             updateLayerImage(0,function () {
-                //                 _self.ScaleCanvas('page');
-                //
-                //                 console.log(_pageIndex,currentPage)
-                //
-                //                 pageNode.renderAll();
-                //
-                //
-                //                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                //                 // console.log(''+currentPage.url)
-                //                 _self.OnPageSelected(_pageIndex,_successCallback,true);
-                //             })
-                //
-                //
-                //
-                //
-                //         }else{
-                //             //console.log('不更新layer');
-                //             _self.ScaleCanvas('page');
-                //
-                //             pageNode.renderAll();
-                //
-                //
-                //             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                //             _self.OnPageSelected(_pageIndex,_successCallback);
-                //         }
-                //
-                //
-                //     })
-                //
-                // });
+                                // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
+                                pageNode.deactivateAll();
+                                pageNode.renderAll();
+                                // console.log('page pro',JSON.stringify(pageNode.toJSON()));
+
+                                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                // console.log('pageurl',''+currentPage.url,currentPage)
+                                // window.currentPage = currentPage
+                                // _successCallback && _successCallback();
+                                _self.OnPageSelected(_pageIndex,_successCallback,true);
+                            })
 
 
-                pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                    //pageNode.setWidth(project.currentSize.width);
-                    //pageNode.setHeight(project.currentSize.height);
-                    if (isInit){
-                        // console.log('init layer');
-                        updateLayerImage(0,function () {
+
+
+                        }else{
+                            console.log('不更新layer');
                             _self.ScaleCanvas('page');
 
-                            // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
-                            pageNode.deactivateAll();
+                            //pageNode.backgroundImage.src="";
                             pageNode.renderAll();
-                            // console.log('page pro',JSON.stringify(pageNode.toJSON()));
+
 
                             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                            // console.log('pageurl',''+currentPage.url,currentPage)
-                            // window.currentPage = currentPage
-                            // _successCallback && _successCallback();
-                            _self.OnPageSelected(_pageIndex,_successCallback,true);
-                        })
+                            _self.OnPageSelected(_pageIndex,_successCallback);
+                        }
 
 
-
-
-                    }else{
-                        //console.log('不更新layer');
-                        _self.ScaleCanvas('page');
-
-                        pageNode.renderAll();
-
-
-                        currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                        _self.OnPageSelected(_pageIndex,_successCallback);
-                    }
-
-
-                })
+                    })
+                });
 
                 function updateLayerImage(_index,_successCallback) {
                     if (_index==pageCount){
@@ -7524,4 +7495,4 @@ ideServices
         }
 
 
-    });
+    }]);

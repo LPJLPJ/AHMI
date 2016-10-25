@@ -2,7 +2,7 @@
  * Created by lixiang on 16/3/17.
  */
 ideServices
-    .service('TagService', function () {
+    .service('TagService', [function () {
 
 
         function Tag(name, register, indexOfRegister, writeOrRead, value, type,bindMod) {
@@ -241,4 +241,4 @@ ideServices
             return timerNum;
         }
 
-    });
+    }]);

@@ -2,7 +2,7 @@
  * Created by shenaolin on 16/3/4.
  */
 ideServices.
-    service('Type', function () {
+    service('Type', [function () {
         var MyPage = this.MyPage = 'MyPage';
         var MyLayer = this.MyLayer = 'MyLayer';
         var MyLayerGroup = this.MyLayerGroup = 'group';
@@ -54,4 +54,4 @@ ideServices.
 
 
 
-});
+}]);

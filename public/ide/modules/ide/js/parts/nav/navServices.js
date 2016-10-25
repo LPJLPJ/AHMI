@@ -1,9 +1,6 @@
-/**
- * Created by shenaolin on 16/3/4.
- * 控制navbar按钮的状态
- */
+
 ideServices.
-    service('NavService', function (CanvasService, ProjectService, OperateQueService, Type,$timeout) {
+    service('NavService', ['CanvasService', 'ProjectService', 'OperateQueService', 'Type','$timeout',function (CanvasService, ProjectService, OperateQueService, Type,$timeout) {
     var _self=this;
 
     /**
@@ -196,4 +193,4 @@ ideServices.
 
 
 
-    })
+    }])
