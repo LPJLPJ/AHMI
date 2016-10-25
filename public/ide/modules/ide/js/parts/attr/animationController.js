@@ -23,6 +23,10 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             console.warn('空');
             return;
         }
+        var curLevel = ProjectService.getCurrentSelectObject().level;
+        var _animation = _.cloneDeep(curLevel.animations);
+        AnimationService.setAnimations(_animation);
+
         $scope.animations=AnimationService.getAllAnimations();
 
         var currentObject = ProjectService.getCurrentSelectObject().level;

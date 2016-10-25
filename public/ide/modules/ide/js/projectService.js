@@ -991,7 +991,8 @@ ideServices
             _render: function (ctx) {
                 try{
                     //console.log('converAngle:',this.minCoverAngle,this.maxCoverAngle);
-                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
+                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value-this.minValue);
+                    var taoValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,
@@ -1004,9 +1005,9 @@ ideServices
                     }
                     if(this.lightBandImageElement){
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                        var angle=translateAngle(newValue+this.offsetValue,this.scaleX,this.scaleY);
+                        var angle=translateAngle(taoValue+this.offsetValue,this.scaleX,this.scaleY);
                         var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
-                        var nowangle=translateAngle(newValue,this.scaleX,this.scaleY);
+                        var nowangle=translateAngle(taoValue,this.scaleX,this.scaleY);
                         var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY);
                         ctx.save();
                         ctx.beginPath();
@@ -1034,7 +1035,7 @@ ideServices
                         }
                         else if(this.clockwise=='2'){
                             //正向，当前值大于0
-                            if(newValue>=0){
+                            if(taoValue>=0){
                                 minAngle=offsetangle+Math.PI/2;
                                 angle=angle+Math.PI/2;
                                 ctx.arc(0,0,radius,minAngle,angle,false);
@@ -1043,8 +1044,8 @@ ideServices
                                 }
                             }
                             //逆向，当前值小于0
-                            else if(newValue<0){
-                                var curValue = -newValue;
+                            else if(taoValue<0){
+                                var curValue = -taoValue;
                                 var nowangle=translateAngle(curValue,this.scaleX,this.scaleY);
                                 minAngle=offsetangle+Math.PI/2;
                                 angle=-nowangle+offsetangle+Math.PI/2;
@@ -1065,13 +1066,15 @@ ideServices
                         var sqrt2 = Math.sqrt(2);
                         var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
                         var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
-                        var angleOfPointer = newValue+this.offsetValue;
+                        var angleOfPointer = newValue+this.offsetValue+this.minAngle;
                         if(this.clockwise=='0'){
                             angleOfPointer=-angleOfPointer;
                         }
                         angleOfPointer=angleOfPointer+45;
                         //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
-                        if(!(this.minCoverAngle==this.maxCoverAngle)){
+                        this.minCoverAngle=this.offsetValue+this.maxAngle;
+                        this.maxCoverAngle=this.offsetValue+this.minAngle;
+                        if(this.minCoverAngle%360!=this.maxCoverAngle){
                             var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                             var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                             ctx.save();
@@ -1084,9 +1087,9 @@ ideServices
                             ctx.restore();
                             ctx.beginPath();
                             ctx.moveTo(0,0);
-                            ctx.arc(0,0,radius,newMaxCoverAngle,newMinCoverAngle,false);
+                            ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
                             ctx.closePath();
-                            //ctx.stroke();
+                            ctx.stroke();
                             ctx.clip();
                         }
                         ctx.scale(1/this.scaleX,1/this.scaleY);
@@ -3270,7 +3273,7 @@ ideServices
                 OnPageClicked(_pageIndex);
 
                 var pageCount=currentPage.layers.length;
-                
+
                 pageNode.setBackgroundImage(null,function(){
                     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
                         //pageNode.setWidth(project.currentSize.width);
@@ -6538,7 +6541,11 @@ ideServices
             }
         };
 
-
+        this.ChangeAttributeAnimation = function(_animationObj,_successCallback){
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.animations=_animationObj;
+            _successCallback&&_successCallback();
+        };
         /**
          * 主要操作
          * 改变对象的Action

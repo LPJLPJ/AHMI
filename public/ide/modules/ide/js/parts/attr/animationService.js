@@ -41,6 +41,7 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
 
     this.appendAnimation=function(newAnimation,cb){
         animations.push(newAnimation);
+        ProjectService.ChangeAttributeAnimation(_.cloneDeep(animations));
         cb&&cb();
     };
 
@@ -51,6 +52,7 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
     this.updateAnimationByIndex=function(animation,index,cb){
         if(index>=0&&index<animations.length){
             animations[index]=animation;
+            ProjectService.ChangeAttributeAnimation(_.cloneDeep(animations));
             cb&&cb();
         }
     };
@@ -61,6 +63,7 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
             return false;
         }else{
             animations.splice(index,1);
+            ProjectService.ChangeAttributeAnimation(_.cloneDeep(animations));
             sCB&&sCB();
             return true;
         }
