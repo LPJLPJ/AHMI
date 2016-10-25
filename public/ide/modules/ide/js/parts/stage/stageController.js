@@ -352,6 +352,8 @@
             if(event.e.y==undefined&&event.e.x==undefined){
                 pageMouseLocation.x=event.e.layerX;
                 pageMouseLocation.y=event.e.layerY;
+                event.e.x=event.e.layerX;
+                event.e.y=event.e.layerY;
             }
         }
 
@@ -544,6 +546,8 @@
             if(event.e.y==undefined&&event.e.x==undefined){
                 pageMouseLocation.x=event.e.layerX;
                 pageMouseLocation.y=event.e.layerY;
+                event.e.x=event.e.layerX;
+                event.e.y=event.e.layerY;
             }
         }
         function holdWidget(){
