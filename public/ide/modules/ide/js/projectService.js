@@ -1075,21 +1075,29 @@ ideServices
                         this.minCoverAngle=this.offsetValue+this.maxAngle;
                         this.maxCoverAngle=this.offsetValue+this.minAngle;
                         if(this.minCoverAngle%360!=this.maxCoverAngle){
-                            var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
-                            var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                            var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY);
+                            var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY);
+                            var clockwise=this.clockwise=='0'?true:false;
+                            if(clockwise){
+                                newMinCoverAngle=-newMinCoverAngle+Math.PI/2;
+                                newMaxCoverAngle=-newMaxCoverAngle+Math.PI/2;
+                            }else{
+                                newMinCoverAngle=newMinCoverAngle+Math.PI/2;
+                                newMaxCoverAngle=newMaxCoverAngle+Math.PI/2;
+                            }
                             ctx.save();
                             ctx.beginPath();
                             ctx.moveTo(0,0);
-                            ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
+                            ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,clockwise);
                             ctx.closePath();
                             ctx.fillStyle='rgba(244,244,244,0.3)';
                             ctx.fill();
                             ctx.restore();
                             ctx.beginPath();
                             ctx.moveTo(0,0);
-                            ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
+                            ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,clockwise);
                             ctx.closePath();
-                            ctx.stroke();
+                            //ctx.stroke();
                             ctx.clip();
                         }
                         ctx.scale(1/this.scaleX,1/this.scaleY);
