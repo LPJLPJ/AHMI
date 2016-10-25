@@ -1,9 +1,6 @@
-/**
- * Created by franky on 16/3/13.
- * 保存和打开文件管理
- */
+
 ideServices.
-service('ProjectFileManage', function (CanvasService,ProjectService,OperateQueService,$http) {
+service('ProjectFileManage', ['CanvasService','ProjectService','OperateQueService','$http',function (CanvasService,ProjectService,OperateQueService,$http) {
 	this.OpenProject= function (_successCallback) {
 
 		_successCallback&&_successCallback();
@@ -37,4 +34,4 @@ service('ProjectFileManage', function (CanvasService,ProjectService,OperateQueSe
             _errCallback&&_errCallback(err);
         })
     }
-});
+}]);

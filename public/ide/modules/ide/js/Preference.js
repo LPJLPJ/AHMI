@@ -3,7 +3,7 @@
  */
 ideServices
 //IDE的偏好设置
-    .service('Preference', function () {
+    .service('Preference', [function () {
 
         /**
          * 空白Layer的URL
@@ -50,4 +50,4 @@ ideServices
         this.NUMBER_IMAGES=['0.png','1.png','2.png','3.png','4.png',
         '5.png','6.png','7.png','8.png','9.png','add.png','sub.png','dot.png'];
 
-    })
+    }])

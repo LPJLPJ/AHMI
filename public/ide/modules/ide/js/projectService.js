@@ -6,7 +6,14 @@
 var ideServices = angular.module('IDEServices', ['ngFileUpload']);
 ideServices
 //IDE界面共享整个项目资源
-    .service('ProjectService', function ($rootScope,$timeout,
+    .service('ProjectService',['$rootScope','$timeout',
+        'CanvasService',
+        'GlobalService',
+        'Preference',
+        'TemplateProvider',
+        'ViewService',
+        'Type',
+        'ResourceService',function ($rootScope,$timeout,
                                          CanvasService,
                                          GlobalService,
                                          Preference,
@@ -7524,4 +7531,4 @@ ideServices
         }
 
 
-    });
+    }]);

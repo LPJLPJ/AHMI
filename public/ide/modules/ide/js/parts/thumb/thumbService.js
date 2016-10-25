@@ -3,6 +3,6 @@
  */
 ideServices
     //提供thumb右键菜单
-    .service('ContextMenuService', function (ProjectService,$timeout) {
+    .service('ContextMenuService',[ 'ProjectService','$timeout',function (ProjectService,$timeout) {
 
-});
+}]);

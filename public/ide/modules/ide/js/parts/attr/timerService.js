@@ -2,7 +2,7 @@
  * Created by lixiang on 16/3/15.
  */
 ideServices
-    .service('TimerService',function(){
+    .service('TimerService',[function(){
     var timerNum=null;
     this.setTimerNum=function(num){
         //console.log("set num success!");
@@ -11,4 +11,4 @@ ideServices
     this.getTimerNum=function(){
         return timerNum;
     }
-});
+}]);

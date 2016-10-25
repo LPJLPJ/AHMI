@@ -1,8 +1,16 @@
-/**
- * Created by shenaolin on 16/2/28.
- */
 
-    ide.controller('NavCtrl', function ($scope, $timeout,
+
+    ide.controller('NavCtrl', ['$scope', '$timeout',
+        'GlobalService',
+        'NavService',
+        'saveProjectModal',
+        'ProjectService',
+        'TemplateProvider',
+        'ProjectFileManage',
+        'Type',
+        'CanvasService',
+        '$uibModal',
+        'OperateQueService', 'TagService', 'ResourceService', 'TimerService', '$http', 'ProjectTransformService', 'RenderSerive', 'LinkPageWidgetsService',function ($scope, $timeout,
                                         GlobalService,
                                         NavService,
                                         saveProjectModal,
@@ -786,7 +794,7 @@
 
 
 
-    });
+    }]);
 
 
 ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uibModalInstance) {

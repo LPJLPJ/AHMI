@@ -1,5 +1,5 @@
 ideServices
-    .service('characterSetService', function (ResourceService) {
+    .service('characterSetService',['ResourceService', function (ResourceService) {
         var characterSet = [
             {
                 text:'标题',
@@ -76,4 +76,4 @@ ideServices
         }
 
 
-    });
+    }]);

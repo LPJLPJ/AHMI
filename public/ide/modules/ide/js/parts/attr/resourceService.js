@@ -1,8 +1,6 @@
-/**
- * Created by shenaolin on 16/3/10.
- */
+
 ideServices
-    .service('ResourceService', function () {
+    .service('ResourceService', [function () {
         var blankImg = new Image();
         blankImg.src = '';
         var globalResources = [{
@@ -303,7 +301,7 @@ ideServices
             return resourceUrl;
         }
 
-    })
+    }])
     .factory('uploadingService', ['$http', function ($http) {
         var doRequest = function (fileData, apiUrl,params) {
             return $http({

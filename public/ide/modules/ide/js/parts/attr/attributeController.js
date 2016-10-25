@@ -1,8 +1,11 @@
-/**
- * Created by shenaolin on 16/3/10.
- */
 
-ide.controller('AttributeCtrl', function ($scope,$timeout,
+
+ide.controller('AttributeCtrl',['$scope','$timeout',
+    'ProjectService',
+    'Type', 'Preference',
+    'ResourceService',
+    'characterSetService',
+    'CanvasService', function ($scope,$timeout,
                                      ProjectService,
                                      Type, Preference,
 										  ResourceService,
@@ -2223,4 +2226,4 @@ ide.controller('AttributeCtrl', function ($scope,$timeout,
         return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
     }
 
-});
+}]);

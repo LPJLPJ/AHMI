@@ -1,7 +1,11 @@
-/**
- * Created by shenaolin on 16/2/28.
- */
-    ide.controller('StageCtrl', function ($scope,$timeout,$interval,
+
+    ide.controller('StageCtrl', ['$scope','$timeout','$interval',
+        'ProjectService',
+        'CanvasService',
+        'Preference',
+        'Type',
+        'KeydownService',
+        'OperateQueService',function ($scope,$timeout,$interval,
                                           ProjectService,
                                           CanvasService,
                                           Preference,
@@ -745,4 +749,4 @@
             ProjectService.ScaleCanvas(scaleMode);
         }
 
-    });
+    }]);

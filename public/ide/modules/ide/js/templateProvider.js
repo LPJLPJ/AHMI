@@ -2,7 +2,7 @@
  * Created by shenaolin on 16/3/12.
  */
 ideServices
-    .service('TemplateProvider', function (Type,CanvasService,Preference) {
+    .service('TemplateProvider', ['Type','CanvasService','Preference',function (Type,CanvasService,Preference) {
 
 
         var project,
@@ -838,4 +838,4 @@ ideServices
             return templateId;
         }
 
-    });
+    }]);

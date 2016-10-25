@@ -1,7 +1,7 @@
 /**
  * Created by Zzen1sS on 24/3/2016
  */
-ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalInstance,Type, ResourceService,widgetInfo,TexService) {
+ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInstance','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$timeout, $uibModalInstance,Type, ResourceService,widgetInfo,TexService) {
 
 
     $scope.images = ResourceService.getAllImagesAndTemplates();
@@ -128,4 +128,4 @@ ide.controller('ImageSelectorInstanceCtl', function ($scope,$timeout, $uibModalI
         return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
     }
 
-});
+}]);

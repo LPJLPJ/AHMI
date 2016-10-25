@@ -2,7 +2,7 @@
  * Created by shenaolin on 16/3/10.
  */
 ideServices
-    .service('OperateQueService', function ($timeout,ProjectService) {
+    .service('OperateQueService', ['$timeout','ProjectService',function ($timeout,ProjectService) {
         var historyQue=[];
         var futureQue=[];
 
@@ -89,4 +89,4 @@ ideServices
 
 
 
-    })
+    }])

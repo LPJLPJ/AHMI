@@ -34,7 +34,8 @@ console.log = (function (console) {
 
 
 var logs=[];
-ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
+ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService',
+    function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
@@ -782,4 +783,4 @@ ide.controller('IDECtrl', function ($scope,$timeout,$http,$interval,
     }
 
 
-});
+}]);
