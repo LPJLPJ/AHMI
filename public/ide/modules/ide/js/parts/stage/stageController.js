@@ -353,7 +353,10 @@
         function onPageMouseDown(event){
             pageMouseLocation.x=event.e.x;
             pageMouseLocation.y=event.e.y;
-
+            if(event.e.y==undefined&&event.e.x==undefined){
+                pageMouseLocation.x=event.e.layerX;
+                pageMouseLocation.y=event.e.layerY;
+            }
         }
 
         function selectLayer(event){
@@ -540,8 +543,12 @@
             });
         }
         function onSubLayerMouseDown(event){
-            subLayerMouseLocation.x=event.e.x;
-            subLayerMouseLocation.y= event.e.y;
+            pageMouseLocation.x=event.e.x;
+            pageMouseLocation.y=event.e.y;
+            if(event.e.y==undefined&&event.e.x==undefined){
+                pageMouseLocation.x=event.e.layerX;
+                pageMouseLocation.y=event.e.layerY;
+            }
         }
         function holdWidget(){
 
