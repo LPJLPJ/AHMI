@@ -3270,45 +3270,7 @@ ideServices
                 OnPageClicked(_pageIndex);
 
                 var pageCount=currentPage.layers.length;
-
-                 //pageNode.setBackgroundImage(null, function () {
-                 //    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                 //        //pageNode.setWidth(project.currentSize.width);
-                 //        //pageNode.setHeight(project.currentSize.height);
-                 //        if (isInit){
-                 //            console.log('init layer');
-                 //            updateLayerImage(0,function () {
-                 //                _self.ScaleCanvas('page');
-                 //
-                 //                console.log(_pageIndex,currentPage)
-                 //
-                 //                pageNode.renderAll();
-                 //
-                 //
-                 //                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                 //                // console.log(''+currentPage.url)
-                 //                _self.OnPageSelected(_pageIndex,_successCallback,true);
-                 //            })
-                 //
-                 //
-                 //
-                 //
-                 //        }else{
-                 //            //console.log('不更新layer');
-                 //            _self.ScaleCanvas('page');
-                 //
-                 //            pageNode.renderAll();
-                 //
-                 //
-                 //            currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                 //            _self.OnPageSelected(_pageIndex,_successCallback);
-                 //        }
-                 //
-                 //
-                 //    })
-                 //
-                 //});
-
+                
                 pageNode.setBackgroundImage(null,function(){
                     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
                         //pageNode.setWidth(project.currentSize.width);
