@@ -1,10 +1,5 @@
-/**
- * Created by shenaolin on 16/2/28.
- */
 
-ide.controller('AttrCtrl', function ($scope,$timeout,
-                                     ProjectService
-                                     ) {
+ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($scope,$timeout, ProjectService) {
     $scope.$on('GlobalProjectReceived', function () {
 
         initUserInterface();
@@ -188,5 +183,5 @@ ide.controller('AttrCtrl', function ($scope,$timeout,
 
 
     }
-});
+}]);
 

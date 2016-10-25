@@ -1,8 +1,6 @@
-/**
- * Created by franky on 16/3/13.
- */
 
-ide.controller('ProjectFileCtrl', function ($scope,$timeout,
+ide.controller('ProjectFileCtrl', ['$scope','$timeout',
+    '$uibModal','$log',function ($scope,$timeout,
                                             $uibModal,$log) {
 
 
@@ -46,8 +44,8 @@ ide.controller('ProjectFileCtrl', function ($scope,$timeout,
 			});
 		};
 	}
-})
-	.controller('ProjectFileInstanceCtrl',  function ($scope, ProjectService,ProjectFileManage,$uibModalInstance, items,isRecent, $timeout) {
+}])
+	.controller('ProjectFileInstanceCtrl',  ['$scope', 'ProjectService','ProjectFileManage','$uibModalInstance', 'items','isRecent', '$timeout',function ($scope, ProjectService,ProjectFileManage,$uibModalInstance, items,isRecent, $timeout) {
 
 		console.log('打开项目');
 		$scope.items = items;
@@ -105,6 +103,6 @@ ide.controller('ProjectFileCtrl', function ($scope,$timeout,
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-	})
+	}])
 ;
 

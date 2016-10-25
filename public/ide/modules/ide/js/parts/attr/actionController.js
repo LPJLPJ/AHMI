@@ -174,7 +174,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 /**
  * action 模态窗口控制器
  */
-    .controller('ActionInstanceCtrl', function ($scope, $uibModalInstance, action,triggers,tags,timerTags,OperationService) {
+    .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance', 'action','triggers','tags','timerTags','OperationService', function ($scope, $uibModalInstance, action,triggers,tags,timerTags,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
 
         var blankCmd = ['', {tag: '', value: ''}, {tag: '', value: ''}];
@@ -225,4 +225,4 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
-    });
+    }]);

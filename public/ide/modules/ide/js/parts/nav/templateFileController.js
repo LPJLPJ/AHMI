@@ -1,9 +1,12 @@
-/**
- * Created by franky on 16/3/16.
- */
 
 
-ide.controller('TemplateFileCtrl', function ($scope,$timeout,
+ide.controller('TemplateFileCtrl', ['$scope','$timeout',
+    '$uibModal','$log',
+    'GlobalService',
+    'ProjectService',
+    'TemplateProvider',
+    'ProjectFileManage',
+    'OperateQueService',function ($scope,$timeout,
                                             $uibModal,$log,
                                             GlobalService,
                                             ProjectService,
@@ -48,8 +51,8 @@ ide.controller('TemplateFileCtrl', function ($scope,$timeout,
 				});
 			};
 		}
-	})
-	.controller('TemplateFileInstanceCtrl',  function ($scope, $uibModalInstance, items, $timeout) {
+	}])
+	.controller('TemplateFileInstanceCtrl',  ['$scope', '$uibModalInstance', 'items', '$timeout',function ($scope, $uibModalInstance, items, $timeout) {
 
 		$scope.items = items;
 		$scope.selected = {
@@ -83,6 +86,6 @@ ide.controller('TemplateFileCtrl', function ($scope,$timeout,
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-	})
+	}])
 ;
 

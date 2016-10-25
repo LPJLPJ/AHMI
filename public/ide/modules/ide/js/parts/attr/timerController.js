@@ -1,7 +1,5 @@
-/**
- * Created by shenaolin on 16/3/14.
- */
-ide.controller('TimerCtrl',function (TimerService,TagService,$scope,$timeout) {
+
+ide.controller('TimerCtrl',['TimerService','TagService','$scope','$timeout',function (TimerService,TagService,$scope,$timeout) {
     $scope.$on('GlobalProjectReceived', function () {
 
         initProject();
@@ -38,4 +36,4 @@ ide.controller('TimerCtrl',function (TimerService,TagService,$scope,$timeout) {
         $scope.num=TimerService.getTimerNum();
     }
 
-});
+}]);

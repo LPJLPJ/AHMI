@@ -9,6 +9,8 @@ var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
+var math = require('mathjs');
+
 
 var sep = '/';
 var defaultState = {
@@ -413,6 +415,8 @@ module.exports =   React.createClass({
         var ctx = canvas.getContext('2d');
         var duration = 1000;
         var frames = 30;
+        var easing = 'easeInOutCubic';
+        var method = 'translate';
         var count = frames;
         var maxD = -100;
         if (!page.state || page.state == LoadState.notLoad) {
@@ -424,42 +428,38 @@ module.exports =   React.createClass({
             options.reLinkWidgets = true;
             this.handleTargetAction(page, 'Load')
 
+            if (method === 'translate'){
+                AnimationManager.step(offcanvas.width,offcanvas.height,0,0,duration,frames,easing,function (deltas) {
+
+                    // offctx.translate(deltas.curX,deltas.curY);
+                    page.translate = {
+                        x:deltas.curX,
+                        y:deltas.curY
+                    }
+                    this.draw();
 
 
-            AnimationManager.moving(offcanvas.width,offcanvas.height,0,0,1000,30,'easeInOutCubic',function (deltas) {
+                }.bind(this),function () {
+                    page.translate = null;
+                })
+            }else if (method === 'scale'){
+                AnimationManager.step(0.5,0.5,1,1,duration,frames,easing,function (deltas) {
 
-                // offctx.translate(deltas.curX,deltas.curY);
-                page.translate = {
-                    x:deltas.curX,
-                    y:deltas.curY
-                }
-                this.draw();
+                    // offctx.translate(deltas.curX,deltas.curY);
+                    page.scale = {
+                        w:deltas.curX,
+                        h:deltas.curY
+                    }
+                    this.draw();
 
 
-            }.bind(this),function () {
-                page.translate = null;
-            })
+                }.bind(this),function () {
+                    page.scale = null;
+                })
+            }
 
-            // var animationKey = setInterval(function () {
-            //     // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
-            //     // offctx.save();
-            //     curValue = EasingFunctions.easeInOutCubic((frames-count)/frames);
-            //     offctx.translate(-offcanvas.width*(curValue-lastValue),0);
-            //     lastValue = curValue;
-            //     this.paintPage(page,options);
-            //     // offctx.restore();
-            //
-            //     // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-            //     ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-            //
-            //     count--;
-            //     if (count<=0){
-            //         //finished
-            //         clearInterval(animationKey);
-            //         console.log('page draw finished')
-            //         offctx.restore();
-            //     }
-            // }.bind(this),duration/frames)
+
+
         }else{
             this.paintPage(page,options)
             // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
@@ -491,6 +491,10 @@ module.exports =   React.createClass({
         offctx.save();
         if (page.translate){
             offctx.translate(page.translate.x,page.translate.y);
+        }
+
+        if (page.scale){
+            offctx.scale(page.scale.w,page.scale.h);
         }
         offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
         this.drawBgColor(0, 0, offcanvas.width, offcanvas.height, page.backgroundColor);
@@ -624,25 +628,157 @@ module.exports =   React.createClass({
             }.bind(this), timer['SysTmr_' + num + '_Interval']);
         }
     },
+    generateTransformMatrix:function (animations) {
+        var a=0,b=0,c=0,d=0,e=0,f=0;
+        if (animations.translate){
+            e = animations.translate.x;
+            f = animations.translate.y;
+        }
+
+        if (animations.scale){
+            a = animations.scale.w;
+            d = animations.scale.h;
+        }
+
+        return {
+            a:a,
+            b:b,
+            c:c,
+            d:d,
+            e:e,
+            f:f
+        }
+    },
     executeAnimation:function (target,animation) {
-        AnimationManager.moving(target.w,target.h,0,0,1000,30,'easeInOutCubic',function (deltas) {
+        // this.animationAttrs={
+        //     translate:{
+        //         dstPos:{
+        //             x:xTranslate,
+        //             y:yTranslate
+        //         }
+        //     },
+        //     scale:{
+        //         dstScale:{
+        //             x:xScale,
+        //             y:yScale
+        //         }
+        //     }
+        // };
+        var duration;
+        var frames = 30;
+        if (animation && animation.animationAttrs){
+            duration = animation.duration || 1000;
+        }
+        var srcTransformObj = {
+            a:2,
+            b:0,
+            c:0,
+            d:2,
+            e:target.x,
+            f:target.y
+
+        };
+        var dstTransformObj = {
+            a:1,
+            b:0,
+            c:0,
+            d:1,
+            e:0-target.x,
+            f:0-target.y
+        }
+
+        AnimationManager.stepObj(srcTransformObj,dstTransformObj,1000,30,'easeInOutCubic',function (deltas) {
 
             // offctx.translate(deltas.curX,deltas.curY);
+            var transformMatrix = {
 
-            target.x = deltas.curX;
-            target.y = deltas.curY;
+            }
+            for (var key in deltas){
+                if (deltas.hasOwnProperty(key)){
+                    transformMatrix[key] = deltas[key].curValue;
+                }
+            }
+            target.transform = transformMatrix;
             this.draw();
 
 
         }.bind(this),function () {
-            
+
         })
+
+        // AnimationManager.step(target.x,target.y,0,0,1000,30,'easeInOutCubic',function (deltas) {
+        //
+        //     // offctx.translate(deltas.curX,deltas.curY);
+        //
+        //     target.translate = {
+        //         x:deltas.curX-target.x,
+        //         y:deltas.curY-target.y
+        //     }
+        //     this.draw();
+        //
+        //
+        // }.bind(this),function () {
+        //
+        // })
+        // AnimationManager.step(3,3,0.5,0.5,1000,30,'easeInOutCubic',function (deltas) {
+        //
+        //     // offctx.translate(deltas.curX,deltas.curY);
+        //
+        //     target.scale = {
+        //         w:deltas.curX,
+        //         h:deltas.curY
+        //     }
+        //     // target.scale = null;
+        //     // this.scaleElement(target,{w:deltas.curX,h:deltas.curY});
+        //     this.draw();
+        //
+        //
+        // }.bind(this),function () {
+        //     // target.scale = null;
+        //     // this.scaleElement(target,{w:0.5,h:0.5});
+        //     // this.draw();
+        // }.bind(this))
+    },
+    scaleElement:function (target,scaleFactor) {
+        console.log('scaling element',target)
+        switch (target.type){
+            case 'MyLayer':
+                this.scaleCanvas(target,scaleFactor);
+                break;
+            case 'MyWidget':
+                this.scaleWidget(target,scaleFactor);
+                break;
+        }
+    },
+    scaleCanvas:function (target,scaleFactor) {
+        target.w *= scaleFactor.w;
+        target.h *= scaleFactor.h;
+        var subCanvasList = target.subCanvasList;
+        for (var i=0;i<subCanvasList.length;i++){
+            var curSubCanvas = subCanvasList[i];
+            for (var j=0;j<curSubCanvas.widgetList.length;j++){
+                var curWidget = curSubCanvas.widgetList[j];
+                this.scaleWidget(curWidget,scaleFactor);
+            }
+        }
+    },
+    scaleWidget:function (target,scaleFactor) {
+        var info = target.info;
+        switch (target.subType){
+            case 'MyButton':
+                info.width *= scaleFactor.w;
+                info.height *= scaleFactor.h;
+                info.left *= scaleFactor.w;
+                info.top *= scaleFactor.h;
+                break;
+        }
     },
     drawCanvas:function (canvasData,options) {
-        var executeAnimation = false;
+        var willExecuteAnimation = false;
         if (options&&options.animation){
             //has animation execute
             if (canvasData.tag === options.animation.tag){
+                willExecuteAnimation = true;
                 //execute animation which number is number
                 // for (var i=0;i<canvasData.animations.length;i++){
                 //     if (canvasData.animations[i].number === options.animation.number){
@@ -655,9 +791,10 @@ module.exports =   React.createClass({
                 this.executeAnimation(canvasData);
             }
         }
-        if (!executeAnimation){
+        if(!willExecuteAnimation){
             this.paintCanvas(canvasData,options);
         }
+
 
     },
     paintCanvas: function (canvasData, options) {
@@ -703,8 +840,23 @@ module.exports =   React.createClass({
         if (subCanvas) {
             console.log('painting canvas')
             offctx.save();
-            this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-            this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options);
+            offctx.translate(canvasData.x,canvasData.y);
+            // if (canvasData.translate){
+            //     offctx.translate(canvasData.translate.x,canvasData.translate.y);
+            // }
+            //
+            // if (canvasData.scale){
+            //     offctx.scale(canvasData.scale.w,canvasData.scale.h);
+            // }
+            if (canvasData.transform){
+                var t = canvasData.transform;
+                offctx.transform(t.a,t.b,t.c,t.d,t.e,t.f);
+            }
+
+
+            // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+
+            this.drawSubCanvas(subCanvas, 0, 0, canvasData.w, canvasData.h, options);
             offctx.restore();
         } else {
             this.handleTargetAction(oldSubCanvas, 'UnLoad');
@@ -792,7 +944,30 @@ module.exports =   React.createClass({
 
         subCanvas.state = LoadState.loaded
     },
-    drawWidget: function (widget, sx, sy, options) {
+    drawWidget:function (widget,sx,sy,options) {
+        var willExecuteAnimation = false;
+        if (options&&options.animation){
+            //has animation execute
+            if (widget.tag === options.animation.tag){
+                willExecuteAnimation = true;
+                //execute animation which number is number
+                // for (var i=0;i<canvasData.animations.length;i++){
+                //     if (canvasData.animations[i].number === options.animation.number){
+                //         //hit
+                //         //execute this animation
+                //         executeAnimation = true;
+                //         this.executeAnimation(canvasData,canvasData.animations[i]);
+                //     }
+                // }
+                this.executeAnimation(widget);
+            }
+        }
+        if(!willExecuteAnimation){
+            this.paintWidget(widget,sx,sy,options);
+        }
+
+    },
+    paintWidget: function (widget, sx, sy, options) {
         // console.log('drawing widget',widget);
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
@@ -802,6 +977,25 @@ module.exports =   React.createClass({
         var subType = widget.subType;
         widget.parentX = sx;
         widget.parentY = sy;
+        offctx.save();
+
+        // console.log('widget',JSON.stringify(widget.translate),JSON.stringify(widget.scale))
+        if (widget.translate){
+            offctx.translate(widget.translate.x,widget.translate.y);
+        }
+        offctx.translate(curX,curY);
+        if (widget.scale){
+            offctx.scale(widget.scale.w,widget.scale.h);
+        }
+
+        curX = 0;
+        curY = 0;
+
+
+
+
+
+
         switch (subType) {
             case 'MySlide':
                 this.drawSlide(curX, curY, widget, options);
@@ -853,6 +1047,8 @@ module.exports =   React.createClass({
                 this.drawInputKeyboard(curX, curY, widget, options);
                 break;
         }
+
+        offctx.restore();
     },
     drawInputKeyboard:function(curX, curY, widget, options){
         var offcanvas = this.refs.offcanvas;
@@ -2298,13 +2494,25 @@ module.exports =   React.createClass({
     },
     inRect: function (x, y, target, type) {
         // console.log(x, y, target, type);
+        //additional condition for transformation
+       var realPoint = {
+           x:x,
+           y:y
+       }
+
         if (type && type == 'widget') {
+            // if (target.translate || target.scale){
+            //   realPoint =  this.recoverTargetPointFromTransformation({x:x,y:y},{x:target.info.left,y:target.info.top},target.translate,target.scale);
+            // }
+            // x = realPoint.x;
+            // y = realPoint.y;
             if (x >= target.info.left && x <= (target.info.left + target.info.width) && y >= target.info.top && y <= (target.info.top + target.info.height)) {
                 return true;
             } else {
                 return false;
             }
         } else {
+            // ealPoint.y;
             if (x >= target.x && x <= (target.x + target.w) && y >= target.y && y <= (target.y + target.h)) {
                 return true;
             } else {
@@ -2313,12 +2521,65 @@ module.exports =   React.createClass({
         }
 
     },
+    transformTargetPoint:function (targetPoint,basePoint,translate,scale) {
+        var dstPoint = {
+            x:0,
+            y:0
+        }
+        dstPoint.x = (targetPoint.x-basePoint.x)*scale.w+basePoint.x+translate.x;
+        dstPoint.y = (targetPoint.y-basePoint.y)*scale.h+basePoint.y+translate.y;
+        return dstPoint;
+    },
+    recoverTargetPointFromTransformation:function (dstPoint,basePoint,translate,scale) {
+        if (!translate){
+            translate = {
+                x:0,
+                y:0
+            }
+        }
+        if (!scale){
+            scale ={
+                w:1.0,
+                h:1.0
+            }
+        }
+        if (scale&&(scale.w===0 || scale.h === 0)){
+            return {
+                x:0,
+                y:0
+            }
+        }
+        return {
+            x:(dstPoint.x-translate.x-basePoint.x)/scale.w+basePoint.x,
+            y:(dstPoint.y-translate.y-basePoint.y)/scale.h+basePoint.y
+        }
+    },
     inRawRect: function (x, y, offsetX, offsetY, width, height) {
         if (x >= offsetX && x <= offsetX + width && y >= offsetY && y <= offsetY + height) {
             return true;
         } else {
             return false;
         }
+    },
+    invertPointFromTransform:function (point,basePoint,transform) {
+        var transformMatrix = [
+            [transform.a,transform.c,transform.e],
+            [transform.b,transform.d,transform.f],
+            [0,0,1]
+        ];
+        var translateMatrix = [
+            [1,0,-basePoint.x],
+            [0,1,-basePoint.y],
+            [0,0,1]
+        ]
+        // var combinedMatrix = math.multiply(math.inv(transformMatrix),translateMatrix);
+        var combinedMatrix = math.inv(transformMatrix);
+        var realPoint = math.multiply(combinedMatrix,[point.x,point.y,1]);
+        return {
+            x:realPoint[0],
+            y:realPoint[1]
+        }
+
     },
     findClickTargets: function (x, y) {
         var project = this.state.project;
@@ -2328,46 +2589,82 @@ module.exports =   React.createClass({
             if (page) {
                 targets.push(page);
                 //if canvas clicked
-                var canvas = '';
+                var canvases = [];
                 // console.log(page.canvasList);
                 if (page.canvasList && page.canvasList.length) {
                     var canvasList = page.canvasList;
                     canvasList.sort(this.compareZIndex);
                     // console.log(canvasList);
+
                     for (var i = canvasList.length - 1; i >= 0; i--) {
                         // console.log(canvasList[i]);
-                        if (this.inRect(x, y, canvasList[i])) {
-                            // console.log('inrect');
+                        var curCanvasRealPoint ={x:x,y:y};
+                        // if (canvasList[i].translate || canvasList[i].scale){
+                        //     curCanvasRealPoint=this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
+                        // }
+                        if (canvasList[i].transform){
+                            curCanvasRealPoint = this.invertPointFromTransform({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].transform);
+                        }
+                        // this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
+                        if (this.inRect(curCanvasRealPoint.x, curCanvasRealPoint.y, canvasList[i])) {
+                            console.log('inrect');
                             targets.push(canvasList[i]);
-                            canvas = canvasList[i];
-                            break;
+                            canvases.push(canvasList[i]);
                         }
                     }
 
                 }
 
-                if (canvas == '') {
+                if (canvases.length === 0) {
                     return targets;
                 }
 
                 //if widget clicked
-                var subCanvas = '';
-                //canvas.subCanvasList[canvas.curSubCanvasIdx];
-                if (canvas.subCanvasList && canvas.subCanvasList.length) {
-                    subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
-                    if (subCanvas.widgetList && subCanvas.widgetList.length) {
-                        var widgetList = subCanvas.widgetList;
-                        widgetList.sort(this.compareZIndex);
-                        for (var i = widgetList.length - 1; i >= 0; i--) {
-                            if (this.inRect(x - canvas.x, y - canvas.y, widgetList[i], 'widget')) {
-                                targets.push(widgetList[i]);
-                                //handle widget like buttongroup
-                                // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
-                                this.handleInnerClickedElement(widgetList[i], x - canvas.x, y - canvas.y);
+                for (var j=0;j<canvases.length;j++){
+                    var subCanvas = '';
+                    curCanvasRealPoint = {
+                        x:x,
+                        y:y
+                    }
+                    var canvas = canvases[j];
+                    // if (canvas.translate || canvas.scale){
+                    //     curCanvasRealPoint = this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvas.x,y:canvas.y},canvas.translate,canvas.scale);
+                    // }
+                    if (canvas.transform){
+                        curCanvasRealPoint = this.invertPointFromTransform({x:x,y:y},{x:canvas.x,y:canvas.y},canvas.transform);
+                    }
+                    //canvas.subCanvasList[canvas.curSubCanvasIdx];
+                    if (canvas.subCanvasList && canvas.subCanvasList.length) {
+                        subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
+                        if (subCanvas.widgetList && subCanvas.widgetList.length) {
+                            var widgetList = subCanvas.widgetList;
+                            widgetList.sort(this.compareZIndex);
+                            var curWidgetRealPoint = {
+                                x:curCanvasRealPoint.x-canvas.x,
+                                y:curCanvasRealPoint.y-canvas.y
+                            }
+
+                            for (var i = widgetList.length - 1; i >= 0; i--) {
+                                var widget = widgetList[i];
+                                // if (widget.translate || widget.scale){
+                                //
+                                //
+                                //     curWidgetRealPoint = this.recoverTargetPointFromTransformation({x:curWidgetRealPoint.x,y:curWidgetRealPoint.y},{x:widget.info.left,y:widget.info.top},widget.translate,widget.scale);
+                                // }
+                                if (widget.transform){
+                                    curWidgetRealPoint = this.invertPointFromTransform({x:curWidgetRealPoint.x,y:curWidgetRealPoint.y},{x:widget.info.left,y:widget.info.top},widget.transform);
+                                }
+                                if (this.inRect(curWidgetRealPoint.x, curWidgetRealPoint.y, widget, 'widget')) {
+                                    targets.push(widget);
+                                    //handle widget like buttongroup
+                                    // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
+                                    this.handleInnerClickedElement(widget, curWidgetRealPoint.x, curWidgetRealPoint.y);
+                                }
                             }
                         }
                     }
                 }
+
 
                 return targets;
             }

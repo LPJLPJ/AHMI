@@ -1,7 +1,11 @@
-/**
- * Created by shenaolin on 16/2/28.
- */
-    ide.controller('StageCtrl', function ($scope,$timeout,$interval,
+
+    ide.controller('StageCtrl', ['$scope','$timeout','$interval',
+        'ProjectService',
+        'CanvasService',
+        'Preference',
+        'Type',
+        'KeydownService',
+        'OperateQueService',function ($scope,$timeout,$interval,
                                           ProjectService,
                                           CanvasService,
                                           Preference,
@@ -349,7 +353,10 @@
         function onPageMouseDown(event){
             pageMouseLocation.x=event.e.x;
             pageMouseLocation.y=event.e.y;
-
+            if(event.e.y==undefined&&event.e.x==undefined){
+                pageMouseLocation.x=event.e.layerX;
+                pageMouseLocation.y=event.e.layerY;
+            }
         }
 
         function selectLayer(event){
@@ -536,8 +543,12 @@
             });
         }
         function onSubLayerMouseDown(event){
-            subLayerMouseLocation.x=event.e.x;
-            subLayerMouseLocation.y= event.e.y;
+            pageMouseLocation.x=event.e.x;
+            pageMouseLocation.y=event.e.y;
+            if(event.e.y==undefined&&event.e.x==undefined){
+                pageMouseLocation.x=event.e.layerX;
+                pageMouseLocation.y=event.e.layerY;
+            }
         }
         function holdWidget(){
 
@@ -745,4 +756,4 @@
             ProjectService.ScaleCanvas(scaleMode);
         }
 
-    });
+    }]);
