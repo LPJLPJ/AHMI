@@ -22,6 +22,15 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
         this.duration=duration;
     }
 
+    function Transition(name,show){
+        this.name=name;
+        this.show=show;
+    }
+    var moveLR=new Transition('MOVE_LR','从左进入');
+    var moveRL=new Transition('MOVE_RL','从右进入');
+    var scale=new Transition('SCALE','缩放');
+    var transition=[moveLR,moveRL,scale];
+
     var tempAnimation = new Animation('动画',null,0,0,1,1,0);
     var defaultAnimation = [tempAnimation];
 
@@ -67,6 +76,10 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
             sCB&&sCB();
             return true;
         }
+    }
+
+    this.getAllTransititon=function(){
+        return transition;
     }
 
 }]);

@@ -6554,6 +6554,12 @@ ideServices
             selectObj.level.animations=_animationObj;
             _successCallback&&_successCallback();
         };
+
+        this.ChangeAttributeTransition = function(_transition,_successCallback){
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.transition=_transition;
+            _successCallback&&_successCallback();
+        }
         /**
          * 主要操作
          * 改变对象的Action
