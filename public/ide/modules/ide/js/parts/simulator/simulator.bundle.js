@@ -21659,14 +21659,9 @@
 	            } else if (curArc < minArc) {
 	                curArc = minArc;
 	            }
+	            minCoverAngle = minCoverAngle * Math.PI / 180 + Math.PI / 2;
+	            maxCoverAngle = maxCoverAngle * Math.PI / 180 + Math.PI / 2;
 	            // console.log(curArc,widget.oldValue);
-	            if (clockwise == '0') {
-	                minCoverAngle = -(offset + minArc) * Math.PI / 180 + Math.PI / 2;
-	                maxCoverAngle = -(offset + maxArc) * Math.PI / 180 + Math.PI / 2;
-	            } else {
-	                minCoverAngle = (offset + minArc) * Math.PI / 180 + Math.PI / 2;
-	                maxCoverAngle = (offset + maxArc) * Math.PI / 180 + Math.PI / 2;
-	            }
 	            var arcPhase = 45;
 	            if (clockwise != '2') {
 	                clockwise = clockwise == '1' ? 1 : -1;
@@ -21676,7 +21671,7 @@
 	                    var bgTex = widget.texList[0].slices[0];
 	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
 	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle, clockwise);
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    //draw circle
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -21689,7 +21684,7 @@
 	                    var lightStripTex = widget.texList[2].slices[0];
 	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
 	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle, clockwise);
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 
 	                    //draw circle
 	                    // var circleTex = widget.texList[3].slices[0]
@@ -21997,18 +21992,17 @@
 	            this.handleTargetAction(widget, 'EnterLowAlarm');
 	        }
 	    },
-	    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle, clockwise) {
+	    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
 	        var transXratio = transXratio || 0;
 	        var transYratio = transYratio || 0;
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        offctx.save();
 	        if (typeof minCoverAngle != 'undefined' && typeof maxCoverAngle != 'undefined' && minCoverAngle != maxCoverAngle) {
-	            clockwise = clockwise == -1 ? true : false;
 	            var radius = Math.max(w, h) / 2;
 	            offctx.beginPath();
 	            offctx.moveTo(x + w * 0.5, y + h * 0.5);
-	            offctx.arc(x + w * 0.5, y + h * 0.5, radius, minCoverAngle, maxCoverAngle, clockwise);
+	            offctx.arc(x + w * 0.5, y + h * 0.5, radius, maxCoverAngle, minCoverAngle, false);
 	            offctx.closePath();
 	            //offctx.stroke();
 	            offctx.clip();

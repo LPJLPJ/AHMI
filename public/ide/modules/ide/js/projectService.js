@@ -1072,30 +1072,20 @@ ideServices
                         }
                         angleOfPointer=angleOfPointer+45;
                         //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
-                        this.minCoverAngle=this.offsetValue+this.maxAngle;
-                        this.maxCoverAngle=this.offsetValue+this.minAngle;
-                        if(this.minCoverAngle%360!=this.maxCoverAngle){
-                            var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY);
-                            var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY);
-                            var clockwise=this.clockwise=='0'?true:false;
-                            if(clockwise){
-                                newMinCoverAngle=-newMinCoverAngle+Math.PI/2;
-                                newMaxCoverAngle=-newMaxCoverAngle+Math.PI/2;
-                            }else{
-                                newMinCoverAngle=newMinCoverAngle+Math.PI/2;
-                                newMaxCoverAngle=newMaxCoverAngle+Math.PI/2;
-                            }
+                        if(!(this.minCoverAngle==this.maxCoverAngle)){
+                            var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                            var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                             ctx.save();
                             ctx.beginPath();
                             ctx.moveTo(0,0);
-                            ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,clockwise);
+                            ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
                             ctx.closePath();
                             ctx.fillStyle='rgba(244,244,244,0.3)';
                             ctx.fill();
                             ctx.restore();
                             ctx.beginPath();
                             ctx.moveTo(0,0);
-                            ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,clockwise);
+                            ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
                             ctx.closePath();
                             //ctx.stroke();
                             ctx.clip();
@@ -6626,7 +6616,7 @@ ideServices
                     };
                     selectObj.target.fire('changeProgressValue',arg);
                 }
-                if(selectObj.type==Type.MyDashboard){
+                if(selectObj.type==Type.MyDashboardDashboard){
                     arg={
                         maxValue:_option.maxValue,
                         callback:_successCallback

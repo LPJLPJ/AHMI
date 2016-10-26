@@ -24,7 +24,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     $scope.$on('ToolShowChanged', function (event, toolShow) {
         $scope.component.textArea.toolShow=toolShow;
     });
-        
+
 	function initUserInterface(){
 		$scope.component={
 			type:'',
