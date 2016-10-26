@@ -25,16 +25,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         $scope.component.textArea.toolShow=toolShow;
     });
 
-
 	function initUserInterface(){
 		$scope.component={
 			type:'',
 			onAttributeChanged:onAttributeChanged,
+            transitionMode:[
+                {name:'MOVE_LR',show:'从左进入'},
+                {name:'MOVE_RL',show:'从右进入'},
+                {name:'SCALE',show:'缩放'}
+            ],
 
             page:{
                 enterImage:enterBackgroundImage,
                 selectImage:'demo20.png',
-
             },
 
             layer:{
@@ -230,7 +233,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             enterMaxAngle:enterMaxAngle,
             enterMinAlert:enterMinAlert,
             enterMaxAlert:enterMaxAlert,
-			restore:restore
+			restore:restore,
+            changeTransition:changeTransition
 		};
 	}
 
@@ -296,6 +300,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 case Type.MyLayer:
                     //调整Layer的ShowSubLayer
                     $scope.component.layer.selectModel=$scope.component.object.level.showSubLayer.id;
+                    if(!$scope.component.object.level.transition){
+                        ProjectService.ChangeAttributeTransition('MOVE_LR');
+                    }
+                    $scope.component.layer.transition=$scope.component.object.level.transition||'MOVE_LR';
                     break;
                 case Type.MyPage:
                     //调整Page的背景图
@@ -304,6 +312,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }else {
                         $scope.component.page.selectImage=$scope.component.object.level.backgroundImage;
                     }
+                    if(!$scope.component.object.level.transition){
+                        ProjectService.ChangeAttributeTransition('MOVE_LR');
+                    }
+                    $scope.component.page.transition=$scope.component.object.level.transition||'MOVE_LR';
                     break;
                 case Type.MySubLayer:
                     //调整SubLayer的背景图
@@ -419,7 +431,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.num.numModeId=$scope.component.object.level.info.numModeId;
                     $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
                     $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
-                    $scope.component.num.overFlowStyle=$scope.component.object.level.info.overFlowStyle
+                    $scope.component.num.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
+                    if(!$scope.component.object.level.transition){
+                        ProjectService.ChangeAttributeTransition('MOVE_LR');
+                    }
+                    $scope.component.num.transition=$scope.component.object.level.transition||'MOVE_LR';
                     break;
                 case Type.MyOscilloscope:
                     break;
@@ -445,6 +461,24 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			$scope.component.object= _.cloneDeep(initObject);
 		})
 	}
+
+    function changeTransition(){
+        var transition = null;
+        switch ($scope.component.object.type){
+            case Type.MyPage:
+                transition=$scope.component.page.transition;
+                break;
+            case Type.MyLayer:
+                transition=$scope.component.layer.transition;
+                break;
+            case Type.MyNum:
+                transition=$scope.component.num.transition;
+                break;
+        }
+        if(transition){
+            ProjectService.ChangeAttributeTransition(transition);
+        }
+    }
 
     function addSubSlide(){
 

@@ -614,9 +614,18 @@
              */
             function clickHandle(){
                 var clickedFabLayer=null;
-
+                    var eventlocationX=null,
+                        eventlocationY=null;
+                    if(event.e.x&&event.e.y){
+                        eventlocationX=event.e.x;
+                        eventlocationY=event.e.y;
+                    }
+                    else if(event.e.layerX&&event.e.layerY){
+                        eventlocationX=event.e.layerX;
+                        eventlocationY=event.e.layerY;
+                    }
                 //如果点击了layer,在Ctrl模式下进行多选,否则单选
-                if (Math.abs(event.e.x-pageMouseLocation.x)<=2&&Math.abs(event.e.y-pageMouseLocation.y)<=2){
+                if (Math.abs(eventlocationX-pageMouseLocation.x)<=2&&Math.abs(eventlocationY-pageMouseLocation.y)<=2){
 
                     //生成落点的Point对象
                     var clickPoint=new fabric.Point(event.e.offsetX/$scope.component.canvas.node.getZoom(),

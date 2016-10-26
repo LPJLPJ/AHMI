@@ -2068,6 +2068,8 @@ module.exports =   React.createClass({
                 } else if (curArc < minArc) {
                     curArc = minArc;
                 }
+                minCoverAngle=minCoverAngle*Math.PI/180+Math.PI/2;
+                maxCoverAngle=maxCoverAngle*Math.PI/180+Math.PI/2;
                 // console.log(curArc,widget.oldValue);
                 var arcPhase = 45;
                 if(clockwise!='2'){
@@ -2351,10 +2353,6 @@ module.exports =   React.createClass({
         offctx.stroke();
         offctx.restore();
     },
-    //指针拖尾的遮罩
-    drawConverAngle:function(){
-        console.log('haha');
-    },
     drawLightStrip: function (curX, curY, width, height, minArc, curArc, image,clockWise,dashboardModeId,nowArc) {
         //clip a fan shape
         // console.log(minArc, curArc);
@@ -2426,8 +2424,9 @@ module.exports =   React.createClass({
             var radius = Math.max(w,h)/2;
             offctx.beginPath();
             offctx.moveTo(x+w*0.5,y+h*0.5);
-            offctx.arc(x+w*0.5,y+h*0.5,radius,maxCoverAngle*Math.PI/180+Math.PI/2,minCoverAngle*Math.PI/180+Math.PI/2,false);
+            offctx.arc(x+w*0.5,y+h*0.5,radius,maxCoverAngle,minCoverAngle,false);
             offctx.closePath();
+            //offctx.stroke();
             offctx.clip();
         }
         if(!(type&&type=='MyRotateImg')){

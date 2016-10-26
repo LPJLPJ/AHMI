@@ -562,9 +562,10 @@
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">动画效果</span>
-                            <select class="form-control my-attr-number-input form-control dengPage-input">
-                                <option value="horizontal">平移</option>
-                                <option value="vertical">缩放</option>
+                            <select class="form-control my-attr-number-input form-control dengPage-input"
+                                    ng-options="transition.name as transition.show for transition in component.transitionMode"
+                                    ng-model="component.page.transition"
+                                    ng-change="component.changeTransition()">
                             </select>
                         </div>
 
@@ -610,10 +611,11 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title ">切换效果</span>
-                            <select class="form-control my-attr-number-input form-control dengPage-input">
-                                <option value="horizontal">平移</option>
-                                <option value="vertical">缩放</option>
+                            <span class="my-attr-title dengPage-title ">切换动画</span>
+                            <select class="form-control my-attr-number-input form-control dengPage-input"
+                                    ng-options="transition.name as transition.show for transition in component.transitionMode"
+                                    ng-model="component.layer.transition"
+                                    ng-change="component.changeTransition()">
                             </select>
                         </div>
 
@@ -1320,9 +1322,10 @@
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">切换动画</span>
-                            <select class="form-control my-attr-number-input form-control dengPage-input">
-                                <option value="horizontal">平移</option>
-                                <option value="vertical">缩放</option>
+                            <select class="form-control my-attr-number-input form-control dengPage-input"
+                                    ng-options="transition.name as transition.show for transition in component.transitionMode"
+                                    ng-model="component.num.transition"
+                                    ng-change="component.changeTransition()">
                             </select>
                         </div>
 
