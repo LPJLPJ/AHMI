@@ -664,30 +664,54 @@ module.exports =   React.createClass({
         //         }
         //     }
         // };
+        var type = target.type;
         var duration;
         var frames = 30;
         if (animation && animation.animationAttrs){
             duration = animation.duration || 1000;
         }
-        var srcTransformObj = {
-            a:2,
-            b:0,
-            c:0,
-            d:2,
-            e:target.x,
-            f:target.y
+        var srcTransformObj={};
+        var dstTransformObj={};
+        if(type === 'MyLayer'){
+            srcTransformObj = {
+                a:2,
+                b:0,
+                c:0,
+                d:2,
+                e:target.x,
+                f:target.y
 
-        };
-        var dstTransformObj = {
-            a:1,
-            b:0,
-            c:0,
-            d:1,
-            e:0-target.x,
-            f:0-target.y
+            };
+            dstTransformObj = {
+                a:1,
+                b:0,
+                c:0,
+                d:1,
+                e:0-target.x,
+                f:0-target.y
+            }
+        }else{
+            srcTransformObj = {
+                a:2,
+                b:0,
+                c:0,
+                d:2,
+                e:100,
+                f:100
+
+            };
+            dstTransformObj = {
+                a:1,
+                b:0,
+                c:0,
+                d:1,
+                e:0-target.info.left,
+                f:0-target.info.top
+            }
         }
 
-        AnimationManager.stepObj(srcTransformObj,dstTransformObj,1000,30,'easeInOutCubic',function (deltas) {
+
+        AnimationManager.stepObj(srcTransformObj,dstTransformObj,duration,30,'easeInOutCubic',function (deltas) {
 
             // offctx.translate(deltas.curX,deltas.curY);
             var transformMatrix = {
@@ -838,7 +862,7 @@ module.exports =   React.createClass({
         }
         var subCanvas = subCanvasList[nextSubCanvasIdx];
         if (subCanvas) {
-            console.log('painting canvas')
+            // console.log('painting canvas')
             offctx.save();
             offctx.translate(canvasData.x,canvasData.y);
             // if (canvasData.translate){
@@ -980,12 +1004,18 @@ module.exports =   React.createClass({
         offctx.save();
 
         // console.log('widget',JSON.stringify(widget.translate),JSON.stringify(widget.scale))
-        if (widget.translate){
-            offctx.translate(widget.translate.x,widget.translate.y);
-        }
+        // if (widget.translate){
+        //     offctx.translate(widget.translate.x,widget.translate.y);
+        // }
+        // offctx.translate(curX,curY);
+        // if (widget.scale){
+        //     offctx.scale(widget.scale.w,widget.scale.h);
+        // }
         offctx.translate(curX,curY);
-        if (widget.scale){
-            offctx.scale(widget.scale.w,widget.scale.h);
+
+        if (widget.transform){
+            var t = widget.transform;
+            offctx.transform(t.a,t.b,t.c,t.d,t.e,t.f);
         }
 
         curX = 0;
