@@ -609,3 +609,7 @@ body{
 .op-selected {
     background-color: #F5F5F5;
 }
+
+/*icon hover turn big*/
+.icon:hover{transform:scale(1.2);}
+.dropdown-menu-item-widget:hover{transform:scale(1.2);}
