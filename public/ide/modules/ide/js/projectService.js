@@ -1037,7 +1037,7 @@ ideServices
                             //正向，当前值大于0
                             if(taoValue>=0){
                                 minAngle=offsetangle+Math.PI/2;
-                                angle=angle+Math.PI/2;
+                                angle=nowangle+offsetangle+Math.PI/2;
                                 ctx.arc(0,0,radius,minAngle,angle,false);
                                 if(this.dashboardModeId=='2'){
                                     ctx.arc(0,0,3*radius/4,angle,minAngle,true);
