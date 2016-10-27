@@ -1219,8 +1219,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.minCoverAngle<-180||$scope.component.object.level.info.minCoverAngle>180||
-                $scope.component.object.level.info.minCoverAngle>$scope.component.object.level.info.maxCoverAngle){
+            if($scope.component.object.level.info.minCoverAngle<-360||$scope.component.object.level.info.minCoverAngle>360||
+                $scope.component.object.level.info.minCoverAngle>$scope.component.object.level.info.maxCoverAngle||
+                $scope.component.object.level.info.maxCoverAngle-$scope.component.object.level.info.minCoverAngle>360){
                 toastr.warning('超出范围');
                 restore();
                 return;
@@ -1242,8 +1243,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxCoverAngle<-180||$scope.component.object.level.info.maxCoverAngle>180||
-                $scope.component.object.level.info.maxCoverAngle<$scope.component.object.level.info.minCoverAngle){
+            if($scope.component.object.level.info.maxCoverAngle<-360||$scope.component.object.level.info.maxCoverAngle>360||
+                $scope.component.object.level.info.maxCoverAngle<$scope.component.object.level.info.minCoverAngle||
+                $scope.component.object.level.info.maxCoverAngle-$scope.component.object.level.info.minCoverAngle>360){
                 toastr.warning('超出范围');
                 restore();
                 return;
