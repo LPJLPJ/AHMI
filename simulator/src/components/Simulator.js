@@ -2023,7 +2023,12 @@ module.exports =   React.createClass({
                 // var curArc = widget.info.value;
                 var curDashboardTag = this.findTagByName(widget.tag);
                 var curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
-                var curArc = (maxArc - minArc) / (maxValue - minValue) * curDashboardTagValue;
+                if(curDashboardTagValue>maxValue){
+                    curDashboardTagValue=maxValue;
+                }else if(curDashboardTagValue<minValue){
+                    curDashboardTagValue=minValue;
+                }
+                var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue-minValue);
                 var currentValue = curDashboardTag && curDashboardTag.value || 0;
                 var clockwise = widget.info.clockwise// == '1' ? 1 : -1;
                 var lowAlarm = widget.info.lowAlarmValue;
@@ -2033,11 +2038,12 @@ module.exports =   React.createClass({
                 pointerWidth = pointerLength / Math.sqrt(2);
                 pointerHeight = pointerLength / Math.sqrt(2);
 
-                if (curArc > maxArc) {
-                    curArc = maxArc;
-                } else if (curArc < minArc) {
-                    curArc = minArc;
-                }
+                //console.log('curDashboardTagValue',curDashboardTagValue,'curArc',curArc);
+                //if (curArc > maxArc) {
+                //    curArc = maxArc;
+                //} else if (curArc < minArc) {
+                //    curArc = minArc;
+                //}
                 minCoverAngle=minCoverAngle*Math.PI/180+Math.PI/2;
                 maxCoverAngle=maxCoverAngle*Math.PI/180+Math.PI/2;
                 // console.log(curArc,widget.oldValue);
@@ -2050,7 +2056,7 @@ module.exports =   React.createClass({
                         var bgTex = widget.texList[0].slices[0];
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
                         //draw circle
                         // var circleTex = widget.texList[2].slices[0]
                         // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -2063,7 +2069,7 @@ module.exports =   React.createClass({
                             var lightStripTex = widget.texList[2].slices[0];
                             this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
                             //draw pointer
-                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
+                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset+minArc) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
 
                             //draw circle
                             // var circleTex = widget.texList[3].slices[0]
@@ -2080,7 +2086,7 @@ module.exports =   React.createClass({
                         var bgTex = widget.texList[0].slices[0];
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
                         //draw circle
                         // var circleTex = widget.texList[2].slices[0]
                         // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -2095,7 +2101,7 @@ module.exports =   React.createClass({
                             this.drawLightStrip(curX, curY, width, height,offset + 90,(curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
                             //draw pointer
 
-                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight,(curArc + offset) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
+                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight,(curArc + offset +minArc) + arcPhase, widget.texList[1].slices[0],null,null,null,minCoverAngle,maxCoverAngle);
                         }
                         else if(curArc<0){
                             var bgTex = widget.texList[0].slices[0];
@@ -2104,7 +2110,7 @@ module.exports =   React.createClass({
                             var lightStripTex = widget.texList[2].slices[0];
                             this.drawLightStrip(curX, curY, width, height,offset + 90,(curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId,curArc);
                             //draw pointer
-                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight,(curArc + offset) + arcPhase, widget.texList[1].slices[0],minCoverAngle,maxCoverAngle);
+                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight,(curArc + offset +minArc) + arcPhase, widget.texList[1].slices[0],minCoverAngle,maxCoverAngle);
 
                         }
 
