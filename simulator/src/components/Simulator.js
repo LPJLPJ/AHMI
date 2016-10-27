@@ -426,7 +426,9 @@ module.exports =   React.createClass({
                 options = {};
             }
             options.reLinkWidgets = true;
-            this.handleTargetAction(page, 'Load')
+            this.handleTargetAction(page, 'Load');
+
+            console.log(page)
 
             if (method === 'translate'){
                 AnimationManager.step(offcanvas.width,offcanvas.height,0,0,duration,frames,easing,function (deltas) {
