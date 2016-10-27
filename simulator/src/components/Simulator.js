@@ -652,6 +652,12 @@ module.exports =   React.createClass({
         }
     },
     executeAnimation:function (target,animation) {
+        var animationAttrs;
+        if (!animation||!animation.animationAttrs){
+            return;
+        }else{
+            animationAttrs = animation.animationAttrs;
+        }
         // this.animationAttrs={
         //     translate:{
         //         dstPos:{
@@ -666,54 +672,55 @@ module.exports =   React.createClass({
         //         }
         //     }
         // };
+        var scale = (animationAttrs.scale&&animationAttrs.scale.dstScale)||{x:1,y:1};
+        var translate = (animationAttrs.translate&&animationAttrs.translate.dstPos)||{x:0,y:0};
+
         var type = target.type;
-        var duration;
+        var duration = animation.duration || 1000;
+        console.log(scale,translate,duration)
         var frames = 30;
-        if (animation && animation.animationAttrs){
-            duration = animation.duration || 1000;
-        }
         var srcTransformObj={};
         var dstTransformObj={};
         if(type === 'MyLayer'){
             srcTransformObj = {
-                a:2,
-                b:0,
-                c:0,
-                d:2,
-                e:target.x,
-                f:target.y
-
-            };
-            dstTransformObj = {
                 a:1,
                 b:0,
                 c:0,
                 d:1,
-                e:0-target.x,
-                f:0-target.y
+                e:0,
+                f:0
+
+            };
+            dstTransformObj = {
+                a:scale.x,
+                b:0,
+                c:0,
+                d:scale.y,
+                e:translate.x-target.x,
+                f:translate.y-target.y
             }
         }else{
             srcTransformObj = {
-                a:2,
-                b:0,
-                c:0,
-                d:2,
-                e:100,
-                f:100
-
-            };
-            dstTransformObj = {
                 a:1,
                 b:0,
                 c:0,
                 d:1,
-                e:0-target.info.left,
-                f:0-target.info.top
+                e:0,
+                f:0
+
+            };
+            dstTransformObj = {
+                a:scale.x,
+                b:0,
+                c:0,
+                d:scale.y,
+                e:translate.x-target.info.left,
+                f:translate.y-target.info.top
             }
         }
 
 
-        AnimationManager.stepObj(srcTransformObj,dstTransformObj,duration,30,'easeInOutCubic',function (deltas) {
+        AnimationManager.stepObj(srcTransformObj,dstTransformObj,duration,frames,'easeInOutCubic',function (deltas) {
 
             // offctx.translate(deltas.curX,deltas.curY);
             var transformMatrix = {
@@ -803,18 +810,22 @@ module.exports =   React.createClass({
         var willExecuteAnimation = false;
         if (options&&options.animation){
             //has animation execute
+            console.log('execute animation')
             if (canvasData.tag === options.animation.tag){
-                willExecuteAnimation = true;
+                // willExecuteAnimation = true;
                 //execute animation which number is number
-                // for (var i=0;i<canvasData.animations.length;i++){
-                //     if (canvasData.animations[i].number === options.animation.number){
-                //         //hit
-                //         //execute this animation
-                //         executeAnimation = true;
-                //         this.executeAnimation(canvasData,canvasData.animations[i]);
-                //     }
-                // }
-                this.executeAnimation(canvasData);
+                if (canvasData.animations&&canvasData.animations.length){
+                    for (var i=0;i<canvasData.animations.length;i++){
+                        if (Number(canvasData.animations[i].id) === options.animation.number){
+                            //hit
+                            //execute this animation
+                            willExecuteAnimation = true;
+                            this.executeAnimation(canvasData,canvasData.animations[i]);
+                        }
+                    }
+                }
+
+                // this.executeAnimation(canvasData);
             }
         }
         if(!willExecuteAnimation){

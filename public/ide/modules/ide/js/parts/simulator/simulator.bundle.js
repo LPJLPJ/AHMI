@@ -20329,6 +20329,12 @@
 	        };
 	    },
 	    executeAnimation: function (target, animation) {
+	        var animationAttrs;
+	        if (!animation || !animation.animationAttrs) {
+	            return;
+	        } else {
+	            animationAttrs = animation.animationAttrs;
+	        }
 	        // this.animationAttrs={
 	        //     translate:{
 	        //         dstPos:{
@@ -20343,53 +20349,54 @@
 	        //         }
 	        //     }
 	        // };
+	        var scale = animationAttrs.scale && animationAttrs.scale.dstScale || { x: 1, y: 1 };
+	        var translate = animationAttrs.translate && animationAttrs.translate.dstPos || { x: 0, y: 0 };
+
 	        var type = target.type;
-	        var duration;
+	        var duration = animation.duration || 1000;
+	        console.log(scale, translate, duration);
 	        var frames = 30;
-	        if (animation && animation.animationAttrs) {
-	            duration = animation.duration || 1000;
-	        }
 	        var srcTransformObj = {};
 	        var dstTransformObj = {};
 	        if (type === 'MyLayer') {
 	            srcTransformObj = {
-	                a: 2,
-	                b: 0,
-	                c: 0,
-	                d: 2,
-	                e: target.x,
-	                f: target.y
-
-	            };
-	            dstTransformObj = {
 	                a: 1,
 	                b: 0,
 	                c: 0,
 	                d: 1,
-	                e: 0 - target.x,
-	                f: 0 - target.y
+	                e: 0,
+	                f: 0
+
+	            };
+	            dstTransformObj = {
+	                a: scale.x,
+	                b: 0,
+	                c: 0,
+	                d: scale.y,
+	                e: translate.x - target.x,
+	                f: translate.y - target.y
 	            };
 	        } else {
 	            srcTransformObj = {
-	                a: 2,
-	                b: 0,
-	                c: 0,
-	                d: 2,
-	                e: 100,
-	                f: 100
-
-	            };
-	            dstTransformObj = {
 	                a: 1,
 	                b: 0,
 	                c: 0,
 	                d: 1,
-	                e: 0 - target.info.left,
-	                f: 0 - target.info.top
+	                e: 0,
+	                f: 0
+
+	            };
+	            dstTransformObj = {
+	                a: scale.x,
+	                b: 0,
+	                c: 0,
+	                d: scale.y,
+	                e: translate.x - target.info.left,
+	                f: translate.y - target.info.top
 	            };
 	        }
 
-	        AnimationManager.stepObj(srcTransformObj, dstTransformObj, duration, 30, 'easeInOutCubic', function (deltas) {
+	        AnimationManager.stepObj(srcTransformObj, dstTransformObj, duration, frames, 'easeInOutCubic', function (deltas) {
 
 	            // offctx.translate(deltas.curX,deltas.curY);
 	            var transformMatrix = {};
@@ -20473,18 +20480,22 @@
 	        var willExecuteAnimation = false;
 	        if (options && options.animation) {
 	            //has animation execute
+	            console.log('execute animation');
 	            if (canvasData.tag === options.animation.tag) {
-	                willExecuteAnimation = true;
+	                // willExecuteAnimation = true;
 	                //execute animation which number is number
-	                // for (var i=0;i<canvasData.animations.length;i++){
-	                //     if (canvasData.animations[i].number === options.animation.number){
-	                //         //hit
-	                //         //execute this animation
-	                //         executeAnimation = true;
-	                //         this.executeAnimation(canvasData,canvasData.animations[i]);
-	                //     }
-	                // }
-	                this.executeAnimation(canvasData);
+	                if (canvasData.animations && canvasData.animations.length) {
+	                    for (var i = 0; i < canvasData.animations.length; i++) {
+	                        if (Number(canvasData.animations[i].id) === options.animation.number) {
+	                            //hit
+	                            //execute this animation
+	                            willExecuteAnimation = true;
+	                            this.executeAnimation(canvasData, canvasData.animations[i]);
+	                        }
+	                    }
+	                }
+
+	                // this.executeAnimation(canvasData);
 	            }
 	        }
 	        if (!willExecuteAnimation) {
@@ -21675,7 +21686,12 @@
 	            // var curArc = widget.info.value;
 	            var curDashboardTag = this.findTagByName(widget.tag);
 	            var curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
-	            var curArc = (maxArc - minArc) / (maxValue - minValue) * curDashboardTagValue;
+	            if (curDashboardTagValue > maxValue) {
+	                curDashboardTagValue = maxValue;
+	            } else if (curDashboardTagValue < minValue) {
+	                curDashboardTagValue = minValue;
+	            }
+	            var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue - minValue);
 	            var currentValue = curDashboardTag && curDashboardTag.value || 0;
 	            var clockwise = widget.info.clockwise; // == '1' ? 1 : -1;
 	            var lowAlarm = widget.info.lowAlarmValue;
@@ -21685,11 +21701,12 @@
 	            pointerWidth = pointerLength / Math.sqrt(2);
 	            pointerHeight = pointerLength / Math.sqrt(2);
 
-	            if (curArc > maxArc) {
-	                curArc = maxArc;
-	            } else if (curArc < minArc) {
-	                curArc = minArc;
-	            }
+	            //console.log('curDashboardTagValue',curDashboardTagValue,'curArc',curArc);
+	            //if (curArc > maxArc) {
+	            //    curArc = maxArc;
+	            //} else if (curArc < minArc) {
+	            //    curArc = minArc;
+	            //}
 	            minCoverAngle = minCoverAngle * Math.PI / 180 + Math.PI / 2;
 	            maxCoverAngle = maxCoverAngle * Math.PI / 180 + Math.PI / 2;
 	            // console.log(curArc,widget.oldValue);
@@ -21702,7 +21719,7 @@
 	                    var bgTex = widget.texList[0].slices[0];
 	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
 	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    //draw circle
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -21715,7 +21732,7 @@
 	                        var lightStripTex = widget.texList[2].slices[0];
 	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
 	                        //draw pointer
-	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 
 	                        //draw circle
 	                        // var circleTex = widget.texList[3].slices[0]
@@ -21731,7 +21748,7 @@
 	                    var bgTex = widget.texList[0].slices[0];
 	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
 	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    //draw circle
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -21746,7 +21763,7 @@
 	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
 	                            //draw pointer
 
-	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + minArc + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                        } else if (curArc < 0) {
 	                            var bgTex = widget.texList[0].slices[0];
 	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
@@ -21754,7 +21771,7 @@
 	                            var lightStripTex = widget.texList[2].slices[0];
 	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
 	                            //draw pointer
-	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], minCoverAngle, maxCoverAngle);
+	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + minArc + arcPhase, widget.texList[1].slices[0], minCoverAngle, maxCoverAngle);
 	                        }
 	                    } else if (widget.dashboardModeId == '2') {
 	                        var lightStripTex = widget.texList[0].slices[0];
