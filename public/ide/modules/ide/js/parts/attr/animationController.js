@@ -31,12 +31,13 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
         var currentObject = ProjectService.getCurrentSelectObject().level;
         switch (currentObject.type){
-            case "MyLayer" :
-            case "MyNum":
-                $scope.showAnimationPanel=true;
+            case "MyPage" :
+            case "MySubLayer":
+            case undefined:
+                $scope.showAnimationPanel=false;
                 break;
             default:
-                $scope.showAnimationPanel=false;
+                $scope.showAnimationPanel=true;
                 break;
         }
     }

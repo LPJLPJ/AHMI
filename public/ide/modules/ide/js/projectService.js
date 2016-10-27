@@ -1005,7 +1005,7 @@ ideServices
                     }
                     if(this.lightBandImageElement){
                         //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                        var angle=translateAngle(taoValue+this.offsetValue,this.scaleX,this.scaleY);
+                        var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
                         var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
                         var nowangle=translateAngle(taoValue,this.scaleX,this.scaleY);
                         var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY);
@@ -1037,7 +1037,7 @@ ideServices
                             //正向，当前值大于0
                             if(taoValue>=0){
                                 minAngle=offsetangle+Math.PI/2;
-                                angle=angle+Math.PI/2;
+                                angle=nowangle+offsetangle+Math.PI/2;
                                 ctx.arc(0,0,radius,minAngle,angle,false);
                                 if(this.dashboardModeId=='2'){
                                     ctx.arc(0,0,3*radius/4,angle,minAngle,true);
@@ -6487,11 +6487,21 @@ ideServices
             _successCallback&&_successCallback();
         };
 
-        this.ChangeAttributeTransition = function(_transition,_successCallback){
+        this.AddAttributeTransition = function(_transition,_successCallback){
             var selectObj = _self.getCurrentSelectObject();
             selectObj.level.transition=_transition;
             _successCallback&&_successCallback();
-        }
+        };
+        this.ChangeAttributeTransition = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            if(_option.hasOwnProperty('name')){
+                selectObj.level.transition.name=_option.name;
+            }else if(_option.hasOwnProperty('duration')){
+                selectObj.level.transition.duration=_option.duration;
+            }
+            _successCallback&&_successCallback();
+        };
+
         /**
          * 主要操作
          * 改变对象的Action

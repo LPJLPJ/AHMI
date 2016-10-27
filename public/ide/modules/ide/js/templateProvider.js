@@ -5,6 +5,14 @@ ideServices
     .service('TemplateProvider', ['Type','CanvasService','Preference',function (Type,CanvasService,Preference) {
 
 
+        function Transition(name,show,duration){
+            this.name=name||'';
+            this.show=show||'';
+            this.duration=duration;
+        }
+
+        var defaultTransition=new Transition('NO_TRANSITION','无动画',0);
+
         var project,
             defaultButton={
                 info :{
@@ -224,6 +232,7 @@ ideServices
                 backgroundColor:'rgb(' + r + ',' + g + ',' + b + ')',
                 backgroundImage:'',
                 currentFabLayer:null,
+                transition:_.cloneDeep(defaultTransition)
             }
 
         };
@@ -250,8 +259,8 @@ ideServices
                 type: Type.MyLayer,
                 expand:true,
                 showSubLayer:subLayer,
-                zIndex:0
-
+                zIndex:0,
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 
@@ -613,7 +622,8 @@ ideServices
                         imgSrc:'',
                         name:'数字背景'
                     }]
-                }]
+                }],
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 

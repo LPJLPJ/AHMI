@@ -564,17 +564,17 @@
                             <span class="my-attr-title dengPage-title ">动画效果</span>
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-options="transition.name as transition.show for transition in component.transitionMode"
-                                    ng-model="component.page.transition"
-                                    ng-change="component.changeTransition()">
+                                    ng-model="component.transitionName"
+                                    ng-change="component.changeTransitionName()">
                             </select>
                         </div>
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">持续时间</span>
                             <input class="my-attr-title-cartoon-times form-control "
-
+                                   ng-model="component.object.level.transition.duration"
                                    ng-blur="component.restore()"
-                                   ng-keypress=""
+                                   ng-keypress="component.changeTransitionDur($event)"
                                    type="number">
                         </div>
 
@@ -614,17 +614,17 @@
                             <span class="my-attr-title dengPage-title ">切换动画</span>
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-options="transition.name as transition.show for transition in component.transitionMode"
-                                    ng-model="component.layer.transition"
-                                    ng-change="component.changeTransition()">
+                                    ng-model="component.transitionName"
+                                    ng-change="component.changeTransitionName()">
                             </select>
                         </div>
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">持续时间</span>
                             <input class="my-attr-title-cartoon-times form-control "
-
                                    ng-blur="component.restore()"
-                                   ng-keypress=""
+                                   ng-model="component.object.level.transition.duration"
+                                   ng-keypress="component.changeTransitionDur($event)"
                                    type="number">
                         </div>
 
@@ -1324,17 +1324,17 @@
                             <span class="my-attr-title dengPage-title ">切换动画</span>
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-options="transition.name as transition.show for transition in component.transitionMode"
-                                    ng-model="component.num.transition"
-                                    ng-change="component.changeTransition()">
+                                    ng-model="component.transition.Name"
+                                    ng-change="component.changeTransitionName()">
                             </select>
                         </div>
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">持续时间</span>
                             <input class="my-attr-title-cartoon-times form-control "
-
                                    ng-blur="component.restore()"
-                                   ng-keypress=""
+                                   ng-model="component.object.level.transition.duration"
+                                   ng-keypress="component.changeTransitionDur($event)"
                                    type="number">
                         </div>
                         
@@ -2225,7 +2225,7 @@
                                     </tr>
                                     <tr>
                                         <td><span class="margin-left40px">Y:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.dstPos.y"></td>
-                                        <td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.x"></td>
+                                        <td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.y"></td>
                                     </tr>
                                 </table>
 
