@@ -5,12 +5,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     'Type', 'Preference',
     'ResourceService',
     'characterSetService',
-    'CanvasService', function ($scope,$timeout,
+    'CanvasService','AnimationService', function ($scope,$timeout,
                                      ProjectService,
                                      Type, Preference,
 										  ResourceService,
                                           characterSetService,
-                                     CanvasService) {
+                                     CanvasService,AnimationService) {
 
 	var initObject=null;
 
@@ -30,10 +30,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			type:'',
 			onAttributeChanged:onAttributeChanged,
             transitionMode:[
+                {name:'NO_TRANSITION',show:'无动画'},
                 {name:'MOVE_LR',show:'从左进入'},
                 {name:'MOVE_RL',show:'从右进入'},
                 {name:'SCALE',show:'缩放'}
             ],
+            transitionName:null,
 
             page:{
                 enterImage:enterBackgroundImage,
@@ -42,8 +44,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
             layer:{
                 enterShowSubLayer:enterShowSubLayer,
-                selectModel:null
-
+                selectModel:null,
             },
             subLayer:{
                 enterImage:enterBackgroundImage,
@@ -234,7 +235,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             enterMinAlert:enterMinAlert,
             enterMaxAlert:enterMaxAlert,
 			restore:restore,
-            changeTransition:changeTransition
+            changeTransitionName:changeTransitionName,
+            changeTransitionDur:changeTransitionDur,
 		};
 	}
 
@@ -245,6 +247,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         //edit by lixiang
         $scope.maxWidth = $scope.project.initSize.width||1280;
         $scope.maxHeight = $scope.project.initSize.height||1080;
+        $scope.defaultTransition = AnimationService.getDefaultTransition();
 
 		onAttributeChanged();
 		updateImageList();
@@ -300,10 +303,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 case Type.MyLayer:
                     //调整Layer的ShowSubLayer
                     $scope.component.layer.selectModel=$scope.component.object.level.showSubLayer.id;
-                    if(!$scope.component.object.level.transition){
-                        ProjectService.ChangeAttributeTransition('MOVE_LR');
+                    if((typeof $scope.component.object.level.transition)!='object'){
+                        ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                        $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                     }
-                    $scope.component.layer.transition=$scope.component.object.level.transition||'MOVE_LR';
+                    $scope.component.transitionName=$scope.component.object.level.transition.name;
                     break;
                 case Type.MyPage:
                     //调整Page的背景图
@@ -312,10 +316,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }else {
                         $scope.component.page.selectImage=$scope.component.object.level.backgroundImage;
                     }
-                    if(!$scope.component.object.level.transition){
-                        ProjectService.ChangeAttributeTransition('MOVE_LR');
+                    if((typeof $scope.component.object.level.transition)!='object'){
+                        ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                        $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                     }
-                    $scope.component.page.transition=$scope.component.object.level.transition||'MOVE_LR';
+                    $scope.component.transitionName=$scope.component.object.level.transition.name;
                     break;
                 case Type.MySubLayer:
                     //调整SubLayer的背景图
@@ -432,10 +437,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
                     $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
                     $scope.component.num.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
-                    if(!$scope.component.object.level.transition){
-                        ProjectService.ChangeAttributeTransition('MOVE_LR');
+                    if((typeof $scope.component.object.level.transition)!='object'){
+                        ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                        $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                     }
-                    $scope.component.num.transition=$scope.component.object.level.transition||'MOVE_LR';
+                    $scope.component.transitionName=$scope.component.object.level.transition.name;
                     break;
                 case Type.MyOscilloscope:
                     break;
@@ -462,21 +468,31 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 		})
 	}
 
-    function changeTransition(){
-        var transition = null;
-        switch ($scope.component.object.type){
-            case Type.MyPage:
-                transition=$scope.component.page.transition;
-                break;
-            case Type.MyLayer:
-                transition=$scope.component.layer.transition;
-                break;
-            case Type.MyNum:
-                transition=$scope.component.num.transition;
-                break;
-        }
-        if(transition){
-            ProjectService.ChangeAttributeTransition(transition);
+    function changeTransitionName(){
+        var option={
+            name:$scope.component.transitionName
+        };
+
+        ProjectService.ChangeAttributeTransition(option);
+
+    }
+    function changeTransitionDur(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.transition.duration>60||$scope.component.object.level.transition.duration<0){
+                toastr.warning('超出限制');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.transition.duration==initObject.level.transition.duration){
+                return;
+            }
+            var option={
+                duration:$scope.component.object.level.transition.duration
+            };
+            oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeTransition(option,function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
         }
     }
 

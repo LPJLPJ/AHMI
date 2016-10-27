@@ -6545,11 +6545,21 @@ ideServices
             _successCallback&&_successCallback();
         };
 
-        this.ChangeAttributeTransition = function(_transition,_successCallback){
+        this.AddAttributeTransition = function(_transition,_successCallback){
             var selectObj = _self.getCurrentSelectObject();
             selectObj.level.transition=_transition;
             _successCallback&&_successCallback();
-        }
+        };
+        this.ChangeAttributeTransition = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            if(_option.hasOwnProperty('name')){
+                selectObj.level.transition.name=_option.name;
+            }else if(_option.hasOwnProperty('duration')){
+                selectObj.level.transition.duration=_option.duration;
+            }
+            _successCallback&&_successCallback();
+        };
+
         /**
          * 主要操作
          * 改变对象的Action
