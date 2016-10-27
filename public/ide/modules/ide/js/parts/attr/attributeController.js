@@ -414,7 +414,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MyButtonGroup:
                     $scope.component.buttonGroup.arrangeModel=$scope.component.object.level.info.arrange;
-                    var texListLength = $scope.component.object.level.texList.length;
                     break;
 
                 case Type.MyNumber:
