@@ -20078,8 +20078,8 @@
 	            // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
 	        } else {
-	            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-	        }
+	                ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	            }
 	    },
 	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
@@ -20108,10 +20108,10 @@
 	        var offctx = offcanvas.getContext('2d');
 	        var canvas = this.refs.canvas;
 	        var ctx = canvas.getContext('2d');
-	        var duration = 1000;
 	        var frames = 30;
 	        var easing = 'easeInOutCubic';
-	        var method = 'translate';
+	        var method = page.transition && page.transition.name;
+	        var duration = page.transition && page.transition.duration || 1000;
 	        var count = frames;
 	        var maxD = -100;
 	        if (!page.state || page.state == LoadState.notLoad) {
@@ -20123,35 +20123,55 @@
 	            options.reLinkWidgets = true;
 	            this.handleTargetAction(page, 'Load');
 
-	            if (method === 'translate') {
-	                AnimationManager.step(offcanvas.width, offcanvas.height, 0, 0, duration, frames, easing, function (deltas) {
+	            switch (method) {
+	                case 'MOVE_LR':
+	                    AnimationManager.step(-offcanvas.width, 0, 0, 0, duration, frames, easing, function (deltas) {
 
-	                    // offctx.translate(deltas.curX,deltas.curY);
-	                    page.translate = {
-	                        x: deltas.curX,
-	                        y: deltas.curY
-	                    };
-	                    this.draw();
-	                }.bind(this), function () {
-	                    page.translate = null;
-	                });
-	            } else if (method === 'scale') {
-	                AnimationManager.step(0.5, 0.5, 1, 1, duration, frames, easing, function (deltas) {
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        page.translate = {
+	                            x: deltas.curX,
+	                            y: deltas.curY
+	                        };
+	                        this.draw();
+	                    }.bind(this), function () {
+	                        page.translate = null;
+	                    });
+	                    break;
+	                case 'MOVE_RL':
+	                    AnimationManager.step(offcanvas.width, 0, 0, 0, duration, frames, easing, function (deltas) {
 
-	                    // offctx.translate(deltas.curX,deltas.curY);
-	                    page.scale = {
-	                        w: deltas.curX,
-	                        h: deltas.curY
-	                    };
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        page.translate = {
+	                            x: deltas.curX,
+	                            y: deltas.curY
+	                        };
+	                        this.draw();
+	                    }.bind(this), function () {
+	                        page.translate = null;
+	                    });
+	                    break;
+	                case 'SCALE':
+	                    AnimationManager.step(0.5, 0.5, 1, 1, duration, frames, easing, function (deltas) {
+
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        page.scale = {
+	                            w: deltas.curX,
+	                            h: deltas.curY
+	                        };
+	                        this.draw();
+	                    }.bind(this), function () {
+	                        page.scale = null;
+	                    });
+	                    break;
+	                default:
 	                    this.draw();
-	                }.bind(this), function () {
-	                    page.scale = null;
-	                });
 	            }
 	        } else {
+	            offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	            ctx.clearRect(0, 0, canvas.width, canvas.height);
 	            this.paintPage(page, options);
 	            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-	            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+
 	            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
 	        }
 	    },
@@ -20327,6 +20347,12 @@
 	        };
 	    },
 	    executeAnimation: function (target, animation) {
+	        var animationAttrs;
+	        if (!animation || !animation.animationAttrs) {
+	            return;
+	        } else {
+	            animationAttrs = animation.animationAttrs;
+	        }
 	        // this.animationAttrs={
 	        //     translate:{
 	        //         dstPos:{
@@ -20341,53 +20367,54 @@
 	        //         }
 	        //     }
 	        // };
+	        var scale = animationAttrs.scale && animationAttrs.scale.dstScale || { x: 1, y: 1 };
+	        var translate = animationAttrs.translate && animationAttrs.translate.dstPos || { x: 0, y: 0 };
+
 	        var type = target.type;
-	        var duration;
+	        var duration = animation.duration || 1000;
+	        // console.log(scale,translate,duration)
 	        var frames = 30;
-	        if (animation && animation.animationAttrs) {
-	            duration = animation.duration || 1000;
-	        }
 	        var srcTransformObj = {};
 	        var dstTransformObj = {};
 	        if (type === 'MyLayer') {
 	            srcTransformObj = {
-	                a: 2,
-	                b: 0,
-	                c: 0,
-	                d: 2,
-	                e: target.x,
-	                f: target.y
-
-	            };
-	            dstTransformObj = {
 	                a: 1,
 	                b: 0,
 	                c: 0,
 	                d: 1,
-	                e: 0 - target.x,
-	                f: 0 - target.y
+	                e: 0,
+	                f: 0
+
+	            };
+	            dstTransformObj = {
+	                a: scale.x,
+	                b: 0,
+	                c: 0,
+	                d: scale.y,
+	                e: translate.x - target.x,
+	                f: translate.y - target.y
 	            };
 	        } else {
 	            srcTransformObj = {
-	                a: 2,
-	                b: 0,
-	                c: 0,
-	                d: 2,
-	                e: 100,
-	                f: 100
-
-	            };
-	            dstTransformObj = {
 	                a: 1,
 	                b: 0,
 	                c: 0,
 	                d: 1,
-	                e: 0 - target.info.left,
-	                f: 0 - target.info.top
+	                e: 0,
+	                f: 0
+
+	            };
+	            dstTransformObj = {
+	                a: scale.x,
+	                b: 0,
+	                c: 0,
+	                d: scale.y,
+	                e: translate.x - target.info.left,
+	                f: translate.y - target.info.top
 	            };
 	        }
 
-	        AnimationManager.stepObj(srcTransformObj, dstTransformObj, duration, 30, 'easeInOutCubic', function (deltas) {
+	        AnimationManager.stepObj(srcTransformObj, dstTransformObj, duration, frames, 'easeInOutCubic', function (deltas) {
 
 	            // offctx.translate(deltas.curX,deltas.curY);
 	            var transformMatrix = {};
@@ -20471,18 +20498,23 @@
 	        var willExecuteAnimation = false;
 	        if (options && options.animation) {
 	            //has animation execute
+	            console.log('execute animation');
 	            if (canvasData.tag === options.animation.tag) {
-	                willExecuteAnimation = true;
+	                // willExecuteAnimation = true;
 	                //execute animation which number is number
-	                // for (var i=0;i<canvasData.animations.length;i++){
-	                //     if (canvasData.animations[i].number === options.animation.number){
-	                //         //hit
-	                //         //execute this animation
-	                //         executeAnimation = true;
-	                //         this.executeAnimation(canvasData,canvasData.animations[i]);
-	                //     }
-	                // }
-	                this.executeAnimation(canvasData);
+	                if (canvasData.animations && canvasData.animations.length) {
+	                    for (var i = 0; i < canvasData.animations.length; i++) {
+	                        if (Number(canvasData.animations[i].id) === options.animation.number) {
+	                            //hit
+	                            //execute this animation
+	                            willExecuteAnimation = true;
+	                            this.executeAnimation(canvasData, canvasData.animations[i]);
+	                            break;
+	                        }
+	                    }
+	                }
+
+	                // this.executeAnimation(canvasData);
 	            }
 	        }
 	        if (!willExecuteAnimation) {
@@ -20546,8 +20578,9 @@
 	            }
 
 	            // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+	            var transition = canvasData.transition;
 
-	            this.drawSubCanvas(subCanvas, 0, 0, canvasData.w, canvasData.h, options);
+	            this.drawSubCanvas(subCanvas, 0, 0, canvasData.w, canvasData.h, options, transition);
 	            offctx.restore();
 	        } else {
 	            this.handleTargetAction(oldSubCanvas, 'UnLoad');
@@ -20562,7 +20595,7 @@
 	        ctx.closePath();
 	        ctx.clip();
 	    },
-	    drawSubCanvas: function (subCanvas, x, y, w, h, options) {
+	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = offcanvas.getContext('2d');
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
@@ -20578,29 +20611,66 @@
 	            //transition animation
 	            var moveX = w;
 	            var moveY = 0;
+	            var method = transition && transition.name;
+	            var duration = transition.duration || 1000;
+	            var frames = 30;
+	            var easing = 'easeInOutCubic';
+	            switch (method) {
+	                case 'MOVE_LR':
+	                    AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
+	                        // offctx.save();
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        subCanvas.translate = {
+	                            x: deltas.curX,
+	                            y: deltas.curY
+	                        };
+	                        // subCanvas.info.x += deltas.deltaX;
+	                        // subCanvas.info.y += deltas.deltaY;
+	                        this.draw();
+	                        // offctx.restore();
+	                    }.bind(this), function () {
+	                        // offctx.restore()
+	                        subCanvas.translate = null;
+	                    });
+	                    break;
+	                case 'MOVE_RL':
+	                    AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
+	                        // offctx.save();
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        subCanvas.translate = {
+	                            x: deltas.curX,
+	                            y: deltas.curY
+	                        };
+	                        // subCanvas.info.x += deltas.deltaX;
+	                        // subCanvas.info.y += deltas.deltaY;
+	                        this.draw();
+	                        // offctx.restore();
+	                    }.bind(this), function () {
+	                        // offctx.restore()
+	                        subCanvas.translate = null;
+	                    });
+	                    break;
+	                case 'SCALE':
+	                    AnimationManager.step(0.5, 0.5, 1, 1, duration, frames, easing, function (deltas) {
+	                        // offctx.save();
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        subCanvas.scale = {
+	                            w: deltas.curX,
+	                            h: deltas.curY
+	                        };
+	                        // subCanvas.info.x += deltas.deltaX;
+	                        // subCanvas.info.y += deltas.deltaY;
+	                        this.draw();
+	                        // offctx.restore();
+	                    }.bind(this), function () {
+	                        // offctx.restore()
+	                        subCanvas.scale = null;
+	                    });
+	                    break;
+	                default:
+	                    this.paintSubCanvas(subCanvas, x, y, w, h, options);
 
-	            // subCanvas.info.x += moveX;
-	            // subCanvas.info.y += moveY;
-
-	            // this.paintSubCanvas(subCanvas, x, y, w, h, options);
-	            // offctx.beginPath();
-	            // offctx.moveTo(0,0);
-	            // offctx.lineTo(100,100);
-	            AnimationManager.moving(moveX, moveY, 0, 0, 1000, 30, 'easeInOutCubic', function (deltas) {
-	                // offctx.save();
-	                // offctx.translate(deltas.curX,deltas.curY);
-	                subCanvas.translate = {
-	                    x: deltas.curX,
-	                    y: deltas.curY
-	                };
-	                // subCanvas.info.x += deltas.deltaX;
-	                // subCanvas.info.y += deltas.deltaY;
-	                this.draw();
-	                // offctx.restore();
-	            }.bind(this), function () {
-	                // offctx.restore()
-	                subCanvas.translate = null;
-	            });
+	            }
 	        } else {
 	            this.paintSubCanvas(subCanvas, x, y, w, h, options);
 	        }
@@ -20618,6 +20688,9 @@
 	        if (subCanvas.translate) {
 
 	            offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
+	        }
+	        if (subCanvas.scale) {
+	            offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
 	        }
 	        this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
 	        this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
@@ -20638,17 +20711,18 @@
 	        if (options && options.animation) {
 	            //has animation execute
 	            if (widget.tag === options.animation.tag) {
-	                willExecuteAnimation = true;
+	                // willExecuteAnimation = true;
 	                //execute animation which number is number
-	                // for (var i=0;i<canvasData.animations.length;i++){
-	                //     if (canvasData.animations[i].number === options.animation.number){
-	                //         //hit
-	                //         //execute this animation
-	                //         executeAnimation = true;
-	                //         this.executeAnimation(canvasData,canvasData.animations[i]);
-	                //     }
-	                // }
-	                this.executeAnimation(widget);
+	                for (var i = 0; i < widget.animations.length; i++) {
+	                    if (Number(widget.animations[i].id) === options.animation.number) {
+	                        //hit
+	                        //execute this animation
+	                        willExecuteAnimation = true;
+	                        this.executeAnimation(widget, widget.animations[i]);
+	                        break;
+	                    }
+	                }
+	                // this.executeAnimation(widget);
 	            }
 	        }
 	        if (!willExecuteAnimation) {
@@ -20875,9 +20949,9 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	            // console.log(tex);
-	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	        }
+	                // console.log(tex);
+	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	            }
 	    },
 	    drawTextArea: function (curX, curY, widget, options) {
 	        var info = widget.info;
@@ -21706,28 +21780,28 @@
 	                    var bgTex = widget.texList[0].slices[0];
 	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
 	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    //draw circle
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	                } else if (widget.dashboardModeId == '1') {
-	                    // complex mode
-	                    //background
-	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                    //draw light strip
-	                    var lightStripTex = widget.texList[2].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    //draw pointer
-	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                        // complex mode
+	                        //background
+	                        var bgTex = widget.texList[0].slices[0];
+	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        //draw light strip
+	                        var lightStripTex = widget.texList[2].slices[0];
+	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                        //draw pointer
+	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 
-	                    //draw circle
-	                    // var circleTex = widget.texList[3].slices[0]
-	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	                } else if (widget.dashboardModeId == '2') {
-	                    var lightStripTex = widget.texList[0].slices[0];
-	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                }
+	                        //draw circle
+	                        // var circleTex = widget.texList[3].slices[0]
+	                        // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                    } else if (widget.dashboardModeId == '2') {
+	                            var lightStripTex = widget.texList[0].slices[0];
+	                            this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                        }
 	            } else {
 	                if (widget.dashboardModeId == '0') {
 	                    //simple mode
@@ -21740,34 +21814,34 @@
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	                } else if (widget.dashboardModeId == '1') {
-	                    // complex mode
-	                    //background
-	                    if (curArc >= 0) {
-	                        var bgTex = widget.texList[0].slices[0];
-	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                        //draw light strip
-	                        var lightStripTex = widget.texList[2].slices[0];
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                        //draw pointer
+	                        // complex mode
+	                        //background
+	                        if (curArc >= 0) {
+	                            var bgTex = widget.texList[0].slices[0];
+	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                            //draw light strip
+	                            var lightStripTex = widget.texList[2].slices[0];
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                            //draw pointer
 
-	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + minArc + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
-	                    } else if (curArc < 0) {
-	                        var bgTex = widget.texList[0].slices[0];
-	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                        //draw light strip
-	                        var lightStripTex = widget.texList[2].slices[0];
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-	                        //draw pointer
-	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + minArc + arcPhase, widget.texList[1].slices[0], minCoverAngle, maxCoverAngle);
+	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                        } else if (curArc < 0) {
+	                            var bgTex = widget.texList[0].slices[0];
+	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                            //draw light strip
+	                            var lightStripTex = widget.texList[2].slices[0];
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+	                            //draw pointer
+	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                        }
+	                    } else if (widget.dashboardModeId == '2') {
+	                        var lightStripTex = widget.texList[0].slices[0];
+	                        if (curArc >= 0) {
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                        } else if (curArc < 0) {
+	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+	                        }
 	                    }
-	                } else if (widget.dashboardModeId == '2') {
-	                    var lightStripTex = widget.texList[0].slices[0];
-	                    if (curArc >= 0) {
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                    } else if (curArc < 0) {
-	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-	                    }
-	                }
 	            }
 	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
 	            widget.oldValue = currentValue;
@@ -22433,9 +22507,9 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	            bgRange = height - widget.slideSize.h || 1;
-	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	        }
+	                bgRange = height - widget.slideSize.h || 1;
+	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	            }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
@@ -22612,6 +22686,9 @@
 	        var relativeRect = this.getRelativeRect(e);
 	        var x = relativeRect.x;
 	        var y = relativeRect.y;
+	        if (!this.mouseState) {
+	            return;
+	        }
 
 	        this.mouseState.position.x = x;
 	        this.mouseState.position.y = y;
@@ -22660,20 +22737,20 @@
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                    //switch
-	                    //if (widget.switchState) {
-	                    //	widget.switchState = !widget.switch
-	                    //}else{
-	                    //	widget.switchState = 1;
-	                    //}
-	                    //update its tag
-	                    var targetTag = this.findTagByName(widget.tag);
-	                    if (targetTag) {
-	                        targetTag.value = parseInt(targetTag.value);
-	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        //switch
+	                        //if (widget.switchState) {
+	                        //	widget.switchState = !widget.switch
+	                        //}else{
+	                        //	widget.switchState = 1;
+	                        //}
+	                        //update its tag
+	                        var targetTag = this.findTagByName(widget.tag);
+	                        if (targetTag) {
+	                            targetTag.value = parseInt(targetTag.value);
+	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
+	                        }
 	                    }
-	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;

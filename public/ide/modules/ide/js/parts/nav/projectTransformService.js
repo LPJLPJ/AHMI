@@ -33,8 +33,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var targetPage = {};
         targetPage.id = ''+index;
         targetPage.type = Type.MyPage;
-        console.log(rawPage);
-        deepCopyAttributes(rawPage,targetPage,['name','backgroundImage','backgroundColor','triggers','actions','tag']);
+        // console.log(rawPage);
+        deepCopyAttributes(rawPage,targetPage,['name','backgroundImage','backgroundColor','triggers','actions','tag','transition']);
         transActions(targetPage);
         //CanvasList
         targetPage.canvasList = [];
@@ -48,7 +48,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var targetLayer = {};
         targetLayer.id = pageIdx+'.'+layerIdx;
         targetLayer.type = Type.MyLayer;
-        deepCopyAttributes(rawLayer,targetLayer,['name','triggers','actions','tag','zIndex']);
+        deepCopyAttributes(rawLayer,targetLayer,['name','triggers','actions','tag','zIndex','animations','transition']);
         transActions(targetLayer);
         targetLayer.w = rawLayer.info.width;
         targetLayer.h = rawLayer.info.height;

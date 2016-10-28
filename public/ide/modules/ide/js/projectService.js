@@ -3521,6 +3521,15 @@ ideServices
             _self.currentFabWidgetIdList=[];
             _self.currentFabWidgetIdList.push(_newWidget.id);
 
+            var syncSublayer = function(fabWidget) {
+                currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                currentSubLayer.widgets.push(_newWidget);
+                currentSubLayer.currentFabWidget=fabWidget;
+
+
+                OnWidgetSelected(_newWidget,_successCallback);
+            }
+
             if (_newWidget.type==Type.MySlide){
                 fabric.MySlide.fromLevel(_newWidget, function (fabWidget) {
                     _self.currentFabWidgetIdList=[fabWidget.id];
@@ -3534,12 +3543,7 @@ ideServices
                     //console.log('-');
 
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
 
 
                 }, initiator);
@@ -3566,11 +3570,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
 
 
@@ -3596,11 +3596,7 @@ ideServices
                     _newWidget.info.height=fabWidget.getHeight();
                     //console.log('-');
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
 
             }
@@ -3617,11 +3613,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
 
 
@@ -3635,11 +3627,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             } 
             else if(_newWidget.type==Type.MyNumber){
@@ -3651,12 +3639,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
-
+                    syncSublayer(fabWidget);
                 }, initiator);
             } else if(_newWidget.type==Type.MyTextArea){
                 fabric.MyTextArea.fromLevel(_newWidget,function(fabWidget){
@@ -3666,11 +3649,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
 
                 }, initiator);
             } else if(_newWidget.type == Type.MyNum){
@@ -3685,11 +3664,7 @@ ideServices
                     _newWidget.info.height=fabWidget.getHeight();
                     //console.log('-');
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }else if(_newWidget.type==Type.MyKnob){
                 if (_newWidget.backgroundImg==''){
@@ -3712,11 +3687,7 @@ ideServices
                     _newWidget.info.height=fabWidget.getHeight();
                     //console.log('-');
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }else if(_newWidget.type==Type.MyOscilloscope){
 
@@ -3740,11 +3711,7 @@ ideServices
                     _newWidget.info.height=fabWidget.getHeight();
                     //console.log('-');
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator)
             }else if(_newWidget.type==Type.MySwitch){
                 fabric.MySwitch.fromLevel(_newWidget,function(fabWidget){
@@ -3759,12 +3726,7 @@ ideServices
                     //console.log('-');
 
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }else if(_newWidget.type==Type.MyRotateImg){
                 fabric.MyRotateImg.fromLevel(_newWidget,function(fabWidget){
@@ -3776,11 +3738,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }else if(_newWidget.type==Type.MyDateTime){
                 fabric.MyDateTime.fromLevel(_newWidget,function(fabWidget){
@@ -3792,11 +3750,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }else if(_newWidget.type==Type.MyScriptTrigger){
                 fabric.MyScriptTrigger.fromLevel(_newWidget,function(fabWidget){
@@ -3808,11 +3762,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }else if(_newWidget.type==Type.MySlideBlock){
                 fabric.MySlideBlock.fromLevel(_newWidget,function(fabWidget){
@@ -3824,11 +3774,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }else if(_newWidget.type==Type.MyVideo){
                 fabric.MyVideo.fromLevel(_newWidget,function(fabWidget){
@@ -3840,11 +3786,7 @@ ideServices
                     _newWidget.info.width=fabWidget.getWidth();
                     _newWidget.info.height=fabWidget.getHeight();
 
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                    currentSubLayer.widgets.push(_newWidget);
-                    currentSubLayer.currentFabWidget=fabWidget;
-
-                    OnWidgetSelected(_newWidget,_successCallback);
+                    syncSublayer(fabWidget);
                 },initiator);
             }
 
