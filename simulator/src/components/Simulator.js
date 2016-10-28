@@ -416,7 +416,7 @@ module.exports =   React.createClass({
         var duration = 1000;
         var frames = 30;
         var easing = 'easeInOutCubic';
-        var method = 'translate';
+        var method = page.transition&&page.transition.name;
         var count = frames;
         var maxD = -100;
         if (!page.state || page.state == LoadState.notLoad) {
@@ -428,44 +428,66 @@ module.exports =   React.createClass({
             options.reLinkWidgets = true;
             this.handleTargetAction(page, 'Load');
 
-            console.log(page)
+            switch (method){
+                case 'MOVE_LR':
+                    AnimationManager.step(-offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
 
-            if (method === 'translate'){
-                AnimationManager.step(offcanvas.width,offcanvas.height,0,0,duration,frames,easing,function (deltas) {
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        this.draw();
 
-                    // offctx.translate(deltas.curX,deltas.curY);
-                    page.translate = {
-                        x:deltas.curX,
-                        y:deltas.curY
-                    }
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                    })
+                    break;
+                case 'MOVE_RL':
+                    AnimationManager.step(offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        this.draw();
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                    })
+                    break;
+                case 'SCALE':
+                    AnimationManager.step(0.5,0.5,1,1,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        page.scale = {
+                            w:deltas.curX,
+                            h:deltas.curY
+                        }
+                        this.draw();
+
+
+                    }.bind(this),function () {
+                        page.scale = null;
+                    })
+                    break;
+                default:
                     this.draw();
-
-
-                }.bind(this),function () {
-                    page.translate = null;
-                })
-            }else if (method === 'scale'){
-                AnimationManager.step(0.5,0.5,1,1,duration,frames,easing,function (deltas) {
-
-                    // offctx.translate(deltas.curX,deltas.curY);
-                    page.scale = {
-                        w:deltas.curX,
-                        h:deltas.curY
-                    }
-                    this.draw();
-
-
-                }.bind(this),function () {
-                    page.scale = null;
-                })
             }
 
 
 
+
+
         }else{
+            offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+            ctx.clearRect(0,0,canvas.width,canvas.height);
             this.paintPage(page,options)
             // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+
             ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
         }
 
@@ -821,6 +843,7 @@ module.exports =   React.createClass({
                             //execute this animation
                             willExecuteAnimation = true;
                             this.executeAnimation(canvasData,canvasData.animations[i]);
+                            break;
                         }
                     }
                 }
@@ -892,8 +915,9 @@ module.exports =   React.createClass({
 
 
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+            var transition = canvasData.transition;
 
-            this.drawSubCanvas(subCanvas, 0, 0, canvasData.w, canvasData.h, options);
+            this.drawSubCanvas(subCanvas, 0, 0, canvasData.w, canvasData.h, options,transition);
             offctx.restore();
         } else {
             this.handleTargetAction(oldSubCanvas, 'UnLoad');
@@ -908,7 +932,7 @@ module.exports =   React.createClass({
         ctx.closePath();
         ctx.clip();
     },
-    drawSubCanvas:function (subCanvas, x, y, w, h, options) {
+    drawSubCanvas:function (subCanvas, x, y, w, h, options,transition) {
         var offcanvas = this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
         if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
@@ -924,29 +948,70 @@ module.exports =   React.createClass({
             //transition animation
             var moveX = w;
             var moveY = 0;
+            var method = transition && transition.name;
+            var duration = transition.duration || 1000;
+            var frames = 30;
+            var easing = 'easeInOutCubic';
+            switch (method){
+                case 'MOVE_LR':
+                    AnimationManager.step(-w,0,0,0,duration,frames,easing,function (deltas) {
+                        // offctx.save();
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        subCanvas.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        // subCanvas.info.x += deltas.deltaX;
+                        // subCanvas.info.y += deltas.deltaY;
+                        this.draw();
+                        // offctx.restore();
+                    }.bind(this),function () {
+                        // offctx.restore()
+                        subCanvas.translate = null;
+                    })
+                    break;
+                case 'MOVE_RL':
+                    AnimationManager.step(w,0,0,0,duration,frames,easing,function (deltas) {
+                        // offctx.save();
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        subCanvas.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        // subCanvas.info.x += deltas.deltaX;
+                        // subCanvas.info.y += deltas.deltaY;
+                        this.draw();
+                        // offctx.restore();
+                    }.bind(this),function () {
+                        // offctx.restore()
+                        subCanvas.translate = null;
+                    })
+                    break;
+                case 'SCALE':
+                    AnimationManager.step(0.5,0.5,1,1,duration,frames,easing,function (deltas) {
+                        // offctx.save();
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        subCanvas.scale = {
+                            w:deltas.curX,
+                            h:deltas.curY
+                        }
+                        // subCanvas.info.x += deltas.deltaX;
+                        // subCanvas.info.y += deltas.deltaY;
+                        this.draw();
+                        // offctx.restore();
+                    }.bind(this),function () {
+                        // offctx.restore()
+                        subCanvas.scale = null;
+                    })
+                    break;
+                default:
+                    this.paintSubCanvas(subCanvas, x, y, w, h, options)
 
-            // subCanvas.info.x += moveX;
-            // subCanvas.info.y += moveY;
+            }
 
-            // this.paintSubCanvas(subCanvas, x, y, w, h, options);
-            // offctx.beginPath();
-            // offctx.moveTo(0,0);
-            // offctx.lineTo(100,100);
-            AnimationManager.moving(moveX,moveY,0,0,1000,30,'easeInOutCubic',function (deltas) {
-                // offctx.save();
-                // offctx.translate(deltas.curX,deltas.curY);
-                subCanvas.translate = {
-                    x:deltas.curX,
-                    y:deltas.curY
-                }
-                // subCanvas.info.x += deltas.deltaX;
-                // subCanvas.info.y += deltas.deltaY;
-                this.draw();
-                // offctx.restore();
-            }.bind(this),function () {
-                // offctx.restore()
-                subCanvas.translate = null;
-            })
+
+
+
         }else{
             this.paintSubCanvas(subCanvas, x, y, w, h, options)
         }
@@ -965,6 +1030,9 @@ module.exports =   React.createClass({
         if (subCanvas.translate){
 
             offctx.translate(subCanvas.translate.x,subCanvas.translate.y);
+        }
+        if (subCanvas.scale){
+            offctx.scale(subCanvas.scale.w,subCanvas.scale.h);
         }
         this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
         this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
@@ -986,17 +1054,18 @@ module.exports =   React.createClass({
         if (options&&options.animation){
             //has animation execute
             if (widget.tag === options.animation.tag){
-                willExecuteAnimation = true;
+                // willExecuteAnimation = true;
                 //execute animation which number is number
-                // for (var i=0;i<canvasData.animations.length;i++){
-                //     if (canvasData.animations[i].number === options.animation.number){
-                //         //hit
-                //         //execute this animation
-                //         executeAnimation = true;
-                //         this.executeAnimation(canvasData,canvasData.animations[i]);
-                //     }
-                // }
-                this.executeAnimation(widget);
+                for (var i=0;i<widget.animations.length;i++){
+                    if (Number(widget.animations[i].id) === options.animation.number){
+                        //hit
+                        //execute this animation
+                        willExecuteAnimation = true;
+                        this.executeAnimation(widget,widget.animations[i]);
+                        break;
+                    }
+                }
+                // this.executeAnimation(widget);
             }
         }
         if(!willExecuteAnimation){
@@ -3044,6 +3113,9 @@ module.exports =   React.createClass({
         var relativeRect = this.getRelativeRect(e);
         var x = relativeRect.x;
         var y = relativeRect.y;
+        if (!this.mouseState){
+            return;
+        }
 
         this.mouseState.position.x = x;
         this.mouseState.position.y = y;

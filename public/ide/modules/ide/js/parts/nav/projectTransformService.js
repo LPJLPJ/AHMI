@@ -33,7 +33,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var targetPage = {};
         targetPage.id = ''+index;
         targetPage.type = Type.MyPage;
-        console.log(rawPage);
+        // console.log(rawPage);
         deepCopyAttributes(rawPage,targetPage,['name','backgroundImage','backgroundColor','triggers','actions','tag','transition']);
         transActions(targetPage);
         //CanvasList

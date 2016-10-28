@@ -15,7 +15,7 @@
         while (program.length&&loopFLag) {
             var line = program[0];
             var block;
-            console.log(line[0]);
+            // console.log(line[0]);
             switch (line[0].name) {
                 //if
                 case 'IF':
