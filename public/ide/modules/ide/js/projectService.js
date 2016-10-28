@@ -6554,6 +6554,7 @@ ideServices
             var selectObj=_self.getCurrentSelectObject();
             if(_option.hasOwnProperty('name')){
                 selectObj.level.transition.name=_option.name;
+                selectObj.level.transition.show=_option.show;
             }else if(_option.hasOwnProperty('duration')){
                 selectObj.level.transition.duration=_option.duration;
             }
