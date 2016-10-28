@@ -20108,10 +20108,10 @@
 	        var offctx = offcanvas.getContext('2d');
 	        var canvas = this.refs.canvas;
 	        var ctx = canvas.getContext('2d');
-	        var duration = 1000;
 	        var frames = 30;
 	        var easing = 'easeInOutCubic';
 	        var method = page.transition && page.transition.name;
+	        var duration = page.transition && page.transition.duration || 1000;
 	        var count = frames;
 	        var maxD = -100;
 	        if (!page.state || page.state == LoadState.notLoad) {
