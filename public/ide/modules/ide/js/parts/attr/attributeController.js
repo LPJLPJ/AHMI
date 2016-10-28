@@ -442,11 +442,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             }
 
         })
-
-
-
-
-
 	}
 
 	function restore(){
