@@ -677,7 +677,7 @@ module.exports =   React.createClass({
 
         var type = target.type;
         var duration = animation.duration || 1000;
-        console.log(scale,translate,duration)
+        // console.log(scale,translate,duration)
         var frames = 30;
         var srcTransformObj={};
         var dstTransformObj={};
