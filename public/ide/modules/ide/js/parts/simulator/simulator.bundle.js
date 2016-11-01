@@ -19790,6 +19790,8 @@
 	        canvas.height = projectHeight;
 	        //draw initialization
 
+	        //initialize canvas context
+
 	        //initialize inputkeyboard
 	        var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
 	        // console.log(keyboardData);
@@ -20018,6 +20020,36 @@
 	        ctx.fillText("加载中... " + progress, 0.5 * projectWidth, 0.5 * projectHeight);
 	    },
 	    draw: function (_project, options) {
+	        var offcanvas = this.refs.offcanvas;
+	        var canvas = this.refs.canvas;
+	        this.ctx = canvas.getContext('2d');
+	        this.offctx = offcanvas.getContext('2d');
+	        // if (this.originalCanvasContext){
+	        //     this.offctx =this.originalCanvasContext;
+	        // }else{
+	        //     this.originalCanvasContext = _.cloneDeep(this.offctx);
+	        // }
+	        if (!this.drawingArray) {
+	            this.drawingArray = [];
+	        }
+	        this.drawingArray.push({
+	            project: _.cloneDeep(_project),
+	            options: _.cloneDeep(options)
+	        });
+	        this.manageDraw();
+	    },
+	    manageDraw: function () {
+	        if (!this.drawingStatus || this.drawingStatus === 'idle') {
+	            if (this.drawingArray.length) {
+	                var nextDrawElem = this.drawingArray.shift();
+	                this.drawingStatus = 'drawing';
+	                this.paint(nextDrawElem.project, nextDrawElem.options);
+	                this.drawingStatus = 'idle';
+	                this.manageDraw();
+	            }
+	        }
+	    },
+	    paint: function (_project, options) {
 	        var project;
 	        if (_project) {
 	            project = _project;
@@ -20025,10 +20057,9 @@
 	            project = this.state.project;
 	        }
 
-	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
-	        var canvas = this.refs.canvas;
-	        var ctx = canvas.getContext('2d');
+	        var offctx = this.offctx;
+
+	        var ctx = this.ctx;
 
 	        if (project.pageList && project.pageList.length > 0) {
 	            //curPageIdx
@@ -20105,9 +20136,9 @@
 	    drawPage: function (page, options) {
 	        //default animation
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        var canvas = this.refs.canvas;
-	        var ctx = canvas.getContext('2d');
+	        var ctx = this.ctx;
 	        var frames = 30;
 	        var easing = 'easeInOutCubic';
 	        var method = page.transition && page.transition.name;
@@ -20525,7 +20556,7 @@
 	        //draw
 
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        var subCanvasList = canvasData.subCanvasList || [];
 	        var canvasTag = this.findTagByName(canvasData.tag);
 	        var nextSubCanvasIdx = canvasTag && canvasTag.value || 0;
@@ -20564,7 +20595,7 @@
 	        if (subCanvas) {
 	            // console.log('painting canvas')
 	            offctx.save();
-	            offctx.translate(canvasData.x, canvasData.y);
+
 	            // if (canvasData.translate){
 	            //     offctx.translate(canvasData.translate.x,canvasData.translate.y);
 	            // }
@@ -20580,7 +20611,7 @@
 	            // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
 	            var transition = canvasData.transition;
 
-	            this.drawSubCanvas(subCanvas, 0, 0, canvasData.w, canvasData.h, options, transition);
+	            this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition);
 	            offctx.restore();
 	        } else {
 	            this.handleTargetAction(oldSubCanvas, 'UnLoad');
@@ -20597,7 +20628,7 @@
 	    },
 	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition) {
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
 	            subCanvas.state = LoadState.willLoad;
 	            //init subcanvas pos and size
@@ -20683,7 +20714,7 @@
 	        // w = subCanvas.info.w;
 	        // h = subCanvas.info.h;
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        offctx.save();
 	        if (subCanvas.translate) {
 
@@ -20710,7 +20741,7 @@
 	        var willExecuteAnimation = false;
 	        if (options && options.animation) {
 	            //has animation execute
-	            if (widget.tag === options.animation.tag) {
+	            if (widget.tag === options.animation.tag && widget.animations) {
 	                // willExecuteAnimation = true;
 	                //execute animation which number is number
 	                for (var i = 0; i < widget.animations.length; i++) {
@@ -20732,7 +20763,7 @@
 	    paintWidget: function (widget, sx, sy, options) {
 	        // console.log('drawing widget',widget);
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        var curX = widget.info.left + sx;
 	        var curY = widget.info.top + sy;
 	        //this.drawBgColor(curX,curY,widget.w,widget.h,widget.bgColor);
@@ -20759,63 +20790,65 @@
 	        curX = 0;
 	        curY = 0;
 
+	        var cb = function () {
+	            offctx.restore();
+	        };
+
 	        switch (subType) {
 	            case 'MySlide':
-	                this.drawSlide(curX, curY, widget, options);
+	                this.drawSlide(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyButton':
-	                this.drawButton(curX, curY, widget, options);
+	                this.drawButton(curX, curY, widget, options, cb);
 	                break;
 	            case 'MySwitch':
-	                this.drawSwitch(curX, curY, widget, options);
+	                this.drawSwitch(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyButtonGroup':
-	                this.drawButtonGroup(curX, curY, widget, options);
+	                this.drawButtonGroup(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyNumber':
-	                this.drawNumber(curX, curY, widget, options);
+	                this.drawNumber(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyProgress':
 	                //draw progressbar
-	                this.drawProgress(curX, curY, widget, options);
+	                this.drawProgress(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyDashboard':
-	                this.drawDashboard(curX, curY, widget, options);
+	                this.drawDashboard(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyOscilloscope':
-	                this.drawOscilloscope(curX, curY, widget, options);
+	                this.drawOscilloscope(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyRotateImg':
-	                this.drawRotateImg(curX, curY, widget, options);
+	                this.drawRotateImg(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyNum':
-	                this.drawNum(curX, curY, widget, options);
+	                this.drawNum(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyDateTime':
-	                this.drawTime(curX, curY, widget, options);
+	                this.drawTime(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyTextArea':
-	                this.drawTextArea(curX, curY, widget, options);
+	                this.drawTextArea(curX, curY, widget, options, cb);
 	                break;
 	            case 'MySlideBlock':
-	                this.drawSlideBlock(curX, curY, widget, options);
+	                this.drawSlideBlock(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyScriptTrigger':
-	                this.drawScriptTrigger(curX, curY, widget, options);
+	                this.drawScriptTrigger(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyVideo':
-	                this.drawVideo(curX, curY, widget, options);
+	                this.drawVideo(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyInputKeyboard':
-	                this.drawInputKeyboard(curX, curY, widget, options);
+	                this.drawInputKeyboard(curX, curY, widget, options, cb);
 	                break;
 	        }
-
-	        offctx.restore();
 	    },
 	    drawInputKeyboard: function (curX, curY, widget, options) {
 	        var offcanvas = this.refs.offcanvas;
-	        var offCtx = offcanvas.getContext('2d');
+	        var offCtx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
 
 	        var tempCtx = tempcanvas.getContext('2d');
@@ -20878,7 +20911,7 @@
 	        }
 	        tempCtx.restore();
 	    },
-	    drawSlide: function (curX, curY, widget, options) {
+	    drawSlide: function (curX, curY, widget, options, cb) {
 	        var slideSlices = widget.texList[0].slices;
 	        var tag = this.findTagByName(widget.tag);
 	        var slideIdx = tag && tag.value || 0;
@@ -20888,8 +20921,9 @@
 	            var height = widget.info.height;
 	            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
 	        }
+	        cb && cb();
 	    },
-	    drawButton: function (curX, curY, widget, options) {
+	    drawButton: function (curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
@@ -20930,8 +20964,10 @@
 	        if (widget.highlight) {
 	            this.drawHighLight(curX, curY, width, height, tex.slices[2]);
 	        }
+
+	        cb && cb();
 	    },
-	    drawSwitch: function (curX, curY, widget, options) {
+	    drawSwitch: function (curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
@@ -20952,8 +20988,10 @@
 	                // console.log(tex);
 	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	            }
+
+	        cb && cb();
 	    },
-	    drawTextArea: function (curX, curY, widget, options) {
+	    drawTextArea: function (curX, curY, widget, options, cb) {
 	        var info = widget.info;
 	        var width = info.width;
 	        var height = info.height;
@@ -20970,6 +21008,7 @@
 	            font['font-color'] = info.fontColor;
 	            this.drawTextByTempCanvas(curX, curY, width, height, info.text, font);
 	        }
+	        cb && cb();
 	    },
 	    drawTextByTempCanvas: function (curX, curY, width, height, text, font) {
 
@@ -20977,7 +21016,7 @@
 	        var font = font || {};
 	        // console.log(font);
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
 	        tempcanvas.width = width;
 	        tempcanvas.height = height;
@@ -20995,7 +21034,7 @@
 	        tempctx.restore();
 	        offctx.drawImage(tempcanvas, curX, curY, width, height);
 	    },
-	    drawButtonGroup: function (curX, curY, widget, options) {
+	    drawButtonGroup: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var interval = widget.info.interval;
@@ -21039,25 +21078,26 @@
 	                }
 	            }
 	        }
+
+	        cb && cb();
 	    },
-	    drawProgress: function (curX, curY, widget, options) {
+	    drawProgress: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
-	        var cursor = widget.info.cursor == '1' ? true : false;
+	        var cursor = widget.info.cursor == '1';
+	        //get current value
+	        var curProgressTag = this.findTagByName(widget.tag);
+	        var curProgress = curProgressTag && curProgressTag.value || 0;
+	        var curScale = 1.0 * (curProgress - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
+
+	        curScale = curScale >= 0 ? curScale : 0.0;
+	        curScale = curScale <= 1 ? curScale : 1.0;
 	        if (widget.texList) {
 	            //has tex
 	            //draw background
 	            var texSlice = widget.texList[0].slices[0];
 
 	            //draw progress
-	            //get current value
-	            var curProgressTag = this.findTagByName(widget.tag);
-
-	            var curProgress = curProgressTag && curProgressTag.value || 0;
-	            var curScale = 1.0 * (curProgress - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
-
-	            curScale = curScale >= 0 ? curScale : 0.0;
-	            curScale = curScale <= 1 ? curScale : 1.0;
 
 	            var progressSlice = widget.texList[1].slices[0];
 	            // console.log('drawing color progress',widget.info.progressModeId);
@@ -21123,13 +21163,15 @@
 	                case '2':
 	                    break;
 	            }
-
-	            //handle action
-	            this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
-	            widget.oldValue = curProgress;
 	        }
+
+	        cb && cb();
+
+	        //handle action
+	        this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
+	        widget.oldValue = curProgress;
 	    },
-	    drawSlideBlock: function (curX, curY, widget, options) {
+	    drawSlideBlock: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 
@@ -21173,26 +21215,28 @@
 	                }
 	            }
 
+	            cb && cb();
+
 	            //handle action
 	            this.handleAlarmAction(curSlide, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	            widget.oldValue = curSlide;
 	        }
 	    },
-	    drawScriptTrigger: function (curX, curY, widget, options) {
+	    drawScriptTrigger: function (curX, curY, widget, options, cb) {
 	        //get current value
 	        var curScriptTriggerTag = this.findTagByName(widget.tag);
 
 	        var curScriptTrigger = curScriptTriggerTag && curScriptTriggerTag.value || 0;
-
+	        cb && cb();
 	        //handle action
 	        this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	        widget.oldValue = curScriptTrigger;
 	    },
-	    drawVideo: function (curX, curY, widget, options) {
+	    drawVideo: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        offctx.fillStyle = widget.texList[0].slices[0].color;
 	        offctx.fillRect(curX, curY, width, height);
 	        //draw video
@@ -21212,6 +21256,8 @@
 	            innerTimerList.push(widget.timerId);
 	            this.setState({ innerTimerList: innerTimerList });
 	        }
+
+	        cb && cb();
 	    },
 	    drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
 
@@ -21294,7 +21340,7 @@
 
 	        return curDate;
 	    },
-	    drawTime: function (curX, curY, widget, options) {
+	    drawTime: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var dateTimeModeId = widget.info.dateTimeModeId;
@@ -21321,7 +21367,7 @@
 	        }
 	        //draw
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
 	        tempcanvas.width = width;
 	        tempcanvas.height = height;
@@ -21359,6 +21405,8 @@
 	                }
 	            }
 	        }
+
+	        cb && cb();
 
 	        //timer 1 s
 	        if (!(widget.timerId && widget.timerId !== 0)) {
@@ -21399,7 +21447,7 @@
 
 	    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 
 	        offctx.save();
 
@@ -21471,7 +21519,7 @@
 	        }
 	        return resultNum;
 	    },
-	    drawNumber: function (curX, curY, widget, options) {
+	    drawNumber: function (curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var needDrawNumber = false;
 	        //handle initial number
@@ -21491,6 +21539,8 @@
 	        } else {
 	            needDrawNumber = true;
 	        }
+	        var maxOverflow = false;
+	        var minOverflow = false;
 	        if (needDrawNumber) {
 	            //draw number
 	            var maxDigits = parseInt(widget.info.initValue) / 10 + 1;
@@ -21508,8 +21558,6 @@
 	                currentValue = Number(widget.info.initValue) || 0;
 	            }
 
-	            var maxOverflow = false;
-	            var minOverflow = false;
 	            //currentValue
 	            if (currentValue > widget.info.maxValue) {
 	                currentValue = widget.info.maxValue;
@@ -21526,20 +21574,22 @@
 	            for (var i = 0; i < currentDigits.length; i++) {
 	                this.drawDigit(currentDigits[i], widget, curX + i * singleNumberWidth, curY, singleNumberWidth, singleNumberHeight);
 	            }
+	        }
 
-	            //handle action
-	            if (maxOverflow) {
-	                //handle max overflow
-	                this.handleTargetAction(widget, 'MaxOverflow');
-	            } else if (minOverflow) {
-	                //handle min overflow
-	                this.handleTargetAction(widget, 'MinOverflow');
-	            }
+	        cb && cb();
+
+	        //handle action
+	        if (maxOverflow) {
+	            //handle max overflow
+	            this.handleTargetAction(widget, 'MaxOverflow');
+	        } else if (minOverflow) {
+	            //handle min overflow
+	            this.handleTargetAction(widget, 'MinOverflow');
 	        }
 	    },
-	    drawNum: function (curX, curY, widget, options) {
+	    drawNum: function (curX, curY, widget, options, cb) {
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        //get current value
 	        var curValue = this.getValueByTagName(widget.tag);
 	        // console.log(curValue)
@@ -21580,6 +21630,7 @@
 	        tempCtx.textBaseline = 'middle';
 
 	        widget.oldValue = widget.oldValue || 0;
+	        var shouldHandleAlarmAction = false;
 
 	        if (curValue != undefined && curValue != null) {
 	            //offCtx.save();
@@ -21608,9 +21659,7 @@
 	                offctx.drawImage(tempcanvas, curX, curY, curWidth, curHeight);
 	                //offCtx.restore();
 
-	                //handle action
-	                this.handleAlarmAction(Number(curValue), widget, lowAlarmValue, highAlarmValue);
-	                widget.oldValue = Number(curValue);
+	                shouldHandleAlarmAction = true;
 	            } else {
 	                //animate number
 
@@ -21647,6 +21696,14 @@
 	                    }.bind(this), 16);
 	                }
 	            }
+	        }
+
+	        cb && cb();
+
+	        if (shouldHandleAlarmAction) {
+	            //handle action
+	            this.handleAlarmAction(Number(curValue), widget, lowAlarmValue, highAlarmValue);
+	            widget.oldValue = Number(curValue);
 	        }
 	    },
 	    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
@@ -21730,7 +21787,7 @@
 	            this.drawBg(originX, originY, width, height, slice.imgSrc || digit + '.png', slice.color);
 	        }
 	    },
-	    drawDashboard: function (curX, curY, widget, options) {
+	    drawDashboard: function (curX, curY, widget, options, cb) {
 
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -21843,12 +21900,15 @@
 	                        }
 	                    }
 	            }
-	            this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
-	            widget.oldValue = currentValue;
 	        }
+
+	        cb && cb();
+
+	        this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
+	        widget.oldValue = currentValue;
 	    },
 
-	    drawRotateImg: function (curX, curY, widget, options) {
+	    drawRotateImg: function (curX, curY, widget, options, cb) {
 
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -21870,12 +21930,13 @@
 	                curArc = minArc;
 	            }
 	            this.drawRotateElem(curX, curY, width, height, width, height, curArc + initValue, widget.texList[0].slices[0], -0.5, -0.5, widget.subType);
-
-	            this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
-	            widget.oldValue = curArc;
 	        }
+
+	        cb && cb();
+	        this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
+	        widget.oldValue = curArc;
 	    },
-	    drawOscilloscope: function (curX, curY, widget, options) {
+	    drawOscilloscope: function (curX, curY, widget, options, cb) {
 	        if (widget.texList) {
 	            var width = widget.info.width;
 	            var height = widget.info.height;
@@ -21938,12 +21999,13 @@
 
 	            var coverSlice = widget.texList[1].slices[0];
 	            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice, blankX, blankY, lineColor);
+	        }
 
-	            //handle action
-	            if (newPoint) {
-	                this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
-	                widget.oldValue = curValue;
-	            }
+	        cb && cb();
+	        //handle action
+	        if (newPoint) {
+	            this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
+	            widget.oldValue = curValue;
 	        }
 	    },
 	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor) {
@@ -21951,7 +22013,7 @@
 	            return 1.0 * (point - minValue) / (maxValue - minValue) * (height - blankY);
 	        });
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        offctx.save();
 	        offctx.translate(curX, curY);
 	        //draw bg
@@ -21988,7 +22050,7 @@
 	    },
 	    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue) {
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        var _offsetX = offsetX % (2 * gridWidth);
 	        var _offsetY = offsetY % (2 * gridHeight);
 	        var _gridWidth = gridWidth;
@@ -22059,7 +22121,7 @@
 	            this.drawBg(curX, curY, width, height, image, null);
 	        } else {
 	            var offcanvas = this.refs.offcanvas;
-	            var offctx = offcanvas.getContext('2d');
+	            var offctx = this.offctx;
 	            offctx.save();
 	            offctx.beginPath();
 	            if (dashboardModeId == '1') {
@@ -22105,7 +22167,7 @@
 	        var transXratio = transXratio || 0;
 	        var transYratio = transYratio || 0;
 	        var offcanvas = this.refs.offcanvas;
-	        var offctx = offcanvas.getContext('2d');
+	        var offctx = this.offctx;
 	        offctx.save();
 	        if (typeof minCoverAngle != 'undefined' && typeof maxCoverAngle != 'undefined' && minCoverAngle != maxCoverAngle) {
 	            var radius = Math.max(w, h) / 2;
