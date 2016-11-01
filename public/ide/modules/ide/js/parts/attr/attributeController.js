@@ -442,11 +442,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             }
 
         })
-
-
-
-
-
 	}
 
 	function restore(){
@@ -459,13 +454,18 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option={
             name:$scope.component.transitionName
         };
-
+        for(var i=0;i<$scope.component.transitionMode.length;i++){
+            if($scope.component.transitionMode[i].name==$scope.component.transitionName){
+                option.show=$scope.component.transitionMode[i].show;
+                break;
+            }
+        }
         ProjectService.ChangeAttributeTransition(option);
 
     }
     function changeTransitionDur(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.transition.duration>60||$scope.component.object.level.transition.duration<0){
+            if($scope.component.object.level.transition.duration>2000||$scope.component.object.level.transition.duration<0){
                 toastr.warning('超出限制');
                 restore();
                 return;
@@ -476,6 +476,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var option={
                 duration:$scope.component.object.level.transition.duration
             };
+            toastr.info('修改成功');
             oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeTransition(option,function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
