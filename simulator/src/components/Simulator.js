@@ -360,6 +360,7 @@ module.exports =   React.createClass({
             project = this.state.project;
         }
 
+        var offcanvas = this.refs.offcanvas;
 
         var offctx = this.offctx;
 
@@ -411,7 +412,6 @@ module.exports =   React.createClass({
             this.state.curPageIdx = curPageIdx
 
             this.drawPage(page, options);
-
             //update
             // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
             // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
@@ -444,7 +444,6 @@ module.exports =   React.createClass({
         return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
     },
     drawPage:function (page,options) {
-        //default animation
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var canvas = this.refs.canvas;
