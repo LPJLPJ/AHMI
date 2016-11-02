@@ -19,13 +19,8 @@ var closeButton = document.getElementById('close');
 // }
 playButton.addEventListener('click', function () {
 
-    ReactDOM.render( < Simulator
-    projectData = {window.projectData
-} />
-    ,
-    simulatorContainer
-    )
-    ;
+    {/*ReactDOM.render( < Simulator projectData = {{}} />, simulatorContainer);*/}
+    ReactDOM.render( < Simulator projectData = {window.projectData} />, simulatorContainer);
 });
 
 closeButton.addEventListener('click', function () {

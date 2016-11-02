@@ -65,8 +65,8 @@
 	// }
 	playButton.addEventListener('click', function () {
 
-	    ReactDOM.render(React.createElement(Simulator, {
-	        projectData: window.projectData }), simulatorContainer);
+	    {/*ReactDOM.render( < Simulator projectData = {{}} />, simulatorContainer);*/}
+	    ReactDOM.render(React.createElement(Simulator, { projectData: window.projectData }), simulatorContainer);
 	});
 
 	closeButton.addEventListener('click', function () {
@@ -19833,6 +19833,7 @@
 	        // this.state.tagList = data.tagList
 	        // this.setState({tagList: data.tagList})
 	        // this.state.tagList = data.tagList;
+	        this.state.tagList = data.tagList;
 	        this.setState({ tagList: data.tagList });
 	        console.log('tagList loaded', data.tagList, this.state.tagList);
 
@@ -19855,10 +19856,11 @@
 	            }
 	        }
 	        // console.log(this.registers);
+	        this.state.registers = this.registers;
 	        this.setState({ registers: this.registers });
 
 	        //initialize timer
-	        var timerList = this.state.timerList;
+	        var timerList = [];
 	        // var postfix = ['Start','Stop','Step','Interval','CurVal','Mode'];
 	        for (var i = 0; i < parseInt(data.timers); i++) {
 	            var newTimer = {};
@@ -19872,7 +19874,8 @@
 	            timerList.push(newTimer);
 	        }
 
-	        this.setState({ timerList: timerList });
+	        // this.setState({timerList:timerList});
+	        this.state.timerList = timerList;
 
 	        console.log('timerList loaded', timerList);
 
@@ -19996,13 +19999,17 @@
 	            var curTimeID = timer.timerID;
 	            clearInterval(curTimeID);
 	        }.bind(this));
+	        this.state.innerTimerList.map(function (timerId) {
+	            clearInterval(timerId);
+	        }.bind(this));
 	        this.simState = {};
 	        VideoSource.setVideoSrc('');
 	        //init animation keys
 	        AnimationManager.clearAllAnimationKeys();
-	        this.state = _.cloneDeep(defaultSimulator);
-	        this.state.project = _.cloneDeep(newProps.projectData);
-	        this.initProject();
+	        var nextState = _.cloneDeep(defaultSimulator);
+	        nextState.project = _.cloneDeep(newProps.projectData);
+	        this.setState(nextState, this.initProject);
+	        // this.initProject();
 	        console.log('receive new project data', this.state.project);
 	    },
 	    drawLoadingProgress: function (total, currentValue, countDown, projectWidth, projectHeight) {
@@ -20257,7 +20264,9 @@
 	    handleTimers: function (num, postfix, value) {
 
 	        var timerList = this.state.timerList;
+
 	        var timer = timerList[num];
+	        console.log(postfix, JSON.stringify(timer));
 	        //update timer
 	        // var postfix = ['Start', 'Stop', 'Step', 'Interval', 't', 'Mode'];
 	        // for (var i = 0; i < postfix.length; i++) {
@@ -20284,8 +20293,8 @@
 	            this.startNewTimer(timer, num, false);
 	        } else if (timer.timerID > 0) {
 	            //update timer
-	            clearInterval(timer.timerID);
-	            timer.timerID = 0;
+	            // clearInterval(timer.timerID);
+	            // timer.timerID = 0;
 	            this.startNewTimer(timer, num, true);
 	        }
 	    },
@@ -20306,8 +20315,6 @@
 	                // targetTag.value = startValue;
 	                this.setTagByTag(targetTag, startValue);
 	            }
-
-	            this.draw();
 
 	            var direction = timer['SysTmr_' + num + '_Mode'];
 
