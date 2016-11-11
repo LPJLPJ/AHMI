@@ -1,0 +1,13 @@
+<li data-userId='<%= user._id %>'  class="user-panel">
+
+    <span class="user-name"><%= user.accountName %></span>
+    <span class="user-mail"><%= user.email%></span>
+
+    <select class="user-type" >
+        <% var options = ["","basic","pro","ultimate","admin"]%>
+        <% for (var i=0;i<options.length;i++){%>
+        <option value="<%= options[i]%>" <%= (user.type==options[i])?"selected":"" %>><%= options[i]%></option>
+        <%}%>
+    </select>
+
+</li>

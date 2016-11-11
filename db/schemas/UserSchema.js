@@ -64,6 +64,23 @@ UserSchema.statics = {
 		.sort('accountName')
 		.exec(cb)
 	},
+    fetchBatch:function(from,limit,cb){
+	    if (limit===0){
+            return this
+                .find({})
+                .sort('accountName')
+                .skip(from)
+                .exec(cb)
+        }else{
+            return this
+                .find({})
+                .sort('accountName')
+                .skip(from)
+                .limit(limit)
+                .exec(cb)
+        }
+
+    },
 	findById:function(id,cb){
 		return this
 		.findOne({_id:id})

@@ -19,7 +19,15 @@ Route_admin.getManageSpace = function (req,res) {
 }
 
 Route_admin.getUsers = function (req, res) {
-    
+    var from = parseInt(req.query.from)||0;
+    var limit = parseInt(req.query.limit)||0;
+    UserModel.fetchBatch(from,limit,function (err,users) {
+        if (err){
+            errHandler(res,500,'fetch users error')
+        }else{
+            res.end(JSON.stringify(users))
+        }
+    })
 }
 
 module.exports = Route_admin;

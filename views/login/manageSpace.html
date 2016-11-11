@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>个人空间</title>
+    <title>用户管理</title>
 
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css" type="text/css" />
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
     <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../../public/login/assets/css/personalProject.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/login/assets/css/manageSpace.css" type="text/css" />
     <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
     <script src="../../public/login/assets/js/bootstrap.js"></script>
     <script src="../../public/login/assets/js/ejs_production.js"></script>
@@ -34,13 +34,16 @@
 
 <div class="main">
     <div class="top">
-        <span class="pro">工程项目</span>
+        <span class="pro">用户管理</span>
     </div>
-    <div class="all">
+    <div class="search-wrapper"><input id="search-input"  /><button id="search-btn">S</button> </div>
+    <div class="users-wrapper">
 
-
+        <ul class="users"></ul>
     </div>
 </div>
+
+<script src="../../public/login/assets/js/manageSpace.js"></script>
 
 <script>
     //        for local
