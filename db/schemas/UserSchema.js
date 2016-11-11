@@ -18,7 +18,7 @@ var UserSchema = new mongoose.Schema({
 })
 
 UserSchema.pre('save',function(next){
-	console.log('saving');
+	// console.log('saving');
 	var user = this
 	if (this.isNew){
         this.createTime = Date.now()

@@ -61,6 +61,9 @@ router.route('/admin/manage/space')
 router.route('/admin/manage/users')
     .get(route_admin.getUsers)
 
+router.route('/admin/manage/changeusertype')
+    .post(route_admin.changeUserType)
+
 //user control
 //signup
 router.route('/user/signup')

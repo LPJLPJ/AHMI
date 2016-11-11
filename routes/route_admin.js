@@ -30,4 +30,25 @@ Route_admin.getUsers = function (req, res) {
     })
 }
 
+
+Route_admin.changeUserType = function (req, res) {
+    var userId = req.body.userId;
+    var type = req.body.type;
+    UserModel.findById(userId,function (err, user) {
+        if (err || !user){
+            console.log(err,user)
+            errHandler(res,500,err)
+        }else{
+            user.type = type;
+            user.save(function (err) {
+                if (err){
+                    errHandler(res,500,"error saving user type");
+                }else{
+                    res.end('ok');
+                }
+            })
+        }
+    })
+}
+
 module.exports = Route_admin;
