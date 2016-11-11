@@ -7,8 +7,12 @@ var uploadFile = require('./uploadFile');
 var getCaptcha = require('./getCaptcha');
 var getUsers = require('./getUsers');
 var route_space = require('./route_space');
+var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel')
+
+//admin
+var UserControl = require('../middlewares/UserControl');
 
 //api route
 var signupAPI = require('./api/signupAPI');
@@ -42,6 +46,21 @@ router
 });
 
 
+
+//admin
+router.route('/admin/login')
+    .get(route_admin.getLogin)
+    .post(route_admin.postLogin);
+
+router.route('/admin/manage/*')
+    .all(UserControl.admin);
+
+router.route('/admin/manage/space')
+    .get(route_admin.getManageSpace)
+
+router.route('/admin/manage/users')
+    .get(route_admin.getUsers)
+
 //user control
 //signup
 router.route('/user/signup')
@@ -49,6 +68,8 @@ router.route('/user/signup')
 
 router.route('/user/signupapi')
 .post(signupAPI.post);
+
+
 
 
 //login
