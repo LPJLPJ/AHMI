@@ -11,6 +11,5 @@
         versionTag.setAttribute('style',"position:fixed;right:5px;bottom:10%;padding:0.2em;font:24px helvetica arial;z-index:99");
         var body = document.body;
         body.appendChild(versionTag);
-
     }
 })();
