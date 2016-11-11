@@ -5,7 +5,7 @@ var UserSchema = new mongoose.Schema({
 	accountName:{unique:true,type:String},
 	password:String,
 	email:{unique:true,type:String},
-    type:{type:String,default:'normal'},
+    type:{type:String,default:'basic'},
     verified:{type:Boolean,default:false},
 	companyId:String,
     phone:String,
@@ -18,7 +18,7 @@ var UserSchema = new mongoose.Schema({
 })
 
 UserSchema.pre('save',function(next){
-	console.log('saving');
+	// console.log('saving');
 	var user = this
 	if (this.isNew){
         this.createTime = Date.now()
@@ -64,6 +64,23 @@ UserSchema.statics = {
 		.sort('accountName')
 		.exec(cb)
 	},
+    fetchBatch:function(from,limit,cb){
+	    if (limit===0){
+            return this
+                .find({})
+                .sort('accountName')
+                .skip(from)
+                .exec(cb)
+        }else{
+            return this
+                .find({})
+                .sort('accountName')
+                .skip(from)
+                .limit(limit)
+                .exec(cb)
+        }
+
+    },
 	findById:function(id,cb){
 		return this
 		.findOne({_id:id})

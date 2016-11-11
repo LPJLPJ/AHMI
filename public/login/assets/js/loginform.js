@@ -27,6 +27,16 @@ $(function(){
 
     var username = $('#username');
     var password = $('#password');
+    var formTitle = $('#form-title').text();
+    var dstURL = "";
+    switch (formTitle){
+        case '登录':
+            dstURL = '/private/space';
+            break;
+        case '管理员登录':
+            dstURL = '/admin/manage/space';
+            break;
+    }
     if (username.val().length) {
         formVerify.username = true;
     }
@@ -132,7 +142,8 @@ $(function(){
 			success:function(data, status, xhr){
                 console.log(data)
 				if (data == 'ok'){
-                    window.location.href='/private/space';
+                    console.log(dstURL)
+                    window.location.href=dstURL;
                     return;
                 }
 

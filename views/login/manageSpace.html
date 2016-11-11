@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+
+    <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
+    <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../public/login/assets/css/manageSpace.css" type="text/css" />
+    <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
+    <script src="../../public/login/assets/js/bootstrap.js"></script>
+    <script src="../../public/login/assets/js/ejs_production.js"></script>
+
+    <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
+    <script src="../../public/nw/menubar.js"></script>
+    <script src="../../public/general/js/versionTag.js"></script>
+    <script src="../../public/general/js/browserCheck.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="header_main">
+        <div class="header_main_logo"><a id="mainhref" href="/">
+            <img src="../../public/login/assets/img/速显微.png" />
+        </a></div>
+        <div id="user-icon"   class="dropdown right">
+            <a id="icon-dropdown" data-toggle="dropdown"><img src="../../public/login/assets/img/Fruit.png" /></a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="/user/logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="main">
+    <div class="top">
+        <span class="pro">用户管理</span>
+    </div>
+    <div class="search-wrapper"><input id="search-input"  /><button id="search-btn">S</button> </div>
+    <div class="users-wrapper">
+
+        <ul class="users"></ul>
+    </div>
+</div>
+
+<script src="../../public/login/assets/js/manageSpace.js"></script>
+
+<script>
+    //        for local
+
+    try{
+        var os = require('os');
+        var mainhref = document.getElementById('mainhref');
+        mainhref.setAttribute('href','#');
+        var iconDropdown = document.getElementById('icon-dropdown');
+        iconDropdown.parentNode.removeChild(iconDropdown);
+    }catch (e){
+
+    }
+
+</script>
+
+</body>
+</html>

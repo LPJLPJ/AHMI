@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-    <title><%= title||"登录" %></title>
+    <title>管理员登录</title>
     <script src="/public/login/assets/js/jquery-1.10.2.js"></script>
     <!--  Core Bootstrap Script -->
     <script src="/public/login/assets/js/bootstrap.js"></script>
@@ -35,18 +35,12 @@
             </button>
             <a class="navbar-brand" href="/"><img class="logo-custom" src="/public/login/assets/img/速显微.png" alt=""/></a>
         </div>
-        <div class="navbar-collapse collapse move-me">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="/user/signup">注册</a></li>
-                <li><a href="/user/login">登录</a></li>
-            </ul>
-        </div>
 
     </div>
 </div>
 <!--NAVBAR SECTION END-->
 <div class="subtitle" style="text-align: center">
-    <h2 id="form-title"><%= title %></h2>
+    <h2 id="form-title">管理员登录</h2>
 </div>
 <div class="form-wrapper">
     <% include loginForm.html %>
