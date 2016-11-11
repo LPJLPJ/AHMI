@@ -15,7 +15,7 @@ Route_admin.postLogin = function (req,res) {
 }
 
 Route_admin.getManageSpace = function (req,res) {
-    console.log('login to manage space')
+    res.render('login/manageSpace.html')
 }
 
 Route_admin.getUsers = function (req, res) {
