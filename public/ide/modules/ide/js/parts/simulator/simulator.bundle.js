@@ -20409,7 +20409,7 @@
 	        var translate = animationAttrs.translate && animationAttrs.translate.dstPos || { x: 0, y: 0 };
 
 	        var type = target.type;
-	        var duration = animation.duration || 1000;
+	        var duration = animation && animation.duration || 1000;
 	        // console.log(scale,translate,duration)
 	        var frames = 30;
 	        var srcTransformObj = {};
@@ -20650,7 +20650,7 @@
 	            var moveX = w;
 	            var moveY = 0;
 	            var method = transition && transition.name;
-	            var duration = transition.duration || 1000;
+	            var duration = transition && transition.duration || 1000;
 	            var frames = 30;
 	            var easing = 'easeInOutCubic';
 	            switch (method) {

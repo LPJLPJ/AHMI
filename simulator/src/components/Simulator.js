@@ -740,7 +740,7 @@ module.exports =   React.createClass({
         var translate = (animationAttrs.translate&&animationAttrs.translate.dstPos)||{x:0,y:0};
 
         var type = target.type;
-        var duration = animation.duration || 1000;
+        var duration = (animation&&animation.duration) || 1000;
         // console.log(scale,translate,duration)
         var frames = 30;
         var srcTransformObj={};
