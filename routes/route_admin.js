@@ -25,6 +25,9 @@ Route_admin.getUsers = function (req, res) {
         if (err){
             errHandler(res,500,'fetch users error')
         }else{
+            users.forEach(function (user) {
+                user.password = null;
+            });
             res.end(JSON.stringify(users))
         }
     })
