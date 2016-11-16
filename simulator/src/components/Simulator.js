@@ -593,7 +593,7 @@ module.exports =   React.createClass({
         var timerList = this.state.timerList;
 
         var timer = timerList[num];
-        console.log(postfix,JSON.stringify(timer))
+        // console.log(postfix,JSON.stringify(timer))
         //update timer
         // var postfix = ['Start', 'Stop', 'Step', 'Interval', 't', 'Mode'];
         // for (var i = 0; i < postfix.length; i++) {

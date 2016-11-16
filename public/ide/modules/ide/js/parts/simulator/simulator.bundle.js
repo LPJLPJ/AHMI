@@ -44,6 +44,8 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	window.fucku = 'fucku';
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
@@ -19711,7 +19713,9 @@
 /* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var React = __webpack_require__(1);
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var React = __webpack_require__(1);
 	var $ = __webpack_require__(160);
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
@@ -19756,10 +19760,10 @@
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState: function () {
+	    getInitialState: function getInitialState() {
 	        return _.cloneDeep(defaultSimulator);
 	    },
-	    componentWillUnmount: function () {
+	    componentWillUnmount: function componentWillUnmount() {
 	        this.state.timerList.map(function (timer, i) {
 	            var curTimeID = timer.timerID;
 	            clearInterval(curTimeID);
@@ -19771,7 +19775,7 @@
 	        VideoSource.pause();
 	        AnimationManager.clearAllAnimationKeys();
 	    },
-	    initCanvas: function (data, callBack) {
+	    initCanvas: function initCanvas(data, callBack) {
 	        var i;
 	        this.mouseState = {
 	            state: 'release',
@@ -19960,7 +19964,7 @@
 	            callBack(data);
 	        }
 	    },
-	    isIn: function (res, resList, key) {
+	    isIn: function isIn(res, resList, key) {
 	        if (key) {
 	            for (var i = 0; i < resList.length; i++) {
 	                if (res[key] === resList[i][key]) {
@@ -19977,7 +19981,7 @@
 	            return false;
 	        }
 	    },
-	    initProject: function () {
+	    initProject: function initProject() {
 
 	        if (this.state.project && this.state.project.size) {
 	            this.initCanvas(this.state.project, this.draw.bind(this, null, { reLinkWidgets: true }));
@@ -19985,7 +19989,7 @@
 	            this.draw.bind(this, null, { reLinkWidgets: true });
 	        }
 	    },
-	    componentDidMount: function () {
+	    componentDidMount: function componentDidMount() {
 	        //this.load();
 	        this.state = _.cloneDeep(defaultSimulator);
 	        this.state.project = _.cloneDeep(this.props.projectData);
@@ -19994,7 +19998,7 @@
 	        this.initProject();
 	        window.inRawRect = this.inRawRect;
 	    },
-	    componentWillReceiveProps: function (newProps) {
+	    componentWillReceiveProps: function componentWillReceiveProps(newProps) {
 	        this.state.timerList.map(function (timer, i) {
 	            var curTimeID = timer.timerID;
 	            clearInterval(curTimeID);
@@ -20012,7 +20016,7 @@
 	        // this.initProject();
 	        console.log('receive new project data', this.state.project);
 	    },
-	    drawLoadingProgress: function (total, currentValue, countDown, projectWidth, projectHeight) {
+	    drawLoadingProgress: function drawLoadingProgress(total, currentValue, countDown, projectWidth, projectHeight) {
 	        var progress = '0.0%';
 	        if (countDown && countDown == true) {
 	            progress = '' + ((total - currentValue) * 100.0 / total).toFixed(2) + '%';
@@ -20026,7 +20030,7 @@
 	        ctx.fillStyle = "white";
 	        ctx.fillText("加载中... " + progress, 0.5 * projectWidth, 0.5 * projectHeight);
 	    },
-	    draw: function (_project, options) {
+	    draw: function draw(_project, options) {
 	        var offcanvas = this.refs.offcanvas;
 	        var canvas = this.refs.canvas;
 	        this.ctx = canvas.getContext('2d');
@@ -20045,7 +20049,7 @@
 	        });
 	        this.manageDraw();
 	    },
-	    manageDraw: function () {
+	    manageDraw: function manageDraw() {
 	        if (!this.drawingStatus || this.drawingStatus === 'idle') {
 	            if (this.drawingArray.length) {
 	                var nextDrawElem = this.drawingArray.shift();
@@ -20056,7 +20060,7 @@
 	            }
 	        }
 	    },
-	    paint: function (_project, options) {
+	    paint: function paint(_project, options) {
 	        var project;
 	        if (_project) {
 	            project = _project;
@@ -20120,7 +20124,7 @@
 	                ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            }
 	    },
-	    getRawValueByTagName: function (name) {
+	    getRawValueByTagName: function getRawValueByTagName(name) {
 	        var curTag = this.findTagByName(name);
 	        if (curTag) {
 	            return curTag.value;
@@ -20128,7 +20132,7 @@
 	            return null;
 	        }
 	    },
-	    getValueByTagName: function (name, defaultValue) {
+	    getValueByTagName: function getValueByTagName(name, defaultValue) {
 	        var curTag = this.findTagByName(name);
 	        if (curTag && curTag.value != undefined) {
 	            return Number(curTag.value);
@@ -20138,10 +20142,10 @@
 	            return null;
 	        }
 	    },
-	    compareZIndex: function (canvasA, canvasB) {
+	    compareZIndex: function compareZIndex(canvasA, canvasB) {
 	        return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
 	    },
-	    drawPage: function (page, options) {
+	    drawPage: function drawPage(page, options) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        var canvas = this.refs.canvas;
@@ -20213,7 +20217,7 @@
 	            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
 	        }
 	    },
-	    paintPage: function (page, options) {
+	    paintPage: function paintPage(page, options) {
 	        // console.log(page);
 	        //will load
 	        // if (!page.state || page.state == LoadState.notLoad) {
@@ -20261,12 +20265,12 @@
 	            // console.log('page', page);
 	        }
 	    },
-	    handleTimers: function (num, postfix, value) {
+	    handleTimers: function handleTimers(num, postfix, value) {
 
 	        var timerList = this.state.timerList;
 
 	        var timer = timerList[num];
-	        console.log(postfix, JSON.stringify(timer));
+	        // console.log(postfix,JSON.stringify(timer))
 	        //update timer
 	        // var postfix = ['Start', 'Stop', 'Step', 'Interval', 't', 'Mode'];
 	        // for (var i = 0; i < postfix.length; i++) {
@@ -20298,7 +20302,7 @@
 	            this.startNewTimer(timer, num, true);
 	        }
 	    },
-	    startNewTimer: function (timer, num, cont) {
+	    startNewTimer: function startNewTimer(timer, num, cont) {
 	        if ((timer['SysTmr_' + num + '_Mode'] & 1) == 1) {
 	            //start
 	            var loop = (timer['SysTmr_' + num + '_Mode'] & 2) == 2;
@@ -20358,7 +20362,7 @@
 	            }.bind(this), timer['SysTmr_' + num + '_Interval']);
 	        }
 	    },
-	    generateTransformMatrix: function (animations) {
+	    generateTransformMatrix: function generateTransformMatrix(animations) {
 	        var a = 0,
 	            b = 0,
 	            c = 0,
@@ -20384,7 +20388,7 @@
 	            f: f
 	        };
 	    },
-	    executeAnimation: function (target, animation) {
+	    executeAnimation: function executeAnimation(target, animation) {
 	        var animationAttrs;
 	        if (!animation || !animation.animationAttrs) {
 	            return;
@@ -20498,7 +20502,7 @@
 	        //     // this.draw();
 	        // }.bind(this))
 	    },
-	    scaleElement: function (target, scaleFactor) {
+	    scaleElement: function scaleElement(target, scaleFactor) {
 	        console.log('scaling element', target);
 	        switch (target.type) {
 	            case 'MyLayer':
@@ -20509,7 +20513,7 @@
 	                break;
 	        }
 	    },
-	    scaleCanvas: function (target, scaleFactor) {
+	    scaleCanvas: function scaleCanvas(target, scaleFactor) {
 	        target.w *= scaleFactor.w;
 	        target.h *= scaleFactor.h;
 	        var subCanvasList = target.subCanvasList;
@@ -20521,7 +20525,7 @@
 	            }
 	        }
 	    },
-	    scaleWidget: function (target, scaleFactor) {
+	    scaleWidget: function scaleWidget(target, scaleFactor) {
 	        var info = target.info;
 	        switch (target.subType) {
 	            case 'MyButton':
@@ -20532,7 +20536,7 @@
 	                break;
 	        }
 	    },
-	    drawCanvas: function (canvasData, options) {
+	    drawCanvas: function drawCanvas(canvasData, options) {
 	        var willExecuteAnimation = false;
 	        if (options && options.animation) {
 	            //has animation execute
@@ -20559,7 +20563,7 @@
 	            this.paintCanvas(canvasData, options);
 	        }
 	    },
-	    paintCanvas: function (canvasData, options) {
+	    paintCanvas: function paintCanvas(canvasData, options) {
 	        //draw
 
 	        var offcanvas = this.refs.offcanvas;
@@ -20624,7 +20628,7 @@
 	            this.handleTargetAction(oldSubCanvas, 'UnLoad');
 	        }
 	    },
-	    clipToRect: function (ctx, originX, originY, w, h) {
+	    clipToRect: function clipToRect(ctx, originX, originY, w, h) {
 	        ctx.beginPath();
 	        ctx.moveTo(originX, originY);
 	        ctx.lineTo(originX + w, originY);
@@ -20633,7 +20637,7 @@
 	        ctx.closePath();
 	        ctx.clip();
 	    },
-	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition) {
+	    drawSubCanvas: function drawSubCanvas(subCanvas, x, y, w, h, options, transition) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
@@ -20713,7 +20717,7 @@
 	            this.paintSubCanvas(subCanvas, x, y, w, h, options);
 	        }
 	    },
-	    paintSubCanvas: function (subCanvas, x, y, w, h, options) {
+	    paintSubCanvas: function paintSubCanvas(subCanvas, x, y, w, h, options) {
 
 	        subCanvas.state = LoadState.loading;
 	        // x = subCanvas.info.x;
@@ -20744,7 +20748,7 @@
 
 	        subCanvas.state = LoadState.loaded;
 	    },
-	    drawWidget: function (widget, sx, sy, options) {
+	    drawWidget: function drawWidget(widget, sx, sy, options) {
 	        var willExecuteAnimation = false;
 	        if (options && options.animation) {
 	            //has animation execute
@@ -20767,7 +20771,7 @@
 	            this.paintWidget(widget, sx, sy, options);
 	        }
 	    },
-	    paintWidget: function (widget, sx, sy, options) {
+	    paintWidget: function paintWidget(widget, sx, sy, options) {
 	        // console.log('drawing widget',widget);
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
@@ -20797,7 +20801,7 @@
 	        curX = 0;
 	        curY = 0;
 
-	        var cb = function () {
+	        var cb = function cb() {
 	            offctx.restore();
 	        };
 
@@ -20853,7 +20857,7 @@
 	                break;
 	        }
 	    },
-	    drawInputKeyboard: function (curX, curY, widget, options) {
+	    drawInputKeyboard: function drawInputKeyboard(curX, curY, widget, options) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offCtx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
@@ -20918,7 +20922,7 @@
 	        }
 	        tempCtx.restore();
 	    },
-	    drawSlide: function (curX, curY, widget, options, cb) {
+	    drawSlide: function drawSlide(curX, curY, widget, options, cb) {
 	        var slideSlices = widget.texList[0].slices;
 	        var tag = this.findTagByName(widget.tag);
 	        var slideIdx = tag && tag.value || 0;
@@ -20930,7 +20934,7 @@
 	        }
 	        cb && cb();
 	    },
-	    drawButton: function (curX, curY, widget, options, cb) {
+	    drawButton: function drawButton(curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
@@ -20974,7 +20978,7 @@
 
 	        cb && cb();
 	    },
-	    drawSwitch: function (curX, curY, widget, options, cb) {
+	    drawSwitch: function drawSwitch(curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
@@ -20998,7 +21002,7 @@
 
 	        cb && cb();
 	    },
-	    drawTextArea: function (curX, curY, widget, options, cb) {
+	    drawTextArea: function drawTextArea(curX, curY, widget, options, cb) {
 	        var info = widget.info;
 	        var width = info.width;
 	        var height = info.height;
@@ -21017,7 +21021,7 @@
 	        }
 	        cb && cb();
 	    },
-	    drawTextByTempCanvas: function (curX, curY, width, height, text, font) {
+	    drawTextByTempCanvas: function drawTextByTempCanvas(curX, curY, width, height, text, font) {
 
 	        var text = text || '';
 	        var font = font || {};
@@ -21041,7 +21045,7 @@
 	        tempctx.restore();
 	        offctx.drawImage(tempcanvas, curX, curY, width, height);
 	    },
-	    drawButtonGroup: function (curX, curY, widget, options, cb) {
+	    drawButtonGroup: function drawButtonGroup(curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var interval = widget.info.interval;
@@ -21088,7 +21092,7 @@
 
 	        cb && cb();
 	    },
-	    drawProgress: function (curX, curY, widget, options, cb) {
+	    drawProgress: function drawProgress(curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var cursor = widget.info.cursor == '1';
@@ -21178,7 +21182,7 @@
 	        this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	        widget.oldValue = curProgress;
 	    },
-	    drawSlideBlock: function (curX, curY, widget, options, cb) {
+	    drawSlideBlock: function drawSlideBlock(curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 
@@ -21229,7 +21233,7 @@
 	            widget.oldValue = curSlide;
 	        }
 	    },
-	    drawScriptTrigger: function (curX, curY, widget, options, cb) {
+	    drawScriptTrigger: function drawScriptTrigger(curX, curY, widget, options, cb) {
 	        //get current value
 	        var curScriptTriggerTag = this.findTagByName(widget.tag);
 
@@ -21239,7 +21243,7 @@
 	        this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	        widget.oldValue = curScriptTrigger;
 	    },
-	    drawVideo: function (curX, curY, widget, options, cb) {
+	    drawVideo: function drawVideo(curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var offcanvas = this.refs.offcanvas;
@@ -21266,7 +21270,7 @@
 
 	        cb && cb();
 	    },
-	    drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
+	    drawVerCursor: function drawVerCursor(beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
 
 	        var cursorImg = this.getImage(img);
 	        cursorImg = cursorImg && cursorImg.content || null;
@@ -21284,7 +21288,7 @@
 	            }
 	        }
 	    },
-	    drawCursor: function (beginX, beginY, width, height, align, alignLimit, img, color) {
+	    drawCursor: function drawCursor(beginX, beginY, width, height, align, alignLimit, img, color) {
 
 	        var cursorImg = this.getImage(img);
 	        cursorImg = cursorImg && cursorImg.content || null;
@@ -21300,7 +21304,7 @@
 	            }
 	        }
 	    },
-	    addTwoColor: function (color1, color2, ratio) {
+	    addTwoColor: function addTwoColor(color1, color2, ratio) {
 	        var color1Array = this.transColorToArray(color1);
 	        var color2Array = this.transColorToArray(color2);
 	        var mixedColor = [];
@@ -21309,7 +21313,7 @@
 	        }
 	        return 'rgba(' + mixedColor.join(',') + ')';
 	    },
-	    transColorToArray: function (color) {
+	    transColorToArray: function transColorToArray(color) {
 	        //rgba to array
 	        var temp = color.split('(')[1].split(')')[0];
 	        var colorArray = temp.split(',').map(function (colorbit) {
@@ -21317,7 +21321,7 @@
 	        });
 	        return colorArray;
 	    },
-	    getCurDateOriginalData: function (widget, source, offset) {
+	    getCurDateOriginalData: function getCurDateOriginalData(widget, source, offset) {
 	        var curDate;
 	        if (source === 'outer') {
 	            var time1 = parseInt(this.getValueByTagName('时钟变量年月日', 0)) || 0;
@@ -21347,7 +21351,7 @@
 
 	        return curDate;
 	    },
-	    drawTime: function (curX, curY, widget, options, cb) {
+	    drawTime: function drawTime(curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var dateTimeModeId = widget.info.dateTimeModeId;
@@ -21425,20 +21429,20 @@
 	            this.setState({ innerTimerList: innerTimerList });
 	        }
 	    },
-	    getCurTime: function (date) {
+	    getCurTime: function getCurTime(date) {
 	        var date = date || new Date();
 	        var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
 	        var minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 	        var second = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
 	        return '' + hour + ':' + minute + ':' + second;
 	    },
-	    getCurTimeHM: function (date) {
+	    getCurTimeHM: function getCurTimeHM(date) {
 	        var date = date || new Date();
 	        var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
 	        var minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 	        return '' + hour + ':' + minute;
 	    },
-	    getCurDate: function (date, mode) {
+	    getCurDate: function getCurDate(date, mode) {
 	        var date = date || new Date();
 	        var year = date.getFullYear();
 	        var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
@@ -21452,7 +21456,7 @@
 	        return dateString;
 	    },
 
-	    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
+	    drawBgClip: function drawBgClip(curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 
@@ -21476,21 +21480,21 @@
 	        // this.drawBg(childX,childY,childWidth,childHeight,imageName,color);
 	        offctx.restore();
 	    },
-	    drawHighLight: function (curX, curY, width, height, slice) {
+	    drawHighLight: function drawHighLight(curX, curY, width, height, slice) {
 	        if (slice) {
 	            this.drawBg(curX, curY, width, height, slice.imgSrc, slice.color);
 	        } else {
 	            this.drawBgColor(curX, curY, width, height, 'rgba(244,244,244,0.3)');
 	        }
 	    },
-	    findValue: function (array, key1, value, key2) {
+	    findValue: function findValue(array, key1, value, key2) {
 	        for (var i = 0; i < array.length; i++) {
 	            if (array[i][key1] == value) {
 	                return array[i][key2];
 	            }
 	        }
 	    },
-	    limitValueBetween: function (curVal, minVal, maxVal, overFlowStyle) {
+	    limitValueBetween: function limitValueBetween(curVal, minVal, maxVal, overFlowStyle) {
 	        if (curVal < minVal) {
 	            return minVal;
 	        } else if (curVal > maxVal) {
@@ -21499,14 +21503,14 @@
 	            return curVal;
 	        }
 	    },
-	    multiDigits: function (digit, num) {
+	    multiDigits: function multiDigits(digit, num) {
 	        var result = '';
 	        for (var i = 0; i < num; i++) {
 	            result += digit;
 	        }
 	        return result;
 	    },
-	    changeNumDigits: function (originalNum, digits, appendNum, beforeOrFalse) {
+	    changeNumDigits: function changeNumDigits(originalNum, digits, appendNum, beforeOrFalse) {
 	        var originalNum = String(parseInt(originalNum || 0));
 	        var originalLength = originalNum.length;
 	        var resultNum = '';
@@ -21526,7 +21530,7 @@
 	        }
 	        return resultNum;
 	    },
-	    drawNumber: function (curX, curY, widget, options, cb) {
+	    drawNumber: function drawNumber(curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var needDrawNumber = false;
 	        //handle initial number
@@ -21594,7 +21598,7 @@
 	            this.handleTargetAction(widget, 'MinOverflow');
 	        }
 	    },
-	    drawNum: function (curX, curY, widget, options, cb) {
+	    drawNum: function drawNum(curX, curY, widget, options, cb) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        //get current value
@@ -21713,7 +21717,7 @@
 	            widget.oldValue = Number(curValue);
 	        }
 	    },
-	    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
+	    drawStyleString: function drawStyleString(tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
 	        tempCtx.clearRect(0, 0, curWidth, curHeight);
 	        tempCtx.save();
 	        //this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
@@ -21737,7 +21741,7 @@
 	        // tempCtx.fillText(tempNumValue,0,)
 	        tempCtx.restore();
 	    },
-	    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
+	    generateStyleString: function generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
 	        var negative = false;
 	        if (curValue < 0) {
 	            negative = true;
@@ -21787,14 +21791,14 @@
 
 	        return tempNumValue;
 	    },
-	    drawDigit: function (digit, widget, originX, originY, width, height) {
+	    drawDigit: function drawDigit(digit, widget, originX, originY, width, height) {
 
 	        if (widget.texList && widget.texList[digit]) {
 	            var slice = widget.texList[digit].slices[0];
 	            this.drawBg(originX, originY, width, height, slice.imgSrc || digit + '.png', slice.color);
 	        }
 	    },
-	    drawDashboard: function (curX, curY, widget, options, cb) {
+	    drawDashboard: function drawDashboard(curX, curY, widget, options, cb) {
 
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -21915,7 +21919,7 @@
 	        widget.oldValue = currentValue;
 	    },
 
-	    drawRotateImg: function (curX, curY, widget, options, cb) {
+	    drawRotateImg: function drawRotateImg(curX, curY, widget, options, cb) {
 
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -21943,7 +21947,7 @@
 	        this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	        widget.oldValue = curArc;
 	    },
-	    drawOscilloscope: function (curX, curY, widget, options, cb) {
+	    drawOscilloscope: function drawOscilloscope(curX, curY, widget, options, cb) {
 	        if (widget.texList) {
 	            var width = widget.info.width;
 	            var height = widget.info.height;
@@ -22015,7 +22019,7 @@
 	            widget.oldValue = curValue;
 	        }
 	    },
-	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor) {
+	    drawPointsLine: function drawPointsLine(curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor) {
 	        var tranedPoints = points.map(function (point) {
 	            return 1.0 * (point - minValue) / (maxValue - minValue) * (height - blankY);
 	        });
@@ -22055,7 +22059,7 @@
 	        offctx.stroke();
 	        offctx.restore();
 	    },
-	    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue) {
+	    drawGrid: function drawGrid(curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        var _offsetX = offsetX % (2 * gridWidth);
@@ -22111,7 +22115,7 @@
 	        offctx.stroke();
 	        offctx.restore();
 	    },
-	    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc) {
+	    drawLightStrip: function drawLightStrip(curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc) {
 	        //clip a fan shape
 	        // console.log(minArc, curArc);
 	        var wise = false;
@@ -22145,12 +22149,12 @@
 	            offctx.restore();
 	        }
 	    },
-	    calculateRadius: function (mode, width, height) {
+	    calculateRadius: function calculateRadius(mode, width, height) {
 	        var radius = mode == '1' ? Math.sqrt(width * width + height * height) / 2 : Math.max(width, height) / 2;
 	        radius = Math.floor(radius);
 	        return radius;
 	    },
-	    handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
+	    handleAlarmAction: function handleAlarmAction(curValue, widget, lowAlarm, highAlarm) {
 	        //handle action
 	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
 	            //enter high alarm
@@ -22170,7 +22174,7 @@
 	            this.handleTargetAction(widget, 'EnterLowAlarm');
 	        }
 	    },
-	    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
+	    drawRotateElem: function drawRotateElem(x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
 	        var transXratio = transXratio || 0;
 	        var transYratio = transYratio || 0;
 	        var offcanvas = this.refs.offcanvas;
@@ -22214,11 +22218,11 @@
 	        }
 	        offctx.restore();
 	    },
-	    drawBg: function (x, y, w, h, imageName, color, ctx) {
+	    drawBg: function drawBg(x, y, w, h, imageName, color, ctx) {
 	        this.drawBgColor(x, y, w, h, color, ctx);
 	        this.drawBgImg(x, y, w, h, imageName, ctx);
 	    },
-	    drawBgColor: function (x, y, w, h, color, ctx) {
+	    drawBgColor: function drawBgColor(x, y, w, h, color, ctx) {
 	        var offcanvas, offctx;
 	        if (!ctx) {
 	            offcanvas = this.refs.offcanvas;
@@ -22235,7 +22239,7 @@
 	            offctx.restore();
 	        }
 	    },
-	    drawBgImg: function (x, y, w, h, imageName, ctx) {
+	    drawBgImg: function drawBgImg(x, y, w, h, imageName, ctx) {
 	        //console.log('x: '+x+' y: '+y+' w: '+w+' h: '+h);
 	        var imageName = this.getImageName(imageName);
 	        var offcanvas, offctx;
@@ -22255,7 +22259,7 @@
 	        }
 	        ;
 	    },
-	    getImageName: function (imageName) {
+	    getImageName: function getImageName(imageName) {
 	        if (imageName && typeof imageName === 'string') {
 	            var names = imageName.split(sep);
 	            return names[names.length - 1];
@@ -22263,7 +22267,7 @@
 	            return '';
 	        }
 	    },
-	    getImage: function (imageName) {
+	    getImage: function getImage(imageName) {
 	        var name = this.getImageName(imageName);
 	        var imageList = this.state.imageList || [];
 	        for (var i = 0; i < imageList.length; i++) {
@@ -22273,7 +22277,7 @@
 	        }
 	        return null;
 	    },
-	    inRect: function (x, y, target, type) {
+	    inRect: function inRect(x, y, target, type) {
 	        // console.log(x, y, target, type);
 	        //additional condition for transformation
 	        var realPoint = {
@@ -22301,7 +22305,7 @@
 	            }
 	        }
 	    },
-	    transformTargetPoint: function (targetPoint, basePoint, translate, scale) {
+	    transformTargetPoint: function transformTargetPoint(targetPoint, basePoint, translate, scale) {
 	        var dstPoint = {
 	            x: 0,
 	            y: 0
@@ -22310,7 +22314,7 @@
 	        dstPoint.y = (targetPoint.y - basePoint.y) * scale.h + basePoint.y + translate.y;
 	        return dstPoint;
 	    },
-	    recoverTargetPointFromTransformation: function (dstPoint, basePoint, translate, scale) {
+	    recoverTargetPointFromTransformation: function recoverTargetPointFromTransformation(dstPoint, basePoint, translate, scale) {
 	        if (!translate) {
 	            translate = {
 	                x: 0,
@@ -22334,14 +22338,14 @@
 	            y: (dstPoint.y - translate.y - basePoint.y) / scale.h + basePoint.y
 	        };
 	    },
-	    inRawRect: function (x, y, offsetX, offsetY, width, height) {
+	    inRawRect: function inRawRect(x, y, offsetX, offsetY, width, height) {
 	        if (x >= offsetX && x <= offsetX + width && y >= offsetY && y <= offsetY + height) {
 	            return true;
 	        } else {
 	            return false;
 	        }
 	    },
-	    invertPointFromTransform: function (point, basePoint, transform) {
+	    invertPointFromTransform: function invertPointFromTransform(point, basePoint, transform) {
 	        var transformMatrix = [[transform.a, transform.c, transform.e], [transform.b, transform.d, transform.f], [0, 0, 1]];
 	        var translateMatrix = [[1, 0, -basePoint.x], [0, 1, -basePoint.y], [0, 0, 1]];
 	        // var combinedMatrix = math.multiply(math.inv(transformMatrix),translateMatrix);
@@ -22352,7 +22356,7 @@
 	            y: realPoint[1]
 	        };
 	    },
-	    findClickTargets: function (x, y) {
+	    findClickTargets: function findClickTargets(x, y) {
 	        var project = this.state.project;
 	        var targets = [];
 	        if (project.pageList && project.pageList.length) {
@@ -22440,7 +22444,7 @@
 	        }
 	        return targets;
 	    },
-	    handleInnerClickedElement: function (widget, x, y) {
+	    handleInnerClickedElement: function handleInnerClickedElement(widget, x, y) {
 	        var left = widget.info.left;
 	        var top = widget.info.top;
 	        var width = widget.info.width;
@@ -22494,7 +22498,7 @@
 	                break;
 	        }
 	    },
-	    handleInputKeyboardKeyPressed: function (curKey, widget) {
+	    handleInputKeyboardKeyPressed: function handleInputKeyboardKeyPressed(curKey, widget) {
 	        var project = this.state.project;
 	        switch (curKey.value) {
 	            case '0':
@@ -22557,7 +22561,7 @@
 	                break;
 	        }
 	    },
-	    handleSlideBlockInnerPress: function (widget, x, y) {
+	    handleSlideBlockInnerPress: function handleSlideBlockInnerPress(widget, x, y) {
 	        var left = widget.info.left;
 	        var top = widget.info.top;
 	        var width = widget.info.width;
@@ -22584,7 +22588,7 @@
 	        widget.curValue = curValue;
 	        // console.log(curValue,widget.info);
 	    },
-	    handlePress: function (e) {
+	    handlePress: function handlePress(e) {
 	        // console.log(e);
 	        // console.log(e.target.scrollLeft,e.targetTag.scrollTop);
 	        var relativeRect = this.getRelativeRect(e);
@@ -22604,7 +22608,7 @@
 	            }
 	        }
 	    },
-	    handleOk: function (type) {
+	    handleOk: function handleOk(type) {
 	        var page = this.state.project.pageList[this.state.curPageIdx];
 	        if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
 	            //has highlight
@@ -22639,7 +22643,7 @@
 	            }
 	        }
 	    },
-	    handleModifyHighlightingWidget: function (widget, direction) {
+	    handleModifyHighlightingWidget: function handleModifyHighlightingWidget(widget, direction) {
 	        switch (widget.subType) {
 	            case 'MyDateTime':
 
@@ -22701,7 +22705,7 @@
 	                break;
 	        }
 	    },
-	    handleMoveNext: function (direction) {
+	    handleMoveNext: function handleMoveNext(direction) {
 	        var page = this.state.project.pageList[this.state.curPageIdx];
 	        var curDirection;
 	        if (direction === 'left') {
@@ -22741,7 +22745,7 @@
 	            }
 	        }
 	    },
-	    getRelativeRect: function (e) {
+	    getRelativeRect: function getRelativeRect(e) {
 	        var clientRect = e.target.getBoundingClientRect();
 	        var x = Math.round(e.pageX - clientRect.left);
 	        var y = Math.round(e.pageY - clientRect.top);
@@ -22751,7 +22755,7 @@
 	            y: y
 	        };
 	    },
-	    handleMove: function (e) {
+	    handleMove: function handleMove(e) {
 	        var relativeRect = this.getRelativeRect(e);
 	        var x = relativeRect.x;
 	        var y = relativeRect.y;
@@ -22769,8 +22773,8 @@
 	            this.mouseState.state = 'move';
 	        }
 	    },
-	    handleHolding: function () {},
-	    handleDragging: function (mouseState) {
+	    handleHolding: function handleHolding() {},
+	    handleDragging: function handleDragging(mouseState) {
 	        var targets = this.state.currentPressedTargets;
 	        for (var i = 0; i < targets.length; i++) {
 	            if (targets[i].type == 'widget') {
@@ -22779,7 +22783,7 @@
 	            }
 	        }
 	    },
-	    handleWidgetDrag: function (widget, mouseState) {
+	    handleWidgetDrag: function handleWidgetDrag(widget, mouseState) {
 	        var subType = widget.subType;
 	        var left = widget.info.left;
 	        var top = widget.info.top;
@@ -22799,7 +22803,7 @@
 	            this.drawAfterMouseAction(mouseState);
 	        }
 	    },
-	    handleWidgetPress: function (widget, mouseState) {
+	    handleWidgetPress: function handleWidgetPress(widget, mouseState) {
 	        var needRedraw = false;
 	        switch (widget.subType) {
 	            case 'MyButton':
@@ -22853,7 +22857,7 @@
 	            this.drawAfterMouseAction(mouseState);
 	        }
 	    },
-	    getImageSize: function (imgName, defaultValueW, defaultValueH) {
+	    getImageSize: function getImageSize(imgName, defaultValueW, defaultValueH) {
 	        var img = this.getImage(imgName);
 	        img = img && img.content || null;
 	        if (!!img) {
@@ -22869,7 +22873,7 @@
 	            };
 	        }
 	    },
-	    handleRelease: function (e) {
+	    handleRelease: function handleRelease(e) {
 	        var x = Math.round(e.pageX - e.target.offsetLeft);
 	        var y = Math.round(e.pageY - e.target.offsetTop);
 	        this.mouseState.state = 'release';
@@ -22884,7 +22888,7 @@
 	        }
 	        this.state.currentPressedTargets = [];
 	    },
-	    handleElementRelease: function (elem, mouseState) {
+	    handleElementRelease: function handleElementRelease(elem, mouseState) {
 	        var needRedraw = false;
 	        switch (elem.type) {
 	            case 'widget':
@@ -22905,12 +22909,12 @@
 	            this.drawAfterMouseAction(mouseState);
 	        }
 	    },
-	    drawAfterMouseAction: function (mouseState) {
+	    drawAfterMouseAction: function drawAfterMouseAction(mouseState) {
 	        var options = {};
 	        options.mouseState = _.cloneDeep(mouseState);
 	        this.draw(null, options);
 	    },
-	    getCertainAction: function (action, type) {
+	    getCertainAction: function getCertainAction(action, type) {
 	        var certainAction = [];
 	        var flag = 0;
 	        for (var i = 0; i < action.length; i++) {
@@ -22930,7 +22934,7 @@
 	        ;
 	        return certainAction;
 	    },
-	    handleTargetAction: function (target, type) {
+	    handleTargetAction: function handleTargetAction(target, type) {
 	        if (target.actions && target.actions.length) {
 	            for (var i = 0; i < target.actions.length; i++) {
 	                if (target.actions[i].trigger == type) {
@@ -22941,7 +22945,7 @@
 	            }
 	        }
 	    },
-	    findTagByName: function (tag) {
+	    findTagByName: function findTagByName(tag) {
 	        var tagList = this.state.tagList;
 	        // console.log(tag,tagList);
 	        if (tag && tag != "") {
@@ -22955,7 +22959,7 @@
 
 	        return null;
 	    },
-	    findTagByTag: function (tag) {
+	    findTagByTag: function findTagByTag(tag) {
 
 	        if (tag && tag != "") {
 	            tag = JSON.parse(tag);
@@ -22971,20 +22975,20 @@
 
 	        return null;
 	    },
-	    setTagByName: function (name, value) {
+	    setTagByName: function setTagByName(name, value) {
 	        var tag = this.findTagByName(name);
 	        if (tag) {
 	            tag.value = value;
 	            this.setState({ tag: tag });
 	        }
 	    },
-	    setTagByTag: function (tag, value) {
+	    setTagByTag: function setTagByTag(tag, value) {
 	        if (tag) {
 	            tag.value = value;
 	            this.setState({ tag: tag });
 	        }
 	    },
-	    timerFlag: function (param) {
+	    timerFlag: function timerFlag(param) {
 	        if (param && param.tag) {
 	            if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
 	                //get SysTmr
@@ -22994,7 +22998,7 @@
 
 	        return -1;
 	    },
-	    processCmds: function (cmds) {
+	    processCmds: function processCmds(cmds) {
 	        // for (var i = 0; i < cmds.length; i++) {
 	        //     this.process(cmds[i]);
 	        // }
@@ -23003,7 +23007,7 @@
 	            this.process(cmds, 0);
 	        }
 	    },
-	    getParamValue: function (param) {
+	    getParamValue: function getParamValue(param) {
 	        var value;
 	        // if (param.tag && param.tag !== ''){
 	        //     value = this.getValueByTagName(param.tag);
@@ -23032,7 +23036,7 @@
 	        // console.log(value,param,(typeof param));
 	        return value;
 	    },
-	    process: function (cmds, index) {
+	    process: function process(cmds, index) {
 	        var cmdsLength = cmds.length;
 	        if (index >= cmdsLength) {
 	            return;
@@ -23420,7 +23424,7 @@
 	            this.process(cmds, index + nextStep.step);
 	        }
 	    },
-	    rwRegister: function (registerIdx, rwType) {
+	    rwRegister: function rwRegister(registerIdx, rwType) {
 	        var registers = this.state.registers;
 	        var register = registers[registerIdx];
 	        var tags = register.tags;
@@ -23456,7 +23460,7 @@
 	            });
 	        }
 	    },
-	    updateTag: function (curTagIdx, value) {
+	    updateTag: function updateTag(curTagIdx, value) {
 	        var tagList = this.state.tagList;
 	        if (curTagIdx >= 0 && curTagIdx < tagList.length) {
 	            // tagList[curTagIdx].value = value;
@@ -23466,12 +23470,12 @@
 	            });
 	        }
 	    },
-	    handleRegisterChange: function (key, value) {
+	    handleRegisterChange: function handleRegisterChange(key, value) {
 	        var registers = this.state.registers;
 	        registers[key].value = value;
 	        this.setState({ registers: registers });
 	    },
-	    render: function () {
+	    render: function render() {
 	        // console.log('registers',this.state.registers);
 	        return React.createElement(
 	            'div',
@@ -49761,18 +49765,20 @@
 /* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var React = __webpack_require__(1);
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState: function () {
+	    getInitialState: function getInitialState() {
 	        return {
 	            tagList: this.props.tagList || [],
 	            tagOldValue: '',
 	            curTagIdx: -1
 	        };
 	    },
-	    handleValueInputFocus: function (e) {
+	    handleValueInputFocus: function handleValueInputFocus(e) {
 	        var tagList = this.state.tagList;
 	        var curTagName = e.target.name;
 	        var curTagIdx = -1;
@@ -49784,7 +49790,7 @@
 	        }
 	        this.setState({ tagOldValue: e.target.value, curTagIdx: curTagIdx });
 	    },
-	    handleValueInputBlur: function (e) {
+	    handleValueInputBlur: function handleValueInputBlur(e) {
 	        var tagOldValue = this.state.tagOldValue;
 	        if (tagOldValue !== 'old') {
 	            //handle blur
@@ -49795,7 +49801,7 @@
 	            }
 	        }
 	    },
-	    handleValueInputEnter: function (e) {
+	    handleValueInputEnter: function handleValueInputEnter(e) {
 
 	        if (e.keyCode == 13) {
 	            //enter
@@ -49806,12 +49812,12 @@
 	            }
 	        }
 	    },
-	    updateTag: function (curTagIdx, value) {
+	    updateTag: function updateTag(curTagIdx, value) {
 	        if (this.props.updateTag && typeof this.props.updateTag == 'function') {
 	            this.props.updateTag(curTagIdx, value);
 	        }
 	    },
-	    handleValueInputChange: function (e) {
+	    handleValueInputChange: function handleValueInputChange(e) {
 	        if (this.state.curTagIdx != -1) {
 	            var curTag = this.state.tagList[this.state.curTagIdx];
 	            if (e.target.value == '') {
@@ -49823,11 +49829,11 @@
 	            this.setState({ curTag: curTag });
 	        }
 	    },
-	    componentWillReceiveProps: function (nextProps) {
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 
 	        this.setState({ tagList: nextProps.tagList });
 	    },
-	    render: function () {
+	    render: function render() {
 
 	        return React.createElement(
 	            'div',
@@ -49904,6 +49910,8 @@
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	/**
 	 * Created by ChangeCheng on 16/8/24.
 	 */
@@ -49911,13 +49919,13 @@
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState: function () {
+	    getInitialState: function getInitialState() {
 	        return {};
 	    },
-	    handleValueInputChange: function (key, e) {
+	    handleValueInputChange: function handleValueInputChange(key, e) {
 	        this.props.handleRegisterChange(key, Number(e.target.value));
 	    },
-	    render: function () {
+	    render: function render() {
 	        // console.log('curRegisters',this.props.registers);
 	        return React.createElement(
 	            'div',
@@ -49976,6 +49984,8 @@
 /* 165 */
 /***/ function(module, exports) {
 
+	'use strict';
+
 	var state = {
 	    notLoad: 'notLoad',
 	    willLoad: 'willLoad',
@@ -49989,6 +49999,8 @@
 /***/ },
 /* 166 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	/**
 	 * Created by ChangeCheng on 16/8/22.
@@ -50177,7 +50189,7 @@
 	    slices: [new KeyTexObj('', '', '', 'rgba(0,0,0,1.0)')]
 	};
 
-	var getInputKeyboard = function (width, height, offsetX, offsetY) {
+	var getInputKeyboard = function getInputKeyboard(width, height, offsetX, offsetY) {
 	    kWidth = width || kWidth;
 	    kHeight = height || kHeight;
 	    kOffsetX = offsetX || kOffsetX;
@@ -50230,6 +50242,8 @@
 /***/ },
 /* 167 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	/**
 	 * Created by ChangeCheng on 16/8/29.
@@ -50422,6 +50436,8 @@
 /* 168 */
 /***/ function(module, exports) {
 
+	'use strict';
+
 	/**
 	 * Created by ChangeCheng on 16/9/8.
 	 */
@@ -50451,6 +50467,8 @@
 /* 169 */
 /***/ function(module, exports) {
 
+	"use strict";
+
 	/**
 	 * Created by ChangeCheng on 2016/10/14.
 	 */
@@ -50458,55 +50476,55 @@
 
 	EasingFunctions = {
 	    // no easing, no acceleration
-	    linear: function (t) {
+	    linear: function linear(t) {
 	        return t;
 	    },
 	    // accelerating from zero velocity
-	    easeInQuad: function (t) {
+	    easeInQuad: function easeInQuad(t) {
 	        return t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutQuad: function (t) {
+	    easeOutQuad: function easeOutQuad(t) {
 	        return t * (2 - t);
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutQuad: function (t) {
+	    easeInOutQuad: function easeInOutQuad(t) {
 	        return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 	    },
 	    // accelerating from zero velocity
-	    easeInCubic: function (t) {
+	    easeInCubic: function easeInCubic(t) {
 	        return t * t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutCubic: function (t) {
+	    easeOutCubic: function easeOutCubic(t) {
 	        return --t * t * t + 1;
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutCubic: function (t) {
+	    easeInOutCubic: function easeInOutCubic(t) {
 	        return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
 	    },
 	    // accelerating from zero velocity
-	    easeInQuart: function (t) {
+	    easeInQuart: function easeInQuart(t) {
 	        return t * t * t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutQuart: function (t) {
+	    easeOutQuart: function easeOutQuart(t) {
 	        return 1 - --t * t * t * t;
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutQuart: function (t) {
+	    easeInOutQuart: function easeInOutQuart(t) {
 	        return t < .5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
 	    },
 	    // accelerating from zero velocity
-	    easeInQuint: function (t) {
+	    easeInQuint: function easeInQuint(t) {
 	        return t * t * t * t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutQuint: function (t) {
+	    easeOutQuint: function easeOutQuint(t) {
 	        return 1 + --t * t * t * t * t;
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutQuint: function (t) {
+	    easeInOutQuint: function easeInOutQuint(t) {
 	        return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
 	    }
 	};
@@ -50516,6 +50534,8 @@
 /***/ },
 /* 170 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	/**
 	 * Created by ChangeCheng on 2016/10/16.
