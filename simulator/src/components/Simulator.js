@@ -649,9 +649,10 @@ module.exports =   React.createClass({
             }
 
 
-            var direction = timer['SysTmr_'+num+'_Mode'];
+
 
             timer.timerID = setInterval(function () {
+                var direction = timer['SysTmr_'+num+'_Mode'];
                 //clock
                 if (direction >= 4) {
                     //decrease

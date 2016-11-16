@@ -20320,9 +20320,8 @@
 	                this.setTagByTag(targetTag, startValue);
 	            }
 
-	            var direction = timer['SysTmr_' + num + '_Mode'];
-
 	            timer.timerID = setInterval(function () {
+	                var direction = timer['SysTmr_' + num + '_Mode'];
 	                //clock
 	                if (direction >= 4) {
 	                    //decrease
@@ -50474,7 +50473,7 @@
 	 */
 	/* easing functions for animation */
 
-	EasingFunctions = {
+	var EasingFunctions = {
 	    // no easing, no acceleration
 	    linear: function linear(t) {
 	        return t;
@@ -50603,6 +50602,8 @@
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
+	    var curX = 0;
+	    var curY = 0;
 	    var rangeX = dstX - srcX;
 	    var rangY = dstY - srcY;
 	    var animationKey = setInterval(function () {

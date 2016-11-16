@@ -4,7 +4,7 @@
 /* easing functions for animation */
 
 
-EasingFunctions = {
+var EasingFunctions = {
     // no easing, no acceleration
     linear: function (t) { return t },
     // accelerating from zero velocity
