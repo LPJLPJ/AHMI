@@ -621,7 +621,7 @@ module.exports =   React.createClass({
             this.startNewTimer(timer, num, false);
         } else if (timer.timerID > 0) {
             //update timer
-            // clearInterval(timer.timerID);
+            clearInterval(timer.timerID);
             // timer.timerID = 0;
             this.startNewTimer(timer, num, true);
 
