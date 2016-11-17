@@ -78,6 +78,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     loadProject();
 
     //receiveGlobalProject();
+    readUserType();
 
     listenChange();
 
@@ -116,26 +117,32 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     }
 
     function readUserType(){
-        var url = window.location.href;
-        var url_splices = url.split('/');
-        var id = '';
-        for (var i=0;i<url_splices.length;i++){
-            if (url_splices[i] == 'project'){
-                id = url_splices[i+1]
-                //console.log(id)
-                break
-            }
-        }
+        //var url = window.location.href;
+        //var url_splices = url.split('/');
+        //var id = '';
+        //for (var i=0;i<url_splices.length;i++){
+        //    if (url_splices[i] == 'project'){
+        //        id = url_splices[i+1]
+        //        //console.log(id)
+        //        break
+        //    }
+        //}
+        //if(window.local){
+        //    UserTypeService.setUserType(false);
+        //}else{
+        //    $http({
+        //        method:'GET',
+        //        url:baseUrl+'/project/'+id+'/userType'
+        //    }).success(function(data){
+        //        UserTypeService.setUserType(data);
+        //    }).error(function(err){
+        //    })
+        //}
         if(window.local){
-            UserTypeService.setUserType(false);
+            UserTypeService.setUserType('basic');
         }else{
-            $http({
-                method:'GET',
-                url:baseUrl+'/project/'+id+'/userType'
-            }).success(function(data){
-                UserTypeService.setUserType(data);
-            }).error(function(err){
-            })
+            var userType=localStorage.getItem('userType');
+            UserTypeService.setUserType(userType);
         }
     }
 
@@ -210,7 +217,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 url:'/public/templates/defaultTemplate/defaultTemplate.json'
             }).success(function (tdata) {
                 console.log('get json success',tdata);
-                readUserType();
                 setTemplate(tdata,function(){
                     loadFromContent(data,id);
                 }.bind(this));
@@ -220,7 +226,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 console.log('get json failed');
             })
         }else{
-            readUserType();
             loadFromContent(data,id);
         }
 

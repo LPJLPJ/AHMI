@@ -29,7 +29,11 @@ loginAPI.post = function(req, res){
                             id:user._id,
                             username:username
                         };
-                        res.end('ok');
+                        var data={
+                            confirm:'ok',
+                            userType:user.type
+                        };
+                        res.send(data);
                     }else{
                         errHandler(res,500,'not match')
                     }

@@ -140,9 +140,10 @@ $(function(){
 			url:'/user/loginAPI',
 			data:userInfo,
 			success:function(data, status, xhr){
-                console.log(data)
-				if (data == 'ok'){
-                    console.log(dstURL)
+                console.log(data);
+				if (data.confirm == 'ok'){
+                    console.log(dstURL);
+					localStorage.setItem('userType',data.userType);
                     window.location.href=dstURL;
                     return;
                 }
