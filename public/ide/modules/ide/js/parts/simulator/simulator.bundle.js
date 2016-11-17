@@ -20322,6 +20322,7 @@
 
 	            timer.timerID = setInterval(function () {
 	                var direction = timer['SysTmr_' + num + '_Mode'];
+	                console.log(timer['SysTmr_' + num + '_Interval']);
 	                //clock
 	                if (direction >= 4) {
 	                    //decrease
