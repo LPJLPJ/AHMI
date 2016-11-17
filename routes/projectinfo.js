@@ -468,6 +468,29 @@ projectRoute.downloadProject = function (req, res) {
     }else{
         errHandler(res,500,'projectId error');
     }
-}
+};
+
+projectRoute.getUserType=function(req,res){
+    var projectId = req.params.id;
+    if(projectId!=""){
+        ProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'projectId error');
+            }else{
+                var userId=project.userId;
+                UserModel.findById(userId,function(err,user){
+                   if(err){
+                       errHandler(res,500,'userId error');
+                   }else{
+                       var userType=user.type;
+                       res.end(userType);
+                   }
+                });
+            }
+        });
+    }else{
+        errHandler(res,500,'projectId error');
+    }
+};
 
 module.exports = projectRoute;

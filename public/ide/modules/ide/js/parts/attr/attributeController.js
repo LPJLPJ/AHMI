@@ -5,12 +5,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     'Type', 'Preference',
     'ResourceService',
     'characterSetService',
-    'CanvasService','AnimationService', function ($scope,$timeout,
+    'CanvasService','AnimationService','UserTypeService', function ($scope,$timeout,
                                      ProjectService,
                                      Type, Preference,
 										  ResourceService,
                                           characterSetService,
-                                     CanvasService,AnimationService) {
+                                     CanvasService,AnimationService,UserTypeService) {
 
 	var initObject=null;
 
@@ -238,6 +238,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             changeTransitionName:changeTransitionName,
             changeTransitionDur:changeTransitionDur,
 		};
+        $scope.animationsDisabled=UserTypeService.getAnimationAuthor()
 	}
 
 	function initProject(){

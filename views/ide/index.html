@@ -89,6 +89,7 @@
 
     <script src="../../public/ide/modules/ide/js/parts/render/renderingX.bundle.js"></script>
     <script src="../../public/ide/modules/ide/js/parts/attr/animationService.js"></script>
+    <script src="../../public/ide/modules/ide/js/userType.js"></script>
 
 
     <!--controllers-->
@@ -565,7 +566,8 @@
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-options="transition.name as transition.show for transition in component.transitionMode"
                                     ng-model="component.transitionName"
-                                    ng-change="component.changeTransitionName()">
+                                    ng-change="component.changeTransitionName()"
+                                    ng-disabled="animationsDisabled">
                             </select>
                         </div>
 
@@ -575,7 +577,8 @@
                                    ng-model="component.object.level.transition.duration"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.changeTransitionDur($event)"
-                                   type="number">
+                                   type="number"
+                                   ng-disabled="animationsDisabled">
                         </div>
 
                         <div class="my-attr-item lg">
@@ -615,7 +618,8 @@
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-options="transition.name as transition.show for transition in component.transitionMode"
                                     ng-model="component.transitionName"
-                                    ng-change="component.changeTransitionName()">
+                                    ng-change="component.changeTransitionName()"
+                                    ng-disabled="animationsDisabled">
                             </select>
                         </div>
 
@@ -625,7 +629,8 @@
                                    ng-blur="component.restore()"
                                    ng-model="component.object.level.transition.duration"
                                    ng-keypress="component.changeTransitionDur($event)"
-                                   type="number">
+                                   type="number"
+                                   ng-disabled="animationsDisabled">
                         </div>
 
 
@@ -1325,7 +1330,8 @@
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-options="transition.name as transition.show for transition in component.transitionMode"
                                     ng-model="component.transition.Name"
-                                    ng-change="component.changeTransitionName()">
+                                    ng-change="component.changeTransitionName()"
+                                    ng-disabled="animationsDisabled">
                             </select>
                         </div>
 
@@ -1335,7 +1341,8 @@
                                    ng-blur="component.restore()"
                                    ng-model="component.object.level.transition.duration"
                                    ng-keypress="component.changeTransitionDur($event)"
-                                   type="number">
+                                   type="number"
+                                   ng-disabled="animationsDisabled">
                         </div>
                         
                         <div class="my-attr-item">
@@ -2182,11 +2189,11 @@
 
                 </div>
 
-                <!--Actions-->
+                <!--Animations-->
                 <div ng-controller="animationCtl" ng-show="showAnimationPanel">
                     <div>
                         <span class="dengPage-Action-Title">动画</span>
-                        <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)">
+                        <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)" id="addAnimationBtn">
                             添加新动画
                         </button>
                     </div>
@@ -2194,7 +2201,7 @@
                     <!--list of current actions-->
                     <div class="glyphicon" style="display: block" ng-click="collapse($event)"
                          ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"></div>
-                    <ul uib-collapse="status.collapsed " class="dengPage-Actionlist">
+                    <ul uib-collapse="status.collapsed " class="dengPage-Actionlist" id="animationUl">
                         <li ng-repeat="animation in animations" ng-click="openPanel($index)">
                             <span>{{animation.title}}</span><i class="iconfont" ng-click="deleteAnimation($index)">
                             &#xe627;</i>

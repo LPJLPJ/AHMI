@@ -157,6 +157,9 @@ router.route('/project/:id/generate')
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
 
+router.route('/project/:id/userType')
+    .get(projectInfo.getUserType);
+
 
 
 router.route('/project/create')
@@ -176,6 +179,7 @@ router.route('/project/:id/resources/:rid')
 
 router.route('/project/:id/deleteresource/:rid')
     .delete(uploadFile.deleteResource);
+
 
 router.route('/mail/sendverifymail')
     .post(sendMail.sendVerifyMail);

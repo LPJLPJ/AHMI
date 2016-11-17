@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 2016/10/19.
  */
-ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','AnimationService',function($scope,ProjectService,Type,$uibModal,AnimationService){
+ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','AnimationService','UserTypeService',function($scope,ProjectService,Type,$uibModal,AnimationService,UserTypeService){
     $scope.$on('GlobalProjectReceived',function(){
         initUserInterface();
         initProject();
@@ -9,7 +9,7 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
     function initUserInterface(){
         readAnimationInfo();
-        $scope.animationsEnabled = true;
+        setAnimationAuthor();
         $scope.status={
             collapsed:false,
         };
@@ -18,6 +18,11 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         }
     }
 
+    function setAnimationAuthor(){
+        var animationsDisabled=UserTypeService.getAnimationAuthor();
+        var animationBtn=document.getElementById('addAnimationBtn');
+        animationBtn.disabled=animationsDisabled;
+    }
     function readAnimationInfo(){
         if(!ProjectService.getCurrentSelectObject()){
             console.warn('空');
@@ -63,7 +68,7 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             }
 
             var modalInstance = $uibModal.open({
-                animation:$scope.animationsEnabled,
+                animation:true,
                 templateUrl:'animationPanelModal.html',
                 controller:'AnimationInstanceCtrl',
                 size:'middle',

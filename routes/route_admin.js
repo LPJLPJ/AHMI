@@ -23,7 +23,7 @@ Route_admin.getUsers = function (req, res) {
     var limit = parseInt(req.query.limit)||0;
     UserModel.fetchBatch(from,limit,function (err,users) {
         if (err){
-            errHandler(res,500,'fetch users error')
+            errHandler(res,500,'fetch user')
         }else{
             users.forEach(function (user) {
                 user.password = null;

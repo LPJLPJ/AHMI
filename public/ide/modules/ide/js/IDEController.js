@@ -34,14 +34,14 @@ console.log = (function (console) {
 
 
 var logs=[];
-ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService',
+ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService',
     function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
                                     ResourceService,
                                     TagService,
-                                    TemplateProvider,TimerService) {
+                                    TemplateProvider,TimerService,UserTypeService) {
 
     ideScope=$scope;
     $scope.ide={
@@ -115,6 +115,30 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         // readLocalProjectData();
     }
 
+    function readUserType(){
+        var url = window.location.href;
+        var url_splices = url.split('/');
+        var id = '';
+        for (var i=0;i<url_splices.length;i++){
+            if (url_splices[i] == 'project'){
+                id = url_splices[i+1]
+                //console.log(id)
+                break
+            }
+        }
+        if(window.local){
+            UserTypeService.setUserType(false);
+        }else{
+            $http({
+                method:'GET',
+                url:baseUrl+'/project/'+id+'/userType'
+            }).success(function(data){
+                UserTypeService.setUserType(data);
+            }).error(function(err){
+            })
+        }
+    }
+
     function readLocalProjectData() {
         var url = window.location.href;
         var projectId = url.split('?')[1].split('=')[1];
@@ -186,6 +210,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 url:'/public/templates/defaultTemplate/defaultTemplate.json'
             }).success(function (tdata) {
                 console.log('get json success',tdata);
+                readUserType();
                 setTemplate(tdata,function(){
                     loadFromContent(data,id);
                 }.bind(this));
@@ -195,6 +220,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 console.log('get json failed');
             })
         }else{
+            readUserType();
             loadFromContent(data,id);
         }
 
