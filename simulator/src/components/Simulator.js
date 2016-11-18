@@ -168,7 +168,7 @@ module.exports =   React.createClass({
         this.state.timerList = timerList;
 
 
-        console.log('timerList loaded', timerList);
+        // console.log('timerList loaded', timerList);
 
         /*init animation keys */
 
@@ -287,7 +287,7 @@ module.exports =   React.createClass({
         //this.load();
         this.state = _.cloneDeep(defaultSimulator);
         this.state.project = _.cloneDeep(this.props.projectData);
-        console.log('receive new project data', this.state.project)
+        // console.log('receive new project data', this.state.project)
         this.simState = {};
         this.initProject();
         window.inRawRect = this.inRawRect;
@@ -309,7 +309,7 @@ module.exports =   React.createClass({
         nextState.project = _.cloneDeep(newProps.projectData);
         this.setState(nextState,this.initProject);
         // this.initProject();
-        console.log('receive new project data', this.state.project)
+        // console.log('receive new project data', this.state.project)
 
     },
     drawLoadingProgress: function (total, currentValue, countDown, projectWidth, projectHeight) {
@@ -653,7 +653,7 @@ module.exports =   React.createClass({
 
             timer.timerID = setInterval(function () {
                 var direction = timer['SysTmr_'+num+'_Mode'];
-                console.log(timer['SysTmr_' + num + '_Interval'])
+                // console.log(timer['SysTmr_' + num + '_Interval'])
                 //clock
                 if (direction >= 4) {
                     //decrease
@@ -839,7 +839,7 @@ module.exports =   React.createClass({
         // }.bind(this))
     },
     scaleElement:function (target,scaleFactor) {
-        console.log('scaling element',target)
+        // console.log('scaling element',target)
         switch (target.type){
             case 'MyLayer':
                 this.scaleCanvas(target,scaleFactor);
@@ -1706,7 +1706,7 @@ module.exports =   React.createClass({
             seconds = (time2-hour*10000-minute*100);
             var realMonth = month - 1;
             curDate = new Date(year,realMonth,day,hour,minute,seconds);
-            console.log(year,realMonth,day,hour,minute,seconds,curDate)
+            // console.log(year,realMonth,day,hour,minute,seconds,curDate)
 
         }else{
 
@@ -2804,7 +2804,7 @@ module.exports =   React.createClass({
                         }
                         // this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
                         if (this.inRect(curCanvasRealPoint.x, curCanvasRealPoint.y, canvasList[i])) {
-                            console.log('inrect');
+                            // console.log('inrect');
                             targets.push(canvasList[i]);
                             canvases.push(canvasList[i]);
                         }
@@ -3492,7 +3492,7 @@ module.exports =   React.createClass({
         if (index>=cmdsLength){
             return;
         }else if (index<0){
-            console.log('processing error');
+            // console.log('processing error');
             return;
         }
 
