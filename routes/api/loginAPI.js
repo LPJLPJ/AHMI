@@ -19,24 +19,27 @@ loginAPI.post = function(req, res){
             if (user) {
                 if (!user.verified){
                     errHandler(res,500,'not verified');
+                    return;
                 }
                 user.comparePassword(password,function(err, isMatch){
                     if (err) {
                         errHandler(res,500,err);
-                    }
-                    if (isMatch) {
-                        req.session.user = {
-                            id:user._id,
-                            username:username
-                        };
-                        var data={
-                            confirm:'ok',
-                            userType:user.type
-                        };
-                        res.send(data);
                     }else{
-                        errHandler(res,500,'not match')
+                        if (isMatch) {
+                            req.session.user = {
+                                id:user._id,
+                                username:username
+                            };
+                            var data={
+                                confirm:'ok',
+                                userType:user.type
+                            };
+                            res.send(data);
+                        }else{
+                            errHandler(res,500,'not match')
+                        }
                     }
+
                 })
             }else{
 

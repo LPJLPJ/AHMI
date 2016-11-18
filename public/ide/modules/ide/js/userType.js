@@ -4,7 +4,7 @@
 ideServices.service('UserTypeService',[function(){
     var userType='basic';
     this.setUserType=function(type){
-        userType=type;
+        userType=type||'basic';
     };
 
     this.getUserType=function(){
