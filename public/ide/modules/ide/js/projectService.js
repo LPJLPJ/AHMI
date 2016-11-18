@@ -3300,7 +3300,7 @@ ideServices
 
                                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                                 // console.log('pageurl',''+currentPage.url,currentPage)
-                                setTestImg(''+currentPage.url)
+                                // setTestImg(''+currentPage.url)
                                 // window.currentPage = currentPage
                                 // _successCallback && _successCallback();
                                 _self.OnPageSelected(_pageIndex,_successCallback,true);
@@ -5247,7 +5247,7 @@ ideServices
                             currentLayer.url = currentSubLayer.url;
                             // console.log('sublayer url',''+currentSubLayer.url)
                             // console.log('layer',_.cloneDeep(layer))
-                            setTestImg(''+currentSubLayer.url)
+                            // setTestImg(''+currentSubLayer.url)
 
                             //sync layer node
                             self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
