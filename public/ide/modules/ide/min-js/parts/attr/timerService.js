@@ -1,0 +1,1 @@
+ideServices.service("TimerService",[function(){var e=null;this.setTimerNum=function(i){e=i},this.getTimerNum=function(){return e}}]);
