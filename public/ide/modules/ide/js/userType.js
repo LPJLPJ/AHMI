@@ -14,11 +14,13 @@ ideServices.service('UserTypeService',[function(){
     this.getAnimationAuthor=function(){
         var animationDisabled=false;
         switch(userType){
-            case 'basic':
-                animationDisabled=true;
+            case 'pro':
+            case 'ultimate':
+            case 'admin':
+                animationDisabled=false;
                 break;
             default:
-                animationDisabled=false;
+                animationDisabled=true;
                 break;
         }
         return animationDisabled;
