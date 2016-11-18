@@ -4,7 +4,7 @@
 ;(function () {
     window.onload = function () {
         var versionNum ='1.3';
-        window.ideVersion = versionNum ;
+        window.ideVersion = versionNum;
         var versionTag = document.createElement('div');
         versionTag.id = 'version-tag';
         versionTag.innerHTML = versionNum;
