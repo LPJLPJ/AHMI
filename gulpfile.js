@@ -8,7 +8,7 @@ var pump = require('pump');
 
 gulp.task('compress', function (cb) {
     pump([
-            gulp.src(['public/ide/modules/ide/js/**/*.js']),
+            gulp.src(['public/ide/modules/ide/js/**/*.js','!public/ide/modules/ide/js/parts/simulator/*.js']),
             stripDebug(),
             uglify(),
             gulp.dest('public/ide/modules/ide/min-js')

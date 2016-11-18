@@ -1,1 +1,1 @@
-ideServices.service("UserTypeService",[function(){var e="basic";this.setUserType=function(i){e=i||"basic"},this.getUserType=function(){return e},this.getAnimationAuthor=function(){var i=!1;switch(e){case"basic":i=!0;break;default:i=!1}return i}}]);
+ideServices.service("UserTypeService",[function(){var e="basic";this.setUserType=function(i){e=i||"basic"},this.getUserType=function(){return e},this.getAnimationAuthor=function(){var i=!1;switch(e){case"pro":case"ultimate":case"admin":i=!1;break;default:i=!0}return i}}]);

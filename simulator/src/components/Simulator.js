@@ -634,7 +634,7 @@ module.exports =   React.createClass({
         if ((timer['SysTmr_' + num + '_Mode'] & 1) == 1) {
             //start
             var loop = ((timer['SysTmr_' + num + '_Mode'] & 2) == 2);
-            console.log('start', loop);
+            // console.log('start', loop);
             // timer['SysTmr_'+num+'_CurVal'] = timer['SysTmr_'+num+'_Start'];
             var targetTag = this.findTagByName('SysTmr_' + num + '_t');
             var startValue = timer['SysTmr_' + num + '_Start'];
@@ -2146,7 +2146,7 @@ module.exports =   React.createClass({
         //console.log(tempNumValue);
         //配置小数位数
         if (parseInt(decimalCount) > 0) {
-            tempNumValuePair = tempNumValue.split('.')
+            var tempNumValuePair = tempNumValue.split('.')
             if (tempNumValuePair.length > 1) {
                 //has original fraction
                 tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempNumValuePair[1], decimalCount, 0, false)
