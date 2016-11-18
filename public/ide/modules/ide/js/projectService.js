@@ -136,8 +136,8 @@ ideServices
                     this.renderUrlInPage(self, cb);
                 });
 
-                this.on('OnRefresh',function () {
-                    this.refresh();
+                this.on('OnRefresh',function (cb) {
+                    this.refresh(cb);
                 })
             },
             toObject: function () {
@@ -145,7 +145,8 @@ ideServices
             },
             _render: function (ctx) {
                 // console.log('rendering my layer')
-                this.loadAll(this.id);
+                // this.loadAll(this.id);
+                // console.log('1',JSON.stringify(this.backgroundImg))
                 try{
                     ctx.fillStyle =this.backgroundColor;
                     ctx.fillRect(
@@ -174,8 +175,10 @@ ideServices
 
                     }
 
+                    // var elem = this.backgroundImg.element;
+                    // console.log('2',elem && elem.src)
                     if(this.backgroundImg.element){
-                        // console.log('drawing background element')
+                        // console.log('drawing background element',this.backgroundImg.element)
                         ctx.drawImage(this.backgroundImg.element,
                             this.backgroundImg.left,
                             this.backgroundImg.top,
@@ -192,7 +195,7 @@ ideServices
             }
         });
 
-        fabric.MyLayer.prototype.loadAll= function (layerId) {
+        fabric.MyLayer.prototype.loadAll= function (layerId,cb) {
 
             var backgroundImg = new Image();
             var layerNode=getFabricObject(layerId);
@@ -218,6 +221,8 @@ ideServices
                     this.loaded = true;
                     this.setCoords();
                     this.fire('image:loaded');
+                    // console.log('img loaded')
+                    cb && cb()
                 }).bind(this);
                 backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
             }
@@ -235,13 +240,18 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
-        fabric.MyLayer.prototype.refresh = function () {
+        fabric.MyLayer.prototype.refresh = function (cb) {
+            // console.log('refreshing')
             if (this.id){
-                this.loadAll(this.id);
+                this.loadAll(this.id,function () {
+                    var pageNode = CanvasService.getPageNode();
+                    pageNode.renderAll();
+                    cb && cb();
+                });
             }
         }
         fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
-
+            // console.log('rendering url in page')
 
             var currentLayer=getLevelById(self.id);
             var backgroundImg = new Image();
@@ -3276,10 +3286,12 @@ ideServices
                     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
                         //pageNode.setWidth(project.currentSize.width);
                         //pageNode.setHeight(project.currentSize.height);
+                        console.log(currentPage.proJsonStr)
                         if (isInit){
                             // console.log('init layer');
                             updateLayerImage(0,function () {
                                 _self.ScaleCanvas('page');
+                                // console.log('currentPage',_.cloneDeep(currentPage))
 
                                 // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
                                 pageNode.deactivateAll();
@@ -3288,6 +3300,7 @@ ideServices
 
                                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                                 // console.log('pageurl',''+currentPage.url,currentPage)
+                                setTestImg(''+currentPage.url)
                                 // window.currentPage = currentPage
                                 // _successCallback && _successCallback();
                                 _self.OnPageSelected(_pageIndex,_successCallback,true);
@@ -3313,6 +3326,7 @@ ideServices
                 });
 
                 function updateLayerImage(_index,_successCallback) {
+                    // console.log('updating layer image')
                     if (_index==pageCount){
                         _successCallback&&_successCallback();
                     }else {
@@ -5146,6 +5160,20 @@ ideServices
             }
         };
         var renderingSubLayer=false;
+        /**
+         *
+         */
+
+        this.getFabLayerByLayer = function (layer) {
+            var fabLayer = null;
+            var pageNode = CanvasService.getPageNode();
+            _.forEach(pageNode.getObjects(), function (_fabObj) {
+                if (_fabObj.id == layer.id) {
+                    fabLayer = _fabObj;
+                }
+            });
+            return fabLayer;
+        }
 
         /**
          * 次要操作
@@ -5161,6 +5189,7 @@ ideServices
                 return;
             }
             renderingSubLayer=true;
+            var self = this;
             var subLayerNode=CanvasService.getSubLayerNode();
             var currentSubLayer=subLayer;
             var currentLayer=layer;
@@ -5182,9 +5211,11 @@ ideServices
 
 
                         currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
-                        renderingSubLayer=false;
-
-                        _successCallback && _successCallback();
+                        // console.log(JSON.stringify(layer));
+                        self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+                            renderingSubLayer = false;
+                            _successCallback && _successCallback();
+                        })
                     },{
                         width:currentLayer.info.width,
                         height:currentLayer.info.height
@@ -5204,17 +5235,27 @@ ideServices
 
                             //subLayerNode.setWidth(currentLayer.info.width);
                             //subLayerNode.setHeight(currentLayer.info.height);
+                            // console.log('showing sublayer')
                             _self.ScaleCanvas('subCanvas',currentLayer);
 
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
                             currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                            // console.log('sublayer',_.cloneDeep(currentSubLayer.proJsonStr));
                             // console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
                             currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+                            currentLayer.url = currentSubLayer.url;
                             // console.log('sublayer url',''+currentSubLayer.url)
+                            // console.log('layer',_.cloneDeep(layer))
+                            setTestImg(''+currentSubLayer.url)
 
-                            renderingSubLayer = false;
-                            _successCallback && _successCallback();
+                            //sync layer node
+                            self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+                                renderingSubLayer = false;
+                                _successCallback && _successCallback();
+                            })
+
+
                         });
                     })
                 });
