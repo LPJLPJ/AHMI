@@ -1,7 +1,6 @@
 
 ideServices
 
-
     .service('CanvasService', [function () {
         var pageNode=null;
         this.setPageNode= function (_node) {
@@ -18,7 +17,7 @@ ideServices
         };
         this.getSubLayerNode= function () {
             return subLayerNode;
-        }
+        };
 
 
         //offcanvas
@@ -26,7 +25,7 @@ ideServices
         this.setOffCanvas = function (_offCanvas) {
             offCanvas = _offCanvas;
 
-        }
+        };
         this.getOffCanvas = function () {
             return offCanvas;
         }

@@ -125,7 +125,7 @@
 
 
     <!--build-->
-    <!--services-->
+    <!--&lt;!&ndash;services&ndash;&gt;-->
     <!--<script src="../../public/ide/modules/ide/js/projectService.js"></script>-->
     <!--<script src="../../public/ide/modules/ide/min-js/Type.js"></script>-->
     <!--<script src="../../public/ide/js/global.js"></script>-->
@@ -1463,6 +1463,15 @@
                             </select>
                         </div>
                         <div class="my-attr-item lg">
+                            <span class="my-attr-title">方向</span>
+
+                            <select class="my-attr-number-input form-control" ng-model="component.num.arrangeModel"
+                                    ng-change="component.num.enterArrange($event)">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">竖直</option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
                             <span class="my-attr-title">数字值</span>
                             <input class="my-attr-number-input form-control"
                                    type="number"
@@ -1512,6 +1521,15 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">方向</span>
+
+                            <select class="my-attr-number-input form-control" ng-model="component.textArea.arrangeModel"
+                                    ng-change="component.textArea.enterArrange($event)">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">竖直</option>
+                            </select>
                         </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">文本</span>
