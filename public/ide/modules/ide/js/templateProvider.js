@@ -597,8 +597,9 @@ ideServices
                 overFlowStyle:'0',//指数字大于最大值时是否继续显示,0不显示，1显示
 
                 align:'center',//数字对齐方式
+                arrange:'horizontal',//数字方向，垂直vertical，水平horizontal
 
-                arrange:true,         //true:横向 false:竖向
+                //arrange:true,         //true:横向 false:竖向
                 numValue:1,
                 fontFamily:'宋体',
                 fontSize:30,

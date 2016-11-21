@@ -161,7 +161,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterOverFlowStyle:enterOverFlowStyle,
 
                 enterNumValue:enterNumValue,
-                changeNumAlign:changeNumAlign
+                changeNumAlign:changeNumAlign,
+                enterArrange:enterArrange
             },
 
             //旋钮
@@ -425,6 +426,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
                     $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
                     $scope.component.num.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
+                    $scope.component.num.arrangeModel=$scope.component.object.level.info.arrange;
                     if((typeof $scope.component.object.level.transition)!='object'){
                         ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
                         $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
@@ -1061,7 +1063,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
         }else if(selectObj.type==Type.MySlideBlock){
             selectArrange=$scope.component.slideBlock.arrangeModel;
-        } else {
+        } else if(selectObj.type==Type.MyNum){
+            selectArrange=$scope.component.num.arrangeModel;
+        }else{
             return;
         }
 
