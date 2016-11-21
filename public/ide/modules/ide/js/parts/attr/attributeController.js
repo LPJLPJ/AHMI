@@ -126,7 +126,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 selectCharacterSetByIndex:selectCharacterSetByIndex,
                 selectCharacterSetByName:selectCharacterSetByName,
                 addCharacterSet:addCharacterSet,
-                deleteCharacterSetByIndex:deleteCharacterSetByIndex
+                deleteCharacterSetByIndex:deleteCharacterSetByIndex,
+                enterArrange:enterArrange
             },
             num:{
                 numModeId:'0',//代表切换模式。0:普通模式 1:动画模式
@@ -383,6 +384,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }
                     break;
                 case Type.MyTextArea:
+                    $scope.component.textArea.arrangeModel=$scope.component.object.level.info.arrange;
                     break;
                 case Type.MyKnob:
                     if ($scope.component.object.level.backgroundImg==''){
@@ -1065,7 +1067,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectArrange=$scope.component.slideBlock.arrangeModel;
         } else if(selectObj.type==Type.MyNum){
             selectArrange=$scope.component.num.arrangeModel;
-        }else{
+        }else if(selectObj.type==Type.MyTextArea){
+            selectArrange=$scope.component.textArea.arrangeModel;
+        } else{
             return;
         }
 

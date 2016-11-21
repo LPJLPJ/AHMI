@@ -2054,10 +2054,33 @@ ideServices
                     _callback&&_callback();
 
                 });
-
-
-
-
+                this.on('changeArrange',function(arg){
+                    var _callback=arg.callback;
+                    var selectObj=_self.getCurrentSelectObject();
+                    self.initValue=arg.initValue;
+                    if(arg.arrange=='vertical'){
+                        self.setAngle(90);
+                        self.set({
+                            originY:'bottom'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getHeight());
+                        selectObj.level.info.height=Math.round(self.getWidth());
+                    }else if(arg.arrange=='horizontal'){
+                        self.setAngle(0);
+                        self.set({
+                            originY:'top'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getWidth());
+                        selectObj.level.info.height=Math.round(self.getHeight());
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2207,7 +2230,6 @@ ideServices
                         selectObj.level.info.width=Math.round(self.getWidth());
                         selectObj.level.info.height=Math.round(self.getHeight());
                     }
-                    console.log(selectObj.level.info.top,selectObj.level.info.left,selectObj.level.info.width,selectObj.level.info.height);
                     var subLayerNode=CanvasService.getSubLayerNode();
                     subLayerNode.renderAll();
                     _callback&&_callback();

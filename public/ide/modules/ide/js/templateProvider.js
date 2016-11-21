@@ -418,7 +418,8 @@ ideServices
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
 
-                arrange:true,         //true:横向 false:竖向
+                arrange:"horizontal",   //horizontal:水平   vertical:竖直
+
                 text:'文本',
                 fontName:'正文',
                 fontFamily:'宋体',
