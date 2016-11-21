@@ -126,7 +126,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 selectCharacterSetByIndex:selectCharacterSetByIndex,
                 selectCharacterSetByName:selectCharacterSetByName,
                 addCharacterSet:addCharacterSet,
-                deleteCharacterSetByIndex:deleteCharacterSetByIndex
+                deleteCharacterSetByIndex:deleteCharacterSetByIndex,
+                enterArrange:enterArrange
             },
             num:{
                 numModeId:'0',//代表切换模式。0:普通模式 1:动画模式
@@ -161,7 +162,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterOverFlowStyle:enterOverFlowStyle,
 
                 enterNumValue:enterNumValue,
-                changeNumAlign:changeNumAlign
+                changeNumAlign:changeNumAlign,
+                enterArrange:enterArrange
             },
 
             //旋钮
@@ -382,6 +384,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }
                     break;
                 case Type.MyTextArea:
+                    $scope.component.textArea.arrangeModel=$scope.component.object.level.info.arrange;
                     break;
                 case Type.MyKnob:
                     if ($scope.component.object.level.backgroundImg==''){
@@ -425,6 +428,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
                     $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
                     $scope.component.num.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
+                    $scope.component.num.arrangeModel=$scope.component.object.level.info.arrange;
                     if((typeof $scope.component.object.level.transition)!='object'){
                         ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
                         $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
@@ -1061,7 +1065,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
         }else if(selectObj.type==Type.MySlideBlock){
             selectArrange=$scope.component.slideBlock.arrangeModel;
-        } else {
+        } else if(selectObj.type==Type.MyNum){
+            selectArrange=$scope.component.num.arrangeModel;
+        }else if(selectObj.type==Type.MyTextArea){
+            selectArrange=$scope.component.textArea.arrangeModel;
+        } else{
             return;
         }
 

@@ -2054,10 +2054,33 @@ ideServices
                     _callback&&_callback();
 
                 });
-
-
-
-
+                this.on('changeArrange',function(arg){
+                    var _callback=arg.callback;
+                    var selectObj=_self.getCurrentSelectObject();
+                    self.initValue=arg.initValue;
+                    if(arg.arrange=='vertical'){
+                        self.setAngle(90);
+                        self.set({
+                            originY:'bottom'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getHeight());
+                        selectObj.level.info.height=Math.round(self.getWidth());
+                    }else if(arg.arrange=='horizontal'){
+                        self.setAngle(0);
+                        self.set({
+                            originY:'top'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getWidth());
+                        selectObj.level.info.height=Math.round(self.getHeight());
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
             },
             toObject: function () {
                 return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2153,6 +2176,7 @@ ideServices
                 this.fontBold=level.info.fontBold;
                 this.fontItalic=level.info.fontItalic;
                 this.align=level.info.align;
+                this.arrange=level.info.arrange;
                 //下面位数字模式属性
                 this.numOfDigits=level.info.numOfDigits;
                 this.decimalCount=level.info.decimalCount;
@@ -2163,7 +2187,6 @@ ideServices
                     this.setWidth(this.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
                     this.setHeight(this.fontSize*1.2);
                 }
-
 
                 this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.backgroundImageElement) {
@@ -2183,6 +2206,33 @@ ideServices
                     subLayerNode.renderAll();
                     _callback&&_callback();
 
+                });
+                this.on('changeArrange',function(arg){
+                    var _callback=arg.callback;
+                    var selectObj=_self.getCurrentSelectObject();
+                    self.initValue=arg.initValue;
+                    if(arg.arrange=='vertical'){
+                        self.setAngle(90);
+                        self.set({
+                            originY:'bottom'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getHeight());
+                        selectObj.level.info.height=Math.round(self.getWidth());
+                    }else if(arg.arrange=='horizontal'){
+                        self.setAngle(0);
+                        self.set({
+                            originY:'top'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getWidth());
+                        selectObj.level.info.height=Math.round(self.getHeight());
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
                 });
 
                 this.on('changeNumContent', function (arg) {
@@ -5724,6 +5774,10 @@ ideServices
         };
         this.ChangeAttributeArrange= function (_option, _successCallback) {
             var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.arrange=selectObj.level.info.arrange||'horizontal';
+            if(selectObj.level.info.arrange==_option.arrange){
+                return;
+            }
             selectObj.level.info.arrange=_option.arrange;
             var arg={
                 arrange:_option.arrange,
