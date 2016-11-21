@@ -1362,7 +1362,7 @@ module.exports =   React.createClass({
         var width = info.width;
         var height = info.height;
         var bgSlice = widget.texList[0].slices[0];
-        var arrange = (info.arrange === 'vertical') || 'horizontal';
+        var arrange = info.arrange === 'vertical'?'vertical': 'horizontal';
         this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
         //draw text
         if (info.text){
@@ -2021,8 +2021,8 @@ module.exports =   React.createClass({
         var curHeight = widget.info.height;
 
         //arrange
-        var arrange = (widget.info.arrange === 'vertical')||'horizontal';
-        console.log(arrange)
+        var arrange = widget.info.arrange === 'vertical'?'vertical':'horizontal';
+        // console.log(arrange)
 
         var tempcanvas = this.refs.tempcanvas;
         // if (arrange == 'vertical'){
@@ -2167,7 +2167,7 @@ module.exports =   React.createClass({
         var arrange = _arrange || 'horizontal';
 
         tempCtx.save()
-        console.log('arrange',arrange)
+        // console.log('arrange',arrange)
         if (arrange==='vertical'){
             tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
             tempCtx.rotate(Math.PI/2);
