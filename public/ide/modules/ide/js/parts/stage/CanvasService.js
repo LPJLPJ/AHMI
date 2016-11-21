@@ -1,7 +1,6 @@
 
 ideServices
-
-
+    
     .service('CanvasService', [function () {
         var pageNode=null;
         this.setPageNode= function (_node) {
