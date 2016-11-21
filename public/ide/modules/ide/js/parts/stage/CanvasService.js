@@ -17,7 +17,7 @@ ideServices
         };
         this.getSubLayerNode= function () {
             return subLayerNode;
-        }
+        };
 
 
         //offcanvas
@@ -25,7 +25,7 @@ ideServices
         this.setOffCanvas = function (_offCanvas) {
             offCanvas = _offCanvas;
 
-        }
+        };
         this.getOffCanvas = function () {
             return offCanvas;
         }
