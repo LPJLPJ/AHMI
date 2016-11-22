@@ -229,6 +229,13 @@ var TextSlice = exports.TextSlice = function (_Slice) {
             // console.log(this.offsetPos);
             ctx.fillStyle = this.style.color;
             ctx.strokeStyle = this.style.color;
+            if (this.style.arrange&&this.style.arrange==='vertical'){
+                //vertical
+                //this.size.w this.size.h
+                ctx.translate(this.size.w/2,this.size.h/2);
+                ctx.rotate(Math.PI/2);
+                ctx.translate(-this.size.w/2,-this.size.h/2);
+            }
             if (this.fillOrStroke) {
                 ctx.fillText(this.text, this.offsetPos.x, this.offsetPos.y);
             } else {

@@ -1362,6 +1362,7 @@ module.exports =   React.createClass({
         var width = info.width;
         var height = info.height;
         var bgSlice = widget.texList[0].slices[0];
+        var arrange = info.arrange === 'vertical'?'vertical': 'horizontal';
         this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
         //draw text
         if (info.text){
@@ -1372,11 +1373,11 @@ module.exports =   React.createClass({
             font['font-size'] = info.fontSize;
             font['font-family'] = info.fontFamily;
             font['font-color']=info.fontColor;
-            this.drawTextByTempCanvas(curX,curY,width,height,info.text,font);
+            this.drawTextByTempCanvas(curX,curY,width,height,info.text,font,arrange);
         }
         cb && cb();
     },
-    drawTextByTempCanvas:function (curX,curY,width,height,text,font) {
+    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange) {
 
         var text = text||'';
         var font = font||{};
@@ -1388,6 +1389,12 @@ module.exports =   React.createClass({
         tempcanvas.height = height;
         var tempctx = tempcanvas.getContext('2d');
         tempctx.save();
+        if (arrange==='vertical'){
+            tempctx.translate(tempcanvas.width/2,tempcanvas.height/2);
+            tempctx.rotate(Math.PI/2);
+            tempctx.translate(-tempcanvas.width/2,-tempcanvas.height/2);
+            // tempctx.translate(0,-tempcanvas.width)
+        }
         tempctx.clearRect(0,0,width,height);
         tempctx.textAlign = font.textAlign||'center';
         tempctx.textBaseline = font.textBaseline||'middle';
@@ -1912,13 +1919,14 @@ module.exports =   React.createClass({
     drawNumber: function (curX, curY, widget, options,cb) {
         // console.log(widget);
         var needDrawNumber = false;
+        var numberTag;
         //handle initial number
         if (this.pageOnload == false) {
             //show init number ?
             if (widget.info.noInit == false) {
                 //init, draw
                 needDrawNumber = true;
-                var numberTag = this.findTagByName(widget.tag);
+                numberTag = this.findTagByName(widget.tag);
 
                 if (numberTag) {
                     // numberTag.value = widget.info.initValue
@@ -1939,7 +1947,7 @@ module.exports =   React.createClass({
 
             //find current number
 
-            var numberTag = this.findTagByName(widget.tag);
+            numberTag = this.findTagByName(widget.tag);
 
             var currentValue = 0;
             if (numberTag) {
@@ -2012,7 +2020,26 @@ module.exports =   React.createClass({
         var curWidth = widget.info.width;
         var curHeight = widget.info.height;
 
+        //arrange
+        var arrange = widget.info.arrange === 'vertical'?'vertical':'horizontal';
+        // console.log(arrange)
+
         var tempcanvas = this.refs.tempcanvas;
+        // if (arrange == 'vertical'){
+        //     tempcanvas.width = curHeight;
+        //     tempcanvas.height = curWidth;
+        //
+        //     // tempcanvas.width = curHeight;
+        //     // tempcanvas.height = curWidth;
+        //     // tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
+        //     // tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
+        //
+        //
+        // }else{
+        //     tempcanvas.width = curWidth;
+        //     tempcanvas.height = curHeight;
+        // }
+
         tempcanvas.width = curWidth;
         tempcanvas.height = curHeight;
         var tempCtx = tempcanvas.getContext('2d');
@@ -2027,9 +2054,14 @@ module.exports =   React.createClass({
 
         widget.oldValue = widget.oldValue || 0;
         var shouldHandleAlarmAction = false;
-
+        var tempNumValue='';
         if (curValue != undefined && curValue != null) {
-            //offCtx.save();
+            // offctx.save();
+            // if (arrange==='vertical'){
+            //     offctx.translate(offcanvas.width/2,offcanvas.height/2);
+            //     offctx.rotate(Math.PI/2);
+            //     offctx.translate(-offcanvas.width/2,-offcanvas.height/2);
+            // }
             //handle action before
             if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
                 return;
@@ -2038,7 +2070,7 @@ module.exports =   React.createClass({
             if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
 
-                var tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
 
 
                 //drawbackground
@@ -2053,8 +2085,8 @@ module.exports =   React.createClass({
                 // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
                 // // tempCtx.fillText(tempNumValue,0,)
                 // tempCtx.restore()
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempCtx)
-                offctx.drawImage(tempcanvas, curX, curY, curWidth, curHeight)
+                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height)
                 //offCtx.restore();
 
 
@@ -2067,15 +2099,30 @@ module.exports =   React.createClass({
                 var bgTex = widget.texList[0].slices[0]
                 var totalFrameNum = 10
                 // //draw
-                var tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempCtx)
-                var oldHeight = (totalFrameNum - widget.curFrameNum) * 1.0 / totalFrameNum * curHeight
-                offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+                var oldHeight=0;
+                var oleWidth=0;
+                if (arrange==='horizontal'){
+                    tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                    oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight
+                    offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
 
-                var tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempCtx)
-                var oldHeight = widget.curFrameNum * 1.0 / totalFrameNum * curHeight
-                offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
+                    tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                    oldHeight = widget.curFrameNum  / totalFrameNum * curHeight
+                    offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
+                }else{
+                    tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                    oldWidth = (totalFrameNum - widget.curFrameNum)  / totalFrameNum * curWidth
+                    offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+
+                    tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                    oldWidth = widget.curFrameNum  / totalFrameNum * curWidth;
+                    offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                }
+
 
                 // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
 
@@ -2101,6 +2148,9 @@ module.exports =   React.createClass({
             }
 
 
+            // offctx.restore();
+
+
         }
 
         cb && cb();
@@ -2112,9 +2162,23 @@ module.exports =   React.createClass({
         }
 
     },
-    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempCtx) {
-        tempCtx.clearRect(0, 0, curWidth, curHeight);
+    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempcanvas,_arrange) {
+        var tempCtx = tempcanvas.getContext('2d');
+        var arrange = _arrange || 'horizontal';
+
         tempCtx.save()
+        // console.log('arrange',arrange)
+        if (arrange==='vertical'){
+            tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
+            tempCtx.rotate(Math.PI/2);
+            tempCtx.translate(-tempcanvas.width/2,-tempcanvas.height/2);
+            // tempCtx.translate(0,-tempcanvas.width)
+        }
+
+
+
+
+        // tempCtx.fillRect(tempcanvas.width/2,tempcanvas.height/2,10,5)
         //this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
         //tempCtx.globalCompositeOperation = "destination-in";
         // console.log(tempNumValue);
@@ -2123,14 +2187,14 @@ module.exports =   React.createClass({
         tempCtx.font=font;
         switch(tempCtx.textAlign){
             case 'left':
-                tempCtx.fillText(tempNumValue, 0, curHeight / 2 );
+                tempCtx.fillText(tempNumValue, 0, tempcanvas.height / 2 );
                 break;
             case 'right':
-                tempCtx.fillText(tempNumValue, curWidth , curHeight / 2 );
+                tempCtx.fillText(tempNumValue, tempcanvas.width , tempcanvas.height / 2 );
                 break;
             case 'center':
             default :
-                tempCtx.fillText(tempNumValue, curWidth / 2, curHeight / 2 );
+                tempCtx.fillText(tempNumValue, tempcanvas.width / 2, tempcanvas.height / 2 );
                 break;
         }
         // tempCtx.fillText(tempNumValue,0,)
