@@ -6,7 +6,7 @@
         var versionNum ='1.3';
         window.ideVersion =  versionNum;
         var versionTag = document.createElement('div');
-        versionTag.id = 'version-tag';
+        versionTag.id = 'version-tag' ;
         versionTag.innerHTML = versionNum;
         versionTag.setAttribute('style',"position:fixed;right:5px;bottom:10%;padding:0.2em;font:24px helvetica arial;z-index:99");
         var body = document.body;
