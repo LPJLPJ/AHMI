@@ -91,6 +91,7 @@
                     showLeft:showLeft,
                     showRight:showRight,
                     showBottom:showBottom,
+                    rotateCanvasLeft:rotateCanvasLeft,
                     rotateCanvasRight:rotateCanvasRight
                 },
                 simulator:{
@@ -134,9 +135,21 @@
             $scope.$emit('ChangeShownArea',2);
         }
 
+        function rotateCanvasLeft(){
+            var c = document.getElementById('c');
+            var backgroundCanvas = document.getElementById('backgroundCanvas');
+            var c1 = document.getElementById('c1');
+            c.style.cssText="transform:rotate(270deg);left:0;top:0";
+            backgroundCanvas.style.cssText="transform:rotate(270deg);left:0;top:0";
+            c1.style.cssText="transform:rotate(270deg);left:0;top:0";
+        }
         function rotateCanvasRight(){
-            var canvas = document.getElementById('c');
-
+            var c = document.getElementById('c');
+            var backgroundCanvas = document.getElementById('backgroundCanvas');
+            var c1 = document.getElementById('c1');
+            c.style.cssText="transform:rotate(0deg);left:0;top:0";
+            backgroundCanvas.style.cssText="transform:rotate(0deg);left:0;top:0";
+            c1.style.cssText="transform:rotate(0deg);left:0;top:0";
         }
 
         //listen for nw.win.close
