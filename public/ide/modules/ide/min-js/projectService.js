@@ -1,4 +1,7648 @@
-var projectRecord=[],ideServices=angular.module("IDEServices",["ngFileUpload"]);ideServices.service("ProjectService",["$rootScope","$timeout","CanvasService","GlobalService","Preference","TemplateProvider","ViewService","Type","ResourceService",function(e,t,i,r,n,a,o,l,s){function c(e){var t=_.cloneDeep(e);return t.id=Math.random().toString(36).substr(2),t&&t.info&&(t.info.left+=10,t.info.top+=10),_.forEach(t.subLayers,function(e){e.id=Math.random().toString(36).substr(2);var t=e.proJsonStr;_.forEach(t.objects,function(t){_.forEach(e.widgets,function(e){if(e.id==t.id){var i=Math.random().toString(36).substr(2);e.id=i,t.id=i}})}),e.proJsonStr=t}),t}function h(e){var t=_.cloneDeep(e);t.id=Math.random().toString(36).substr(2),t.mode=0;var i=t.proJsonStr;return _.forEach(i.objects,function(e){_.forEach(t.layers,function(t){if(t.id==e.id){var i=Math.random().toString(36).substr(2);t.id=i,e.id=i}})}),t.proJsonStr=i,_.forEach(t.layers,function(e){_.forEach(e.subLayers,function(e){e.id=Math.random().toString(36).substr(2);var t=e.proJsonStr;_.forEach(t.objects,function(t){_.forEach(e.widgets,function(e){if(e.id==t.id){var i=Math.random().toString(36).substr(2);e.id=i,t.id=i}})}),e.proJsonStr=t})}),t}function g(e){var t=_.cloneDeep(e),i=Math.random().toString(36).substr(2);return t.id=i,t&&t.info&&(t.info.left+=5,t.info.top+=5),t}function u(){_.forEach(L.pages,function(e){e.$$hashKey=void 0})}function d(e,t){if(e&&e.type==l.MyGroup){var r=null;r=t?i.getSubLayerNode():i.getPageNode();var n=[];if(r.forEachObject(function(t){_.forEach(e.getObjects(),function(e){e.id==t.id&&n.push(t)})}),n.length==e.getObjects().length){var a=new fabric.Group(n,{canvas:r});return a}return e}}function f(e,t){var i=!1;return"group"!=t.type?i:(_.forEach(t.getObjects(),function(t){t.id==e.id&&(i=!0)}),i)}function b(e,t,i){for(var r=null;e>360;)e-=360;for(;e<0;)e+=360;return e>=0&&e<=90?r=Math.atan(Math.tan(e*Math.PI/180)*(i/t)):e>90&&e<=180?(r=Math.atan(Math.tan((e-90)*Math.PI/180)*(t/i)),r+=Math.PI/2):e>180&&e<=270?(r=Math.atan(Math.tan((e-180)*Math.PI/180)*(i/t)),r+=Math.PI):e>270&&e<=360&&(r=Math.atan(Math.tan((e-270)*Math.PI/180)*(t/i)),r+=3*Math.PI/2),r}function m(e,t,i){var r=e.slice(5,e.length-1).split(","),n=t.slice(5,t.length-1).split(","),a=parseInt(r[0]),o=parseInt(r[1]),l=parseInt(r[2]),s=(parseInt(r[3]),parseInt(n[0])),c=parseInt(n[1]),h=parseInt(n[2]),g=(parseInt(n[3]),parseInt(a+(s-a)*i)),u=parseInt(o+(c-o)*i),d=parseInt(l+(h-l)*i),f=1;return"rgba("+g+","+u+","+d+","+f+")"}function y(e,t,i,r,n,a,o,l,s,c,h){var g=n/s.scaleX,u=a/s.scaleY,d=o/s.scaleX,f=l/s.scaleY,b=Math.floor((i-g)/d)+1,m=Math.floor((r-u)/f)+1;if(c.save(),c.translate(e,t),c.beginPath(),c.save(),c.translate(g,0),s&&s.grid&&"1"==s.grid||"3"==s.grid){c.textAlign="center",c.textBaseline="top",c.fillStyle="rgba(255,255,255,1)",c.font="10px";for(var y=s.gridInitValue+(b-1)*s.gridUnitX,p=Math.floor(c.measureText(y).width/(2*o/3))+1,v=0;v<b;v++){var S=v*d,I=s.gridInitValue+v*s.gridUnitX;c.moveTo(S,0),c.lineTo(S,r-u),v%p==0&&(c.scale(1/s.scaleX,1/s.scaleY),c.fillText(I,S*s.scaleX,(r-u+2)*s.scaleY),c.scale(s.scaleX,s.scaleY))}}if(c.restore(),c.save(),c.translate(g,r-u),s&&s.grid&&"1"==s.grid||"2"==s.grid)for(c.textAlign="right",c.textBaseline="middle",c.fillStyle="rgba(255,255,255,1)",c.font="10px",v=0;v<m;v++){var L=v*f,C=h+s.gridInitValue+v*s.gridUnitY;c.moveTo(0,-L),c.lineTo(i-g,-L),c.scale(1/s.scaleX,1/s.scaleY),c.fillText(C,-2*s.scaleX,-L*s.scaleY),c.scale(s.scaleX,s.scaleY)}c.restore(),c.lineWidth=s.lineWidth||1,c.strokeStyle=s&&s.color||"lightgrey",c.scale(1/s.scaleX,1/s.scaleY),c.stroke(),c.restore()}function p(e,t,i,r,n){var a=n||1,o=parseInt(e*a),l=parseInt(t*a),c=I.getCurrentPage(),h=c.backgroundColor||"rgba(54,71,92,0.3)",g=c.backgroundImage||"",u=L.currentSize&&L.currentSize.width||1280,d=L.currentSize&&L.currentSize.height||480,f=document.getElementById("backgroundCanvas");f.width=o,f.height=l;var b=f.getContext("2d");if(""!=g&&"/public/images/blank.png"!=g){pageBackgroundImg=s.getResourceFromCache(g);var m=parseInt(pageBackgroundImg.width/u*i),y=parseInt(pageBackgroundImg.height/d*r),p=parseInt(pageBackgroundImg.width/u*e),v=parseInt(pageBackgroundImg.height/d*t);b.drawImage(pageBackgroundImg,m,y,p,v,0,0,o,l)}else b.beginPath(),b.rect(0,0,o,l),b.fillStyle=h,b.fill(),b.closePath()}function v(e,t,i){var r="1"==e?Math.sqrt(t*t+i*i)/2:Math.max(t,i)/2;return r=Math.floor(r)}function S(e,t,i,r,n,a,o){t.fillStyle=o;var l=new Date,s=[],c=[],h=0;for(s.push(l.getHours()),s.push(l.getMinutes()),s.push(l.getSeconds()),h=0;h<s.length;h++)s[h]<10&&(s[h]="0"+s[h]);for(c.push(l.getFullYear()),c.push(l.getMonth()+1),c.push(l.getDate()),h=0;h<c.length;h++)c[h]<10&&(c[h]="0"+c[h]);"0"==e?(t.scale(1/i,1/r),t.font=n,t.textAlign=a,t.textBaseline="middle",t.fillText(s.join(":"),0,0),t.scale(i,r)):"1"==e?(t.scale(1/i,1/r),t.font=n,t.textAlign=a,t.textBaseline="middle",t.fillText(s.slice(0,2).join(":"),0,0),t.scale(i,r)):"2"==e?(t.scale(1/i,1/r),t.font=n,t.textAlign=a,t.textBaseline="middle",t.fillText(c.join("/"),0,0),t.scale(i,r)):"3"==e&&(t.scale(1/i,1/r),t.font=n,t.textAlign=a,t.textBaseline="middle",t.fillText(c.join("-"),0,0),t.scale(i,r))}var I=this;fabric.Object.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{id:this.id})}}(fabric.Object.prototype.toObject),fabric.Canvas.prototype.setActive=function(e){var t=this;if(e)if(e.type==l.MyLayer||l.isWidget(e.type)){var i=e;t.setActiveObject(i),i.setCoords()}else if(e.type==l.MyLayerGroup||e.type==l.MyWidgetGroup){var r=e;t.deactivateAllWithDispatch(),r.addWithUpdate(),t.setActiveGroup(r),r.saveCoords(),t.renderAll();var n=t.getActiveGroup();n&&(n.setObjectsCoords().setCoords(),n.isMoving=!1,t.setCursor(t.defaultCursor)),t._groupSelector=null,t._currentTransform=null}},fabric.Image.prototype.setSrc=function(e,t){var i=this,r=new Image;r.src=e+"?"+100*Math.random(),r.onload=function(){i.setElement(r),t(r.width,r.height)}},fabric.MyLayer=fabric.util.createClass(fabric.Object,{type:l.MyLayer,initialize:function(e,t){var i=this;this.initScale||(this.initScale={X:1,Y:1}),this.callSuper("initialize",t),this.loadAll(e),this.lockRotation=!0,this.hasRotatingPoint=!1,this.on("OnRelease",function(){var e=(I.getLevelById(i.id),null);e=A(i.id),i.initPosition.left=_.cloneDeep(i.getLeft()),i.initPosition.top=_.cloneDeep(i.getTop()),i.initScale.X=e.getScaleX().toFixed(2),i.initScale.Y=e.getScaleY().toFixed(2)}),this.on("OnScaleRelease",function(e){e==i.id&&this.renderUrlInPage(i)}),this.on("OnRenderUrl",function(e){this.renderUrlInPage(i,e)}),this.on("OnRefresh",function(e){this.refresh(e)})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{e.fillStyle=this.backgroundColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height);var t=M();if(t&&P.scaling&&P.objId==this.id){this.widgetImgs=[];var i=A(t.id),r=i.getAngle()*Math.PI/180,n=Math.sin(r),a=Math.cos(r),o=this.initPosition.left-this.getLeft(),l=this.initPosition.top-this.getTop();this.backgroundImg.width=this.width/i.getScaleX()*this.initScale.X,this.backgroundImg.height=this.height/i.getScaleY()*this.initScale.Y,this.backgroundImg.top=(-n*o+a*l)/i.getScaleY()-this.height/2,this.backgroundImg.left=(a*o+n*l)/i.getScaleX()-this.width/2}this.backgroundImg.element&&e.drawImage(this.backgroundImg.element,this.backgroundImg.left,this.backgroundImg.top,this.backgroundImg.width,this.backgroundImg.height)}catch(e){toastr.warning("渲染Layer出错")}}}),fabric.MyLayer.prototype.loadAll=function(e,t){var i=new Image,r=(A(e),k(e)),n=r.info.width/this.initScale.X,a=r.info.height/this.initScale.Y;this.initPosition={},""==r.showSubLayer.url?i=null:(i.onload=function(){this.width=n,this.height=a,this.loaded=!0,this.setCoords(),this.fire("image:loaded"),t&&t()}.bind(this),i.src=_.cloneDeep(r.showSubLayer.url)),this.backgroundImg={element:i,width:n,height:a,left:-n/2,top:-a/2},this.backgroundColor=r.showSubLayer.backgroundColor,this.initPosition.left=_.cloneDeep(this.getLeft()),this.initPosition.top=_.cloneDeep(this.getTop())},fabric.MyLayer.prototype.refresh=function(e){this.id&&this.loadAll(this.id,function(){var t=i.getPageNode();t.renderAll(),e&&e()})},fabric.MyLayer.prototype.renderUrlInPage=function(e,t){var r=k(e.id),n=new Image;n.onload=function(){e.backgroundImg.element=n,e.backgroundImg.width=e.width,e.backgroundImg.height=e.height,e.backgroundImg.left=-e.width/2,e.backgroundImg.top=-e.height/2,e.initPosition.left=_.cloneDeep(e.getLeft()),e.initPosition.top=_.cloneDeep(e.getTop());var r=i.getPageNode();r.renderAll(),t&&t()}.bind(e),n.onerror=function(e){n=null,t&&t(e)}.bind(e),n.src=r.showSubLayer.url},fabric.MyLayer.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{loaded:this.loaded,backgroundImg:this.backgroundImg,widgetImgs:this.widgetImgs,initPosition:this.initPosition,initScale:this.initScale})}}(fabric.MyLayer.prototype.toObject),fabric.MyLayer.fromObject=function(e,t){t&&t(new fabric.MyLayer(e.id,e))},fabric.MyLayer.async=!0,fabric.MyProgress=fabric.util.createClass(fabric.Object,{type:l.MyProgress,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.progressValue=e.info.progressValue/(e.info.maxValue-e.info.minValue),this.progressModeId=e.info.progressModeId,this.cursor=e.info.cursor,"1"==this.progressModeId&&(this.initColor=e.texList[1].slices[0].color,this.endColor=e.texList[2].slices[0].color),"0"==this.progressModeId&&"1"==this.cursor&&(this.cursorColor=e.texList[2].slices[0].color,this.cursorImageElement=s.getResourceFromCache(e.texList[2].slices[0].imgSrc)),"1"==this.progressModeId&&"1"==this.cursor&&(this.cursorColor=e.texList[3].slices[0].color,this.cursorImageElement=s.getResourceFromCache(e.texList[3].slices[0].imgSrc)),this.backgroundColor=e.texList[0].slices[0].color,this.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.backgroundImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.progressColor=e.texList[1].slices[0].color,this.progressImageElement=s.getResourceFromCache(e.texList[1].slices[0].imgSrc),this.arrange=e.info.arrange,this.on("changeProgressValue",function(e){r.progressValue=e.progress;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeTex",function(e){var t=e.level,n=e.callback;t.texList[0]&&"进度条底纹"==t.texList[0].name&&(r.backgroundColor=t.texList[0].slices[0].color,r.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc)),t.texList[1]&&"进度条"==t.texList[1].name?(r.progressColor=t.texList[1].slices[0].color,r.progressImageElement=s.getResourceFromCache(t.texList[1].slices[0].imgSrc)):t.texList[1]&&"初始颜色"==t.texList[1].name&&(r.initColor=t.texList[1].slices[0].color),t.texList[2]&&t.texList[2]&&"光标纹理"==t.texList[2].name?(r.cursorColor=t.texList[2].slices[0].color,r.cursorImageElement=s.getResourceFromCache(t.texList[2].slices[0].imgSrc)):t.texList[2]&&"结束颜色"==t.texList[2].name&&(r.endColor=t.texList[2].slices[0].color),t.texList[3]&&t.texList[3]&&"光标纹理"==t.texList[3].name&&(r.cursorColor=t.texList[3].slices[0].color,r.cursorImageElement=s.getResourceFromCache(t.texList[3].slices[0].imgSrc));var a=i.getSubLayerNode();a.renderAll(),n&&n()}),this.on("changeArrange",function(e){r.arrange=e.arrange;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeAttributeCursor",function(t){r.backgroundColor=t.backgroundColor,r.progressColor=t.progressColor,r.progressModeId=t.progressModeId,t.hasOwnProperty("initColor")&&(r.initColor=t.initColor),t.hasOwnProperty("endColor")&&(r.endColor=t.endColor),e.texList[0]&&"进度条底纹"==e.texList[0].name?r.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc):r.backgroundImageElement=null,e.texList[1]&&"进度条"==e.texList[1].name?r.progressImageElement=s.getResourceFromCache(e.texList[1].slices[0].imgSrc):r.progressImageElement=null,e.texList[3]&&e.texList[3]&&"光标纹理"==e.texList[3].name?r.cursorImageElement=s.getResourceFromCache(e.texList[3].slices[0].imgSrc):r.cursorImageElement=null;var n=i.getSubLayerNode();n.renderAll()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{if("0"==this.progressModeId)e.fillStyle=this.backgroundColor,e.fillRect(-this.width/2,-this.height/2,this.width,this.height),this.backgroundImageElement&&e.drawImage(this.backgroundImageElement,-this.width/2,-this.height/2,this.width,this.height),"horizontal"==this.arrange?(e.fillStyle=this.progressColor,e.fillRect(-this.width/2,-this.height/2,this.width*this.progressValue,this.height),this.progressImageElement&&e.drawImage(this.progressImageElement,-this.width/2,-this.height/2,this.width*this.progressValue,this.height),this.cursorImageElement&&e.drawImage(this.cursorImageElement,-this.width/2+this.width*this.progressValue,-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY)):(e.fillStyle=this.progressColor,e.fillRect(-this.width/2,this.height/2-this.height*this.progressValue,this.width,this.height*this.progressValue),this.progressImageElement&&e.drawImage(this.progressImageElement,-this.width/2,this.height/2-this.height*this.progressValue,this.width,this.height*this.progressValue),this.cursorImageElement&&e.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY));else if("1"==this.progressModeId){var t=m(this.initColor,this.endColor,this.progressValue);"horizontal"==this.arrange?(this.cursorImageElement&&e.drawImage(this.cursorImageElement,-this.width/2+this.width*this.progressValue,-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY),e.fillStyle=t,e.fillRect(-this.width/2,-this.height/2,this.width*this.progressValue,this.height)):(e.fillStyle=t,e.fillRect(-this.width/2,this.height/2-this.height*this.progressValue,this.width,this.height*this.progressValue),this.cursorImageElement&&e.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY)),this.backgroundImageElement&&e.drawImage(this.backgroundImageElement,-this.width/2,-this.height/2,this.width,this.height)}else"2"==this.progressModeId;this.clipTo=function(e){e.save(),e.beginPath(),e.rect(-this.width/2,-this.height/2,this.width,this.height),e.closePath(),e.restore()}}catch(e){toastr.warning("渲染进度条出错")}}}),fabric.MyProgress.fromLevel=function(e,t,i){t&&t(new fabric.MyProgress(e,i))},fabric.MyProgress.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{backgroundImageElement:this.backgroundImageElement,progressImageElement:this.progressImageElement,backgroundColor:this.backgroundColor,progressColor:this.progressColor,progressValue:this.progressValue,arrange:this.arrange})}}(fabric.MyProgress.prototype.toObject),fabric.MyProgress.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyProgress(i,e))},fabric.MyProgress.async=!0,fabric.MyOscilloscope=fabric.util.createClass(fabric.Object,{type:l.MyOscilloscope,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.maxValue=e.info.maxValue,this.minValue=e.info.minValue,this.spacing=e.info.spacing,this.grid=e.info.grid,this.lineWidth=e.info.lineWidth,this.gridUnitX=e.info.gridUnitX,this.gridUnitY=e.info.gridUnitY,this.gridInitValue=e.info.gridInitValue,this.blankX=e.info.blankX,this.blankY=e.info.blankY,this.setScaleY((((this.maxValue-this.minValue)/this.gridUnitY+.5)*this.spacing+this.blankY)/this.height),this.backgroundColor=e.texList[0].slices[0].color,this.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.backgroundImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.oscilloscopeColor=e.texList[1].slices[0].color,this.oscilloscopeImageElement=s.getResourceFromCache(e.texList[1].slices[0].imgSrc),this.on("changeTex",function(e){var t=e.level,n=e.callback;r.backgroundColor=t.texList[0].slices[0].color,this.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc),r.oscilloscopeColor=t.texList[1].slices[0].color,this.oscilloscopeImageElement=s.getResourceFromCache(t.texList[1].slices[0].imgSrc);var a=i.getSubLayerNode();a.renderAll(),n&&n()}),this.on("ChangeAttributeOscilloscope",function(e){var t=I.getCurrentSelectObject(),n=e.callback;e.hasOwnProperty("lineColor"),e.hasOwnProperty("spacing")&&(r.spacing=e.spacing,r.setScaleY((((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY)/r.height),t.level.info.height=((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY),e.hasOwnProperty("grid")&&(r.grid=e.grid),e.hasOwnProperty("lineWidth")&&(r.lineWidth=e.lineWidth),e.hasOwnProperty("gridInitValue")&&(r.gridInitValue=e.gridInitValue),e.hasOwnProperty("gridUnitX")&&(r.gridUnitX=e.gridUnitX),e.hasOwnProperty("gridUnitY")&&(r.gridUnitY=e.gridUnitY,r.setScaleY((((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY)/r.height),t.level.info.height=((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY),e.hasOwnProperty("maxValue")&&(r.maxValue=e.maxValue,r.setScaleY((((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY)/r.height),t.level.info.height=((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY),e.hasOwnProperty("minValue")&&(r.minValue=e.minValue,r.setScaleY((((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY)/r.height),t.level.info.height=((r.maxValue-r.minValue)/r.gridUnitY+.5)*r.spacing+r.blankY);var a=i.getSubLayerNode();a.renderAll(),n&&n()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{if(e.fillStyle=this.backgroundColor,e.fillRect(-this.width/2,-this.height/2,this.width,this.height),this.backgroundImageElement&&e.drawImage(this.backgroundImageElement,-this.width/2,-this.height/2,this.width,this.height),this.oscilloscopeImageElement&&e.drawImage(this.oscilloscopeImageElement,-this.width/2,-this.height/2,this.width,this.height),"0"!=this.grid){var t={lineWidth:this.lineWidth,grid:this.grid,gridInitValue:this.gridInitValue,gridUnitX:this.gridUnitX,gridUnitY:this.gridUnitY,scaleX:this.scaleX,scaleY:this.scaleY};y(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,this.spacing,this.spacing,t,e,this.minValue)}this.clipTo=function(e){e.save(),e.beginPath(),e.rect(-this.width/2,-this.height/2,this.width,this.height),e.closePath(),e.restore()}}catch(e){toastr.warning("渲染示波器出错")}}}),fabric.MyOscilloscope.fromLevel=function(e,t,i){t&&t(new fabric.MyOscilloscope(e,i))},fabric.MyOscilloscope.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{backgroundImageElement:this.backgroundImageElement,oscilloscopeImageElement:this.oscilloscopeImageElement,backgroundColor:this.backgroundColor,oscilloscopeColor:this.oscilloscopeColor})}}(fabric.MyOscilloscope.prototype.toObject),fabric.MyOscilloscope.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyOscilloscope(i,e))},fabric.MyOscilloscope.async=!0,fabric.MyDashboard=fabric.util.createClass(fabric.Object,{type:l.MyDashboard,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.value=e.info.value,this.offsetValue=e.info.offsetValue,this.minValue=e.info.minValue,this.maxValue=e.info.maxValue,this.minAngle=e.info.minAngle,this.maxAngle=e.info.maxAngle,this.pointerLength=e.info.pointerLength,this.clockwise=e.info.clockwise,this.dashboardModeId=e.dashboardModeId,e.info.hasOwnProperty("minCoverAngle")&&(this.minCoverAngle=e.info.minCoverAngle),e.info.hasOwnProperty("maxCoverAngle")&&(this.maxCoverAngle=e.info.maxCoverAngle),"0"==this.dashboardModeId||"1"==this.dashboardModeId?(this.backgroundColor=e.texList[0].slices[0].color,this.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.backgroundImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.pointerColor=e.texList[1].slices[0].color,this.pointerImageElement=s.getResourceFromCache(e.texList[1].slices[0].imgSrc),e.texList[2]&&(this.lightBandImageElement=s.getResourceFromCache(e.texList[2].slices[0].imgSrc))):"2"==this.dashboardModeId&&(this.backgroundColor=e.texList[0].slices[0].color,this.backgroundImageElement=null,this.pointerColor=null,this.pointerImageElement=null,this.lightBandImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.lightBandImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded"))),this.on("changeDashboardOffsetValue",function(e){(e.offsetValue||0==e.offsetValue)&&(r.offsetValue=e.offsetValue);var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeDashboardValue",function(e){e.hasOwnProperty("value")?r.value=e.value:e.hasOwnProperty("maxValue")?r.maxValue=e.maxValue:e.hasOwnProperty("minValue")?r.minValue=e.minValue:e.hasOwnProperty("minAngle")?r.minAngle=e.minAngle:e.hasOwnProperty("maxAngle")&&(r.maxAngle=e.maxAngle);var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeDashboardPointerLength",function(e){r.pointerLength=e.pointerLength,r.scaleX=e.scaleX,r.scaleY=e.scaleY;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeDashboardMode",function(e){var t=e.level,n=e.callback;r.dashboardModeId=e.dashboardModeId,"0"==r.dashboardModeId||"1"==r.dashboardModeId?(r.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc),r.backgroundColor=t.texList[0].slices[0].color,r.pointerImageElement=s.getResourceFromCache(t.texList[1].slices[0].imgSrc),r.pointerColor=t.texList[1].slices[0].color,t.texList[2]?r.lightBandImageElement=s.getResourceFromCache(t.texList[2].slices[0].imgSrc):r.lightBandImageElement=null):"2"==r.dashboardModeId&&(r.backgroundImageElement=null,r.backgroundColor=t.texList[0].slices[0].color,r.pointerImageElement=null,r.pointerColor=null,r.lightBandImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc));var a=i.getSubLayerNode();a.renderAll(),n&&n()}),this.on("changeDashboardClockwise",function(e){r.clockwise=e.clockwise;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeDashboardCoverAngle",function(e){var t=e.callback,n=i.getSubLayerNode();e.hasOwnProperty("minCoverAngle")?r.minCoverAngle=e.minCoverAngle:e.hasOwnProperty("maxCoverAngle")&&(r.maxCoverAngle=e.maxCoverAngle),n.renderAll(),t&&t()}),this.on("changeTex",function(e){var t=e.level,n=t.dashboardModeId,a=e.callback;"0"==n||"1"==n?(r.backgroundColor=t.texList[0].slices[0].color,r.pointerColor=t.texList[1].slices[0].color,r.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc),r.pointerImageElement=s.getResourceFromCache(t.texList[1].slices[0].imgSrc),t.texList[2]&&(r.lightBandImageElement=s.getResourceFromCache(t.texList[2].slices[0].imgSrc))):"2"==n&&(r.backgroundImageElement=null,r.backgroundColor=t.texList[0].slices[0].color,r.pointerImageElement=null,r.pointerColor=null,r.lightBandImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc));var o=i.getSubLayerNode();o.renderAll(),a&&a()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{var t=(this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value-this.minValue),i=(this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;if(e.fillStyle=this.backgroundColor,e.fillRect(-this.width/2,-this.height/2,this.width,this.height),this.backgroundImageElement&&e.drawImage(this.backgroundImageElement,-this.width/2,-this.height/2,this.width,this.height),this.lightBandImageElement){var r=b(t+this.offsetValue+this.minAngle,this.scaleX,this.scaleY),n=b(this.offsetValue+this.minAngle,this.scaleX,this.scaleY),a=b(i,this.scaleX,this.scaleY),o=b(this.offsetValue,this.scaleX,this.scaleY);e.save(),e.beginPath(),e.moveTo(0,0);var l=v(this.dashboardModeId,this.width,this.height);if("0"==this.clockwise)n=-n+Math.PI/2,r=-r+Math.PI/2,e.arc(0,0,l,n,r,!0),"2"==this.dashboardModeId&&e.arc(0,0,3*l/4,r,n,!1);else if("1"==this.clockwise)n+=Math.PI/2,r+=Math.PI/2,e.arc(0,0,l,n,r,!1),"2"==this.dashboardModeId&&e.arc(0,0,3*l/4,r,n,!0);else if("2"==this.clockwise)if(i>=0)n=o+Math.PI/2,r=a+o+Math.PI/2,e.arc(0,0,l,n,r,!1),"2"==this.dashboardModeId&&e.arc(0,0,3*l/4,r,n,!0);else if(i<0){var s=-i,a=b(s,this.scaleX,this.scaleY);n=o+Math.PI/2,r=-a+o+Math.PI/2,e.arc(0,0,l,r,n,!1),"2"==this.dashboardModeId&&e.arc(0,0,3*l/4,n,r,!0)}e.closePath(),e.clip(),e.drawImage(this.lightBandImageElement,-this.width/2,-this.height/2,this.width,this.height),e.restore()}if(this.pointerImageElement){e.save();var c=Math.sqrt(2),h=this.pointerLength/c/this.scaleX,g=this.pointerLength/c/this.scaleY,u=t+this.offsetValue+this.minAngle;if("0"==this.clockwise&&(u=-u),u+=45,this.minCoverAngle!=this.maxCoverAngle){var d=b(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2,f=b(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;e.save(),e.beginPath(),e.moveTo(0,0),e.arc(0,0,this.width/2,d,f,!1),e.closePath(),e.fillStyle="rgba(244,244,244,0.3)",e.fill(),e.restore(),e.beginPath(),e.moveTo(0,0),e.arc(0,0,this.width/2,f,d,!1),e.closePath(),e.clip()}e.scale(1/this.scaleX,1/this.scaleY),e.rotate(u*Math.PI/180),e.scale(this.scaleX,this.scaleY),e.fillStyle=this.pointerColor,e.fillRect(0,0,h,g),e.drawImage(this.pointerImageElement,0,0,h,g),e.restore()}this.clipTo=function(e){e.save(),e.beginPath(),e.rect(-this.width/2,-this.height/2,this.width,this.height),e.closePath(),e.restore()}}catch(e){toastr.warning("渲染仪表盘出错")}}}),fabric.MyDashboard.fromLevel=function(e,t,i){t&&t(new fabric.MyDashboard(e,i))},fabric.MyDashboard.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{backgroundImageElement:this.backgroundImageElement,pointerImageElement:this.pointerImageElement,backgroundColor:this.backgroundColor,pointerColor:this.pointerColor,value:this.value})}}(fabric.MyDashboard.prototype.toObject),fabric.MyDashboard.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyDashboard(i,e))},fabric.MyDashboard.async=!0,fabric.MyKnob=fabric.util.createClass(fabric.Object,{type:l.MyKnob,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.value=e.info.value,this.knobSize=e.info.knobSize,this.backgroundColor=e.texList[0].slices[0].color,this.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.backgroundImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.knobColor=e.texList[1].slices[0].color,this.knobImageElement=s.getResourceFromCache(e.texList[1].slices[0].imgSrc),this.on("changeKnobValue",function(e){r.value=e.value;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeKnobSize",function(e){r.knobSize=e.knobSize,r.scaleX=e.scaleX,r.scaleY=e.scaleY;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeTex",function(e){var t=e.level,n=e.callback;r.backgroundColor=t.texList[0].slices[0].color,r.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc),r.knobColor=t.texList[1].slices[0].color,r.knobImageElement=s.getResourceFromCache(t.texList[1].slices[0].imgSrc);var a=i.getSubLayerNode();a.renderAll(),n&&n(),n&&n()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{if(e.fillStyle=this.backgroundColor,e.fillRect(-this.width/2,-this.height/2,this.width,this.height),this.backgroundImageElement&&e.drawImage(this.backgroundImageElement,-this.width/2,-this.height/2,this.width,this.height),this.knobImageElement){var t=Math.sqrt(2),i=this.knobSize/t/this.scaleX,r=this.knobSize/t/this.scaleY;e.scale(1/this.scaleX,1/this.scaleY),e.rotate(this.value*Math.PI/180),e.scale(this.scaleX,this.scaleY),e.drawImage(this.knobImageElement,-i/2,-r/2,i,r)}}catch(e){toastr.warning("渲染旋钮出错")}}}),fabric.MyKnob.fromLevel=function(e,t,i){t&&t(new fabric.MyKnob(e,i))},fabric.MyKnob.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{backgroundImageElement:this.backgroundImageElement,knobImageElement:this.knobImageElement,backgroundColor:this.backgroundColor,knobColor:this.knobColor,value:this.value})}}(fabric.MyKnob.prototype.toObject),fabric.MyKnob.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyKnob(i,e))},fabric.MyKnob.async=!0,fabric.MySwitch=fabric.util.createClass(fabric.Object,{type:l.MySwitch,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.backgroundColor=e.texList[0].slices[0].color,this.bindBit=e.info.bindBit,this.imageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.imageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.on("changeTex",function(e){var t=e.level,n=e.callback,a=t.texList[0];r.backgroundColor=a.slices[0].color,r.imageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc);var o=i.getSubLayerNode();o.renderAll(),n&&n()}),this.on("changeWidgetSize",function(e){var t=e.callback,n=e.widgetWidth||25,a=e.WidgetHeight||25;r.set({scaleX:1,scaleY:1,width:n,height:a});var o=i.getSubLayerNode();o.renderAll(),t&&t()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{e.fillStyle=this.backgroundColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height),this.imageElement&&e.drawImage(this.imageElement,-this.width/2,-this.height/2,this.width,this.height)}catch(e){toastr.warning("渲染开关出错")}}}),fabric.MySwitch.fromLevel=function(e,t,i){t&&t(new fabric.MySwitch(e,i))},fabric.MySwitch.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{imageElement:this.imageElement,backgroundColor:this.backgroundColor})}}(fabric.MySwitch.prototype.toObject),fabric.MySwitch.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MySwitch(i,e))},fabric.MySwitch.async=!0,fabric.MyScriptTrigger=fabric.util.createClass(fabric.Object,{type:l.MyScriptTrigger,initialize:function(e,t){this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){}}),fabric.MyScriptTrigger.fromLevel=function(e,t,i){t&&t(new fabric.MyScriptTrigger(e,i))},fabric.MyScriptTrigger.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{})}}(fabric.MyScriptTrigger.prototype.toObject),fabric.MyScriptTrigger.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyScriptTrigger(i,e))},fabric.MyScriptTrigger.async=!0,fabric.MyRotateImg=fabric.util.createClass(fabric.Object,{type:l.MyRotateImg,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.backgroundColor=e.texList[0].slices[0].color,this.minValue=e.info.minValue,this.maxValue=e.info.maxValue,this.initValue=e.info.initValue,this.imageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.imageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.on("changeTex",function(e){var t=e.level,n=e.callback,a=t.texList[0];r.backgroundColor=a.slices[0].color,r.imageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc);var o=i.getSubLayerNode();o.renderAll(),n&&n()}),this.on("changeInitValue",function(e){var t=e.callback;r.initValue=e.initValue,r.setAngle(r.initValue);
-var n=i.getSubLayerNode();n.renderAll(),t&&t()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{e.fillStyle=this.backgroundColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height),this.imageElement&&e.drawImage(this.imageElement,-this.width/2,-this.height/2,this.width,this.height)}catch(e){toastr.warning("渲染旋转图出错")}}}),fabric.MyRotateImg.fromLevel=function(e,t,i){t&&t(new fabric.MyRotateImg(e,i))},fabric.MyRotateImg.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{imageElement:this.imageElement,backgroundColor:this.backgroundColor})}}(fabric.MyRotateImg.prototype.toObject),fabric.MyRotateImg.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyRotateImg(i,e))},fabric.MyRotateImg.async=!0,fabric.MySlideBlock=fabric.util.createClass(fabric.Object,{type:l.MySlideBlock,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.minValue=e.info.minValue,this.maxValue=e.info.maxValue,this.initValue=e.info.initValue,this.arrange=e.info.arrange,this.backgroundColor=e.texList[0].slices[0].color,this.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.backgroundImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.slideColor=e.texList[1].slices[0].color,this.slideImageElement=s.getResourceFromCache(e.texList[1].slices[0].imgSrc),this.slideImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.on("changeTex",function(e){var t=e.level,n=e.callback;t.texList&&t.texList[0]&&(r.backgroundColor=t.texList[0].slices[0].color,r.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc)),t.texList&&t.texList[1]&&(r.slideColor=t.texList[1].slices[0].color,r.slideImageElement=s.getResourceFromCache(t.texList[1].slices[0].imgSrc));var a=i.getSubLayerNode();a.renderAll(),n&&n()}),this.on("changeInitValue",function(e){var t=e.callback;e.hasOwnProperty("minValue")&&(r.minValue=e.minValue),e.hasOwnProperty("maxValue")&&(r.maxValue=e.maxValue),e.hasOwnProperty("initValue")&&(r.initValue=e.initValue);var n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeArrange",function(e){r.arrange=e.arrange;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{var t=(this.initValue-this.minValue)/(this.maxValue-this.minValue);e.fillStyle=this.backgroundColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height),this.backgroundImageElement&&e.drawImage(this.backgroundImageElement,-this.width/2,-this.height/2,this.width,this.height),this.slideImageElement&&("horizontal"==this.arrange?e.drawImage(this.slideImageElement,-this.width/2+(this.width-this.slideImageElement.width/this.scaleX)*t,-this.slideImageElement.height/(2*this.scaleY),this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY):e.drawImage(this.slideImageElement,-this.slideImageElement.width/(2*this.scaleX),this.height/2-this.slideImageElement.height/this.scaleY*(1-t)-this.height*t,this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY)),this.clipTo=function(e){e.save(),e.beginPath(),e.rect(-this.width/2,-this.height/2,this.width,this.height),e.closePath(),e.restore()}}catch(e){toastr.warning("渲染滑块出错")}}}),fabric.MySlideBlock.fromLevel=function(e,t,i){t&&t(new fabric.MySlideBlock(e,i))},fabric.MySlideBlock.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{})}}(fabric.MySlideBlock.prototype.toObject),fabric.MySlideBlock.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MySlideBlock(i,e))},fabric.MySlideBlock.async=!0,fabric.MyDateTime=fabric.util.createClass(fabric.Object,{type:l.MyDateTime,initialize:function(e,t){var r=this;this.callSuper("initialize",t);var n={bl:!1,br:!1,mb:!1,ml:!1,mr:!1,mt:!1,tl:!1,tr:!1};this.setControlsVisibility(n),this.lockRotation=!0,this.hasRotatingPoint=!1,this.dateTimeModeId=e.info.dateTimeModeId,this.fontFamily=e.info.fontFamily,this.fontSize=e.info.fontSize,this.fontColor=e.info.fontColor,this.align=e.info.align,this.initValue=e.info.initValue,this.setHeight(1.5*this.fontSize),"0"==this.dateTimeModeId?this.setWidth(4*this.fontSize):"1"==this.dateTimeModeId?this.setWidth(3*this.fontSize):this.setWidth(6*this.fontSize),this.on("changeDateTimeModeId",function(e){var t=e.dateTimeModeId,n=e.callback;r.dateTimeModeId=t,r.setHeight(1.5*r.fontSize),"0"==r.dateTimeModeId?r.setWidth(4*r.fontSize):"1"==r.dateTimeModeId?r.setWidth(3*r.fontSize):r.setWidth(6*r.fontSize);var a=i.getSubLayerNode();a.renderAll(),n&&n()}),this.on("changeDateTimeText",function(e){var t=e.callback;e.hasOwnProperty("fontFamily")&&(r.fontFamily=e.fontFamily),e.hasOwnProperty("fontSize")&&(r.fontSize=e.fontSize,r.setHeight(1.5*r.fontSize),"0"==r.dateTimeModeId?r.setWidth(4*r.fontSize):"1"==r.dateTimeModeId?r.setWidth(3*r.fontSize):r.setWidth(6*r.fontSize)),e.hasOwnProperty("fontColor")&&(r.fontColor=e.fontColor);var n=i.getSubLayerNode();n.renderAll(),t&&t()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{var t=null;t=this.fontSize+"px "+this.fontFamily,S(this.dateTimeModeId,e,this.scaleX,this.scaleY,t,this.align,this.fontColor)}catch(e){toastr.warning("渲染时间日期出错")}}}),fabric.MyDateTime.fromLevel=function(e,t,i){t&&t(new fabric.MyDateTime(e,i))},fabric.MyDateTime.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{imageElement:this.imageElement,backgroundColor:this.backgroundColor})}}(fabric.MyDateTime.prototype.toObject),fabric.MyDateTime.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyDateTime(i,e))},fabric.MyDateTime.async=!0,fabric.MyButton=fabric.util.createClass(fabric.Object,{type:l.MyButton,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.normalColor=e.texList[0].slices[0].color,this.text=e.info.text,this.fontFamily=e.info.fontFamily,this.fontSize=e.info.fontSize,this.fontColor=e.info.fontColor,this.fontBold=e.info.fontBold,this.fontItalic=e.info.fontItalic,this.normalImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.normalImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.on("changeTex",function(e){var t=e.level,n=e.callback,a=t.texList[0];r.normalColor=a.slices[0].color,r.normalImageElement=s.getResourceFromCache(a.slices[0].imgSrc);var o=i.getSubLayerNode();o.renderAll(),n&&n()}),this.on("changeButtonText",function(e){e.hasOwnProperty("text")&&(r.text=e.text),e.fontFamily&&(r.fontFamily=e.fontFamily),e.fontBold&&(r.fontBold=e.fontBold),e.hasOwnProperty("fontItalic")&&(r.fontItalic=e.fontItalic),e.fontSize&&(r.fontSize=e.fontSize),e.fontColor&&(r.fontColor=e.fontColor);var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{if(e.fillStyle=this.fontColor,e.save(),e.fillStyle=this.normalColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height),this.normalImageElement&&e.drawImage(this.normalImageElement,-this.width/2,-this.height/2,this.width,this.height),e.restore(),this.text){e.save();var t=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px "+this.fontFamily;e.scale(1/this.scaleX,1/this.scaleY),e.font=t,e.textAlign="center",e.textBaseline="middle",e.fillText(this.text,0,0),e.restore()}this.clipTo=function(e){e.save(),e.beginPath(),e.rect(-this.width/2,-this.height/2,this.width,this.height),e.closePath(),e.restore()}}catch(e){toastr.warning("渲染按钮出错")}}}),fabric.MyButton.fromLevel=function(e,t,i){t&&t(new fabric.MyButton(e,i))},fabric.MyButton.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{normalImageElement:this.normalImageElement,normalColor:this.normalColor})}}(fabric.MyButton.prototype.toObject),fabric.MyButton.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyButton(i,e))},fabric.MyButton.async=!0,fabric.MyTextArea=fabric.util.createClass(fabric.Object,{type:l.MyTextArea,initialize:function(e,t){var r=this,n={bl:!1,br:!1,mb:!0,ml:!0,mr:!0,mt:!0,tl:!1,tr:!1};this.callSuper("initialize",t),this.lockRotation=!0,this.setControlsVisibility(n),this.hasRotatingPoint=!1,this.backgroundColor=e.texList[0].slices[0].color,this.text=e.info.text,this.fontFamily=e.info.fontFamily,this.fontSize=e.info.fontSize,this.fontColor=e.info.fontColor,this.fontBold=e.info.fontBold,this.fontItalic=e.info.fontItalic,this.fontUnderline=e.info.fontUnderline,this.text&&this.fontSize&&(this.setWidth(this.fontSize*(this.text.length+1)),this.setHeight(2*this.fontSize)),this.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.backgroundImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.on("changeTex",function(e){var t=e.level,n=e.callback,a=t.texList[0];r.backgroundColor=a.slices[0].color,r.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc);var o=i.getSubLayerNode();o.renderAll(),n&&n()}),this.on("changeTextContent",function(e){e.text&&(r.text=e.text),e.fontFamily&&(r.fontFamily=e.fontFamily),e.fontSize&&(r.fontSize=e.fontSize),e.fontColor&&(r.fontColor=e.fontColor),e.fontBold&&(r.fontBold=e.fontBold),e.hasOwnProperty("fontItalic")&&(r.fontItalic=e.fontItalic),r.fontSize&&r.text&&(r.setWidth(r.fontSize*(r.text.length+1)),r.setHeight(2*r.fontSize));var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{if(e.fillStyle=this.fontColor,e.save(),e.fillStyle=this.backgroundColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height),this.backgroundImageElement&&e.drawImage(this.backgroundImageElement,-this.width/2,-this.height/2,this.width,this.height),e.restore(),this.text){var t=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px "+this.fontFamily;e.scale(1/this.scaleX,1/this.scaleY),e.font=t,e.textAlign="center",e.textBaseline="middle",e.fillText(this.text,0,0)}this.clipTo=function(e){e.save(),e.beginPath(),e.rect(-this.width/2,-this.height/2,this.width,this.height),e.closePath(),e.restore()}}catch(e){toastr.warning("渲染文本出错")}}}),fabric.MyTextArea.fromLevel=function(e,t,i){t&&t(new fabric.MyTextArea(e,i))},fabric.MyTextArea.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{backgroundImageElement:this.backgroundImageElement,backgroundColor:this.backgroundColor})}}(fabric.MyTextArea.prototype.toObject),fabric.MyTextArea.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyTextArea(i,e))},fabric.MyTextArea.async=!0,fabric.MyNum=fabric.util.createClass(fabric.Object,{type:l.MyNum,initialize:function(e,t){var r=this,n={bl:!1,br:!1,mb:!1,ml:!1,mr:!1,mt:!1,tl:!1,tr:!1};this.callSuper("initialize",t),this.lockRotation=!0,this.setControlsVisibility(n),this.hasRotatingPoint=!1,this.backgroundColor=e.info.fontColor,this.numValue=e.info.numValue,this.fontFamily=e.info.fontFamily,this.fontSize=e.info.fontSize,this.fontColor=e.info.fontColor,this.fontBold=e.info.fontBold,this.fontItalic=e.info.fontItalic,this.align=e.info.align,this.numOfDigits=e.info.numOfDigits,this.decimalCount=e.info.decimalCount,this.symbolMode=e.info.symbolMode,this.fontZeroMode=e.info.frontZeroMode,this.numOfDigits&&this.fontSize&&(this.setWidth(this.numOfDigits*("0"==r.symbolMode?r.fontSize-3:r.fontSize)),this.setHeight(1.2*this.fontSize)),this.backgroundImageElement=s.getResourceFromCache(e.texList[0].slices[0].imgSrc),this.backgroundImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.on("changeTex",function(e){var t=e.level,n=e.callback,a=t.texList[0];r.backgroundColor=a.slices[0].color,r.backgroundImageElement=s.getResourceFromCache(t.texList[0].slices[0].imgSrc);var o=i.getSubLayerNode();o.renderAll(),n&&n()}),this.on("changeNumContent",function(e){e.hasOwnProperty("numValue")&&(r.numValue=e.numValue),e.fontFamily&&(r.fontFamily=e.fontFamily),e.fontSize&&(r.fontSize=e.fontSize),e.fontBold&&(r.fontBold=e.fontBold),e.hasOwnProperty("fontItalic")&&(r.fontItalic=e.fontItalic),e.numOfDigits&&(r.numOfDigits=e.numOfDigits),e.hasOwnProperty("decimalCount")&&(r.decimalCount=e.decimalCount),e.symbolMode&&(r.symbolMode=e.symbolMode),e.frontZeroMode&&(r.frontZeroMode=e.frontZeroMode),e.align&&(r.align=e.align),e.fontColor&&(r.fontColor=e.fontColor),r.numOfDigits&&r.fontSize&&(r.setWidth(r.numOfDigits*("0"==r.symbolMode?r.fontSize-3:r.fontSize)),r.setHeight(1.2*r.fontSize));var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{if(e.fillStyle=this.fontColor,!isNaN(this.numValue)){e.font=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px "+this.fontFamily,e.textAlign=this.align,e.textBaseline="middle";var t=!1;this.numValue<0&&(t=!0);var i=Math.abs(this.numValue);i=i.toString();var r=0;if(this.decimalCount)if(i.indexOf(".")!=-1){var n=i.split(".")[1];for(r=0;r<this.decimalCount-n.length;r++)i+="0"}else for(i+=".",r=0;r<this.decimalCount;r++)i+="0";if("1"==this.frontZeroMode){var a=this.numOfDigits-i.length;if(this.decimalCount)for(r=0;r<a+1;r++)i="0"+i;else for(r=0;r<a;r++)i="0"+i}"1"!=this.symbolMode||t?t&&(i="-"+i):i="+"+i,"center"==this.align?e.fillText(i,0,0):"left"==this.align?e.fillText(i,-this.width/2,0):"right"==this.align&&e.fillText(i,this.width/2,0)}}catch(e){toastr.warning("渲染数字出错")}}}),fabric.MyNum.fromLevel=function(e,t,i){t&&t(new fabric.MyNum(e,i))},fabric.MyNum.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{backgroundImageElement:this.backgroundImageElement,backgroundColor:this.backgroundColor})}}(fabric.MyNum.prototype.toObject),fabric.MyNum.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyNum(i,e))},fabric.MyNum.async=!0,fabric.MyButtonGroup=fabric.util.createClass(fabric.Object,{type:l.MyButtonGroup,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,r.interval=e.info.interval,r.arrange=e.info.arrange,r.normalColors=[],r.normalImageElements=[];for(var n=0;n<e.texList.length-1;n++)r.normalColors.push(e.texList[n].slices[0].color),r.normalImageElements.push(s.getResourceFromCache(e.texList[n].slices[0].imgSrc));this.on("changeArrange",function(e){r.arrange=e.arrange;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeInterval",function(e){r.interval=e.interval;var t=e.callback,n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeTex",function(e){var t=e.level,n=e.callback;r.normalColors=[],r.normalImageElements=[];for(var a=0;a<t.texList.length-1;a++)r.normalColors.push(t.texList[a].slices[0].color),r.normalImageElements.push(s.getResourceFromCache(t.texList[a].slices[0].imgSrc));var o=i.getSubLayerNode();o.renderAll(),n&&n()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{var t=this.normalColors.length;if("horizontal"==this.arrange){var i=(this.width-this.interval*(t-1))/t,r=this.height,n=this.interval;if(i<0)return;for(var a=0;a<this.normalColors.length;a++)e.fillStyle=this.normalColors[a],e.fillRect(-(this.width/2)+(i+n)*a,-(this.height/2),i,r);for(var a=0;a<this.normalImageElements.length;a++){var o=this.normalImageElements[a];o&&e.drawImage(o,-this.width/2+(i+n)*a,-this.height/2,i,r)}}else{var r=(this.height-this.interval*(t-1))/t,i=this.width,n=this.interval;if(r<0)return;for(var a=0;a<this.normalColors.length;a++){e.fillStyle=this.normalColors[a],e.fillRect(-(this.width/2),-(this.height/2)+(r+n)*a,i,r);var o=this.normalImageElements[a];o&&e.drawImage(o,-this.width/2,-this.height/2+(r+n)*a,i,r)}}}catch(e){toastr.warning("渲染按钮组出错")}}}),fabric.MyButtonGroup.fromLevel=function(e,t,i){t&&t(new fabric.MyButtonGroup(e,i))},fabric.MyButtonGroup.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{normalImageElements:this.normalImageElements,normalColors:this.normalColors,interval:this.interval,arrange:this.arrange})}}(fabric.MyButtonGroup.prototype.toObject),fabric.MyButtonGroup.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyButtonGroup(i,e))},fabric.MyButtonGroup.async=!0,fabric.MyNumber=fabric.util.createClass(fabric.Object,{type:l.MyNumber,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.myNumber=e.info.initValue+"",this.numberBackColors=[],this.numberImageElements=[];for(var a=0;a<13;a++)if(e.texList[a]){var o=e.texList[a];r.numberBackColors.push(o.slices[0].color);var l=new Image;o.slices[0].imgSrc?l.src=o.slices[0].imgSrc:l.src=n.NUMBER_IMAGES[a],l.onload=function(){}.bind(this),r.numberImageElements.push(l)}else{r.numberBackColors.push(n.WHITE_COLOR);var l=new Image;l.src=n.NUMBER_IMAGES[a],l.onload=function(){}.bind(this),r.numberImageElements.push(l)}this.on("changeNumber",function(e,t){r.myNumber=e.info.initValue+"",this.width=e.info.width,this.height=e.info.height;var n=i.getSubLayerNode();n.renderAll(),t&&t()}),this.on("changeTex",function(e){var t=e.level,a=e.callback;r.numberBackColors=[],r.numberImageElements=[];for(var o=0;o<13;o++)if(t.texList[o]){var l=t.texList[o];r.numberBackColors.push(l.slices[0].color);var s=new Image;l.slices[0].imgSrc?s.src=l.slices[0].imgSrc:s.src=n.NUMBER_IMAGES[o],s.onload=function(){}.bind(this),r.numberImageElements.push(s)}else{r.numberBackColors.push(n.WHITE_COLOR);var s=new Image;s.src=n.NUMBER_IMAGES[o],s.onload=function(){}.bind(this),r.numberImageElements.push(s)}var c=i.getSubLayerNode();c.renderAll(),a&&a()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){for(var t=this.myNumber.split(""),i=t.length,r=this.width/i,n=this.height,a=[],o=[],l=0;l<t.length;l++){var s=t[l];switch(s){case"0":a.push(this.numberBackColors[0]),o.push(this.numberImageElements[0]);break;case"1":a.push(this.numberBackColors[1]),o.push(this.numberImageElements[1]);break;case"2":a.push(this.numberBackColors[2]),o.push(this.numberImageElements[2]);break;case"3":a.push(this.numberBackColors[3]),o.push(this.numberImageElements[3]);break;case"4":a.push(this.numberBackColors[4]),o.push(this.numberImageElements[4]);break;case"5":a.push(this.numberBackColors[5]),o.push(this.numberImageElements[5]);break;case"6":a.push(this.numberBackColors[6]),o.push(this.numberImageElements[6]);break;case"7":a.push(this.numberBackColors[7]),o.push(this.numberImageElements[7]);break;case"8":a.push(this.numberBackColors[8]),o.push(this.numberImageElements[8]);break;case"9":a.push(this.numberBackColors[9]),o.push(this.numberImageElements[9]);break;case"+":a.push(this.numberBackColors[10]),o.push(this.numberImageElements[10]);break;case"-":a.push(this.numberBackColors[11]),o.push(this.numberImageElements[11]);break;case".":a.push(this.numberBackColors[12]),o.push(this.numberImageElements[12])}}for(var l=0;l<a.length;l++)e.fillStyle=a[l],e.fillRect(-(this.width/2)+r*l,-(this.height/2),r,n);for(var l=0;l<o.length;l++)e.fillStyle=o[l],e.drawImage(o[l],-(this.width/2)+r*l,-(this.height/2),r,n)}}),fabric.MyNumber.fromLevel=function(e,t,i){t&&t(new fabric.MyNumber(e,i))},fabric.MyNumber.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{numberImageElements:this.numberImageElements,numberBackColors:this.numberBackColors,myNumber:this.myNumber})}}(fabric.MyNumber.prototype.toObject),fabric.MyNumber.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyNumber(i,e))},fabric.MyNumber.async=!0,fabric.MyVideo=fabric.util.createClass(fabric.Object,{type:l.MyVideo,initialize:function(e,t){this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1,this.backgroundColor=e.texList[0].slices[0].color},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{e.fillStyle=this.backgroundColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height)}catch(e){toastr.warning("渲染Slide出错")}}}),fabric.MyVideo.fromLevel=function(e,t,i){t&&t(new fabric.MyVideo(e,i))},fabric.MyVideo.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{backgroundColor:this.backgroundColor})}}(fabric.MyVideo.prototype.toObject),fabric.MyVideo.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MyVideo(i,e))},fabric.MyVideo.async=!0,fabric.MySlide=fabric.util.createClass(fabric.Object,{type:l.MySlide,initialize:function(e,t){var r=this;this.callSuper("initialize",t),this.lockRotation=!0,this.hasRotatingPoint=!1;var n=e.texList[0];this.currentColor=n.slices[n.currentSliceIdx].color,this.currentImageElement=s.getResourceFromCache(n.slices[n.currentSliceIdx].imgSrc),this.currentImageElement&&(this.loaded=!0,this.setCoords(),this.fire("image:loaded")),this.on("changeTex",function(e){var t=e.level,n=e.callback,a=t.texList[0];r.currentColor=a.slices[a.currentSliceIdx].color,r.currentImageElement=s.getResourceFromCache(a.slices[a.currentSliceIdx].imgSrc);var o=i.getSubLayerNode();o.renderAll(),n&&n()})},toObject:function(){return fabric.util.object.extend(this.callSuper("toObject"))},_render:function(e){try{e.fillStyle=this.currentColor,e.fillRect(-(this.width/2),-(this.height/2),this.width,this.height),this.currentImageElement&&e.drawImage(this.currentImageElement,-this.width/2,-this.height/2,this.width,this.height)}catch(e){toastr.warning("渲染Slide出错")}}}),fabric.MySlide.fromLevel=function(e,t,i){t&&t(new fabric.MySlide(e,i))},fabric.MySlide.prototype.toObject=function(e){return function(){return fabric.util.object.extend(e.call(this),{currentColor:this.currentColor,currentImageElement:this.currentImageElement})}}(fabric.MySlide.prototype.toObject),fabric.MySlide.fromObject=function(e,t){var i=I.getLevelById(e.id);t&&t(new fabric.MySlide(i,e))},fabric.MySlide.async=!0;var L={},C={type:"",objects:[]};this.shearPlate={type:"",objects:[],mode:0,target:null};var O=this.shearPlate,w=!1;this.setRendering=function(e){w=e},this.isRendering=function(){return w},this.isEditingPage=function(){var e=I.getCurrentPage();return 0==e.mode};var x=this.getCurrentSelectObject=function(){var e="none",t=null,r=null,n=0,a=i.getPageNode(),o=i.getSubLayerNode();return _.forEach(L.pages,function(s){s.current&&(s.selected&&(e=l.MyPage,t=a,r=s,n=0),s.currentFabLayer&&s.currentFabLayer.type==l.MyLayerGroup&&(e=l.MyLayerGroup,t=a.getActiveGroup(),r={info:{left:t?Math.round(t.getLeft()):null,top:t?Math.round(t.getTop()):null}},n=0),_.forEach(s.layers,function(a){a.current&&(a.selected&&(e=l.MyLayer,t=s.currentFabLayer,r=a,n=0),_.forEach(a.subLayers,function(a){a.current&&(a.selected&&(e=l.MySubLayer,t=i.getSubLayerNode(),r=a,n=1),a.currentFabWidget&&a.currentFabWidget.type==l.MyWidgetGroup&&(e=l.MyWidgetGroup,t=o.getActiveGroup(),r={info:{left:t?Math.round(t.getLeft()):null,top:t?Math.round(t.getTop()):null}},n=1),_.forEach(a.widgets,function(i){i.current&&i.selected&&(e=A(i.id,!0).type,t=a.currentFabWidget,r=i,n=1)}))}))}))}),{type:e,target:t,level:r,mode:n}};this.saveProjectFromGlobal=function(e,t){function i(e,t){e==r?I.changeCurrentPageIndex(0,t):I.changeCurrentPageIndex(e,function(){i(e+1,t)},!0)}L=e,_.forEach(L.pages,function(e){_.forEach(e.layers,function(e){_.forEach(e.subLayers,function(t){t.id==e.showSubLayer.id&&(e.showSubLayer=t)})})});var r=L.pages.length;i(0,t)},this.getProjectTo=function(e,t){e.project=L,t&&t()},this.getProjectCopyTo=function(e,t){e.project=_.cloneDeep(L),t&&t()},this.getCurrentPage=function(){var e=null;return _.forEach(L.pages,function(t){t.current&&(e=t)}),e},this.getCurrentSubLayer=function(){var e=I.getCurrentPage(),t=null;return _.forEach(e.layers,function(e){e.current&&_.forEach(e.subLayers,function(e){e.current&&(t=e)})}),t};var M=this.getCurrentLayer=function(e){var t=e;t||(t=I.getCurrentPage());var i=null;return _.forEach(t.layers,function(e){e.current&&(i=e)}),i},k=this.getLevelById=function(e){var t=null;return _.forEach(L.pages,function(i){i.id==e&&(t=i),_.forEach(i.layers,function(i){i.id==e&&(t=i),_.forEach(i.subLayers,function(i){i.id==e&&(t=i),_.forEach(i.widgets,function(i){i.id==e&&(t=i)})})})}),t},E=(this.getResourceList=function(){return L.resourceList},this.getCurrentWidget=function(e){var t=W();if(t||(t=e),t){var i=null;return _.forEach(t.widgets,function(e){e.current&&(i=e)}),i}}),A=this.getFabricObject=function(e,t){var r;r=t?i.getSubLayerNode():i.getPageNode();var n=null;return _.forEach(r.getObjects(),function(t){t.id==e&&(n=t)}),n};this.getRequiredResourceNames=function(){var e=[];return _.forEach(L.pages,function(t){t.backgroundImage&&e.push(t.backgroundImage),_.forEach(t.layers,function(t){_.forEach(t.subLayers,function(t){t.backgroundImage&&e.push(t.backgroundImage),_.forEach(t.widgets,function(t){_.forEach(t.texList,function(t){_.forEach(t.slices,function(t){t.imgSrc&&e.push(t.imgSrc)})})})})})}),e},this.getRequiredTagNames=function(){var e=[];return _.forEach(L.pages,function(t){t.tag&&e.push(t.tag),_.forEach(t.layers,function(t){t.tag&&e.push(t.tag),_.forEach(t.subLayers,function(t){_.forEach(t.widgets,function(t){t.tag&&e.push(t.tag)})})})}),e};this.changeCurrentPageIndex=function(e,t,r){function n(){function n(e,t){if(e==l)t&&t();else{var i=o.layers[e];I.SyncSubLayerImage(i,i.showSubLayer,function(){n(e+1,t)})}}var a=i.getPageNode(),o=L.pages[e];if(o){z(e);var l=o.layers.length;a.setBackgroundImage(null,function(){a.loadFromJSON(o.proJsonStr,function(){r?n(0,function(){I.ScaleCanvas("page"),a.deactivateAll(),a.renderAll(),o.url=a.toDataURL({format:"jpeg",quality:"0.2"}),I.OnPageSelected(e,t,!0)}):(I.ScaleCanvas("page"),a.renderAll(),o.url=a.toDataURL({format:"jpeg",quality:"0.2"}),I.OnPageSelected(e,t))})})}}if(r)n();else if(e>=0){var a=I.getCurrentPage();if(a){var o=-1;_.forEach(L.pages,function(e,t){e.id==a.id&&(o=t)}),o!=e?1==a.mode?I.OnPageSelected(o,n,!0):I.OnPageSelected(e,function(){t&&t(!0)}):I.OnPageSelected(e,function(){t&&t(!0)},r)}else n()}},this.changeCurrentSubLayerIndex=function(e,t){if(!(e<0)){var r=(i.getSubLayerNode(),M()),n=(R(I.getCurrentPage().layers,r),r.subLayers[e]);n&&(r.showSubLayer=n,I.SyncSubLayerImage(r,n,function(){var e=I.getCurrentSelectObject();e.target.fire("OnScaleRelease",e.target.id),e.target.fire("OnRelease",e.target.id),t&&t()}))}},this.shearPagePlateEnable=function(){return 0!=C.objects.length},this.shearPlateEnable=function(){if(0==O.objects.length)return!1;var e=x();I.getCurrentPage();return e.type==l.MyPage?O.type==l.MyLayer||O.type==l.MyGroup&&0==O.mode:e.type==l.MyLayer||e.type==l.MyGroup&&0==e.mode?O.type==l.MyLayer||O.type==l.MyGroup&&0==O.mode:e.type==l.MySubLayer?!!l.isWidget(O.type)||O.type==l.MyGroup&&1==O.mode:!!(l.isWidget(e.type)||e.type==l.MyGroup&&1==e.mode)&&(!!l.isWidget(O.type)||O.type==l.MyGroup&&1==O.mode)},this.AddNewPage=function(e,t){T(!0);var i=_.cloneDeep(e),r=R(L.pages,I.getCurrentPage()),n=-1;r==L.pages.length-1?(L.pages.push(i),n=L.pages.length-1):(L.pages.splice(r+1,0,i),n=r+1),I.changeCurrentPageIndex(n,function(){u(),t&&t()},!0)},this.AddNewLayerInCurrentPage=function(e,t){var r=i.getPageNode();e.zIndex=r.getObjects().length;var n=I.getCurrentPage(),a={width:e.info.width,height:e.info.height,top:e.info.top,left:e.info.left,id:e.id,lockScalingFlip:!0,hasRotatingPoint:!1,shadow:{color:"rgba(0,0,0,0.4)",blur:2}};n.layers.push(e);var o=new fabric.MyLayer(e.id,a);r.add(o),r.renderAll.bind(r)(),e.info.width=o.getWidth(),e.info.height=o.getHeight(),n.currentFabLayer=o,r.renderAll.bind(r)(),I.currentFabLayerIdList=[],I.currentFabLayerIdList.push(e.id),I.OnLayerSelected(e,t)},this.AddNewSubLayerInCurrentLayer=function(e,t){var i=_.cloneDeep(e),r=M(),n=R(I.getCurrentPage().layers,r);r.subLayers.push(i);var a=r.subLayers.length-1;I.OnSubLayerSelected(n,a,t,!0)},this.AddNewWidgetInCurrentSubLayer=function(e,t){var r=i.getSubLayerNode(),a=W();e.zIndex=r.getObjects().length;var o={width:e.info.width,height:e.info.height,top:e.info.top,left:e.info.left,id:e.id,lockScalingFlip:!0,hasRotatingPoint:!1,shadow:{color:"rgba(0,0,0,0.4)",blur:2}};I.currentFabWidgetIdList=[],I.currentFabWidgetIdList.push(e.id);var s=function(i){a.proJsonStr=r.toJSON(),a.widgets.push(e),a.currentFabWidget=i,N(e,t)};e.type==l.MySlide?fabric.MySlide.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.urls=e.subSlides,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyProgress?(""==e.backgroundImg&&(e.backgroundImg=n.BLANK_LAYER_URL),""==e.progressImg&&(e.progressImg=n.BLANK_LAYER_URL),fabric.MyProgress.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.backgroundUrl=e.backgroundImg,t.progressUrl=e.progressImg,r.add(t),r.renderAll(),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o)):e.type==l.MyDashboard?(""==e.backgroundImg&&(e.backgroundImg=n.BLANK_LAYER_URL),""==e.progressImg&&(e.progressImg=n.BLANK_LAYER_URL),fabric.MyDashboard.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.backgroundUrl=e.backgroundImg,t.progressUrl=e.progressImg,r.add(t),r.renderAll(),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o)):e.type==l.MyButton?fabric.MyButton.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.normalImg=e.backgroundImg,t.pressImg=e.progressImg,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyButtonGroup?fabric.MyButtonGroup.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyNumber?fabric.MyNumber.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyTextArea?fabric.MyTextArea.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyNum?fabric.MyNum.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],r.add(t),r.renderAll(),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyKnob?(""==e.backgroundImg&&(e.backgroundImg=n.BLANK_LAYER_URL),""==e.knobImg&&(e.knobImg=n.BLANK_LAYER_URL),fabric.MyKnob.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.backgroundUrl=e.backgroundImg,t.knobUrl=e.KnobImg,r.add(t),r.renderAll(),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o)):e.type==l.MyOscilloscope?(""==e.backgroundImg&&(e.backgroundImg=n.BLANK_LAYER_URL),""==e.oscillationImg&&(e.oscillationImg=n.BLANK_LAYER_URL),fabric.MyOscilloscope.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.backgroundUrl=e.backgroundImg,t.oscillationImg=e.oscillationImg,r.add(t),r.renderAll(),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o)):e.type==l.MySwitch?fabric.MySwitch.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.urls=e.subSlides,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyRotateImg?fabric.MyRotateImg.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.urls=e.subSlides,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyDateTime?fabric.MyDateTime.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.urls=e.subSlides,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyScriptTrigger?fabric.MyScriptTrigger.fromLevel(e,function(t){
-I.currentFabWidgetIdList=[t.id],t.urls=e.subSlides,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MySlideBlock?fabric.MySlideBlock.fromLevel(e,function(t){I.currentFabWidgetIdList=[t.id],t.urls=e.subSlides,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o):e.type==l.MyVideo&&fabric.MyVideo.fromLevel(e,function(t){I.currentFabLayerIdList=[t.id],t.urls=e.subSlides,r.add(t),r.renderAll.bind(r)(),e.info.width=t.getWidth(),e.info.height=t.getHeight(),s(t)},o)},this.BindPageTree=function(e,t){var i,r,n,a;return{dragStart:function(t){i=J(),r=t.source.index,e(t)},dropped:function(e){n=e.dest.index,n!=r&&(a=J()),t(e,a)}}},this.DeletePageByIndex=function(e,t){var i=-1;if(0==e&&1==L.pages.length){L.pages=[];var r=a.getRandomPage();L.pages.push(r),i=0}else 0==e?(L.pages.shift(),i=0):(L.pages.splice(e,1),i=e-1);u(),I.changeCurrentPageIndex(i,t)},this.DeleteActiveLayers=function(e){function t(e){for(var t=I.getCurrentPage().layers,i=0;i<t.length;i++){var r=t[i];r.id==e.id&&t.splice(i,1)}}var r=i.getPageNode(),n=I.getCurrentPage(),a=R(L.pages,n),o=r.getActiveGroup(),l=r.getActiveObject();o&&o.objects.length>0?(_.forEach(o.getObjects(),function(e){r.fxRemove(e,{onComplete:function(){t(e)}})}),r.fxRemove(o,{onComplete:function(){r.deactivateAll(),r.renderAll(),I.OnPageSelected(a,e)}})):l&&r.fxRemove(l,{onComplete:function(){t(l),I.OnPageSelected(a,e)}})},this.DeleteCurrentSubLayer=function(e){var t=I.getCurrentLayer(),i=I.getCurrentSubLayer(),r=(R(L.pages,I.getCurrentPage()),-1);if(_.forEach(t.subLayers,function(e,t){e.id==i.id&&(r=t)}),!(r<0)){var n=t.showSubLayer.id==i.id;if(n)if(t.subLayers.length>1){var o=t.subLayers[0];t.showSubLayer=o,I.SyncSubLayerImage(t,o,function(){I.OnLayerSelected(t,function(){t.subLayers.splice(r,1),e&&e()})})}else{var l=a.getDefaultSubLayer();t.subLayers.push(l),t.showSubLayer=l,I.SyncSubLayerImage(t,l,function(){I.OnLayerSelected(t,function(){t.subLayers.splice(r,1),e&&e()})})}else I.OnLayerSelected(t,function(){t.subLayers.splice(r,1),e&&e()})}},this.DeleteActiveWidgets=function(e){function t(e){for(var t=I.getCurrentSubLayer().widgets,i=0;i<t.length;i++){var r=t[i];r.id==e.id&&t.splice(i,1)}}var r=i.getSubLayerNode(),n=I.getCurrentSubLayer(),a=I.getCurrentPage(),o=I.getCurrentLayer(),l=R(a.layers,o),s=R(o.subLayers,n),c=r.getActiveGroup(),h=r.getActiveObject();c&&c.objects.length>0?(_.forEach(c.getObjects(),function(e){r.fxRemove(e,{onComplete:function(){t(e)}})}),r.fxRemove(c,{onComplete:function(){r.deactivateAll(),r.renderAll(),n.proJsonStr=JSON.stringify(r.toJSON()),I.OnSubLayerSelected(l,s,e)}})):h&&r.fxRemove(h,{onComplete:function(){t(h),I.OnSubLayerSelected(l,s,e)}})},this.MoveActiveObjects=function(e,t,r,n){var a,o=!0;if("layers"===e)a=i.getPageNode();else{if("widgets"!==e)return;a=i.getSubLayerNode(),o=!1}var l=a.getActiveGroup(),s=a.getActiveObject();r=r||0;var c=0,h=0;switch(t){case"up":h=0-r;break;case"down":h=r;break;case"left":c=0-r;break;case"right":c=r}var g,u;if(l&&l.objects.length>0?(g=l.get("left")+c,u=l.get("top")+h,l.set("left",g),l.set("top",u)):s&&(g=s.get("left")+c,u=s.get("top")+h,s.set("left",g),s.set("top",u)),a.renderAll(),o){var d=I.getCurrentLayer();if(d){var f=I.getFabricObject(d.id);f&&I.SyncLevelFromFab(d,f)}}else{var b=I.getCurrentWidget();if(b){var m=I.getFabricObject(b.id,!0);m&&I.SyncLevelFromFab(b,m)}}I.UpdateCurrentThumb(),n&&n()},this.CopyPageByIndex=function(e,t){I.OnPageSelected(e,function(){C={type:l.MyPage,objects:[L.pages[e]]},t&&t()},!0)},this.CopyLayer=function(e,t){var i=I.getFabricObject(e.id);O={type:l.MyLayer,objects:[e],mode:0,target:i},toastr.info("复制成功"),t&&t()},this.CopyWidget=function(e,t){var i=g(e),r=I.getFabricObject(e.id,!0);O={type:e.type,objects:[i],mode:0,target:r},toastr.info("复制成功"),t&&t()},this.CopyLayerGroup=function(e,t){var i=R(L.pages,I.getCurrentPage()),r=_.cloneDeep(e);I.OnPageSelected(i,function(){var i=I.getCurrentPage().layers;_.forEach(i,function(e){V(e,I.getFabricObject(e.id))}),I.OnLayerGroupSelected(d(r),function(){var i=[],r=e;_.forEach(e.getObjects(),function(e){var t=_.cloneDeep(I.getLevelById(e.id));t&&i.push(t)}),O={type:l.MyLayerGroup,objects:i,mode:0,target:r},toastr.info("复制成功"),t&&t()})})},this.CopyWidgetGroup=function(e,t){var i=R(I.getCurrentPage().layers,I.getCurrentLayer()),r=R(I.getCurrentLayer().subLayers,I.getCurrentSubLayer()),n=_.cloneDeep(e);I.OnSubLayerSelected(i,r,function(){var i=I.getCurrentSubLayer().widgets;_.forEach(i,function(e){V(e,I.getFabricObject(e.id,!0))}),I.OnWidgetGroupSelected(d(n,!0),function(){var i=[],r=e;_.forEach(e.getObjects(),function(e){var t=_.cloneDeep(I.getLevelById(e.id));e.id=t.id,t&&i.push(t)}),O={type:l.MyWidgetGroup,objects:i,mode:1,target:r},toastr.info("复制成功"),t&&t()})})},this.DoPaste=function(e){function t(e,i){var n=c(O.objects[e]);n.$$hashKey=void 0,I.AddNewLayerInCurrentPage(n,function(n){return r.push(n),e==O.objects.length-1?void(i&&i()):void t(e+1,i)})}function i(e,t){var r=g(O.objects[e]);r.$$hashKey=void 0,I.AddNewWidgetInCurrentSubLayer(r,function(r){return n.push(r),e==O.objects.length-1?void(t&&t()):void i(e+1,t)})}var r=[],n=[];if(O.type==l.MyLayer){var a=c(O.objects[0]);a.$$hashKey=void 0,I.AddNewLayerInCurrentPage(a,e)}else if(O.type==l.MyGroup&&0==O.mode)t(0,function(){I.OnLayerGroupSelected(new fabric.Group(r),e,!0)});else if(l.isWidget(O.type)){var o=g(O.objects[0]);o.$$hashKey=void 0,I.AddNewWidgetInCurrentSubLayer(o,e)}else O.type==l.MyGroup&&1==O.mode&&i(0,function(){I.OnWidgetGroupSelected(new fabric.Group(n),e)})},this.PastePageByIndex=function(e){if(C.type==l.MyPage){var t=h(C.objects[0]);t.id=Math.random().toString(36).substr(2),t.$$hashKey=void 0,this.AddNewPage(t,function(){e&&e()})}},this.HoldObject=function(e,t){e.holdOperate=J(),t&&t()};var P={scaling:!1,objId:""};this.ScaleLayer=function(e,t){P.scaling=!0,P.objId=x().level.id;M();e.holdOperate=J(),t&&t()},this.ReleaseObject=function(e,t){var r=x();if(P.scaling&&(P.scaling=!1,P.objId="",r.type==l.MyLayer&&I.SyncSubLayerImage(r.level,r.level.showSubLayer,function(){r.target.fire("OnScaleRelease",r.target.id)})),r.type==l.MyLayer?r.target.fire("OnRelease",r.target.id):r.type==l.MyGroup&&0==r.mode?_.forEach(r.target.getObjects(),function(e){var t=A(e.id);t.fire("OnRelease",t.id)}):l.isWidget(r.type)?r.target.fire("OnRelease",r.target.id):r.type==l.MyGroup&&1==r.mode&&_.forEach(r.target.getObjects(),function(e){var t=A(e.id,!0);t.fire("OnRelease",t.id)}),e.holdOperate){var n=I.getCurrentPage();if(!n)return;n.proJsonStr=JSON.stringify(i.getPageNode().toJSON());var a=I.getCurrentSubLayer();a&&(a.proJsonStr=JSON.stringify(i.getSubLayerNode().toJSON())),t&&t()}},this.SaveCurrentOperate=function(){var e=(I.getCurrentPage(),i.getPageNode(),I.getCurrentSubLayer());if(e){i.getSubLayerNode()}return _.cloneDeep(L)},this.LoadCurrentOperate=function(e,t,r){L=e,u();i.getPageNode(),i.getSubLayerNode();_.forEach(L.pages,function(e,i){if(e.current){if(e.selected)return void I.OnPageSelected(i,t,!0,!1,r);if(e.currentFabLayer&&e.currentFabLayer.type!=l.MyLayer)return void I.OnLayerGroupSelected(d(e.currentFabLayer),t,!0);_.forEach(e.layers,function(e,i){if(e.current){if(e.selected)return void I.OnLayerSelected(e,t,!0);_.forEach(e.subLayers,function(e,r){if(e.current){if(e.selected)return void I.OnSubLayerSelected(i,r,t,!0);if(!l.isWidget(e.currentFabWidget.type))return void I.OnWidgetGroupSelected(d(e.currentFabWidget,!0),t,!0);_.forEach(e.widgets,function(e){e.current&&e.selected&&I.OnWidgetSelected(e,t,!0)})}})}})}})},this.OnPageClicked=function(e,t,i){e<0||(i||(I.currentFabLayerIdList=[]),I.currentFabWidgetIdList=[],_.forEach(L.pages,function(t,i){i!=e?(t.selected=!1,t.current=!1):(t.selected=!0,t.current=!0,t.currentFabLayer=null),_.forEach(t.layers,function(e){e.selected=!1,e.current=!1,_.forEach(e.subLayers,function(e){e.selected=!1,e.current=!1,e.currentFabWidget=null,_.forEach(e.widgets,function(t){t.selected=!1,e.current=!1})})})}),t&&t())},this.OnPageSelected=function(e,t,r,n,a){var o=L.pages[e];if(o||(o=I.getCurrentPage()),o){var l=!1;I.getCurrentPage()?I.getCurrentPage()&&I.getCurrentPage().id==o.id&&(l=!0):l=!0;var s=i.getPageNode();0==o.mode&&l&&!r?(I.OnPageClicked(e,null,n),s.deactivateAll(),s.renderAll(),o.proJsonStr=s.toJSON(),o.url=s.toDataURL({format:"jpeg",quality:"0.2"}),t&&t()):1==o.mode?F(o,function(){I.OnPageClicked(e,null,n),s.deactivateAll(),s.renderAll(),o.proJsonStr=s.toJSON(),o.mode=0,o.url=s.toDataURL({format:"jpeg",quality:"0.2"}),t&&t()}):s.setBackgroundImage(null,function(){s.loadFromJSON(o.proJsonStr,function(){I.OnPageClicked(e,null,n),s.deactivateAll(),s.renderAll(),o.proJsonStr=s.toJSON(),o.mode=0,o.url=s.toDataURL({format:"jpeg",quality:"0.2"}),t&&t()})})}},this.currentFabLayerIdList=[],this.currentFabWidgetIdList=[],this.OnLayerClicked=function(e,t){I.currentFabWidgetIdList=[];var i=I.getCurrentPage();i&&(i.selected=!1,_.forEach(i.layers,function(t){if(e.id==t.id)t.current=!0,t.selected=!0,i.currentFabLayer=e,e.hasControls=!0,V(t,e);else if(f(t,e)){e.lockScalingX=!0,e.lockScalingY=!0,t.current=!1,t.selected=!0,i.currentFabLayer=e;var r=n.GROUP_CONTROL_VISIBLE;e.setControlsVisibility(r)}else t.current=!1,t.selected=!1;_.forEach(t.subLayers,function(e){e.selected=!1,e.current=!1,e.currentFabWidget=null,_.forEach(e.widgets,function(t){t.selected=!1,e.current=!1})})}),t&&t())},this.OnLayerMultiSelected=function(e){var t=I.currentFabLayerIdList,r=i.getPageNode(),n=R(L.pages,I.getCurrentPage());t.length>1?I.OnPageSelected(n,function(){var i=[];r.forEachObject(function(e){R(t,e.id)>=0&&i.push(e)}),i.length!=t.length;var n=new fabric.Group(i,{canvas:r});I.OnLayerGroupSelected(n,e,!1)},!1,!0):1==t.length&&I.OnPageSelected(n,function(){I.OnLayerSelected(I.getLevelById(t[0]),e,!1)},!1,!0)},this.OnLayerDoubleClicked=function(e,t){var i=I.getCurrentPage(),r=R(L.pages,i),n=I.getLevelById(e),a=R(i.layers,n),o=-1;_.forEach(n.subLayers,function(e,t){e.id==n.showSubLayer.id&&(o=t)}),I.OnPageSelected(r,function(){I.OnSubLayerSelected(a,o,t,!0)})},this.OnWidgetMultiSelected=function(e){var t=I.currentFabWidgetIdList,r=i.getSubLayerNode(),n=R(I.getCurrentPage().layers,I.getCurrentLayer()),a=R(I.getCurrentLayer().subLayers,I.getCurrentSubLayer());t.length>1?I.OnSubLayerSelected(n,a,function(){var i=[];r.forEachObject(function(e){R(t,e.id)>=0&&i.push(e)}),i.length!=t.length;var n=new fabric.Group(i,{canvas:r});I.OnWidgetGroupSelected(n,e,!1)},!1,!0):1==t.length&&I.OnSubLayerSelected(n,a,function(){I.OnWidgetSelected(I.getLevelById(t[0]),e,!1)},!1,!0)},this.OnLayerGroupSelected=function(e,t,r,n){var a=I.getCurrentPage();if(a){var o=i.getPageNode();if(0!=a.mode||r)F(a,function(){a.currentFabLayer=e;var i=d(a.currentFabLayer);o.setActive(i),a.currentFabLayer=_.cloneDeep(i),o.renderAll(),a.proJsonStr=JSON.stringify(o.toJSON()),a.mode=0,a.url=o.toDataURL({format:"jpeg",quality:"0.2"}),t&&t()});else{a.currentFabLayer=e;var l=a.currentFabLayer;o.setActive(l),a.currentFabLayer=_.cloneDeep(l),o.renderAll(),a.proJsonStr=JSON.stringify(o.toJSON()),a.url=o.toDataURL({format:"jpeg",quality:"0.2"}),t&&t()}}},this.OnLayerSelected=function(e,t,r,n){var a=I.getCurrentPage();if(a){var o=i.getPageNode();if(0!=a.mode||r)F(a,function(){a.currentFabLayer=A(e.id);var i=a.currentFabLayer;o.deactivateAll(),o.renderAll(),o.setActive(i),a.currentFabLayer=_.cloneDeep(i),o.renderAll(),a.proJsonStr=JSON.stringify(o.toJSON()),a.mode=0,a.url=o.toDataURL({format:"jpeg",quality:"0.2"}),I.SyncSubLayerImage(e,e.showSubLayer,function(){t&&t(i)})});else{o.deactivateAll(),o.renderAll(),a.currentFabLayer=n?n:A(e.id);var l=a.currentFabLayer;o.setActive(l),a.currentFabLayer=_.cloneDeep(l),o.renderAll(),a.proJsonStr=JSON.stringify(o.toJSON()),a.url=o.toDataURL({format:"jpeg",quality:"0.2"}),I.SyncSubLayerImage(e,e.showSubLayer,function(){t&&t(l)})}}},this.OnSubLayerClicked=function(e,t,i){I.currentFabLayerIdList=[];var r=I.getCurrentPage(),n=r.layers[e],a=n.subLayers[t];r.selected=!1,_.forEach(r.layers,function(i,r){e>=0&&(r==e?(i.current=!0,i.selected=!1,n=i):(i.current=!1,i.selected=!1)),_.forEach(i.subLayers,function(i,n){t>=0&&(n==t&&r==e?(i.current=!0,i.selected=!0,a=i,a.currentFabWidget=null):(i.current=!1,i.selected=!1)),_.forEach(i.widgets,function(e){e.current=!1,e.selected=!1})})}),i&&i()},this.OnSubLayerSelected=function(e,t,r,n){var a=I.getCurrentPage();if(a){1==a.mode&&B(I.getCurrentSubLayer());try{var o=a.layers[e]}catch(e){}var l=o.subLayers[t];if(l){p(o.info.width,o.info.height,o.info.left,o.info.top);var s=!1;W()&&W().id==l.id&&(s=!0),D(e,t);var c=i.getSubLayerNode();A(o.id);1==a.mode&&s&&!n?(I.ScaleCanvas("subCanvas",o),c.deactivateAll(),c.renderAll(),l.proJsonStr=JSON.stringify(c.toJSON()),r&&r()):(c.clear(),c.setBackgroundImage(null,function(){c.loadFromJSON(l.proJsonStr,function(){I.ScaleCanvas("subCanvas",o),c.deactivateAll(),c.renderAll(),l.proJsonStr=JSON.stringify(c.toJSON()),a.mode=1,j=!1,r&&r()})}))}}};var j=!1;this.getFabLayerByLayer=function(e){var t=null,r=i.getPageNode();return _.forEach(r.getObjects(),function(i){i.id==e.id&&(t=i)}),t},this.SyncSubLayerImage=function(e,t,r){if(!j){j=!0;var n=this,a=i.getSubLayerNode(),o=t,l=e;l.showSubLayer.backgroundImage&&""!=l.showSubLayer.backgroundImage?(a.clear(),a.loadFromJSON(l.showSubLayer.proJsonStr,function(){I.ScaleCanvas("subCanvas",l),a.setBackgroundImage(l.showSubLayer.backgroundImage,function(){a.deactivateAll(),a.renderAll(),o.proJsonStr=a.toJSON(),o.url=a.toDataURL({format:"png"}),n.getFabLayerByLayer(l).fire("OnRefresh",function(){j=!1,r&&r()})},{width:l.info.width,height:l.info.height})})):a.setBackgroundImage(null,function(){a.setBackgroundColor(l.showSubLayer.backgroundColor,function(){a.loadFromJSON(l.showSubLayer.proJsonStr,function(){I.ScaleCanvas("subCanvas",l),a.deactivateAll(),a.renderAll(),o.proJsonStr=a.toJSON(),o.url=a.toDataURL({format:"png"}),l.url=o.url,n.getFabLayerByLayer(l).fire("OnRefresh",function(){j=!1,r&&r()})})})})}},this.OnWidgetClicked=function(e,t){I.currentFabLayerIdList=[];var i=I.getCurrentPage();i.selected=!1,i&&(i.selected=!1,_.forEach(i.layers,function(t){t.current=!1,t.selected=!1,_.forEach(t.subLayers,function(i){i.selected=!1,i.current=!1,_.forEach(i.widgets,function(r){if(r.id==e.id)r.selected=!0,r.current=!0,i.current=!0,i.currentFabWidget=_.cloneDeep(e),t.current=!0,e.hasControls=!0,V(r,e);else if(f(r,e)){r.selected=!0,r.current=!1,i.current=!0,t.current=!0,i.currentFabWidget=_.cloneDeep(e);var a=n.GROUP_CONTROL_VISIBLE;e.setControlsVisibility(a)}else r.selected=!1,r.current=!1})})}),t&&t())};var N=this.OnWidgetSelected=function(e,t,r,n){var a=I.getCurrentPage();1==a.mode;var o=null,l=null;if(_.forEach(a.layers,function(t){_.forEach(t.subLayers,function(i){_.forEach(i.widgets,function(r){r.id==e.id&&(o=i,l=t)})})}),a&&o){var s=!1;W()&&W().id==o.id&&(s=!0);var c=i.getSubLayerNode();if(1==a.mode&&s&&!r){I.ScaleCanvas("subCanvas",l),c.deactivateAll(),c.renderAll(),o.currentFabWidget=n?n:A(e.id,!0);var h=o.currentFabWidget;c.setActive(h),o.currentFabWidget=_.cloneDeep(h),o.proJsonStr=JSON.stringify(c.toJSON()),c.renderAll(),t&&t(h)}else c.clear(),c.setBackgroundImage(null,function(){c.loadFromJSON(o.proJsonStr,function(){I.ScaleCanvas("subCanvas",l),c.deactivateAll(),c.renderAll(),o.currentFabWidget=A(e.id,!0);var i=o.currentFabWidget;c.setActive(i),o.currentFabWidget=_.cloneDeep(i),o.proJsonStr=JSON.stringify(c.toJSON()),c.renderAll(),a.mode=1,t&&t(i)})})}};this.OnWidgetGroupSelected=function(e,t,r){var n=I.getCurrentPage(),a=I.getCurrentSubLayer(),o=i.getSubLayerNode();if(1!=n.mode||r)o.clear(),o.setBackgroundImage(null,function(){o.loadFromJSON(a.proJsonStr,function(){o.renderAll(),a.currentFabwidget=e;var i=d(a.currentFabwidget,!0);o.setActive(i),a.currentFabwidget=_.cloneDeep(i),o.renderAll(),n.mode=1,a.proJsonStr=JSON.stringify(o.toJSON()),a.url=o.toDataURL({format:"png"}),t&&t()})});else{a.currentFabwidget=e;var l=a.currentFabwidget;o.setActive(l),a.currentFabwidget=_.cloneDeep(l),o.renderAll(),a.proJsonStr=JSON.stringify(o.toJSON()),a.url=o.toDataURL({format:"png"}),t&&t()}},this.OnSelectAll=function(e){if(I.isEditingPage()){var t=i.getPageNode(),r=I.getCurrentPage(),n=t.getObjects();if(0==n.length)return;if(1==n.length)I.OnLayerSelected(r.layers[0],e);else{var a=new fabric.Group(n,{originX:"left",originY:"top"});I.OnLayerGroupSelected(a,e)}}else{var o=i.getSubLayerNode(),l=I.getCurrentSubLayer(),s=o.getObjects();if(0==s.length);else if(1==s.length)I.OnWidgetSelected(l.widgets[0],e);else{var a=new fabric.Group(s,{originX:"left",originY:"top"});I.OnWidgetGroupSelected(a,e)}}};var V=this.SyncLevelFromFab=function(e,t){var i=e.info.width,r=e.info.height;e.info.left,e.info.top;e.info.width=Math.abs(t.getWidth()-i)<=1?i:Math.round(t.getWidth()),e.info.height=Math.abs(t.getHeight()-r)<=1?r:Math.round(t.getHeight()),e.info.left=Math.round(t.getLeft()),e.info.top=Math.round(t.getTop()),e.type==l.MyButtonGroup&&("horizontal"==e.info.arrange?e.info.interval=e.info.intervalScale*t.getWidth():e.info.interval=e.info.intervalScale*t.getHeight())};this.UpdateCurrentThumb=function(e){var t=i.getPageNode(),r=I.getCurrentPage();r.url=t.toDataURL({format:"jpeg",quality:"0.2"}),e&&e()},this.updateCurrentThumbInPage=function(){var e=i.getSubLayerNode();M()&&(M().url=e.toDataURL({format:"png"}))},this.ChangeAttributeName=function(e,t){var i=J(),r=x();r.level.name=e.name,t&&t(i)},this.ChangeAttributeBackgroundColor=function(e,t){var r=J(),n=x();switch(n.type){case l.MyPage:var a=I.getCurrentPage(),o=i.getPageNode();o.setBackgroundColor(e.color,function(){o.renderAll(),a.backgroundColor=e.color,a.proJsonStr=JSON.stringify(o.toJSON());var i=R(L.pages,a);I.OnPageSelected(i,function(){t&&t(r)})});break;case l.MySubLayer:var s=W(),c=i.getSubLayerNode();c.setBackgroundColor(e.color,function(){c.renderAll(),s.backgroundColor=e.color,s.proJsonStr=JSON.stringify(c.toJSON());var i=R(L.pages,I.getCurrentPage()),n=R(L.pages[i].layers,I.getCurrentLayer()),a=R(L.pages[i].layers[n].subLayers,I.getCurrentSubLayer());I.OnSubLayerSelected(i,a,function(){t&&t(r)})})}},this.ChangeAttributeBackgroundImage=function(e,t){var r=J(),n=x(),a=I.getCurrentPage();switch(n.type){case l.MyPage:var o=i.getPageNode();o.setBackgroundImage(e.image,function(){o.renderAll(),a.backgroundImage=e.image,a.proJsonStr=JSON.stringify(o.toJSON());var i=R(L.pages,a);I.OnPageSelected(i,function(){t&&t(r)})},{width:o.getWidth()/o.getZoom(),height:o.getHeight()/o.getZoom()});break;case l.MySubLayer:var s=M(),c=W(),h=i.getSubLayerNode();h.setBackgroundImage(e.image,function(){h.renderAll(),c.backgroundImage=e.image,c.proJsonStr=JSON.stringify(h.toJSON());var i=R(I.getCurrentPage().layers,s),n=R(s.subLayers,c);I.OnSubLayerSelected(i,n,function(){t&&t(r)})},{width:s.info.width,height:s.info.height})}},this.ChangeAttributePressImage=function(e,t){var i=I.getCurrentSelectObject();e.image&&""!=e.image&&(i.level.pressImg=e.image)},this.ChangeAttributeButtonText=function(e,t){var i=I.getCurrentSelectObject(),r=(A(i.level.id,!0),{level:i.level,callback:function(){var e=i.level;N(e,t)}});e.hasOwnProperty("text")&&(i.level.info.text=e.text,r.text=e.text),e.fontFamily&&(i.level.info.fontFamily=e.fontFamily,r.fontFamily=e.fontFamily),e.fontSize&&(i.level.info.fontSize=e.fontSize,r.fontSize=e.fontSize),e.fontColor&&(i.level.info.fontColor=e.fontColor,r.fontColor=e.fontColor),e.fontBold&&(i.level.info.fontBold=e.fontBold,r.fontBold=e.fontBold),e.hasOwnProperty("fontItalic")&&(i.level.info.fontItalic=e.fontItalic,r.fontItalic=e.fontItalic),e.fontName&&(i.level.info.fontName=e.fontName),i.target.fire("changeButtonText",r)},this.ChangeAttributeProgressValue=function(e,t){var i=I.getCurrentSelectObject(),r=(e.progressValue-i.level.info.minValue)/(i.level.info.maxValue-i.level.info.minValue);i.level.info.progressValue=e.progressValue;var n={progress:r,callback:t};i.target.fire("changeProgressValue",n)},this.ChangeAttributeArrange=function(e,t){var i=I.getCurrentSelectObject();i.level.info.arrange=e.arrange;var r={arrange:e.arrange,callback:t};i.target.fire("changeArrange",r)},this.ChangeAttributeCursor=function(e,t){var i=a.getTemplateId(),r={},n=I.getCurrentSelectObject();n.level.info.cursor=e.cursor,n.level.info.progressModeId=e.progressModeId,"0"==e.cursor&&(n.level.texList=[{currentSliceIdx:0,name:"进度条底纹",slices:[{color:i?"rgba(0,0,0,0)":"rgba(240,145,66,1)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/barBackground.png":"",name:"进度条底纹"}]},{currentSliceIdx:0,name:"进度条",slices:[{color:i?"rgba(0,0,0,0)":"rgba(125,27,27,1)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/barAll.png":"",name:"进度条"}]}],"1"==e.progressModeId&&(n.level.texList=[{currentSliceIdx:0,name:"进度条背景",slices:[{color:i?"rgba(0,0,0,0)":"rgba(240,145,66,1)",imgSrc:"",name:"进度条背景"}]},{currentSliceIdx:0,name:"初始颜色",slices:[{color:"rgba(170,80,80,1)",imgSrc:"",name:"初始颜色"}]},{currentSliceIdx:0,name:"结束颜色",slices:[{color:"rgba(243,204,82,1)",imgSrc:"",name:"结束颜色"}]}],r.initColor=n.level.texList[1].slices[0].color,r.endColor=n.level.texList[2].slices[0].color)),"1"==e.cursor&&(n.level.texList=[{currentSliceIdx:0,name:"进度条底纹",slices:[{color:i?"rgba(0,0,0,0)":"rgba(240,145,66,1)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/barBackground.png":"",name:"进度条底纹"}]},{currentSliceIdx:0,name:"进度条",slices:[{color:i?"rgba(0,0,0,0)":"rgba(125,27,27,1)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/barAll.png":"",name:"进度条"}]},{currentSliceIdx:0,name:"光标纹理",slices:[{color:"rgba(0,0,0,0)",imgSrc:"",name:"光标纹理"}]}],"1"==e.progressModeId&&(n.level.texList=[{currentSliceIdx:0,name:"进度条底纹",slices:[{color:i?"rgba(0,0,0,0)":"rgba(240,145,66,1)",imgSrc:"",name:"进度条底纹"}]},{currentSliceIdx:0,name:"初始颜色",slices:[{color:"rgba(170,80,80,1)",imgSrc:"",name:"初始颜色"}]},{currentSliceIdx:0,name:"结束颜色",slices:[{color:"rgba(243,204,82,1)",imgSrc:"",name:"结束颜色"}]},{currentSliceIdx:0,name:"光标纹理",slices:[{color:"rgba(0,0,0,0)",imgSrc:"",name:"光标纹理"}]}],r.initColor=n.level.texList[1].slices[0].color,r.endColor=n.level.texList[2].slices[0].color)),r.backgroundColor=n.level.texList[0].slices[0].color,r.progressColor=n.level.texList[1].slices[0].color,r.progressModeId=n.level.info.progressModeId,r.level=_.cloneDeep(n.level),t&&t(),n.target.fire("changeAttributeCursor",r)},this.ChangeAttributeDashboardOffsetValue=function(e,t){var i=I.getCurrentSelectObject(),r=e.offsetValue;i.level.info.offsetValue=r;var n={offsetValue:r,callback:t};i.target.fire("changeDashboardOffsetValue",n)},this.ChangeAttributeDashboardValue=function(e,t){var i=I.getCurrentSelectObject(),r=e.value;i.level.info.value=e.value;var n={value:r,callback:t};i.target.fire("changeDashboardValue",n)},this.ChangeAttributeDashboardPointerLength=function(e,t){var i=I.getCurrentSelectObject(),r=e.pointerLength,n=A(i.level.id,!0);i.level.info.pointerLength=r;var a={pointerLength:r,scaleX:n.getScaleX(),scaleY:n.getScaleY(),callback:t};i.target.fire("changeDashboardPointerLength",a)},this.ChangeAttributeKnobSize=function(e,t){var i=I.getCurrentSelectObject(),r=e.knobSize,n=A(i.level.id,!0);i.level.info.knobSize=r;var a={knobSize:r,scaleX:n.getScaleX(),scaleY:n.getScaleY(),callback:t};i.target.fire("changeKnobSize",a)},this.ChangeAttributeKnobValue=function(e,t){var i=I.getCurrentSelectObject(),r=e.value;i.level.info.value=e.value;var n={value:r,callback:t};i.target.fire("changeKnobValue",n)},this.ChangeAttributeTextContent=function(e,t){var i=I.getCurrentSelectObject(),r=(A(i.level.id,!0),{level:i.level,callback:function(){var e=i.level;N(e,t)}});if(e.text){var n=e.text;i.level.info.text=n,r.text=n}if(e.fontFamily){var a=e.fontFamily;i.level.info.fontFamily=a,r.fontFamily=a}if(e.fontSize){var o=e.fontSize;i.level.info.fontSize=o,r.fontSize=o}if(e.fontColor){var l=e.fontColor;i.level.info.fontColor=l,r.fontColor=l}if(e.fontBold){var s=e.fontBold;i.level.info.fontBold=s,r.fontBold=s}if(e.hasOwnProperty("fontItalic")){var c=e.fontItalic;i.level.info.fontItalic=c,r.fontItalic=c}e.fontName&&(i.level.info.fontName=e.fontName),i.target.fire("changeTextContent",r)},this.ChangeAttributeNumContent=function(e,t){var i=I.getCurrentSelectObject(),r=A(i.level.id,!0),n={scaleX:r.getScaleX(),scaleY:r.getScaleY(),callback:t};if(e.fontFamily){var a=e.fontFamily;i.level.info.fontFamily=a,n.fontFamily=a}if(e.fontSize){var o=e.fontSize;i.level.info.fontSize=o,n.fontSize=o}if(e.fontBold){var l=e.fontBold;i.level.info.fontBold=l,n.fontBold=l}if(e.hasOwnProperty("fontItalic")){var s=e.fontItalic;i.level.info.fontItalic=s,n.fontItalic=s}if(e.hasOwnProperty("fontColor")){var c=e.fontColor;i.level.info.fontColor=c,n.fontColor=c}if(e.numOfDigits){var h=e.numOfDigits;i.level.info.numOfDigits=h,n.numOfDigits=h}if(e.decimalCount||0==e.decimalCount){var g=e.decimalCount;i.level.info.decimalCount=g,n.decimalCount=g}if(e.symbolMode){var u=e.symbolMode;i.level.info.symbolMode=u,n.symbolMode=u}if(e.frontZeroMode){var d=e.frontZeroMode;i.level.info.frontZeroMode=d,n.frontZeroMode=d}if(e.hasOwnProperty("numValue")){var f=e.numValue;i.level.info.numValue=f,n.numValue=f}if(e.align){var b=e.align;i.level.info.align=b,n.align=b}i.target.fire("changeNumContent",n)},this.ChangeAttributeOfNum=function(e,t){var i=I.getCurrentSelectObject();e.numModeId&&(i.level.info.numModeId=e.numModeId),e.overFlowStyle&&(i.level.info.overFlowStyle=e.overFlowStyle),t&&t()},this.ChangeAttributeButtonModeId=function(e,t){var i=I.getCurrentSelectObject();i.level.buttonModeId=e.buttonModeId,t&&t()},this.ChangeAttributeOscilloscopeForRender=function(e,t){var i=I.getCurrentSelectObject(),r={callback:t};e.hasOwnProperty("spacing")&&(i.level.info.spacing=e.spacing,r.spacing=e.spacing),e.hasOwnProperty("grid")&&(i.level.info.grid=e.grid,r.grid=e.grid),e.hasOwnProperty("lineWidth")&&(i.level.info.lineWidth=e.lineWidth,r.lineWidth=e.lineWidth),e.hasOwnProperty("gridInitValue")&&(i.level.info.gridInitValue=e.gridInitValue,r.gridInitValue=e.gridInitValue),e.hasOwnProperty("gridUnitX")&&(i.level.info.gridUnitX=e.gridUnitX,r.gridUnitX=e.gridUnitX),e.hasOwnProperty("gridUnitY")&&(i.level.info.gridUnitY=e.gridUnitY,r.gridUnitY=e.gridUnitY),i.target.fire("ChangeAttributeOscilloscope",r)},this.ChangeAttributeOscilloscope=function(e,t){var i=I.getCurrentSelectObject();e.hasOwnProperty("lineColor")&&(i.level.info.lineColor=e.lineColor)},this.ChangeAttributeBindBit=function(e,t){var i=(e.bindBit,I.getCurrentSelectObject());i.level.info.bindBit=e.bindBit,t&&t()},this.ChangeAttributeInitValue=function(e,t){var i=e.initValue,r=I.getCurrentSelectObject();r.level.info.initValue=e.initValue,arg={initValue:i,callback:t},r.target.fire("changeInitValue",arg)},this.ChangeAttributeDateTimeModeId=function(e,t){var i=e.dateTimeModeId,r=e.RTCModeId,n=I.getCurrentSelectObject();n.level.info.dateTimeModeId=i,n.level.info.RTCModeId=r;var a={level:n.level,dateTimeModeId:i,callback:function(){var e=n.level;N(e,t)}};n.target.fire("changeDateTimeModeId",a)},this.ChangeAttributeDateTimeText=function(e,t){var i=I.getCurrentSelectObject(),r={level:i.level,callback:function(){var e=i.level;N(e,t)}};e.hasOwnProperty("fontFamily")&&(i.level.info.fontFamily=e.fontFamily,r.fontFamily=e.fontFamily),e.hasOwnProperty("fontSize")&&(i.level.info.fontSize=e.fontSize,r.fontSize=e.fontSize),e.hasOwnProperty("fontColor")&&(i.level.info.fontColor=e.fontColor,r.fontColor=e.fontColor),i.target.fire("changeDateTimeText",r)},this.ChangeAttributeGroupAlign=function(e,t){var r=J(),n=i.getPageNode(),a=i.getSubLayerNode(),o=I.getCurrentPage(),l=I.getCurrentSelectObject(),s=l.target,c=(l.level,s.getWidth()),h=s.getHeight();switch(e.align){case"left":s.forEachObject(function(e){e.setLeft(-c/2)});break;case"top":s.forEachObject(function(e){e.setTop(-h/2)});break;case"bottom":s.forEachObject(function(e){var t=e.getHeight(),i=h/2-t;e.setTop(i)});break;case"right":s.forEachObject(function(e){var t=e.getWidth(),i=c/2-t;e.setLeft(i)})}if(W()){var g=W();g.proJsonStr=JSON.stringify(a.toJSON())}else o.proJsonStr=JSON.stringify(n.toJSON());a.renderAll(),n.renderAll(),t&&t(r)},this.ChangeAttributeDashboardModeId=function(e,t){var i=a.getTemplateId(),r=I.getCurrentSelectObject();r.level.dashboardModeId=e.dashboardModeId,"0"==r.level.dashboardModeId?r.level.texList=[{currentSliceIdx:0,name:"仪表盘背景",slices:[{color:i?"rgba(0,0,0,0)":"rgba(100,100,100,1)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/dashboard.png":"",name:"仪表盘背景"}]},{currentSliceIdx:0,name:"仪表盘指针",slices:[{color:"rgba(0,0,0,0)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/pointer.png":"",name:"仪表盘指针"}]}]:"1"==r.level.dashboardModeId?r.level.texList=[{currentSliceIdx:0,name:"仪表盘背景",slices:[{color:i?"rgba(0,0,0,0)":"rgba(100,100,100,1)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/dashboard.png":"",name:"仪表盘背景"}]},{currentSliceIdx:0,name:"仪表盘指针",slices:[{color:"rgba(0,0,0,0)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/pointer.png":"",name:"仪表盘指针"}]},{currentSliceIdx:0,name:"光带效果",slices:[{color:"rgba(0,0,0,0)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/lightBand.png":"",name:"光带效果"}]}]:"2"==r.level.dashboardModeId&&(r.level.texList=[{currentSliceIdx:0,name:"光带效果",slices:[{color:"rgba(0,0,0,0)",imgSrc:i?"/public/templates/defaultTemplate/defaultResources/lightBand.png":"",name:"光带效果"}]}]);var n=_.cloneDeep(r.level);arg={level:n,backgroundColor:_.cloneDeep(r.level.texList[0].slices[0].color),dashboardModeId:e.dashboardModeId,callback:t},r.target.fire("changeDashboardMode",arg)},this.ChangeAttributeDashboardClockwise=function(e,t){var i=I.getCurrentSelectObject();i.level.info.clockwise=e.clockwise,arg={clockwise:e.clockwise,callback:t},i.target.fire("changeDashboardClockwise",arg)},this.ChangeAttributeDashboardCoverAngle=function(e,t){var i=I.getCurrentSelectObject();arg={callback:t},e.hasOwnProperty("minCoverAngle")?(arg.minCoverAngle=e.minCoverAngle,i.level.info.minCoverAngle=e.minCoverAngle):e.hasOwnProperty("maxCoverAngle")&&(arg.maxCoverAngle=e.maxCoverAngle,i.level.info.maxCoverAngle=e.maxCoverAngle),toastr.info("修改成功!"),i.target.fire("changeDashboardCoverAngle",arg)},this.ChangeAttributeInterval=function(e,t){var i=I.getCurrentSelectObject();i.level.info.interval=e.interval;var r=i.level.info.interval,n=A(i.level.id,!0);"horizontal"==i.level.info.arrange?(i.level.info.intervalScale=i.level.info.interval/n.getWidth(),r=i.level.info.interval/n.getScaleX()):(i.level.info.intervalScale=i.level.info.interval/n.getHeight(),r=i.level.info.interval/n.getScaleY());var a={interval:r,callback:t};i.target.fire("changeInterval",a)},this.ChangeAttributeButtonCount=function(e,t){function i(e,t,r){if(e.texList.length<t+1)e.texList.splice(e.texList.length-1,0,a.getDefaultButtonTex()),i(e,t,r);else{if(!(e.texList.length>t+1))return void(r&&r());e.texList.splice(e.texList.length-2,1),i(e,t,r)}}var r=I.getCurrentSelectObject();r.level.info.count=e.count,i(r.level,r.level.info.count,function(){var e={level:r.level,callback:t};r.target.fire("changeTex",e)})},this.ChangeAttributePosition=function(e,t){var r=J(),n=I.getCurrentSelectObject(),a=i.getPageNode(),o=i.getSubLayerNode(),s=I.getCurrentPage();if(n.type==l.MyLayer){var c=null,h=M();_.forEach(a.getObjects(),function(e){e.id==n.target.id&&(c=e)}),_.isNumber(e.left)&&(c.setLeft(e.left),h.info.left=e.left),_.isNumber(e.top)&&(c.setTop(e.top),h.info.top=e.top),a.renderAll(),s.proJsonStr=JSON.stringify(a.toJSON()),I.OnLayerSelected(h,function(){t&&t(r)})}else if(l.isWidget(n.type)){var g=null,u=W(),d=E(u);if(_.forEach(o.getObjects(),function(e){e.id==n.target.id&&(g=e)}),g=A(n.target.id,!0),!g)return;_.isNumber(e.left)&&(g.setLeft(e.left),d.info.left=e.left),_.isNumber(e.top)&&(g.setTop(e.top),d.info.top=e.top),o.renderAll(),u.proJsonStr=JSON.stringify(o.toJSON()),I.OnWidgetSelected(d,function(){t&&t(r)})}else if(n.type==l.MyGroup){var f=n.target,b=n.level;if(!f)return;if(_.isNumber(e.left)&&(f.setLeft(e.left),b.info.left=e.left),_.isNumber(e.top)&&(f.setTop(e.top),b.info.top=e.top),W()){var u=W();
-u.proJsonStr=JSON.stringify(o.toJSON())}else s.proJsonStr=JSON.stringify(a.toJSON());o.renderAll(),a.renderAll(),t&&t(r)}},this.ChangeAttributeAnimation=function(e,t){var i=I.getCurrentSelectObject();i.level.animations=e,t&&t()},this.AddAttributeTransition=function(e,t){var i=I.getCurrentSelectObject();i.level.transition=e,t&&t()},this.ChangeAttributeTransition=function(e,t){var i=I.getCurrentSelectObject();e.hasOwnProperty("name")?(i.level.transition.name=e.name,i.level.transition.show=e.show):e.hasOwnProperty("duration")&&(i.level.transition.duration=e.duration),t&&t()},this.ChangeAttributeAction=function(e,t){var i=I.getCurrentSelectObject();i.level.actions=e,t&&t()},this.ChangeAttributeTexList=function(e,t){var i=I.getCurrentSelectObject();i.level.texList=e;var r={level:i.level,callback:t};i.target.fire("changeTex",r)},this.ChangeAttributeWidgetSize=function(e){var t=I.getCurrentSelectObject(),i={callback:e},r=s.getResourceFromCache(t.level.texList[0].slices[0].imgSrc);i.widgetWidth=r.width,i.WidgetHeight=r.height,r.width==t.level.info.width&&r.height==t.level.info.height&&1==t.target.scaleX&&1==t.target.scaleY||(t.level.info.width=r.width,t.level.info.height=r.height,t.target.fire("changeWidgetSize",i))},this.ChangeAttributeTag=function(e,t){var i=I.getCurrentSelectObject();i.level.tag=e,t&&t()},this.ChangeAttributeValue=function(e,t){var r=J(),n=i.getSubLayerNode(),a=null,o=null,s=x();e.hasOwnProperty("maxValue")&&(s.level.info.maxValue=e.maxValue,s.type==l.MyProgress&&(o=(s.level.info.progressValue-s.level.info.minValue)/(s.level.info.maxValue-s.level.info.minValue),a={progress:o,callback:t},s.target.fire("changeProgressValue",a)),s.type==l.MyDashboardDashboard&&(a={maxValue:e.maxValue,callback:t},s.target.fire("changeDashboardValue",a)),s.type==l.MyOscilloscope&&(a={maxValue:e.maxValue,callback:t},s.target.fire("ChangeAttributeOscilloscope",a)),s.type==l.MySlideBlock&&(a={maxValue:e.maxValue,callback:t},s.target.fire("changeInitValue",a))),e.hasOwnProperty("minValue")&&(s.level.info.minValue=e.minValue,s.type==l.MyProgress&&(o=(s.level.info.progressValue-s.level.info.minValue)/(s.level.info.maxValue-s.level.info.minValue),a={progress:o,callback:t},s.target.fire("changeProgressValue",a)),s.type==l.MyDashboard&&(a={minValue:e.minValue,callback:t},s.target.fire("changeDashboardValue",a)),s.type==l.MyOscilloscope&&(a={minValue:e.minValue,callback:t},s.target.fire("ChangeAttributeOscilloscope",a)),s.type==l.MySlideBlock&&(a={minValue:e.minValue,callback:t},s.target.fire("changeInitValue",a))),e.hasOwnProperty("minAngle")&&(s.level.info.minAngle=e.minAngle,s.type==l.MyDashboard&&(a={minAngle:e.minAngle,callback:t},s.target.fire("changeDashboardValue",a))),e.hasOwnProperty("maxAngle")&&(s.level.info.maxAngle=e.maxAngle,s.type==l.MyDashboard&&(a={maxAngle:e.maxAngle,callback:t},s.target.fire("changeDashboardValue",a))),e.hasOwnProperty("highAlarmValue")&&(s.level.info.highAlarmValue=e.highAlarmValue),e.hasOwnProperty("lowAlarmValue")&&(s.level.info.lowAlarmValue=e.lowAlarmValue),e.hasOwnProperty("initValue")&&(s.level.info.initValue=e.initValue,s.target.fire("changeNumber",s.level),n.renderAll()),toastr.info("修改成功!"),t&&t(r)},this.ChangeAttributeNoInit=function(e,t){var i=x();e.noInit&&(i.level.info.noInit=e.noInit),toastr.info("修改成功!")},this.ChangeAttributeZIndex=function(e,t){var r=J(),n=x();if(n.type==l.MyLayer){var a=i.getPageNode(),o=null,s=I.getCurrentPage();M();if(_.forEach(a.getObjects(),function(e){e.id==n.target.id&&(o=e)}),!o)return;0==e.index?o.bringForward():o.sendBackwards(),s.proJsonStr=JSON.stringify(a.toJSON());var c=a.getObjects();_.forEach(s.layers,function(e,t){for(var i=0;i<c.length;i++)if(c[i].id==e.id){e.zIndex=i;break}}),s.layers.sort(function(e,t){return e.zIndex-t.zIndex})}else if(l.isWidget(n.type)){var h=i.getSubLayerNode(),g=null,u=W();E();if(_.forEach(h.getObjects(),function(e){e.id==n.target.id&&(g=e)}),!g)return;0==e.index?g.bringForward():g.sendBackwards(),u.proJsonStr=JSON.stringify(h.toJSON());var d=h.getObjects();_.forEach(u.widgets,function(e,t){for(var i=0;i<d.length;i++)if(d[i].id==e.id){e.zIndex=i;break}}),u.widgets.sort(function(e,t){return e.zIndex-t.zIndex})}t&&t(r)},this.ChangeAttributeSize=function(e,t){var r=J(),n=x();if(n.type==l.MyLayer){var a=i.getPageNode(),o=null,s=M();if(_.forEach(a.getObjects(),function(e){e.id==n.target.id&&(o=e)}),!o)return;var c=I.getCurrentPage();e.width&&(o.set({width:e.width,scaleX:1}),s.info.width=e.width),e.height&&(o.set({height:e.height,scaleY:1}),s.info.height=e.height),n.target.fire("OnRelease",n.target.id),a.renderAll(),c.proJsonStr=JSON.stringify(a.toJSON());var h=M();I.OnLayerSelected(h,function(){t&&t(r)})}else if(l.isWidget(n.type)){var g=i.getSubLayerNode(),u=null,d=W(),f=E(d);if(_.forEach(g.getObjects(),function(e){e.id==n.target.id&&(u=e)}),!u)return;e.width&&(u.set({width:e.width,scaleX:1}),f.info.width=e.width),e.height&&(u.set({height:e.height,scaleY:1}),f.info.height=e.height),g.renderAll(),d.proJsonStr=JSON.stringify(g.toJSON()),N(f,function(){t&&t(r)})}},this.SearchObjectByName=function(e,t){var i=[];_.forEach(L.pages,function(t){t.name==e&&i.push({id:t.id,type:l.MyPage}),_.forEach(t.layers,function(t){t.name==e&&i.push({id:t.id,type:l.MyLayer}),_.forEach(t.subLayers,function(t){t.name==e&&i.push({id:t.id,type:l.MySubLayer}),_.forEach(t.widgets,function(t){t.name==e&&i.push({id:t.id,type:t.type})})})})}),t(i)},this.SelectInSearchResults=function(e,t){if(e){var i=R(L.pages,I.getCurrentPage());_.forEach(L.pages,function(r,n){return r.id==e.id&&e.type==l.MyPage?void I.changeCurrentPageIndex(n,t):void _.forEach(r.layers,function(r,a){return r.id==e.id&&e.type==l.MyLayer?void(i==n?I.OnLayerSelected(r,t,!0):I.changeCurrentPageIndex(n,function(){I.OnLayerSelected(r,t,!0)})):void _.forEach(r.subLayers,function(r,o){return r.id==e.id&&e.type==l.MySubLayer?void(i==n?I.OnSubLayerSelected(a,o,t,!0):I.changeCurrentPageIndex(n,function(){I.OnSubLayerSelected(a,o,t,!0)})):void _.forEach(r.widgets,function(r){r.id==e.id&&l.isWidget(e.type)&&(i==n?I.OnSubLayerSelected(a,o,function(){I.OnWidgetSelected(r,t,!0)},!0):I.changeCurrentPageIndex(n,function(){I.OnSubLayerSelected(a,o,function(){I.OnWidgetSelected(r,t,!0)},!0)}))})})})})}},this.ScaleCanvas=function(e,t){var r=(I.getCurrentPage(),1);if("page"==e){var n=i.getPageNode();r=o.getScaleFloat("page"),n.setZoom(r),n.setWidth(L.currentSize.width*r),n.setHeight(L.currentSize.height*r)}else if("subCanvas"==e){var a=t?t:I.getCurrentLayer(),l=i.getSubLayerNode();r=o.getScaleFloat("subCanvas"),p(a.info.width,a.info.height,a.info.left,a.info.top,r),l.setZoom(r),l.setWidth(a.info.width*r),l.setHeight(a.info.height*r)}};var F=function(e,t){var r=W(),n=i.getPageNode();r&&(r.proJsonStr=JSON.stringify(i.getSubLayerNode().toJSON())),n.setBackgroundImage(null,function(){n.loadFromJSON(e.proJsonStr,function(){1==e.mode?B(r,t):t&&t()})})},R=function(e,t){var i=-1;return e?(_.forEach(e,function(e,r){e.id==t.id&&(i=r)}),i):i},B=function(e,t){if(e){var r=i.getSubLayerNode(),n=i.getPageNode();r.deactivateAll(),r.renderAll(),e.url=r.toDataURL({format:"png"});var a=n.getObjects(),o=a.length;if(o>0){var l=function(){o-=1,o<=0&&t&&t()}.bind(this);_.forEach(a,function(e){e.fire("OnRenderUrl",l)}.bind(this))}else t&&t()}},T=this.setRendering,W=this.getCurrentSubLayer,z=this.OnPageClicked,D=this.OnSubLayerClicked,J=this.SaveCurrentOperate}]);
+/**
+ * Created by shenaolin on 16/2/26.
+ */
+
+    var projectRecord=[];
+var ideServices = angular.module('IDEServices', ['ngFileUpload']);
+ideServices
+//IDE界面共享整个项目资源
+    .service('ProjectService',['$rootScope','$timeout',
+        'CanvasService',
+        'GlobalService',
+        'Preference',
+        'TemplateProvider',
+        'ViewService',
+        'Type',
+        'ResourceService',function ($rootScope,$timeout,
+                                         CanvasService,
+                                         GlobalService,
+                                         Preference,
+                                         TemplateProvider,
+                                         ViewService,
+                                         Type,
+                                         ResourceService) {
+
+
+        var _self=this;
+
+        fabric.Object.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    id: this.id
+                });
+            }
+        })(fabric.Object.prototype.toObject);
+
+        /**
+         * 设置选中
+         * @param obj
+         * @param option    只有对Group设置坐标
+         */
+        fabric.Canvas.prototype.setActive = function (obj) {
+            var self = this;
+            if (!obj) {
+                console.warn('找不到对象');
+                return;
+            }
+
+            if (obj.type == Type.MyLayer || Type.isWidget(obj.type)) {
+
+                var fabObject=obj;
+
+                self.setActiveObject(fabObject);
+                fabObject.setCoords();
+
+            } else if (obj.type == Type.MyLayerGroup || obj.type == Type.MyWidgetGroup) {
+
+                var fabGroup=obj;
+
+                self.deactivateAllWithDispatch();
+                fabGroup.addWithUpdate();
+                self.setActiveGroup(fabGroup);
+
+                fabGroup.saveCoords();
+
+
+                self.renderAll();
+                var activeGroup = self.getActiveGroup();
+                if (activeGroup) {
+                    activeGroup.setObjectsCoords().setCoords();
+                    activeGroup.isMoving = false;
+                    self.setCursor(self.defaultCursor);
+                }
+
+                // clear selection and current transformation
+                self._groupSelector = null;
+                self._currentTransform = null;
+            }
+        };
+        /**
+         * 给image 对象添加一个修改图片的方法
+         * @param src
+         * @param onloadCallback
+         */
+        fabric.Image.prototype.setSrc = function (src, onloadCallback) {
+            var self = this;
+            var img = new Image();
+            img.src = src + '?' + Math.random() * 100;
+            img.onload = function () {
+                self.setElement(img);
+                onloadCallback(img.width, img.height);
+            };
+        };
+
+
+        fabric.MyLayer = fabric.util.createClass(fabric.Object, {
+            type: Type.MyLayer,
+
+            initialize: function (layerId, options) {
+
+                var self=this;
+
+                //开始移动时Layer的Scale
+                if (!this.initScale){
+                    this.initScale={
+                        X:1,
+                        Y:1
+                    }
+                }
+
+                this.callSuper('initialize', options);
+                this.loadAll(layerId);
+                this.layerId = layerId;
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+
+
+                //开始移动时Layer的Scale
+                this.on('OnRelease', function () {
+                    var currentLayer=_self.getLevelById(self.id);
+                    var layerNode=null;
+                    layerNode=getFabricObject(self.id);
+
+                    self.initPosition.left = _.cloneDeep(self.getLeft());
+                    self.initPosition.top = _.cloneDeep(self.getTop());
+                    self.initScale.X=layerNode.getScaleX().toFixed(2);
+                    self.initScale.Y=layerNode.getScaleY().toFixed(2);
+
+
+                });
+
+                this.on('OnScaleRelease', function (objId) {
+                    if (objId==self.id){
+                        this.renderUrlInPage(self);
+                    }
+                });
+                this.on('OnRenderUrl', function (cb) {
+                    this.renderUrlInPage(self, cb);
+                });
+
+                this.on('OnRefresh',function (cb) {
+                    this.refresh(self,cb);
+                })
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                // console.log('rendering my layer')
+                // this.loadAll(this.id);
+                // console.log('1',JSON.stringify(this.backgroundImg))
+                try{
+                    ctx.fillStyle =this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
+
+                    var currentLayer=getCurrentLayer();
+
+                    if (currentLayer&&scalingOperate.scaling&&scalingOperate.objId==this.id){
+                        this.widgetImgs=[];
+                        var layerNode=getFabricObject(currentLayer.id);
+
+                        var angle=layerNode.getAngle()*Math.PI/180;
+                        var sin=Math.sin(angle);
+                        var cos=Math.cos(angle);
+                        var deltaLeft=this.initPosition.left-this.getLeft();
+                        var deltaTop=this.initPosition.top-this.getTop();
+
+                        this.backgroundImg.width=this.width/layerNode.getScaleX()*this.initScale.X;
+                        this.backgroundImg.height=this.height/layerNode.getScaleY()*this.initScale.Y;
+
+                        this.backgroundImg.top=(-sin*deltaLeft+cos*deltaTop)/layerNode.getScaleY()-this.height/2;
+                        this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
+
+                    }
+
+                    // var elem = this.backgroundImg.element;
+                    // console.log('2',elem && elem.src)
+                    if(this.backgroundImg.element){
+                        // console.log('drawing background element',this.backgroundImg.element)
+                        ctx.drawImage(this.backgroundImg.element,
+                            this.backgroundImg.left,
+                            this.backgroundImg.top,
+
+                            this.backgroundImg.width,
+                            this.backgroundImg.height);
+                    }
+                }
+                catch (err) {
+                    console.log('错误描述',err);
+                    toastr.warning('渲染Layer出错');
+                }
+
+            }
+        });
+
+        fabric.MyLayer.prototype.loadAll= function (layerId,cb) {
+
+            var backgroundImg = new Image();
+            var layerNode=getFabricObject(layerId);
+
+            var layer=getLevelById(layerId);
+            // console.log('loadall',layer.showSubLayer.url)
+            // console.log('scale',this.initScale.X,this.initScale.Y)
+
+            var layerWidth=layer.info.width/this.initScale.X;
+            var layerHeight=layer.info.height/this.initScale.Y;
+
+
+
+            this.initPosition={};
+
+
+            if (layer.showSubLayer.url==''){
+                backgroundImg = null;
+            }else{
+
+                backgroundImg.onload = (function () {
+                    this.width = layerWidth;
+                    this.height = layerHeight;
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                    // console.log('img loaded',layerWidth,layerHeight)
+                    cb && cb()
+                }).bind(this);
+                backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
+            }
+
+            this.backgroundImg={
+                element:backgroundImg,
+                width:layerWidth,
+                height:layerHeight,
+                left:-layerWidth / 2,
+                top:-layerHeight/2
+            };
+
+            this.backgroundColor=layer.showSubLayer.backgroundColor;
+            this.initPosition.left = _.cloneDeep(this.getLeft());
+            this.initPosition.top = _.cloneDeep(this.getTop());
+
+        };
+        fabric.MyLayer.prototype.refresh = function (self,cb) {
+            this.renderUrlInPage(self,function () {
+                cb && cb();
+            })
+        }
+        fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
+            // console.log('rendering url in page')
+
+            var currentLayer=getLevelById(self.id);
+            var backgroundImg = new Image();
+
+
+            backgroundImg.onload = function () {
+                self.backgroundImg.element = backgroundImg;
+
+                self.backgroundImg.width = self.width;
+                self.backgroundImg.height = self.height;
+                self.backgroundImg.left = -self.width / 2;
+                self.backgroundImg.top = -self.height / 2;
+
+
+                self.initPosition.left = _.cloneDeep(self.getLeft());
+                self.initPosition.top = _.cloneDeep(self.getTop());
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
+                cb && cb();
+            }.bind(self);
+
+            backgroundImg.onerror = function (err) {
+                backgroundImg = null;
+                cb && cb(err);
+            }.bind(self);
+
+            // while(!renderFlag){
+            //
+            // }
+            backgroundImg.src = currentLayer.showSubLayer.url;
+
+
+        };
+        fabric.MyLayer.prototype.toObject = (function (toObject) {
+            return function () {
+
+
+                return fabric.util.object.extend(toObject.call(this), {
+                    //id: this.id,
+                    loaded: this.loaded,
+                    backgroundImg:this.backgroundImg,
+                    widgetImgs:this.widgetImgs,
+                    initPosition:this.initPosition,
+                    initScale:this.initScale,
+                    //backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MyLayer.prototype.toObject);
+        fabric.MyLayer.fromObject = function (object, callback) {
+            callback && callback(new fabric.MyLayer(object.id,object));
+        };
+        fabric.MyLayer.async = true;
+
+        fabric.MyProgress = fabric.util.createClass(fabric.Object, {
+            type: Type.MyProgress,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.progressValue=level.info.progressValue/(level.info.maxValue-level.info.minValue);
+                this.progressModeId=level.info.progressModeId;
+                this.cursor=level.info.cursor;
+                if(this.progressModeId=='1'){
+                    this.initColor=level.texList[1].slices[0].color;
+                    this.endColor=level.texList[2].slices[0].color;
+                }
+                if(this.progressModeId=='0'&&this.cursor=='1'){
+                    this.cursorColor=level.texList[2].slices[0].color;
+                    // if(level.texList[2].slices[0].imgSrc&&level.texList[2].slices[0].imgSrc!=''){
+                    //     this.cursorImageElement=new Image();
+                    //     this.cursorImageElement.src=level.texList[2].slices[0].imgSrc;
+                    //     this.cursorImageElement.onload=function(){
+                    //
+                    //     }.bind(this);
+                    // }else{
+                    //     this.cursorImageElement=null;
+                    // }
+
+                    this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+
+                }
+                if(this.progressModeId=='1'&&this.cursor=='1'){
+                    this.cursorColor=level.texList[3].slices[0].color;
+                    // if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
+                    //     this.cursorImageElement=new Image();
+                    //     this.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
+                    //     this.cursorImageElement.onload=function(){
+                    //
+                    //     }.bind(this);
+                    // }else{
+                    //     this.cursorImageElement=null;
+                    // }
+                    this.cursorImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+                }
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.backgroundImageElement=new Image();
+                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.backgroundImageElement.onload = function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }.bind(this);
+                // }else {
+                //     this.backgroundImageElement=null;
+                // }
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+                this.progressColor=level.texList[1].slices[0].color;
+                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                //
+                //     this.progressImageElement=new Image();
+                //     this.progressImageElement.src=level.texList[1].slices[0].imgSrc;
+                //     this.progressImageElement.onload = function () {
+                //
+                //     }.bind(this);
+                // }else {
+                //     this.progressImageElement=null;
+                // }
+
+                this.progressImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                this.arrange=level.info.arrange;
+
+
+
+                this.on('changeProgressValue', function (arg) {
+                    self.progressValue=arg.progress;
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    //console.log(level.texList);
+                    if(level.texList[0]&&level.texList[0].name=='进度条底纹'){
+                        self.backgroundColor=level.texList[0].slices[0].color;
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    }
+
+                    if(level.texList[1]&&level.texList[1].name=='进度条'){
+                        self.progressColor=level.texList[1].slices[0].color;
+                        self.progressImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    }else if(level.texList[1]&&level.texList[1].name=='初始颜色'){
+                        self.initColor=level.texList[1].slices[0].color;
+                    }
+
+                    if(level.texList[2]&&level.texList[2]&&level.texList[2].name=='光标纹理'){
+                        self.cursorColor=level.texList[2].slices[0].color;
+                        self.cursorImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                    }else if(level.texList[2]&&level.texList[2].name=='结束颜色'){
+                        self.endColor=level.texList[2].slices[0].color;
+                    }
+
+                    if(level.texList[3]&&level.texList[3]&&level.texList[3].name=='光标纹理'){
+                        self.cursorColor=level.texList[3].slices[0].color;
+                        // if(level.texList[3].slices[0].imgSrc&&level.texList[3].slices[0].imgSrc!=''){
+                        //     self.cursorImageElement=new Image();
+                        //     self.cursorImageElement.src=level.texList[3].slices[0].imgSrc;
+                        //     self.cursorImageElement.onload=function(){
+                        //
+                        //     }.bind(this);
+                        // }else{
+                        //     self.cursorImageElement=null;
+                        // }
+                        self.cursorImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+
+                this.on('changeArrange', function (arg) {
+                    self.arrange=arg.arrange;
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+                this.on('changeAttributeCursor',function(arg){
+                    self.backgroundColor=arg.backgroundColor;
+                    self.progressColor=arg.progressColor;
+                    self.progressModeId=arg.progressModeId;
+
+                    if(arg.hasOwnProperty('initColor')){
+                        self.initColor=arg.initColor;
+                    }
+                    if(arg.hasOwnProperty('endColor')){
+                        self.endColor=arg.endColor;
+                    }
+
+                    if(level.texList[0]&&level.texList[0].name=='进度条底纹'){
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    }else{
+                        self.backgroundImageElement=null;
+                    }
+
+                    if(level.texList[1]&&level.texList[1].name=='进度条'){
+                        self.progressImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    }else{
+                        self.progressImageElement=null
+                    }
+
+                    if(level.texList[3]&&level.texList[3]&&level.texList[3].name=='光标纹理'){
+                        self.cursorImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+                    }else{
+                        self.cursorImageElement=null;
+                    }
+
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                });
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    if(this.progressModeId=='0'){
+                        //普通进度条
+                        ctx.fillStyle=this.backgroundColor;
+                        ctx.fillRect(
+                            -this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height
+                        );
+                        if (this.backgroundImageElement){
+                            ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                        }
+
+                        if (this.arrange=='horizontal'){
+                            ctx.fillStyle=this.progressColor;
+                            ctx.fillRect(
+                                -this.width / 2,
+                                -this.height / 2,
+                                this.width*this.progressValue,
+                                this.height
+                            );
+                            if (this.progressImageElement){
+                                ctx.drawImage(this.progressImageElement, -this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+
+                            }
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+
+                        }else {
+                            ctx.fillStyle=this.progressColor;
+                            ctx.fillRect(
+                                -this.width / 2,
+                                this.height / 2-this.height*this.progressValue,
+                                this.width,
+                                this.height*this.progressValue
+                            );
+                            if (this.progressImageElement){
+                                ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            }
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+                        }
+                    }else if(this.progressModeId=='1'){
+                        //变色进度条
+                        var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
+
+                        //console.log(progressColor);
+                        if(this.arrange=='horizontal'){
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+                            ctx.fillStyle=progressColor;
+                            ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+                        }else{
+                            ctx.fillStyle=progressColor;
+                            ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            if(this.cursorImageElement){
+                                ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                            }
+                        }
+                        if(this.backgroundImageElement){
+                            ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                        }
+                    }else if(this.progressModeId=='2'){
+                        //脚本进度条，啥也不画！
+                    }
+
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+                }
+                catch(err){
+                    console.log('错误描述',err)
+                    toastr.warning('渲染进度条出错');
+                }
+
+            }
+        });
+        fabric.MyProgress.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyProgress(level, option));
+        };
+        fabric.MyProgress.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement:this.backgroundImageElement,
+                    progressImageElement:this.progressImageElement,
+
+                    backgroundColor:this.backgroundColor,
+                    progressColor:this.progressColor,
+
+                    progressValue:this.progressValue,
+                    arrange:this.arrange
+                });
+            }
+        })(fabric.MyProgress.prototype.toObject);
+        fabric.MyProgress.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyProgress(level, object));
+        };
+        fabric.MyProgress.async = true;
+
+
+        //**oscilloscope**//
+        fabric.MyOscilloscope = fabric.util.createClass(fabric.Object, {
+            type: Type.MyOscilloscope,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.maxValue=level.info.maxValue;
+                this.minValue=level.info.minValue;
+                this.spacing=level.info.spacing;
+                this.grid=level.info.grid;
+                this.lineWidth=level.info.lineWidth;
+                this.gridUnitX=level.info.gridUnitX;
+                this.gridUnitY=level.info.gridUnitY;
+                this.gridInitValue=level.info.gridInitValue;
+                this.blankX=level.info.blankX;
+                this.blankY=level.info.blankY;
+                this.setScaleY((((this.maxValue-this.minValue)/this.gridUnitY+1/2)*this.spacing+this.blankY)/this.height);
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.backgroundImageElement=new Image();
+                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.backgroundImageElement.onload = function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }.bind(this);
+                // }else {
+                //     this.backgroundImageElement=null;
+                // }
+
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+
+                this.oscilloscopeColor=level.texList[1].slices[0].color;
+                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                //
+                //     this.oscilloscopeImageElement=new Image();
+                //     this.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                //     this.oscilloscopeImageElement.onload = function () {
+                //     }.bind(this);
+                // }else {
+                //     this.oscilloscopeImageElement=null;
+                // }
+
+                this.oscilloscopeImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    //     self.backgroundImageElement=new Image();
+                    //     self.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                    //     self.backgroundImageElement.onload = function () {
+                    //
+                    //     }.bind(this);
+                    // }else {
+                    //     self.backgroundImageElement=null;
+                    // }
+
+                    this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+
+
+                    self.oscilloscopeColor=level.texList[1].slices[0].color;
+                    // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    //
+                    //     self.oscilloscopeImageElement=new Image();
+                    //     self.oscilloscopeImageElement.src=level.texList[1].slices[0].imgSrc;
+                    //     self.oscilloscopeImageElement.onload = function () {
+                    //
+                    //     }.bind(this);
+                    // }else {
+                    //     self.oscilloscopeImageElement=null;
+                    // }
+
+                    this.oscilloscopeImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+                this.on('ChangeAttributeOscilloscope',function(arg){
+                    var selectObj=_self.getCurrentSelectObject();
+                    var _callback=arg.callback;
+                    if(arg.hasOwnProperty('lineColor')){
+
+                    }
+                    if(arg.hasOwnProperty('spacing')){
+                        self.spacing=arg.spacing;
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
+                    }
+                    if(arg.hasOwnProperty('grid')){
+                        self.grid=arg.grid;
+                    }
+                    if(arg.hasOwnProperty('lineWidth')){
+                        self.lineWidth=arg.lineWidth;
+                    }
+                    if(arg.hasOwnProperty('gridInitValue')){
+                        self.gridInitValue=arg.gridInitValue;
+                    }
+                    if(arg.hasOwnProperty('gridUnitX')){
+                        self.gridUnitX=arg.gridUnitX;
+                    }
+                    if(arg.hasOwnProperty('gridUnitY')){
+                        self.gridUnitY=arg.gridUnitY;
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
+                    }
+                    if(arg.hasOwnProperty('maxValue')){
+                        self.maxValue=arg.maxValue;
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
+                    }
+                    if(arg.hasOwnProperty('minValue')){
+                        self.minValue=arg.minValue;
+                        self.setScaleY((((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY)/self.height);
+                        selectObj.level.info.height=(((self.maxValue-self.minValue)/self.gridUnitY+1/2)*self.spacing+self.blankY);
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
+                    );
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+
+                    if(this.oscilloscopeImageElement){
+                        ctx.drawImage(this.oscilloscopeImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                    if(this.grid!='0'){
+                        var style={
+                            lineWidth:this.lineWidth,
+                            grid:this.grid,
+                            gridInitValue:this.gridInitValue,
+                            gridUnitX:this.gridUnitX,
+                            gridUnitY:this.gridUnitY,
+                            scaleX:this.scaleX,
+                            scaleY:this.scaleY,
+                        };
+                        drawGrid(-this.width/2,-this.height/2,this.width,this.height,this.blankX,this.blankY,this.spacing,this.spacing,style,ctx,this.minValue);
+                    }
+
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染示波器出错');
+                }
+
+            }
+        });
+        fabric.MyOscilloscope.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyOscilloscope(level, option));
+        };
+        fabric.MyOscilloscope.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement:this.backgroundImageElement,
+                    oscilloscopeImageElement:this.oscilloscopeImageElement,
+
+                    backgroundColor:this.backgroundColor,
+                    oscilloscopeColor:this.oscilloscopeColor,
+
+                });
+            }
+        })(fabric.MyOscilloscope.prototype.toObject);
+        fabric.MyOscilloscope.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyOscilloscope(level, object));
+        };
+        fabric.MyOscilloscope.async = true;
+
+        //**** Dashboard ****//
+        fabric.MyDashboard = fabric.util.createClass(fabric.Object, {
+            type: Type.MyDashboard,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.value=level.info.value;
+                this.offsetValue=level.info.offsetValue;
+                this.minValue=level.info.minValue;
+                this.maxValue=level.info.maxValue;
+                this.minAngle=level.info.minAngle;
+                this.maxAngle=level.info.maxAngle;
+                this.pointerLength = level.info.pointerLength;
+                this.clockwise=level.info.clockwise;
+                this.dashboardModeId=level.dashboardModeId;
+                if(level.info.hasOwnProperty('minCoverAngle')){
+                    this.minCoverAngle=level.info.minCoverAngle;
+                }
+                if(level.info.hasOwnProperty('maxCoverAngle')){
+                    this.maxCoverAngle=level.info.maxCoverAngle;
+                }
+          
+                if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
+                    this.backgroundColor=level.texList[0].slices[0].color;
+
+                    this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    if (this.backgroundImageElement) {
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }
+
+                    this.pointerColor=level.texList[1].slices[0].color;
+
+                    this.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                    //初始化光带
+                    if(level.texList[2]){
+                        this.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                    }
+                }else if(this.dashboardModeId=='2'){
+                    this.backgroundColor=level.texList[0].slices[0].color;
+                    this.backgroundImageElement=null;
+                    this.pointerColor=null;
+                    this.pointerImageElement=null;
+                    this.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    if(this.lightBandImageElement){
+                        this.loaded = true;
+                        this.setCoords();
+                        this.fire('image:loaded');
+                    }
+                }
+
+
+                //this.on('mouseup',function(arg){
+                //});
+                this.on('changeDashboardOffsetValue', function (arg) {
+                    if(arg.offsetValue||arg.offsetValue==0){
+                        self.offsetValue=arg.offsetValue;
+                    }
+                    //console.log('changeDashboardValue',self.value);
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+                this.on('changeDashboardValue', function (arg) {
+                    if(arg.hasOwnProperty('value')){
+                        self.value=arg.value;
+                    }
+                    else if(arg.hasOwnProperty('maxValue')){
+                        self.maxValue=arg.maxValue;
+                    }
+                    else if(arg.hasOwnProperty('minValue')){
+                        self.minValue=arg.minValue;
+                    }
+                    else if(arg.hasOwnProperty('minAngle')){
+                        self.minAngle=arg.minAngle;
+                    }
+                    else if(arg.hasOwnProperty('maxAngle')){
+                        self.maxAngle=arg.maxAngle;
+                    }
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+                //changeDashboardPointerLength
+
+                this.on('changeDashboardPointerLength', function (arg) {
+                    self.pointerLength=arg.pointerLength;
+                    self.scaleX = arg.scaleX;
+                    self.scaleY = arg.scaleY;
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+                //change dashboard mode
+                this.on('changeDashboardMode',function(arg){
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    self.dashboardModeId = arg. dashboardModeId;
+                    //若改变模式，重置已经画好的仪表盘控件
+                    if(self.dashboardModeId=='0'||self.dashboardModeId=='1'){
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        self.backgroundColor = level.texList[0].slices[0].color;
+
+                        self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                        self.pointerColor=level.texList[1].slices[0].color;
+
+                        if(level.texList[2]){
+                            self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        }else{
+                            self.lightBandImageElement=null;
+                        }
+                    }else if(self.dashboardModeId=='2'){
+                        self.backgroundImageElement=null;
+                        self.backgroundColor=level.texList[0].slices[0].color;
+                        self.pointerImageElement=null;
+                        self.pointerColor=null;
+                        self.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    }
+
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                //chang dashboard clockwise
+                this.on('changeDashboardClockwise',function(arg){
+                    self.clockwise=arg.clockwise;
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeDashboardCoverAngle',function(arg){
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    if(arg.hasOwnProperty('minCoverAngle')){
+                        self.minCoverAngle=arg.minCoverAngle;
+                    }else if(arg.hasOwnProperty('maxCoverAngle')){
+                        self.maxCoverAngle=arg.maxCoverAngle;
+                    }
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                })
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var dashboardModeId=level.dashboardModeId;
+                    var _callback=arg.callback;
+                    if(dashboardModeId=='0'||dashboardModeId=='1'){
+                        self.backgroundColor=level.texList[0].slices[0].color;
+                        self.pointerColor=level.texList[1].slices[0].color;
+
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                        self.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                        //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
+                        if(level.texList[2]){
+                            self.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                        }
+                    }else if(dashboardModeId=='2'){
+                        self.backgroundImageElement=null;
+                        self.backgroundColor=level.texList[0].slices[0].color;
+                        self.pointerImageElement=null;
+                        self.pointerColor=null;
+                        self.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    }
+
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    //console.log('converAngle:',this.minCoverAngle,this.maxCoverAngle);
+                    var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value-this.minValue);
+                    var taoValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
+                    );
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                    if(this.lightBandImageElement){
+                        //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
+                        var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
+                        var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
+                        var nowangle=translateAngle(taoValue,this.scaleX,this.scaleY);
+                        var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY);
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(0,0);
+                        var radius=calculateRadius(this.dashboardModeId,this.width,this.height);
+                        //console.log('radius,width,height',radius,this.width,this.height);
+                        //ctx.moveTo(0,0);
+                        //如果是逆时针，则反方向旋转
+                        if(this.clockwise=='0'){
+                            minAngle=-minAngle+Math.PI/2;
+                            angle=-angle+Math.PI/2;
+                            ctx.arc(0,0,radius,minAngle,angle,true);
+                            if(this.dashboardModeId=='2'){
+                                ctx.arc(0,0,3*radius/4,angle,minAngle,false);
+                            }
+                        }
+                        else if(this.clockwise=='1'){
+                            minAngle=minAngle+Math.PI/2;
+                            angle=angle+Math.PI/2;
+                            ctx.arc(0,0,radius,minAngle,angle,false);
+                            if(this.dashboardModeId=='2'){
+                                ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                            }
+                            //ctx.stroke();
+                        }
+                        else if(this.clockwise=='2'){
+                            //正向，当前值大于0
+                            if(taoValue>=0){
+                                minAngle=offsetangle+Math.PI/2;
+                                angle=nowangle+offsetangle+Math.PI/2;
+                                ctx.arc(0,0,radius,minAngle,angle,false);
+                                if(this.dashboardModeId=='2'){
+                                    ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                                }
+                            }
+                            //逆向，当前值小于0
+                            else if(taoValue<0){
+                                var curValue = -taoValue;
+                                var nowangle=translateAngle(curValue,this.scaleX,this.scaleY);
+                                minAngle=offsetangle+Math.PI/2;
+                                angle=-nowangle+offsetangle+Math.PI/2;
+                                ctx.arc(0,0,radius,angle,minAngle,false);
+                                if(this.dashboardModeId=='2'){
+                                    ctx.arc(0,0,3*radius/4,minAngle,angle,true);
+                                }
+                            }
+                        }
+                        ctx.closePath();
+                        ctx.clip();
+                        ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                        ctx.restore();
+                    }
+                    if (this.pointerImageElement){
+                        ctx.save();
+                        var sqrt2 = Math.sqrt(2);
+                        var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
+                        var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
+                        var angleOfPointer = newValue+this.offsetValue+this.minAngle;
+                        if(this.clockwise=='0'){
+                            angleOfPointer=-angleOfPointer;
+                        }
+                        angleOfPointer=angleOfPointer+45;
+                        //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
+                        if(!(this.minCoverAngle==this.maxCoverAngle)){
+                            var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                            var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.moveTo(0,0);
+                            ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
+                            ctx.closePath();
+                            ctx.fillStyle='rgba(244,244,244,0.3)';
+                            ctx.fill();
+                            ctx.restore();
+                            ctx.beginPath();
+                            ctx.moveTo(0,0);
+                            ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
+                            ctx.closePath();
+                            //ctx.stroke();
+                            ctx.clip();
+                        }
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.rotate(angleOfPointer*Math.PI/180);
+                        ctx.scale(this.scaleX,this.scaleY);
+                        ctx.fillStyle=this.pointerColor;
+                        ctx.fillRect(
+                            0,
+                            0,
+                            pointerImgWidth,
+                            pointerImgHeight
+                        );
+                        ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
+                        ctx.restore();
+                    }
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo = function (ctx) {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染仪表盘出错');
+                }
+            }
+        });
+        fabric.MyDashboard.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyDashboard(level, option));
+        }
+        fabric.MyDashboard.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement:this.backgroundImageElement,
+                    pointerImageElement:this.pointerImageElement,
+
+                    backgroundColor:this.backgroundColor,
+                    pointerColor:this.pointerColor,
+
+                    value:this.value
+
+                });
+            }
+        })(fabric.MyDashboard.prototype.toObject);
+        fabric.MyDashboard.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyDashboard(level, object));
+        };
+        fabric.MyDashboard.async = true;
+
+
+        fabric.MyKnob = fabric.util.createClass(fabric.Object, {
+            type: Type.MyKnob,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.value=level.info.value;
+                this.knobSize = level.info.knobSize;
+
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.backgroundImageElement=new Image();
+                //     this.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                //     this.backgroundImageElement.onload = function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }.bind(this);
+                // }else {
+                //     this.backgroundImageElement=null;
+                // }
+
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+                this.knobColor=level.texList[1].slices[0].color;
+                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                //
+                //     this.knobImageElement=new Image();
+                //     this.knobImageElement.src=level.texList[1].slices[0].imgSrc;
+                //     this.knobImageElement.onload = function () {
+                //
+                //     }.bind(this);
+                // }else {
+                //     this.knobImageElement=null;
+                // }
+
+                this.knobImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+
+
+
+                this.on('changeKnobValue', function (arg) {
+                    self.value=arg.value;
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+
+                this.on('changeKnobSize', function (arg) {
+                    self.knobSize=arg.knobSize;
+                    self.scaleX = arg.scaleX;
+                    self.scaleY = arg.scaleY;
+                    //console.log('change pointer',self.pointerLength,level);
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                    //     self.backgroundImageElement=new Image();
+                    //     self.backgroundImageElement.src= level.texList[0].slices[0].imgSrc;
+                    //     self.backgroundImageElement.onload = function () {
+                    //
+                    //     }.bind(this);
+                    // }else {
+                    //     self.backgroundImageElement=null;
+                    // }
+
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                    self.knobColor=level.texList[1].slices[0].color;
+                    // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                    //     self.knobImageElement=new Image();
+                    //     self.knobImageElement.src=level.texList[1].slices[0].imgSrc;
+                    //     self.knobImageElement.onload = function () {
+                    //
+                    //     }.bind(this);
+                    // }else {
+                    //     self.knobImageElement=null;
+                    // }
+
+                    self.knobImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                    _callback&&_callback();
+
+                });
+
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
+                    );
+                    if (this.backgroundImageElement){
+                        //console.log('bg',this.width,this.height);
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                    }
+                    if (this.knobImageElement){
+                        //console.log('draw knob',this.knobImageElement)
+                        var sqrt2 = Math.sqrt(2);
+                        var knobImgWidth = this.knobSize/sqrt2/this.scaleX;
+                        var knobImgHeight = this.knobSize/sqrt2/this.scaleY;
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.rotate((this.value)*Math.PI/180);
+                        ctx.scale(this.scaleX,this.scaleY);
+                        //console.log(pointerImgWidth,pointerImgHeight,this.width,this.height);
+                        ctx.drawImage(this.knobImageElement, -knobImgWidth/2, -knobImgHeight/2,knobImgWidth,knobImgHeight);
+
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染旋钮出错');
+                }
+            }
+        });
+        fabric.MyKnob.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyKnob(level, option));
+        }
+        fabric.MyKnob.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement:this.backgroundImageElement,
+                    knobImageElement:this.knobImageElement,
+
+                    backgroundColor:this.backgroundColor,
+                    knobColor:this.knobColor,
+
+                    value:this.value
+
+                });
+            }
+        })(fabric.MyKnob.prototype.toObject);
+        fabric.MyKnob.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyKnob(level, object));
+        };
+        fabric.MyKnob.async = true;
+
+
+        fabric.MySwitch = fabric.util.createClass(fabric.Object, {
+            type: Type.MySwitch,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+                this.bindBit=level.info.bindBit;
+                this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.imageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeWidgetSize',function(arg){
+                    var _callback=arg.callback;
+                    var widgetWidth=arg.widgetWidth||25;
+                    var widgetHeight=arg.WidgetHeight||25;
+                    self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
+
+                    if (this.imageElement){
+                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染开关出错');
+                }
+            }
+        });
+        fabric.MySwitch.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MySwitch(level, option));
+        };
+        fabric.MySwitch.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    imageElement:this.imageElement,
+                    backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MySwitch.prototype.toObject);
+        fabric.MySwitch.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MySwitch(level, object));
+        };
+        fabric.MySwitch.async = true;
+
+        fabric.MyScriptTrigger = fabric.util.createClass(fabric.Object, {
+            type: Type.MyScriptTrigger,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render:function(ctx){
+
+            }
+        });
+        fabric.MyScriptTrigger.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyScriptTrigger(level, option));
+        };
+        fabric.MyScriptTrigger.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                });
+            }
+        })(fabric.MyScriptTrigger.prototype.toObject);
+        fabric.MyScriptTrigger.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyScriptTrigger(level, object));
+        };
+        fabric.MyScriptTrigger.async = true;
+
+        fabric.MyRotateImg = fabric.util.createClass(fabric.Object, {
+            type: Type.MyRotateImg,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+                this.minValue=level.info.minValue;
+                this.maxValue=level.info.maxValue;
+                this.initValue=level.info.initValue;
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.imageElement=new Image();
+                //     this.imageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.imageElement.onload = (function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                // }else {
+                //     this.imageElement=null;
+                // }
+
+                this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.imageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    // if (tex.slices[0].imgSrc!='') {
+                    //     var currentImageElement=new Image();
+                    //     currentImageElement.src=tex.slices[0].imgSrc;
+                    //     currentImageElement.onload = function () {
+                    //     }.bind(this);
+                    //     self.imageElement=currentImageElement;
+                    // }else {
+                    //     self.imageElement=null;
+                    // }
+
+                    self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeInitValue',function(arg){
+                    var _callback=arg.callback;
+                    self.initValue=arg.initValue;
+                    self.setAngle(self.initValue);
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                })
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
+
+                    if (this.imageElement){
+                        ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染旋转图出错');
+                }
+            }
+        });
+        fabric.MyRotateImg.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyRotateImg(level, option));
+        };
+        fabric.MyRotateImg.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    imageElement:this.imageElement,
+                    backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MyRotateImg.prototype.toObject);
+        fabric.MyRotateImg.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyRotateImg(level, object));
+        };
+        fabric.MyRotateImg.async = true;
+
+        fabric.MySlideBlock = fabric.util.createClass(fabric.Object, {
+            type: Type.MySlideBlock,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.minValue=level.info.minValue;
+                this.maxValue=level.info.maxValue;
+                this.initValue=level.info.initValue;
+                this.arrange=level.info.arrange;
+
+                this.backgroundColor=level.texList[0].slices[0].color;
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.backgroundImageElement=new Image();
+                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.backgroundImageElement.onload = (function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                // }else {
+                //     this.backgroundImageElement=null;
+                // }
+
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+                this.slideColor=level.texList[1].slices[0].color;
+                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
+                //     this.slideImageElement=new Image();
+                //     this.slideImageElement.src=level.texList[1].slices[0].imgSrc;
+                //     this.slideImageElement.onload = (function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                // }else {
+                //     this.slideImageElement=null;
+                // }
+
+                this.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                if (this.slideImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    if(level.texList&&level.texList[0]){
+                        self.backgroundColor=level.texList[0].slices[0].color;
+
+                        self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    }
+
+                    if(level.texList&&level.texList[1]){
+                        self.slideColor=level.texList[1].slices[0].color;
+                        self.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeInitValue',function(arg){
+                    var _callback=arg.callback;
+                    // console.log('haha',arg);
+                    if(arg.hasOwnProperty('minValue')){
+                        self.minValue=arg.minValue;
+                    }
+                    if(arg.hasOwnProperty('maxValue')){
+                        self.maxValue=arg.maxValue;
+                    }
+                    if(arg.hasOwnProperty('initValue')){
+                        self.initValue=arg.initValue;
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeArrange', function (arg) {
+                    self.arrange=arg.arrange;
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    var progress = (this.initValue-this.minValue)/(this.maxValue-this.minValue);
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
+
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                    if(this.slideImageElement){
+                        if(this.arrange=='horizontal'){
+                            ctx.drawImage(this.slideImageElement,-this.width/2+((this.width-this.slideImageElement.width/this.scaleX)*progress),-this.slideImageElement.height/(2*this.scaleY),this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
+                        }else{
+                            ctx.drawImage(this.slideImageElement,-this.slideImageElement.width/(2*this.scaleX),this.height/2-this.slideImageElement.height/this.scaleY*(1-progress)-this.height*progress,this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
+                        }
+                    }
+
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染滑块出错');
+                }
+            }
+        });
+        fabric.MySlideBlock.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MySlideBlock(level, option));
+        };
+        fabric.MySlideBlock.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+
+                });
+            }
+        })(fabric.MySlideBlock.prototype.toObject);
+        fabric.MySlideBlock.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MySlideBlock(level, object));
+        };
+        fabric.MySlideBlock.async = true;
+
+        fabric.MyDateTime = fabric.util.createClass(fabric.Object, {
+            type: Type.MyDateTime,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                var ctrlOptions={
+                    bl:false,
+                    br:false,
+                    mb:false,
+                    ml:false,
+                    mr:false,
+                    mt:false,
+                    tl:false,
+                    tr:false
+                };
+                this.setControlsVisibility(ctrlOptions);//使时间控件不能拉伸
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                //this.backgroundColor=level.texList[0].slices[0].color;
+                this.dateTimeModeId=level.info.dateTimeModeId;
+                this.fontFamily=level.info.fontFamily;
+                this.fontSize=level.info.fontSize;
+                this.fontColor=level.info.fontColor;
+                this.align=level.info.align;
+                this.initValue=level.info.initValue;
+
+                //设置canvas的宽度和高度
+                this.setHeight(this.fontSize*1.5);
+                if(this.dateTimeModeId=='0'){
+                    this.setWidth(4*this.fontSize);
+                }else if(this.dateTimeModeId=='1'){
+                    this.setWidth(3*this.fontSize);
+                }else
+                    this.setWidth(6*this.fontSize);
+                
+                this.on('changeDateTimeModeId',function(arg){
+                    var dateTimeModeId=arg.dateTimeModeId;
+                    var _callback=arg.callback;
+                    self.dateTimeModeId=dateTimeModeId;
+                    self.setHeight(self.fontSize*1.5);
+                    if(self.dateTimeModeId=='0'){
+                        self.setWidth(4*self.fontSize);
+                    }else if(self.dateTimeModeId=='1'){
+                        self.setWidth(3*self.fontSize);
+                    }else
+                        self.setWidth(6*self.fontSize);
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+                this.on('changeDateTimeText',function(arg){
+                    var _callback = arg.callback;
+                    if(arg.hasOwnProperty('fontFamily')){
+                        self.fontFamily = arg.fontFamily;
+                    }
+                    if(arg.hasOwnProperty('fontSize')){
+                        self.fontSize=arg.fontSize;
+                        self.setHeight(self.fontSize*1.5);
+                        if(self.dateTimeModeId=='0'){
+                            self.setWidth(4*self.fontSize);
+                        }else if(self.dateTimeModeId=='1'){
+                            self.setWidth(3*self.fontSize);
+                        }else
+                            self.setWidth(6*self.fontSize);
+                    }
+                    if(arg.hasOwnProperty('fontColor')){
+                        self.fontColor=arg.fontColor;
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                })
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    var fontString = null;
+                    //ctx.fillStyle=this.fontColor;
+                    fontString=this.fontSize+'px'+" "+this.fontFamily;
+                    drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染时间日期出错');
+                };
+            }
+        });
+        fabric.MyDateTime.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyDateTime(level, option));
+        };
+        fabric.MyDateTime.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    imageElement:this.imageElement,
+                    backgroundColor:this.backgroundColor
+                });
+            }
+        })(fabric.MyDateTime.prototype.toObject);
+        fabric.MyDateTime.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyDateTime(level, object));
+        };
+        fabric.MyDateTime.async = true;
+
+        fabric.MyButton = fabric.util.createClass(fabric.Object, {
+            type: Type.MyButton,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.normalColor=level.texList[0].slices[0].color;
+
+                this.text=level.info.text;
+                this.fontFamily=level.info.fontFamily;
+                this.fontSize=level.info.fontSize;
+                this.fontColor=level.info.fontColor;
+                this.fontBold=level.info.fontBold;
+                this.fontItalic=level.info.fontItalic;
+
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.normalImageElement=new Image();
+                //     this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.normalImageElement.onload = (function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                //
+                //
+                // }else {
+                //     this.normalImageElement=null;
+                // }
+
+                this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.normalImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.normalColor=tex.slices[0].color;
+                    // if (tex.slices[0].imgSrc!='') {
+                    //     var currentImageElement=new Image();
+                    //     currentImageElement.src=tex.slices[0].imgSrc;
+                    //     currentImageElement.onload = (function () {
+                    //     }).bind(this);
+                    //     self.normalImageElement=currentImageElement;
+                    // }else {
+                    //     self.normalImageElement=null;
+                    // }
+
+                    self.normalImageElement = ResourceService.getResourceFromCache(tex.slices[0].imgSrc);
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+                this.on('changeButtonText',function(arg){
+                    if(arg.hasOwnProperty('text')){
+                        self.text=arg.text;
+
+                    }
+                    if(arg.fontFamily){
+                        self.fontFamily=arg.fontFamily;
+                    }
+                    if(arg.fontBold){
+                        self.fontBold=arg.fontBold;
+                    }
+                    if(arg.hasOwnProperty('fontItalic')){
+                        self.fontItalic=arg.fontItalic;
+                    }
+                    if(arg.fontSize){
+                        self.fontSize=arg.fontSize;
+                    }
+                    if(arg.fontColor){
+                        self.fontColor=arg.fontColor;
+                    }
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.fontColor;
+                    ctx.save();
+                    ctx.fillStyle=this.normalColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height);
+
+                    if (this.normalImageElement){
+                        ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+                    ctx.restore();
+                    if(this.text){
+                        ctx.save();
+                        var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                        // console.log('button font',fontString)
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign='center';
+                        ctx.textBaseline='middle';//使文本垂直居中
+                        ctx.fillText(this.text,0,0);
+                        ctx.restore();
+                    }
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染按钮出错');
+                }
+            }
+        });
+        fabric.MyButton.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyButton(level, option));
+        };
+        fabric.MyButton.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    normalImageElement:this.normalImageElement,
+                    normalColor:this.normalColor
+                });
+            }
+        })(fabric.MyButton.prototype.toObject);
+        fabric.MyButton.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyButton(level, object));
+        };
+        fabric.MyButton.async = true;
+
+        //Text area
+        fabric.MyTextArea = fabric.util.createClass(fabric.Object,{
+            type: Type.MyTextArea,
+            initialize: function (level, options) {
+                var self=this;
+                var ctrlOptions={
+                    bl:false,
+                    br:false,
+                    mb:true,
+                    ml:true,
+                    mr:true,
+                    mt:true,
+                    tl:false,
+                    tr:false
+                };
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+
+                this.text=level.info.text;
+                this.fontFamily=level.info.fontFamily;
+                this.fontSize=level.info.fontSize;
+                this.fontColor=level.info.fontColor;
+                this.fontBold=level.info.fontBold;
+                this.fontItalic=level.info.fontItalic;
+                this.fontUnderline=level.info.fontUnderline;
+
+                //设置宽高
+                if(this.text&&this.fontSize){
+                    this.setWidth(this.fontSize*(this.text.length+1));
+                    this.setHeight(this.fontSize*2);
+                }
+
+                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
+                //     this.backgroundImageElement=new Image();
+                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
+                //     this.backgroundImageElement.onload = (function () {
+                //
+                //         this.loaded = true;
+                //         this.setCoords();
+                //         this.fire('image:loaded');
+                //     }).bind(this);
+                // }else {
+                //     this.backgroundImageElement=null;
+                // }
+
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+
+                this.on('changeTextContent', function (arg) {
+                    //console.log('enter on changeTextContent');
+                    if(arg.text){
+                        self.text=arg.text;
+                    }
+                    if(arg.fontFamily){
+                        self.fontFamily=arg.fontFamily;
+                    }
+                    if(arg.fontSize){
+                        self.fontSize=arg.fontSize;
+                    }
+                    if(arg.fontColor){
+                        self.fontColor=arg.fontColor;
+                    }
+                    if(arg.fontBold){
+                        self.fontBold=arg.fontBold;
+                    }
+                    if(arg.hasOwnProperty('fontItalic')){
+                        self.fontItalic=arg.fontItalic;
+                    }
+
+                    //重新设置canvas的宽高
+                    if(self.fontSize&&self.text){
+                        self.setWidth(self.fontSize*(self.text.length+1));
+                        self.setHeight(self.fontSize*2);
+                    }
+
+                    var _callback=arg.callback;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+                this.on('changeArrange',function(arg){
+                    var _callback=arg.callback;
+                    var selectObj=_self.getCurrentSelectObject();
+                    self.initValue=arg.initValue;
+                    if(arg.arrange=='vertical'){
+                        self.setAngle(90);
+                        self.set({
+                            originY:'bottom'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getHeight());
+                        selectObj.level.info.height=Math.round(self.getWidth());
+                    }else if(arg.arrange=='horizontal'){
+                        self.setAngle(0);
+                        self.set({
+                            originY:'top'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getWidth());
+                        selectObj.level.info.height=Math.round(self.getHeight());
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.fontColor;
+                    ctx.save();
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width,
+                        this.height);
+
+                    if (this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
+
+                    ctx.restore();
+                    //var subLayerNode=CanvasService.getSubLayerNode();
+
+                    if(this.text){
+                        var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                        //console.log(fontString);
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign='center';
+                        ctx.textBaseline='middle';//使文本垂直居中
+                        ctx.fillText(this.text,0,0);
+                    }
+                    //将图片超出canvas的部分裁剪
+                    this.clipTo=function(ctx){
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(-this.width / 2,
+                            -this.height / 2,
+                            this.width,
+                            this.height);
+                        ctx.closePath();
+                        ctx.restore();
+                    };
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染文本出错');
+                }
+            }
+        });
+        fabric.MyTextArea.fromLevel = function(level,callback,option){
+            callback && callback(new fabric.MyTextArea(level, option));
+        };
+        fabric.MyTextArea.prototype.toObject = (function (toObject){
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement: this.backgroundImageElement,
+                    backgroundColor: this.backgroundColor
+                });
+            }
+        })(fabric.MyTextArea.prototype.toObject);
+        fabric.MyTextArea.fromObject = function(object,callback){
+            var level=_self.getLevelById(object.id);
+            callback&&callback(new fabric.MyTextArea(level,object));
+        };
+        fabric.MyTextArea.async = true;
+
+        fabric.MyNum = fabric.util.createClass(fabric.Object,{
+            type: Type.MyNum,
+            initialize: function (level, options) {
+                var self=this;
+                var ctrlOptions={
+                    bl:false,
+                    br:false,
+                    mb:false,
+                    ml:false,
+                    mr:false,
+                    mt:false,
+                    tl:false,
+                    tr:false
+                };
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+                this.hasRotatingPoint=false;
+                //this.backgroundColor=level.texList[0].slices[0].color;
+                this.backgroundColor=level.info.fontColor;
+
+
+                this.numValue=level.info.numValue;
+                this.fontFamily=level.info.fontFamily;
+                this.fontSize=level.info.fontSize;
+                this.fontColor=level.info.fontColor;
+                this.fontBold=level.info.fontBold;
+                this.fontItalic=level.info.fontItalic;
+                this.align=level.info.align;
+                this.arrange=level.info.arrange;
+                //下面位数字模式属性
+                this.numOfDigits=level.info.numOfDigits;
+                this.decimalCount=level.info.decimalCount;
+                this.symbolMode=level.info.symbolMode;
+                this.fontZeroMode=level.info.frontZeroMode;
+                //设置canvas的宽度和高度
+                if(this.numOfDigits&&this.fontSize){
+                    this.setWidth(this.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                    this.setHeight(this.fontSize*1.2);
+                }
+
+                this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                if (this.backgroundImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+
+                this.on('changeTex', function (arg) {
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.backgroundColor=tex.slices[0].color;
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+
+                });
+                this.on('changeArrange',function(arg){
+                    var _callback=arg.callback;
+                    var selectObj=_self.getCurrentSelectObject();
+                    self.initValue=arg.initValue;
+                    if(arg.arrange=='vertical'){
+                        self.setAngle(90);
+                        self.set({
+                            originY:'bottom'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getHeight());
+                        selectObj.level.info.height=Math.round(self.getWidth());
+                    }else if(arg.arrange=='horizontal'){
+                        self.setAngle(0);
+                        self.set({
+                            originY:'top'
+                        });
+                        selectObj.level.info.top=Math.round(self.getTop());
+                        selectObj.level.info.right=Math.round(self.getLeft());
+                        selectObj.level.info.width=Math.round(self.getWidth());
+                        selectObj.level.info.height=Math.round(self.getHeight());
+                    }
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+                this.on('changeNumContent', function (arg) {
+                    if(arg.hasOwnProperty('numValue')){
+                        self.numValue=arg.numValue;
+                    }
+                    if(arg.fontFamily){
+                        self.fontFamily=arg.fontFamily;
+                    }
+                    if(arg.fontSize){
+                        self.fontSize=arg.fontSize;
+                    }
+                    if(arg.fontBold){
+                        self.fontBold=arg.fontBold;
+                    }
+                    if(arg.hasOwnProperty('fontItalic')){
+                        self.fontItalic=arg.fontItalic;
+                    }
+                    if(arg.numOfDigits){
+                        self.numOfDigits=arg.numOfDigits;
+                    }
+                    if(arg.hasOwnProperty('decimalCount')){
+                        self.decimalCount=arg.decimalCount;
+                    }
+                    if(arg.symbolMode){
+                        self.symbolMode=arg.symbolMode;
+                    }
+                    if(arg.frontZeroMode){
+                        self.frontZeroMode=arg.frontZeroMode;
+                    }
+                    if(arg.align){
+                        self.align=arg.align;
+                    }
+                    if(arg.fontColor){
+                        self.fontColor=arg.fontColor;
+                    }
+
+                    //设置宽高
+                    if(self.numOfDigits&&self.fontSize){
+                        self.setWidth(self.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                        self.setHeight(self.fontSize*1.2);
+                    }
+
+                    var _callback=arg.callback;
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+
+
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    //var offCanvas = CanvasService.getOffCanvas();
+
+                    //offCanvas.width = this.width;
+                    //offCanvas.height = this.height;
+                    //获取offCanvas
+                    //var offCtx = offCanvas.getContext('2d');
+                    //offCtx.clearRect(0,0,this.width,this.height);
+
+                    ctx.fillStyle=this.fontColor;
+                    //ctx.fillRect(0,0,this.width,this.height);
+                    //if (this.backgroundImageElement) {
+                    //    offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
+                    //}
+
+                    //在数字框里展示数字预览效果
+                    if(!isNaN(this.numValue)) {
+                        //offCtx.save();
+
+                        //offCtx.globalCompositeOperation = "destination-in";
+                        ctx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
+                        ctx.textAlign = this.align;
+
+                        ctx.textBaseline='middle';//设置数字垂直居中
+                        var negative=false;
+                        if(this.numValue<0){
+                            negative=true;
+                        }
+                        var tempNumValue=Math.abs(this.numValue);
+                        tempNumValue= tempNumValue.toString();
+                        var i=0;
+                        //配置小数位数
+                        if(this.decimalCount){
+                            if(tempNumValue.indexOf('.')!=-1){
+                                //console.log('输入有小数')
+                                var tempDecimalCount=tempNumValue.split('.')[1];
+                                for(i=0;i<this.decimalCount-tempDecimalCount.length;i++){
+                                    tempNumValue=tempNumValue+'0';
+                                }
+                            }else{
+                                //console.log('输入无小数')
+                                tempNumValue= tempNumValue+".";
+                                for(i=0;i<this.decimalCount;i++){
+                                    tempNumValue=tempNumValue+'0';
+                                }
+                            }
+
+                        }
+                        //配置前导0模式
+                        if(this.frontZeroMode=='1'){
+                            //console.log('minus',this.numOfDigits-tempNumValue.length);
+                            var minus=this.numOfDigits-tempNumValue.length;
+                            //console.log('minus',minus);
+                            if(this.decimalCount){
+                                for(i=0;i<minus+1;i++){
+                                    tempNumValue='0'+tempNumValue;
+                                }
+                            }else{
+                                for(i=0;i<minus;i++){
+                                    tempNumValue='0'+tempNumValue;
+                                }
+                            }
+                        }
+                        //配置正负号
+                        if((this.symbolMode=='1')&&(!negative)){
+                            tempNumValue='+'+tempNumValue;
+                        }else if(negative){
+                            tempNumValue='-'+tempNumValue;
+                        }
+                        //ctx.scale(1/this.scaleX,1/this.scaleY);
+                        //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
+                        if(this.align=='center'){
+                            ctx.fillText(tempNumValue, 0, 0);
+
+                        }else if(this.align=='left') {
+                            ctx.fillText(tempNumValue, -this.width/2, 0);
+                        }else if(this.align=='right'){
+                            ctx.fillText(tempNumValue,this.width/2,0);
+                        }
+                        //offCtx.restore();
+                    }
+                    //ctx.scale(1/this.scaleX,1/this.scaleY);
+                    //ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染数字出错');
+                }
+            }
+        });
+        fabric.MyNum.fromLevel = function(level,callback,option){
+            callback && callback(new fabric.MyNum(level, option));
+        };
+        fabric.MyNum.prototype.toObject = (function (toObject){
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundImageElement: this.backgroundImageElement,
+                    backgroundColor: this.backgroundColor
+                });
+            }
+        })(fabric.MyNum.prototype.toObject);
+        fabric.MyNum.fromObject = function(object,callback){
+            var level=_self.getLevelById(object.id);
+            callback&&callback(new fabric.MyNum(level,object));
+        };
+        fabric.MyNum.async = true;
+
+
+
+        fabric.MyButtonGroup = fabric.util.createClass(fabric.Object, {
+            type: Type.MyButtonGroup,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                //初始化间距
+                self.interval=level.info.interval;
+                //初始化方向
+                self.arrange=level.info.arrange;
+                //初始化列表
+                self.normalColors=[];
+                self.normalImageElements=[];
+                for(var i=0;i<level.texList.length-1;i++){
+                    self.normalColors.push(level.texList[i].slices[0].color);
+                    self.normalImageElements.push(ResourceService.getResourceFromCache(level.texList[i].slices[0].imgSrc));
+                }
+                //_.forEach(level.texList, function (_tex) {
+                //    self.normalColors.push(_tex.slices[0].color);
+                //
+                //    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
+                //
+                //});
+
+                this.on('changeArrange', function (arg) {
+                    self.arrange=arg.arrange;
+                    var _callback=arg.callback;
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                })
+
+                this.on('changeInterval', function (arg) {
+                    self.interval=arg.interval;
+                    var _callback=arg.callback;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                })
+                this.on('changeTex', function (arg) {
+                    //初始化列表
+                    //console.log(arg);
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    self.normalColors=[];
+                    self.normalImageElements=[];
+                    //console.log(level.texList);
+                    //_.forEach(level.texList, function (_tex) {
+                    //    self.normalColors.push(_tex.slices[0].color);
+                    //    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
+                    //});
+                    for(var i=0;i<level.texList.length-1;i++){
+                        self.normalColors.push(level.texList[i].slices[0].color);
+                        self.normalImageElements.push(ResourceService.getResourceFromCache(level.texList[i].slices[0].imgSrc));
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+
+                    _callback&&_callback();
+                });
+
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    var count=this.normalColors.length;
+                    if (this.arrange=='horizontal'){
+                        //横向
+                        var width=(this.width-this.interval*(count-1))/count;
+                        var height=this.height;
+                        var interval=this.interval;
+                        if (width<0){
+                            return;
+                        }
+
+                        //按顺序画按钮
+                        for (var i=0;i<this.normalColors.length;i++){
+                            ctx.fillStyle=this.normalColors[i];
+                            ctx.fillRect(
+                                -(this.width / 2)+(width+interval)*i,
+                                -(this.height / 2) ,
+                                width ,
+                                height );
+
+
+                        }
+                        for (var i=0;i<this.normalImageElements.length;i++){
+                            var normalImageElement=this.normalImageElements[i];
+                            if (normalImageElement){
+                                ctx.drawImage(normalImageElement, -this.width / 2+(width+interval)*i, -this.height / 2,width,height);
+
+
+                            }
+                        }
+                    }else{
+                        //纵向
+                        var height=(this.height-this.interval*(count-1))/count;
+                        var width=this.width;
+                        var interval=this.interval;
+                        if (height<0){
+                            return;
+                        }
+
+                        //按顺序画按钮
+                        for (var i=0;i<this.normalColors.length;i++){
+                            ctx.fillStyle=this.normalColors[i];
+                            ctx.fillRect(
+                                -(this.width / 2),
+                                -(this.height / 2)+(height+interval)*i ,
+                                width ,
+                                height );
+
+                            var normalImageElement=this.normalImageElements[i];
+                            if (normalImageElement){
+                                ctx.drawImage(normalImageElement, -this.width / 2, -this.height / 2+(height+interval)*i,width,height);
+                            }
+                        }
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染按钮组出错');
+                }
+
+            }
+        });
+        fabric.MyButtonGroup.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyButtonGroup(level, option));
+        };
+        fabric.MyButtonGroup.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    normalImageElements:this.normalImageElements,
+                    normalColors:this.normalColors,
+                    interval:this.interval,
+                    arrange:this.arrange
+                });
+            }
+        })(fabric.MyButtonGroup.prototype.toObject);
+        fabric.MyButtonGroup.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyButtonGroup(level, object));
+        };
+        fabric.MyButtonGroup.async = true;
+
+        fabric.MyNumber=fabric.util.createClass(fabric.Object,{
+            type:Type.MyNumber,
+            initialize: function (level, options) {
+
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.myNumber=level.info.initValue+'';
+                this.numberBackColors=[];
+                this.numberImageElements=[];
+
+                for (var i=0;i<13;i++){
+                    if (level.texList[i]){
+
+                        var tex=level.texList[i];
+                        self.numberBackColors.push(tex.slices[0].color);
+
+                        var imageElement=new Image();
+                        if (tex.slices[0].imgSrc){
+                            imageElement.src=tex.slices[0].imgSrc;
+                        }else{
+                            imageElement.src=Preference.NUMBER_IMAGES[i];
+
+                        }
+                        imageElement.onload = (function () {}).bind(this);
+                        self.numberImageElements.push(imageElement);
+                    }else {
+                        //填充默认的颜色和数字图片
+                        self.numberBackColors.push(Preference.WHITE_COLOR);
+                        var imageElement=new Image();
+                        imageElement.src=Preference.NUMBER_IMAGES[i];
+                        imageElement.onload = (function () {}).bind(this);
+                        self.numberImageElements.push(imageElement);
+                    }
+                }
+
+                this.on('changeNumber', function (newLevel, _callback) {
+                    self.myNumber=newLevel.info.initValue+'';
+                    this.width=newLevel.info.width;
+                    this.height=newLevel.info.height;
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+                this.on('changeTex', function (arg) {
+                    //初始化列表
+                    var level=arg.level;
+                    var _callback=arg.callback;
+                    self.numberBackColors=[];
+                    self.numberImageElements=[];
+
+
+                    for (var i=0;i<13;i++){
+                        if (level.texList[i]){
+
+                            var tex=level.texList[i];
+                            self.numberBackColors.push(tex.slices[0].color);
+
+                            var imageElement=new Image();
+                            if (tex.slices[0].imgSrc){
+                                imageElement.src=tex.slices[0].imgSrc;
+                            }else{
+                                imageElement.src=Preference.NUMBER_IMAGES[i];
+
+                            }
+                            imageElement.onload = (function () {}).bind(this);
+                            self.numberImageElements.push(imageElement);
+                        }else {
+                            //填充默认的颜色和数字图片
+                            self.numberBackColors.push(Preference.WHITE_COLOR);
+                            var imageElement=new Image();
+                            imageElement.src=Preference.NUMBER_IMAGES[i];
+                            imageElement.onload = (function () {}).bind(this);
+                            self.numberImageElements.push(imageElement);
+                        }
+                    }
+
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+
+                    _callback&&_callback();
+                });
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+
+
+                //按数字画按钮
+                var charArray=this.myNumber.split('');
+                var count=charArray.length;
+                var width=this.width/count;
+                var height=this.height;
+
+                var colors=[];
+                var imageElements=[];
+                for (var i=0;i<charArray.length;i++) {
+                    var _char=charArray[i];
+                    switch (_char){
+                        case '0':
+                            colors.push(this.numberBackColors[0]);
+                            imageElements.push(this.numberImageElements[0]);
+                            break;
+                        case '1':
+                            colors.push(this.numberBackColors[1]);
+                            imageElements.push(this.numberImageElements[1]);
+                            break;
+                        case '2':
+                            colors.push(this.numberBackColors[2]);
+                            imageElements.push(this.numberImageElements[2]);
+                            break;
+                        case '3':
+                            colors.push(this.numberBackColors[3]);
+                            imageElements.push(this.numberImageElements[3]);
+                            break;
+                        case '4':
+                            colors.push(this.numberBackColors[4]);
+                            imageElements.push(this.numberImageElements[4]);
+                            break;
+                        case '5':
+                            colors.push(this.numberBackColors[5]);
+                            imageElements.push(this.numberImageElements[5]);
+                            break;
+                        case '6':
+                            colors.push(this.numberBackColors[6]);
+                            imageElements.push(this.numberImageElements[6]);
+                            break;
+                        case '7':
+                            colors.push(this.numberBackColors[7]);
+                            imageElements.push(this.numberImageElements[7]);
+                            break;
+                        case '8':
+                            colors.push(this.numberBackColors[8]);
+                            imageElements.push(this.numberImageElements[8]);
+                            break;
+                        case '9':
+                            colors.push(this.numberBackColors[9]);
+                            imageElements.push(this.numberImageElements[9]);
+                            break;
+                        case '+':
+                            colors.push(this.numberBackColors[10]);
+                            imageElements.push(this.numberImageElements[10]);
+                            break;
+                        case '-':
+                            colors.push(this.numberBackColors[11]);
+                            imageElements.push(this.numberImageElements[11]);
+                            break;
+                        case '.':
+                            colors.push(this.numberBackColors[12]);
+                            imageElements.push(this.numberImageElements[12]);
+                            break;
+
+                    }
+                }
+                for (var i=0;i<colors.length;i++){
+                    ctx.fillStyle=colors[i];
+                    ctx.fillRect(
+                        -(this.width / 2)+width*i,
+                        -(this.height / 2) ,
+                        width ,
+                        height );
+                }
+                for (var i=0;i<imageElements.length;i++){
+                    ctx.fillStyle=imageElements[i];
+                    ctx.drawImage(
+                        imageElements[i],
+                        -(this.width / 2)+width*i,
+                        -(this.height / 2) ,
+                        width ,
+                        height );
+                }
+            }
+        });
+        fabric.MyNumber.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyNumber(level, option));
+        };
+        fabric.MyNumber.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    numberImageElements:this.numberImageElements,
+                    numberBackColors:this.numberBackColors,
+                    myNumber:this.myNumber
+                });
+            }
+        })(fabric.MyNumber.prototype.toObject);
+        fabric.MyNumber.fromObject= function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback&&callback(new fabric.MyNumber(level,object));
+        };
+        fabric.MyNumber.async = true;
+
+
+
+
+        fabric.MyVideo = fabric.util.createClass(fabric.Object, {
+            type: Type.MyVideo,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                this.backgroundColor=level.texList[0].slices[0].color;
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染Slide出错');
+                }
+            }
+        });
+        fabric.MyVideo.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MyVideo(level, option));
+        }
+        fabric.MyVideo.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    backgroundColor:this.backgroundColor,
+                });
+            }
+        })(fabric.MyVideo.prototype.toObject);
+        fabric.MyVideo.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MyVideo(level, object));
+        };
+        fabric.MyVideo.async = true;
+
+        fabric.MySlide = fabric.util.createClass(fabric.Object, {
+            type: Type.MySlide,
+            initialize: function (level, options) {
+                var self=this;
+                this.callSuper('initialize',options);
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+
+                var tex=level.texList[0];
+                this.currentColor=tex.slices[tex.currentSliceIdx].color;
+
+                this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                if (this.currentImageElement) {
+                    this.loaded = true;
+                    this.setCoords();
+                    this.fire('image:loaded');
+                }
+                this.on('changeTex', function (arg) {
+
+                    var level=arg.level;
+                    var _callback=arg.callback;
+
+                    var tex=level.texList[0];
+                    self.currentColor=tex.slices[tex.currentSliceIdx].color;
+                    self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function (ctx) {
+                try{
+                    ctx.fillStyle=this.currentColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
+                    if (this.currentImageElement){
+                        ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                    }
+                }
+                catch(err){
+                    console.log('错误描述',err);
+                    toastr.warning('渲染Slide出错');
+                }
+            }
+        });
+        fabric.MySlide.fromLevel= function (level, callback,option) {
+            callback && callback(new fabric.MySlide(level, option));
+        }
+        fabric.MySlide.prototype.toObject = (function (toObject) {
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                    currentColor:this.currentColor,
+                    currentImageElement:this.currentImageElement
+                });
+            }
+        })(fabric.MySlide.prototype.toObject);
+        fabric.MySlide.fromObject = function (object, callback) {
+            var level=_self.getLevelById(object.id);
+            callback && callback(new fabric.MySlide(level, object));
+        };
+        fabric.MySlide.async = true;
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * IDE当前项目
+         * @type {{}}
+         */
+        var project = {};
+
+        /**
+         * IDEPage剪切板
+         */
+        var shearPagePlate = {
+            type: '',
+            objects: []
+        };
+
+        this.shearPlate={
+            type: '',
+            objects: [],
+            mode:0,
+            target:null
+        };
+
+        var shearPlate=this.shearPlate;
+
+        var pageRendering = false;
+
+        /**
+         * 设置渲染状态
+         * @param _rendering
+         */
+        this.setRendering = function (_rendering) {
+            pageRendering = _rendering;
+        };
+
+        /**
+         * 返回当前是否在渲染
+         * @returns {boolean}
+         */
+        this.isRendering = function () {
+            return pageRendering;
+        };
+
+        /**
+         * 判断是否处于编辑Page的模式
+         */
+        this.isEditingPage = function () {
+            var currentPage=_self.getCurrentPage();
+            return currentPage.mode==0
+        };
+
+        /**
+         * 获得当前选中的对象
+         * @returns {{type: string, target: *, level: *}}  类型/fabric对象/图层对象
+         */
+        var getCurrentSelectObject=this.getCurrentSelectObject= function () {
+            var type='none';
+            var target=null;
+            var level=null;
+            var mode=0;
+            var pageNode=CanvasService.getPageNode();
+            var subLayerNode=CanvasService.getSubLayerNode();
+            _.forEach(project.pages, function (_page) {
+                if (_page.current){
+                    if (_page.selected){
+                        type= Type.MyPage;
+                        target=pageNode;
+                        level=_page;
+                        mode=0;
+                    }
+                    if (_page.currentFabLayer&&_page.currentFabLayer.type==Type.MyLayerGroup){
+
+                        type=Type.MyLayerGroup;
+                        target=pageNode.getActiveGroup();
+
+                        level={
+                            info:{
+
+                                left:target?Math.round(target.getLeft()):null,
+                                top:target?Math.round(target.getTop()):null,
+                            }
+                        };
+                        mode=0;
+
+                    }
+                    _.forEach(_page.layers, function (_layer) {
+
+                        if (_layer.current){
+                            if (_layer.selected){
+                                type= Type.MyLayer;
+                                target=_page.currentFabLayer;
+                                level=_layer;
+                                mode=0;
+
+                            }
+                            _.forEach(_layer.subLayers, function (_subLayer) {
+                                if (_subLayer.current){
+                                    if (_subLayer.selected){
+
+                                        type= Type.MySubLayer;
+                                        target=CanvasService.getSubLayerNode();
+                                        level=_subLayer;
+                                        mode=1;
+
+                                    }
+                                    if (_subLayer.currentFabWidget&&_subLayer.currentFabWidget.type==Type.MyWidgetGroup){
+
+
+
+                                        type=Type.MyWidgetGroup;
+                                        target=subLayerNode.getActiveGroup();
+                                        level={
+                                            info:{
+                                                left:target?Math.round(target.getLeft()):null,
+                                                top:target?Math.round(target.getTop()):null,
+                                            }
+                                        };
+                                        mode=1;
+
+                                    }
+                                    _.forEach(_subLayer.widgets, function (_widget) {
+
+
+                                        if ((_widget.current)&&(_widget.selected)){
+
+
+                                            type=getFabricObject(_widget.id,true).type;
+                                            target=_subLayer.currentFabWidget;
+                                            level=_widget;
+                                            mode=1;
+
+                                        }
+                                    })
+                                }
+                            })
+                        }
+
+                    })
+                }
+
+            });
+
+            // console.log(type,target,level,mode);
+
+            return {
+                type: type,
+                target: target,
+                level: level,
+                mode:mode
+            };
+        };
+
+        /**
+         * 存储全局的项目
+         * @param _globalProject
+         * @param _successCallback
+         */
+        this.saveProjectFromGlobal = function (_globalProject,_successCallback) {
+            project = _globalProject;
+
+            _.forEach(project.pages,function (_page) {
+                _.forEach(_page.layers,function (_layer) {
+                    _.forEach(_layer.subLayers,function (_subLayer) {
+                        if (_subLayer.id==_layer.showSubLayer.id){
+                            _layer.showSubLayer=_subLayer;
+                        }
+                    })
+                })
+            });
+            var pageCount=project.pages.length;
+            openAllPage(0,_successCallback);
+            //
+
+
+            function openAllPage(_index, _successCallback) {
+                if (_index==pageCount){
+                    _self.changeCurrentPageIndex(0,_successCallback);
+                }else{
+                    _self.changeCurrentPageIndex(_index,function () {
+                        openAllPage(_index+1,_successCallback);
+
+                    },true);
+                }
+            }
+        };
+
+
+        /**
+         * 将当前项目赋值到scope.project
+         * 不可在其他controller中直接改动scope.project
+         * @param scope
+         * @param _successCallback
+         */
+        this.getProjectTo = function (scope, _successCallback) {
+            scope.project = project;
+            _successCallback && _successCallback();
+        };
+
+        //get project copy to
+        
+        this.getProjectCopyTo = function (scope, scb) {
+            scope.project = _.cloneDeep(project);
+            scb && scb();
+        };
+
+
+        /**
+         * 获得当前Page
+         * @returns {*}
+         */
+        this.getCurrentPage= function () {
+            var currentPage=null;
+            _.forEach(project.pages, function (_page) {
+                if (_page.current){
+                    currentPage=_page;
+                }
+            });
+            return currentPage;
+        };
+
+        /**
+         * 获得当前SubLayer
+         * @returns {*}
+         */
+        this.getCurrentSubLayer= function () {
+            var currentPage=_self.getCurrentPage();
+            var currentSubLayer=null;
+            _.forEach(currentPage.layers, function (_layer) {
+                if (_layer.current){
+                    _.forEach(_layer.subLayers, function (_subLayer) {
+                        if (_subLayer.current){
+                            currentSubLayer=_subLayer
+                        }
+                    })
+                }
+            });
+            return currentSubLayer;
+        }
+
+        /**
+         * 根据当前的Page找到当前的Layer
+         * @returns {*}
+         */
+        var getCurrentLayer=this.getCurrentLayer = function (_currentPage) {
+            var currentPage=_currentPage;
+            if (!currentPage){
+                currentPage = _self.getCurrentPage();
+
+            }
+            var currentLayer=null;
+            _.forEach(currentPage.layers, function (_layer) {
+                if (_layer.current){
+                    currentLayer=_layer;
+                }
+            });
+            return currentLayer;
+        };
+
+        /**
+         * 按照id获得项目中的level
+         * 效率很低,不建议在循环中使用
+         * @type {getLevelById}
+         */
+        var getLevelById=this.getLevelById = function (_id) {
+            var level=null;
+            _.forEach(project.pages, function (_page) {
+                if (_page.id==_id){
+                    level= _page;
+                }
+                _.forEach(_page.layers, function (_layer) {
+                    if (_layer.id==_id){
+                        level= _layer;
+                    }
+                    _.forEach(_layer.subLayers, function (_subLayer) {
+                        if (_subLayer.id==_id){
+                            level= _subLayer;
+                        }
+                        _.forEach(_subLayer.widgets, function (_widget) {
+                            if (_widget.id==_id){
+                                level= _widget;
+                            }
+                        })
+                    })
+                })
+
+            });
+            return level;
+        };
+
+        var getResourceList=this.getResourceList=function () {
+
+            return project.resourceList;
+        }
+
+        var getCurrentWidget=this.getCurrentWidget= function (_currentSubLayer) {
+            var currentSubLayer=getCurrentSubLayer();
+            if (!currentSubLayer){
+                currentSubLayer=_currentSubLayer;
+            }
+
+            if (!currentSubLayer){
+                console.warn('找不到SubLayer');
+                return;
+
+            }
+            var currentWidget=null;
+            _.forEach(currentSubLayer.widgets, function (_widget) {
+                if (_widget.current){
+                    currentWidget=_widget;
+                }
+            });
+            return currentWidget;
+
+        }
+
+        /**
+         * 找到画布对应的Fabric对象
+         * @returns {null}
+         * @param _id
+         * @param _isSubLayer
+         */
+        var getFabricObject=this.getFabricObject = function (_id, _isSubLayer) {
+            var canvasNode;
+            if (!_isSubLayer){
+                canvasNode=CanvasService.getPageNode();
+            }else {
+                canvasNode=CanvasService.getSubLayerNode();
+
+            }
+            var fobj = null;
+
+            _.forEach(canvasNode.getObjects(), function (_fobj) {
+
+                if (_fobj.id == _id) {
+                    fobj =_fobj;
+                }
+            });
+
+            return fobj;
+        };
+
+        /**
+         * 搜寻所有被项目引用过的图片资源名
+         * 用于删除资源时判断  该资源是否可以被删除
+         * @type {getRequiredResourceNames}
+         */
+        var getRequiredResourceNames=this.getRequiredResourceNames=function () {
+            var names=[];
+            _.forEach(project.pages,function (page) {
+                if (page.backgroundImage){
+                    names.push(page.backgroundImage);
+                }
+                _.forEach(page.layers,function (layer) {
+                    _.forEach(layer.subLayers,function (subLayer) {
+                        if (subLayer.backgroundImage){
+                            names.push(subLayer.backgroundImage);
+                        }
+                        _.forEach(subLayer.widgets,function (widget) {
+                            _.forEach(widget.texList,function (tex) {
+                                _.forEach(tex.slices,function (slice) {
+                                    if (slice.imgSrc){
+                                        names.push(slice.imgSrc);
+
+                                    }
+                                })
+                            })
+                        })
+                    })
+                })
+            });
+            return names;
+        };
+        /**
+         * 搜寻所有被项目引用过的tag名
+         * 用于删除资源时判断  该资源是否可以被删除
+         * @type {getRequiredResourceNames}
+         */
+        var getRequiredTagNames=this.getRequiredTagNames=function(){
+            var names=[];
+            _.forEach(project.pages,function(page){
+                if(page.tag){
+                    names.push(page.tag);
+                }
+                _.forEach(page.layers,function(layer){
+                    if(layer.tag){
+                        names.push(layer.tag);
+                    }
+                    _.forEach(layer.subLayers,function(subLayer){
+                       _.forEach(subLayer.widgets,function(widget){
+                           if(widget.tag){
+                               names.push(widget.tag);
+                           }
+                       })
+                    })
+                })
+            });
+            return names
+        };
+
+        /**
+         * Page之间的切换
+         * @param _pageIndex
+         * @param _successCallback
+         */
+        this.changeCurrentPageIndex = function (_pageIndex, _successCallback,isInit) {
+            if (isInit){
+                //console.log('初始化页面');
+                intoNewPage();
+
+            }
+            else if (_pageIndex>=0){
+
+                var  oldPage=_self.getCurrentPage();
+                if (oldPage){
+                    var oldPageIndex=-1;
+                    _.forEach(project.pages, function (__page,__pageIndex) {
+
+                        if (__page.id==oldPage.id){
+                            oldPageIndex=__pageIndex;
+                        }
+                    });
+                    //console.log(oldPageIndex+'/'+_pageIndex);
+                    if (oldPageIndex!=_pageIndex){
+                        console.log('页面间切换');
+                        if (oldPage.mode==1){
+                            _self.OnPageSelected(oldPageIndex,intoNewPage,true);
+
+                        }else{
+                            _self.OnPageSelected(_pageIndex,function(){
+                                _successCallback&&_successCallback(true);
+                            });
+                        }
+
+                    }else{
+                        //console.log('相同页面点击');
+
+                            _self.OnPageSelected(_pageIndex,function(){
+                                _successCallback&&_successCallback(true);
+                            },isInit);
+
+
+
+                    }
+                }else {
+                    console.log('异常情况');
+                    intoNewPage();
+
+                }
+
+            }
+
+            function intoNewPage(){
+                var pageNode=CanvasService.getPageNode();
+                var currentPage=project.pages[_pageIndex];
+                if (!currentPage){
+                    console.warn('找不到Page');
+                    return;
+                }
+
+                OnPageClicked(_pageIndex);
+
+                var pageCount=currentPage.layers.length;
+
+                pageNode.setBackgroundImage(null,function(){
+                    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                        //pageNode.setWidth(project.currentSize.width);
+                        //pageNode.setHeight(project.currentSize.height);
+                        // console.log(currentPage.proJsonStr)
+                        if (isInit){
+                            // console.log('init layer');
+                            updateLayerImage(0,function () {
+                                _self.ScaleCanvas('page');
+                                // console.log('currentPage',_.cloneDeep(currentPage))
+
+                                // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
+                                pageNode.deactivateAll();
+                                pageNode.renderAll();
+                                // console.log('page pro',JSON.stringify(pageNode.toJSON()));
+
+                                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                // console.log('pageurl',''+currentPage.url,currentPage)
+                                // setTestImg(''+currentPage.url)
+                                // window.currentPage = currentPage
+                                // _successCallback && _successCallback();
+                                _self.OnPageSelected(_pageIndex,_successCallback,true);
+                            })
+
+
+
+
+                        }else{
+                            console.log('不更新layer');
+                            _self.ScaleCanvas('page');
+
+                            //pageNode.backgroundImage.src="";
+                            pageNode.renderAll();
+
+
+                            currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                            _self.OnPageSelected(_pageIndex,_successCallback);
+                        }
+
+
+                    })
+                });
+
+                function updateLayerImage(_index,_successCallback) {
+                    // console.log('updating layer image')
+                    if (_index==pageCount){
+                        _successCallback&&_successCallback();
+                    }else {
+                        var layer=currentPage.layers[_index];
+
+                        _self.SyncSubLayerImage(layer,layer.showSubLayer,function () {
+                            updateLayerImage(_index+1,_successCallback);
+                        })
+                    }
+                }
+
+                // function updateLayerImage(_index,_successCallback) {
+                //     if (_index==pageCount){
+                //         _successCallback&&_successCallback();
+                //     }else{
+                //
+                //     }
+                // }
+
+            }
+        }
+
+        this.changeCurrentSubLayerIndex= function (_subLayerIndex,_successCallback) {
+            if (_subLayerIndex<0){
+                console.warn('输入不合法');
+                return;
+            }
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var currentLayer=getCurrentLayer();
+            var layerIndex= _indexById(_self.getCurrentPage().layers,currentLayer);
+            var currentSubLayer=currentLayer.subLayers[_subLayerIndex];
+            if (!currentSubLayer){
+                console.warn('找不到SubLayer');
+                return;
+            }
+            currentLayer.showSubLayer=currentSubLayer;
+
+            _self.SyncSubLayerImage(currentLayer,currentSubLayer,function () {
+                var selectObj=_self.getCurrentSelectObject();
+                selectObj.target.fire('OnScaleRelease',selectObj.target.id);
+                selectObj.target.fire('OnRelease',selectObj.target.id);
+
+                _successCallback&&_successCallback();
+            });
+
+        }
+        /**
+         * 询问当前的复制粘贴状态
+         * @returns {boolean}
+         */
+        this.shearPagePlateEnable = function () {
+            return (shearPagePlate.objects.length != 0);
+        };
+
+        this.shearPlateEnable= function () {
+            if (shearPlate.objects.length==0){
+                return false;
+            }
+            var selectObj=getCurrentSelectObject();
+            var currentPage=_self.getCurrentPage();
+            if (selectObj.type==Type.MyPage){
+                //Page下面只有Layer或者Layer组可以粘贴
+                if (shearPlate.type==Type.MyLayer){
+                    return true;
+                }else if(shearPlate.type == Type.MyGroup && shearPlate.mode == 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else if (selectObj.type==Type.MyLayer||(selectObj.type==Type.MyGroup&&selectObj.mode==0)){
+                //Layer下面只有Layer或者Layer组可以粘贴
+
+                if (shearPlate.type==Type.MyLayer){
+                    return true;
+                }else if(shearPlate.type == Type.MyGroup && shearPlate.mode == 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else if (selectObj.type==Type.MySubLayer){
+                //SubLayer下面只有Widget或者Widget组可以粘贴
+                if (Type.isWidget(shearPlate.type)){
+                    return true;
+                }else return (shearPlate.type == Type.MyGroup && shearPlate.mode == 1);
+            }else if (Type.isWidget(selectObj.type)||(selectObj.type==Type.MyGroup&&selectObj.mode==1)){
+                //Widget下面只有Widget或者Widget组可以粘贴
+                if (Type.isWidget(shearPlate.type)){
+                    return true;
+                }else return (shearPlate.type == Type.MyGroup && shearPlate.mode == 1);
+            }else {
+                return false;
+            }
+        }
+
+        /**
+         * 主要操作
+         * 添加新Page
+         * @param _newPage 新的页面
+         * @param _successCallback 成功的回调
+         * @constructor
+         */
+        this.AddNewPage = function (_newPage, _successCallback) {
+            setRendering(true);
+
+            var newPage = _.cloneDeep(_newPage);
+            // console.log('newPage',newPage);
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
+            var newPageIndex=-1;
+            if (currentPageIndex == project.pages.length - 1) {
+                project.pages.push(newPage);
+                newPageIndex=project.pages.length - 1;
+            } else {
+                project.pages.splice(currentPageIndex + 1, 0, newPage);
+                newPageIndex=currentPageIndex + 1;
+
+            }
+            //console.log(project);
+            _self.changeCurrentPageIndex(newPageIndex, function () {
+                _cleanPageHashKey();
+                _successCallback && _successCallback();
+            },true);
+
+
+        };
+        /**
+         * 主要操作
+         * 在当前Page添加一个新Layer
+         * @param _newLayer
+         * @param _successCallback
+         * @constructor
+         */
+        this.AddNewLayerInCurrentPage = function (_newLayer, _successCallback) {
+
+            var pageNode = CanvasService.getPageNode();
+            //init zindex
+            _newLayer.zIndex = pageNode.getObjects().length;
+
+            var currentPage=_self.getCurrentPage();
+            var initiator = {
+                width: _newLayer.info.width,
+                height: _newLayer.info.height,
+                top: _newLayer.info.top,
+                left: _newLayer.info.left,
+                id: _newLayer.id,
+                lockScalingFlip:true,
+                hasRotatingPoint:false,
+                shadow:{
+                    color:'rgba(0,0,0,0.4)',blur:2
+                }
+            };
+
+            currentPage.layers.push(_newLayer);
+
+            var fabLayer=new fabric.MyLayer(_newLayer.id,initiator);
+            pageNode.add(fabLayer);
+
+            pageNode.renderAll.bind(pageNode)();
+            _newLayer.info.width=fabLayer.getWidth();
+            _newLayer.info.height=fabLayer.getHeight();
+
+
+            currentPage.currentFabLayer=fabLayer;
+            pageNode.renderAll.bind(pageNode)();
+
+            _self.currentFabLayerIdList=[];
+            _self.currentFabLayerIdList.push(_newLayer.id);
+            _self.OnLayerSelected(_newLayer,_successCallback);
+
+
+        };
+
+        this.AddNewSubLayerInCurrentLayer= function (_newSubLayer,_successCallback) {
+
+            var newSubLayer = _.cloneDeep(_newSubLayer);
+            var currentLayer=getCurrentLayer();
+            var currentLayerIndex= _indexById(_self.getCurrentPage().layers,currentLayer);
+            currentLayer.subLayers.push(newSubLayer);
+            var newSubLayerIndex=currentLayer.subLayers.length - 1;
+
+            _self.OnSubLayerSelected(currentLayerIndex,newSubLayerIndex,_successCallback,true);
+
+        }
+        /**
+         * 主要操作
+         * 在当前SubLayer添加一个新Widget
+         * @constructor
+         */
+        this.AddNewWidgetInCurrentSubLayer = function (_newWidget, _successCallback) {
+            var subLayerNode = CanvasService.getSubLayerNode();
+            var currentSubLayer=getCurrentSubLayer();
+            //init zindex
+            _newWidget.zIndex = subLayerNode.getObjects().length;
+            var initiator = {
+                width: _newWidget.info.width,
+                height: _newWidget.info.height,
+                top: _newWidget.info.top,
+                left: _newWidget.info.left,
+                id: _newWidget.id,
+                lockScalingFlip:true,
+                hasRotatingPoint:false,
+                shadow:{
+                    color:'rgba(0,0,0,0.4)',blur:2
+                }
+            };
+
+            _self.currentFabWidgetIdList=[];
+            _self.currentFabWidgetIdList.push(_newWidget.id);
+
+            var syncSublayer = function(fabWidget) {
+                currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                currentSubLayer.widgets.push(_newWidget);
+                currentSubLayer.currentFabWidget=fabWidget;
+
+
+                OnWidgetSelected(_newWidget,_successCallback);
+            }
+
+            if (_newWidget.type==Type.MySlide){
+                fabric.MySlide.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+
+                    syncSublayer(fabWidget);
+
+
+                }, initiator);
+
+            }
+            else if (_newWidget.type==Type.MyProgress){
+
+                if (_newWidget.backgroundImg==''){
+                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
+                }
+                if (_newWidget.progressImg==''){
+                    _newWidget.progressImg=Preference.BLANK_LAYER_URL;
+                }
+                fabric.MyProgress.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
+                    fabWidget.progressUrl=_newWidget.progressImg;
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+
+
+            }
+            else if(_newWidget.type==Type.MyDashboard){
+                if (_newWidget.backgroundImg==''){
+                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
+                }
+                if (_newWidget.progressImg==''){
+                    _newWidget.progressImg=Preference.BLANK_LAYER_URL;
+                }
+                fabric.MyDashboard.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
+                    fabWidget.progressUrl=_newWidget.progressImg;
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+                    syncSublayer(fabWidget);
+                },initiator);
+
+            }
+            else if (_newWidget.type==Type.MyButton){
+
+                fabric.MyButton.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.normalImg=_newWidget.backgroundImg;
+                    fabWidget.pressImg=_newWidget.progressImg;
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+
+
+            }
+            else  if (_newWidget.type==Type.MyButtonGroup){
+                fabric.MyButtonGroup.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            } 
+            else if(_newWidget.type==Type.MyNumber){
+                fabric.MyNumber.fromLevel(_newWidget, function (fabWidget) {
+
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                }, initiator);
+            } else if(_newWidget.type==Type.MyTextArea){
+                fabric.MyTextArea.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+
+                }, initiator);
+            } else if(_newWidget.type == Type.MyNum){
+                fabric.MyNum.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }else if(_newWidget.type==Type.MyKnob){
+                if (_newWidget.backgroundImg==''){
+                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
+                }
+                if (_newWidget.knobImg==''){
+                    _newWidget.knobImg=Preference.BLANK_LAYER_URL;
+                }
+                fabric.MyKnob.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
+                    fabWidget.knobUrl=_newWidget.KnobImg;
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }else if(_newWidget.type==Type.MyOscilloscope){
+
+                if (_newWidget.backgroundImg==''){
+                    _newWidget.backgroundImg=Preference.BLANK_LAYER_URL;
+                }
+                if (_newWidget.oscillationImg==''){
+                    _newWidget.oscillationImg=Preference.BLANK_LAYER_URL;
+                }
+                fabric.MyOscilloscope.fromLevel(_newWidget, function (fabWidget) {
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.backgroundUrl=_newWidget.backgroundImg;
+                    fabWidget.oscillationImg=_newWidget.oscillationImg;
+
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll();
+
+                    subLayerNode.renderAll.bind(subLayerNode)();
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+                    syncSublayer(fabWidget);
+                },initiator)
+            }else if(_newWidget.type==Type.MySwitch){
+                fabric.MySwitch.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+                    //console.log('-');
+
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }else if(_newWidget.type==Type.MyRotateImg){
+                fabric.MyRotateImg.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }else if(_newWidget.type==Type.MyDateTime){
+                fabric.MyDateTime.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }else if(_newWidget.type==Type.MyScriptTrigger){
+                fabric.MyScriptTrigger.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }else if(_newWidget.type==Type.MySlideBlock){
+                fabric.MySlideBlock.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabWidgetIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }else if(_newWidget.type==Type.MyVideo){
+                fabric.MyVideo.fromLevel(_newWidget,function(fabWidget){
+                    _self.currentFabLayerIdList=[fabWidget.id];
+                    fabWidget.urls=_newWidget.subSlides;
+                    subLayerNode.add(fabWidget);
+                    subLayerNode.renderAll.bind(subLayerNode)();
+
+                    _newWidget.info.width=fabWidget.getWidth();
+                    _newWidget.info.height=fabWidget.getHeight();
+
+                    syncSublayer(fabWidget);
+                },initiator);
+            }
+
+
+
+        };
+
+        /**
+         * 主要操作
+         * 绑定缩略图的拖拽
+         * @param _dragStartCallback
+         * @param _droppedCallback
+         * @returns {{dragStart: ProjectService.dragStart, dropped: ProjectService.dropped}}
+         * @constructor
+         */
+        this.BindPageTree = function (_dragStartCallback, _droppedCallback) {
+            var startOperate;
+            var startIndex;
+            var endIndex;
+            var endOperate;
+            return {
+
+                dragStart: function (e) {
+                    startOperate = SaveCurrentOperate();
+                    startIndex = e.source.index;
+                    _dragStartCallback(e);
+                },
+                dropped: function (e) {
+                    endIndex = e.dest.index;
+                    if (endIndex != startIndex) {
+
+                        endOperate = SaveCurrentOperate();
+
+                    }
+
+                    _droppedCallback(e, endOperate)
+                }
+
+            };
+        };
+
+        /**
+         * 主要操作
+         * 根据序号删除一个页面
+         * @param _index
+         * @param _successCallback
+         * @constructor
+         */
+        this.DeletePageByIndex = function (_index, _successCallback) {
+            var currentPageIndex=-1;
+            if (_index == 0 && project.pages.length == 1) {
+
+                project.pages = [];
+                var newPage = TemplateProvider.getRandomPage();
+                project.pages.push(newPage);
+                currentPageIndex = 0;
+            } else if (_index == 0) {
+                project.pages.shift();
+                currentPageIndex = 0;
+
+            } else {
+                project.pages.splice(_index, 1);
+                currentPageIndex = _index - 1;
+            }
+            _cleanPageHashKey();
+
+            _self.changeCurrentPageIndex(currentPageIndex,_successCallback);
+
+
+
+
+        };
+
+        /**
+         * 主要操作
+         * 删除Layer
+         * @param _successCallback
+         * @constructor
+         */
+        this.DeleteActiveLayers = function (_successCallback) {
+            var pageNode = CanvasService.getPageNode();
+            var currentPage=_self.getCurrentPage();
+            var currentPageIndex= _indexById(project.pages,currentPage);
+            var activeGroup = pageNode.getActiveGroup();
+            var activeObject = pageNode.getActiveObject();
+
+
+            if (activeGroup && activeGroup.objects.length > 0) {
+                _.forEach(activeGroup.getObjects(), function (_fabLayer) {
+                    pageNode.fxRemove(_fabLayer,{
+                        onComplete: function () {
+                            deleteLayerFromJson(_fabLayer);
+                        }
+                    });
+                });
+                pageNode.fxRemove(activeGroup, {
+                    onComplete: function () {
+                        pageNode.deactivateAll();
+                        pageNode.renderAll();
+
+                        _self.OnPageSelected(currentPageIndex,_successCallback);
+                    }
+                });
+
+
+            }
+            else if (activeObject) {
+
+                pageNode.fxRemove(activeObject, {
+                    onComplete: function () {
+                        deleteLayerFromJson(activeObject);
+                        _self.OnPageSelected(currentPageIndex,_successCallback);
+
+
+                    }
+                });
+            }
+
+            function deleteLayerFromJson(object) {
+                var layers = _self.getCurrentPage().layers;
+                for (var i = 0; i < layers.length; i++) {
+                    var layer = layers[i];
+                    if (layer.id == object.id) {
+                        layers.splice(i, 1);
+                    }
+                }
+            }
+
+
+        };
+
+        /**
+         *主要操作
+         * 删除当前的SubLayer
+         * 如果是当前的showSubLayer要另外判断
+         * @param _successCallback
+         * @constructor
+         */
+        this.DeleteCurrentSubLayer= function (_successCallback) {
+            var currentLayer= _self.getCurrentLayer();
+            var currentSubLayer=_self.getCurrentSubLayer();
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
+            var currentSubLayerIndex=-1;
+            _.forEach(currentLayer.subLayers, function (_subLayer,_subLayerIndex) {
+                if (_subLayer.id==currentSubLayer.id){
+                    currentSubLayerIndex=_subLayerIndex;
+                }
+            });
+            if (currentSubLayerIndex<0){
+                console.warn('找不到SubLayer');
+                return;
+            }
+            var shown=(currentLayer.showSubLayer.id==currentSubLayer.id);
+
+            if (!shown){
+                _self.OnLayerSelected(currentLayer, function () {
+                    currentLayer.subLayers.splice(currentSubLayerIndex,1);
+                    _successCallback&&_successCallback();
+                });
+            }else if(currentLayer.subLayers.length>1){
+                var showSubLayer=currentLayer.subLayers[0];
+                currentLayer.showSubLayer=showSubLayer;
+                _self.SyncSubLayerImage(currentLayer,showSubLayer, function () {
+                    _self.OnLayerSelected(currentLayer, function () {
+                        currentLayer.subLayers.splice(currentSubLayerIndex,1);
+                        _successCallback&&_successCallback();
+                    });
+                })
+
+            }else {
+                var newSubLayer=TemplateProvider.getDefaultSubLayer();
+                currentLayer.subLayers.push(newSubLayer);
+                currentLayer.showSubLayer=newSubLayer;
+                _self.SyncSubLayerImage(currentLayer,newSubLayer, function () {
+                    _self.OnLayerSelected(currentLayer, function () {
+                        currentLayer.subLayers.splice(currentSubLayerIndex,1);
+                        _successCallback&&_successCallback();
+                    });
+                })
+
+            }
+
+
+        };
+
+        this.DeleteActiveWidgets= function (_successCallback) {
+            var subLayerNode = CanvasService.getSubLayerNode();
+            var currentSubLayer=_self.getCurrentSubLayer();
+            var currentPage= _self.getCurrentPage();
+            var currentLayer= _self.getCurrentLayer();
+            var layerIndex= _indexById(currentPage.layers,currentLayer);
+            var subLayerIndex= _indexById(currentLayer.subLayers,currentSubLayer);
+            var activeGroup = subLayerNode.getActiveGroup();
+            var activeObject = subLayerNode.getActiveObject();
+
+
+            if (activeGroup && activeGroup.objects.length > 0) {
+                _.forEach(activeGroup.getObjects(), function (_fabWidget) {
+                    subLayerNode.fxRemove(_fabWidget,{
+                        onComplete: function () {
+                            deleteLayerFromJson(_fabWidget);
+                        }
+                    });
+                });
+                subLayerNode.fxRemove(activeGroup, {
+                    onComplete: function () {
+                        subLayerNode.deactivateAll();
+                        subLayerNode.renderAll();
+
+                        currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                        _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback);
+                    }
+                });
+
+
+            }
+            else if (activeObject) {
+
+                subLayerNode.fxRemove(activeObject, {
+                    onComplete: function () {
+                        deleteLayerFromJson(activeObject);
+                        _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback);
+
+                    }
+                });
+            }
+
+            function deleteLayerFromJson(object) {
+                var widgets = _self.getCurrentSubLayer().widgets;
+                for (var i = 0; i < widgets.length; i++) {
+                    var widget = widgets[i];
+                    if (widget.id == object.id) {
+                        widgets.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+
+
+
+
+        /**
+         * 主要操作
+         * Move Layer
+         * @param _successCallback
+         * @constructor
+         */
+        this.MoveActiveObjects = function (type,direction,step,_successCallback) {
+            var fabNode;
+            var layerMode = true;
+            if (type === 'layers'){
+                fabNode = CanvasService.getPageNode();
+            }else if (type === 'widgets'){
+                fabNode = CanvasService.getSubLayerNode();
+                layerMode = false;
+            }else{
+                return;
+            }
+
+            var activeGroup = fabNode.getActiveGroup();
+            var activeObject = fabNode.getActiveObject();
+
+            step = step || 0;
+            var leftStep  = 0;
+            var topStep = 0;
+            switch (direction){
+                case 'up':
+                    topStep = 0-step;
+                    break;
+                case 'down':
+                    topStep = step;
+                    break;
+                case 'left':
+                    leftStep = 0-step;
+                    break;
+                case 'right':
+                    leftStep = step;
+                    break;
+            }
+            var tempLeft;
+            var tempTop;
+
+            if (activeGroup && activeGroup.objects.length > 0) {
+                tempLeft = activeGroup.get('left') + leftStep;
+                tempTop = activeGroup.get('top')+topStep;
+                activeGroup.set('left',tempLeft);
+                activeGroup.set('top',tempTop);
+
+
+            }else if (activeObject) {
+
+                tempLeft = activeObject.get('left') + leftStep;
+                tempTop = activeObject.get('top')+topStep;
+                activeObject.set('left',tempLeft);
+                activeObject.set('top',tempTop);
+
+            }
+
+            fabNode.renderAll();
+
+            if (layerMode){
+                var layer=_self.getCurrentLayer();
+                if (layer){
+                    var fabLayer=_self.getFabricObject(layer.id);
+                    if (fabLayer){
+                        _self.SyncLevelFromFab(layer,fabLayer);
+                    }
+                }
+            }else{
+                var widget=_self.getCurrentWidget();
+                if (widget){
+                    var fabWidget=_self.getFabricObject(widget.id,true);
+                    if (fabWidget){
+                        _self.SyncLevelFromFab(widget,fabWidget);
+                    }
+                }
+            }
+
+            _self.UpdateCurrentThumb();
+
+            _successCallback && _successCallback();
+
+
+
+        };
+
+        /**
+         * 辅助
+         * 获得一个Layer对象的拷贝
+         * @param _layer
+         * @private
+         */
+        function _getCopyLayer(_layer){
+            var copyLayer= _.cloneDeep(_layer);
+            copyLayer.id=Math.random().toString(36).substr(2);
+            if(copyLayer&&copyLayer.info){
+                copyLayer.info.left+=10;
+                copyLayer.info.top+=10;
+            }
+            _.forEach(copyLayer.subLayers, function (_subLayer) {
+                _subLayer.id=Math.random().toString(36).substr(2);
+                var proJson1=_subLayer.proJsonStr;
+
+                _.forEach(proJson1.objects, function (_fabWidget) {
+                    _.forEach(_subLayer.widgets, function (_widget) {
+
+                        if (_widget.id==_fabWidget.id){
+                            var newId=Math.random().toString(36).substr(2);
+                            _widget.id=newId;
+                            _fabWidget.id=newId;
+                        }
+                    })
+                });
+                _subLayer.proJsonStr=proJson1;
+
+            });
+            return copyLayer;
+        }
+
+        function _getCopyPage(_page){
+            var pageCopy= _.cloneDeep(_page);
+            pageCopy.id=Math.random().toString(36).substr(2);   //重置id
+            pageCopy.mode=0;    //显示page模式
+            var proJson=pageCopy.proJsonStr;    //改proJson
+            _.forEach(proJson.objects, function (_fabLayer) {
+                _.forEach(pageCopy.layers, function (_layer) {
+                    if (_layer.id==_fabLayer.id){
+                        var newId=Math.random().toString(36).substr(2);
+                        _layer.id=newId;
+                        _fabLayer.id=newId;
+                        // _fabLayer.layer= _.cloneDeep(_layer);
+                    }
+                })
+            });
+            pageCopy.proJsonStr=proJson;
+            _.forEach(pageCopy.layers, function (_layer) {
+                _.forEach(_layer.subLayers, function (_subLayer) {
+                    _subLayer.id=Math.random().toString(36).substr(2);
+                    var proJson1=_subLayer.proJsonStr;
+                    _.forEach(proJson1.objects, function (_fabWidget) {
+                        _.forEach(_subLayer.widgets, function (_widget) {
+                            if (_widget.id==_fabWidget.id){
+                                var newId=Math.random().toString(36).substr(2);
+                                _widget.id=newId;
+                                _fabWidget.id=newId;
+                            }
+                        })
+                    });
+                    _subLayer.proJsonStr=proJson1;
+                })
+            });
+
+            // console.log('pagecopy',pageCopy)
+            return pageCopy;
+        }
+
+        /**
+         * 辅助
+         * 获得一个Widget拷贝对象
+         * @param _widget
+         * @private
+         */
+        function _getCopyWidget(_widget){
+            var copyWidget= _.cloneDeep(_widget);
+            var newId=Math.random().toString(36).substr(2);
+            copyWidget.id=newId;
+            if(copyWidget&&copyWidget.info){
+                copyWidget.info.left+=5;
+                copyWidget.info.top+=5;
+            }
+            return copyWidget;
+        }
+
+
+        /**
+         * 主要操作
+         * 根据序号拷贝一个页面
+         * @param _index
+         * @param _successCallback
+         * @constructor
+         */
+        this.CopyPageByIndex = function (_index, _successCallback) {
+            _self.OnPageSelected(_index, function () {
+
+                shearPagePlate = {
+                    type: Type.MyPage,
+                    objects: [project.pages[_index]]
+                };
+
+                _successCallback&&_successCallback();
+            },true);
+
+
+        };
+
+        this.CopyLayer= function (_layer, _successCallback) {
+            var fabLayer=_self.getFabricObject(_layer.id);
+            shearPlate = {
+                type: Type.MyLayer,
+                objects: [_layer],
+                mode:0,
+                target:fabLayer
+            };
+            toastr.info('复制成功');
+            _successCallback&&_successCallback();
+
+        };
+        this.CopyWidget= function (_widget, _successCallback) {
+            var copyWidget= _getCopyWidget(_widget);
+            var fabWidget=_self.getFabricObject(_widget.id,true);
+            shearPlate = {
+                type:_widget.type,
+                objects: [copyWidget],
+                mode:0,
+                target:fabWidget
+            };
+            toastr.info('复制成功');
+            _successCallback&&_successCallback();
+        }
+
+        this.CopyLayerGroup= function (_groupTarget, _successCallback) {
+            var pageIndex= _indexById(project.pages,_self.getCurrentPage());
+            var groupCopy= _.cloneDeep(_groupTarget);
+
+            _self.OnPageSelected(pageIndex, function () {
+                var layers=_self.getCurrentPage().layers;
+                _.forEach(layers, function (_layer) {
+                    SyncLevelFromFab(_layer,_self.getFabricObject(_layer.id));
+                });
+
+                _self.OnLayerGroupSelected(_createGroup(groupCopy), function () {
+                    var layers=[];
+                    var fabGroup=_groupTarget;
+                    _.forEach(_groupTarget.getObjects(), function (_fabLayer) {
+                        var layer=_.cloneDeep(_self.getLevelById(_fabLayer.id));
+                        if (!layer){
+                            console.warn('layer不存在');
+                            return;
+                        }
+                        layers.push(layer);
+                    });
+                    shearPlate = {
+                        type: Type.MyLayerGroup,
+                        objects:layers,
+                        mode:0,
+                        target:fabGroup
+                    };
+                    toastr.info('复制成功');
+                    _successCallback&&_successCallback();
+
+                })
+
+
+            })
+
+        };
+
+        this.CopyWidgetGroup= function (_groupTarget, _successCallback) {
+            var layerIndex= _indexById(_self.getCurrentPage().layers,_self.getCurrentLayer());
+            var subLayerIndex= _indexById(_self.getCurrentLayer().subLayers,_self.getCurrentSubLayer());
+            var groupCopy= _.cloneDeep(_groupTarget);
+            _self.OnSubLayerSelected(layerIndex,subLayerIndex, function () {
+                var widgets=_self.getCurrentSubLayer().widgets;
+                _.forEach(widgets, function (_widget) {
+                    SyncLevelFromFab(_widget,_self.getFabricObject(_widget.id,true));
+                });
+                _self.OnWidgetGroupSelected(_createGroup(groupCopy,true), function () {
+                    var widgets=[];
+                    var fabGroup=_groupTarget;
+                    _.forEach(_groupTarget.getObjects(), function (_fabWidget) {
+
+                        var widget= _.cloneDeep(_self.getLevelById(_fabWidget.id));
+                        _fabWidget.id=widget.id;
+                        if (!widget){
+                            console.warn('layer不存在');
+                            return;
+                        }
+                        widgets.push(widget);
+
+                    });
+                    shearPlate = {
+                        type: Type.MyWidgetGroup,
+                        objects:widgets,
+                        mode:1,
+                        target:fabGroup,
+                    };
+                    toastr.info('复制成功');
+                    _successCallback&&_successCallback();
+                })
+
+
+
+            })
+
+        }
+        this.DoPaste= function (_successCallback) {
+            //记录新生成Layer或Widget组成员的数组
+            var fabLayerItems=[];
+            var fabWidgetItems=[];
+
+            if (shearPlate.type==Type.MyLayer){
+                var newLayer= _getCopyLayer(shearPlate.objects[0]);
+                newLayer.$$hashKey=undefined;
+                _self.AddNewLayerInCurrentPage(newLayer,_successCallback);
+
+            }else if (shearPlate.type==Type.MyGroup&&shearPlate.mode==0){
+                //粘贴LayerGroup
+                //添加Layer然后选中Group
+                addLayers(0, function () {
+                    _self.OnLayerGroupSelected(new fabric.Group(fabLayerItems),_successCallback,true);
+
+                })
+            }else if (Type.isWidget(shearPlate.type)){
+                var newWidget= _getCopyWidget(shearPlate.objects[0]);
+                newWidget.$$hashKey=undefined;
+                _self.AddNewWidgetInCurrentSubLayer(newWidget,_successCallback);
+
+            }else if (shearPlate.type==Type.MyGroup&&shearPlate.mode==1){
+                //粘贴widgetGroup
+                //添加widget然后选中Group
+                addWidgets(0, function () {
+
+                    _self.OnWidgetGroupSelected(new fabric.Group(fabWidgetItems),_successCallback);
+                })
+            }
+
+            /**
+             * 递归函数,往当前Page添加Layer数组
+             * @param _index 当前Layer的index
+             * @param _callback 递归的出口
+             */
+            function addLayers(_index,_callback){
+
+                var layer=_getCopyLayer(shearPlate.objects[_index]);
+                layer.$$hashKey=undefined;
+                _self.AddNewLayerInCurrentPage(layer, function (_fabLayer) {
+                    //如果不是Group中最后一个Layer,继续添加下一个
+                    //否则运行回调
+                    fabLayerItems.push(_fabLayer);
+                    if (_index==shearPlate.objects.length-1){
+                        _callback&&_callback();
+                        return;
+                    }
+                    addLayers(_index+1,_callback);
+                })
+            }
+
+            /**
+             * 递归函数,往当前SubLayer添加Widget数组
+             * @param _index 当前Layer的index
+             * @param _callback 递归的出口
+             */
+            function addWidgets(_index,_callback){
+                var widget=_getCopyWidget(shearPlate.objects[_index]);
+                widget.$$hashKey=undefined;
+                _self.AddNewWidgetInCurrentSubLayer(widget, function (_fabWidget) {
+                    //如果不是Group中最后一个Layer,继续添加下一个
+                    //否则运行回调
+
+                    fabWidgetItems.push(_fabWidget);
+
+                    if (_index==shearPlate.objects.length-1){
+                        _callback&&_callback();
+                        return;
+                    }
+                    addWidgets(_index+1,_callback);
+                })
+            }
+
+        }
+        /**
+         * 主要操作
+         * 根据序号粘贴一个页面
+         * @param _successCallback
+         * @constructor
+         */
+        this.PastePageByIndex = function (_successCallback) {
+
+            if (shearPagePlate.type != Type.MyPage) {
+                console.warn('当前剪切板中不是页面');
+                return;
+            }
+
+            var pastePage = _getCopyPage(shearPagePlate.objects[0]);
+            console.log('pastePage',pastePage)
+
+            pastePage.id = Math.random().toString(36).substr(2);
+            pastePage.$$hashKey = undefined;
+            this.AddNewPage(pastePage, function () {
+                _successCallback && _successCallback();
+            });
+
+
+        };
+
+        //var holdOperate={};
+        /**
+         * 主要操作
+         * 拿起一个可操作对象
+         * @param status
+         * @param _successCallback
+         */
+        this.HoldObject = function (status, _successCallback) {
+
+            status.holdOperate = SaveCurrentOperate();
+            _successCallback && _successCallback();
+        };
+        var scalingOperate={
+            scaling:false,
+            objId:''
+        };
+        this.ScaleLayer= function (status, _successCallback) {
+            scalingOperate.scaling=true;
+            scalingOperate.objId=getCurrentSelectObject().level.id;
+            var layer=getCurrentLayer();
+            status.holdOperate = SaveCurrentOperate();
+            _successCallback && _successCallback();
+        }
+
+        /**
+         * 主要操作
+         * 放下一个可操作对象
+         * @param status
+         * @param _successCallback
+         * @constructor
+         */
+        this.ReleaseObject = function (status, _successCallback) {
+            var selectObj=getCurrentSelectObject();
+
+            //如果缩放了Layer,需要和subLayer同步
+            if (scalingOperate.scaling){
+                scalingOperate.scaling=false;
+                scalingOperate.objId='';
+                if (selectObj.type==Type.MyLayer){
+                    _self.SyncSubLayerImage(selectObj.level,selectObj.level.showSubLayer, function () {
+                        selectObj.target.fire('OnScaleRelease',selectObj.target.id);
+                    })
+                }
+
+            }
+
+            if (selectObj.type==Type.MyLayer){
+                selectObj.target.fire('OnRelease',selectObj.target.id);
+
+            }else if (selectObj.type==Type.MyGroup&&selectObj.mode==0) {
+                _.forEach(selectObj.target.getObjects(), function (_obj) {
+                    var fabLayer = getFabricObject(_obj.id);
+                    fabLayer.fire('OnRelease', fabLayer.id);
+                })
+            }
+            else if (Type.isWidget(selectObj.type)){
+                selectObj.target.fire('OnRelease',selectObj.target.id);
+
+            }else if (selectObj.type==Type.MyGroup&&selectObj.mode==1){
+                _.forEach(selectObj.target.getObjects(), function (_obj) {
+                    var fabWidget=getFabricObject(_obj.id,true);
+                    fabWidget.fire('OnRelease',fabWidget.id);
+                })
+            }
+
+
+
+            if (status.holdOperate) {
+                var currentPage=_self.getCurrentPage();
+                if (!currentPage){
+                    console.warn('找不到Page');
+                    return;
+                }
+                currentPage.proJsonStr =
+                    JSON.stringify(CanvasService.getPageNode().toJSON());
+                //console.log(currentPage.proJsonStr);
+
+                var currentSubLayer=_self.getCurrentSubLayer();
+                if (currentSubLayer){
+
+                    currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
+
+                }
+
+
+
+                _successCallback && _successCallback();
+
+
+            }
+
+
+
+        };
+
+
+        this.SaveCurrentOperate= function () {
+
+            var currentPage=_self.getCurrentPage();
+            var pageNode=CanvasService.getPageNode();
+            //currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+            //console.log(currentPage.proJsonStr);
+
+            var currentSubLayer=_self.getCurrentSubLayer();
+            if (currentSubLayer){
+                var subLayerNode=CanvasService.getSubLayerNode();
+
+                //currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+            }
+            return _.cloneDeep(project);
+
+        };
+
+        this.LoadCurrentOperate = function (_operate, _successCallback,_errCallback) {
+            project=_operate;
+
+            _cleanPageHashKey();
+            var pageNode=CanvasService.getPageNode();
+            var subCanvasNode=CanvasService.getSubLayerNode();
+            _.forEach(project.pages, function (_page,_pageIndex) {
+                if (_page.current){
+                    if (_page.selected){
+                        _self.OnPageSelected(_pageIndex,_successCallback,true,false,_errCallback);
+                        return;
+                    }
+                    if (_page.currentFabLayer&&_page.currentFabLayer.type!=Type.MyLayer){
+                        _self.OnLayerGroupSelected(_createGroup(_page.currentFabLayer),_successCallback,true);
+                        return;
+                    }
+                    _.forEach(_page.layers, function (_layer, _layerIndex) {
+                        if (_layer.current){
+                            if (_layer.selected){
+                                _self.OnLayerSelected(_layer,_successCallback,true);
+                                return;
+                            }
+
+                            _.forEach(_layer.subLayers, function (_subLayer, _subLayerIndex) {
+                                if (_subLayer.current){
+                                    if (_subLayer.selected){
+                                        _self.OnSubLayerSelected(_layerIndex,_subLayerIndex,_successCallback,true);
+                                        return;
+                                    }
+
+                                    if (!Type.isWidget(_subLayer.currentFabWidget.type)){
+
+                                        //选中组
+                                        _self.OnWidgetGroupSelected(_createGroup(_subLayer.currentFabWidget,true),_successCallback,true);
+                                        return;
+                                    }
+                                    _.forEach(_subLayer.widgets, function (_widget) {
+                                        if (_widget.current){
+                                            if (_widget.selected){
+                                                _self.OnWidgetSelected(_widget,_successCallback,true);
+                                            }
+                                        }
+                                    })
+                                }
+                            })
+                        }
+
+                    })
+                }
+            });
+
+
+
+        };
+
+
+        /**
+         * 次要操作
+         * Page空白被点击后的响应
+         * @param pageIndex         序号
+         * @param _successCallback  回调
+         * @param skipClean         是否跳过[清理currentFabLayerIdList]
+         * @constructor
+         */
+        this.OnPageClicked= function (pageIndex, _successCallback,skipClean) {
+            if (pageIndex<0){
+                console.warn('找不到Page');
+                return;
+            }
+            if (!skipClean){
+                _self.currentFabLayerIdList=[];
+
+            }
+            _self.currentFabWidgetIdList=[];
+            _.forEach(project.pages, function (_page,_pageIndex) {
+                    if (_pageIndex != pageIndex) {
+                        _page.selected = false;
+                        _page.current = false;
+                    } else {
+                        _page.selected = true;
+                        _page.current = true;
+                        _page.currentFabLayer = null;
+                    }
+                    _.forEach(_page.layers, function (_layer) {
+                        _layer.selected = false;
+                        _layer.current = false;
+                        _.forEach(_layer.subLayers, function (_subLayer) {
+                            _subLayer.selected = false;
+                            _subLayer.current = false;
+                            _subLayer.currentFabWidget = null;
+
+                            _.forEach(_subLayer.widgets, function (_widget) {
+                                _widget.selected = false;
+                                _subLayer.current = false;
+                            })
+                        })
+                    })
+
+                }
+            );
+            _successCallback&&_successCallback();
+
+
+        };
+
+        /**
+         * 次要操作
+         * 选择一个Page
+         * @param pageIndex 序号
+         * @param _successCallback  回调
+         * @param forceReload   是否强制刷新
+         * @param skipClean 跳过[清理选中的缓存]
+         * @constructor
+         */
+        this.OnPageSelected= function (pageIndex,_successCallback,forceReload,skipClean,_errCallback) {
+            //除了当前的Page,取消所有Page,Layer,SubLayer,Widget的current
+
+            //如果当前在编辑Page,需要使所有Layer失焦,如果在编辑SubLayer,需要重新loadFromJSON
+            var currentPage=project.pages[pageIndex];
+
+            if (!currentPage){
+                currentPage=_self.getCurrentPage();
+            }
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
+
+            var editInSamePage=false;
+            if (!_self.getCurrentPage()){
+                editInSamePage=true;
+
+            }
+            else if (_self.getCurrentPage()&&_self.getCurrentPage().id==currentPage.id){
+                editInSamePage=true;
+            }
+            var pageNode = CanvasService.getPageNode();
+
+
+
+            if (currentPage.mode==0&&editInSamePage&&!forceReload){
+                _self.OnPageClicked(pageIndex,null,skipClean);
+                pageNode.deactivateAll();
+                pageNode.renderAll();
+                currentPage.proJsonStr=pageNode.toJSON();
+
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+
+                _successCallback && _successCallback();
+            }else if (currentPage.mode==1){
+                _backToPage(currentPage, function () {
+                    _self.OnPageClicked(pageIndex,null,skipClean);
+                    pageNode.deactivateAll();
+
+                    pageNode.renderAll();
+                    currentPage.proJsonStr=pageNode.toJSON();
+
+                    currentPage.mode=0;
+                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                    _successCallback && _successCallback();
+
+                });
+            }else{
+                pageNode.setBackgroundImage(null, function () {
+                    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                        _self.OnPageClicked(pageIndex,null,skipClean);
+
+                        pageNode.deactivateAll();
+                        pageNode.renderAll();
+                        currentPage.proJsonStr=pageNode.toJSON();
+
+
+                        currentPage.mode=0;
+                        currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+
+                        _successCallback && _successCallback();
+
+
+                    });
+
+                });
+            }
+
+        };
+
+
+
+
+        /**
+         * 当前选中的layer列表
+         * @type {Array}
+         */
+        this.currentFabLayerIdList=[];
+        this.currentFabWidgetIdList=[];
+        this.OnLayerClicked= function (_target,_successCallback) {
+            //除了选中的layer,清除所有Layer,SubLayer,Widget的current
+            _self.currentFabWidgetIdList=[];
+
+
+            var currentPage=_self.getCurrentPage();
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
+            currentPage.selected=false;
+
+
+
+            _.forEach(currentPage.layers, function (_layer) {
+                if (_target.id==_layer.id){
+
+                    _layer.current=true;
+                    _layer.selected=true;
+                    currentPage.currentFabLayer=_target;
+                    _target.hasControls=true;
+
+                    SyncLevelFromFab(_layer,_target);
+                }else if (belongToGroup(_layer,_target)){
+
+                    _target.lockScalingX=true;
+                    _target.lockScalingY=true;
+                    _layer.current=false;
+                    _layer.selected=true;
+                    currentPage.currentFabLayer=_target;
+                    var controlsVisibility=Preference.GROUP_CONTROL_VISIBLE;
+                    _target.setControlsVisibility(controlsVisibility);
+
+                }else {
+                    _layer.current=false;
+                    _layer.selected=false;
+
+                }
+                _.forEach(_layer.subLayers, function (_subLayer) {
+                    _subLayer.selected=false;
+                    _subLayer.current=false;
+                    _subLayer.currentFabWidget=null;
+                    _.forEach(_subLayer.widgets, function (_widget) {
+                        _widget.selected=false;
+                        _subLayer.current=false;
+                    })
+                })
+            });
+
+            _successCallback&&_successCallback();
+        };
+        /**
+         * 在多选模式下的选择
+         * @constructor
+         */
+        this.OnLayerMultiSelected= function (_successCallback) {
+            var currentFabLayerIdList=_self.currentFabLayerIdList;
+            var pageNode=CanvasService.getPageNode();
+
+
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
+
+            if (currentFabLayerIdList.length>1){
+                _self.OnPageSelected(currentPageIndex, function () {
+
+                    var fabLayerList=[];
+                    pageNode.forEachObject(function (fabLayer) {
+                        if (_indexById(currentFabLayerIdList,fabLayer.id)>=0){
+                            fabLayerList.push(fabLayer);
+                        }
+                    })
+                    if (fabLayerList.length!=currentFabLayerIdList.length){
+                        console.warn('数据不一致');
+                    }
+                    var fabGroup=new fabric.Group(fabLayerList,{
+                        canvas:pageNode
+                    });
+                    _self.OnLayerGroupSelected(fabGroup,_successCallback,false);
+                },false,true)
+
+            }else if (currentFabLayerIdList.length==1){
+                _self.OnPageSelected(currentPageIndex, function () {
+
+                    _self.OnLayerSelected(_self.getLevelById(currentFabLayerIdList[0]),_successCallback,false);
+                },false,true)
+
+            }else{
+                console.warn('currentFabLayerIdList为空');
+            }
+
+
+        };
+
+        /**
+         * 次要操作
+         * 双击Layer
+         * @param _layerId
+         * @param _successCallback
+         * @constructor
+         */
+        this.OnLayerDoubleClicked=function(_layerId,_successCallback){
+
+            var currentPage=_self.getCurrentPage();
+            var currentPageIndex=_indexById(project.pages,currentPage);
+            var currentLayer=_self.getLevelById(_layerId);
+            var layerIndex=_indexById(currentPage.layers,currentLayer);
+
+            var subLayerIndex=-1;
+
+            _.forEach(currentLayer.subLayers,function (_subLayer, _index) {
+                if (_subLayer.id==currentLayer.showSubLayer.id){
+                    subLayerIndex=_index;
+                }
+            })
+            //console.log(currentPageIndex+'/'+layerIndex+'/'+subLayerIndex);
+            _self.OnPageSelected(currentPageIndex,function () {
+                _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback,true);
+
+            });
+        }
+        this.OnWidgetMultiSelected= function (_successCallback) {
+            var currentFabWidgetIdList=_self.currentFabWidgetIdList;
+            var subLayerNode=CanvasService.getSubLayerNode();
+
+            var layerIndex= _indexById(_self.getCurrentPage().layers,_self.getCurrentLayer());
+            var subLayerIndex= _indexById(_self.getCurrentLayer().subLayers,_self.getCurrentSubLayer());
+
+            if (currentFabWidgetIdList.length>1){
+                _self.OnSubLayerSelected(layerIndex,subLayerIndex, function () {
+
+                    var fabWidgetList=[];
+                    subLayerNode.forEachObject(function (fabWidget) {
+                        if (_indexById(currentFabWidgetIdList,fabWidget.id)>=0){
+                            fabWidgetList.push(fabWidget);
+                        }
+                    })
+                    if (fabWidgetList.length!=currentFabWidgetIdList.length){
+                        console.warn('数据不一致');
+                    }
+                    var fabGroup=new fabric.Group(fabWidgetList,{
+                        canvas:subLayerNode
+                    });
+                    _self.OnWidgetGroupSelected(fabGroup,_successCallback,false);
+                },false,true)
+            }else if (currentFabWidgetIdList.length==1){
+
+                _self.OnSubLayerSelected(layerIndex,subLayerIndex, function () {
+
+                    _self.OnWidgetSelected(_self.getLevelById(currentFabWidgetIdList[0]),_successCallback,false);
+                },false,true)
+
+            }else{
+                console.warn('currentFabWidgetList为空');
+            }
+
+
+        }
+        /**
+         * 次要操作
+         * 选中Layer组
+         * @param fabGroup
+         * @param _successCallback
+         * @param forceReload
+         * @param preventPop
+         * @constructor
+         */
+        this.OnLayerGroupSelected= function (fabGroup, _successCallback, forceReload,preventPop) {
+            var currentPage=_self.getCurrentPage();
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
+            //如果当前在编辑Page,需要选择Layer,如果在编辑SubLayer,需要重新loadFromJSON
+            var pageNode = CanvasService.getPageNode();
+            if (currentPage.mode==0&&!forceReload){
+                currentPage.currentFabLayer=fabGroup;
+                var currentFabLayer= currentPage.currentFabLayer;
+                pageNode.setActive(currentFabLayer);
+                currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
+                pageNode.renderAll();
+                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                //console.log(currentPage.proJsonStr);
+
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                _successCallback && _successCallback();
+            }else {
+                _backToPage(currentPage, function () {
+                    currentPage.currentFabLayer=fabGroup;
+                    var currentFabLayer= _createGroup(currentPage.currentFabLayer);
+                    pageNode.setActive(currentFabLayer);
+                    currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
+                    pageNode.renderAll();
+                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    //console.log(currentPage.proJsonStr);
+
+                    currentPage.mode=0;
+                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                    _successCallback && _successCallback();
+
+                });
+            }
+        };
+
+        /**
+         * 次要操作
+         * stage以外选中Layer
+         * @param _layer Layer对象
+         * @param _successCallback  回调
+         * @param forceReload   是否强制刷新
+         * @param _fabLayer
+         * @constructor
+         */
+        this.OnLayerSelected= function (_layer,_successCallback,forceReload,_fabLayer) {
+            var currentPage=_self.getCurrentPage();
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
+
+            //如果当前在编辑Page,需要选择Layer,如果在编辑SubLayer,需要重新loadFromJSON
+            var pageNode = CanvasService.getPageNode();
+
+            if (currentPage.mode==0&&!forceReload){
+
+                pageNode.deactivateAll();
+                pageNode.renderAll();
+
+                currentPage.currentFabLayer=_fabLayer?_fabLayer:getFabricObject(_layer.id);
+                var currentFabLayer=currentPage.currentFabLayer;
+                //console.log('currentFabLayer',currentFabLayer);
+
+                pageNode.setActive(currentFabLayer);
+
+                currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
+                pageNode.renderAll();
+                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                //console.log(currentPage.proJsonStr);
+
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
+                    _successCallback&&_successCallback(currentFabLayer)
+                });
+            }else {
+                _backToPage(currentPage, function () {
+                    currentPage.currentFabLayer=getFabricObject(_layer.id);
+                    var currentFabLayer= currentPage.currentFabLayer;
+
+
+                    pageNode.deactivateAll();
+                    pageNode.renderAll();
+
+                    pageNode.setActive(currentFabLayer);
+                    currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
+
+                    pageNode.renderAll();
+                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+
+                    currentPage.mode=0;
+                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+
+                    _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
+                        _successCallback&&_successCallback(currentFabLayer);
+                    });
+
+
+
+                });
+                //for fix scale bug!!!
+                //var currentPageIndex= _indexById(project.pages, currentPage);
+                //var layer = getCurrentLayer();
+                //_self.OnPageSelected(currentPageIndex,function () {
+                //    //$rootScope.$emit('ChangeCurrentPage',null, function () {});
+                //},false);
+                //
+                //$timeout(function () {
+                //    _self.OnLayerSelected(layer,function(){
+                //        $rootScope.$emit('ChangeCurrentPage',null,function(){});
+                //    },false);
+                //},1);
+
+            }
+
+
+        };
+        this.OnSubLayerClicked= function (layerIndex,subLayerIndex,_successCallback) {
+            _self.currentFabLayerIdList=[];
+
+
+            var currentPage=_self.getCurrentPage();
+            var currentLayer=currentPage.layers[layerIndex];
+            var currentSubLayer=currentLayer.subLayers[subLayerIndex];
+            currentPage.selected=false;
+            _.forEach(currentPage.layers, function (_layer,_layerIndex) {
+                if (layerIndex>=0){
+                    if (_layerIndex==layerIndex) {
+                        _layer.current = true;
+                        _layer.selected = false;
+                        currentLayer = _layer;
+
+                    }else {
+                        _layer.current=false;
+                        _layer.selected=false;
+                    }
+                }
+
+                _.forEach(_layer.subLayers, function (_subLayer, _subLayerIndex) {
+                    if (subLayerIndex>=0){
+                        if (_subLayerIndex==subLayerIndex&&_layerIndex==layerIndex){
+                            _subLayer.current=true;
+                            _subLayer.selected=true;
+                            currentSubLayer=_subLayer;
+                            currentSubLayer.currentFabWidget=null;
+
+
+                        }else {
+                            _subLayer.current=false;
+                            _subLayer.selected=false;
+                        }
+                    }
+
+                    _.forEach(_subLayer.widgets, function (_widget) {
+                        _widget.current=false;
+                        _widget.selected=false;
+                    })
+
+                })
+
+            });
+
+            _successCallback&&_successCallback();
+        };
+        this.OnSubLayerSelected= function (layerIndex,subLayerIndex,_successCallback,forceReload) {
+
+
+            //除了当前的SubLayer,取消所有Page,Layer,SubLayer,Widget的current
+            var currentPage=_self.getCurrentPage();
+
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
+
+            //如果当前正在编辑subLayer,需要保存之前的subLayer再跳转
+            if (currentPage.mode==1){
+                _leaveFromSubLayer(_self.getCurrentSubLayer());
+            }
+            try{
+                var currentLayer=currentPage.layers[layerIndex];
+
+            }catch(e){
+                console.log(e);
+            }
+
+            var currentSubLayer=currentLayer.subLayers[subLayerIndex];
+
+            if (!currentSubLayer){
+                console.warn('找不到SubLayer');
+                return;
+            }
+
+            drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
+
+            var editInSameSubLayer=false;
+            if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
+                editInSameSubLayer=true;
+            }
+
+            OnSubLayerClicked(layerIndex,subLayerIndex);
+
+            //如果当前在编辑SubLayer,需要使所有Widget失焦,如果在编辑Page,需要重新loadFromJSON
+            var subLayerNode = CanvasService.getSubLayerNode();
+
+            var fabLayer=getFabricObject(currentLayer.id);
+            if (currentPage.mode==1&&editInSameSubLayer&&!forceReload){
+
+                //subLayerNode.setWidth(currentLayer.info.width);
+                //subLayerNode.setHeight(currentLayer.info.height);
+                _self.ScaleCanvas('subCanvas',currentLayer);
+
+                subLayerNode.deactivateAll();
+                subLayerNode.renderAll();
+
+                currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+
+                _successCallback && _successCallback();
+
+
+            }
+            else {
+                subLayerNode.clear();
+                subLayerNode.setBackgroundImage(null, function () {
+                    subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+
+
+                        _self.ScaleCanvas('subCanvas',currentLayer);
+
+                        subLayerNode.deactivateAll();
+                        subLayerNode.renderAll();
+                        currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+                        currentPage.mode=1;
+
+
+
+                        renderingSubLayer=false;
+
+                        _successCallback && _successCallback();
+                    });
+
+                });
+                //console.log('');
+
+            }
+        };
+        var renderingSubLayer=false;
+        /**
+         *
+         */
+
+        this.getFabLayerByLayer = function (layer) {
+            var fabLayer = null;
+            var pageNode = CanvasService.getPageNode();
+            _.forEach(pageNode.getObjects(), function (_fabObj) {
+                if (_fabObj.id == layer.id) {
+                    fabLayer = _fabObj;
+                }
+            });
+            return fabLayer;
+        }
+
+        /**
+         * 次要操作
+         * 当Layer在Page中发生了缩放时
+         * 改变SubLayerNode画布并截图,贴到Layer上
+         * @param layer
+         * @param subLayer
+         * @param _successCallback
+         * @constructor
+         */
+        // this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
+        //     if (renderingSubLayer){
+        //         return;
+        //     }
+        //     renderingSubLayer=true;
+        //     var self = this;
+        //     var subLayerNode=CanvasService.getSubLayerNode();
+        //     var currentSubLayer=subLayer;
+        //     var currentLayer=layer;
+        //
+        //     if (currentLayer.showSubLayer.backgroundImage&&currentLayer.showSubLayer.backgroundImage!=''){
+        //         subLayerNode.clear();
+        //
+        //
+        //         subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+        //             //subLayerNode.setWidth(currentLayer.info.width);
+        //             //subLayerNode.setHeight(currentLayer.info.height);
+        //             _self.ScaleCanvas('subCanvas',currentLayer);
+        //
+        //             subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
+        //
+        //                 subLayerNode.deactivateAll();
+        //                 subLayerNode.renderAll();
+        //                 currentSubLayer.proJsonStr=subLayerNode.toJSON();
+        //
+        //
+        //                 currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+        //                 // console.log(JSON.stringify(layer));
+        //                 // self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+        //                 //     renderingSubLayer = false;
+        //                 //     _successCallback && _successCallback();
+        //                 // })
+        //                 renderingSubLayer = false;
+        //                 _successCallback && _successCallback();
+        //             },{
+        //                 width:currentLayer.info.width,
+        //                 height:currentLayer.info.height
+        //                 })
+        //
+        //
+        //         })
+        //     }
+        //     else {
+        //         //subLayerNode.clear();
+        //
+        //
+        //         subLayerNode.setBackgroundImage(null, function () {
+        //
+        //             subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
+        //                 subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+        //
+        //                     //subLayerNode.setWidth(currentLayer.info.width);
+        //                     //subLayerNode.setHeight(currentLayer.info.height);
+        //                     // console.log('showing sublayer')
+        //                     _self.ScaleCanvas('subCanvas',currentLayer);
+        //
+        //                     subLayerNode.deactivateAll();
+        //                     subLayerNode.renderAll();
+        //                     currentSubLayer.proJsonStr= subLayerNode.toJSON();
+        //                     // console.log('sublayer',_.cloneDeep(currentSubLayer.proJsonStr));
+        //                     // console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
+        //                     currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+        //                     currentLayer.url = currentSubLayer.url;
+        //                     // console.log('sublayer url',''+currentSubLayer.url)
+        //                     // console.log('layer',_.cloneDeep(layer))
+        //                     // setTestImg(''+currentSubLayer.url)
+        //
+        //                     //sync layer node
+        //                     // self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+        //                     //     renderingSubLayer = false;
+        //                     //     _successCallback && _successCallback();
+        //                     // })
+        //
+        //                     renderingSubLayer = false;
+        //                     _successCallback && _successCallback();
+        //
+        //                     // renderingSubLayer = false;
+        //                     // _successCallback && _successCallback();
+        //                 })
+        //
+        //
+        //
+        //             })
+        //         });
+        //
+        //
+        //     }
+        //
+        //
+        //
+        // };
+
+
+
+        this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
+            if (renderingSubLayer){
+                return;
+            }
+            renderingSubLayer=true;
+            var self = this;
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var currentSubLayer=subLayer;
+            var currentLayer=layer;
+
+            if (currentLayer.showSubLayer.backgroundImage&&currentLayer.showSubLayer.backgroundImage!=''){
+                subLayerNode.clear();
+
+
+                subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+                    //subLayerNode.setWidth(currentLayer.info.width);
+                    //subLayerNode.setHeight(currentLayer.info.height);
+                    _self.ScaleCanvas('subCanvas',currentLayer);
+
+                    subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
+
+                        subLayerNode.deactivateAll();
+                        subLayerNode.renderAll();
+                        currentSubLayer.proJsonStr=subLayerNode.toJSON();
+
+                        currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                        self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+                            renderingSubLayer = false;
+                            _successCallback && _successCallback();
+                        })
+                    },{
+                        width:currentLayer.info.width,
+                        height:currentLayer.info.height
+                    })
+
+
+                })
+            }
+            else {
+                //subLayerNode.clear();
+
+
+                subLayerNode.setBackgroundImage(null, function () {
+
+                    subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
+                        subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+
+                            //subLayerNode.setWidth(currentLayer.info.width);
+                            //subLayerNode.setHeight(currentLayer.info.height);
+                            // console.log('currentlayer',currentLayer.info.width,currentLayer.info.height)
+                            _self.ScaleCanvas('subCanvas',currentLayer);
+
+                            subLayerNode.deactivateAll();
+                            subLayerNode.renderAll();
+                            currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                            currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+                            self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+                                renderingSubLayer = false;
+                                _successCallback && _successCallback();
+                            })
+
+                            // renderingSubLayer = false;
+                            // _successCallback && _successCallback();
+                        });
+                    })
+                });
+
+
+            }
+
+
+
+        };
+
+
+
+        this.OnWidgetClicked= function (_target, _successCallback) {
+            //除了选中的layer,清除所有Layer,SubLayer,Widget的current
+
+
+            _self.currentFabLayerIdList=[];
+
+            var currentPage=_self.getCurrentPage();
+            currentPage.selected=false;
+
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
+            currentPage.selected=false;
+            _.forEach(currentPage.layers, function (_layer) {
+                _layer.current=false;
+                _layer.selected=false;
+
+                _.forEach(_layer.subLayers, function (_subLayer) {
+                    _subLayer.selected=false;
+                    _subLayer.current=false;
+                    _.forEach(_subLayer.widgets, function (_widget) {
+
+                        if (_widget.id==_target.id){
+
+                            _widget.selected=true;
+                            _widget.current=true;
+
+                            _subLayer.current=true;
+                            _subLayer.currentFabWidget= _.cloneDeep(_target);
+                            _layer.current=true;
+
+                            _target.hasControls=true;
+                            SyncLevelFromFab(_widget,_target);
+
+
+                        }else if (belongToGroup(_widget,_target)){
+
+                            _widget.selected=true;
+                            _widget.current=false;
+                            _subLayer.current=true;
+                            _layer.current=true;
+                            _subLayer.currentFabWidget= _.cloneDeep(_target);
+
+                            //组的缩放要隐藏
+                            var controlsVisibility=Preference.GROUP_CONTROL_VISIBLE;
+                            _target.setControlsVisibility(controlsVisibility);
+                        } else {
+
+                            _widget.selected=false;
+                            _widget.current=false;
+                        }
+                    })
+                })
+            });
+            _successCallback&&_successCallback();
+
+        };
+        var OnWidgetSelected=this.OnWidgetSelected= function (_widget,_successCallback,forceReload,_fabWidget) {
+
+            var currentPage=_self.getCurrentPage();
+
+            //如果当前正在编辑subLayer,需要保存之前的subLayer再跳转
+            if (currentPage.mode==1){
+                //_leaveFromSubLayer(_self.getCurrentSubLayer());
+            }
+
+            var currentSubLayer=null;
+            var currentLayer=null;
+
+            _.forEach(currentPage.layers, function (_layer) {
+                _.forEach(_layer.subLayers, function (_subLayer) {
+                    _.forEach(_subLayer.widgets, function (widget) {
+
+                        if (widget.id==_widget.id){
+                            currentSubLayer=_subLayer;
+                            currentLayer=_layer;
+                        }
+                    })
+                })
+            });
+
+            if (!currentPage){
+                console.warn('找不到Page');
+                return;
+            }
+            if (!currentSubLayer){
+                console.warn('找不到SubLayer');
+                return;
+            }
+
+            var editInSameSubLayer=false;
+            if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
+                editInSameSubLayer=true;
+            }
+
+            //如果当前在编辑SubLayer,需要选择Widget,如果在编辑Page,需要重新loadFromJSON
+            var subLayerNode = CanvasService.getSubLayerNode();
+
+            if (currentPage.mode==1&&editInSameSubLayer&&!forceReload){
+                //console.log('----');
+                _self.ScaleCanvas('subCanvas',currentLayer);
+                subLayerNode.deactivateAll();
+
+                subLayerNode.renderAll();
+                currentSubLayer.currentFabWidget=_fabWidget?_fabWidget:getFabricObject(_widget.id,true);
+
+                var currentFabWidget= currentSubLayer.currentFabWidget;
+                subLayerNode.setActive(currentFabWidget);
+                //console.log('subLayerNode toJson',subLayerNode.toJSON());
+                currentSubLayer.currentFabWidget= _.cloneDeep(currentFabWidget);
+
+                currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+                //console.log('currentSubLayer',currentSubLayer.proJsonStr);
+
+                subLayerNode.renderAll();
+
+                _successCallback && _successCallback(currentFabWidget);
+            }else {
+                subLayerNode.clear();
+                subLayerNode.setBackgroundImage(null, function () {
+
+                    subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+                        //subLayerNode.setWidth(currentLayer.info.width);
+                        //subLayerNode.setHeight(currentLayer.info.height);
+                        _self.ScaleCanvas('subCanvas',currentLayer);
+                        subLayerNode.deactivateAll();
+
+                        subLayerNode.renderAll();
+
+                        currentSubLayer.currentFabWidget=getFabricObject(_widget.id,true);
+
+                        var currentFabWidget= currentSubLayer.currentFabWidget;
+                        subLayerNode.setActive(currentFabWidget);
+                        currentSubLayer.currentFabWidget=_.cloneDeep(currentFabWidget);
+
+                        currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+                        subLayerNode.renderAll();
+                        currentPage.mode=1;
+                        _successCallback && _successCallback(currentFabWidget);
+                    });
+
+                })
+            }
+
+        };
+        /**
+         * 选择WidgetGroup
+         * @param fabWidgets    klass数组
+         * @param fabGroup      fabric group对象,获取位置用
+         * @param _successCallback
+         * @param forceReload
+         * @constructor
+         */
+        this.OnWidgetGroupSelected= function (fabGroup, _successCallback, forceReload) {
+
+            var currentPage=_self.getCurrentPage();
+            var currentSubLayer=_self.getCurrentSubLayer();
+
+            var subLayerNode = CanvasService.getSubLayerNode();
+
+            if (currentPage.mode==1&&!forceReload){
+
+                currentSubLayer.currentFabwidget =fabGroup;
+                var currentFabWidget=currentSubLayer.currentFabwidget;
+                subLayerNode.setActive(currentFabWidget);
+                currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
+                subLayerNode.renderAll();
+
+
+                currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+                currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                _successCallback && _successCallback();
+            }else {
+                subLayerNode.clear();
+                subLayerNode.setBackgroundImage(null, function () {
+
+                    subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+                        subLayerNode.renderAll();
+                        currentSubLayer.currentFabwidget=fabGroup;
+
+                        //重载时,需要重新创建一个group
+                        var currentFabWidget=_createGroup(currentSubLayer.currentFabwidget,true);
+                        subLayerNode.setActive(currentFabWidget);
+                        currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
+                        subLayerNode.renderAll();
+                        currentPage.mode=1;
+
+                        currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+
+                        currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                        _successCallback && _successCallback();
+                    });
+
+                })
+            }
+        };
+
+        this.OnSelectAll= function (_successCallback) {
+            if (_self.isEditingPage()){
+                //如果在编辑Page,选中所有的Layer
+                var pageNode=CanvasService.getPageNode();
+                var currentPage=_self.getCurrentPage();
+                var fabObjects=pageNode.getObjects();
+                if (fabObjects.length==0){
+                    return;
+                }else if (fabObjects.length==1){
+                    //只有一个Layer则直接选中
+                    _self.OnLayerSelected(currentPage.layers[0],_successCallback);
+
+                }else {
+                    var fabGroup=new fabric.Group(fabObjects,{
+                        originX:'left',originY:'top'
+                    });
+                    //只有一个Layer则直接选中
+                    _self.OnLayerGroupSelected(fabGroup,_successCallback);
+
+                }
+            }else {
+                //如果在编辑SubCanvas,选中所有Widget
+                var subLayerNode=CanvasService.getSubLayerNode();
+                var currentSubLayer=_self.getCurrentSubLayer();
+                var fabWidgets=subLayerNode.getObjects();
+                if (fabWidgets.length==0){
+                }else if (fabWidgets.length==1){
+                    //只有一个Layer则直接选中
+                    _self.OnWidgetSelected(currentSubLayer.widgets[0],_successCallback);
+
+                }else {
+                    var fabGroup=new fabric.Group(fabWidgets,{
+                        originX:'left',originY:'top'
+                    })
+                    //只有一个Layer则直接选中
+                    _self.OnWidgetGroupSelected(fabGroup,_successCallback);
+
+                }
+            }
+        }
+        var SyncLevelFromFab=this.SyncLevelFromFab=function(level,fabNode){
+            var width = level.info.width,
+                height = level.info.height,
+                left = level.info.left,
+                top = level.info.top;
+            level.info.width = (Math.abs(fabNode.getWidth()-width)<=1)?width:Math.round(fabNode.getWidth());
+            level.info.height = (Math.abs(fabNode.getHeight()-height)<=1)?height:Math.round(fabNode.getHeight());
+            level.info.left = Math.round(fabNode.getLeft());
+            level.info.top = Math.round(fabNode.getTop());
+
+            if (level.type==Type.MyButtonGroup){
+                //如果是按钮组,要同步放大其间距
+                if (level.info.arrange=='horizontal'){
+                    //横向用scaleX
+                    level.info.interval=level.info.intervalScale*fabNode.getWidth();
+                }else {
+                    //纵向
+                    level.info.interval=level.info.intervalScale*fabNode.getHeight();
+                }
+            }else if(level.type==Type.MyNum||level.type==Type.MyTextArea){
+                //如果是数字或者文本的竖直模式，需要改变他们的长宽
+                if(level.info.arrange&&level.info.arrange=='vertical'){
+                    level.info.width = (Math.abs(fabNode.getHeight()-height)<=1)?height:Math.round(fabNode.getHeight());
+                    level.info.height = (Math.abs(fabNode.getWidth()-width)<=1)?width:Math.round(fabNode.getWidth());
+                }
+            }
+
+
+        }
+
+        /**
+         *更新当前Page的预览图
+         * @param _callback
+         * @constructor
+         */
+        this.UpdateCurrentThumb = function (_callback) {
+            var pageNode = CanvasService.getPageNode();
+            var currentPage=_self.getCurrentPage();
+            // $timeout(function () {
+            //
+            //     currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+            //     _callback && _callback();
+            // })
+
+            currentPage.url = pageNode.toDataURL({format: 'jpeg', quality: '0.2'});
+            _callback && _callback();
+        };
+
+        this.updateCurrentThumbInPage = function () {
+            var subLayerNode = CanvasService.getSubLayerNode();
+            if (!getCurrentLayer()) {
+                console.warn('当前Layer为空');
+                return;
+            }
+            getCurrentLayer().url = subLayerNode.toDataURL({format:'png'});
+        };
+
+        this.ChangeAttributeName= function (_option, _successCallback) {
+            var currentOperate=SaveCurrentOperate();
+            var object=getCurrentSelectObject();
+            object.level.name=_option.name;
+            _successCallback&&_successCallback(currentOperate);
+        };
+
+        this.ChangeAttributeBackgroundColor= function (_option, _successCallback) {
+            var currentOperate=SaveCurrentOperate();
+            var object=getCurrentSelectObject();
+            switch (object.type){
+                case Type.MyPage:
+                    var currentPage=_self.getCurrentPage();
+                    var pageNode=CanvasService.getPageNode();
+                    pageNode.setBackgroundColor(_option.color, function () {
+                        pageNode.renderAll();
+                        currentPage.backgroundColor=_option.color;
+                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                        //console.log(currentPage.proJsonStr);
+
+                        var currentPageIndex= _indexById(project.pages, currentPage);
+                        _self.OnPageSelected(currentPageIndex, function () {
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    });
+
+                    break;
+
+                case Type.MySubLayer:
+                    var currentSubLayer=getCurrentSubLayer();
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.setBackgroundColor(_option.color, function () {
+                        subLayerNode.renderAll();
+                        currentSubLayer.backgroundColor=_option.color;
+
+                        currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                        var currentPageIndex= _indexById(project.pages, _self.getCurrentPage());
+                        var currentLayerIndex=_indexById(project.pages[currentPageIndex].layers,_self.getCurrentLayer());
+                        var currentSubLayerIndex= _indexById(project.pages[currentPageIndex].layers[currentLayerIndex].subLayers, _self.getCurrentSubLayer());
+                        _self.OnSubLayerSelected(currentPageIndex,currentSubLayerIndex, function () {
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    })
+            }
+
+        };
+
+
+        this.ChangeAttributeBackgroundImage= function (_option,_successCallback) {
+            var currentOperate=SaveCurrentOperate();
+            var object=getCurrentSelectObject();
+            var currentPage=_self.getCurrentPage();
+
+            switch (object.type){
+                case Type.MyPage:
+                    var pageNode=CanvasService.getPageNode();
+                    pageNode.setBackgroundImage(_option.image, function () {
+                        pageNode.renderAll();
+                        currentPage.backgroundImage=_option.image;
+                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                            //console.log(currentPage.proJsonStr);
+
+                            var currentPageIndex= _indexById(project.pages, currentPage);
+                        _self.OnPageSelected(currentPageIndex, function () {
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                        ,{
+                        width:pageNode.getWidth()/pageNode.getZoom(),
+                        height:pageNode.getHeight()/pageNode.getZoom()
+                    }
+                    );
+
+                    break;
+
+                case Type.MySubLayer:
+                    var currentLayer=getCurrentLayer();
+                    var currentSubLayer=getCurrentSubLayer();
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.setBackgroundImage(_option.image, function () {
+                        subLayerNode.renderAll();
+                        currentSubLayer.backgroundImage=_option.image;
+
+                        currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                        var currentLayerIndex= _indexById(_self.getCurrentPage().layers, currentLayer);
+
+                        var currentSubLayerIndex= _indexById(currentLayer.subLayers, currentSubLayer);
+                        _self.OnSubLayerSelected(currentLayerIndex,currentSubLayerIndex, function () {
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    },{
+                        width:currentLayer.info.width,
+                        height:currentLayer.info.height
+
+                    })
+            }
+        };
+
+        this.ChangeAttributePressImage=function (_option,_successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            if (!_option.image||_option.image==''){
+                console.warn('内容为空');
+                return;
+            }
+            selectObj.level.pressImg=_option.image;
+        };
+
+        this.ChangeAttributeButtonText=function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var fabTextObj=getFabricObject(selectObj.level.id,true);
+            var arg={
+                level:selectObj.level,
+                callback:function () {
+                    var currentWidget=selectObj.level;
+                    OnWidgetSelected(currentWidget,_successCallback);
+                }
+            };
+
+            if(_option.hasOwnProperty('text')){
+                selectObj.level.info.text=_option.text;
+                arg.text=_option.text;
+            }
+            if(_option.fontFamily){
+                selectObj.level.info.fontFamily=_option.fontFamily;
+                arg.fontFamily=_option.fontFamily;
+            }
+            if(_option.fontSize){
+                selectObj.level.info.fontSize=_option.fontSize;
+                arg.fontSize=_option.fontSize;
+            }
+            if(_option.fontColor){
+                selectObj.level.info.fontColor=_option.fontColor;
+                arg.fontColor=_option.fontColor;
+            }
+            if(_option.fontBold){
+                selectObj.level.info.fontBold=_option.fontBold;
+                arg.fontBold=_option.fontBold;
+            }
+            if(_option.hasOwnProperty('fontItalic')){
+                selectObj.level.info.fontItalic=_option.fontItalic;
+                arg.fontItalic=_option.fontItalic;
+            }
+            if(_option.fontName){
+                selectObj.level.info.fontName=_option.fontName;
+            }
+
+            selectObj.target.fire('changeButtonText',arg);
+        };
+
+        this.ChangeAttributeProgressValue= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+
+            var progress=(_option.progressValue-selectObj.level.info.minValue)/(selectObj.level.info.maxValue-selectObj.level.info.minValue);
+
+            selectObj.level.info.progressValue=_option.progressValue;
+
+            var arg={
+                progress:progress,
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeProgressValue',arg);
+
+
+        };
+        this.ChangeAttributeArrange= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.arrange=selectObj.level.info.arrange||'horizontal';
+            if(selectObj.level.info.arrange==_option.arrange){
+                return;
+            }
+            selectObj.level.info.arrange=_option.arrange;
+            var arg={
+                arrange:_option.arrange,
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeArrange',arg);
+
+        };
+
+        //改变所选进度条的光标和 模式
+        this.ChangeAttributeCursor = function(_option,_successCallback){
+            var templateId = TemplateProvider.getTemplateId();
+            var arg={};
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.cursor=_option.cursor;
+            selectObj.level.info.progressModeId=_option.progressModeId;
+            //无光标
+            if(_option.cursor=='0'){
+                //普通进度条
+                selectObj.level.texList=[{
+                    currentSliceIdx:0,
+                    name:'进度条底纹',
+                    slices:[{
+                        color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barBackground.png':'',
+                        name:'进度条底纹'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'进度条',
+                    slices:[{
+                        color:templateId?'rgba(0,0,0,0)':'rgba(125,27,27,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barAll.png':'',
+                        name:'进度条'
+                    }]
+                }];
+                //变色进度条
+                if(_option.progressModeId=='1'){
+                    selectObj.level.texList=[{
+                        currentSliceIdx:0,
+                        name:'进度条背景',
+                        slices:[{
+                            color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
+                            imgSrc:'',
+                            name:'进度条背景'
+                        }]
+                    },{
+                        currentSliceIdx:0,
+                        name:'初始颜色',
+                        slices:[{
+                            color:'rgba(170,80,80,1)',
+                            imgSrc:'',
+                            name:'初始颜色'
+                        }]
+                    },{
+                        currentSliceIdx:0,
+                        name:'结束颜色',
+                        slices:[{
+                            color:'rgba(243,204,82,1)',
+                            imgSrc:'',
+                            name:'结束颜色'
+                        }]
+                    }];
+                    arg.initColor=selectObj.level.texList[1].slices[0].color;
+                    arg.endColor=selectObj.level.texList[2].slices[0].color;
+                }
+            }
+            //有光标
+            if(_option.cursor=='1'){
+                selectObj.level.texList=[{
+                    currentSliceIdx:0,
+                    name:'进度条底纹',
+                    slices:[{
+                        color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barBackground.png':'',
+                        name:'进度条底纹'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'进度条',
+                    slices:[{
+                        color:templateId?'rgba(0,0,0,0)':'rgba(125,27,27,1)',
+                        imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/barAll.png':'',
+                        name:'进度条'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'光标纹理',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'光标纹理'
+                    }]
+                }];
+                //变色进度条
+                if(_option.progressModeId=='1'){
+                    selectObj.level.texList=[{
+                        currentSliceIdx:0,
+                        name:'进度条底纹',
+                        slices:[{
+                            color:templateId?'rgba(0,0,0,0)':'rgba(240,145,66,1)',
+                            imgSrc:'',
+                            name:'进度条底纹'
+                        }]
+                    },{
+                        currentSliceIdx:0,
+                        name:'初始颜色',
+                        slices:[{
+                            color:'rgba(170,80,80,1)',
+                            imgSrc:'',
+                            name:'初始颜色'
+                        }]
+                    },{
+                        currentSliceIdx:0,
+                        name:'结束颜色',
+                        slices:[{
+                            color:'rgba(243,204,82,1)',
+                            imgSrc:'',
+                            name:'结束颜色'
+                        }]
+                    },{
+                        currentSliceIdx:0,
+                        name:'光标纹理',
+                        slices:[{
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:'',
+                            name:'光标纹理'
+                        }]
+                    }];
+                    arg.initColor=selectObj.level.texList[1].slices[0].color;
+                    arg.endColor=selectObj.level.texList[2].slices[0].color;
+                }
+            }
+            arg.backgroundColor= selectObj.level.texList[0].slices[0].color;
+            arg.progressColor=selectObj.level.texList[1].slices[0].color;
+            arg.progressModeId=selectObj.level.info.progressModeId;
+            arg.level=_.cloneDeep(selectObj.level);
+
+            _successCallback&&_successCallback();
+            selectObj.target.fire('changeAttributeCursor',arg);
+        };
+
+
+        this.ChangeAttributeDashboardOffsetValue = function(_option, _successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var offsetValue=_option.offsetValue;
+
+
+            selectObj.level.info.offsetValue=offsetValue;
+
+            var arg={
+                offsetValue:offsetValue,
+                callback:_successCallback
+            }
+            selectObj.target.fire('changeDashboardOffsetValue',arg);
+        }
+
+
+        this.ChangeAttributeDashboardValue= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            var value=_option.value;
+
+
+            selectObj.level.info.value=_option.value;
+
+            var arg={
+                value:value,
+                callback:_successCallback
+            }
+            selectObj.target.fire('changeDashboardValue',arg);
+
+
+        };
+
+        this.ChangeAttributeDashboardPointerLength= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            var value=_option.pointerLength;
+
+            var fabDashboardObj = getFabricObject(selectObj.level.id,true);
+            //console.log(fabDashboardObj,fabDashboardObj.getWidth(),fabDashboardObj.getHeight(),fabDashboardObj.getScaleX(),fabDashboardObj.getScaleY());
+
+            selectObj.level.info.pointerLength=value;
+
+            var arg={
+                pointerLength:value,
+                scaleX:fabDashboardObj.getScaleX(),
+                scaleY:fabDashboardObj.getScaleY(),
+                callback:_successCallback
+            }
+
+            selectObj.target.fire('changeDashboardPointerLength',arg);
+
+
+        };
+
+        this.ChangeAttributeKnobSize = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var value=_option.knobSize;
+
+            var fabDashboardObj = getFabricObject(selectObj.level.id,true);
+            //console.log(fabDashboardObj,fabDashboardObj.getWidth(),fabDashboardObj.getHeight(),fabDashboardObj.getScaleX(),fabDashboardObj.getScaleY());
+
+            selectObj.level.info.knobSize=value;
+
+            var arg={
+                knobSize:value,
+                scaleX:fabDashboardObj.getScaleX(),
+                scaleY:fabDashboardObj.getScaleY(),
+                callback:_successCallback
+            }
+
+            selectObj.target.fire('changeKnobSize',arg);
+        };
+
+        this.ChangeAttributeKnobValue= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            var value=_option.value;
+
+
+            selectObj.level.info.value=_option.value;
+
+            var arg={
+                value:value,
+                callback:_successCallback
+            }
+            selectObj.target.fire('changeKnobValue',arg);
+
+
+        };
+
+        this.ChangeAttributeTextContent = function (_option,_successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            var fabTextObj=getFabricObject(selectObj.level.id,true);
+            var arg={
+                level:selectObj.level,
+                callback:function () {
+                    var currentWidget=selectObj.level;
+                    OnWidgetSelected(currentWidget,_successCallback);
+                }
+            };
+
+            if(_option.text){
+                var tempText=_option.text;
+                selectObj.level.info.text=tempText;
+                arg.text=tempText;
+            }
+            if(_option.fontFamily){
+                var tempFontFamily=_option.fontFamily;
+                selectObj.level.info.fontFamily=tempFontFamily;
+                arg.fontFamily=tempFontFamily;
+            }
+            if(_option.fontSize){
+                var tempFontSize=_option.fontSize;
+                selectObj.level.info.fontSize=tempFontSize;
+                arg.fontSize=tempFontSize;
+            }
+            if(_option.fontColor){
+                var tempFontColor=_option.fontColor;
+                selectObj.level.info.fontColor=tempFontColor;
+                arg.fontColor=tempFontColor;
+            }
+            if(_option.fontBold){
+                var tempFontBold=_option.fontBold;
+                selectObj.level.info.fontBold=tempFontBold;
+                arg.fontBold=tempFontBold;
+            }
+            if(_option.hasOwnProperty('fontItalic')){
+                var tempFontItalic=_option.fontItalic;
+                selectObj.level.info.fontItalic=tempFontItalic;
+                arg.fontItalic=tempFontItalic;
+            }
+            if(_option.fontName){
+                selectObj.level.info.fontName=_option.fontName;
+            }
+
+            selectObj.target.fire('changeTextContent',arg);
+        };
+
+        //改变如下数字属性，需要重新渲染预览界面
+        this.ChangeAttributeNumContent = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var fabNumObj=getFabricObject(selectObj.level.id,true);
+            var arg={
+                scaleX:fabNumObj.getScaleX(),
+                scaleY:fabNumObj.getScaleY(),
+                callback:_successCallback
+            };
+
+            //下面是数字字体属性，如字体，字体大小，粗体，斜体
+            if(_option.fontFamily){
+                var tempFontFamily=_option.fontFamily;
+                selectObj.level.info.fontFamily=tempFontFamily;
+                arg.fontFamily=tempFontFamily;
+            }
+            if(_option.fontSize){
+                var tempFontSize=_option.fontSize;
+                selectObj.level.info.fontSize=tempFontSize;
+                arg.fontSize=tempFontSize;
+            }
+            if(_option.fontBold){
+                var tempFontBold=_option.fontBold;
+                selectObj.level.info.fontBold=tempFontBold;
+                arg.fontBold=tempFontBold;
+            }
+            if(_option.hasOwnProperty('fontItalic')){
+                var tempFontItalic=_option.fontItalic;
+                selectObj.level.info.fontItalic=tempFontItalic;
+                arg.fontItalic=tempFontItalic;
+            }
+            if(_option.hasOwnProperty('fontColor')){
+                var tempFontColor=_option.fontColor;
+                selectObj.level.info.fontColor=tempFontColor;
+                arg.fontColor=tempFontColor;
+            }
+
+            //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式
+            if(_option.numOfDigits){
+                var tempNumOfDigits=_option.numOfDigits;
+                selectObj.level.info.numOfDigits=tempNumOfDigits;
+                arg.numOfDigits=tempNumOfDigits;
+            }
+            if(_option.decimalCount||(_option.decimalCount==0)){
+                var tempDecimalCount=_option.decimalCount;
+                selectObj.level.info.decimalCount=tempDecimalCount;
+                arg.decimalCount=tempDecimalCount;
+            }
+            if(_option.symbolMode){
+                var tempSymbolMode=_option.symbolMode;
+                selectObj.level.info.symbolMode=tempSymbolMode;
+                arg.symbolMode=tempSymbolMode;
+            }
+            if(_option.frontZeroMode){
+                var tempFrontZeroMode=_option.frontZeroMode;
+                selectObj.level.info.frontZeroMode=tempFrontZeroMode;
+                arg.frontZeroMode=tempFrontZeroMode;
+            }
+
+            //下面是数字数值
+            if(_option.hasOwnProperty('numValue')){
+                var tempNumValue = _option.numValue;
+                selectObj.level.info.numValue=tempNumValue;
+                arg.numValue=tempNumValue;
+            }
+            if(_option.align){
+                var tempAlign = _option.align;
+                selectObj.level.info.align=tempAlign;
+                arg.align=tempAlign;
+            }
+            selectObj.target.fire('changeNumContent',arg);
+        };
+        //如下属性改变，但是不用重新渲染界面，包括切换模式
+        this.ChangeAttributeOfNum=function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            if(_option.numModeId){
+                selectObj.level.info.numModeId=_option.numModeId;
+            }
+            if(_option.overFlowStyle){
+                selectObj.level.info.overFlowStyle=_option.overFlowStyle;
+            }
+            _successCallback&&_successCallback();
+            //console.log('displayModel',selectObj.level.info.numModeId);
+
+        };
+
+        //改变按钮模式
+        this.ChangeAttributeButtonModeId= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.buttonModeId=_option.buttonModeId;
+            _successCallback&&_successCallback();
+        };
+
+        //改变示波器的一些需要重新渲染的属性，如点距离，添加网格，
+        this.ChangeAttributeOscilloscopeForRender = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var arg={
+                callback:_successCallback
+            };
+            if(_option.hasOwnProperty('spacing')){
+                selectObj.level.info.spacing= _option.spacing;
+                arg.spacing=_option.spacing;
+            }
+            if(_option.hasOwnProperty('grid')){
+                selectObj.level.info.grid=_option.grid;
+                arg.grid=_option.grid;
+            }
+            if(_option.hasOwnProperty('lineWidth')){
+                selectObj.level.info.lineWidth=_option.lineWidth;
+                arg.lineWidth=_option.lineWidth;
+            }
+            if(_option.hasOwnProperty('gridInitValue')){
+                selectObj.level.info.gridInitValue=_option.gridInitValue;
+                arg.gridInitValue=_option.gridInitValue;
+            }
+            if(_option.hasOwnProperty('gridUnitX')){
+                selectObj.level.info.gridUnitX=_option.gridUnitX;
+                arg.gridUnitX=_option.gridUnitX;
+            }
+            if(_option.hasOwnProperty('gridUnitY')){
+                selectObj.level.info.gridUnitY=_option.gridUnitY;
+                arg.gridUnitY=_option.gridUnitY;
+            }
+            selectObj.target.fire('ChangeAttributeOscilloscope',arg);
+        };
+        //改变示波器的不需要重新渲染的属性，如线条颜色
+        this.ChangeAttributeOscilloscope = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            if(_option.hasOwnProperty("lineColor")){
+                //console.log('keke',_option.lineColor);
+                selectObj.level.info.lineColor= _option.lineColor;
+            }
+        };
+        //改变开关纹理所绑定的tag的位
+        this.ChangeAttributeBindBit = function(_option,_successCallback){
+            var bindBit=_option.bindBit;
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.info.bindBit=_option.bindBit;
+            _successCallback&&_successCallback();
+        };
+        //改变控件初始值
+        this.ChangeAttributeInitValue = function(_option,_successCallback){
+            var initValue=_option.initValue;
+            var selectObj= _self.getCurrentSelectObject();
+            selectObj.level.info.initValue=_option.initValue;
+            arg={
+                initValue:initValue,
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeInitValue',arg);
+        };
+        //改变时间控件的显示模式
+        this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){
+            var dateTimeModeId = _option.dateTimeModeId;
+            var RTCModeId = _option.RTCModeId;
+            var selectObj= _self.getCurrentSelectObject();
+            selectObj.level.info.dateTimeModeId=dateTimeModeId;
+            selectObj.level.info.RTCModeId=RTCModeId;
+            var arg={
+                level:selectObj.level,
+                dateTimeModeId:dateTimeModeId,
+                callback:function(){
+                    var currentWidget=selectObj.level;
+                    OnWidgetSelected(currentWidget,_successCallback);
+                }
+            };
+            selectObj.target.fire('changeDateTimeModeId',arg);
+        };
+        this.ChangeAttributeDateTimeText = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var arg={
+                level:selectObj.level,
+                callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                }
+
+            if(_option.hasOwnProperty('fontFamily')){
+                selectObj.level.info.fontFamily=_option.fontFamily;
+                arg.fontFamily = _option.fontFamily;
+            }
+            if(_option.hasOwnProperty('fontSize')){
+                selectObj.level.info.fontSize=_option.fontSize;
+                arg.fontSize = _option.fontSize;
+            }
+            if(_option.hasOwnProperty('fontColor')){
+                selectObj.level.info.fontColor=_option.fontColor;
+                arg.fontColor = _option.fontColor;
+            }
+
+            selectObj.target.fire('changeDateTimeText',arg);
+        };
+        this.ChangeAttributeGroupAlign=function(_option,_successCallback){
+            var currentOperate=SaveCurrentOperate();
+            var pageNode=CanvasService.getPageNode();
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var currentPage=_self.getCurrentPage();
+            var object = _self.getCurrentSelectObject();
+            var fabGroup = object.target;
+            var currentGroup = object.level;
+            var groupWidth = fabGroup.getWidth();
+            var groupHeight = fabGroup.getHeight();
+            switch(_option.align){
+                case 'left':
+                    fabGroup.forEachObject(function(item){
+                        item.setLeft(-groupWidth/2);
+                    });
+                    break;
+                case 'top':
+                    fabGroup.forEachObject(function(item){
+                        item.setTop(-groupHeight/2);
+                    });
+                    break;
+                case 'bottom':
+                    fabGroup.forEachObject(function(item){
+                        var itemHeight=item.getHeight();
+                        var top = groupHeight/2-itemHeight;
+                        item.setTop(top);
+                    });
+                    break;
+                case 'right':
+                    fabGroup.forEachObject(function(item){
+                        var itemWidth=item.getWidth();
+                        var left=groupWidth/2-itemWidth;
+                        item.setLeft(left);
+                    });
+                    break;
+                default :break;
+            }
+            if(getCurrentSubLayer()){
+                var currentSubLayer=getCurrentSubLayer();
+
+                currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+
+
+            }else {
+                currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                //console.log(currentPage.proJsonStr);
+
+            }
+            subLayerNode.renderAll();
+            pageNode.renderAll();
+            _successCallback && _successCallback(currentOperate);
+
+        }
+
+        //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
+        this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
+            var templateId = TemplateProvider.getTemplateId();
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.dashboardModeId = _option.dashboardModeId;
+            if(selectObj.level.dashboardModeId=='0')
+            {
+                selectObj.level.texList=[
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘背景',
+                        slices:[{
+                                color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
+                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
+                                name:'仪表盘背景'
+                            }]
+                    },
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘指针',
+                        slices:[{
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
+                        name:'仪表盘指针'
+                            }]
+                    }
+                ]
+            }else if(selectObj.level.dashboardModeId=='1'){
+                selectObj.level.texList=[
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘背景',
+                        slices:[{
+                            color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
+                            name:'仪表盘背景'
+                        }]
+                    },
+                    {
+                        currentSliceIdx:0,
+                        name:'仪表盘指针',
+                        slices:[{
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
+                            name:'仪表盘指针'
+                        }]
+                    },
+                    {
+                        currentSliceIdx:0,
+                        name:'光带效果',
+                        slices:[{
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
+                            name:'光带效果'
+                        }]
+
+                    }
+                ]
+            }else if(selectObj.level.dashboardModeId=='2'){
+                selectObj.level.texList=[
+                    {
+                        currentSliceIdx:0,
+                        name:'光带效果',
+                        slices:[{
+                            color:'rgba(0,0,0,0)',
+                            imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
+                            name:'光带效果'
+                        }]
+                    }
+                ];
+            }
+            //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
+            var level = _.cloneDeep(selectObj.level);
+            arg={
+                level:level,
+                backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
+                dashboardModeId:_option.dashboardModeId,
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeDashboardMode',arg);
+        };
+        //改变仪表盘的转动方向
+        this.ChangeAttributeDashboardClockwise=function(_option,_successCallback){
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.info.clockwise = _option.clockwise;
+            arg={
+                clockwise: _option.clockwise,
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeDashboardClockwise',arg);
+        };
+        //改变仪表盘的覆盖角度
+        this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            arg={
+                callback:_successCallback
+            };
+            if(_option.hasOwnProperty('minCoverAngle')){
+                arg.minCoverAngle=_option.minCoverAngle;
+                selectObj.level.info.minCoverAngle=_option.minCoverAngle;
+            }
+            else if(_option.hasOwnProperty('maxCoverAngle')){
+                arg.maxCoverAngle=_option.maxCoverAngle;
+                selectObj.level.info.maxCoverAngle=_option.maxCoverAngle;
+            }
+            toastr.info('修改成功!');
+            selectObj.target.fire('changeDashboardCoverAngle',arg);
+        };
+        this.ChangeAttributeInterval= function (_option, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.interval=_option.interval;
+
+            var fabInterval=selectObj.level.info.interval;
+
+            //更新间距的比例
+            var fabButtonGroup=getFabricObject(selectObj.level.id,true);
+
+            if (selectObj.level.info.arrange=='horizontal'){
+                selectObj.level.info.intervalScale=selectObj.level.info.interval/fabButtonGroup.getWidth();
+                fabInterval=selectObj.level.info.interval/fabButtonGroup.getScaleX();
+            }else {
+                selectObj.level.info.intervalScale=selectObj.level.info.interval/fabButtonGroup.getHeight();
+                fabInterval=selectObj.level.info.interval/fabButtonGroup.getScaleY();
+            }
+
+            var arg={
+                interval:fabInterval,
+                callback:_successCallback
+            };
+            selectObj.target.fire('changeInterval',arg);
+
+        };
+        this.ChangeAttributeButtonCount= function (_option, _successCallback) {
+            //console.log(_successCallback);
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.count=_option.count;
+            checkTexList(selectObj.level,selectObj.level.info.count, function () {
+                var arg={
+                    level:selectObj.level,
+                    callback:_successCallback,
+                };
+                selectObj.target.fire('changeTex',arg);
+
+            });
+
+            /**
+             * 递归函数,根据count改变TexList
+             * @param _level    buttonGroup对象
+             * @param _count    要求的数目
+             * @param _callback 回调函数
+             */
+            function checkTexList(_level,_count,_callback){
+                if (_level.texList.length<_count+1){
+                    _level.texList.splice(_level.texList.length-1,0,TemplateProvider.getDefaultButtonTex());
+                    checkTexList(_level,_count,_callback);
+                }else if (_level.texList.length>_count+1){
+                    _level.texList.splice(_level.texList.length-2,1);
+                    checkTexList(_level,_count,_callback);
+
+                }else {
+                    _callback&&_callback();
+                    return;
+                }
+            }
+
+        }
+        this.ChangeAttributePosition= function (_option, _successCallback) {
+            var currentOperate=SaveCurrentOperate();
+            var object=_self.getCurrentSelectObject();
+            var pageNode=CanvasService.getPageNode();
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var currentPage=_self.getCurrentPage();
+
+            if (object.type==Type.MyLayer) {
+
+                var fabLayer = null;
+                var currentLayer = getCurrentLayer();
+                _.forEach(pageNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.id == object.target.id) {
+                        fabLayer = _fabObj;
+                    }
+                });
+
+                if (_.isNumber(_option.left)) {
+                    fabLayer.setLeft(_option.left);
+                    currentLayer.info.left = _option.left;
+
+                }
+                if (_.isNumber(_option.top)) {
+                    fabLayer.setTop(_option.top);
+                    currentLayer.info.top = _option.top;
+
+                }
+
+                pageNode.renderAll();
+                currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                //console.log(currentPage.proJsonStr);
+
+                _self.OnLayerSelected(currentLayer, function () {
+                    _successCallback && _successCallback(currentOperate);
+
+                });
+            }else if (Type.isWidget(object.type)) {
+
+
+                var fabWidget = null;
+                var currentSubLayer = getCurrentSubLayer();
+                var currentWidget = getCurrentWidget(currentSubLayer);
+                _.forEach(subLayerNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.id == object.target.id) {
+                        fabWidget = _fabObj;
+                    }
+                });
+                fabWidget = getFabricObject(object.target.id, true);
+                if (!fabWidget) {
+                    console.warn('找不到fabSlide');
+                    return;
+                }
+
+                if (_.isNumber(_option.left)) {
+                    fabWidget.setLeft(_option.left);
+                    currentWidget.info.left = _option.left;
+
+                }
+                if (_.isNumber(_option.top)) {
+                    fabWidget.setTop(_option.top);
+                    currentWidget.info.top = _option.top;
+
+                }
+
+               subLayerNode.renderAll();
+
+                currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                _self.OnWidgetSelected(currentWidget, function () {
+                    _successCallback && _successCallback(currentOperate);
+
+                });
+            }else if (object.type==Type.MyGroup){
+                var fabGroup=object.target;
+                var currentGroup=object.level;
+                if (!fabGroup) {
+                    console.warn('找不到fabWidget');
+                    return;
+                }
+
+                if (_.isNumber(_option.left)) {
+                    fabGroup.setLeft(_option.left);
+                    currentGroup.info.left = _option.left;
+
+                }
+                if (_.isNumber(_option.top)) {
+                    fabGroup.setTop(_option.top);
+                    currentGroup.info.top = _option.top;
+                }
+
+                if (getCurrentSubLayer()){
+                    var currentSubLayer=getCurrentSubLayer();
+
+                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+
+
+                }else {
+                    currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                    //console.log(currentPage.proJsonStr);
+
+                }
+                subLayerNode.renderAll();
+                pageNode.renderAll();
+                _successCallback && _successCallback(currentOperate);
+
+            }
+        };
+
+        this.ChangeAttributeAnimation = function(_animationObj,_successCallback){
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.animations=_animationObj;
+            _successCallback&&_successCallback();
+        };
+
+        this.AddAttributeTransition = function(_transition,_successCallback){
+            var selectObj = _self.getCurrentSelectObject();
+            selectObj.level.transition=_transition;
+            _successCallback&&_successCallback();
+        };
+        this.ChangeAttributeTransition = function(_option,_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            if(_option.hasOwnProperty('name')){
+                selectObj.level.transition.name=_option.name;
+                selectObj.level.transition.show=_option.show;
+            }else if(_option.hasOwnProperty('duration')){
+                selectObj.level.transition.duration=_option.duration;
+            }
+            _successCallback&&_successCallback();
+        };
+
+        /**
+         * 主要操作
+         * 改变对象的Action
+         * @param _actionObj
+         * @param _successCallback
+         * @constructor
+         */
+        this.ChangeAttributeAction= function (_actionObj,_successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.actions=_actionObj;
+            _successCallback&&_successCallback();
+        };
+        this.ChangeAttributeTexList= function (_actionObj,_successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.texList=_actionObj;
+            var arg={
+                level:selectObj.level,
+                callback:_successCallback
+            }
+            selectObj.target.fire('changeTex',arg);
+        };
+
+        /**
+         * 用于一键配置控件大小，使控件大小与纹理大小相同
+         * @constructor
+         */
+        this.ChangeAttributeWidgetSize=function(_successCallback){
+            var selectObj=_self.getCurrentSelectObject();
+            var arg={
+                callback:_successCallback,
+            };
+            var image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+            arg.widgetWidth=image.width;
+            arg.WidgetHeight=image.height;
+            if(image.width==selectObj.level.info.width&&image.height==selectObj.level.info.height&&selectObj.target.scaleX==1&&selectObj.target.scaleY==1){
+                return;
+            }
+            selectObj.level.info.width=image.width;
+            selectObj.level.info.height=image.height;
+            selectObj.target.fire('changeWidgetSize',arg);
+        };
+
+        this.ChangeAttributeTag= function (_tagObj, _successCallback) {
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.tag=_tagObj;
+            _successCallback&&_successCallback();
+        }
+        this.ChangeAttributeValue= function (_option, _successCallback) {
+            var currentOperate=SaveCurrentOperate();
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var arg=null;
+            var progress=null;
+
+            var selectObj=getCurrentSelectObject();
+            if (_option.hasOwnProperty('maxValue')){
+                selectObj.level.info.maxValue=_option.maxValue;
+
+                if(selectObj.type==Type.MyProgress){
+                    progress=(selectObj.level.info.progressValue-selectObj.level.info.minValue)/(selectObj.level.info.maxValue-selectObj.level.info.minValue);
+
+                    arg={
+                        progress:progress,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeProgressValue',arg);
+                }
+                if(selectObj.type==Type.MyDashboardDashboard){
+                    arg={
+                        maxValue:_option.maxValue,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeDashboardValue',arg);
+                }
+                if(selectObj.type==Type.MyOscilloscope){
+                    arg={
+                        maxValue:_option.maxValue,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('ChangeAttributeOscilloscope',arg);
+                }
+                if(selectObj.type==Type.MySlideBlock){
+                    arg={
+                        maxValue:_option.maxValue,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeInitValue',arg);
+                }
+
+            }
+            if (_option.hasOwnProperty('minValue')){
+                selectObj.level.info.minValue=_option.minValue;
+
+                if(selectObj.type==Type.MyProgress){
+                    progress=(selectObj.level.info.progressValue-selectObj.level.info.minValue)/(selectObj.level.info.maxValue-selectObj.level.info.minValue);
+
+                    arg={
+                        progress:progress,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeProgressValue',arg);
+                }
+                if(selectObj.type==Type.MyDashboard){
+                    arg={
+                        minValue:_option.minValue,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeDashboardValue',arg);
+                }
+                if(selectObj.type==Type.MyOscilloscope){
+                    arg={
+                        minValue:_option.minValue,
+                        callback:_successCallback
+                    }
+                    selectObj.target.fire('ChangeAttributeOscilloscope',arg);
+                }
+                if(selectObj.type==Type.MySlideBlock){
+                    arg={
+                        minValue:_option.minValue,
+                        callback:_successCallback
+                    }
+                    selectObj.target.fire('changeInitValue',arg);
+                }
+            }
+            if(_option.hasOwnProperty('minAngle')){
+                selectObj.level.info.minAngle=_option.minAngle;
+
+                if(selectObj.type==Type.MyDashboard){
+                    arg={
+                        minAngle:_option.minAngle,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeDashboardValue',arg);
+                }
+            }
+            if(_option.hasOwnProperty('maxAngle')){
+                selectObj.level.info.maxAngle=_option.maxAngle;
+                if(selectObj.type==Type.MyDashboard){
+                    arg={
+                        maxAngle:_option.maxAngle,
+                        callback:_successCallback
+                    };
+                    selectObj.target.fire('changeDashboardValue',arg);
+                }
+            }
+            if (_option.hasOwnProperty('highAlarmValue')){
+                selectObj.level.info.highAlarmValue=_option.highAlarmValue;
+            }
+            if (_option.hasOwnProperty('lowAlarmValue')){
+                selectObj.level.info.lowAlarmValue=_option.lowAlarmValue;
+            }
+            if (_option.hasOwnProperty('initValue')){
+                selectObj.level.info.initValue=_option.initValue;
+                selectObj.target.fire('changeNumber',selectObj.level);
+                subLayerNode.renderAll();
+            }
+            toastr.info('修改成功!');
+            _successCallback&&_successCallback(currentOperate);
+        }
+
+        this.ChangeAttributeNoInit= function (_option,_successCallback) {
+            var selectObj=getCurrentSelectObject();
+            if (_option.noInit){
+                selectObj.level.info.noInit=_option.noInit;
+            }
+            toastr.info('修改成功!');
+            //_successCallback&&_successCallback();
+        }
+
+        /**
+         *
+         * @param _option
+         * @param _successCallback
+         * @constructor
+         */
+
+        function sortObjects(objArray){
+
+        }
+
+        this.ChangeAttributeZIndex= function (_option, _successCallback) {
+            var currentOperate=SaveCurrentOperate();
+            var object=getCurrentSelectObject();
+
+            if (object.type==Type.MyLayer){
+                var pageNode = CanvasService.getPageNode();
+                var fabLayer = null;
+                var currentPage=_self.getCurrentPage();
+                var currentLayer = getCurrentLayer();
+                _.forEach(pageNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.id == object.target.id) {
+                        fabLayer = _fabObj;
+                    }
+                });
+                if (!fabLayer) {
+                    console.warn('找不到Layer');
+                    return;
+                }
+                if (_option.index==0){
+                    fabLayer.bringForward();
+
+
+                }else {
+                    fabLayer.sendBackwards();
+                }
+                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+
+                var layers = pageNode.getObjects();
+                _.forEach(currentPage.layers, function (_layer,index) {
+                    for (var i=0;i<layers.length;i++){
+                        if (layers[i].id == _layer.id){
+                            _layer.zIndex = i;
+                            break;
+                        }
+                    }
+                });
+                currentPage.layers.sort(function(item1,item2){
+                    return item1.zIndex-item2.zIndex;
+                });
+            }
+            else if (Type.isWidget(object.type)){
+                var subLayerNode = CanvasService.getSubLayerNode();
+                var fabWidget = null;
+                var currentSubLayer=getCurrentSubLayer();
+                console.log(currentSubLayer.widgets);
+                var currentWidget = getCurrentWidget();
+                _.forEach(subLayerNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.id == object.target.id) {
+                        fabWidget = _fabObj;
+                    }
+                });
+                if (!fabWidget) {
+                    console.warn('找不到Widget');
+                    return;
+                }
+                if (_option.index==0){
+                    fabWidget.bringForward();
+                }else {
+                    fabWidget.sendBackwards();
+                }
+                currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                var widgetObjs = subLayerNode.getObjects();
+                _.forEach(currentSubLayer.widgets, function (_widget,index) {
+                    for (var i=0;i<widgetObjs.length;i++){
+                        if (widgetObjs[i].id == _widget.id){
+                            _widget.zIndex = i;
+                            break;
+                        }
+                    }
+                });
+                currentSubLayer.widgets.sort(function(item1,item2){
+                    return  item1.zIndex-item2.zIndex;
+                });
+            }
+
+            _successCallback&&_successCallback(currentOperate);
+        };
+
+        this.ChangeAttributeSize= function (_option, _successCallback) {
+            var currentOperate=SaveCurrentOperate();
+            var object=getCurrentSelectObject();
+
+            if (object.type==Type.MyLayer) {
+
+                var pageNode = CanvasService.getPageNode();
+                var fabLayer = null;
+                var currentLayer = getCurrentLayer();
+                _.forEach(pageNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.id == object.target.id) {
+                        fabLayer = _fabObj;
+                    }
+                });
+                if (!fabLayer) {
+                    console.warn('找不到Layer');
+                    return;
+                }
+                var currentPage = _self.getCurrentPage();
+                if (_option.width) {
+                    //fabLayer.setScaleX(_option.width / fabLayer.width);
+                    fabLayer.set({width:_option.width,scaleX:1});
+                    currentLayer.info.width = _option.width;
+                }
+                if (_option.height) {
+                    //fabLayer.setScaleY(_option.height / fabLayer.height);
+                    fabLayer.set({height:_option.height,scaleY:1});
+                    currentLayer.info.height = _option.height;
+                }
+
+                //for fix scale bug!!!
+                object.target.fire('OnRelease',object.target.id);
+
+                pageNode.renderAll();
+                currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                //console.log(currentPage.proJsonStr);
+
+                var layer = getCurrentLayer();
+                _self.OnLayerSelected(layer, function () {
+                    _successCallback && _successCallback(currentOperate);
+
+                });
+            }else if (Type.isWidget(object.type)) {
+                var subLayerNode = CanvasService.getSubLayerNode();
+                var fabWidget = null;
+                var currentSubLayer = getCurrentSubLayer();
+                var currentWidget = getCurrentWidget(currentSubLayer);
+                _.forEach(subLayerNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.id == object.target.id) {
+                        fabWidget = _fabObj;
+                    }
+                });
+                if (!fabWidget) {
+                    console.warn('找不到Widget');
+                    return;
+                }
+                if (_option.width) {
+                    //fabWidget.setScaleX(_option.width / fabWidget.width);
+                    fabWidget.set({width:_option.width,scaleX:1});
+                    currentWidget.info.width = _option.width;
+                }
+                if (_option.height) {
+                    //fabWidget.setScaleY(_option.height / fabWidget.height);
+                    fabWidget.set({height:_option.height,scaleY:1});
+                    currentWidget.info.height = _option.height;
+                }
+                subLayerNode.renderAll();
+
+                currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                OnWidgetSelected(currentWidget, function () {
+                    _successCallback && _successCallback(currentOperate);
+
+                });
+            }
+
+
+        };
+
+        /**
+         * 次要操作
+         * 按照名字搜索一个对象
+         * @param _nameString   名字
+         * @param _successCallback  回调
+         * @constructor
+         */
+        this.SearchObjectByName= function (_nameString, _successCallback) {
+            var resultList=[];
+            _.forEach(project.pages, function (_page) {
+                if (_page.name==_nameString){
+                    resultList.push({
+                        id:_page.id,
+                        type:Type.MyPage
+                    });
+                }
+                _.forEach(_page.layers, function (_layer) {
+                    if (_layer.name==_nameString){
+                        resultList.push({
+                            id:_layer.id,
+                            type:Type.MyLayer
+                        });
+                    }
+                    _.forEach(_layer.subLayers, function (_subLayer) {
+                        if (_subLayer.name==_nameString){
+                            resultList.push({
+                                id:_subLayer.id,
+                                type:Type.MySubLayer
+                            });
+                        }
+                        _.forEach(_subLayer.widgets, function (_widget) {
+                            if (_widget.name==_nameString){
+                                resultList.push({
+                                    id:_widget.id,
+                                    type:_widget.type
+                                });
+                            }
+                        });
+                    });
+                });
+
+            });
+
+            _successCallback(resultList);
+        };
+
+        /**
+         * 次要操作
+         * 从搜索结果中选中
+         * @param _result   需要选中的resultList中的item
+         * @param _successCallback  回调
+         * @constructor
+         */
+        this.SelectInSearchResults= function (_result, _successCallback) {
+            if (!_result){
+                console.warn('无效的参数');
+                return;
+            }
+
+            //如果在当前Page内部搜索,则不必先切换Page
+            var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
+            _.forEach(project.pages, function (_page,_pageIndex) {
+                if (_page.id==_result.id&&_result.type==Type.MyPage){
+                    _self.changeCurrentPageIndex(_pageIndex,_successCallback);
+                    return;
+                }
+                _.forEach(_page.layers, function (_layer, _layerIndex) {
+                    if (_layer.id==_result.id&&_result.type==Type.MyLayer){
+                        if (currentPageIndex==_pageIndex){
+                            _self.OnLayerSelected(_layer,_successCallback,true);
+
+                        }else {
+                            _self.changeCurrentPageIndex(_pageIndex, function () {
+                                _self.OnLayerSelected(_layer,_successCallback,true);
+                            })
+                        }
+
+                        return;
+                    }
+                    _.forEach(_layer.subLayers, function (_subLayer, _subLayerIndex) {
+
+
+                        if (_subLayer.id==_result.id&&_result.type==Type.MySubLayer){
+                            if (currentPageIndex==_pageIndex){
+                                _self.OnSubLayerSelected(_layerIndex,_subLayerIndex,_successCallback,true);
+
+                            }else {
+                                _self.changeCurrentPageIndex(_pageIndex, function () {
+                                    _self.OnSubLayerSelected(_layerIndex,_subLayerIndex,_successCallback,true);
+                                });
+                            }
+
+                            return;
+
+                        }
+                        _.forEach(_subLayer.widgets, function (_widget) {
+                            if (_widget.id==_result.id&&Type.isWidget(_result.type)){
+                                if (currentPageIndex==_pageIndex){
+                                    _self.OnSubLayerSelected(_layerIndex,_subLayerIndex, function () {
+                                        _self.OnWidgetSelected(_widget,_successCallback,true);
+
+                                    },true);
+
+
+                                }else {
+                                    _self.changeCurrentPageIndex(_pageIndex, function () {
+                                        _self.OnSubLayerSelected(_layerIndex,_subLayerIndex, function () {
+                                            _self.OnWidgetSelected(_widget,_successCallback,true);
+
+                                        },true);
+                                    })
+                                }
+                            }
+
+
+                            return;
+                        })
+                    })
+
+                })
+            })
+        };
+
+        /**
+         * 缩放画布
+         * @param _scaleMode 模式 'page' or 'subCanvas'
+         * @constructor
+         */
+        this.ScaleCanvas= function (_scaleMode,_level) {
+            var currentPage=_self.getCurrentPage();
+            var _scale=1;
+            if (_scaleMode=='page'){
+                var pageNode=CanvasService.getPageNode();
+                _scale=ViewService.getScaleFloat('page');
+                pageNode.setZoom(_scale);
+
+                pageNode.setWidth(project.currentSize.width*_scale);
+                pageNode.setHeight(project.currentSize.height*_scale);
+
+            }else if (_scaleMode=='subCanvas'){
+                var currentLayer=_level?_level:_self.getCurrentLayer();
+                var subLayerNode=CanvasService.getSubLayerNode();
+                _scale=ViewService.getScaleFloat('subCanvas');
+
+                drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
+                subLayerNode.setZoom(_scale);
+
+                subLayerNode.setWidth(currentLayer.info.width*_scale);
+                subLayerNode.setHeight(currentLayer.info.height*_scale);
+
+            }else {
+                console.warn('传参有问题');
+            }
+        }
+
+
+
+        /**
+         * 清除page的HashKeys
+         * @private
+         */
+        function _cleanPageHashKey() {
+            _.forEach(project.pages, function (_page) {
+                _page.$$hashKey = undefined;
+            })
+        }
+
+        /**
+         * 生成一个给定fabric.Group的最新体
+         * @param oldFabGroup   旧的fabric group
+         * @param is
+         * @private
+         */
+        function _createGroup(oldFabGroup,isSubLayer){
+            if(!oldFabGroup||oldFabGroup.type!=Type.MyGroup){
+                console.warn('传参不对');
+                return;
+            }
+            var canvasNode=null;
+            if(!isSubLayer){
+                canvasNode=CanvasService.getPageNode();
+            }else{
+                canvasNode=CanvasService.getSubLayerNode();
+            }
+            var groupItems=[];
+            canvasNode.forEachObject(function (fabItem) {
+                _.forEach(oldFabGroup.getObjects(), function (_fabLayer) {
+                    if (_fabLayer.id==fabItem.id){
+                        groupItems.push(fabItem);
+
+                    }
+                })
+            })
+            if (groupItems.length==oldFabGroup.getObjects().length){
+                var fabGroup=new fabric.Group(groupItems,{
+                    canvas:canvasNode
+                });
+                return fabGroup;
+
+            }else {
+                return oldFabGroup;
+            }
+
+        }
+
+        /**
+         * 辅助函数
+         * 从subLayer模式返回Page模式
+         * @param currentPage
+         * @param _successCallback
+         * @private
+         */
+        var _backToPage= function (currentPage,_successCallback) {
+            var currentSubLayer=getCurrentSubLayer();
+            var pageNode=CanvasService.getPageNode();
+
+            if (currentSubLayer){
+                currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
+
+            }
+
+            pageNode.setBackgroundImage(null, function () {
+                pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                    if (currentPage.mode==1){
+                        _leaveFromSubLayer(currentSubLayer,_successCallback);
+                    }else {
+                        _successCallback&&_successCallback();
+                    }
+
+
+                });
+                //console.log('pageNode',pageNode);
+            });
+        };
+
+
+        var _indexById= function (_array, _item) {
+            var index=-1;
+            if (!_array){
+                return index;
+            }
+            _.forEach(_array, function (__item,_index) {
+                if (__item.id==_item.id){
+                    index=_index;
+                }
+            })
+            return index;
+        }
+
+        /**
+         * 辅助函数
+         * 当离开当前SubLayer触发
+         * @param _successCallback
+         * @private
+         */
+        var _leaveFromSubLayer = function (currentSubLayer, _successCallback) {
+            if (!currentSubLayer){
+                console.warn('找不到SubLayer');
+                return;
+            }
+
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var pageNode=CanvasService.getPageNode();
+
+            subLayerNode.deactivateAll();
+            subLayerNode.renderAll();
+
+            currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+
+
+            var pageNodeObjs = pageNode.getObjects();
+            var totalNum = pageNodeObjs.length;
+            if (totalNum > 0) {
+                var cb = function () {
+                    totalNum -= 1;
+                    if (totalNum <= 0) {
+                        _successCallback && _successCallback();
+
+                    }
+                }.bind(this);
+                _.forEach(pageNodeObjs, function (_fabLayer) {
+                    _fabLayer.fire('OnRenderUrl', cb);
+
+                }.bind(this));
+            } else {
+                _successCallback && _successCallback();
+            }
+
+
+
+
+
+
+        }
+
+        function belongToGroup(_obj,_target){
+            var result=false;
+            if (_target.type!='group'){
+                return result;
+            }
+            _.forEach(_target.getObjects(), function (_item) {
+                if (_item.id==_obj.id){
+                    result=true;
+                }
+            });
+            return result;
+        }
+
+        var setRendering = this.setRendering;
+        var getCurrentSubLayer=this.getCurrentSubLayer;
+
+        var OnPageClicked=this.OnPageClicked;
+        var OnSubLayerClicked=this.OnSubLayerClicked;
+        var SaveCurrentOperate=this.SaveCurrentOperate;
+
+
+        /**
+         * 用于将仪表盘中的角度转换，矫正变形偏差
+         * @param value
+         * @param scaleX
+         * @param scaleY
+         * @returns {*}
+         */
+        function translateAngle(value,scaleX,scaleY){
+            var tempAngle=null;
+            while(value>360){
+                value=value-360;
+            }
+            while(value<0){
+                value=value+360;
+            }
+            if(value>=0&&value<=90){
+                tempAngle = Math.atan(Math.tan(value*Math.PI/180)*(scaleY/scaleX));
+            }else if(value>90&&value<=180){
+                tempAngle = Math.atan(Math.tan((value-90)*Math.PI/180)*(scaleX/scaleY));
+                tempAngle+=Math.PI/2;
+            }else if(value>180&&value<=270){
+                tempAngle = Math.atan(Math.tan((value-180)*Math.PI/180)*(scaleY/scaleX));
+                tempAngle+=Math.PI;
+            }else if(value>270&&value<=360){
+                tempAngle = Math.atan(Math.tan((value-270)*Math.PI/180)*(scaleX/scaleY));
+                tempAngle+=Math.PI*3/2;
+            }
+            return tempAngle;
+        }
+
+        /**
+         * 用于求渐变色
+         * @param initColor
+         * @param endColor
+         * @param value
+         */
+        function changeColor(initColor,endColor,progressValue){
+            var initColorArr = initColor.slice(5,initColor.length-1).split(','),
+                endColorArr = endColor.slice(5,endColor.length-1).split(',');
+            var initColorR = parseInt(initColorArr[0]),
+                initColorG = parseInt(initColorArr[1]),
+                initColorB = parseInt(initColorArr[2]),
+                initColorA = parseInt(initColorArr[3]),
+                endColorR = parseInt(endColorArr[0]),
+                endColorG = parseInt(endColorArr[1]),
+                endColorB = parseInt(endColorArr[2]),
+                endColorA = parseInt(endColorArr[3]);
+
+            var progressColorR = parseInt(initColorR+(endColorR-initColorR)*progressValue),
+                progressColorG = parseInt(initColorG+(endColorG-initColorG)*progressValue),
+                progressColorB = parseInt(initColorB+(endColorB-initColorB)*progressValue),
+                progressColorA = 1;
+
+            return  'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
+
+        }
+
+        /**
+         * get image name(id)
+         * @param imageName
+         * @returns {*}
+         */
+        function getImageName(imageName) {
+            if (imageName && typeof imageName === 'string') {
+                var names = imageName.split('/');
+                return names[names.length - 1];
+            } else {
+                return '';
+            }
+        }
+
+        /**
+         * 画网格
+         * @param curX
+         * @param curY
+         * @param width
+         * @param height
+         * @param offsetX
+         * @param offsetY
+         * @param gridWidth
+         * @param gridHeight
+         * @param gridStyle
+         */
+        function drawGrid(curX, curY, width, height,offsetX, offsetY,gridWidth, gridHeight, gridStyle,ctx,minValue) {
+            var _offsetX = offsetX/gridStyle.scaleX;
+            var _offsetY = offsetY/gridStyle.scaleY;
+            var _gridWidth = gridWidth/gridStyle.scaleX;
+            var _gridHeight = gridHeight/gridStyle.scaleY;
+            var vertGrids = Math.floor((width - _offsetX)/_gridWidth)+1;
+            var horiGrids = Math.floor((height - _offsetY)/_gridHeight)+1;
+            //var maxWidth = 0;
+            ctx.save();
+            ctx.translate(curX,curY);
+            ctx.beginPath();
+            //draw verts
+            ctx.save();
+            ctx.translate(_offsetX,0);
+            if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='3'){
+                ctx.textAlign='center';
+                ctx.textBaseline='top';
+                ctx.fillStyle='rgba(255,255,255,1)';
+                ctx.font='10px';
+                var maxXValue =  gridStyle.gridInitValue+(vertGrids-1)*gridStyle.gridUnitX;
+                var q = Math.floor(ctx.measureText(maxXValue).width/(2*gridWidth/3))+1;
+                for (var i=0;i<vertGrids;i++){
+                    var vertX = i * _gridWidth;
+                    var xValue = gridStyle.gridInitValue+i*gridStyle.gridUnitX;
+
+                    ctx.moveTo(vertX,0);
+                    ctx.lineTo(vertX,height-_offsetY);
+
+                    if(i%q==0){
+                        ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
+                        ctx.fillText(xValue,vertX*gridStyle.scaleX,(height-_offsetY+2)*gridStyle.scaleY);
+                        ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
+                    }
+                }
+            }
+            ctx.restore();
+            ctx.save();
+            ctx.translate(_offsetX,height-_offsetY);
+            if(gridStyle&&gridStyle.grid&&gridStyle.grid=='1'||gridStyle.grid=='2') {
+                ctx.textAlign='right';
+                ctx.textBaseline='middle';
+                ctx.fillStyle='rgba(255,255,255,1)';
+                ctx.font='10px';
+                for (i = 0; i < horiGrids; i++) {
+                    var horiY = i * _gridHeight;
+                    var yValue = minValue+gridStyle.gridInitValue+i*gridStyle.gridUnitY;
+
+                    ctx.moveTo(0, -horiY);
+                    ctx.lineTo(width-_offsetX, -horiY);
+
+
+                    ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
+                    ctx.fillText(yValue,(0-2)*gridStyle.scaleX, -horiY*gridStyle.scaleY);
+                    ctx.scale(gridStyle.scaleX,gridStyle.scaleY);
+                }
+            }
+            ctx.restore();
+            ctx.lineWidth=gridStyle.lineWidth||1;
+            ctx.strokeStyle = (gridStyle&&gridStyle.color) || 'lightgrey';
+            ctx.scale(1/gridStyle.scaleX,1/gridStyle.scaleY);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        /**
+         *
+         * @param width
+         * @param height
+         */
+        function drawBackgroundCanvas(width,height,x,y,scale){
+            var _scale = scale||1;
+            var _width = parseInt(width*_scale);
+            var _height = parseInt(height*_scale);
+            var currentPage = _self.getCurrentPage();
+
+            var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
+            var pageBackgroundImgSrc = currentPage.backgroundImage||"";
+            //var pageFromJson = JSON.parse(currentPage.proJsonStr);
+            var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
+            var pageHeight = (project.currentSize&&project.currentSize.height)||480;
+            //console.log('got page width and height',pageWidth,pageHeight);
+
+            var backgroundCanvas=document.getElementById('backgroundCanvas');
+            backgroundCanvas.width=_width;
+            backgroundCanvas.height=_height;
+            var ctx=backgroundCanvas.getContext('2d');
+
+            if(pageBackgroundImgSrc!=""&&pageBackgroundImgSrc!="/public/images/blank.png"){
+                pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
+                var sourceX = parseInt(pageBackgroundImg.width/pageWidth*x);
+                var sourceY = parseInt(pageBackgroundImg.height/pageHeight*y);
+                var sourceWidth =parseInt(pageBackgroundImg.width/pageWidth*width);
+                var sourceHeight =parseInt(pageBackgroundImg.height/pageHeight*height);
+                ctx.drawImage(pageBackgroundImg,sourceX,sourceY,sourceWidth,sourceHeight,0,0,_width,_height);
+            }else{
+                ctx.beginPath();
+                ctx.rect(0,0,_width,_height);
+                ctx.fillStyle=pageColor;
+                ctx.fill();
+                ctx.closePath();
+            }
+            //ctx.lineWidth = 1;
+            //ctx.strokeStyle = 'rgba(102,153,255,0.75)';
+            //ctx.stroke();
+        }
+
+        /**
+         * to resize widget
+         * @param self
+         */
+        function setWidthAndHeight(self){
+            var w = parseInt((self.width*self.scaleX).toFixed(0)),
+                h = parseInt((self.height*self.scaleY).toFixed(0));
+            self.set({
+                'height' :h,
+                'width'  :w,
+                'scaleX'  :1,
+                'scaleY'  :1,
+            });
+
+        }
+
+        /**
+         * to reset top and left
+         * @param self
+         */
+        function setTopAndLeft(self){
+            var t = parseInt(self.top);
+            var l = parseInt(self.left);
+            var selectObj=_self.getCurrentSelectObject();
+            selectObj.level.info.top=t;
+            selectObj.level.info.left=l;
+            self.set({
+                top:t,
+                left:l
+            })
+
+        }
+
+        /**
+         * calculate dashboard lightBand radius
+         * @param mode
+         * @param width
+         * @param height
+         * @returns {number}
+         */
+        function calculateRadius(mode,width,height){
+            var radius = mode=='1'?Math.sqrt(width*width+height*height)/2:Math.max(width,height)/2;
+            radius= Math.floor(radius);
+            return radius;
+        }
+
+        /**
+         *
+         * @param mode
+         * @param ctx
+         * @param scaleX
+         * @param scaleY
+         * @param fontString
+         * @param align
+         * @param fontColor
+         */
+        function drawDateTime(mode,ctx,scaleX,scaleY,fontString,align,fontColor){
+            ctx.fillStyle=fontColor;
+            var dateObj = new Date(),
+                arrTime = [],
+                arrDate = [];
+            var i=0;
+            arrTime.push(dateObj.getHours());
+            arrTime.push(dateObj.getMinutes());
+            arrTime.push(dateObj.getSeconds());
+            for(i=0;i<arrTime.length;i++){
+                if(arrTime[i]<10){
+                    arrTime[i]='0'+arrTime[i];
+                }
+            }
+
+            arrDate.push(dateObj.getFullYear());
+            arrDate.push(dateObj.getMonth()+1);
+            arrDate.push(dateObj.getDate());
+
+            for(i=0;i<arrDate.length;i++){
+                if(arrDate[i]<10){
+                    arrDate[i]='0'+arrDate[i];
+                }
+            }
+            if(mode=='0'){
+                //时分秒
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrTime.join(":"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }else if(mode=='1'){
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrTime.slice(0,2).join(":"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }
+            else if(mode=='2'){
+                //斜杠日期
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrDate.join("/"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }else if(mode=='3'){
+                //减号日期
+                ctx.scale(1/scaleX,1/scaleY);
+                ctx.font=fontString;
+                ctx.textAlign=align;
+                ctx.textBaseline='middle';
+                ctx.fillText(arrDate.join("-"),0,0);
+                ctx.scale(scaleX,scaleY);
+            }
+        }
+
+
+    }]);

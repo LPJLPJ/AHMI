@@ -8,12 +8,20 @@ var pump = require('pump');
 
 gulp.task('compress', function (cb) {
     pump([
-            gulp.src(['public/ide/modules/ide/js/**/*.js','!public/ide/modules/ide/js/parts/simulator/*.js']),
-            stripDebug(),
+            gulp.src(['public/ide/modules/ide/js/**/*.js','!public/ide/modules/ide/js/parts/simulator/*.js','!public/ide/modules/ide/js/projectService.js'],{base:'public/ide/modules/ide/js'}),
             uglify(),
             gulp.dest('public/ide/modules/ide/min-js')
         ],
-        cb
+        function () {
+            pump([
+                    gulp.src(['public/ide/modules/ide/js/parts/simulator/*.js','public/ide/modules/ide/js/projectService.js'],{base:'public/ide/modules/ide/js'}),
+                    gulp.dest('public/ide/modules/ide/min-js')
+                ],
+                cb
+            );
+        }
     );
+
+
 });
 
