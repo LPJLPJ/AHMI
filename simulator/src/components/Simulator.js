@@ -4002,7 +4002,7 @@ module.exports =   React.createClass({
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>
                     <canvas ref='canvas' className='simulator-canvas' />
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
-                    < canvas ref='tempcanvas'  className='simulator-tempcanvas'/>
+                    < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
                 <div className="phical-keyboard-wrapper">
                     <button onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
