@@ -436,6 +436,8 @@
                         class="caption"></span></a>
                 <a ng-click="component.tool.showBottom()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe619;</span><span
                         class="caption"></span></a>
+                <a class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>
+                <a class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
                     <div class="input-group" style="top: 13px;">
@@ -2663,10 +2665,10 @@
 
                 <div class="my-levels-line">
                     <div class="my-levels-title" ng-class="{true:'selected'}[component.bottom.page.selected]">
-                        <i class="iconfont" ng-click="toggleShow(component.bottom.page.id)"
-                           ng-show="component.bottom.page.expand">&#xe60a;</i>
-                        <i class="iconfont" ng-click="toggleShow(component.bottom.page.id)"
-                           ng-show="!component.bottom.page.expand">&#xe609;</i>
+                        <i class="iconfont display-hidden" ng-click="toggleShow(component.bottom.page.id)"
+                           ng-show="component.bottom.page.expand" >&#xe722;</i>
+                        <i class="iconfont display-hidden" ng-click="toggleShow(component.bottom.page.id)"
+                           ng-show="!component.bottom.page.expand">&#xe721;</i>
                         <span class="my-object-label"
                               ng-click="component.bottom.selectPage(component.bottom.page.id)"
                               ng-class="{true:'selected'}[component.bottom.page.selected]">
@@ -2680,8 +2682,8 @@
                     <div ng-repeat="layer in component.bottom.page.layers track by $index">
                         <div class="my-levels-line">
                             <div class="my-levels-title" ng-class="{true:'selected'}[layer.selected]">
-                                <i class="iconfont" ng-click="toggleShow(layer.id)" ng-show="layer.expand">&#xe60a;</i>
-                                <i class="iconfont" ng-click="toggleShow(layer.id)" ng-show="!layer.expand">&#xe609;</i>
+                                <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="layer.expand">&#xe722;</i>
+                                <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="!layer.expand">&#xe721;</i>
                                 <span class="my-object-label"
                                       ng-class="{true:'selected'}[layer.selected]"
                                       ng-click="component.bottom.selectLayer(layer)">{{layer.name}}</span>
@@ -2692,10 +2694,10 @@
                             <div ng-repeat="subLayer in layer.subLayers track by $index">
                                 <div class="my-levels-line">
                                     <div class="my-levels-title" ng-class="{true:'selected'}[subLayer.selected]">
-                                        <i class="iconfont" ng-click="toggleShow(subLayer.id)"
-                                           ng-show="subLayer.expand">&#xe60a;</i>
-                                        <i class="iconfont" ng-click="toggleShow(subLayer.id)"
-                                           ng-show="!subLayer.expand">&#xe609;</i>
+                                        <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
+                                           ng-show="subLayer.expand">&#xe722;</i>
+                                        <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
+                                           ng-show="!subLayer.expand">&#xe721;</i>
                                         <span class="my-object-label"
                                               ng-class="{true:'selected'}[subLayer.selected]"
                                               ng-click="component.bottom.selectSubLayer(layer,subLayer)">{{subLayer.name}}</span>
