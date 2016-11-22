@@ -500,6 +500,7 @@ renderer.prototype.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPre
         style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+('\"'+font['font-family']+'\"'||'arial');
         style.textAlign = 'center';
         style.textBaseline = 'middle';
+        style.arrange = widget.info.arrange;
         var canvas = new Canvas(width,height);
         var ctx = canvas.getContext('2d');
         ctx.clearRect(0,0,width,height);
