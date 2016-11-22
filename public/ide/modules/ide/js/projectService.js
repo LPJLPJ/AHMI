@@ -109,6 +109,7 @@ ideServices
 
                 this.callSuper('initialize', options);
                 this.loadAll(layerId);
+                this.layerId = layerId;
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
 
@@ -137,7 +138,7 @@ ideServices
                 });
 
                 this.on('OnRefresh',function (cb) {
-                    this.refresh(cb);
+                    this.refresh(self,cb);
                 })
             },
             toObject: function () {
@@ -202,6 +203,7 @@ ideServices
 
             var layer=getLevelById(layerId);
             // console.log('loadall',layer.showSubLayer.url)
+            // console.log('scale',this.initScale.X,this.initScale.Y)
 
             var layerWidth=layer.info.width/this.initScale.X;
             var layerHeight=layer.info.height/this.initScale.Y;
@@ -221,7 +223,7 @@ ideServices
                     this.loaded = true;
                     this.setCoords();
                     this.fire('image:loaded');
-                    // console.log('img loaded')
+                    // console.log('img loaded',layerWidth,layerHeight)
                     cb && cb()
                 }).bind(this);
                 backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
@@ -240,15 +242,10 @@ ideServices
             this.initPosition.top = _.cloneDeep(this.getTop());
 
         };
-        fabric.MyLayer.prototype.refresh = function (cb) {
-            // console.log('refreshing')
-            if (this.id){
-                this.loadAll(this.id,function () {
-                    var pageNode = CanvasService.getPageNode();
-                    pageNode.renderAll();
-                    cb && cb();
-                });
-            }
+        fabric.MyLayer.prototype.refresh = function (self,cb) {
+            this.renderUrlInPage(self,function () {
+                cb && cb();
+            })
         }
         fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
             // console.log('rendering url in page')
@@ -1610,7 +1607,7 @@ ideServices
                 });
                 this.on('changeInitValue',function(arg){
                     var _callback=arg.callback;
-                    console.log('haha',arg);
+                    // console.log('haha',arg);
                     if(arg.hasOwnProperty('minValue')){
                         self.minValue=arg.minValue;
                     }
@@ -3336,7 +3333,7 @@ ideServices
                     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
                         //pageNode.setWidth(project.currentSize.width);
                         //pageNode.setHeight(project.currentSize.height);
-                        console.log(currentPage.proJsonStr)
+                        // console.log(currentPage.proJsonStr)
                         if (isInit){
                             // console.log('init layer');
                             updateLayerImage(0,function () {
@@ -3482,7 +3479,7 @@ ideServices
             setRendering(true);
 
             var newPage = _.cloneDeep(_newPage);
-            console.log('newPage',newPage);
+            // console.log('newPage',newPage);
             var currentPageIndex= _indexById(project.pages,_self.getCurrentPage());
             var newPageIndex=-1;
             if (currentPageIndex == project.pages.length - 1) {
@@ -5234,6 +5231,100 @@ ideServices
          * @param _successCallback
          * @constructor
          */
+        // this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
+        //     if (renderingSubLayer){
+        //         return;
+        //     }
+        //     renderingSubLayer=true;
+        //     var self = this;
+        //     var subLayerNode=CanvasService.getSubLayerNode();
+        //     var currentSubLayer=subLayer;
+        //     var currentLayer=layer;
+        //
+        //     if (currentLayer.showSubLayer.backgroundImage&&currentLayer.showSubLayer.backgroundImage!=''){
+        //         subLayerNode.clear();
+        //
+        //
+        //         subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+        //             //subLayerNode.setWidth(currentLayer.info.width);
+        //             //subLayerNode.setHeight(currentLayer.info.height);
+        //             _self.ScaleCanvas('subCanvas',currentLayer);
+        //
+        //             subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
+        //
+        //                 subLayerNode.deactivateAll();
+        //                 subLayerNode.renderAll();
+        //                 currentSubLayer.proJsonStr=subLayerNode.toJSON();
+        //
+        //
+        //                 currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+        //                 // console.log(JSON.stringify(layer));
+        //                 // self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+        //                 //     renderingSubLayer = false;
+        //                 //     _successCallback && _successCallback();
+        //                 // })
+        //                 renderingSubLayer = false;
+        //                 _successCallback && _successCallback();
+        //             },{
+        //                 width:currentLayer.info.width,
+        //                 height:currentLayer.info.height
+        //                 })
+        //
+        //
+        //         })
+        //     }
+        //     else {
+        //         //subLayerNode.clear();
+        //
+        //
+        //         subLayerNode.setBackgroundImage(null, function () {
+        //
+        //             subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
+        //                 subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+        //
+        //                     //subLayerNode.setWidth(currentLayer.info.width);
+        //                     //subLayerNode.setHeight(currentLayer.info.height);
+        //                     // console.log('showing sublayer')
+        //                     _self.ScaleCanvas('subCanvas',currentLayer);
+        //
+        //                     subLayerNode.deactivateAll();
+        //                     subLayerNode.renderAll();
+        //                     currentSubLayer.proJsonStr= subLayerNode.toJSON();
+        //                     // console.log('sublayer',_.cloneDeep(currentSubLayer.proJsonStr));
+        //                     // console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
+        //                     currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+        //                     currentLayer.url = currentSubLayer.url;
+        //                     // console.log('sublayer url',''+currentSubLayer.url)
+        //                     // console.log('layer',_.cloneDeep(layer))
+        //                     // setTestImg(''+currentSubLayer.url)
+        //
+        //                     //sync layer node
+        //                     // self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
+        //                     //     renderingSubLayer = false;
+        //                     //     _successCallback && _successCallback();
+        //                     // })
+        //
+        //                     renderingSubLayer = false;
+        //                     _successCallback && _successCallback();
+        //
+        //                     // renderingSubLayer = false;
+        //                     // _successCallback && _successCallback();
+        //                 })
+        //
+        //
+        //
+        //             })
+        //         });
+        //
+        //
+        //     }
+        //
+        //
+        //
+        // };
+
+
+
         this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
             if (renderingSubLayer){
                 return;
@@ -5259,9 +5350,7 @@ ideServices
                         subLayerNode.renderAll();
                         currentSubLayer.proJsonStr=subLayerNode.toJSON();
 
-
                         currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
-                        // console.log(JSON.stringify(layer));
                         self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
                             renderingSubLayer = false;
                             _successCallback && _successCallback();
@@ -5269,7 +5358,7 @@ ideServices
                     },{
                         width:currentLayer.info.width,
                         height:currentLayer.info.height
-                        })
+                    })
 
 
                 })
@@ -5285,27 +5374,20 @@ ideServices
 
                             //subLayerNode.setWidth(currentLayer.info.width);
                             //subLayerNode.setHeight(currentLayer.info.height);
-                            // console.log('showing sublayer')
+                            // console.log('currentlayer',currentLayer.info.width,currentLayer.info.height)
                             _self.ScaleCanvas('subCanvas',currentLayer);
 
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
                             currentSubLayer.proJsonStr= subLayerNode.toJSON();
-                            // console.log('sublayer',_.cloneDeep(currentSubLayer.proJsonStr));
-                            // console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
                             currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
-                            currentLayer.url = currentSubLayer.url;
-                            // console.log('sublayer url',''+currentSubLayer.url)
-                            // console.log('layer',_.cloneDeep(layer))
-                            // setTestImg(''+currentSubLayer.url)
-
-                            //sync layer node
                             self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
                                 renderingSubLayer = false;
                                 _successCallback && _successCallback();
                             })
 
-
+                            // renderingSubLayer = false;
+                            // _successCallback && _successCallback();
                         });
                     })
                 });
@@ -5316,6 +5398,9 @@ ideServices
 
 
         };
+
+
+
         this.OnWidgetClicked= function (_target, _successCallback) {
             //除了选中的layer,清除所有Layer,SubLayer,Widget的current
 
