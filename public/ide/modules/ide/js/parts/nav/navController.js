@@ -90,7 +90,8 @@
                     saveProject: saveProject.bind(null, null, true),
                     showLeft:showLeft,
                     showRight:showRight,
-                    showBottom:showBottom
+                    showBottom:showBottom,
+                    rotateCanvasRight:rotateCanvasRight
                 },
                 simulator:{
                     show:false
@@ -133,6 +134,10 @@
             $scope.$emit('ChangeShownArea',2);
         }
 
+        function rotateCanvasRight(){
+            var canvas = document.getElementById('c');
+
+        }
 
         //listen for nw.win.close
         function confirmForClosingWindow() {
