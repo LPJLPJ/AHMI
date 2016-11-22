@@ -541,6 +541,9 @@ body{
 .my-layers-panel .iconfont{
     cursor: pointer;
 }
+.my-layers-panel .display-hidden{
+    font-weight: 700;
+}
 
 #simulator-wrapper{
     position:absolute;
