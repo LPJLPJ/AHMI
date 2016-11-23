@@ -341,7 +341,7 @@ ideServices
                 width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
-                arrange:true,            //true:横向 false:竖向
+                arrange:'horizontal',   //horizontal:水平   vertical:竖直
 
                 text:'button',
                 fontFamily:"宋体",
@@ -737,7 +737,8 @@ ideServices
                 fontFamily:'宋体',
                 fontSize:20,
                 fontColor:'rgba(0,0,0,1)',
-                align:'center'
+                align:'center',
+                arrange:"horizontal"   //horizontal:水平   vertical:竖直
             };
             return {
                 id: Math.random().toString(36).substr(2),

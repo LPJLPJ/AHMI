@@ -141,6 +141,18 @@
             c.style.cssText="transform:rotate(270deg);left:0;top:0";
             backgroundCanvas.style.cssText="transform:rotate(270deg);left:0;top:0";
             c1.style.cssText="transform:rotate(270deg);left:0;top:0";
+            var cNode = CanvasService.getPageNode();
+            var c1Node = CanvasService.getSubLayerNode();
+            cNode.deactivateAll();
+            c1Node.deactivateAll();
+            var cArr=cNode.getObjects();
+            var c1Arr=c1Node.getObjects();
+            cArr.map(function(obj){
+                obj['selectable']=false;
+            });
+            c1Arr.map(function(obj){
+                obj['selectable']=false;
+            });
         }
         function rotateCanvasRight(){
             var c = document.getElementById('c');
@@ -149,6 +161,18 @@
             c.style.cssText="transform:rotate(0deg);left:0;top:0";
             backgroundCanvas.style.cssText="transform:rotate(0deg);left:0;top:0";
             c1.style.cssText="transform:rotate(0deg);left:0;top:0";
+            var cNode = CanvasService.getPageNode();
+            var c1Node = CanvasService.getSubLayerNode();
+            cNode.deactivateAll();
+            c1Node.deactivateAll();
+            var cArr=cNode.getObjects();
+            var c1Arr=c1Node.getObjects();
+            cArr.map(function(obj){
+                obj['selectable']=true;
+            });
+            c1Arr.map(function(obj){
+                obj['selectable']=true;
+            });
         }
 
         //listen for nw.win.close

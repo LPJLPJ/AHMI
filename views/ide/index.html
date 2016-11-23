@@ -828,7 +828,15 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">方向</span>
 
+                            <select class="my-attr-number-input form-control" ng-model="component.button.arrangeModel"
+                                    ng-change="component.button.enterArrange($event)">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">竖直</option>
+                            </select>
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
                             <select class="form-control my-attr-number-input form-control"
@@ -1691,7 +1699,7 @@
                                    class="my-attr-number-input form-control"
                                    ng-model="component.object.level.info.bindBit"
                                    ng-blur="component.restore()"
-                                   ng-keypress="component.switch.enterBindBit($event)"/>
+                                   ng-keypress="component.switchWidget.enterBindBit($event)"/>
                         </div>
                     </div>
                     <div ng-show="component.object.type=='MyRotateImg'">
@@ -1799,6 +1807,15 @@
                                ng-keypress="component.enterHeight($event)"
                                type="number">
                     </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">方向</span>
+
+                            <select class="my-attr-number-input form-control" ng-model="component.dateTime.arrangeModel"
+                                    ng-change="component.dateTime.enterArrange($event)">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">竖直</option>
+                            </select>
+                        </div>
                         <!--<div class="my-attr-item lg">-->
                             <!--<span class="my-attr-title">初始值</span>-->
                             <!--<input type="number"-->
