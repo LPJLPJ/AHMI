@@ -5715,7 +5715,7 @@ ideServices
                     //纵向
                     level.info.interval=level.info.intervalScale*fabNode.getHeight();
                 }
-            }else if(level.type==Type.MyNum||level.type==Type.MyTextArea){
+            }else if(level.type==Type.MyNum||level.type==Type.MyTextArea||level.type==Type.MyButton||level.type==Type.MyDateTime){
                 //如果是数字或者文本的竖直模式，需要改变他们的长宽
                 if(level.info.arrange&&level.info.arrange=='vertical'){
                     level.info.width = (Math.abs(fabNode.getHeight()-height)<=1)?height:Math.round(fabNode.getHeight());
