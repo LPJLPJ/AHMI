@@ -1,8 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.
-    controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibModal', function ($scope, TagService,ProjectService,Type,$uibModal) {
+ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibModal', function ($scope, TagService,ProjectService,Type,$uibModal) {
         $scope
             .$on('GlobalProjectReceived', function () {
                 initProject();
@@ -383,7 +382,7 @@ ide.
 
     }]);
 
-ide.controller('TagInstanceCtrl', function ($scope, $uibModalInstance, tag,type) {
+ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','tag','type',function ($scope, $uibModalInstance, tag,type) {
 
     $scope.tag = tag;
     $scope.type = type;
@@ -419,4 +418,4 @@ ide.controller('TagInstanceCtrl', function ($scope, $uibModalInstance, tag,type)
         return false;
     }
 
-});
+}]);
