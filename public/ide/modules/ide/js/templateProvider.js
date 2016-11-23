@@ -737,7 +737,8 @@ ideServices
                 fontFamily:'宋体',
                 fontSize:20,
                 fontColor:'rgba(0,0,0,1)',
-                align:'center'
+                align:'center',
+                arrange:"horizontal"   //horizontal:水平   vertical:竖直
             };
             return {
                 id: Math.random().toString(36).substr(2),

@@ -186,7 +186,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             },
 
             //开关
-            switch:{
+            switchWidget:{
                 enterBindBit:enterBindBit
             },
             //旋转
@@ -207,6 +207,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterDateTimeMode:enterDateTimeMode,
                 changeDateTimeFontFamily:changeDateTimeFontFamily,
                 changeDateTimeFontSize:changeDateTimeFontSize,
+                enterArrange:enterArrange
             },
             //滑块
             slideBlock:{
@@ -404,7 +405,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 case Type.MyButton:
 
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
-                    $scope.component.button.arrange.model=$scope.component.object.level.info.arrange;
+                    $scope.component.button.arrangeModel=$scope.component.object.level.info.arrange;
                     if ($scope.component.object.level.normalImg==''){
                         $scope.component.button.normalImage='blank.png';
                     }else {
@@ -440,6 +441,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 case Type.MyOscilloscope:
                     break;
                 case Type.MyDateTime:
+                    $scope.component.dateTime.arrangeModel=$scope.component.object.level.info.arrange;
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
                     $scope.component.dateTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
                     break;
@@ -1073,6 +1075,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectArrange=$scope.component.textArea.arrangeModel;
         }else if(selectObj.type==Type.MyButton){
             selectArrange=$scope.component.button.arrangeModel;
+        }else if(selectObj.type=Type.MyDateTime){
+            selectArrange=$scope.component.dateTime.arrangeModel;
         }else{
             return;
         }
