@@ -134,7 +134,6 @@
         function showBottom(){
             $scope.$emit('ChangeShownArea',2);
         }
-
         function rotateCanvasLeft(){
             var c = document.getElementById('c');
             var backgroundCanvas = document.getElementById('backgroundCanvas');
