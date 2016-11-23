@@ -67,6 +67,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 setButtonFontBold:setButtonFontBold,
                 setButtonFontItalic:setButtonFontItalic,
                 changeButtonFontSize:changeButtonFontSize,
+                enterArrange:enterArrange,
 
                 normalImage:'blank.png',
                 pressImage:'blank.png'
@@ -403,6 +404,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 case Type.MyButton:
 
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
+                    $scope.component.button.arrange.model=$scope.component.object.level.info.arrange;
                     if ($scope.component.object.level.normalImg==''){
                         $scope.component.button.normalImage='blank.png';
                     }else {
@@ -1069,7 +1071,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectArrange=$scope.component.num.arrangeModel;
         }else if(selectObj.type==Type.MyTextArea){
             selectArrange=$scope.component.textArea.arrangeModel;
-        } else{
+        }else if(selectObj.type==Type.MyButton){
+            selectArrange=$scope.component.button.arrangeModel;
+        }else{
             return;
         }
 

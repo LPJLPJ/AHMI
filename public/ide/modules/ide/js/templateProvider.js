@@ -341,7 +341,7 @@ ideServices
                 width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
-                arrange:true,            //true:横向 false:竖向
+                arrange:'horizontal',   //horizontal:水平   vertical:竖直
 
                 text:'button',
                 fontFamily:"宋体",
