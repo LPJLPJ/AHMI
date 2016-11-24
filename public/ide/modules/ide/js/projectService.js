@@ -6789,7 +6789,7 @@ ideServices
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.tag=_tagObj;
             _successCallback&&_successCallback();
-        }
+        };
         this.ChangeAttributeValue= function (_option, _successCallback) {
             var currentOperate=SaveCurrentOperate();
             var subLayerNode=CanvasService.getSubLayerNode();
