@@ -997,7 +997,7 @@ ideServices
             },
             _render: function (ctx) {
                 try{
-                    console.log('dashboard self',this);
+                    //console.log('dashboard self',this);
                     var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value-this.minValue);
                     var taoValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
                     ctx.fillStyle=this.backgroundColor;
@@ -6789,7 +6789,7 @@ ideServices
             var selectObj=_self.getCurrentSelectObject();
             selectObj.level.tag=_tagObj;
             _successCallback&&_successCallback();
-        }
+        };
         this.ChangeAttributeValue= function (_option, _successCallback) {
             var currentOperate=SaveCurrentOperate();
             var subLayerNode=CanvasService.getSubLayerNode();

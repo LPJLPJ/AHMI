@@ -997,7 +997,7 @@ ideServices
             },
             _render: function (ctx) {
                 try{
-                    console.log('dashboard self',this);
+                    //console.log('dashboard self',this);
                     var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value-this.minValue);
                     var taoValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
                     ctx.fillStyle=this.backgroundColor;
