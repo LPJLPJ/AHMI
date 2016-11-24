@@ -2175,7 +2175,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             if($scope.component.object.level.info.bindBit==initObject.level.info.bindBit){
                 return;
             };
-            if($scope.component.object.level.info.bindBit<0||$scope.component.object.level.info.bindBit>30){
+            if($scope.component.object.level.info.bindBit<0||$scope.component.object.level.info.bindBit>31){
                 toastr.warning('超出范围');
                 restore();
                 return;
