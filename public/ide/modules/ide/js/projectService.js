@@ -2265,7 +2265,7 @@ ideServices
                     if(arg.arrange=='vertical'){
                         self.setAngle(90);
                         self.set({
-                            originY:'bottom'
+                            originY:'bottom',
                         });
                         selectObj.level.info.top=Math.round(self.getTop());
                         selectObj.level.info.right=Math.round(self.getLeft());

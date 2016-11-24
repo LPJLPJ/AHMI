@@ -92,7 +92,8 @@
                     showRight:showRight,
                     showBottom:showBottom,
                     rotateCanvasLeft:rotateCanvasLeft,
-                    rotateCanvasRight:rotateCanvasRight
+                    rotateCanvasRight:rotateCanvasRight,
+                    rotateProject:rotateProject,
                 },
                 simulator:{
                     show:false
@@ -138,9 +139,9 @@
             var c = document.getElementById('c');
             var backgroundCanvas = document.getElementById('backgroundCanvas');
             var c1 = document.getElementById('c1');
-            c.style.cssText="transform:rotate(270deg);left:0;top:0";
-            backgroundCanvas.style.cssText="transform:rotate(270deg);left:0;top:0";
-            c1.style.cssText="transform:rotate(270deg);left:0;top:0";
+            c.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(-90deg);left:0;top:0";
+            backgroundCanvas.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(-90deg);left:0;top:0";
+            c1.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(-90deg);left:0;top:0";
             //var cNode = CanvasService.getPageNode();
             //var c1Node = CanvasService.getSubLayerNode();
             //cNode.deactivateAll();
@@ -153,14 +154,15 @@
             //c1Arr.map(function(obj){
             //    obj['selectable']=false;
             //});
+
         }
         function rotateCanvasRight(){
             var c = document.getElementById('c');
             var backgroundCanvas = document.getElementById('backgroundCanvas');
             var c1 = document.getElementById('c1');
-            c.style.cssText="transform:rotate(0deg);left:0;top:0";
-            backgroundCanvas.style.cssText="transform:rotate(0deg);left:0;top:0";
-            c1.style.cssText="transform:rotate(0deg);left:0;top:0";
+            c.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(0deg);left:0;top:0";
+            backgroundCanvas.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(0deg);left:0;top:0";
+            c1.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(0deg);left:0;top:0";
             //var cNode = CanvasService.getPageNode();
             //var c1Node = CanvasService.getSubLayerNode();
             //cNode.deactivateAll();
@@ -173,6 +175,19 @@
             //c1Arr.map(function(obj){
             //    obj['selectable']=true;
             //});
+        }
+        function rotateProject(){
+            var pageNode=CanvasService.getPageNode();
+            var width=pageNode.getWidth();
+            var height=pageNode.getHeight();
+            pageNode.setWidth(height);
+            pageNode.setHeight(width);
+            pageNode.forEachObject(function(obj){
+                console.log(obj);
+                obj.rotate(90);
+                obj.set({originY:'bottom'});
+            });
+            pageNode.renderAll();
         }
 
         //listen for nw.win.close
