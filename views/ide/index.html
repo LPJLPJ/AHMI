@@ -53,7 +53,7 @@
     <script src="../../public/ide/lib/Drag.js"></script>
     <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.js"></script>
 
-    <!--<script src="../../public/ide/modules/ide/js/utils.js"></script>-->
+    <script src="../../public/ide/modules/ide/js/utils.js"></script>
 
 
     <!--dependency-->
@@ -118,7 +118,7 @@
     <!--<script src="../../public/ide/modules/ide/js/parts/attr/animationController.js"></script>-->
 
     <!--<script src="../../public/ide/modules/ide/js/parts/attr/tagController.js"></script>-->
-    <!--&lt;!&ndash;directive&ndash;&gt;-->
+    <!--directive-->
 
     <!--<script src="../../public/ide/modules/ide/js/parts/lexer/actionCompiler2.js"></script>-->
 
@@ -156,7 +156,7 @@
     <script src="../../public/ide/modules/ide/min-js/userType.js"></script>
 
 
-    <!--controllers-->
+    <!--&lt;!&ndash;controllers&ndash;&gt;-->
     <script src="../../public/ide/modules/ide/min-js/IDEController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/containerCtl.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/navController.js"></script>
@@ -182,7 +182,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>
 
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
-    <!--directive-->
+    <!--&lt;!&ndash;directive&ndash;&gt;-->
 
     <script src="../../public/ide/modules/ide/min-js/parts/lexer/actionCompiler2.js"></script>
 
@@ -436,8 +436,8 @@
                         class="caption"></span></a>
                 <a ng-click="component.tool.showBottom()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe619;</span><span
                         class="caption"></span></a>
-                <a class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>
-                <a class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>
+                <a ng-click="component.tool.rotateCanvasLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>
+                <a ng-click="component.tool.rotateCanvasRight()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
                     <div class="input-group" style="top: 13px;">
@@ -828,7 +828,15 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">方向</span>
 
+                            <select class="my-attr-number-input form-control" ng-model="component.button.arrangeModel"
+                                    ng-change="component.button.enterArrange($event)">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">竖直</option>
+                            </select>
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
                             <select class="form-control my-attr-number-input form-control"
@@ -1363,21 +1371,21 @@
                                    type="number">
                         </div>
 
-                        <!--<div class="my-attr-item">-->
-                            <!--<span class="my-attr-title">宽度</span>-->
-                            <!--<input class="my-attr-number-input form-control short-input"-->
-                                   <!--ng-model="component.object.level.info.width"-->
-                                   <!--ng-blur="component.restore()"-->
-                                   <!--ng-keypress="component.enterWidth($event)"-->
-                                   <!--type="number">-->
-                        <!--</div><div class="my-attr-item">-->
-                            <!--<span class="my-attr-title">高度</span>-->
-                            <!--<input class="my-attr-number-input form-control short-input  "-->
-                                   <!--ng-model="component.object.level.info.height"-->
-                                   <!--ng-blur="component.restore()"-->
-                                   <!--ng-keypress="component.enterHeight($event)"-->
-                                   <!--type="number">-->
-                        <!--</div>-->
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">高度</span>
+                            <input class="my-attr-number-input form-control short-input  "
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                        </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1691,7 +1699,7 @@
                                    class="my-attr-number-input form-control"
                                    ng-model="component.object.level.info.bindBit"
                                    ng-blur="component.restore()"
-                                   ng-keypress="component.switch.enterBindBit($event)"/>
+                                   ng-keypress="component.switchWidget.enterBindBit($event)"/>
                         </div>
                     </div>
                     <div ng-show="component.object.type=='MyRotateImg'">
@@ -1799,6 +1807,15 @@
                                ng-keypress="component.enterHeight($event)"
                                type="number">
                     </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">方向</span>
+
+                            <select class="my-attr-number-input form-control" ng-model="component.dateTime.arrangeModel"
+                                    ng-change="component.dateTime.enterArrange($event)">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">竖直</option>
+                            </select>
+                        </div>
                         <!--<div class="my-attr-item lg">-->
                             <!--<span class="my-attr-title">初始值</span>-->
                             <!--<input type="number"-->
