@@ -2282,7 +2282,7 @@ module.exports =   React.createClass({
                 }
                 var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue-minValue);
                 var currentValue = curDashboardTag && curDashboardTag.value || 0;
-                var clockwise = widget.info.clockwise// == '1' ? 1 : -1;
+                var clockwise = widget.info.clockwise;// == '1' ? 1 : -1;
                 var lowAlarm = widget.info.lowAlarmValue;
                 var highAlarm = widget.info.highAlarmValue;
                 var pointerLength = widget.info.pointerLength;
@@ -2308,7 +2308,7 @@ module.exports =   React.createClass({
                         var bgTex = widget.texList[0].slices[0];
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
                         //draw circle
                         // var circleTex = widget.texList[2].slices[0]
                         // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
