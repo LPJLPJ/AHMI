@@ -11,6 +11,16 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
 
+var env = 'dev' //dev or build
+var lg = (function () {
+    if (env === 'dev'){
+        return console.log;
+    }else{
+        return function () {
+            
+        }
+    }
+}());
 
 var sep = '/';
 var defaultState = {
@@ -479,7 +489,7 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
-                        this.draw();
+                        this.draw(null,options);
 
 
                     }.bind(this),function () {
@@ -494,7 +504,7 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
-                        this.draw();
+                        this.draw(null,options);
 
 
                     }.bind(this),function () {
@@ -509,7 +519,7 @@ module.exports =   React.createClass({
                             w:deltas.curX,
                             h:deltas.curY
                         }
-                        this.draw();
+                        this.draw(null,options);
 
 
                     }.bind(this),function () {
@@ -517,7 +527,7 @@ module.exports =   React.createClass({
                     })
                     break;
                 default:
-                    this.draw();
+                    this.draw(null,options);
             }
 
 
@@ -1327,6 +1337,8 @@ module.exports =   React.createClass({
         this.drawTextByTempCanvas(curX,curY,width,height,text,font);
 
         //draw highlight
+        lg('highlight',widget.highlight)
+        // console.log('highlight',widget.highlight);
         if (widget.highlight) {
             this.drawHighLight(curX, curY, width, height,tex.slices[2]);
         }
@@ -3204,6 +3216,7 @@ module.exports =   React.createClass({
         }
     },
     handleMoveNext: function (direction) {
+        lg('move',direction)
         var page = this.state.project.pageList[this.state.curPageIdx];
         var curDirection;
         if (direction === 'left') {
