@@ -1546,40 +1546,13 @@ ideServices
                 this.arrange=level.info.arrange;
 
                 this.backgroundColor=level.texList[0].slices[0].color;
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
-
                 this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.backgroundImageElement) {
                     this.loaded = true;
                     this.setCoords();
                     this.fire('image:loaded');
                 }
-
                 this.slideColor=level.texList[1].slices[0].color;
-                // if (level.texList[1].slices[0].imgSrc&&level.texList[1].slices[0].imgSrc!=''){
-                //     this.slideImageElement=new Image();
-                //     this.slideImageElement.src=level.texList[1].slices[0].imgSrc;
-                //     this.slideImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.slideImageElement=null;
-                // }
-
                 this.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
                 if (this.slideImageElement) {
                     this.loaded = true;
@@ -1714,6 +1687,7 @@ ideServices
                 this.fontColor=level.info.fontColor;
                 this.align=level.info.align;
                 this.initValue=level.info.initValue;
+                this.arrange=level.info.arrange;
 
                 //设置canvas的宽度和高度
                 this.setHeight(this.fontSize*1.5);
@@ -1723,7 +1697,18 @@ ideServices
                     this.setWidth(3*this.fontSize);
                 }else
                     this.setWidth(6*this.fontSize);
-                
+
+                if(this.arrange=='vertical'){
+                    this.setAngle(90);
+                    this.set({
+                        originY:'bottom'
+                    });
+                }else if(this.arrange=='horizontal'){
+                    this.setAngle(0);
+                    this.set({
+                        originY:'top'
+                    });
+                }
                 this.on('changeDateTimeModeId',function(arg){
                     var dateTimeModeId=arg.dateTimeModeId;
                     var _callback=arg.callback;
@@ -1764,7 +1749,7 @@ ideServices
                 this.on('changeArrange',function(arg){
                     var _callback=arg.callback;
                     var selectObj=_self.getCurrentSelectObject();
-                    self.initValue=arg.initValue;
+                    self.arrange=arg.arrange;
                     if(arg.arrange=='vertical'){
                         self.setAngle(90);
                         self.set({
@@ -1830,6 +1815,7 @@ ideServices
                 this.lockRotation=true;
                 this.hasRotatingPoint=false;
                 this.normalColor=level.texList[0].slices[0].color;
+                this.arrange=level.info.arrange;
 
                 this.text=level.info.text;
                 this.fontFamily=level.info.fontFamily;
@@ -1838,21 +1824,6 @@ ideServices
                 this.fontBold=level.info.fontBold;
                 this.fontItalic=level.info.fontItalic;
 
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.normalImageElement=new Image();
-                //     this.normalImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.normalImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                //
-                //
-                // }else {
-                //     this.normalImageElement=null;
-                // }
-
                 this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.normalImageElement) {
                     this.loaded = true;
@@ -1860,6 +1831,17 @@ ideServices
                     this.fire('image:loaded');
                 }
 
+                if(this.arrange=='vertical'){
+                    this.setAngle(90);
+                    this.set({
+                        originY:'bottom'
+                    });
+                }else if(this.arrange=='horizontal'){
+                    this.setAngle(0);
+                    this.set({
+                        originY:'top'
+                    });
+                }
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
                     var _callback=arg.callback;
@@ -1911,7 +1893,7 @@ ideServices
                 this.on('changeArrange',function(arg){
                     var _callback=arg.callback;
                     var selectObj=_self.getCurrentSelectObject();
-                    self.initValue=arg.initValue;
+                    self.arrange=arg.arrange;
                     if(arg.arrange=='vertical'){
                         self.setAngle(90);
                         self.set({
@@ -2021,6 +2003,7 @@ ideServices
                 this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
                 this.hasRotatingPoint=false;
                 this.backgroundColor=level.texList[0].slices[0].color;
+                this.arrange=level.info.arrange;
 
                 this.text=level.info.text;
                 this.fontFamily=level.info.fontFamily;
@@ -2036,18 +2019,6 @@ ideServices
                     this.setHeight(this.fontSize*2);
                 }
 
-                // if (level.texList[0].slices[0].imgSrc&&level.texList[0].slices[0].imgSrc!=''){
-                //     this.backgroundImageElement=new Image();
-                //     this.backgroundImageElement.src=level.texList[0].slices[0].imgSrc;
-                //     this.backgroundImageElement.onload = (function () {
-                //
-                //         this.loaded = true;
-                //         this.setCoords();
-                //         this.fire('image:loaded');
-                //     }).bind(this);
-                // }else {
-                //     this.backgroundImageElement=null;
-                // }
 
                 this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if (this.backgroundImageElement) {
@@ -2055,7 +2026,17 @@ ideServices
                     this.setCoords();
                     this.fire('image:loaded');
                 }
-
+                if(this.arrange=='vertical'){
+                    this.setAngle(90);
+                    this.set({
+                        originY:'bottom'
+                    });
+                }else if(this.arrange=='horizontal'){
+                    this.setAngle(0);
+                    this.set({
+                        originY:'top'
+                    });
+                }
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
@@ -2108,7 +2089,7 @@ ideServices
                 this.on('changeArrange',function(arg){
                     var _callback=arg.callback;
                     var selectObj=_self.getCurrentSelectObject();
-                    self.initValue=arg.initValue;
+                    self.arrange=arg.arrange;
                     if(arg.arrange=='vertical'){
                         self.setAngle(90);
                         self.set({
@@ -2245,6 +2226,17 @@ ideServices
                     this.setCoords();
                     this.fire('image:loaded');
                 }
+                if(this.arrange=='vertical'){
+                    this.setAngle(90);
+                    this.set({
+                        originY:'bottom'
+                    });
+                }else if(this.arrange=='horizontal'){
+                    this.setAngle(0);
+                    this.set({
+                        originY:'top'
+                    });
+                }
 
                 this.on('changeTex', function (arg) {
                     var level=arg.level;
@@ -2261,7 +2253,7 @@ ideServices
                 this.on('changeArrange',function(arg){
                     var _callback=arg.callback;
                     var selectObj=_self.getCurrentSelectObject();
-                    self.initValue=arg.initValue;
+                    self.arrange=arg.arrange;
                     if(arg.arrange=='vertical'){
                         self.setAngle(90);
                         self.set({
@@ -4202,6 +4194,8 @@ ideServices
             }
 
             fabNode.renderAll();
+            //var currentSubLayer = _self.getCurrentSubLayer();
+            //currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
 
             if (layerMode){
                 var layer=_self.getCurrentLayer();
@@ -4209,6 +4203,8 @@ ideServices
                     var fabLayer=_self.getFabricObject(layer.id);
                     if (fabLayer){
                         _self.SyncLevelFromFab(layer,fabLayer);
+                        var currentPage=_self.getCurrentPage();
+                        currentPage.proJsonStr=JSON.stringify(fabNode.toJSON());
                     }
                 }
             }else{
@@ -4217,6 +4213,8 @@ ideServices
                     var fabWidget=_self.getFabricObject(widget.id,true);
                     if (fabWidget){
                         _self.SyncLevelFromFab(widget,fabWidget);
+                        var currentSubLayer = getCurrentSubLayer();
+                        currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
                     }
                 }
             }
@@ -6678,7 +6676,7 @@ ideServices
 
                 }
 
-               subLayerNode.renderAll();
+                subLayerNode.renderAll();
 
                 currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                 _self.OnWidgetSelected(currentWidget, function () {
