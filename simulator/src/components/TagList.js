@@ -4,7 +4,8 @@ module.exports = React.createClass({
         return {
             tagList: this.props.tagList || [],
             tagOldValue: '',
-            curTagIdx: -1
+            curTagIdx: -1,
+            inputingTag:false
         };
     },
     handleValueInputFocus: function (e) {
@@ -17,7 +18,7 @@ module.exports = React.createClass({
                 break;
             }
         }
-        this.setState({tagOldValue: e.target.value, curTagIdx: curTagIdx});
+        this.setState({tagOldValue: e.target.value, curTagIdx: curTagIdx,inputingTag:true});
     },
     handleValueInputBlur: function (e) {
         var tagOldValue = this.state.tagOldValue;
@@ -30,6 +31,7 @@ module.exports = React.createClass({
             }
 
         }
+        this.setState({inputingTag:false});
     },
     handleValueInputEnter: function (e) {
 
@@ -37,7 +39,7 @@ module.exports = React.createClass({
             //enter
             if (this.state.curTagIdx != -1) {
 
-                this.setState({tagOldValue: 'old'});
+                this.setState({tagOldValue: 'old',inputingTag:false});
                 this.updateTag(this.state.curTagIdx, e.target.value);
             }
         }
@@ -61,8 +63,12 @@ module.exports = React.createClass({
         }
     },
     componentWillReceiveProps: function (nextProps) {
+        var inputingTag = this.state.inputingTag;
+        if (!inputingTag){
+            this.setState({tagList: nextProps.tagList});
+        }
 
-        this.setState({tagList: nextProps.tagList});
+
     },
     render: function () {
 
@@ -83,8 +89,8 @@ module.exports = React.createClass({
                     {
                         this.state.tagList.map(function (tag, index) {
                             if (tag.register) {
-                                var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');
-
+                                {/*var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');*/}
+                                var disabled = false;
                                 return (
                                     <tr key={index} className='tag-table-row'>
                                         <td className='tag-table-col'> {tag.name}</td>

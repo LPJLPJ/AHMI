@@ -620,7 +620,7 @@ module.exports =   React.createClass({
             //curval
             key = 'SysTmr_' + num + '_' + 't';
             var curTag = this.findTagByName(key);
-            timer[key] = (curTag&&curTag.value) || 0;
+            timer[key] = (curTag&&Number(curTag.value)) || 0;
         }else{
             key = 'SysTmr_' + num + '_' + postfix;
             timer[key] = value;
@@ -649,6 +649,7 @@ module.exports =   React.createClass({
             // console.log('start', loop);
             // timer['SysTmr_'+num+'_CurVal'] = timer['SysTmr_'+num+'_Start'];
             var targetTag = this.findTagByName('SysTmr_' + num + '_t');
+            targetTag.value = Number(targetTag.value)||0;
             var startValue = timer['SysTmr_' + num + '_Start'];
             if (cont) {
                 if (targetTag.value > startValue) {
@@ -671,6 +672,7 @@ module.exports =   React.createClass({
                     //decrease
 
                     if (targetTag&&targetTag.name != '') {
+                        targetTag.value = Number(targetTag.value)||0;
                         targetTag.value -= timer['SysTmr_' + num + '_Step'];
                         if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
                             //clear timer
@@ -688,7 +690,9 @@ module.exports =   React.createClass({
 
                     }
                 } else {
+                    // console.log((targetTag.value))
                     if (targetTag&&targetTag.name != '') {
+                        targetTag.value = Number(targetTag.value)||0;
                         targetTag.value += timer['SysTmr_' + num + '_Step'];
                         if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
                             //clear timer
