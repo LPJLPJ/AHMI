@@ -3,7 +3,6 @@
  */
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
-var stripDebug = require('gulp-strip-debug');
 var pump = require('pump');
 var watch = require('gulp-watch');
 var path = require('path');
@@ -48,15 +47,9 @@ gulp.task('keepCompressing',function () {
 
 gulp.task('transferNormalFiles',function () {
     return gulp.src([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js'],{base:baseUrl})
-        .pipe(watch([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js']))
+        .pipe(watch([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js'],{base:baseUrl}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
 
-gulp.task('default', function() {
-    return gulp.src('sass/*.scss')
-        .pipe(watch('sass/*.scss'))
-        .pipe(sass())
-        .pipe(gulp.dest('dist'));
-})
 
 gulp.task('dev',['keepCompressing','transferNormalFiles']);

@@ -32,5 +32,8 @@
     "qs": "^6.2.0",
     "swig-email-templates": "^3.0.0",
     "yazl": "^2.4.1"
+  },
+  "devDependencies": {
+    "gulp-watch": "^4.3.11"
   }
 }
