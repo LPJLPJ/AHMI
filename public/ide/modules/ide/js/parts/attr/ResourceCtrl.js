@@ -100,12 +100,12 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
 }])
 
-    .controller('deleteResCtrl', function ($scope, $uibModalInstance, selectedResIndex) {
+    .controller('deleteResCtrl', ['$scope','$uibModalInstance','selectedResIndex',function ($scope, $uibModalInstance, selectedResIndex) {
         $scope.confirm = function () {
             $uibModalInstance.close(selectedResIndex);
         };
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         }
-    });
+    }]);
 

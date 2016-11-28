@@ -11,7 +11,7 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
 
-var env = 'dev' //dev or build
+var env = 'build' //dev or build
 var lg = (function () {
     if (env === 'dev'){
         return function () {
@@ -1336,7 +1336,8 @@ module.exports =   React.createClass({
         }
 
         //draw tint
-        this.drawTextByTempCanvas(curX,curY,width,height,text,font);
+        lg('arrange',widget.info.arrange);
+        this.drawTextByTempCanvas(curX,curY,width,height,text,font,widget.info.arrange);
 
         //draw highlight
         lg('highlight',widget.highlight)
@@ -1751,6 +1752,15 @@ module.exports =   React.createClass({
         var fontSize = widget.info.fontSize;
         var fontColor = widget.info.fontColor;
         var tex = widget.textList&&widget.texList[0];
+        lg(tex)
+
+        var font = {};
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
+
         var curDate;
             if (widget.info.RTCModeId=='0'){
                curDate =  this.getCurDateOriginalData(widget,'inner',widget.timeOffset);
@@ -1769,22 +1779,29 @@ module.exports =   React.createClass({
             dateTimeString = this.getCurDate(curDate,dateTimeModeId);
         }
         //draw
+
+        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
-        tempcanvas.width = width;
-        tempcanvas.height = height;
-        var tempctx = tempcanvas.getContext('2d');
-        tempctx.save();
-        tempctx.clearRect(0,0,width,height);
-        tempctx.textAlign = 'center';
-        tempctx.textBaseline = 'middle';
-        //font style
-        tempctx.fillStyle=fontColor;
-        tempctx.font = fontSize+'px '+fontFamily;
-        tempctx.fillText(dateTimeString,0.5*width,0.5*height);
-        tempctx.restore();
+        // tempcanvas.width = width;
+        // tempcanvas.height = height;
+        // var tempctx = tempcanvas.getContext('2d');
+        // tempctx.save();
+        // tempctx.clearRect(0,0,width,height);
+        // tempctx.textAlign = 'center';
+        // tempctx.textBaseline = 'middle';
+        // //font style
+        // tempctx.fillStyle=fontColor;
+        // tempctx.font = fontSize+'px '+fontFamily;
+        // tempctx.fillText(dateTimeString,0.5*width,0.5*height);
+        // tempctx.restore();
+
+
+
         offctx.drawImage(tempcanvas,curX,curY,width,height);
+
+
 
         //hightlight
         var eachWidth=0;
