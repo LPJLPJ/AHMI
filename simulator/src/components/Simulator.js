@@ -14,7 +14,9 @@ var math = require('mathjs');
 var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev'){
-        return console.log;
+        return function () {
+            return console.log([].slice.apply(arguments));
+        };
     }else{
         return function () {
             
