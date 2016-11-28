@@ -20,7 +20,7 @@ ideServices
                     height: 50,
                     left: 0, top: 0,
                     originX: 'center', originY: 'center',
-                    arrange:true,
+                    arrange:'horizontal',
 
                     text:'button',
                     fontFamily:"宋体",
