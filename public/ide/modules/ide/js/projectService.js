@@ -858,7 +858,6 @@ ideServices
                     }
                 }
 
-
                 //this.on('mouseup',function(arg){
                 //});
                 this.on('changeDashboardOffsetValue', function (arg) {
