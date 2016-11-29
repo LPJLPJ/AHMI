@@ -52,4 +52,13 @@ gulp.task('transferNormalFiles',function () {
 })
 
 
-gulp.task('dev',['keepCompressing','transferNormalFiles']);
+gulp.task('transferAllFiles',function () {
+    return gulp.src([baseUrl+'**/*.js'],{base:baseUrl})
+        .pipe(watch([baseUrl+'**/*.js'],{base:baseUrl}))
+        .pipe(gulp.dest('public/ide/modules/ide/min-js'))
+})
+
+gulp.task('build',['keepCompressing','transferNormalFiles']);
+
+gulp.task('dev',['transferAllFiles'])
+

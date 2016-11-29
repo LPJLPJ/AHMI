@@ -17,7 +17,7 @@ ideServices
         var resourceUrl = '';
         var resourceNWUrl = '';
         var projectUrl = '';
-        var fontSheet = (function() {
+        var fontStyle = (function() {
             // 创建 <style> 标签
             var style = document.createElement("style");
 
@@ -26,14 +26,18 @@ ideServices
             // style.setAttribute("media", "only screen and (max-width : 1024px)")
 
             // 对WebKit hack :(
-            style.appendChild(document.createTextNode(""));
+            style.appendChild(document.createTextNode("xxx"));
 
 
             // 将 <style> 元素加到页面中
             document.head.appendChild(style);
 
-            return style.sheet;
+            return style;
         })();
+
+        var fontSheet = fontStyle.sheet;
+
+        window.fontStyle = fontStyle;
 
         this.getGlobalResources = function () {
             return globalResources;
@@ -177,8 +181,9 @@ ideServices
         };
 
         this.addWebFont = function (fontFile,type) {
+            console.log('font: ',fontFile,type)
             var fontName = fontFile.name.split('.')[0];
-            var curRule = "@font-face {font-family: '"+fontName+ "';"+"url('"+fontFile.src+"') format('"+type+"') } ";
+            var curRule = "@font-face {font-family: '"+fontName+ "';"+" src:url('"+fontFile.src+"') format('"+type+"') ;} ";
             fontSheet.insertRule(curRule, 0);
             //fontSheet.insertRule(".web-font{ font-family:\""+fontName+"\" !important; }",1);
             //console.log('added font: ',fontFile,fontSheet,curRule)
