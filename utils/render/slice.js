@@ -121,6 +121,7 @@ var TextSlice = exports.TextSlice = (function (_Slice) {
             for (i in customFonts) {
                 ctx.addFont(customFonts[i]);
             }
+            // console.log(customFonts,ctx)
             ctx.textDrawingMode = 'path';
             // console.log('translated: ',this.originPos.x,this.originPos.y);
 
@@ -129,6 +130,7 @@ var TextSlice = exports.TextSlice = (function (_Slice) {
             _contextUtils2.default.clipRect(ctx, new _position2.default(), this.size);
 
             ctx.font = this.style.font;
+            // console.log(ctx.font);
             // ctx.font = '40px helvetica';
             // console.log('font', this.style);
             // console.log(this.style.font);
