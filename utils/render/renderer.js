@@ -31,6 +31,12 @@ renderingX = getRidofDefault(renderingX);
 function renderer(images,customFonts) {
     this.images = images||{};
     this.customFonts = customFonts || {};
+    // for(var cFont in this.customFonts){
+    //     if (this.customFonts.hasOwnProperty(cFont)){
+    //         Canvas.registerFont(this.customFonts[cFont],{family:cFont});
+    //     }
+    //
+    // }
 }
 
 //customfonts

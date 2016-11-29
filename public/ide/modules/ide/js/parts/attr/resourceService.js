@@ -1,6 +1,14 @@
 
 ideServices
     .service('ResourceService', [function () {
+        var path,local=false;
+        try{
+            path = require('path')
+            local = true;
+        }catch (e){
+
+        }
+
         var blankImg = new Image();
         blankImg.src = '';
         var globalResources = [{
@@ -181,9 +189,18 @@ ideServices
         };
 
         this.addWebFont = function (fontFile,type) {
-            console.log('font: ',fontFile,type)
+            console.log('font: ',fontFile,type,fontFile)
             var fontName = fontFile.name.split('.')[0];
-            var curRule = "@font-face {font-family: '"+fontName+ "';"+" src:url('"+fontFile.src+"') format('"+type+"') ;} ";
+            //handle window url
+            var curSrc = fontFile.src;
+            if (local){
+                //handle win pt
+                if (process && process.platform && process.platform.indexOf('win')!=-1){
+                    //win
+                    curSrc = curSrc.replace(/\\/g,'/');
+                }
+            }
+            var curRule = "@font-face {font-family: '"+fontName+ "';"+" src:url('"+curSrc+"') format('"+type+"') ;} ";
             fontSheet.insertRule(curRule, 0);
             //fontSheet.insertRule(".web-font{ font-family:\""+fontName+"\" !important; }",1);
             //console.log('added font: ',fontFile,fontSheet,curRule)

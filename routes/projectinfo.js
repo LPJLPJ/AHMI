@@ -432,6 +432,7 @@ function isFont(font) {
 function fontFile(name,baseUrl,id) {
     // var fonts = {'Songti':new Font('Songti',this.fontFile('Songti.ttc'))};
     return new Font(name,path.join(baseUrl,id));
+    // return path.join(baseUrl,id);
 }
 
 

@@ -118,9 +118,9 @@ var TextSlice = exports.TextSlice = (function (_Slice) {
             //add customFonts
             customFonts = customFonts || {};
             var i = undefined;
-            for (i in customFonts) {
-                ctx.addFont(customFonts[i]);
-            }
+            // for (i in customFonts) {
+            //     ctx.addFont(customFonts[i]);
+            // }
             // console.log(customFonts,ctx)
             ctx.textDrawingMode = 'path';
             // console.log('translated: ',this.originPos.x,this.originPos.y);
