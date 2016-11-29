@@ -2528,7 +2528,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.textArea.changeFontFamily()">
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
                             <a class="my-cmd-item"
@@ -2564,7 +2564,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.num.changeNumFamily()">
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
                             <a class="my-cmd-item"
@@ -2610,12 +2610,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.button.changeButtonFontFamily()">
-                                <!--<option value="宋体" ng-selected="true">宋体</option>-->
-                                <!--<option value="times">Times</option>-->
-                                <!--<option value="-">-&#45;&#45;</option>-->
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
-                                <!--<option>{{componentOfChar.character.fontName}}</option>-->
-                                <!--<option >xxxxxx</option>-->
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
 
                         </div>
