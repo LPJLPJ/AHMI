@@ -21437,22 +21437,42 @@
 	        //hightlight
 	        var eachWidth = 0;
 	        var delimiterWidth = 0;
+	        var eachHeight = 0;
+	        var delimiterHeight = 0;
 
 	        if (widget.highlight) {
 	            // console.log(widget)
-	            delimiterWidth = widget.delimiterWidth;
-	            if (dateTimeModeId == '0') {
-	                eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
-	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
-	            } else if (dateTimeModeId == '1') {
-	                eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
-	                this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
-	            } else {
-	                eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
-	                if (widget.highlightValue == 0) {
-	                    this.drawHighLight(curX, curY, eachWidth * 2, height, tex.slices[0]);
+	            if (widget.info.arrange == 'vertical') {
+	                delimiterHeight = widget.delimiterWidth;
+	                if (dateTimeModeId == '0') {
+	                    eachHeight = (widget.info.height - 2 * delimiterHeight) / 3;
+	                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, tex.slices[0]);
+	                } else if (dateTimeModeId == '1') {
+	                    eachHeight = (widget.info.height - delimiterHeight) / 2;
+	                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, tex.slices[0]);
 	                } else {
-	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, tex.slices[0]);
+	                    eachHeight = (widget.info.height - 2 * delimiterHeight) / 4;
+	                    if (widget.highlightValue == 0) {
+	                        this.drawHighLight(curX, curY, width, eachHeight * 2, tex.slices[0]);
+	                    } else {
+	                        this.drawHighLight(curX, curY + (eachHeight + delimiterHeight) * widget.highlightValue + eachHeight, width, eachHeight, tex.slices[0]);
+	                    }
+	                }
+	            } else {
+	                delimiterWidth = widget.delimiterWidth;
+	                if (dateTimeModeId == '0') {
+	                    eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
+	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
+	                } else if (dateTimeModeId == '1') {
+	                    eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
+	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
+	                } else {
+	                    eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
+	                    if (widget.highlightValue == 0) {
+	                        this.drawHighLight(curX, curY, eachWidth * 2, height, tex.slices[0]);
+	                    } else {
+	                        this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, tex.slices[0]);
+	                    }
 	                }
 	            }
 	        }
