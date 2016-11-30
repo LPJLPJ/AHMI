@@ -2613,10 +2613,9 @@
                                 <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
 
-                        </div>
-                        <div class="my-attr-item xiangPage-fontStyle">
-                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']" ng-click="component.button.setButtonFontBold()"><span class="iconfont icon">&#xe618;</span></a>
-                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']" ng-click="component.button.setButtonFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
+                        </div><div class="my-attr-item xiangPage-fontStyle">
+                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']" ng-click="component.button.setButtonFontBold()"><span class="iconfont icon">&#xe618;</span></a>
+                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']" ng-click="component.button.setButtonFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
                         </div>
 
 
