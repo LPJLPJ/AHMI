@@ -37,11 +37,16 @@ module.exports = React.createClass({
 
         if (e.keyCode == 13) {
             //enter
+
             if (this.state.curTagIdx != -1) {
 
-                this.setState({tagOldValue: 'old',inputingTag:false});
+                this.state.tagOldValue = 'old';
                 this.updateTag(this.state.curTagIdx, e.target.value);
+                e.target.blur();
+            }else{
+                e.target.blur();
             }
+
         }
     },
     updateTag: function (curTagIdx, value) {

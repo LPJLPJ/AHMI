@@ -11,7 +11,7 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
 
-var env = 'build' //dev or build
+var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev'){
         return function () {
@@ -87,7 +87,7 @@ module.exports =   React.createClass({
         canvas.width = projectWidth;
         canvas.height = projectHeight;
         //draw initialization
-
+        lg('initializing: ',data)
         //initialize canvas context
 
 
@@ -302,7 +302,7 @@ module.exports =   React.createClass({
         // console.log('receive new project data', this.state.project)
         this.simState = {};
         this.initProject();
-        window.inRawRect = this.inRawRect;
+
 
     },
     componentWillReceiveProps: function (newProps) {
@@ -666,14 +666,17 @@ module.exports =   React.createClass({
 
             timer.timerID = setInterval(function () {
                 var direction = timer['SysTmr_'+num+'_Mode'];
+                var curValue = 0;
                 // console.log(timer['SysTmr_' + num + '_Interval'])
                 //clock
                 if (direction >= 4) {
                     //decrease
 
                     if (targetTag&&targetTag.name != '') {
-                        targetTag.value = Number(targetTag.value)||0;
-                        targetTag.value -= timer['SysTmr_' + num + '_Step'];
+                        curValue = Number(targetTag.value)||0;
+                        curValue -= timer['SysTmr_' + num + '_Step'];
+                        this.setTagByTag(targetTag,curValue)
+
                         if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
                             //clear timer
                             if (loop){
@@ -692,8 +695,9 @@ module.exports =   React.createClass({
                 } else {
                     // console.log((targetTag.value))
                     if (targetTag&&targetTag.name != '') {
-                        targetTag.value = Number(targetTag.value)||0;
-                        targetTag.value += timer['SysTmr_' + num + '_Step'];
+                        curValue = Number(targetTag.value)||0;
+                        curValue += timer['SysTmr_' + num + '_Step'];
+                        this.setTagByTag(targetTag,curValue)
                         if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
                             //clear timer
                             if (loop){
@@ -1755,8 +1759,8 @@ module.exports =   React.createClass({
         var fontFamily = widget.info.fontFamily;
         var fontSize = widget.info.fontSize;
         var fontColor = widget.info.fontColor;
-        var tex = widget.textList&&widget.texList[0];
-        lg(tex)
+        var tex = widget.texList&&widget.texList[0];
+        // lg(tex,widget)
 
         var font = {};
         font['font-style'] = widget.info.fontItalic;
