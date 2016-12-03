@@ -1809,7 +1809,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function changeNumSize(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>150){
+            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>350){
                 toastr.warning('超出最大值');
                 restore();
                 return;
