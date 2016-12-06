@@ -9,7 +9,7 @@ var getUsers = require('./getUsers');
 var route_space = require('./route_space');
 var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
-var UserModel = require('../db/models/UserModel')
+var UserModel = require('../db/models/UserModel');
 
 //admin
 var UserControl = require('../middlewares/UserControl');
