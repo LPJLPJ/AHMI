@@ -11,6 +11,18 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
 
+var env = 'dev' //dev or build
+var lg = (function () {
+    if (env === 'dev'){
+        return function () {
+            return console.log([].slice.apply(arguments));
+        };
+    }else{
+        return function () {
+            
+        }
+    }
+}());
 
 var sep = '/';
 var defaultState = {
@@ -75,7 +87,7 @@ module.exports =   React.createClass({
         canvas.width = projectWidth;
         canvas.height = projectHeight;
         //draw initialization
-
+        lg('initializing: ',data)
         //initialize canvas context
 
 
@@ -290,7 +302,7 @@ module.exports =   React.createClass({
         // console.log('receive new project data', this.state.project)
         this.simState = {};
         this.initProject();
-        window.inRawRect = this.inRawRect;
+
 
     },
     componentWillReceiveProps: function (newProps) {
@@ -479,7 +491,7 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
-                        this.draw();
+                        this.draw(null,options);
 
 
                     }.bind(this),function () {
@@ -494,7 +506,7 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
-                        this.draw();
+                        this.draw(null,options);
 
 
                     }.bind(this),function () {
@@ -509,7 +521,7 @@ module.exports =   React.createClass({
                             w:deltas.curX,
                             h:deltas.curY
                         }
-                        this.draw();
+                        this.draw(null,options);
 
 
                     }.bind(this),function () {
@@ -517,7 +529,7 @@ module.exports =   React.createClass({
                     })
                     break;
                 default:
-                    this.draw();
+                    this.draw(null,options);
             }
 
 
@@ -608,7 +620,7 @@ module.exports =   React.createClass({
             //curval
             key = 'SysTmr_' + num + '_' + 't';
             var curTag = this.findTagByName(key);
-            timer[key] = (curTag&&curTag.value) || 0;
+            timer[key] = (curTag&&Number(curTag.value)) || 0;
         }else{
             key = 'SysTmr_' + num + '_' + postfix;
             timer[key] = value;
@@ -637,6 +649,7 @@ module.exports =   React.createClass({
             // console.log('start', loop);
             // timer['SysTmr_'+num+'_CurVal'] = timer['SysTmr_'+num+'_Start'];
             var targetTag = this.findTagByName('SysTmr_' + num + '_t');
+            targetTag.value = Number(targetTag.value)||0;
             var startValue = timer['SysTmr_' + num + '_Start'];
             if (cont) {
                 if (targetTag.value > startValue) {
@@ -653,13 +666,17 @@ module.exports =   React.createClass({
 
             timer.timerID = setInterval(function () {
                 var direction = timer['SysTmr_'+num+'_Mode'];
+                var curValue = 0;
                 // console.log(timer['SysTmr_' + num + '_Interval'])
                 //clock
                 if (direction >= 4) {
                     //decrease
 
                     if (targetTag&&targetTag.name != '') {
-                        targetTag.value -= timer['SysTmr_' + num + '_Step'];
+                        curValue = Number(targetTag.value)||0;
+                        curValue -= timer['SysTmr_' + num + '_Step'];
+                        this.setTagByTag(targetTag,curValue)
+
                         if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
                             //clear timer
                             if (loop){
@@ -676,8 +693,11 @@ module.exports =   React.createClass({
 
                     }
                 } else {
+                    // console.log((targetTag.value))
                     if (targetTag&&targetTag.name != '') {
-                        targetTag.value += timer['SysTmr_' + num + '_Step'];
+                        curValue = Number(targetTag.value)||0;
+                        curValue += timer['SysTmr_' + num + '_Step'];
+                        this.setTagByTag(targetTag,curValue)
                         if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
                             //clear timer
                             if (loop){
@@ -1324,9 +1344,12 @@ module.exports =   React.createClass({
         }
 
         //draw tint
-        this.drawTextByTempCanvas(curX,curY,width,height,text,font);
+        lg('arrange',widget.info.arrange);
+        this.drawTextByTempCanvas(curX,curY,width,height,text,font,widget.info.arrange);
 
         //draw highlight
+        lg('highlight',widget.highlight)
+        // console.log('highlight',widget.highlight);
         if (widget.highlight) {
             this.drawHighLight(curX, curY, width, height,tex.slices[2]);
         }
@@ -1736,7 +1759,16 @@ module.exports =   React.createClass({
         var fontFamily = widget.info.fontFamily;
         var fontSize = widget.info.fontSize;
         var fontColor = widget.info.fontColor;
-        var tex = widget.textList&&widget.texList[0];
+        var tex = widget.texList&&widget.texList[0];
+        // lg(tex,widget)
+
+        var font = {};
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
+
         var curDate;
             if (widget.info.RTCModeId=='0'){
                curDate =  this.getCurDateOriginalData(widget,'inner',widget.timeOffset);
@@ -1755,45 +1787,74 @@ module.exports =   React.createClass({
             dateTimeString = this.getCurDate(curDate,dateTimeModeId);
         }
         //draw
+
+        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
-        tempcanvas.width = width;
-        tempcanvas.height = height;
-        var tempctx = tempcanvas.getContext('2d');
-        tempctx.save();
-        tempctx.clearRect(0,0,width,height);
-        tempctx.textAlign = 'center';
-        tempctx.textBaseline = 'middle';
-        //font style
-        tempctx.fillStyle=fontColor;
-        tempctx.font = fontSize+'px '+fontFamily;
-        tempctx.fillText(dateTimeString,0.5*width,0.5*height);
-        tempctx.restore();
+        // tempcanvas.width = width;
+        // tempcanvas.height = height;
+        // var tempctx = tempcanvas.getContext('2d');
+        // tempctx.save();
+        // tempctx.clearRect(0,0,width,height);
+        // tempctx.textAlign = 'center';
+        // tempctx.textBaseline = 'middle';
+        // //font style
+        // tempctx.fillStyle=fontColor;
+        // tempctx.font = fontSize+'px '+fontFamily;
+        // tempctx.fillText(dateTimeString,0.5*width,0.5*height);
+        // tempctx.restore();
+
+
+
         offctx.drawImage(tempcanvas,curX,curY,width,height);
+
+
 
         //hightlight
         var eachWidth=0;
         var delimiterWidth=0;
+        var eachHeight = 0;
+        var delimiterHeight = 0;
 
         if (widget.highlight){
             // console.log(widget)
-            delimiterWidth = widget.delimiterWidth;
-            if (dateTimeModeId=='0'){
-                eachWidth = (widget.info.width - 2*delimiterWidth)/3;
-                this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,tex.slices[0]);
-            }else if(dateTimeModeId=='1'){
-                eachWidth = (widget.info.width - widget.delimiterWidth)/2;
-                this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,tex.slices[0]);
-            }else{
-                eachWidth = (widget.info.width - 2*widget.delimiterWidth)/4;
-                if (widget.highlightValue == 0){
-                    this.drawHighLight(curX,curY,eachWidth*2,height,tex.slices[0]);
+            if (widget.info.arrange =='vertical'){
+                delimiterHeight = widget.delimiterWidth;
+                if (dateTimeModeId=='0'){
+                    eachHeight = (widget.info.height - 2*delimiterHeight)/3;
+                    this.drawHighLight(curX,(eachHeight+delimiterHeight)*widget.highlightValue+curY,width,eachHeight,tex.slices[0]);
+                }else if(dateTimeModeId=='1'){
+                    eachHeight = (widget.info.height - delimiterHeight)/2;
+                    this.drawHighLight(curX,(eachHeight+delimiterHeight)*widget.highlightValue+curY,width,eachHeight,tex.slices[0]);
                 }else{
-                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue+eachWidth,curY,eachWidth,height,tex.slices[0]);
-                }
+                    eachHeight = (widget.info.height - 2*delimiterHeight)/4;
+                    if (widget.highlightValue == 0){
+                        this.drawHighLight(curX,curY,width,eachHeight*2,tex.slices[0]);
+                    }else{
+                        this.drawHighLight(curX,curY+(eachHeight+delimiterHeight)*widget.highlightValue+eachHeight,width,eachHeight,tex.slices[0]);
+                    }
 
+                }
+            }else{
+                delimiterWidth = widget.delimiterWidth;
+                if (dateTimeModeId=='0'){
+                    eachWidth = (widget.info.width - 2*delimiterWidth)/3;
+                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,tex.slices[0]);
+                }else if(dateTimeModeId=='1'){
+                    eachWidth = (widget.info.width - widget.delimiterWidth)/2;
+                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,tex.slices[0]);
+                }else{
+                    eachWidth = (widget.info.width - 2*widget.delimiterWidth)/4;
+                    if (widget.highlightValue == 0){
+                        this.drawHighLight(curX,curY,eachWidth*2,height,tex.slices[0]);
+                    }else{
+                        this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue+eachWidth,curY,eachWidth,height,tex.slices[0]);
+                    }
+
+                }
             }
+
         }
 
         cb && cb();
@@ -2282,7 +2343,7 @@ module.exports =   React.createClass({
                 }
                 var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue-minValue);
                 var currentValue = curDashboardTag && curDashboardTag.value || 0;
-                var clockwise = widget.info.clockwise// == '1' ? 1 : -1;
+                var clockwise = widget.info.clockwise;// == '1' ? 1 : -1;
                 var lowAlarm = widget.info.lowAlarmValue;
                 var highAlarm = widget.info.highAlarmValue;
                 var pointerLength = widget.info.pointerLength;
@@ -2308,7 +2369,7 @@ module.exports =   React.createClass({
                         var bgTex = widget.texList[0].slices[0];
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
                         //draw circle
                         // var circleTex = widget.texList[2].slices[0]
                         // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -2337,7 +2398,7 @@ module.exports =   React.createClass({
                         var bgTex = widget.texList[0].slices[0];
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset+minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight,  curArc + offset+ arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
                         //draw circle
                         // var circleTex = widget.texList[2].slices[0]
                         // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -3204,6 +3265,7 @@ module.exports =   React.createClass({
         }
     },
     handleMoveNext: function (direction) {
+        lg('move',direction)
         var page = this.state.project.pageList[this.state.curPageIdx];
         var curDirection;
         if (direction === 'left') {

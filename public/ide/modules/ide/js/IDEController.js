@@ -19,7 +19,7 @@ var MAX_DATA_LENGTH=100000;
 
 var ideScope;
 var isOffline;
-var mode = 'DEBUG';
+var mode = 'BUILD';
 
 console.log = (function (console) {
     if (mode === 'DEBUG'){
@@ -27,7 +27,6 @@ console.log = (function (console) {
     }else{
         console.oldLog = console.log;
         return function () {
-            
         }
     }
 })(console);

@@ -4,10 +4,10 @@
 ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
     'ProjectService',
     'Type', 'Preference',
-    'ResourceService','CanvasService',function($scope,characterSetService,$timeout,
+    'ResourceService','CanvasService','UserTypeService',function($scope,characterSetService,$timeout,
                                            ProjectService,
                                            Type, Preference,
-                                           ResourceService,CanvasService){
+                                           ResourceService,CanvasService,UserTypeService){
     var initObject=null;
 
     $scope.$on('GlobalProjectReceived',function(){
@@ -38,10 +38,16 @@ ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
 
     function syncFontFamilies() {
         var customFonts = ResourceService.getAllFontResources().map(function (fRes) {
-            return {name:fRes.name};
+            var customFont={
+                name:fRes.name
+            };
+            if($scope.customFontDisabled){
+                customFont.type='disable'
+            }
+            return customFont;
         });
         // console.log(customFonts)
-        $scope.componentOfChar.fontFamilies = [{name:'宋体'},{name:'times'}].concat(customFonts)
+        $scope.componentOfChar.fontFamilies = [{name:'宋体'},{name:'Arial'},{name:'times'}].concat(customFonts)
     }
 
     function initProject(){
@@ -54,6 +60,7 @@ ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
         //});
 
         $scope.componentOfChar.allCharacters=characterSetService.getCharacterSet();
+        $scope.customFontDisabled=UserTypeService.getCustomFontAuthor();
 
         syncFontFamilies();
 

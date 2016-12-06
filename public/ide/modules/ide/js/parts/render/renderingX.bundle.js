@@ -215,6 +215,7 @@ var TextSlice = exports.TextSlice = function (_Slice) {
             for (i in customFonts) {
                 ctx.addFont(customFonts[i]);
             }
+            console.log(customFonts)
 
             ctx.translate(this.originPos.x, this.originPos.y);
             //clip
