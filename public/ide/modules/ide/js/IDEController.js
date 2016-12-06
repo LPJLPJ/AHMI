@@ -27,7 +27,6 @@ console.log = (function (console) {
     }else{
         console.oldLog = console.log;
         return function () {
-            
         }
     }
 })(console);
