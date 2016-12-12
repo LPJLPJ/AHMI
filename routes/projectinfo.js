@@ -420,6 +420,26 @@ projectRoute.generateProject = function (req, res) {
     }
 }
 
+projectRoute.saveDataAndCompress = function (req, res) {
+    var projectId = req.params.id;
+    var dataStructure = req.body.dataStructure;
+    if (projectId!=""){
+        var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
+        var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
+        //
+        var SrcUrl = path.join(ProjectBaseUrl,'resources');
+        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+        MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+            if (err) {
+                errHandler(res, 500, err);
+            } else {
+                res.end('ok')
+
+            }
+        })
+    }
+}
+
 function isFont(font) {
     var names = font.src.split('.');
     var ext = names[names.length-1];

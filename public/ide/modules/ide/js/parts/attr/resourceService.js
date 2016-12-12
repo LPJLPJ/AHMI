@@ -105,7 +105,7 @@ ideServices
         this.getExt = function (fileName) {
             var extArray = fileName.split('.');
             var ext = extArray[extArray.length-1];
-            return ext;
+            return ext.toLowerCase();
         }
 
         this.syncFiles = function (_files) {
