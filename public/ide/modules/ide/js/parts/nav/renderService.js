@@ -742,16 +742,18 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                                 })
                                     .success(function (data) {
                                         if (data == 'ok'){
-                                            toastr.info('生成成功');
                                             //download
                                             window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download'
+
                                         }else{
                                             console.log(data);
                                             toastr.info('生成失败')
                                         }
+                                        sCb && sCb()
                                     })
                                     .error(function (err) {
                                         errHandler(err);
+                                        fCb && fCb()
                                     })
                             }
 
