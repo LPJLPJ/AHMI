@@ -781,17 +781,43 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
             }
         }else{
-            fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
-                if (err){
-                    errHandler(res,500,err);
-                }else{
-                    //write ok
-                    // successHandler();
-                    var SrcUrl = path.join(ProjectBaseUrl,'resources');
-                    var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                    zipResources(DistUrl,SrcUrl);
-                }
-            })
+            if (local){
+                fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                    if (err){
+                        errHandler(res,500,err);
+                    }else{
+                        //write ok
+                        // successHandler();
+                        var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                        zipResources(DistUrl,SrcUrl);
+                    }
+                })
+            }else{
+                $http({
+                    method:'POST',
+                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
+                    data:{
+                        data:JSON.stringify(dataStructure,null,4)
+                    }
+                })
+                    .success(function (data) {
+                        if (data == 'ok'){
+                            //download
+                            window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download'
+
+                        }else{
+                            console.log(data);
+                            toastr.info('生成失败')
+                        }
+                        sCb && sCb()
+                    })
+                    .error(function (err) {
+                        errHandler(err);
+                        fCb && fCb()
+                    })
+            }
+
         }
     }
 
