@@ -796,7 +796,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     method:'POST',
                     url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
                     data:{
-                        data:JSON.stringify(dataStructure,null,4)
+                        dataStructure:dataStructure
                     }
                 })
                     .success(function (data) {
