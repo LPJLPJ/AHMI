@@ -427,16 +427,27 @@ projectRoute.saveDataAndCompress = function (req, res) {
         var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
         //
-        var SrcUrl = path.join(ProjectBaseUrl,'resources');
-        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-        MyZip.zipDir(SrcUrl,DistUrl,function (err) {
-            if (err) {
-                errHandler(res, 500, err);
-            } else {
-                res.end('ok')
 
+
+
+        fs.writeFile(DataFileUrl,dataStructure, function (err) {
+            if (err){
+                errHandler(res,500,err);
+            }else{
+                var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+                    if (err) {
+                        errHandler(res, 500, err);
+                    } else {
+                        res.end('ok')
+
+                    }
+                })
             }
         })
+    }else{
+        errHandler(res,500,'projectId error');
     }
 }
 
