@@ -422,7 +422,7 @@ projectRoute.generateProject = function (req, res) {
 
 projectRoute.saveDataAndCompress = function (req, res) {
     var projectId = req.params.id;
-    var dataStructure = req.body.data;
+    var dataStructure = req.body.dataStructure;
     if (projectId!=""){
         var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
