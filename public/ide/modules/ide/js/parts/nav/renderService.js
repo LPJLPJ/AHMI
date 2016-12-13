@@ -731,13 +731,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                                 })
                             }else{
                                 //browser
-
-
                                 $http({
                                     method:'POST',
                                     url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
                                     data:{
-                                        data:JSON.stringify(dataStructure,null,4)
+                                        data:dataStructure
                                     }
                                 })
                                     .success(function (data) {

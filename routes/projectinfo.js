@@ -422,7 +422,7 @@ projectRoute.generateProject = function (req, res) {
 
 projectRoute.saveDataAndCompress = function (req, res) {
     var projectId = req.params.id;
-    var dataStructure = req.body.dataStructure;
+    var dataStructure = req.body.data;
     if (projectId!=""){
         var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
@@ -430,7 +430,7 @@ projectRoute.saveDataAndCompress = function (req, res) {
 
 
 
-        fs.writeFile(DataFileUrl,dataStructure, function (err) {
+        fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
             if (err){
                 errHandler(res,500,err);
             }else{
