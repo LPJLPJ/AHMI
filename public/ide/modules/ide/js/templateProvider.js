@@ -335,40 +335,8 @@ ideServices
 
 
         this.getDefaultButton= function () {
-            var subLayerNode=CanvasService.getSubLayerNode();
-
-            var defaultInfo={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-                left: 0, top: 0,
-                originX: 'center', originY: 'center',
-                arrange:'horizontal',   //horizontal:水平   vertical:竖直
-
-                text:'button',
-                fontFamily:"宋体",
-                fontSize:20,
-                fontColor:'rgba(0,0,0,1)',
-                fontBold:"100",
-                fontItalic:'',
-            };
-            var defaultTexList = [{
-                name:'按钮纹理',
-                currentSliceIdx:0,
-                slices:[{
-                    color:'rgba(52,100,169,1)',
-                    imgSrc:'',
-                    name:'按下前'
-                },{
-                    color:'rgba(47,132,85,1)',
-                    imgSrc:'',
-                    name:'按下后'
-                },{
-                    color:'rgba(244,244,244,0.3)',
-                    imgSrc:'',
-                    name:'高亮'
-                }]
-            }];
-            var info = _.cloneDeep(defaultButton.info)||defaultInfo;
-            var texList = _.cloneDeep(defaultButton.texList)||defaultTexList;
+            var info = _.cloneDeep(defaultButton.info);
+            var texList = _.cloneDeep(defaultButton.texList);
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
@@ -453,9 +421,7 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-
+                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 interval:0,//间距
@@ -548,21 +514,6 @@ ideServices
 
 
         this.getDefaultDashboard= function () {
-            //var subLayerNode=CanvasService.getSubLayerNode();
-            //
-            //var info={
-            //    width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
-            //    height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
-            //    left: 0, top: 0,
-            //    originX: 'center', originY: 'center',
-            //    clockwise:'1',//1代表顺时针，0代表逆时针
-            //    minValue:0,maxValue:360,//最小值和最大值
-            //    minAngle:0,maxAngle:360,//最小角度和最大角度
-            //    lowAlarmValue:0,highAlarmValue:360,
-            //    value:45,
-            //    offsetValue:0,
-            //    pointerLength:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
-            //};
             var info = _.cloneDeep(defaultDashboard.info);
             var texList = _.cloneDeep(defaultDashboard.texList);
             return {
@@ -648,8 +599,7 @@ ideServices
                 gridUnitY:10,//纵向网格单位长度
                 gridInitValue:0,//网格初始坐标值
                 blankX:24,//x方向留白
-                blankY:24,//y方向留白
-
+                blankY:24//y方向留白
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -683,8 +633,6 @@ ideServices
         };
 
         this.getDefaultSwitch=function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
-
             var info=_.cloneDeep(defaultSwitch.info);
             var texList=_.cloneDeep(defaultSwitch.texList);
             return {
@@ -695,21 +643,10 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:texList,
-
+                texList:texList
             }
         };
         this.getDefaultRotateImg=function(){
-            //var subLayerNode=CanvasService.getSubLayerNode();
-            //
-            //var info={
-            //    width: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
-            //    height: (subLayerNode.getWidth() / subLayerNode.getZoom()) / 4,
-            //    left: 0, top: 0,
-            //    originX: 'center', originY: 'center',
-            //    minValue:0,maxValue:360,
-            //    initValue:0
-            //};
             var info = _.cloneDeep(defaultRotateImage.info);
             var texList=_.cloneDeep(defaultRotateImage.texList);
             return {
@@ -720,8 +657,7 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:texList,
-
+                texList:texList
             }
         };
         this.getDefaultDateTime=function(){
@@ -781,19 +717,6 @@ ideServices
             }
         };
         this.getDefaultSlideBlock = function(){
-            //var subLayerNode=CanvasService.getSubLayerNode();
-
-            //var info={
-            //    width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4,
-            //    height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-            //
-            //    left: 0, top: 0,
-            //    originX: 'center', originY: 'center',
-            //    minValue:0,maxValue:100,
-            //    lowAlarmValue:0,highAlarmValue:100,
-            //    initValue:0,
-            //    arrange:"horizontal"   //horizontal:水平   vertical:竖直
-            //};
             var info = _.cloneDeep(defaultSlideBlock.info);
             var texList = _.cloneDeep(defaultSlideBlock.texList);
             return {
@@ -805,7 +728,6 @@ ideServices
                 url:'',
                 zIndex:0,
                 texList:texList
-
             }
         };
         this.getDefaultVideo = function(){

@@ -84,6 +84,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 progressModes:[
                     {id:'0',name:'普通进度条'},
                     {id:'1',name:'变色进度条'},
+                    {id:'3',name:'多色进度条'},
                     {id:'2',name:'脚本进度条'}
                 ],
                 backgroundImage:'blank.png',
@@ -92,7 +93,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterProgressImage:enterProgressImage,
                 enterProgressValue:enterProgressValue,
                 enterArrange:enterArrange,
-                enterCursor:enterCursor,
+                enterCursor:enterCursor
             },
             dashboard:{
                 dashboardModeId:'0',
