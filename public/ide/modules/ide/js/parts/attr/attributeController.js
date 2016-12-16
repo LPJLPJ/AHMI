@@ -105,7 +105,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 dashboardClockwise:[
                     {wise:'1',name:'顺时针'},
                     {wise:'0',name:'逆时针'},
-                    {wise:'2',name:'双向'}
+                   // {wise:'2',name:'双向'}
                 ],
                 backgroundImage:'blank.png',
                 pointerImg:'blank.png',
@@ -1809,7 +1809,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function changeNumSize(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>150){
+            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>350){
                 toastr.warning('超出最大值');
                 restore();
                 return;

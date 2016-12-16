@@ -186,28 +186,26 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
         if (!page||!page.id){
             return;
         }
-        $timeout(function () {
-            for (var i=0;i<$scope.project.pages.length;i++){
+        for (var i=0;i<$scope.project.pages.length;i++){
 
-                if ($scope.project.pages[i].id
-                    ==page.id){
-                    ProjectService.changeCurrentPageIndex(i, function (keepInSamePage) {
-                        var oldOperate=ProjectService.SaveCurrentOperate();
+            if ($scope.project.pages[i].id
+                ==page.id){
+                ProjectService.changeCurrentPageIndex(i, function (keepInSamePage) {
+                    var oldOperate=ProjectService.SaveCurrentOperate();
 
-                        if (!keepInSamePage){
+                    if (!keepInSamePage){
 
-                            $scope.$emit('SwitchCurrentPage');
+                        $scope.$emit('SwitchCurrentPage');
 
 
-                        }else{
-                            $scope.$emit('ChangeCurrentPage',oldOperate, function () {
-                            });
-                        }
+                    }else{
+                        $scope.$emit('ChangeCurrentPage',oldOperate, function () {
+                        });
+                    }
 
-                    });
-                    break;
-                }
+                });
+                break;
             }
-        })
+        }
     }
 }]);

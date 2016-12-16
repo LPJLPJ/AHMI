@@ -1,6 +1,14 @@
 
 ideServices
     .service('ResourceService', [function () {
+        var path,local=false;
+        try{
+            path = require('path')
+            local = true;
+        }catch (e){
+
+        }
+
         var blankImg = new Image();
         blankImg.src = '';
         var globalResources = [{
@@ -17,7 +25,7 @@ ideServices
         var resourceUrl = '';
         var resourceNWUrl = '';
         var projectUrl = '';
-        var fontSheet = (function() {
+        var fontStyle = (function() {
             // 创建 <style> 标签
             var style = document.createElement("style");
 
@@ -26,14 +34,18 @@ ideServices
             // style.setAttribute("media", "only screen and (max-width : 1024px)")
 
             // 对WebKit hack :(
-            style.appendChild(document.createTextNode(""));
+            style.appendChild(document.createTextNode("xxx"));
 
 
             // 将 <style> 元素加到页面中
             document.head.appendChild(style);
 
-            return style.sheet;
+            return style;
         })();
+
+        var fontSheet = fontStyle.sheet;
+
+        window.fontStyle = fontStyle;
 
         this.getGlobalResources = function () {
             return globalResources;
@@ -93,7 +105,7 @@ ideServices
         this.getExt = function (fileName) {
             var extArray = fileName.split('.');
             var ext = extArray[extArray.length-1];
-            return ext;
+            return ext.toLowerCase();
         }
 
         this.syncFiles = function (_files) {
@@ -177,8 +189,18 @@ ideServices
         };
 
         this.addWebFont = function (fontFile,type) {
+            console.log('font: ',fontFile,type,fontFile)
             var fontName = fontFile.name.split('.')[0];
-            var curRule = "@font-face {font-family: '"+fontName+ "';"+"url('"+fontFile.src+"') format('"+type+"') } ";
+            //handle window url
+            var curSrc = fontFile.src;
+            if (local){
+                //handle win pt
+                if (process && process.platform && process.platform.indexOf('win')!=-1){
+                    //win
+                    curSrc = curSrc.replace(/\\/g,'/');
+                }
+            }
+            var curRule = "@font-face {font-family: '"+fontName+ "';"+" src:url('"+curSrc+"') format('"+type+"') ;} ";
             fontSheet.insertRule(curRule, 0);
             //fontSheet.insertRule(".web-font{ font-family:\""+fontName+"\" !important; }",1);
             //console.log('added font: ',fontFile,fontSheet,curRule)
