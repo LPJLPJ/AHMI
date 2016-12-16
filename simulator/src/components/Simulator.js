@@ -2125,88 +2125,90 @@ module.exports =   React.createClass({
             // }
             //handle action before
             if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
-                return;
-            }
-            curValue = this.limitValueBetween(curValue, minValue, maxValue);
-            if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
+            }else{
+                curValue = this.limitValueBetween(curValue, minValue, maxValue);
+                if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
-                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-
-
-                //drawbackground
-                var bgTex = {
-                    color:numColor,
-                    imgSrc:'',
-                    name:'数字背景'
-                }
-                // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
-                // tempCtx.globalCompositeOperation = "destination-in";
-                // console.log(tempNumValue);
-                // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
-                // // tempCtx.fillText(tempNumValue,0,)
-                // tempCtx.restore()
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height)
-                //offCtx.restore();
-
-
-                shouldHandleAlarmAction = true;
-            } else {
-                //animate number
-
-
-                //drawbackground
-                var bgTex = widget.texList[0].slices[0]
-                var totalFrameNum = 10
-                // //draw
-                var oldHeight=0;
-                var oleWidth=0;
-                if (arrange==='horizontal'){
-                    tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                    oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight
-                    offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                    oldHeight = widget.curFrameNum  / totalFrameNum * curHeight
-                    offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
-                }else{
-                    tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                    oldWidth = (totalFrameNum - widget.curFrameNum)  / totalFrameNum * curWidth
-                    offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
 
-                    tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+
+                    //drawbackground
+                    var bgTex = {
+                        color:numColor,
+                        imgSrc:'',
+                        name:'数字背景'
+                    }
+                    // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
+                    // tempCtx.globalCompositeOperation = "destination-in";
+                    // console.log(tempNumValue);
+                    // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
+                    // // tempCtx.fillText(tempNumValue,0,)
+                    // tempCtx.restore()
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                    oldWidth = widget.curFrameNum  / totalFrameNum * curWidth;
-                    offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                    offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height)
+                    //offCtx.restore();
+
+
+                    shouldHandleAlarmAction = true;
+                } else {
+                    //animate number
+
+
+                    //drawbackground
+                    var bgTex = widget.texList[0].slices[0]
+                    var totalFrameNum = 10
+                    // //draw
+                    var oldHeight=0;
+                    var oleWidth=0;
+                    if (arrange==='horizontal'){
+                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                        oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight
+                        offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                        oldHeight = widget.curFrameNum  / totalFrameNum * curHeight
+                        offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
+                    }else{
+                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                        oldWidth = (totalFrameNum - widget.curFrameNum)  / totalFrameNum * curWidth
+                        offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                        oldWidth = widget.curFrameNum  / totalFrameNum * curWidth;
+                        offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                    }
+
+
+                    // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
+
+
+                    if (widget.animateTimerId == undefined || widget.animateTimerId == 0) {
+                        widget.animateTimerId = setInterval(function () {
+                            if (widget.curFrameNum != undefined) {
+                                widget.curFrameNum += 1
+                            } else {
+                                widget.curFrameNum = 1
+                            }
+                            if (widget.curFrameNum > totalFrameNum - 1) {
+                                clearInterval(widget.animateTimerId)
+                                widget.animateTimerId = 0
+                                widget.curFrameNum = 0
+                                widget.oldValue = curValue
+                            }
+                            this.draw()
+                        }.bind(this), 16)
+                    }
+
+
                 }
-
-
-                // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
-
-
-                if (widget.animateTimerId == undefined || widget.animateTimerId == 0) {
-                    widget.animateTimerId = setInterval(function () {
-                        if (widget.curFrameNum != undefined) {
-                            widget.curFrameNum += 1
-                        } else {
-                            widget.curFrameNum = 1
-                        }
-                        if (widget.curFrameNum > totalFrameNum - 1) {
-                            clearInterval(widget.animateTimerId)
-                            widget.animateTimerId = 0
-                            widget.curFrameNum = 0
-                            widget.oldValue = curValue
-                        }
-                        this.draw()
-                    }.bind(this), 16)
-                }
-
-
             }
+
 
 
             // offctx.restore();
