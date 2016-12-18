@@ -317,9 +317,6 @@ ideServices
                     this.thresholdModeId=level.info.thresholdModeId||'1';
                     this.threshold1=level.info.threshold1||null;
                     this.threshold2=level.info.threshold2||null;
-                    this.color1;
-                    this.color2;
-                    this.color3;
 
                     this.backgroundColor=level.texList[0].slices[0].color;
                     this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
@@ -334,7 +331,9 @@ ideServices
                     }else if(this.progressModeId=='3'){
                         this.color1=level.texList[1].slices[0].color;
                         this.color2=level.texList[2].slices[0].color;
-                        this.color3=level.texList[3].slices[0].color;
+                        if(this.thresholdModeId=='2'){
+                            this.color3=level.texList[3].slices[0].color;
+                        }
                     }
                     if(this.cursor=='1'){
                         var length = level.texList.length;
