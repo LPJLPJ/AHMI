@@ -1017,7 +1017,6 @@
                                 </option>
                             </select>
                         </div>
-
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">方向</span>
 
@@ -1035,7 +1034,33 @@
                                 <option value="1">有光标</option>
                             </select>
                         </div>
-
+                        <div class="my-attr-item lg" ng-show="component.progress.progressModeId=='3'">
+                            <span class="my-attr-title">阈值模式</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.progress.thresholdModeId"
+                                    ng-change="component.progress.enterThresholdMode($event)">
+                                <option ng-repeat="mode in component.progress.thresholdModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div ng-show="component.progress.progressModeId=='3'">
+                            <div class="my-attr-item">
+                                <span class="my-attr-title">阈值1</span>
+                                <input class="my-attr-number-input form-control short-input"
+                                       ng-model="component.object.level.info.threshold1"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.progress.enterThresholdValue1($event)"
+                                       type="number">
+                            </div><div class="my-attr-item" ng-show="component.progress.thresholdModeId=='2'">
+                            <span class="my-attr-title">阈值2</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.threshold2"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.progress.enterThresholdValue2($event)"
+                                   type="number">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- oscilloScope-->

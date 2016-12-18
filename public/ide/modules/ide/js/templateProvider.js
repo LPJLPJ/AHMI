@@ -76,7 +76,10 @@ ideServices
                     progressValue:50,
                     arrange:"horizontal" ,
                     cursor:"0",
-                    progressModeId:'0'
+                    progressModeId:'0',
+                    thresholdModeId:'1',
+                    threshold1:null,
+                    threshold2:null
                     },
                 texList:[{
                     currentSliceIdx:0,
