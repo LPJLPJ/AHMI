@@ -12,18 +12,18 @@ ideServices
         'TemplateProvider',
         'ViewService',
         'Type',
-        'ResourceService','WidgetService',function ($rootScope,$timeout,
+        'ResourceService',function ($rootScope,$timeout,
                                     CanvasService,
                                     GlobalService,
                                     Preference,
                                     TemplateProvider,
                                     ViewService,
                                     Type,
-                                    ResourceService,WidgetService) {
+                                    ResourceService) {
 
 
             var _self=this;
-            var fabric = WidgetService.fabric
+            // var fabric = WidgetService.fabric
 
             /**
              * IDE当前项目
@@ -286,7 +286,7 @@ ideServices
              * 效率很低,不建议在循环中使用
              * @type {getLevelById}
              */
-            var getLevelById=this.getLevelById = function (_id) {
+            this.getLevelById = function (_id) {
                 var level=null;
                 _.forEach(project.pages, function (_page) {
                     if (_page.id==_id){

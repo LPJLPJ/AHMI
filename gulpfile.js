@@ -39,15 +39,15 @@ gulp.task('transNormalFiles',function (cb) {
 
 
 gulp.task('keepCompressing',function () {
-    return gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js'],{base:baseUrl})
-        .pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js']))
+    return gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js'],{base:baseUrl})
+        .pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js']))
         .pipe(uglify())
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
 
 gulp.task('transferNormalFiles',function () {
-    return gulp.src([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js'],{base:baseUrl})
-        .pipe(watch([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js'],{base:baseUrl}))
+    return gulp.src([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl})
+        .pipe(watch([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
 
