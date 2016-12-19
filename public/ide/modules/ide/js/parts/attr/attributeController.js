@@ -84,7 +84,13 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 progressModes:[
                     {id:'0',name:'普通进度条'},
                     {id:'1',name:'变色进度条'},
+                    {id:'3',name:'多色进度条'},
                     {id:'2',name:'脚本进度条'}
+                ],
+                thresholdModeId:'1',
+                thresholdModes:[
+                    {id:'1',name:'两段色'},
+                    {id:'2',name:'三段色'}
                 ],
                 backgroundImage:'blank.png',
                 progressImage:'blank.png',
@@ -93,6 +99,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterProgressValue:enterProgressValue,
                 enterArrange:enterArrange,
                 enterCursor:enterCursor,
+                enterThresholdMode:enterThresholdMode,
+                enterThresholdValue1:enterThresholdValue1,
+                enterThresholdValue2:enterThresholdValue2
             },
             dashboard:{
                 dashboardModeId:'0',
@@ -350,6 +359,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     //Progress的光标
                     $scope.component.progress.cursor = $scope.component.object.level.info.cursor;
                     $scope.component.progress.progressModeId=$scope.component.object.level.info.progressModeId;
+                    if(!$scope.component.object.level.info.thresholdModeId){
+                        selectObject.level.info.thresholdModeId='1';
+                        selectObject.level.info.threshold1=null;
+                        selectObject.level.info.threshold2=null;
+                        $scope.component.progress.thresholdModeId='1';
+                    }else{
+                        $scope.component.progress.thresholdModeId=$scope.component.object.level.info.thresholdModeId;
+                    }
                     //调整背景图
                     if ($scope.component.object.level.backgroundImg==''){
                         $scope.component.progress.backgroundImage='blank.png';
@@ -362,7 +379,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }else {
                         $scope.component.progress.progressImage=$scope.component.object.level.progressImg;
                     }
-
                     break;
                 case Type.MyDashboard:
                     $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
@@ -1053,6 +1069,80 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         })
     }
 
+    /**
+     * 在多色进度条模式下，更改阈值模式
+     * @param e
+     */
+    function enterThresholdMode(e){
+        var selectThresholdMode = $scope.component.progress.thresholdModeId;
+        $scope.component.progress.threshold2=null;
+        var  option = {
+            thresholdModeId:selectThresholdMode
+        };
+        var oldOperate= ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeProgressThreshold(option,function(){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+
+    /**
+     *输入阈值1
+     * @param e
+     */
+    function enterThresholdValue1(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.threshold1==initObject.level.info.threshold1){
+                return;
+            }
+            if($scope.component.object.level.info.threshold1<$scope.component.object.level.info.minValue||
+               $scope.component.object.level.info.threshold1>$scope.component.object.level.info.maxValue){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.threshold2){
+                if($scope.component.object.level.info.threshold1>$scope.component.object.level.info.threshold2){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+            }
+            var option = {
+                threshold1:$scope.component.object.level.info.threshold1
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeProgressThreshold(option,function(){
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function enterThresholdValue2(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.threshold2==initObject.level.info.threshold2){
+                return;
+            }
+            if($scope.component.object.level.info.threshold2<$scope.component.object.level.info.minValue||
+                $scope.component.object.level.info.threshold2>$scope.component.object.level.info.maxValue){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.threshold1){
+                if($scope.component.object.level.info.threshold2<$scope.component.object.level.info.threshold1){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+            }
+            var option = {
+                threshold2:$scope.component.object.level.info.threshold2
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeProgressThreshold(option,function(){
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
 
     /**
      * 改变排列方向属性

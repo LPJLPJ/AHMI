@@ -44,8 +44,6 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
 	window.fucku = 'fucku';
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
@@ -19713,9 +19711,7 @@
 /* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
-
-	var React = __webpack_require__(1);
+	/* WEBPACK VAR INJECTION */(function(global) {var React = __webpack_require__(1);
 	var $ = __webpack_require__(160);
 	var _ = __webpack_require__(161);
 	var TagList = __webpack_require__(163);
@@ -19771,10 +19767,10 @@
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState: function getInitialState() {
+	    getInitialState: function () {
 	        return _.cloneDeep(defaultSimulator);
 	    },
-	    componentWillUnmount: function componentWillUnmount() {
+	    componentWillUnmount: function () {
 	        this.state.timerList.map(function (timer, i) {
 	            var curTimeID = timer.timerID;
 	            clearInterval(curTimeID);
@@ -19786,7 +19782,7 @@
 	        VideoSource.pause();
 	        AnimationManager.clearAllAnimationKeys();
 	    },
-	    initCanvas: function initCanvas(data, callBack) {
+	    initCanvas: function (data, callBack) {
 	        var i;
 	        this.mouseState = {
 	            state: 'release',
@@ -19975,7 +19971,7 @@
 	            callBack(data);
 	        }
 	    },
-	    isIn: function isIn(res, resList, key) {
+	    isIn: function (res, resList, key) {
 	        if (key) {
 	            for (var i = 0; i < resList.length; i++) {
 	                if (res[key] === resList[i][key]) {
@@ -19992,7 +19988,7 @@
 	            return false;
 	        }
 	    },
-	    initProject: function initProject() {
+	    initProject: function () {
 
 	        if (this.state.project && this.state.project.size) {
 	            this.initCanvas(this.state.project, this.draw.bind(this, null, { reLinkWidgets: true }));
@@ -20000,7 +19996,7 @@
 	            this.draw.bind(this, null, { reLinkWidgets: true });
 	        }
 	    },
-	    componentDidMount: function componentDidMount() {
+	    componentDidMount: function () {
 	        //this.load();
 	        this.state = _.cloneDeep(defaultSimulator);
 	        this.state.project = _.cloneDeep(this.props.projectData);
@@ -20008,7 +20004,7 @@
 	        this.simState = {};
 	        this.initProject();
 	    },
-	    componentWillReceiveProps: function componentWillReceiveProps(newProps) {
+	    componentWillReceiveProps: function (newProps) {
 	        this.state.timerList.map(function (timer, i) {
 	            var curTimeID = timer.timerID;
 	            clearInterval(curTimeID);
@@ -20026,7 +20022,7 @@
 	        // this.initProject();
 	        // console.log('receive new project data', this.state.project)
 	    },
-	    drawLoadingProgress: function drawLoadingProgress(total, currentValue, countDown, projectWidth, projectHeight) {
+	    drawLoadingProgress: function (total, currentValue, countDown, projectWidth, projectHeight) {
 	        var progress = '0.0%';
 	        if (countDown && countDown == true) {
 	            progress = '' + ((total - currentValue) * 100.0 / total).toFixed(2) + '%';
@@ -20040,7 +20036,7 @@
 	        ctx.fillStyle = "white";
 	        ctx.fillText("加载中... " + progress, 0.5 * projectWidth, 0.5 * projectHeight);
 	    },
-	    draw: function draw(_project, options) {
+	    draw: function (_project, options) {
 	        var offcanvas = this.refs.offcanvas;
 	        var canvas = this.refs.canvas;
 	        this.ctx = canvas.getContext('2d');
@@ -20059,7 +20055,7 @@
 	        });
 	        this.manageDraw();
 	    },
-	    manageDraw: function manageDraw() {
+	    manageDraw: function () {
 	        if (!this.drawingStatus || this.drawingStatus === 'idle') {
 	            if (this.drawingArray.length) {
 	                var nextDrawElem = this.drawingArray.shift();
@@ -20070,7 +20066,7 @@
 	            }
 	        }
 	    },
-	    paint: function paint(_project, options) {
+	    paint: function (_project, options) {
 	        var project;
 	        if (_project) {
 	            project = _project;
@@ -20131,10 +20127,10 @@
 	            // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
 	        } else {
-	                ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-	            }
+	            ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+	        }
 	    },
-	    getRawValueByTagName: function getRawValueByTagName(name) {
+	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
 	        if (curTag) {
 	            return curTag.value;
@@ -20142,7 +20138,7 @@
 	            return null;
 	        }
 	    },
-	    getValueByTagName: function getValueByTagName(name, defaultValue) {
+	    getValueByTagName: function (name, defaultValue) {
 	        var curTag = this.findTagByName(name);
 	        if (curTag && curTag.value != undefined) {
 	            return Number(curTag.value);
@@ -20152,10 +20148,10 @@
 	            return null;
 	        }
 	    },
-	    compareZIndex: function compareZIndex(canvasA, canvasB) {
+	    compareZIndex: function (canvasA, canvasB) {
 	        return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
 	    },
-	    drawPage: function drawPage(page, options) {
+	    drawPage: function (page, options) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        var canvas = this.refs.canvas;
@@ -20227,7 +20223,7 @@
 	            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
 	        }
 	    },
-	    paintPage: function paintPage(page, options) {
+	    paintPage: function (page, options) {
 	        // console.log(page);
 	        //will load
 	        // if (!page.state || page.state == LoadState.notLoad) {
@@ -20275,7 +20271,7 @@
 	            // console.log('page', page);
 	        }
 	    },
-	    handleTimers: function handleTimers(num, postfix, value) {
+	    handleTimers: function (num, postfix, value) {
 
 	        var timerList = this.state.timerList;
 
@@ -20312,7 +20308,7 @@
 	            this.startNewTimer(timer, num, true);
 	        }
 	    },
-	    startNewTimer: function startNewTimer(timer, num, cont) {
+	    startNewTimer: function (timer, num, cont) {
 	        if ((timer['SysTmr_' + num + '_Mode'] & 1) == 1) {
 	            //start
 	            var loop = (timer['SysTmr_' + num + '_Mode'] & 2) == 2;
@@ -20380,7 +20376,7 @@
 	            }.bind(this), timer['SysTmr_' + num + '_Interval']);
 	        }
 	    },
-	    generateTransformMatrix: function generateTransformMatrix(animations) {
+	    generateTransformMatrix: function (animations) {
 	        var a = 0,
 	            b = 0,
 	            c = 0,
@@ -20406,7 +20402,7 @@
 	            f: f
 	        };
 	    },
-	    executeAnimation: function executeAnimation(target, animation) {
+	    executeAnimation: function (target, animation) {
 	        var animationAttrs;
 	        if (!animation || !animation.animationAttrs) {
 	            return;
@@ -20520,7 +20516,7 @@
 	        //     // this.draw();
 	        // }.bind(this))
 	    },
-	    scaleElement: function scaleElement(target, scaleFactor) {
+	    scaleElement: function (target, scaleFactor) {
 	        // console.log('scaling element',target)
 	        switch (target.type) {
 	            case 'MyLayer':
@@ -20531,7 +20527,7 @@
 	                break;
 	        }
 	    },
-	    scaleCanvas: function scaleCanvas(target, scaleFactor) {
+	    scaleCanvas: function (target, scaleFactor) {
 	        target.w *= scaleFactor.w;
 	        target.h *= scaleFactor.h;
 	        var subCanvasList = target.subCanvasList;
@@ -20543,7 +20539,7 @@
 	            }
 	        }
 	    },
-	    scaleWidget: function scaleWidget(target, scaleFactor) {
+	    scaleWidget: function (target, scaleFactor) {
 	        var info = target.info;
 	        switch (target.subType) {
 	            case 'MyButton':
@@ -20554,7 +20550,7 @@
 	                break;
 	        }
 	    },
-	    drawCanvas: function drawCanvas(canvasData, options) {
+	    drawCanvas: function (canvasData, options) {
 	        var willExecuteAnimation = false;
 	        if (options && options.animation) {
 	            //has animation execute
@@ -20581,7 +20577,7 @@
 	            this.paintCanvas(canvasData, options);
 	        }
 	    },
-	    paintCanvas: function paintCanvas(canvasData, options) {
+	    paintCanvas: function (canvasData, options) {
 	        //draw
 
 	        var offcanvas = this.refs.offcanvas;
@@ -20646,7 +20642,7 @@
 	            this.handleTargetAction(oldSubCanvas, 'UnLoad');
 	        }
 	    },
-	    clipToRect: function clipToRect(ctx, originX, originY, w, h) {
+	    clipToRect: function (ctx, originX, originY, w, h) {
 	        ctx.beginPath();
 	        ctx.moveTo(originX, originY);
 	        ctx.lineTo(originX + w, originY);
@@ -20655,7 +20651,7 @@
 	        ctx.closePath();
 	        ctx.clip();
 	    },
-	    drawSubCanvas: function drawSubCanvas(subCanvas, x, y, w, h, options, transition) {
+	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
@@ -20735,7 +20731,7 @@
 	            this.paintSubCanvas(subCanvas, x, y, w, h, options);
 	        }
 	    },
-	    paintSubCanvas: function paintSubCanvas(subCanvas, x, y, w, h, options) {
+	    paintSubCanvas: function (subCanvas, x, y, w, h, options) {
 
 	        subCanvas.state = LoadState.loading;
 	        // x = subCanvas.info.x;
@@ -20766,7 +20762,7 @@
 
 	        subCanvas.state = LoadState.loaded;
 	    },
-	    drawWidget: function drawWidget(widget, sx, sy, options) {
+	    drawWidget: function (widget, sx, sy, options) {
 	        var willExecuteAnimation = false;
 	        if (options && options.animation) {
 	            //has animation execute
@@ -20789,7 +20785,7 @@
 	            this.paintWidget(widget, sx, sy, options);
 	        }
 	    },
-	    paintWidget: function paintWidget(widget, sx, sy, options) {
+	    paintWidget: function (widget, sx, sy, options) {
 	        // console.log('drawing widget',widget);
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
@@ -20819,7 +20815,7 @@
 	        curX = 0;
 	        curY = 0;
 
-	        var cb = function cb() {
+	        var cb = function () {
 	            offctx.restore();
 	        };
 
@@ -20875,7 +20871,7 @@
 	                break;
 	        }
 	    },
-	    drawInputKeyboard: function drawInputKeyboard(curX, curY, widget, options) {
+	    drawInputKeyboard: function (curX, curY, widget, options) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offCtx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
@@ -20940,7 +20936,7 @@
 	        }
 	        tempCtx.restore();
 	    },
-	    drawSlide: function drawSlide(curX, curY, widget, options, cb) {
+	    drawSlide: function (curX, curY, widget, options, cb) {
 	        var slideSlices = widget.texList[0].slices;
 	        var tag = this.findTagByName(widget.tag);
 	        var slideIdx = tag && tag.value || 0;
@@ -20952,7 +20948,7 @@
 	        }
 	        cb && cb();
 	    },
-	    drawButton: function drawButton(curX, curY, widget, options, cb) {
+	    drawButton: function (curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
@@ -20999,7 +20995,7 @@
 
 	        cb && cb();
 	    },
-	    drawSwitch: function drawSwitch(curX, curY, widget, options, cb) {
+	    drawSwitch: function (curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
@@ -21017,13 +21013,13 @@
 	        if (switchState == 0) {
 	            // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
 	        } else {
-	                // console.log(tex);
-	                this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
-	            }
+	            // console.log(tex);
+	            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+	        }
 
 	        cb && cb();
 	    },
-	    drawTextArea: function drawTextArea(curX, curY, widget, options, cb) {
+	    drawTextArea: function (curX, curY, widget, options, cb) {
 	        var info = widget.info;
 	        var width = info.width;
 	        var height = info.height;
@@ -21043,7 +21039,7 @@
 	        }
 	        cb && cb();
 	    },
-	    drawTextByTempCanvas: function drawTextByTempCanvas(curX, curY, width, height, text, font, arrange) {
+	    drawTextByTempCanvas: function (curX, curY, width, height, text, font, arrange) {
 
 	        var text = text || '';
 	        var font = font || {};
@@ -21073,7 +21069,7 @@
 	        tempctx.restore();
 	        offctx.drawImage(tempcanvas, curX, curY, width, height);
 	    },
-	    drawButtonGroup: function drawButtonGroup(curX, curY, widget, options, cb) {
+	    drawButtonGroup: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var interval = widget.info.interval;
@@ -21120,7 +21116,7 @@
 
 	        cb && cb();
 	    },
-	    drawProgress: function drawProgress(curX, curY, widget, options, cb) {
+	    drawProgress: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var cursor = widget.info.cursor == '1';
@@ -21201,6 +21197,27 @@
 	                    break;
 	                case '2':
 	                    break;
+	                case '3':
+	                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+	                    var drawColor = this.confirmOneColor(widget, curProgress);
+	                    switch (widget.info.arrange) {
+	                        case 'vertical':
+	                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, null, drawColor);
+	                            if (cursor) {
+	                                var cursorSlice = widget.texList[2].slices[0];
+	                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY);
+	                            }
+	                            break;
+	                        case 'horizontal':
+	                        default:
+	                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, null, drawColor);
+	                            if (cursor) {
+	                                var cursorSlice = widget.texList[2].slices[0];
+	                                this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+	                            }
+	                            break;
+	                    }
+	                    break;
 	            }
 	        }
 
@@ -21210,7 +21227,7 @@
 	        this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	        widget.oldValue = curProgress;
 	    },
-	    drawSlideBlock: function drawSlideBlock(curX, curY, widget, options, cb) {
+	    drawSlideBlock: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 
@@ -21261,7 +21278,7 @@
 	            widget.oldValue = curSlide;
 	        }
 	    },
-	    drawScriptTrigger: function drawScriptTrigger(curX, curY, widget, options, cb) {
+	    drawScriptTrigger: function (curX, curY, widget, options, cb) {
 	        //get current value
 	        var curScriptTriggerTag = this.findTagByName(widget.tag);
 
@@ -21271,7 +21288,7 @@
 	        this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
 	        widget.oldValue = curScriptTrigger;
 	    },
-	    drawVideo: function drawVideo(curX, curY, widget, options, cb) {
+	    drawVideo: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var offcanvas = this.refs.offcanvas;
@@ -21298,7 +21315,7 @@
 
 	        cb && cb();
 	    },
-	    drawVerCursor: function drawVerCursor(beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
+	    drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
 
 	        var cursorImg = this.getImage(img);
 	        cursorImg = cursorImg && cursorImg.content || null;
@@ -21316,7 +21333,7 @@
 	            }
 	        }
 	    },
-	    drawCursor: function drawCursor(beginX, beginY, width, height, align, alignLimit, img, color) {
+	    drawCursor: function (beginX, beginY, width, height, align, alignLimit, img, color) {
 
 	        var cursorImg = this.getImage(img);
 	        cursorImg = cursorImg && cursorImg.content || null;
@@ -21332,7 +21349,7 @@
 	            }
 	        }
 	    },
-	    addTwoColor: function addTwoColor(color1, color2, ratio) {
+	    addTwoColor: function (color1, color2, ratio) {
 	        var color1Array = this.transColorToArray(color1);
 	        var color2Array = this.transColorToArray(color2);
 	        var mixedColor = [];
@@ -21341,7 +21358,35 @@
 	        }
 	        return 'rgba(' + mixedColor.join(',') + ')';
 	    },
-	    transColorToArray: function transColorToArray(color) {
+	    confirmOneColor: function (widget, curProgress) {
+	        var progressValue = parseInt(curProgress);
+	        var color1 = widget.texList[1].slices[0].color,
+	            color2 = widget.texList[2].slices[0].color,
+	            thresholdModeId = widget.info.thresholdModeId,
+	            threshold1 = widget.info.threshold1,
+	            threshold2 = widget.info.threshold2;
+	        if (thresholdModeId == '2') {
+	            var color3 = widget.texList[3].slices[0].color;
+	        };
+	        var drawColor = 'rgba(0,0,0,1)';
+	        if (thresholdModeId == '1') {
+	            if (progressValue < threshold1) {
+	                drawColor = color1;
+	            } else if (progressValue >= threshold2) {
+	                drawColor = color2;
+	            }
+	        } else if (thresholdModeId == '2') {
+	            if (progressValue < threshold1) {
+	                drawColor = color1;
+	            } else if (progressValue >= threshold1 && progressValue < threshold2) {
+	                drawColor = color2;
+	            } else if (progressValue >= threshold2) {
+	                drawColor = color3;
+	            }
+	        }
+	        return drawColor;
+	    },
+	    transColorToArray: function (color) {
 	        //rgba to array
 	        var temp = color.split('(')[1].split(')')[0];
 	        var colorArray = temp.split(',').map(function (colorbit) {
@@ -21349,7 +21394,7 @@
 	        });
 	        return colorArray;
 	    },
-	    getCurDateOriginalData: function getCurDateOriginalData(widget, source, offset) {
+	    getCurDateOriginalData: function (widget, source, offset) {
 	        var curDate;
 	        if (source === 'outer') {
 	            var time1 = parseInt(this.getValueByTagName('时钟变量年月日', 0)) || 0;
@@ -21367,19 +21412,19 @@
 	            // console.log(year,realMonth,day,hour,minute,seconds,curDate)
 	        } else {
 
-	                // if (widget.baseDate===undefined){
-	                //     widget.baseDate = new Date();
-	                // }
-	                // curDate = widget.baseDate;
-	                curDate = new Date();
-	                if (offset !== undefined) {
-	                    curDate = new Date(curDate.getTime() + offset);
-	                }
+	            // if (widget.baseDate===undefined){
+	            //     widget.baseDate = new Date();
+	            // }
+	            // curDate = widget.baseDate;
+	            curDate = new Date();
+	            if (offset !== undefined) {
+	                curDate = new Date(curDate.getTime() + offset);
 	            }
+	        }
 
 	        return curDate;
 	    },
-	    drawTime: function drawTime(curX, curY, widget, options, cb) {
+	    drawTime: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var dateTimeModeId = widget.info.dateTimeModeId;
@@ -21489,20 +21534,20 @@
 	            this.setState({ innerTimerList: innerTimerList });
 	        }
 	    },
-	    getCurTime: function getCurTime(date) {
+	    getCurTime: function (date) {
 	        var date = date || new Date();
 	        var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
 	        var minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 	        var second = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
 	        return '' + hour + ':' + minute + ':' + second;
 	    },
-	    getCurTimeHM: function getCurTimeHM(date) {
+	    getCurTimeHM: function (date) {
 	        var date = date || new Date();
 	        var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
 	        var minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 	        return '' + hour + ':' + minute;
 	    },
-	    getCurDate: function getCurDate(date, mode) {
+	    getCurDate: function (date, mode) {
 	        var date = date || new Date();
 	        var year = date.getFullYear();
 	        var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
@@ -21516,7 +21561,7 @@
 	        return dateString;
 	    },
 
-	    drawBgClip: function drawBgClip(curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
+	    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 
@@ -21540,21 +21585,21 @@
 	        // this.drawBg(childX,childY,childWidth,childHeight,imageName,color);
 	        offctx.restore();
 	    },
-	    drawHighLight: function drawHighLight(curX, curY, width, height, slice) {
+	    drawHighLight: function (curX, curY, width, height, slice) {
 	        if (slice) {
 	            this.drawBg(curX, curY, width, height, slice.imgSrc, slice.color);
 	        } else {
 	            this.drawBgColor(curX, curY, width, height, 'rgba(244,244,244,0.3)');
 	        }
 	    },
-	    findValue: function findValue(array, key1, value, key2) {
+	    findValue: function (array, key1, value, key2) {
 	        for (var i = 0; i < array.length; i++) {
 	            if (array[i][key1] == value) {
 	                return array[i][key2];
 	            }
 	        }
 	    },
-	    limitValueBetween: function limitValueBetween(curVal, minVal, maxVal, overFlowStyle) {
+	    limitValueBetween: function (curVal, minVal, maxVal, overFlowStyle) {
 	        if (curVal < minVal) {
 	            return minVal;
 	        } else if (curVal > maxVal) {
@@ -21563,14 +21608,14 @@
 	            return curVal;
 	        }
 	    },
-	    multiDigits: function multiDigits(digit, num) {
+	    multiDigits: function (digit, num) {
 	        var result = '';
 	        for (var i = 0; i < num; i++) {
 	            result += digit;
 	        }
 	        return result;
 	    },
-	    changeNumDigits: function changeNumDigits(originalNum, digits, appendNum, beforeOrFalse) {
+	    changeNumDigits: function (originalNum, digits, appendNum, beforeOrFalse) {
 	        var originalNum = String(parseInt(originalNum || 0));
 	        var originalLength = originalNum.length;
 	        var resultNum = '';
@@ -21590,7 +21635,7 @@
 	        }
 	        return resultNum;
 	    },
-	    drawNumber: function drawNumber(curX, curY, widget, options, cb) {
+	    drawNumber: function (curX, curY, widget, options, cb) {
 	        // console.log(widget);
 	        var needDrawNumber = false;
 	        var numberTag;
@@ -21659,7 +21704,7 @@
 	            this.handleTargetAction(widget, 'MinOverflow');
 	        }
 	    },
-	    drawNum: function drawNum(curX, curY, widget, options, cb) {
+	    drawNum: function (curX, curY, widget, options, cb) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        //get current value
@@ -21731,79 +21776,78 @@
 	            //     offctx.translate(-offcanvas.width/2,-offcanvas.height/2);
 	            // }
 	            //handle action before
-	            if (overFlowStyle == '0' && (curValue > maxValue || curValue < minValue)) {
-	                return;
-	            }
-	            curValue = this.limitValueBetween(curValue, minValue, maxValue);
-	            if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
-
-	                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
-
-	                //drawbackground
-	                var bgTex = {
-	                    color: numColor,
-	                    imgSrc: '',
-	                    name: '数字背景'
-	                };
-	                // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
-	                // tempCtx.globalCompositeOperation = "destination-in";
-	                // console.log(tempNumValue);
-	                // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
-	                // // tempCtx.fillText(tempNumValue,0,)
-	                // tempCtx.restore()
-	                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
-	                //offCtx.restore();
-
-	                shouldHandleAlarmAction = true;
-	            } else {
-	                //animate number
-
-	                //drawbackground
-	                var bgTex = widget.texList[0].slices[0];
-	                var totalFrameNum = 10;
-	                // //draw
-	                var oldHeight = 0;
-	                var oleWidth = 0;
-	                if (arrange === 'horizontal') {
-	                    tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                    oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight;
-	                    offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
+	            if (overFlowStyle == '0' && (curValue > maxValue || curValue < minValue)) {} else {
+	                curValue = this.limitValueBetween(curValue, minValue, maxValue);
+	                if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
 
 	                    tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+
+	                    //drawbackground
+	                    var bgTex = {
+	                        color: numColor,
+	                        imgSrc: '',
+	                        name: '数字背景'
+	                    };
+	                    // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
+	                    // tempCtx.globalCompositeOperation = "destination-in";
+	                    // console.log(tempNumValue);
+	                    // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
+	                    // // tempCtx.fillText(tempNumValue,0,)
+	                    // tempCtx.restore()
 	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                    oldHeight = widget.curFrameNum / totalFrameNum * curHeight;
-	                    offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
+	                    offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
+	                    //offCtx.restore();
+
+	                    shouldHandleAlarmAction = true;
 	                } else {
-	                    tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                    oldWidth = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curWidth;
-	                    offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
+	                    //animate number
 
-	                    tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                    oldWidth = widget.curFrameNum / totalFrameNum * curWidth;
-	                    offctx.drawImage(tempcanvas, curWidth - oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight);
-	                }
+	                    //drawbackground
+	                    var bgTex = widget.texList[0].slices[0];
+	                    var totalFrameNum = 10;
+	                    // //draw
+	                    var oldHeight = 0;
+	                    var oleWidth = 0;
+	                    if (arrange === 'horizontal') {
+	                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight;
+	                        offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
 
-	                // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
+	                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        oldHeight = widget.curFrameNum / totalFrameNum * curHeight;
+	                        offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
+	                    } else {
+	                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        oldWidth = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curWidth;
+	                        offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
 
-	                if (widget.animateTimerId == undefined || widget.animateTimerId == 0) {
-	                    widget.animateTimerId = setInterval(function () {
-	                        if (widget.curFrameNum != undefined) {
-	                            widget.curFrameNum += 1;
-	                        } else {
-	                            widget.curFrameNum = 1;
-	                        }
-	                        if (widget.curFrameNum > totalFrameNum - 1) {
-	                            clearInterval(widget.animateTimerId);
-	                            widget.animateTimerId = 0;
-	                            widget.curFrameNum = 0;
-	                            widget.oldValue = curValue;
-	                        }
-	                        this.draw();
-	                    }.bind(this), 16);
+	                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        oldWidth = widget.curFrameNum / totalFrameNum * curWidth;
+	                        offctx.drawImage(tempcanvas, curWidth - oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight);
+	                    }
+
+	                    // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
+
+	                    if (widget.animateTimerId == undefined || widget.animateTimerId == 0) {
+	                        widget.animateTimerId = setInterval(function () {
+	                            if (widget.curFrameNum != undefined) {
+	                                widget.curFrameNum += 1;
+	                            } else {
+	                                widget.curFrameNum = 1;
+	                            }
+	                            if (widget.curFrameNum > totalFrameNum - 1) {
+	                                clearInterval(widget.animateTimerId);
+	                                widget.animateTimerId = 0;
+	                                widget.curFrameNum = 0;
+	                                widget.oldValue = curValue;
+	                            }
+	                            this.draw();
+	                        }.bind(this), 16);
+	                    }
 	                }
 	            }
 
@@ -21818,7 +21862,7 @@
 	            widget.oldValue = Number(curValue);
 	        }
 	    },
-	    drawStyleString: function drawStyleString(tempNumValue, curWidth, curHeight, font, bgTex, tempcanvas, _arrange) {
+	    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempcanvas, _arrange) {
 	        var tempCtx = tempcanvas.getContext('2d');
 	        var arrange = _arrange || 'horizontal';
 
@@ -21853,7 +21897,7 @@
 	        // tempCtx.fillText(tempNumValue,0,)
 	        tempCtx.restore();
 	    },
-	    generateStyleString: function generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
+	    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
 	        var negative = false;
 	        if (curValue < 0) {
 	            negative = true;
@@ -21903,14 +21947,14 @@
 
 	        return tempNumValue;
 	    },
-	    drawDigit: function drawDigit(digit, widget, originX, originY, width, height) {
+	    drawDigit: function (digit, widget, originX, originY, width, height) {
 
 	        if (widget.texList && widget.texList[digit]) {
 	            var slice = widget.texList[digit].slices[0];
 	            this.drawBg(originX, originY, width, height, slice.imgSrc || digit + '.png', slice.color);
 	        }
 	    },
-	    drawDashboard: function drawDashboard(curX, curY, widget, options, cb) {
+	    drawDashboard: function (curX, curY, widget, options, cb) {
 
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -21965,23 +22009,23 @@
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	                } else if (widget.dashboardModeId == '1') {
-	                        // complex mode
-	                        //background
-	                        var bgTex = widget.texList[0].slices[0];
-	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                        //draw light strip
-	                        var lightStripTex = widget.texList[2].slices[0];
-	                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                        //draw pointer
-	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                    // complex mode
+	                    //background
+	                    var bgTex = widget.texList[0].slices[0];
+	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    //draw light strip
+	                    var lightStripTex = widget.texList[2].slices[0];
+	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    //draw pointer
+	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 
-	                        //draw circle
-	                        // var circleTex = widget.texList[3].slices[0]
-	                        // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-	                    } else if (widget.dashboardModeId == '2') {
-	                            var lightStripTex = widget.texList[0].slices[0];
-	                            this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                        }
+	                    //draw circle
+	                    // var circleTex = widget.texList[3].slices[0]
+	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+	                } else if (widget.dashboardModeId == '2') {
+	                    var lightStripTex = widget.texList[0].slices[0];
+	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                }
 	            } else {
 	                if (widget.dashboardModeId == '0') {
 	                    //simple mode
@@ -21994,34 +22038,34 @@
 	                    // var circleTex = widget.texList[2].slices[0]
 	                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
 	                } else if (widget.dashboardModeId == '1') {
-	                        // complex mode
-	                        //background
-	                        if (curArc >= 0) {
-	                            var bgTex = widget.texList[0].slices[0];
-	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                            //draw light strip
-	                            var lightStripTex = widget.texList[2].slices[0];
-	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                            //draw pointer
+	                    // complex mode
+	                    //background
+	                    if (curArc >= 0) {
+	                        var bgTex = widget.texList[0].slices[0];
+	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        //draw light strip
+	                        var lightStripTex = widget.texList[2].slices[0];
+	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                        //draw pointer
 
-	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
-	                        } else if (curArc < 0) {
-	                            var bgTex = widget.texList[0].slices[0];
-	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-	                            //draw light strip
-	                            var lightStripTex = widget.texList[2].slices[0];
-	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-	                            //draw pointer
-	                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
-	                        }
-	                    } else if (widget.dashboardModeId == '2') {
-	                        var lightStripTex = widget.texList[0].slices[0];
-	                        if (curArc >= 0) {
-	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-	                        } else if (curArc < 0) {
-	                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-	                        }
+	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+	                    } else if (curArc < 0) {
+	                        var bgTex = widget.texList[0].slices[0];
+	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        //draw light strip
+	                        var lightStripTex = widget.texList[2].slices[0];
+	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+	                        //draw pointer
+	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    }
+	                } else if (widget.dashboardModeId == '2') {
+	                    var lightStripTex = widget.texList[0].slices[0];
+	                    if (curArc >= 0) {
+	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+	                    } else if (curArc < 0) {
+	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+	                    }
+	                }
 	            }
 	        }
 
@@ -22031,7 +22075,7 @@
 	        widget.oldValue = currentValue;
 	    },
 
-	    drawRotateImg: function drawRotateImg(curX, curY, widget, options, cb) {
+	    drawRotateImg: function (curX, curY, widget, options, cb) {
 
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -22059,7 +22103,7 @@
 	        this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	        widget.oldValue = curArc;
 	    },
-	    drawOscilloscope: function drawOscilloscope(curX, curY, widget, options, cb) {
+	    drawOscilloscope: function (curX, curY, widget, options, cb) {
 	        if (widget.texList) {
 	            var width = widget.info.width;
 	            var height = widget.info.height;
@@ -22131,7 +22175,7 @@
 	            widget.oldValue = curValue;
 	        }
 	    },
-	    drawPointsLine: function drawPointsLine(curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor) {
+	    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor) {
 	        var tranedPoints = points.map(function (point) {
 	            return 1.0 * (point - minValue) / (maxValue - minValue) * (height - blankY);
 	        });
@@ -22171,7 +22215,7 @@
 	        offctx.stroke();
 	        offctx.restore();
 	    },
-	    drawGrid: function drawGrid(curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue) {
+	    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        var _offsetX = offsetX % (2 * gridWidth);
@@ -22227,7 +22271,7 @@
 	        offctx.stroke();
 	        offctx.restore();
 	    },
-	    drawLightStrip: function drawLightStrip(curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc) {
+	    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc) {
 	        //clip a fan shape
 	        // console.log(minArc, curArc);
 	        var wise = false;
@@ -22261,12 +22305,12 @@
 	            offctx.restore();
 	        }
 	    },
-	    calculateRadius: function calculateRadius(mode, width, height) {
+	    calculateRadius: function (mode, width, height) {
 	        var radius = mode == '1' ? Math.sqrt(width * width + height * height) / 2 : Math.max(width, height) / 2;
 	        radius = Math.floor(radius);
 	        return radius;
 	    },
-	    handleAlarmAction: function handleAlarmAction(curValue, widget, lowAlarm, highAlarm) {
+	    handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
 	        //handle action
 	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
 	            //enter high alarm
@@ -22286,7 +22330,7 @@
 	            this.handleTargetAction(widget, 'EnterLowAlarm');
 	        }
 	    },
-	    drawRotateElem: function drawRotateElem(x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
+	    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
 	        var transXratio = transXratio || 0;
 	        var transYratio = transYratio || 0;
 	        var offcanvas = this.refs.offcanvas;
@@ -22330,11 +22374,11 @@
 	        }
 	        offctx.restore();
 	    },
-	    drawBg: function drawBg(x, y, w, h, imageName, color, ctx) {
+	    drawBg: function (x, y, w, h, imageName, color, ctx) {
 	        this.drawBgColor(x, y, w, h, color, ctx);
 	        this.drawBgImg(x, y, w, h, imageName, ctx);
 	    },
-	    drawBgColor: function drawBgColor(x, y, w, h, color, ctx) {
+	    drawBgColor: function (x, y, w, h, color, ctx) {
 	        var offcanvas, offctx;
 	        if (!ctx) {
 	            offcanvas = this.refs.offcanvas;
@@ -22351,7 +22395,7 @@
 	            offctx.restore();
 	        }
 	    },
-	    drawBgImg: function drawBgImg(x, y, w, h, imageName, ctx) {
+	    drawBgImg: function (x, y, w, h, imageName, ctx) {
 	        //console.log('x: '+x+' y: '+y+' w: '+w+' h: '+h);
 	        var imageName = this.getImageName(imageName);
 	        var offcanvas, offctx;
@@ -22371,7 +22415,7 @@
 	        }
 	        ;
 	    },
-	    getImageName: function getImageName(imageName) {
+	    getImageName: function (imageName) {
 	        if (imageName && typeof imageName === 'string') {
 	            var names = imageName.split(sep);
 	            return names[names.length - 1];
@@ -22379,7 +22423,7 @@
 	            return '';
 	        }
 	    },
-	    getImage: function getImage(imageName) {
+	    getImage: function (imageName) {
 	        var name = this.getImageName(imageName);
 	        var imageList = this.state.imageList || [];
 	        for (var i = 0; i < imageList.length; i++) {
@@ -22389,7 +22433,7 @@
 	        }
 	        return null;
 	    },
-	    inRect: function inRect(x, y, target, type) {
+	    inRect: function (x, y, target, type) {
 	        // console.log(x, y, target, type);
 	        //additional condition for transformation
 	        var realPoint = {
@@ -22417,7 +22461,7 @@
 	            }
 	        }
 	    },
-	    transformTargetPoint: function transformTargetPoint(targetPoint, basePoint, translate, scale) {
+	    transformTargetPoint: function (targetPoint, basePoint, translate, scale) {
 	        var dstPoint = {
 	            x: 0,
 	            y: 0
@@ -22426,7 +22470,7 @@
 	        dstPoint.y = (targetPoint.y - basePoint.y) * scale.h + basePoint.y + translate.y;
 	        return dstPoint;
 	    },
-	    recoverTargetPointFromTransformation: function recoverTargetPointFromTransformation(dstPoint, basePoint, translate, scale) {
+	    recoverTargetPointFromTransformation: function (dstPoint, basePoint, translate, scale) {
 	        if (!translate) {
 	            translate = {
 	                x: 0,
@@ -22450,14 +22494,14 @@
 	            y: (dstPoint.y - translate.y - basePoint.y) / scale.h + basePoint.y
 	        };
 	    },
-	    inRawRect: function inRawRect(x, y, offsetX, offsetY, width, height) {
+	    inRawRect: function (x, y, offsetX, offsetY, width, height) {
 	        if (x >= offsetX && x <= offsetX + width && y >= offsetY && y <= offsetY + height) {
 	            return true;
 	        } else {
 	            return false;
 	        }
 	    },
-	    invertPointFromTransform: function invertPointFromTransform(point, basePoint, transform) {
+	    invertPointFromTransform: function (point, basePoint, transform) {
 	        var transformMatrix = [[transform.a, transform.c, transform.e], [transform.b, transform.d, transform.f], [0, 0, 1]];
 	        var translateMatrix = [[1, 0, -basePoint.x], [0, 1, -basePoint.y], [0, 0, 1]];
 	        // var combinedMatrix = math.multiply(math.inv(transformMatrix),translateMatrix);
@@ -22468,7 +22512,7 @@
 	            y: realPoint[1]
 	        };
 	    },
-	    findClickTargets: function findClickTargets(x, y) {
+	    findClickTargets: function (x, y) {
 	        var project = this.state.project;
 	        var targets = [];
 	        if (project.pageList && project.pageList.length) {
@@ -22556,7 +22600,7 @@
 	        }
 	        return targets;
 	    },
-	    handleInnerClickedElement: function handleInnerClickedElement(widget, x, y) {
+	    handleInnerClickedElement: function (widget, x, y) {
 	        var left = widget.info.left;
 	        var top = widget.info.top;
 	        var width = widget.info.width;
@@ -22610,7 +22654,7 @@
 	                break;
 	        }
 	    },
-	    handleInputKeyboardKeyPressed: function handleInputKeyboardKeyPressed(curKey, widget) {
+	    handleInputKeyboardKeyPressed: function (curKey, widget) {
 	        var project = this.state.project;
 	        switch (curKey.value) {
 	            case '0':
@@ -22673,7 +22717,7 @@
 	                break;
 	        }
 	    },
-	    handleSlideBlockInnerPress: function handleSlideBlockInnerPress(widget, x, y) {
+	    handleSlideBlockInnerPress: function (widget, x, y) {
 	        var left = widget.info.left;
 	        var top = widget.info.top;
 	        var width = widget.info.width;
@@ -22692,15 +22736,15 @@
 	            curValue = (x - 0.5 * widget.slideSize.w) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
 	            // console.log(curValue,x)
 	        } else {
-	                bgRange = height - widget.slideSize.h || 1;
-	                curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
-	            }
+	            bgRange = height - widget.slideSize.h || 1;
+	            curValue = (height - y - 0.5 * widget.slideSize.h) / bgRange * (widget.info.maxValue - widget.info.minValue) + widget.info.minValue;
+	        }
 	        curValue = parseInt(curValue);
 	        curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
 	        widget.curValue = curValue;
 	        // console.log(curValue,widget.info);
 	    },
-	    handlePress: function handlePress(e) {
+	    handlePress: function (e) {
 	        // console.log(e);
 	        // console.log(e.target.scrollLeft,e.targetTag.scrollTop);
 	        var relativeRect = this.getRelativeRect(e);
@@ -22720,7 +22764,7 @@
 	            }
 	        }
 	    },
-	    handleOk: function handleOk(type) {
+	    handleOk: function (type) {
 	        var page = this.state.project.pageList[this.state.curPageIdx];
 	        if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
 	            //has highlight
@@ -22755,7 +22799,7 @@
 	            }
 	        }
 	    },
-	    handleModifyHighlightingWidget: function handleModifyHighlightingWidget(widget, direction) {
+	    handleModifyHighlightingWidget: function (widget, direction) {
 	        switch (widget.subType) {
 	            case 'MyDateTime':
 
@@ -22817,7 +22861,7 @@
 	                break;
 	        }
 	    },
-	    handleMoveNext: function handleMoveNext(direction) {
+	    handleMoveNext: function (direction) {
 	        lg('move', direction);
 	        var page = this.state.project.pageList[this.state.curPageIdx];
 	        var curDirection;
@@ -22858,7 +22902,7 @@
 	            }
 	        }
 	    },
-	    getRelativeRect: function getRelativeRect(e) {
+	    getRelativeRect: function (e) {
 	        var clientRect = e.target.getBoundingClientRect();
 	        var x = Math.round(e.pageX - clientRect.left);
 	        var y = Math.round(e.pageY - clientRect.top);
@@ -22868,7 +22912,7 @@
 	            y: y
 	        };
 	    },
-	    handleMove: function handleMove(e) {
+	    handleMove: function (e) {
 	        var relativeRect = this.getRelativeRect(e);
 	        var x = relativeRect.x;
 	        var y = relativeRect.y;
@@ -22886,8 +22930,8 @@
 	            this.mouseState.state = 'move';
 	        }
 	    },
-	    handleHolding: function handleHolding() {},
-	    handleDragging: function handleDragging(mouseState) {
+	    handleHolding: function () {},
+	    handleDragging: function (mouseState) {
 	        var targets = this.state.currentPressedTargets;
 	        for (var i = 0; i < targets.length; i++) {
 	            if (targets[i].type == 'widget') {
@@ -22896,7 +22940,7 @@
 	            }
 	        }
 	    },
-	    handleWidgetDrag: function handleWidgetDrag(widget, mouseState) {
+	    handleWidgetDrag: function (widget, mouseState) {
 	        var subType = widget.subType;
 	        var left = widget.info.left;
 	        var top = widget.info.top;
@@ -22916,27 +22960,27 @@
 	            this.drawAfterMouseAction(mouseState);
 	        }
 	    },
-	    handleWidgetPress: function handleWidgetPress(widget, mouseState) {
+	    handleWidgetPress: function (widget, mouseState) {
 	        var needRedraw = false;
 	        switch (widget.subType) {
 	            case 'MyButton':
 	                if (widget.buttonModeId == '0') {
 	                    //normal
 	                } else if (widget.buttonModeId == '1') {
-	                        //switch
-	                        //if (widget.switchState) {
-	                        //	widget.switchState = !widget.switch
-	                        //}else{
-	                        //	widget.switchState = 1;
-	                        //}
-	                        //update its tag
-	                        var targetTag = this.findTagByName(widget.tag);
-	                        if (targetTag) {
-	                            targetTag.value = parseInt(targetTag.value);
-	                            // targetTag.value = targetTag.value > 0 ? 0 : 1;
-	                            this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
-	                        }
+	                    //switch
+	                    //if (widget.switchState) {
+	                    //	widget.switchState = !widget.switch
+	                    //}else{
+	                    //	widget.switchState = 1;
+	                    //}
+	                    //update its tag
+	                    var targetTag = this.findTagByName(widget.tag);
+	                    if (targetTag) {
+	                        targetTag.value = parseInt(targetTag.value);
+	                        // targetTag.value = targetTag.value > 0 ? 0 : 1;
+	                        this.setTagByTag(targetTag, targetTag.value > 0 ? 0 : 1);
 	                    }
+	                }
 	                widget.mouseState = mouseState;
 	                needRedraw = true;
 	                break;
@@ -22970,7 +23014,7 @@
 	            this.drawAfterMouseAction(mouseState);
 	        }
 	    },
-	    getImageSize: function getImageSize(imgName, defaultValueW, defaultValueH) {
+	    getImageSize: function (imgName, defaultValueW, defaultValueH) {
 	        var img = this.getImage(imgName);
 	        img = img && img.content || null;
 	        if (!!img) {
@@ -22986,7 +23030,7 @@
 	            };
 	        }
 	    },
-	    handleRelease: function handleRelease(e) {
+	    handleRelease: function (e) {
 	        var x = Math.round(e.pageX - e.target.offsetLeft);
 	        var y = Math.round(e.pageY - e.target.offsetTop);
 	        this.mouseState.state = 'release';
@@ -23001,7 +23045,7 @@
 	        }
 	        this.state.currentPressedTargets = [];
 	    },
-	    handleElementRelease: function handleElementRelease(elem, mouseState) {
+	    handleElementRelease: function (elem, mouseState) {
 	        var needRedraw = false;
 	        switch (elem.type) {
 	            case 'widget':
@@ -23022,12 +23066,12 @@
 	            this.drawAfterMouseAction(mouseState);
 	        }
 	    },
-	    drawAfterMouseAction: function drawAfterMouseAction(mouseState) {
+	    drawAfterMouseAction: function (mouseState) {
 	        var options = {};
 	        options.mouseState = _.cloneDeep(mouseState);
 	        this.draw(null, options);
 	    },
-	    getCertainAction: function getCertainAction(action, type) {
+	    getCertainAction: function (action, type) {
 	        var certainAction = [];
 	        var flag = 0;
 	        for (var i = 0; i < action.length; i++) {
@@ -23047,7 +23091,7 @@
 	        ;
 	        return certainAction;
 	    },
-	    handleTargetAction: function handleTargetAction(target, type) {
+	    handleTargetAction: function (target, type) {
 	        if (target.actions && target.actions.length) {
 	            for (var i = 0; i < target.actions.length; i++) {
 	                if (target.actions[i].trigger == type) {
@@ -23058,7 +23102,7 @@
 	            }
 	        }
 	    },
-	    findTagByName: function findTagByName(tag) {
+	    findTagByName: function (tag) {
 	        var tagList = this.state.tagList;
 	        // console.log(tag,tagList);
 	        if (tag && tag != "") {
@@ -23072,7 +23116,7 @@
 
 	        return null;
 	    },
-	    findTagByTag: function findTagByTag(tag) {
+	    findTagByTag: function (tag) {
 
 	        if (tag && tag != "") {
 	            tag = JSON.parse(tag);
@@ -23088,20 +23132,20 @@
 
 	        return null;
 	    },
-	    setTagByName: function setTagByName(name, value) {
+	    setTagByName: function (name, value) {
 	        var tag = this.findTagByName(name);
 	        if (tag) {
 	            tag.value = value;
 	            this.setState({ tag: tag });
 	        }
 	    },
-	    setTagByTag: function setTagByTag(tag, value) {
+	    setTagByTag: function (tag, value) {
 	        if (tag) {
 	            tag.value = value;
 	            this.setState({ tag: tag });
 	        }
 	    },
-	    timerFlag: function timerFlag(param) {
+	    timerFlag: function (param) {
 	        if (param && param.tag) {
 	            if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
 	                //get SysTmr
@@ -23111,7 +23155,7 @@
 
 	        return -1;
 	    },
-	    processCmds: function processCmds(cmds) {
+	    processCmds: function (cmds) {
 	        // for (var i = 0; i < cmds.length; i++) {
 	        //     this.process(cmds[i]);
 	        // }
@@ -23120,7 +23164,7 @@
 	            this.process(cmds, 0);
 	        }
 	    },
-	    getParamValue: function getParamValue(param) {
+	    getParamValue: function (param) {
 	        var value;
 	        // if (param.tag && param.tag !== ''){
 	        //     value = this.getValueByTagName(param.tag);
@@ -23149,7 +23193,7 @@
 	        // console.log(value,param,(typeof param));
 	        return value;
 	    },
-	    process: function process(cmds, index) {
+	    process: function (cmds, index) {
 	        var cmdsLength = cmds.length;
 	        if (index >= cmdsLength) {
 	            return;
@@ -23537,7 +23581,7 @@
 	            this.process(cmds, index + nextStep.step);
 	        }
 	    },
-	    rwRegister: function rwRegister(registerIdx, rwType) {
+	    rwRegister: function (registerIdx, rwType) {
 	        var registers = this.state.registers;
 	        var register = registers[registerIdx];
 	        var tags = register.tags;
@@ -23573,7 +23617,7 @@
 	            });
 	        }
 	    },
-	    updateTag: function updateTag(curTagIdx, value) {
+	    updateTag: function (curTagIdx, value) {
 	        var tagList = this.state.tagList;
 	        if (curTagIdx >= 0 && curTagIdx < tagList.length) {
 	            // tagList[curTagIdx].value = value;
@@ -23583,12 +23627,12 @@
 	            });
 	        }
 	    },
-	    handleRegisterChange: function handleRegisterChange(key, value) {
+	    handleRegisterChange: function (key, value) {
 	        var registers = this.state.registers;
 	        registers[key].value = value;
 	        this.setState({ registers: registers });
 	    },
-	    render: function render() {
+	    render: function () {
 	        // console.log('registers',this.state.registers);
 	        return React.createElement(
 	            'div',
@@ -49878,13 +49922,11 @@
 /* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
 	var React = __webpack_require__(1);
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState: function getInitialState() {
+	    getInitialState: function () {
 	        return {
 	            tagList: this.props.tagList || [],
 	            tagOldValue: '',
@@ -49892,7 +49934,7 @@
 	            inputingTag: false
 	        };
 	    },
-	    handleValueInputFocus: function handleValueInputFocus(e) {
+	    handleValueInputFocus: function (e) {
 	        var tagList = this.state.tagList;
 	        var curTagName = e.target.name;
 	        var curTagIdx = -1;
@@ -49904,7 +49946,7 @@
 	        }
 	        this.setState({ tagOldValue: e.target.value, curTagIdx: curTagIdx, inputingTag: true });
 	    },
-	    handleValueInputBlur: function handleValueInputBlur(e) {
+	    handleValueInputBlur: function (e) {
 	        var tagOldValue = this.state.tagOldValue;
 	        if (tagOldValue !== 'old') {
 	            //handle blur
@@ -49916,7 +49958,7 @@
 	        }
 	        this.setState({ inputingTag: false });
 	    },
-	    handleValueInputEnter: function handleValueInputEnter(e) {
+	    handleValueInputEnter: function (e) {
 
 	        if (e.keyCode == 13) {
 	            //enter
@@ -49931,12 +49973,12 @@
 	            }
 	        }
 	    },
-	    updateTag: function updateTag(curTagIdx, value) {
+	    updateTag: function (curTagIdx, value) {
 	        if (this.props.updateTag && typeof this.props.updateTag == 'function') {
 	            this.props.updateTag(curTagIdx, value);
 	        }
 	    },
-	    handleValueInputChange: function handleValueInputChange(e) {
+	    handleValueInputChange: function (e) {
 	        if (this.state.curTagIdx != -1) {
 	            var curTag = this.state.tagList[this.state.curTagIdx];
 	            if (e.target.value == '') {
@@ -49948,13 +49990,13 @@
 	            this.setState({ curTag: curTag });
 	        }
 	    },
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	    componentWillReceiveProps: function (nextProps) {
 	        var inputingTag = this.state.inputingTag;
 	        if (!inputingTag) {
 	            this.setState({ tagList: nextProps.tagList });
 	        }
 	    },
-	    render: function render() {
+	    render: function () {
 
 	        return React.createElement(
 	            'div',
@@ -50031,8 +50073,6 @@
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
 	/**
 	 * Created by ChangeCheng on 16/8/24.
 	 */
@@ -50040,13 +50080,13 @@
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState: function getInitialState() {
+	    getInitialState: function () {
 	        return {};
 	    },
-	    handleValueInputChange: function handleValueInputChange(key, e) {
+	    handleValueInputChange: function (key, e) {
 	        this.props.handleRegisterChange(key, Number(e.target.value));
 	    },
-	    render: function render() {
+	    render: function () {
 	        // console.log('curRegisters',this.props.registers);
 	        return React.createElement(
 	            'div',
@@ -50105,8 +50145,6 @@
 /* 165 */
 /***/ function(module, exports) {
 
-	'use strict';
-
 	var state = {
 	    notLoad: 'notLoad',
 	    willLoad: 'willLoad',
@@ -50120,8 +50158,6 @@
 /***/ },
 /* 166 */
 /***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
 
 	/**
 	 * Created by ChangeCheng on 16/8/22.
@@ -50310,7 +50346,7 @@
 	    slices: [new KeyTexObj('', '', '', 'rgba(0,0,0,1.0)')]
 	};
 
-	var getInputKeyboard = function getInputKeyboard(width, height, offsetX, offsetY) {
+	var getInputKeyboard = function (width, height, offsetX, offsetY) {
 	    kWidth = width || kWidth;
 	    kHeight = height || kHeight;
 	    kOffsetX = offsetX || kOffsetX;
@@ -50363,8 +50399,6 @@
 /***/ },
 /* 167 */
 /***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
 
 	/**
 	 * Created by ChangeCheng on 16/8/29.
@@ -50557,8 +50591,6 @@
 /* 168 */
 /***/ function(module, exports) {
 
-	'use strict';
-
 	/**
 	 * Created by ChangeCheng on 16/9/8.
 	 */
@@ -50588,8 +50620,6 @@
 /* 169 */
 /***/ function(module, exports) {
 
-	"use strict";
-
 	/**
 	 * Created by ChangeCheng on 2016/10/14.
 	 */
@@ -50597,55 +50627,55 @@
 
 	var EasingFunctions = {
 	    // no easing, no acceleration
-	    linear: function linear(t) {
+	    linear: function (t) {
 	        return t;
 	    },
 	    // accelerating from zero velocity
-	    easeInQuad: function easeInQuad(t) {
+	    easeInQuad: function (t) {
 	        return t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutQuad: function easeOutQuad(t) {
+	    easeOutQuad: function (t) {
 	        return t * (2 - t);
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutQuad: function easeInOutQuad(t) {
+	    easeInOutQuad: function (t) {
 	        return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 	    },
 	    // accelerating from zero velocity
-	    easeInCubic: function easeInCubic(t) {
+	    easeInCubic: function (t) {
 	        return t * t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutCubic: function easeOutCubic(t) {
+	    easeOutCubic: function (t) {
 	        return --t * t * t + 1;
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutCubic: function easeInOutCubic(t) {
+	    easeInOutCubic: function (t) {
 	        return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
 	    },
 	    // accelerating from zero velocity
-	    easeInQuart: function easeInQuart(t) {
+	    easeInQuart: function (t) {
 	        return t * t * t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutQuart: function easeOutQuart(t) {
+	    easeOutQuart: function (t) {
 	        return 1 - --t * t * t * t;
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutQuart: function easeInOutQuart(t) {
+	    easeInOutQuart: function (t) {
 	        return t < .5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
 	    },
 	    // accelerating from zero velocity
-	    easeInQuint: function easeInQuint(t) {
+	    easeInQuint: function (t) {
 	        return t * t * t * t * t;
 	    },
 	    // decelerating to zero velocity
-	    easeOutQuint: function easeOutQuint(t) {
+	    easeOutQuint: function (t) {
 	        return 1 + --t * t * t * t * t;
 	    },
 	    // acceleration until halfway, then deceleration
-	    easeInOutQuint: function easeInOutQuint(t) {
+	    easeInOutQuint: function (t) {
 	        return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
 	    }
 	};
@@ -50655,8 +50685,6 @@
 /***/ },
 /* 170 */
 /***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
 
 	/**
 	 * Created by ChangeCheng on 2016/10/16.
