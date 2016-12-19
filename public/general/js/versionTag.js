@@ -3,7 +3,7 @@
  */
 ;(function () {
     window.onload = function () {
-        var versionNum ='1.5';
+        var versionNum ='1.7';
         window.ideVersion = versionNum;
         var versionTag = document.createElement('div');
         versionTag.id = 'version-tag';

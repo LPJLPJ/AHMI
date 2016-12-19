@@ -157,6 +157,10 @@ router.route('/project/:id/generate')
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
 
+
+router.route('/project/:id/savedatacompress')
+    .post(projectInfo.saveDataAndCompress);
+
 router.route('/project/:id/userType')
     .get(projectInfo.getUserType);
 
@@ -170,6 +174,9 @@ router.route('/project/delete')
 //project file
 router.route('/project/:id/upload')
     .post(uploadFile.uploadProjectFile);
+
+router.route('/project/:id/generatetex')
+    .post(uploadFile.uploadTex);
 
 router.route('/project/:id/delete')
     .post(uploadFile.deleteProjectFile);

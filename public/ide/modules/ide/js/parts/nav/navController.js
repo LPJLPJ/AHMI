@@ -675,7 +675,7 @@
 
         function generateDataFile(format){
             generateData(format);
-            if (window.local){
+            if (window){
                 if (window.spinner){
                     window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
                     window.spinner.show();
@@ -742,7 +742,7 @@
 
         function play(){
             generateData()
-            window.cachedResourceList = _.cloneDeep(ResourceService.getGlobalResources());
+            window.cachedResourceList = ResourceService.getGlobalResources();
 
             $scope.component.simulator.show = true;
 
