@@ -217,7 +217,7 @@ ideServices
             var r = 54;
             var g = 71;
             var b = 92;
-            var jsonStr = '{"objects":[],"background":"rgb(' + r + ',' + g + ',' + b + ')"}';
+            var jsonStr = {"objects":[],"background":"rgb(" + r + "," + g + "," + b + ")"};
             return {
                 url: '',
                 id: Math.random().toString(36).substr(2),
