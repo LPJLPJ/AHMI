@@ -2,17 +2,25 @@
  * Created by lixiang on 2016/10/19.
  */
 ideServices.service('AnimationService',['ProjectService','Type',function(ProjectService,Type){
-    function Animation(title,id,xTranslate,yTranslate,xScale,yScale,duration){
+    function Animation(title,id,srcX,srcY,srcScaleX,srcScaleY,xTranslate,yTranslate,xScale,yScale,duration){
         this.title=title;
         this.id=id;
         this.animationAttrs={
             translate:{
+                srcPos:{
+                    x:srcX,
+                    y:srcY
+                },
                 dstPos:{
                     x:xTranslate,
                     y:yTranslate
                 }
             },
             scale:{
+                srcScale:{
+                    x:srcScaleX,
+                    y:srcScaleY
+                },
                 dstScale:{
                     x:xScale,
                     y:yScale
@@ -34,7 +42,7 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
     var scale=new Transition('SCALE','缩放',1);
     var transition=[noTransition,moveLR,moveRL,scale];
 
-    var tempAnimation = new Animation('动画',null,0,0,1,1,0);
+    var tempAnimation = new Animation('动画',null,null,null,1,1,0,0,1,1,0);
     var defaultAnimation = [tempAnimation];
 
     var animations=[];
