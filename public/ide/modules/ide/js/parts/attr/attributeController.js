@@ -1066,7 +1066,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             cursor:selectCursor,
             progressModeId:selectModeId,
             thresholdModeId:selectThresholdModeId
-        };
+        }
         ProjectService.ChangeAttributeCursor(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
