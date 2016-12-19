@@ -38,6 +38,8 @@
     <script src="../../public/ide/lib/lodash/dist/lodash.min.js"></script>
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
     <script src="../../public/ide/lib/angular-modal/modal.min.js"></script>
+    <script src="../../public/ide/lib/jquery-ui.js"></script>
+    <script src="../../public/ide/lib/sortable.js"></script>
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
@@ -180,6 +182,7 @@
     <script src="../../public/config/customConfig.js"></script>
     <script src="../../public/general/js/versionTag.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>
+    <script src="../../public/ide/modules/ide/js/parts/attr/SortableController.js"></script>
 
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
     <!--directive-->
@@ -2340,7 +2343,8 @@
                             <td class="col-xs-1">操作</td>
                         </tr>
                         </thead>
-                        <tbody>
+                        <div ng-controller="sortCtrl">
+                        <tbody ui-sortable="sortableOptions">
                         <tr class="img-info" ng-repeat="file in component.top.files">
                             <td><img width="40px" height="40px" ng-src="{{file.src}}"/></td>
                             <td>
@@ -2353,6 +2357,7 @@
                             </td>
                         </tr>
                         </tbody>
+                        </div>
                     </table>
 
                     <script type="text/ng-template" id="deletePanelModal.html">
