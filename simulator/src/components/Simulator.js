@@ -1565,6 +1565,27 @@ module.exports =   React.createClass({
                     break;
                 case '2':
                     break;
+                case '3':
+                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+                    var drawColor=this.confirmOneColor(widget,curProgress);
+                    switch(widget.info.arrange){
+                        case 'vertical':
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, null, drawColor);
+                            if (cursor){
+                                var cursorSlice = widget.texList[2].slices[0];
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
+                             }
+                            break;
+                        case 'horizontal':
+                        default:
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, null, drawColor);
+                            if (cursor){
+                                var cursorSlice = widget.texList[2].slices[0];
+                                this.drawCursor(width*curScale+curX,curY,width,height,true,width*(1-curScale),cursorSlice.imgSrc,cursorSlice.color);
+                            }
+                            break;
+                    }
+                    break;
             }
 
 
@@ -1714,6 +1735,34 @@ module.exports =   React.createClass({
             mixedColor[i] = parseInt(color1Array[i] * ratio + (1-ratio)* color2Array[i]);
         }
         return 'rgba('+mixedColor.join(',')+')';
+    },
+    confirmOneColor:function(widget,curProgress){
+        var progressValue=parseInt(curProgress);
+        var color1=widget.texList[1].slices[0].color,
+            color2=widget.texList[2].slices[0].color,
+            thresholdModeId=widget.info.thresholdModeId,
+            threshold1=widget.info.threshold1,
+            threshold2=widget.info.threshold2;
+        if(thresholdModeId=='2'){
+            var color3=widget.texList[3].slices[0].color;
+        };
+        var drawColor='rgba(0,0,0,1)';
+        if(thresholdModeId=='1'){
+            if(progressValue<threshold1){
+                drawColor=color1;
+            }else if(progressValue>=threshold2){
+                drawColor=color2;
+            }
+        }else if(thresholdModeId=='2'){
+            if(progressValue<threshold1){
+                drawColor=color1;
+            }else if(progressValue>=threshold1&&progressValue<threshold2){
+                drawColor=color2;
+            }else if(progressValue>=threshold2){
+                drawColor=color3;
+            }
+        }
+        return drawColor;
     },
     transColorToArray:function (color) {
         //rgba to array
