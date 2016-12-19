@@ -382,7 +382,6 @@ ideServices
                         var _callback=arg.callback;
                         var progressModeId=self.progressModeId;
                         var cursor=self.cursor;
-                        console.log('progressModeId,thresholdModeId,cursor',progressModeId,cursor);
                         self.backgroundColor=level.texList[0].slices[0].color;
                         self.backgroundImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                         if(progressModeId=='0'){
@@ -596,6 +595,13 @@ ideServices
                         }else if(this.progressModeId=='2'){
                             //脚本进度条，啥也不画！
                         }else if(this.progressModeId=='3'){
+                            ctx.fillStyle=this.backgroundColor;
+                            ctx.fillRect(
+                                -this.width / 2,
+                                -this.height / 2,
+                                this.width,
+                                this.height
+                            );
                             if(this.arrange=='horizontal'){
                                 if(this.cursorImageElement){
                                     ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -624,8 +630,32 @@ ideServices
                                     ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
                                 }
                             }else{
-                                ctx.fillStyle=progressColor;
-                                ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                                 if(this.cursorImageElement){
+                                    ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
+                                }
+                                if(this.thresholdModeId=='1'){
+                                    if(this.threshold1!=null){
+                                       if(this.progressValueOri<this.threshold1){
+                                            ctx.fillStyle=this.color1;
+                                        }else if(this.progressValueOri>=this.threshold1){
+                                            ctx.fillStyle=this.color2;
+                                        } 
+                                    }else{
+                                        ctx.fillStyle=this.null;
+                                    }
+                                    ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                                }else if(this.thresholdModeId=='2'){
+                                    if(this.progressValueOri<this.threshold1){
+                                        ctx.fillStyle=this.color1;
+                                    }else if(this.progressValueOri>=this.threshold1&&this.progressValueOri<this.threshold2){
+                                        ctx.fillStyle=this.color2;
+                                    }else if(this.progressValueOri>=this.threshold2){
+                                        ctx.fillStyle=this.color3;
+                                    }else{
+                                        ctx.fillStyle=null;
+                                    }
+                                    ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                                }
                                 if(this.cursorImageElement){
                                     ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                                 }
