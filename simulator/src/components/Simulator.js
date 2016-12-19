@@ -758,9 +758,10 @@ module.exports =   React.createClass({
         //         }
         //     }
         // };
-        var scale = (animationAttrs.scale&&animationAttrs.scale.dstScale)||{x:1,y:1};
-        var translate = (animationAttrs.translate&&animationAttrs.translate.dstPos)||{x:0,y:0};
-
+        var srcScale = (animationAttrs.scale&&animationAttrs.scale.srcScale)||{x:1,y:1};
+        var dstScale = (animationAttrs.scale&&animationAttrs.scale.dstScale)||{x:1,y:1};
+        var srcTranslate = (animationAttrs.translate&&animationAttrs.translate.srcPos)||{x:0,y:0};
+        var dstTranslate = (animationAttrs.translate&&animationAttrs.translate.dstPos)||{x:0,y:0};
         var type = target.type;
         var duration = (animation&&animation.duration) || 1000;
         // console.log(scale,translate,duration)
@@ -769,44 +770,45 @@ module.exports =   React.createClass({
         var dstTransformObj={};
         if(type === 'MyLayer'){
             srcTransformObj = {
-                a:1,
+                a:srcScale.x,
                 b:0,
                 c:0,
-                d:1,
-                e:0,
-                f:0
+                d:srcScale.y,
+                e:srcTranslate-target.x,
+                f:srcTranslate-target.y
 
             };
             dstTransformObj = {
-                a:scale.x,
+                a:dstScale.x,
                 b:0,
                 c:0,
-                d:scale.y,
-                e:translate.x-target.x,
-                f:translate.y-target.y
+                d:dstScale.y,
+                e:dstTranslate.x-target.x,
+                f:dstTranslate.y-target.y
             }
         }else{
             srcTransformObj = {
-                a:1,
+                a:srcScale.x,
                 b:0,
                 c:0,
-                d:1,
-                e:0,
-                f:0
+                d:srcScale.y,
+                e:srcTranslate-target.info.left,
+                f:srcTranslate-target.info.top
 
             };
             dstTransformObj = {
-                a:scale.x,
+                a:dstScale.x,
                 b:0,
                 c:0,
-                d:scale.y,
-                e:translate.x-target.info.left,
-                f:translate.y-target.info.top
+                d:dstScale.y,
+                e:dstTranslate.x-target.info.left,
+                f:dstTranslate.y-target.info.top
             }
         }
 
+        var easingFunc = 'easeInOutCubic';
 
-        AnimationManager.stepObj(srcTransformObj,dstTransformObj,duration,frames,'easeInOutCubic',function (deltas) {
+        AnimationManager.stepObj(srcTransformObj,dstTransformObj,duration,frames,easingFunc,function (deltas) {
 
             // offctx.translate(deltas.curX,deltas.curY);
             var transformMatrix = {
