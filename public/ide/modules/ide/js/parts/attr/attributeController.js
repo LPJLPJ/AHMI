@@ -1053,16 +1053,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var selectObj=ProjectService.getCurrentSelectObject();
         var selectCursor=null;
         var selectModeId=null;
+        var selectThresholdModeId=null;
         if(selectObj.type==Type.MyProgress){
             selectCursor=$scope.component.progress.cursor;
             selectModeId=$scope.component.progress.progressModeId;
+            selectThresholdModeId=$scope.component.progress.thresholdModeId;
         }else{
             return;
         }
         var oldOperate=ProjectService.SaveCurrentOperate();
         var option={
             cursor:selectCursor,
-            progressModeId:selectModeId
+            progressModeId:selectModeId,
+            thresholdModeId:selectThresholdModeId
         };
         ProjectService.ChangeAttributeCursor(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);

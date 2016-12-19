@@ -6011,6 +6011,9 @@ ideServices
                     //多色进度条
                     selectObj.level.texList=[];
                     selectObj.level.texList.push(new ProgressTex('进度条背景',null,'rgba(240,145,66,1)'),new ProgressTex('颜色1',null,'rgba(0,255,0,1)'),new ProgressTex('颜色2',null,'rgba(255,0,0,1)'));
+                    if(_option.thresholdModeId=='2'){
+                        selectObj.level.texList.push(new ProgressTex('颜色3',null,'rgba(0,0,255,1)'));
+                    }
                 }
                 if(_option.cursor=='1'){
                     selectObj.level.texList.push(new ProgressTex('光标纹理',null,'rgba(0,0,0,0)'));
