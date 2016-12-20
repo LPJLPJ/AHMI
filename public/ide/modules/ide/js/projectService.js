@@ -2232,18 +2232,7 @@ ideServices
 
 
                     });
-                    //for fix scale bug!!!
-                    //var currentPageIndex= _indexById(project.pages, currentPage);
-                    //var layer = getCurrentLayer();
-                    //_self.OnPageSelected(currentPageIndex,function () {
-                    //    //$rootScope.$emit('ChangeCurrentPage',null, function () {});
-                    //},false);
-                    //
-                    //$timeout(function () {
-                    //    _self.OnLayerSelected(layer,function(){
-                    //        $rootScope.$emit('ChangeCurrentPage',null,function(){});
-                    //    },false);
-                    //},1);
+
 
                 }
 
@@ -2395,107 +2384,6 @@ ideServices
                 });
                 return fabLayer;
             }
-
-            /**
-             * 次要操作
-             * 当Layer在Page中发生了缩放时
-             * 改变SubLayerNode画布并截图,贴到Layer上
-             * @param layer
-             * @param subLayer
-             * @param _successCallback
-             * @constructor
-             */
-            // this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
-            //     if (renderingSubLayer){
-            //         return;
-            //     }
-            //     renderingSubLayer=true;
-            //     var self = this;
-            //     var subLayerNode=CanvasService.getSubLayerNode();
-            //     var currentSubLayer=subLayer;
-            //     var currentLayer=layer;
-            //
-            //     if (currentLayer.showSubLayer.backgroundImage&&currentLayer.showSubLayer.backgroundImage!=''){
-            //         subLayerNode.clear();
-            //
-            //
-            //         subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
-            //             //subLayerNode.setWidth(currentLayer.info.width);
-            //             //subLayerNode.setHeight(currentLayer.info.height);
-            //             _self.ScaleCanvas('subCanvas',currentLayer);
-            //
-            //             subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
-            //
-            //                 subLayerNode.deactivateAll();
-            //                 subLayerNode.renderAll();
-            //                 currentSubLayer.proJsonStr=subLayerNode.toJSON();
-            //
-            //
-            //                 currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
-            //                 // console.log(JSON.stringify(layer));
-            //                 // self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
-            //                 //     renderingSubLayer = false;
-            //                 //     _successCallback && _successCallback();
-            //                 // })
-            //                 renderingSubLayer = false;
-            //                 _successCallback && _successCallback();
-            //             },{
-            //                 width:currentLayer.info.width,
-            //                 height:currentLayer.info.height
-            //                 })
-            //
-            //
-            //         })
-            //     }
-            //     else {
-            //         //subLayerNode.clear();
-            //
-            //
-            //         subLayerNode.setBackgroundImage(null, function () {
-            //
-            //             subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
-            //                 subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
-            //
-            //                     //subLayerNode.setWidth(currentLayer.info.width);
-            //                     //subLayerNode.setHeight(currentLayer.info.height);
-            //                     // console.log('showing sublayer')
-            //                     _self.ScaleCanvas('subCanvas',currentLayer);
-            //
-            //                     subLayerNode.deactivateAll();
-            //                     subLayerNode.renderAll();
-            //                     currentSubLayer.proJsonStr= subLayerNode.toJSON();
-            //                     // console.log('sublayer',_.cloneDeep(currentSubLayer.proJsonStr));
-            //                     // console.log('sublayer pro',JSON.stringify(currentSubLayer.proJsonStr));
-            //                     currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
-            //                     currentLayer.url = currentSubLayer.url;
-            //                     // console.log('sublayer url',''+currentSubLayer.url)
-            //                     // console.log('layer',_.cloneDeep(layer))
-            //                     // setTestImg(''+currentSubLayer.url)
-            //
-            //                     //sync layer node
-            //                     // self.getFabLayerByLayer(currentLayer).fire('OnRefresh',function () {
-            //                     //     renderingSubLayer = false;
-            //                     //     _successCallback && _successCallback();
-            //                     // })
-            //
-            //                     renderingSubLayer = false;
-            //                     _successCallback && _successCallback();
-            //
-            //                     // renderingSubLayer = false;
-            //                     // _successCallback && _successCallback();
-            //                 })
-            //
-            //
-            //
-            //             })
-            //         });
-            //
-            //
-            //     }
-            //
-            //
-            //
-            // };
 
 
 
