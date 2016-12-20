@@ -197,6 +197,27 @@
                         <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
                     </div>
                 </script>
+                <a ng-click="component.tool.openCANPanel()" class="my-cmd-item" ng-class=""><span
+                        class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>
+                </a>
+                <script type="text/ng-template" id="navCANModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">导入CAN配置</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">
+                            <select  class="form-control dengModel-trigger"
+                                     ng-options="item.id as item.name for item in CANInfo"
+                                     ng-model="selectCANId">
+                                <option value="">---</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
                 <script type="text/ng-template" id="navModalCloseWindow.html">
                     <div class="modal-header">
                         <h3 class="modal-title">关闭前保存工程?</h3>

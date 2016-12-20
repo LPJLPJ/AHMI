@@ -85,6 +85,7 @@
                     generateDataFile:generateDataFile,
                     play:play,
                     openPanel:openPanel,
+                    openCANPanel:openCANPanel,
                     runSimulator:runSimulator,
                     closeSimulator:closeSimulator,
                     saveProject: saveProject.bind(null, null, true),
@@ -92,8 +93,7 @@
                     showRight:showRight,
                     showBottom:showBottom,
                     rotateCanvasLeft:rotateCanvasLeft,
-                    rotateCanvasRight:rotateCanvasRight,
-                    rotateProject:rotateProject,
+                    rotateCanvasRight:rotateCanvasRight
                 },
                 simulator:{
                     show:false
@@ -139,9 +139,9 @@
             var c = document.getElementById('c');
             var backgroundCanvas = document.getElementById('backgroundCanvas');
             var c1 = document.getElementById('c1');
-            c.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(-90deg);left:0;top:0";
-            backgroundCanvas.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(-90deg);left:0;top:0";
-            c1.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(-90deg);left:0;top:0";
+            c.style.cssText="transform:rotate(270deg);left:0;top:0";
+            backgroundCanvas.style.cssText="transform:rotate(270deg);left:0;top:0";
+            c1.style.cssText="transform:rotate(270deg);left:0;top:0";
             //var cNode = CanvasService.getPageNode();
             //var c1Node = CanvasService.getSubLayerNode();
             //cNode.deactivateAll();
@@ -154,15 +154,14 @@
             //c1Arr.map(function(obj){
             //    obj['selectable']=false;
             //});
-
         }
         function rotateCanvasRight(){
             var c = document.getElementById('c');
             var backgroundCanvas = document.getElementById('backgroundCanvas');
             var c1 = document.getElementById('c1');
-            c.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(0deg);left:0;top:0";
-            backgroundCanvas.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(0deg);left:0;top:0";
-            c1.style.cssText="-webkit-transition: all 500ms ease-in-out;transform:rotate(0deg);left:0;top:0";
+            c.style.cssText="transform:rotate(0deg);left:0;top:0";
+            backgroundCanvas.style.cssText="transform:rotate(0deg);left:0;top:0";
+            c1.style.cssText="transform:rotate(0deg);left:0;top:0";
             //var cNode = CanvasService.getPageNode();
             //var c1Node = CanvasService.getSubLayerNode();
             //cNode.deactivateAll();
@@ -175,19 +174,6 @@
             //c1Arr.map(function(obj){
             //    obj['selectable']=true;
             //});
-        }
-        function rotateProject(){
-            var pageNode=CanvasService.getPageNode();
-            var width=pageNode.getWidth();
-            var height=pageNode.getHeight();
-            pageNode.setWidth(height);
-            pageNode.setHeight(width);
-            pageNode.forEachObject(function(obj){
-                console.log(obj);
-                obj.rotate(90);
-                obj.set({originY:'bottom'});
-            });
-            pageNode.renderAll();
         }
 
         //listen for nw.win.close
@@ -787,16 +773,9 @@
                 controller: 'NavModalCloseWindwoCtl',
                 size: 'md',
                 backdrop:'static',
-                resolve: {
-
-                }
+                resolve: {}
             });
 
-            /**
-             * result.then接收两个匿名函数参数
-             * calling $uibModalInstance.close will trigger the former function
-             * when clicking at the background, pressing the esc button on keyboard, or calling $modalInstance.dismiss will trigger the latter one
-             */
             modalInstance.result.then(function (result) {
                 //save
                 sc && sc();
@@ -807,8 +786,6 @@
 
 
         function openPanel() {
-
-
             /**
              * 利用$uiModal服务，制作模态窗口
              */
@@ -822,11 +799,6 @@
                 }
             });
 
-            /**
-             * result.then接收两个匿名函数参数
-             * calling $uibModalInstance.close will trigger the former function
-             * when clicking at the background, pressing the esc button on keyboard, or calling $modalInstance.dismiss will trigger the latter one
-             */
             modalInstance.result.then(function (result) {
                 // console.log('new action');
                 // console.log(newAction);
@@ -836,7 +808,6 @@
                 console.log('Modal dismissed at: ' + new Date());
             });
         }
-
         function getSaveStatus(){
             var status = false;//未save
             if(document.getElementById("saveFlag").value==="true"){
@@ -845,12 +816,54 @@
             return status;
         }
 
+        function openCANPanel(){
+            var CANNames;
+            $http({
+                method:'GET',
+                url:'/CANProject/names'
+            })
+                .success(function(data,status,xhr){
+                    //console.log('data',data);
+                    CANInfo = data;
+                    var modalInstance = $uibModal.open({
+                        animation:$scope.animationsEnabled,
+                        templateUrl:'navCANModal.html',
+                        controller:'NavModalCANConfig',
+                        size:'md',
+                        resolve:{
+                            data:function(){
+                                return CANInfo;
+                            }
+                        }
+                    });
 
+                    modalInstance.result.then(function(result){
+                        importCANConfig(result);
+                    },function(){
+                        //toastr.warning('cancel');
+                    })
+                })
+                .error(function(err){
+                    console.log('err',err);
+                    toastr.warning('获取失败');
+                });
+        }
 
-
-
-
+        function importCANConfig(id){
+            console.log('CANId',id);
+            $http({
+                method:"GET",
+                url:"/CANProject/"+id+"/content"
+            })
+                .success(function(data,status,xhr){
+                    console.log('data',data);
+                    var CANConfig = JSON.parse(data.content);
+                }).error(function(data,status,xhr){
+                    console.log('err',err);
+                });
+        }
     }]);
+
 
 
 ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uibModalInstance) {
@@ -887,5 +900,26 @@ ide.controller('NavModalCloseWindwoCtl',['$scope','$uibModalInstance',function (
     //取消
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
+    };
+}]);
+
+ide.controller('NavModalCANConfig',['$scope','$uibModalInstance','data','NavModalCANConfigService',function($scope,$uibModalInstance,data,NavModalCANConfigService){
+    $scope.CANInfo = data;
+    $scope.selectCANId = NavModalCANConfigService.getCANId();
+    $scope.ok = function(){
+        NavModalCANConfigService.setCANId($scope.selectCANId);
+        $uibModalInstance.close($scope.selectCANId);
+    };
+    $scope.cancel = function(){
+        $uibModalInstance.dismiss('cancel');
+    };
+}]);
+ide.service('NavModalCANConfigService',[function(){
+    var CANId;
+    this.setCANId = function(id){
+        CANId=id;
+    };
+    this.getCANId = function(){
+        return CANId
     };
 }]);
