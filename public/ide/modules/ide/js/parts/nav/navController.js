@@ -10,7 +10,7 @@
         'Type',
         'CanvasService',
         '$uibModal',
-        'OperateQueService', 'TagService', 'ResourceService', 'TimerService', '$http', 'ProjectTransformService', 'RenderSerive', 'LinkPageWidgetsService',function ($scope, $timeout,
+        'OperateQueService', 'TagService', 'ResourceService', 'TimerService', '$http', 'ProjectTransformService', 'RenderSerive', 'LinkPageWidgetsService','NavModalCANConfigService',function ($scope, $timeout,
                                         GlobalService,
                                         NavService,
                                         saveProjectModal,
@@ -20,7 +20,7 @@
                                         Type,
                                         CanvasService,
                                         $uibModal,
-                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService) {
+                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService,NavModalCANConfigService) {
 
         var path, fs, __dirname;
         initLocalPref();
@@ -312,6 +312,7 @@
                     curScope.project.timerTags = TagService.getAllTimerTags();
                     curScope.project.timers = TagService.getTimerNum();
                     curScope.project.version = window.ideVersion;
+                    curScope.project.CANId = NavModalCANConfigService.getCANId();
                     var currentProject = curScope.project;
                     // console.log(currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
@@ -838,9 +839,13 @@
                     });
 
                     modalInstance.result.then(function(result){
-                        importCANConfig(result);
+                        //console.log('result',result);
+                        if(result){
+                            importCANConfig(result);
+                        }else{
+                            deleteCANConfig();
+                        }
                     },function(){
-                        //toastr.warning('cancel');
                     })
                 })
                 .error(function(err){
@@ -850,17 +855,38 @@
         }
 
         function importCANConfig(id){
-            console.log('CANId',id);
             $http({
-                method:"GET",
-                url:"/CANProject/"+id+"/content"
+                method:'POST',
+                url:'/CANProject/'+id+'/importCANFile',
+                data:{
+                    projectId:$scope.project.projectId
+                }
             })
-                .success(function(data,status,xhr){
-                    console.log('data',data);
-                    var CANConfig = JSON.parse(data.content);
-                }).error(function(data,status,xhr){
-                    console.log('err',err);
-                });
+            .success(function(data,status,xhr){
+                if(data=='ok'){
+                    toastr.info('导入成功');
+                }
+            })
+            .error(function(data,status,xhr){
+                console.log('导入失败',data);
+            });
+        }
+
+        function deleteCANConfig(){
+            $http({
+                method:'POST',
+                url:'/CANProject/'+$scope.project.projectId+'/deleteCANFile',
+                data:{}
+            })
+            .success(function(data,status,xhr){
+                if(data=='ok'){
+                    //console.log('删除成功');
+                    toastr.info('取消CAN配置')
+                }
+            })
+            .error(function(data,status,xhr){
+                console.log('删除失败',data);
+            })
         }
     }]);
 
@@ -907,8 +933,15 @@ ide.controller('NavModalCANConfig',['$scope','$uibModalInstance','data','NavModa
     $scope.CANInfo = data;
     $scope.selectCANId = NavModalCANConfigService.getCANId();
     $scope.ok = function(){
-        NavModalCANConfigService.setCANId($scope.selectCANId);
-        $uibModalInstance.close($scope.selectCANId);
+        if($scope.selectCANId!=NavModalCANConfigService.getCANId()){
+            //console.log('改变了');
+            NavModalCANConfigService.setCANId($scope.selectCANId);
+            $uibModalInstance.close($scope.selectCANId);
+        }else{
+            //console.log('未改变');
+            $uibModalInstance.dismiss('cancel');
+        }
+
     };
     $scope.cancel = function(){
         $uibModalInstance.dismiss('cancel');
