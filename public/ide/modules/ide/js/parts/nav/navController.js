@@ -355,7 +355,7 @@
                                 try {
                                     var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
                                     oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
-                                    console.log(oldProjectData.thumbnail);
+                                    // console.log(oldProjectData.thumbnail);
                                     oldProjectData.content = JSON.stringify(currentProject);
                                     fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
                                     //success
@@ -381,7 +381,7 @@
                             });
                         } else {
                             uploadThumb(scaledThumb, function () {
-                                console.log(currentProject)
+                                // console.log(currentProject)
                                 $http({
                                     method: 'PUT',
                                     url: '/project/' + currentProject.projectId + '/save',
@@ -439,7 +439,7 @@
                         }
 
                         function saveThumb(thumb, _callback) {
-                            console.log(thumb);
+                            // console.log(thumb);
                             var thumbFile = new Buffer(thumb.split(',')[1], 'base64');
                             var projectUrl = $scope.project.projectUrl || path.join(__dirname, 'localproject', currentProject.projectId);
                             var thumbUrl = path.join(projectUrl, 'thumbnail.jpg');
@@ -690,7 +690,7 @@
 
         function generateDataFile(format){
             generateData(format);
-            if (window.local){
+            if (window){
                 if (window.spinner){
                     window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
                     window.spinner.show();
@@ -757,7 +757,7 @@
 
         function play(){
             generateData()
-            window.cachedResourceList = _.cloneDeep(ResourceService.getGlobalResources());
+            window.cachedResourceList = ResourceService.getGlobalResources();
 
             $scope.component.simulator.show = true;
 

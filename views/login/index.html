@@ -23,6 +23,27 @@
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css"/>
     <script src="../../public/general/js/versionTag.js"></script>
 
+    <script src="../../public/ide/js/jquery-zyj.js"></script>
+    <script src="../../public/ide/js/vector-zyj.js"></script>
+    <script>
+        $(function(){
+            // 初始化 传入dom id
+            var victor = new Victor("container-zyj", "output");
+            var theme = [
+                ["#002c4a", "#005584"],
+                ["#35ac03", "#3f4303"],
+                ["#ac0908", "#cd5726"],
+                ["#18bbff", "#00486b"]
+            ]
+            $(".color li").each(function(index, val) {
+                var color = theme[index];
+                $(this).mouseover(function(){
+                    victor(color).set();
+                })
+            });
+        });
+    </script>
+
 </head>
 <body>
 
@@ -53,10 +74,10 @@
 </div>
 <!--NAVBAR SECTION END-->
 <div class="home-sec" id="home">
-    <div class="overlay">
+    <div id="output">
+    <div class="overlay" id="container-zyj">
         <div class="container">
             <div class="row text-center ">
-
                 <div class="col-lg-12  col-md-12 col-sm-12">
 
                     <div class="flexslider set-flexi" id="main-section">
@@ -67,7 +88,6 @@
                                 <h1>极速掌握</h1>
                                 <a class="btn btn-primary btn-lg" href="/user/login">登录</a>
                                 <a class="btn btn-primary btn-lg" href="/user/signup">注册</a>
-
                             </li>
                             <!-- End Slider 01 -->
 
@@ -96,7 +116,7 @@
                 </div>
             </div>
 
-
+        </div>
         </div>
 
     </div>

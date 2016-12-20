@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <title>AHMI IDE</title>
-
-    <!--生产环境-->
-    <!--<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
-    <!--<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">-->
-    <!--<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>-->
-    <!--<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
-    <!--<script src="lib/underscore-min.js"></script>-->
-    <!--测试环境-->
     <link rel="stylesheet" href="../../public/ide/lib/bootstrap-3.3.5-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/bootstrap-3.3.5-dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-ui-tree/angular-ui-tree.css">
@@ -38,6 +30,8 @@
     <script src="../../public/ide/lib/lodash/dist/lodash.min.js"></script>
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
     <script src="../../public/ide/lib/angular-modal/modal.min.js"></script>
+    <script src="../../public/ide/lib/jquery-ui.js"></script>
+    <script src="../../public/ide/lib/sortable.js"></script>
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
@@ -53,138 +47,73 @@
     <script src="../../public/ide/lib/Drag.js"></script>
     <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.js"></script>
 
-    <script src="../../public/ide/modules/ide/js/utils.js"></script>
-
-
-    <!--dependency-->
-
-
-    <!--devlop-->
-    <!--services-->
-
-    <script src="../../public/ide/modules/ide/js/projectService.js"></script>
-    <script src="../../public/ide/modules/ide/js/Type.js"></script>
-    <script src="../../public/ide/js/global.js"></script>
-    <script src="../../public/ide/modules/ide/js/operateQueService.js"></script>
-    <script src="../../public/ide/modules/ide/js/Preference.js"></script>
-    <script src="../../public/ide/modules/ide/js/templateProvider.js"></script>
-    <script src="../../public/ide/modules/ide/js/keydownService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/projectFileManage.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/thumb/thumbService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/stage/CanvasService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/linkPageWidgetsService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/navServices.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/viewService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/projectFileManage.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/projectTransformService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/renderService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/texService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/actionService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/resourceService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/timerService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/tagService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/operationService.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/characterSetService.js"></script>
-    <script src="../../public/ide/modules/ide/js/closeBrowser.js"></script>
-
-    <script src="../../public/ide/modules/ide/js/parts/render/renderingX.bundle.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/animationService.js"></script>
-    <script src="../../public/ide/modules/ide/js/userType.js"></script>
-
-
-    <!--&lt;!&ndash;controllers&ndash;&gt;-->
-    <script src="../../public/ide/modules/ide/js/IDEController.js"></script>
-    <script src="../../public/ide/modules/ide/js/containerCtl.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/navController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/saveModalController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/thumb/thumbController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/stage/stageController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/attrController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/attributeController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/timerController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/ResourceCtrl.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/projectFileController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/templateFileController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/dropdownController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/searchController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/arrangeController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/nav/viewController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/actionController.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/imageSelectorInstanceCtl.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/texCtl.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/characterSetController.js"></script>
-    <script src="../../public/config/customConfig.js"></script>
-    <script src="../../public/general/js/versionTag.js"></script>
-    <script src="../../public/ide/modules/ide/js/parts/attr/animationController.js"></script>
-
-    <script src="../../public/ide/modules/ide/js/parts/attr/tagController.js"></script>
-    <!--directive-->
-
-    <script src="../../public/ide/modules/ide/js/parts/lexer/actionCompiler2.js"></script>
 
 
 
     <!--build-->
-    <!--&lt;!&ndash;services&ndash;&gt;-->
-    <!--<script src="../../public/ide/modules/ide/min-js/projectService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/Type.js"></script>-->
-    <!--<script src="../../public/ide/js/global.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/operateQueService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/Preference.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/templateProvider.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/keydownService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileManage.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/thumb/thumbService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/stage/CanvasService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/linkPageWidgetsService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/navServices.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/viewService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileManage.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/projectTransformService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/renderService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/texService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/actionService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/resourceService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/timerService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/tagService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/operationService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/closeBrowser.js"></script>-->
+    <!--services-->
+    <script src="../../public/ide/modules/ide/min-js/ideServices.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/projectService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/Type.js"></script>
+    <script src="../../public/ide/js/global.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/operateQueService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/Preference.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/templateProvider.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/keydownService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileManage.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/thumb/thumbService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/stage/CanvasService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/linkPageWidgetsService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/navServices.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/viewService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileManage.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/projectTransformService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/renderService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/texService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/actionService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/resourceService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/widgetService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/timerService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/tagService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/operationService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/closeBrowser.js"></script>
 
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/userType.js"></script>-->
+    <script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/userType.js"></script>
 
 
-    <!--&lt;!&ndash;controllers&ndash;&gt;-->
-    <!--<script src="../../public/ide/modules/ide/min-js/IDEController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/containerCtl.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/navController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/saveModalController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/thumb/thumbController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/stage/stageController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/attrController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/attributeController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/timerController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/ResourceCtrl.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/templateFileController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/dropdownController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/searchController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/arrangeController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/nav/viewController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/actionController.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/imageSelectorInstanceCtl.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/texCtl.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetController.js"></script>-->
-    <!--<script src="../../public/config/customConfig.js"></script>-->
-    <!--<script src="../../public/general/js/versionTag.js"></script>-->
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>-->
+    <!--controllers-->
+    <script src="../../public/ide/modules/ide/min-js/IDEController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/containerCtl.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/navController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/saveModalController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/thumb/thumbController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/stage/stageController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/attrController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/attributeController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/timerController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/ResourceCtrl.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/templateFileController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/dropdownController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/searchController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/arrangeController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/viewController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/actionController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/imageSelectorInstanceCtl.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/texCtl.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetController.js"></script>
+    <script src="../../public/config/customConfig.js"></script>
+    <script src="../../public/general/js/versionTag.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>
+    <script src="../../public/ide/modules/ide/js/parts/attr/SortableController.js"></script>
 
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>-->
-    <!--&lt;!&ndash;directive&ndash;&gt;-->
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
+    <!--directive-->
 
-    <!--<script src="../../public/ide/modules/ide/min-js/parts/lexer/actionCompiler2.js"></script>-->
+    <script src="../../public/ide/modules/ide/min-js/parts/lexer/actionCompiler2.js"></script>
 
 
 
@@ -253,9 +182,6 @@
                 <!--</a>-->
                 <a ng-click="component.tool.openPanel()" class="my-cmd-item" ng-class=""><span
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
-                </a>
-                <a ng-click="component.tool.rotateProject()" class="my-cmd-item" ng-class=""><span
-                        class="iconfont icon">&#xe60f;</span><span class="caption">旋转工程</span>
                 </a>
                 <script type="text/ng-template" id="navModal.html">
                     <div class="modal-header">
@@ -336,8 +262,8 @@
                             <span class="caption">排列</span>
                         </div>
                         <ul class="dropdown-menu" uib-dropdown-menu>
-                            <li ng-click="changeZIndex($index)">上移一层</li>
-                            <li ng-click="changeZIndex($index)">下移一层</li>
+                            <li ng-click="changeZIndex(0)">上移一层</li>
+                            <li ng-click="changeZIndex(1)">下移一层</li>
                         </ul>
                     </div>
                 </a>
@@ -1020,7 +946,6 @@
                                 </option>
                             </select>
                         </div>
-
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">方向</span>
 
@@ -1038,7 +963,33 @@
                                 <option value="1">有光标</option>
                             </select>
                         </div>
-
+                        <div class="my-attr-item lg" ng-show="component.progress.progressModeId=='3'">
+                            <span class="my-attr-title">阈值模式</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.progress.thresholdModeId"
+                                    ng-change="component.progress.enterThresholdMode($event)">
+                                <option ng-repeat="mode in component.progress.thresholdModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div ng-show="component.progress.progressModeId=='3'">
+                            <div class="my-attr-item">
+                                <span class="my-attr-title">阈值1</span>
+                                <input class="my-attr-number-input form-control short-input"
+                                       ng-model="component.object.level.info.threshold1"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.progress.enterThresholdValue1($event)"
+                                       type="number">
+                            </div><div class="my-attr-item" ng-show="component.progress.thresholdModeId=='2'">
+                            <span class="my-attr-title">阈值2</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.threshold2"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.progress.enterThresholdValue2($event)"
+                                   type="number">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- oscilloScope-->
@@ -2264,6 +2215,17 @@
                                         <td><span class="move-and-zoom">平移</span></td><td><span class="move-and-zoom">缩放</span></td>
                                     </tr>
                                     <tr>
+                                        <td><span class="object-position">起始位置</span></td><td><span class="object-position">起始大小</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="margin-left40px">X:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.srcPos.x"></td>
+                                        <td><span class="margin-left40px">W:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.srcScale.x"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="margin-left40px">Y:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.srcPos.y"></td>
+                                        <td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.srcScale.y"></td>
+                                    </tr>
+                                    <tr>
                                         <td><span class="object-position">目标位置</span></td><td><span class="object-position">目标大小</span></td>
                                     </tr>
                                     <tr>
@@ -2343,7 +2305,8 @@
                             <td class="col-xs-1">操作</td>
                         </tr>
                         </thead>
-                        <tbody>
+                        <div ng-controller="sortCtrl">
+                        <tbody ui-sortable="sortableOptions">
                         <tr class="img-info" ng-repeat="file in component.top.files">
                             <td><img width="40px" height="40px" ng-src="{{file.src}}"/></td>
                             <td>
@@ -2356,6 +2319,7 @@
                             </td>
                         </tr>
                         </tbody>
+                        </div>
                     </table>
 
                     <script type="text/ng-template" id="deletePanelModal.html">
@@ -2484,8 +2448,8 @@
             <div class="my-panel-item xiangPage-textArea-container" style="overflow-y: auto;"
                  ng-show="component.top.currentNav==3" >
                 <div ng-controller="AttributeCtrl">
-                    <div ng-show="component.object.type=='MyTextArea'">
-                        <div class=" dropdown my-attr-item lg" ng-controller="characterSetCtrl">
+                    <div ng-show="component.object.type=='MyTextArea'" ng-controller="characterSetCtrl">
+                        <div class=" dropdown my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">字符集</span>
                             <button type="button"
                                     class="btn btn-default btn-sm dropdown-toggle my-attr-number-input form-control xiangPage-dropdown-button"
@@ -2531,9 +2495,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.textArea.changeFontFamily()">
-                                <!--<option value="宋体" ng-selected="true">宋体</option>-->
-                                <!--<option value="times">Times</option>-->
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
                             <a class="my-cmd-item"
@@ -2569,7 +2531,7 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.num.changeNumFamily()">
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
                             <a class="my-cmd-item"
@@ -2615,18 +2577,12 @@
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.fontFamily"
                                     ng-change="component.button.changeButtonFontFamily()">
-                                <!--<option value="宋体" ng-selected="true">宋体</option>-->
-                                <!--<option value="times">Times</option>-->
-                                <!--<option value="-">-&#45;&#45;</option>-->
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
-                                <!--<option>{{componentOfChar.character.fontName}}</option>-->
-                                <!--<option >xxxxxx</option>-->
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
 
-                        </div>
-                        <div class="my-attr-item xiangPage-fontStyle">
-                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']" ng-click="component.button.setButtonFontBold()"><span class="iconfont icon">&#xe618;</span></a>
-                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']" ng-click="component.button.setButtonFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
+                        </div><div class="my-attr-item xiangPage-fontStyle">
+                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']" ng-click="component.button.setButtonFontBold()"><span class="iconfont icon">&#xe618;</span></a>
+                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']" ng-click="component.button.setButtonFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
                         </div>
 
 

@@ -19,6 +19,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     function transDataFile(rawProject){
         var targetProject = {};
+        targetProject.version = rawProject.version;
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
         targetProject.size = rawProject.currentSize;

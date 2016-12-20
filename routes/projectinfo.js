@@ -388,8 +388,8 @@ projectRoute.generateProject = function (req, res) {
                 var curFont = fontRes[i];
                 customFonts[curFont.name] = fontFile(curFont.name,resBaseUrl,curFont.id);
             }
-
-            var renderer = new Renderer(null);
+            console.log(customFonts)
+            var renderer = new Renderer(null,customFonts);
             for (var m=0;m<allWidgets.length;m++){
                 var curWidget = allWidgets[m];
                 renderer.renderWidget(curWidget,path.join(__dirname,'..'),path.join(ProjectBaseUrl,'resources'),path.join('project',String(projectId),'resources'),cb);
@@ -420,6 +420,37 @@ projectRoute.generateProject = function (req, res) {
     }
 }
 
+projectRoute.saveDataAndCompress = function (req, res) {
+    var projectId = req.params.id;
+    var dataStructure = req.body.dataStructure;
+    if (projectId!=""){
+        var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
+        var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
+        //
+
+
+
+        fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+            if (err){
+                errHandler(res,500,err);
+            }else{
+                var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+                    if (err) {
+                        errHandler(res, 500, err);
+                    } else {
+                        res.end('ok')
+
+                    }
+                })
+            }
+        })
+    }else{
+        errHandler(res,500,'projectId error');
+    }
+}
+
 function isFont(font) {
     var names = font.src.split('.');
     var ext = names[names.length-1];
@@ -432,6 +463,7 @@ function isFont(font) {
 function fontFile(name,baseUrl,id) {
     // var fonts = {'Songti':new Font('Songti',this.fontFile('Songti.ttc'))};
     return new Font(name,path.join(baseUrl,id));
+    // return path.join(baseUrl,id);
 }
 
 
