@@ -2993,8 +2993,4 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MySlide.async = true;
 
 
-    window.fabric = fabric;
-    console.log('hhhfdhfadshfdhfhadfh')
-
-
 }])
