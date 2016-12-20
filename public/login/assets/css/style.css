@@ -93,7 +93,7 @@ body {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0);
     background-color: transparent;
     border: 0px solid #000;
-    padding-top: 120px;
+    /*padding-top: 120px;*/
 }
 
 .flex-control-nav {
@@ -275,6 +275,13 @@ h1::after {
     position: absolute;
     height: 700px;
     width: 100%;
+}
+
+.slide-container{
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
 }
 #output {
     width: 100%;
