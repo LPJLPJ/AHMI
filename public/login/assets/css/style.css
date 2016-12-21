@@ -1,4 +1,4 @@
-﻿/*=============================================================
+﻿﻿/*=============================================================
     Authour URI: www.binarytheme.com
     License: Commons Attribution 3.0
 
@@ -30,9 +30,9 @@ body {
     ===================================*/
 
 .logo-custom {
-    max-height: 60px;
-    position:absolute;
-    top:2px;
+    max-height: 62px;
+    position: absolute;
+    top:0;
 }
 
 #menu {
@@ -41,7 +41,7 @@ body {
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 1px;
-    min-height: 60px;
+    min-height: 59px;
 }
 
 
@@ -245,7 +245,6 @@ h1::after {
     padding: 0;
     -webkit-background-size: cover;
     background-size: cover;
-    color: #fff;
     background-attachment: fixed;
 }
 
