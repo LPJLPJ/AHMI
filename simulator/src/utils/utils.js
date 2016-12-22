@@ -40,6 +40,9 @@ function linkWidgets(widgetList) {
     var linkedWidgetList = [];
     for (i = 0; i < widgetList.length; i++) {
         curWidget = widgetList[i];
+        if (curWidget.info.disableHighlight==true){
+            continue
+        }
         switch (curWidget.subType) {
             case 'MyButtonGroup':
                 var interval = curWidget.info.interval;
