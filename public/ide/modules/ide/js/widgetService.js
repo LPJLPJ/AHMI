@@ -1935,16 +1935,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 var tex=level.texList[0];
                 self.normalColor=tex.slices[0].color;
-                // if (tex.slices[0].imgSrc!='') {
-                //     var currentImageElement=new Image();
-                //     currentImageElement.src=tex.slices[0].imgSrc;
-                //     currentImageElement.onload = (function () {
-                //     }).bind(this);
-                //     self.normalImageElement=currentImageElement;
-                // }else {
-                //     self.normalImageElement=null;
-                // }
-
                 self.normalImageElement = ResourceService.getResourceFromCache(tex.slices[0].imgSrc);
 
                 var subLayerNode=CanvasService.getSubLayerNode();

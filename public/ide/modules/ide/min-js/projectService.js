@@ -1704,28 +1704,42 @@ ideServices
                     }
 
                 }
-
                 if (selectObj.type==Type.MyLayer){
                     selectObj.target.fire('OnRelease',selectObj.target.id);
 
                 }else if (selectObj.type==Type.MyGroup&&selectObj.mode==0) {
-                    _.forEach(selectObj.target.getObjects(), function (_obj) {
-                        var fabLayer = getFabricObject(_obj.id);
-                        fabLayer.fire('OnRelease', fabLayer.id);
+                    var fabGroup = selectObj.target;
+                    var baseLeft=selectObj.level.info.left+fabGroup.width/2;
+                    var baseTop=selectObj.level.info.top+fabGroup.height/2;
+                    fabGroup.forEachObject(function(item){
+                        var layer = getLevelById(item.id,'layer');
+                        layer.info.left = Math.round(baseLeft+item.left);
+                        layer.info.top = Math.round(baseTop+item.top);
                     })
+
+                    // _.forEach(selectObj.target.getObjects(), function (_obj) {
+                    //     var fabLayer = getFabricObject(_obj.id);
+                    //     fabLayer.fire('OnRelease', fabLayer.id);
+                    // })
                 }
                 else if (Type.isWidget(selectObj.type)){
                     selectObj.target.fire('OnRelease',selectObj.target.id);
 
                 }else if (selectObj.type==Type.MyGroup&&selectObj.mode==1){
-                    _.forEach(selectObj.target.getObjects(), function (_obj) {
-                        var fabWidget=getFabricObject(_obj.id,true);
-                        fabWidget.fire('OnRelease',fabWidget.id);
+                    var fabGroup = selectObj.target;
+                    var baseLeft=selectObj.level.info.left+fabGroup.width/2;
+                    var baseTop=selectObj.level.info.top+fabGroup.height/2;
+                    // _.forEach(selectObj.target.getObjects(), function (_obj) {
+                    //     var fabWidget=getFabricObject(_obj.id,true);
+                    //     fabWidget.fire('OnRelease',fabWidget.id);
+                    // })
+                    fabGroup.forEachObject(function(item){
+
+                        var widget = getLevelById(item.id,'widget');
+                        widget.info.left = Math.round(baseLeft+item.left);
+                        widget.info.top = Math.round(baseTop+item.top);
                     })
                 }
-
-
-
                 if (status.holdOperate) {
                     var currentPage=_self.getCurrentPage();
                     if (!currentPage){
@@ -1742,18 +1756,42 @@ ideServices
                         currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
 
                     }
-
-
-
                     _successCallback && _successCallback();
-
-
                 }
-
-
-
             };
 
+            /**
+             * 根据id获取一个控件widget level
+             * @param _id
+             */
+            var getLevelById = function(_id,type){
+                if(type=='widget'){
+                    var currentSublayer = _self.getCurrentSubLayer();
+                    var widget=null;
+                    if(currentSublayer){
+                        var widgets = currentSublayer.widgets;
+                        for(var i=0;i<widgets.length;i++){
+                            if(widgets[i].id==_id){
+                                widget = widgets[i];
+                            }
+                        }
+                    }
+                    return widget;
+                }else if(type=='layer'){
+                    var currentPage = _self.getCurrentPage();
+                    var layer=null;
+                    if(currentPage){
+                        var layers = currentPage.layers;
+                        for(var i=0;i<layers.length;i++){
+                            if(layers[i].id==_id){
+                                layer=layers[i];
+                            }
+                        }
+                    }
+                    return layer;
+                }
+                
+            };
 
             this.SaveCurrentOperate= function () {
 
@@ -3412,15 +3450,11 @@ ideServices
                 }
                 if(getCurrentSubLayer()){
                     var currentSubLayer=getCurrentSubLayer();
-
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-
-
                 }else {
                     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                    //console.log(currentPage.proJsonStr);
-
                 }
+                _self.ReleaseObject({});
                 subLayerNode.renderAll();
                 pageNode.renderAll();
                 _successCallback && _successCallback(currentOperate);
