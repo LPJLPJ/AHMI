@@ -2363,10 +2363,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option = {
             align :$scope.component.group.alignModeId
         };
-        var oldOperate = ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeGroupAlign(option,function(oldOperate){
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        });
+        // var oldOperate = ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeGroupAlign(option);
     }
 
     function _getRandomColor(){
