@@ -1,0 +1,1 @@
+ide.controller("sortCtrl",function(o,t){o.cannotSort=!1,o.sortableOptions={update:function(n,a){console.log("update"),t(function(){for(var t=[],n=0;n<o.data.length;n++)t.push(o.data[n].i);console.log(t)})},stop:function(o,t){}}});
