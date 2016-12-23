@@ -111,26 +111,6 @@ module.exports =   React.createClass({
         //check curPage tag
 
 
-        // var curPageTag = {
-        //     name: '当前页面序号',
-        //     register: true,
-        //     writeOrRead: 'true',
-        //     indexOfRegister: -1,
-        //     value: 0
-        // };
-        //
-        // var hasCurPageTag = false;
-        // for (i=0;i<data.tagList.length;i++){
-        //     if (data.tagList[i].name === curPageTag.name){
-        //         hasCurPageTag = true;
-        //         break;
-        //     }
-        // }
-        // if (!hasCurPageTag){
-        //     data.tagList.push(curPageTag);
-        // }
-
-
         data.tag = '当前页面序号';
         // this.state.tagList = data.tagList
         // this.setState({tagList: data.tagList})
@@ -138,7 +118,6 @@ module.exports =   React.createClass({
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
         console.log('tagList loaded', data.tagList,this.state.tagList);
-
         //initialize registers
         this.registers = {};
         var curTag;
@@ -514,19 +493,43 @@ module.exports =   React.createClass({
                     })
                     break;
                 case 'SCALE':
-                    AnimationManager.step(0.5,0.5,1,1,duration,frames,easing,function (deltas) {
-
-                        // offctx.translate(deltas.curX,deltas.curY);
-                        page.scale = {
-                            w:deltas.curX,
-                            h:deltas.curY
-                        }
+                    var beforeTranslateMatrix = [
+                        [1,0,-400],
+                        [0,1,-240],
+                        [0,0,1]
+                    ];
+                    var afterTranslateMatrix = [
+                        [1,0,400],
+                        [0,1,240],
+                        [0,0,1]
+                    ];
+                    var beforeScaleMatrix = [
+                        [0.5,0,0],
+                        [0,0.5,0],
+                        [0,0,1]
+                    ];
+                    var afterScaleMatrix = [
+                        [1,0,0],
+                        [0,1,0],
+                        [0,0,1]
+                    ];
+                    AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
+                        var curScaleMatrix = [
+                            [deltas.a.curValue,deltas.c.curValue,deltas.e.curValue],
+                            [deltas.b.curValue,deltas.d.curValue,deltas.f.curValue],
+                            [0,0,1]
+                        ];
+                        // console.log(curScaleMatrix)
+                        // var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
+                        // combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
+                        page.transform = curScaleMatrix;
                         this.draw(null,options);
-
-
                     }.bind(this),function () {
-                        page.scale = null;
+                        page.transform = null
                     })
+
+
+
                     break;
                 default:
                     this.draw(null,options);
@@ -567,12 +570,18 @@ module.exports =   React.createClass({
 
         //drawPage
         offctx.save();
-        if (page.translate){
-            offctx.translate(page.translate.x,page.translate.y);
-        }
 
-        if (page.scale){
-            offctx.scale(page.scale.w,page.scale.h);
+        if (page.transform){
+            var m = page.transform;
+            offctx.transform(m[0][0],m[1][0],m[0][1],m[1][1],m[0][2],m[1][2]);
+        }else{
+            if (page.translate){
+                offctx.translate(page.translate.x,page.translate.y);
+            }
+
+            if (page.scale){
+                offctx.scale(page.scale.w,page.scale.h);
+            }
         }
         offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
         this.drawBgColor(0, 0, offcanvas.width, offcanvas.height, page.backgroundColor);
@@ -716,6 +725,23 @@ module.exports =   React.createClass({
             }.bind(this), timer['SysTmr_' + num + '_Interval']);
         }
     },
+    matrixToObj:function (m) {
+        return {
+            a:m[0][0],
+            b:m[1][0],
+            c:m[0][1],
+            d:m[1][1],
+            e:m[0][2],
+            f:m[1][2]
+        }
+    },
+    objToMatrix:function (o) {
+      return [
+          [o.a,o.c,o.e],
+          [o.b,o.d,o.f],
+          [0,0,1]
+      ]
+    },
     generateTransformMatrix:function (animations) {
         var a=0,b=0,c=0,d=0,e=0,f=0;
         if (animations.translate){
@@ -827,38 +853,6 @@ module.exports =   React.createClass({
 
         })
 
-        // AnimationManager.step(target.x,target.y,0,0,1000,30,'easeInOutCubic',function (deltas) {
-        //
-        //     // offctx.translate(deltas.curX,deltas.curY);
-        //
-        //     target.translate = {
-        //         x:deltas.curX-target.x,
-        //         y:deltas.curY-target.y
-        //     }
-        //     this.draw();
-        //
-        //
-        // }.bind(this),function () {
-        //
-        // })
-        // AnimationManager.step(3,3,0.5,0.5,1000,30,'easeInOutCubic',function (deltas) {
-        //
-        //     // offctx.translate(deltas.curX,deltas.curY);
-        //
-        //     target.scale = {
-        //         w:deltas.curX,
-        //         h:deltas.curY
-        //     }
-        //     // target.scale = null;
-        //     // this.scaleElement(target,{w:deltas.curX,h:deltas.curY});
-        //     this.draw();
-        //
-        //
-        // }.bind(this),function () {
-        //     // target.scale = null;
-        //     // this.scaleElement(target,{w:0.5,h:0.5});
-        //     // this.draw();
-        // }.bind(this))
     },
     scaleElement:function (target,scaleFactor) {
         // console.log('scaling element',target)
@@ -1346,11 +1340,11 @@ module.exports =   React.createClass({
         }
 
         //draw tint
-        lg('arrange',widget.info.arrange);
+        // lg('arrange',widget.info.arrange);
         this.drawTextByTempCanvas(curX,curY,width,height,text,font,widget.info.arrange);
 
         //draw highlight
-        lg('highlight',widget.highlight)
+        // lg('highlight',widget.highlight)
         // console.log('highlight',widget.highlight);
         if (widget.highlight) {
             this.drawHighLight(curX, curY, width, height,tex.slices[2]);
