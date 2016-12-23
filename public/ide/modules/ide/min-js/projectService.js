@@ -2957,6 +2957,22 @@ ideServices
             };
 
             /**
+             * 是否禁止控件的高亮属性
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeAttributeHighlightMode = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                if(_option.highlightMode&&_option.highlightMode=='1'){
+                    selectObj.level.info.disableHighlight=false;
+                }else{
+                    selectObj.level.info.disableHightlight=true;
+                }
+                console.log('selectObj.level',selectObj.level);
+            };
+
+            /**
              * 进度条tex的构造函数
              * @param name
              * @param templateId

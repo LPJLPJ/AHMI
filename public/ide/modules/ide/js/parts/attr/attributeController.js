@@ -58,6 +58,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 buttonModes:[
                     {id:'0',name:'普通模式'},
                     {id:'1',name:'开关模式'}],
+                highlightModeId:'0',
+                highlightModes:[
+                    {id:'0',name:'启用高亮'},
+                    {id:'1',name:'禁用高亮'}
+                ],
                 enterButtonMode:enterButtonMode,
                 enterNormalImage:enterNormalImage,
                 enterPressImage:enterPressImage,
@@ -250,6 +255,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			restore:restore,
             changeTransitionName:changeTransitionName,
             changeTransitionDur:changeTransitionDur,
+            enterHighlightMode:enterHighlightMode
 		};
         $scope.animationsDisabled=UserTypeService.getAnimationAuthor()
 	}
@@ -422,17 +428,25 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
                     $scope.component.button.arrangeModel=$scope.component.object.level.info.arrange;
-                    if ($scope.component.object.level.normalImg==''){
-                        $scope.component.button.normalImage='blank.png';
-                    }else {
-                        $scope.component.button.normalImage=$scope.component.object.level.normalImg;
+                    if(scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.button.highlightModeId='1';
+                    }else if(scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.button.highlightModeId='1';
+                    }else if(scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.button.highlightModeId='0';
                     }
-                    if ($scope.component.object.level.pressImg==''){
-
-                        $scope.component.button.pressImage='blank.png';
-                    }else {
-                        $scope.component.button.pressImage=$scope.component.object.level.pressImg;
-                    }
+                    //if ($scope.component.object.level.normalImg==''){
+                    //    $scope.component.button.normalImage='blank.png';
+                    //}else {
+                    //    $scope.component.button.normalImage=$scope.component.object.level.normalImg;
+                    //}
+                    //if ($scope.component.object.level.pressImg==''){
+                    //
+                    //    $scope.component.button.pressImage='blank.png';
+                    //}else {
+                    //    $scope.component.button.pressImage=$scope.component.object.level.pressImg;
+                    //}
 
                     break;
                 case Type.MyButtonGroup:
@@ -508,6 +522,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             })
         }
     }
+
 
     function addSubSlide(){
 
@@ -737,6 +752,22 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             })
         }
 	}
+
+    function enterHighlightMode(){
+        var selectObj = ProjectService.getCurrentSelectObject();
+        var selectHighlightMode=null;
+        if(selectObj.type==Type.MyButton){
+            selectHighlightMode=$scope.component.button.highlightModeId;
+        }
+
+        var option = {
+            highlightMode:selectHighlightMode
+        }
+        var oldOperate = ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeHighLightMode(option,function(){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
 
 	function enterShowSubLayer(op){
         var oldOperate=ProjectService.SaveCurrentOperate();
@@ -1653,7 +1684,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
         var option={
             buttonModeId:selectButtonMode
-        }
+        };
         ProjectService.ChangeAttributeButtonModeId(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
 

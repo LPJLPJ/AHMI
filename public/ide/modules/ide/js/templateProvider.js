@@ -28,6 +28,7 @@ ideServices
                     fontColor:'rgba(0,0,0,1)',
                     fontBold:"100",
                     fontItalic:'',
+                    disableHighlight:false
                 },
                 texList:[{
                     name:'按钮纹理',
@@ -430,8 +431,8 @@ ideServices
                 interval:0,//间距
                 intervalScale:0,//间距长度占总长度的比例,缩放时用到
                 count:2,
-                arrange:"horizontal"   //horizontal:水平   vertical:竖直
-
+                arrange:"horizontal",   //horizontal:水平   vertical:竖直
+                disableHighlight:false
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -677,7 +678,8 @@ ideServices
                 fontSize:20,
                 fontColor:'rgba(0,0,0,1)',
                 align:'center',
-                arrange:"horizontal"   //horizontal:水平   vertical:竖直
+                arrange:"horizontal",   //horizontal:水平   vertical:竖直
+                disableHighlight:false
             };
             return {
                 id: Math.random().toString(36).substr(2),

@@ -805,8 +805,16 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.button.enterButtonText($event)"/>
                         </div>
-
-
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">启用高亮</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.button.highlightModeId"
+                                    ng-change="component.enterHighlightMode($event)">
+                                <option ng-repeat="mode in component.button.highlightModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
                     </div>
 
                     <div ng-show="component.object.type=='MyButtonGroup'">
