@@ -58,6 +58,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 buttonModes:[
                     {id:'0',name:'普通模式'},
                     {id:'1',name:'开关模式'}],
+                highlightModeId:'0',
                 enterButtonMode:enterButtonMode,
                 enterNormalImage:enterNormalImage,
                 enterPressImage:enterPressImage,
@@ -76,8 +77,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             buttonGroup:{
                 enterInterval:enterInterval,
                 enterButtonCount:enterButtonCount,
-                enterArrange:enterArrange
-
+                enterArrange:enterArrange,
+                highlightModeId:'0',
             },
             progress:{
                 progressModeId:'0',
@@ -213,6 +214,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     {id:'0',name:'使用内部时钟'},
                     {id:'1',name:'使用外部时钟'}
                 ],
+                highlightModeId:'0',
                 enterDateTimeMode:enterDateTimeMode,
                 changeDateTimeFontFamily:changeDateTimeFontFamily,
                 changeDateTimeFontSize:changeDateTimeFontSize,
@@ -233,7 +235,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 alignModeId:null,
                 changeGroupAlign:changeGroupAlign,
             },
-
+            highlightModes:[
+                {id:'0',name:'启用高亮'},
+                {id:'1',name:'禁用高亮'}
+            ],
             enterName:enterName,
 			enterColor:enterColor,
 			enterX:enterX,
@@ -250,6 +255,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			restore:restore,
             changeTransitionName:changeTransitionName,
             changeTransitionDur:changeTransitionDur,
+            enterHighlightMode:enterHighlightMode
 		};
         $scope.animationsDisabled=UserTypeService.getAnimationAuthor()
 	}
@@ -422,21 +428,37 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
                     $scope.component.button.arrangeModel=$scope.component.object.level.info.arrange;
-                    if ($scope.component.object.level.normalImg==''){
-                        $scope.component.button.normalImage='blank.png';
-                    }else {
-                        $scope.component.button.normalImage=$scope.component.object.level.normalImg;
+                    if($scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.button.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.button.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.button.highlightModeId='1';
                     }
-                    if ($scope.component.object.level.pressImg==''){
-
-                        $scope.component.button.pressImage='blank.png';
-                    }else {
-                        $scope.component.button.pressImage=$scope.component.object.level.pressImg;
-                    }
+                    //if ($scope.component.object.level.normalImg==''){
+                    //    $scope.component.button.normalImage='blank.png';
+                    //}else {
+                    //    $scope.component.button.normalImage=$scope.component.object.level.normalImg;
+                    //}
+                    //if ($scope.component.object.level.pressImg==''){
+                    //
+                    //    $scope.component.button.pressImage='blank.png';
+                    //}else {
+                    //    $scope.component.button.pressImage=$scope.component.object.level.pressImg;
+                    //}
 
                     break;
                 case Type.MyButtonGroup:
                     $scope.component.buttonGroup.arrangeModel=$scope.component.object.level.info.arrange;
+                    if($scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.buttonGroup.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.buttonGroup.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.buttonGroup.highlightModeId='1';
+                    }
                     break;
 
                 case Type.MyNumber:
@@ -463,6 +485,16 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MySlideBlock:
                     $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
+                    break;
+                case Type.MyDateTime:
+                    if($scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.dateTime.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.dateTime.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.dateTime.highlightModeId='1';
+                    }
                     break;
             }
 
@@ -737,6 +769,25 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             })
         }
 	}
+
+    function enterHighlightMode(){
+        var selectObj = ProjectService.getCurrentSelectObject();
+        var selectHighlightMode=null;
+        if(selectObj.type==Type.MyButton){
+            selectHighlightMode=$scope.component.button.highlightModeId;
+        }else if(selectObj.type==Type.MyButtonGroup){
+            selectHighlightMode=$scope.component.buttonGroup.highlightModeId;
+        }else if(selectObj.type==Type.MyDateTime){
+            selectHighlightMode=$scope.component.dateTime.highlightModeId;
+        }
+        var option = {
+            highlightMode:selectHighlightMode
+        }
+        var oldOperate = ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeHighLightMode(option,function(){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
 
 	function enterShowSubLayer(op){
         var oldOperate=ProjectService.SaveCurrentOperate();

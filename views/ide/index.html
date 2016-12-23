@@ -784,7 +784,16 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.button.enterButtonText($event)"/>
                         </div>
-
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">高亮</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.button.highlightModeId"
+                                    ng-change="component.enterHighlightMode($event)">
+                                <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
 
                     </div>
 
@@ -853,6 +862,16 @@
                                     ng-change="component.buttonGroup.enterArrange($event)">
                                 <option value="horizontal">水平</option>
                                 <option value="vertical">竖直</option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">高亮</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.buttonGroup.highlightModeId"
+                                    ng-change="component.enterHighlightMode($event)">
+                                <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -1308,7 +1327,7 @@
                                    type="number"
                                    ng-disabled="animationsDisabled">
                         </div>
-                        
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">坐标X</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1788,6 +1807,16 @@
                             <span class="my-attr-title">时钟来源</span>
                             <select class="my-attr-number-input form-control" ng-model="component.dateTime.RTCModeId" ng-change="component.dateTime.enterDateTimeMode($event)">
                                 <option ng-repeat="mode in component.dateTime.RTCModes" value="{{mode.id}}">{{mode.name}}</option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">高亮</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.dateTime.highlightModeId"
+                                    ng-change="component.enterHighlightMode($event)">
+                                <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
                             </select>
                         </div>
                     </div>
