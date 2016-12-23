@@ -482,11 +482,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.dateTime.arrangeModel=$scope.component.object.level.info.arrange;
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
                     $scope.component.dateTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
-                    break;
-                case Type.MySlideBlock:
-                    $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
-                    break;
-                case Type.MyDateTime:
                     if($scope.component.object.level.info.disableHighlight==undefined){
                         selectObject.level.info.disableHighlight=false;
                         $scope.component.dateTime.highlightModeId='0';
@@ -495,6 +490,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }else if($scope.component.object.level.info.disableHighlight==true){
                         $scope.component.dateTime.highlightModeId='1';
                     }
+                    break;
+                case Type.MySlideBlock:
+                    $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
                     break;
             }
 
