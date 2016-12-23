@@ -378,12 +378,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
         var info = widget.info;
         if (!!info){
             //trans each slide
-            var width = info.width;
-            var height = info.height;
+
 
             var texList = widget.texList;
             var totalSlices = texList.length;
             texList.map(function (tex,i) {
+                var width = info.width;
+                var height = info.height;
                 if (i===1){
                     //pointer
                     width = height = info.pointerLength/Math.sqrt(2);

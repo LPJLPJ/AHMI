@@ -58,6 +58,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 buttonModes:[
                     {id:'0',name:'普通模式'},
                     {id:'1',name:'开关模式'}],
+                highlightModeId:'0',
                 enterButtonMode:enterButtonMode,
                 enterNormalImage:enterNormalImage,
                 enterPressImage:enterPressImage,
@@ -76,15 +77,21 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             buttonGroup:{
                 enterInterval:enterInterval,
                 enterButtonCount:enterButtonCount,
-                enterArrange:enterArrange
-
+                enterArrange:enterArrange,
+                highlightModeId:'0',
             },
             progress:{
                 progressModeId:'0',
                 progressModes:[
                     {id:'0',name:'普通进度条'},
                     {id:'1',name:'变色进度条'},
+                    {id:'3',name:'多色进度条'},
                     {id:'2',name:'脚本进度条'}
+                ],
+                thresholdModeId:'1',
+                thresholdModes:[
+                    {id:'1',name:'两段色'},
+                    {id:'2',name:'三段色'}
                 ],
                 backgroundImage:'blank.png',
                 progressImage:'blank.png',
@@ -93,6 +100,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterProgressValue:enterProgressValue,
                 enterArrange:enterArrange,
                 enterCursor:enterCursor,
+                enterThresholdMode:enterThresholdMode,
+                enterThresholdValue1:enterThresholdValue1,
+                enterThresholdValue2:enterThresholdValue2
             },
             dashboard:{
                 dashboardModeId:'0',
@@ -204,6 +214,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     {id:'0',name:'使用内部时钟'},
                     {id:'1',name:'使用外部时钟'}
                 ],
+                highlightModeId:'0',
                 enterDateTimeMode:enterDateTimeMode,
                 changeDateTimeFontFamily:changeDateTimeFontFamily,
                 changeDateTimeFontSize:changeDateTimeFontSize,
@@ -224,7 +235,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 alignModeId:null,
                 changeGroupAlign:changeGroupAlign,
             },
-
+            highlightModes:[
+                {id:'0',name:'启用高亮'},
+                {id:'1',name:'禁用高亮'}
+            ],
             enterName:enterName,
 			enterColor:enterColor,
 			enterX:enterX,
@@ -241,6 +255,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			restore:restore,
             changeTransitionName:changeTransitionName,
             changeTransitionDur:changeTransitionDur,
+            enterHighlightMode:enterHighlightMode
 		};
         $scope.animationsDisabled=UserTypeService.getAnimationAuthor()
 	}
@@ -350,6 +365,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     //Progress的光标
                     $scope.component.progress.cursor = $scope.component.object.level.info.cursor;
                     $scope.component.progress.progressModeId=$scope.component.object.level.info.progressModeId;
+                    if(!$scope.component.object.level.info.thresholdModeId){
+                        selectObject.level.info.thresholdModeId='1';
+                        selectObject.level.info.threshold1=null;
+                        selectObject.level.info.threshold2=null;
+                        $scope.component.progress.thresholdModeId='1';
+                    }else{
+                        $scope.component.progress.thresholdModeId=$scope.component.object.level.info.thresholdModeId;
+                    }
                     //调整背景图
                     if ($scope.component.object.level.backgroundImg==''){
                         $scope.component.progress.backgroundImage='blank.png';
@@ -362,7 +385,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }else {
                         $scope.component.progress.progressImage=$scope.component.object.level.progressImg;
                     }
-
                     break;
                 case Type.MyDashboard:
                     $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
@@ -406,21 +428,37 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
                     $scope.component.button.arrangeModel=$scope.component.object.level.info.arrange;
-                    if ($scope.component.object.level.normalImg==''){
-                        $scope.component.button.normalImage='blank.png';
-                    }else {
-                        $scope.component.button.normalImage=$scope.component.object.level.normalImg;
+                    if($scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.button.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.button.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.button.highlightModeId='1';
                     }
-                    if ($scope.component.object.level.pressImg==''){
-
-                        $scope.component.button.pressImage='blank.png';
-                    }else {
-                        $scope.component.button.pressImage=$scope.component.object.level.pressImg;
-                    }
+                    //if ($scope.component.object.level.normalImg==''){
+                    //    $scope.component.button.normalImage='blank.png';
+                    //}else {
+                    //    $scope.component.button.normalImage=$scope.component.object.level.normalImg;
+                    //}
+                    //if ($scope.component.object.level.pressImg==''){
+                    //
+                    //    $scope.component.button.pressImage='blank.png';
+                    //}else {
+                    //    $scope.component.button.pressImage=$scope.component.object.level.pressImg;
+                    //}
 
                     break;
                 case Type.MyButtonGroup:
                     $scope.component.buttonGroup.arrangeModel=$scope.component.object.level.info.arrange;
+                    if($scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.buttonGroup.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.buttonGroup.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.buttonGroup.highlightModeId='1';
+                    }
                     break;
 
                 case Type.MyNumber:
@@ -444,6 +482,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.dateTime.arrangeModel=$scope.component.object.level.info.arrange;
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
                     $scope.component.dateTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
+                    if($scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.dateTime.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.dateTime.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.dateTime.highlightModeId='1';
+                    }
                     break;
                 case Type.MySlideBlock:
                     $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
@@ -721,6 +767,25 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             })
         }
 	}
+
+    function enterHighlightMode(){
+        var selectObj = ProjectService.getCurrentSelectObject();
+        var selectHighlightMode=null;
+        if(selectObj.type==Type.MyButton){
+            selectHighlightMode=$scope.component.button.highlightModeId;
+        }else if(selectObj.type==Type.MyButtonGroup){
+            selectHighlightMode=$scope.component.buttonGroup.highlightModeId;
+        }else if(selectObj.type==Type.MyDateTime){
+            selectHighlightMode=$scope.component.dateTime.highlightModeId;
+        }
+        var option = {
+            highlightMode:selectHighlightMode
+        }
+        var oldOperate = ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeHighLightMode(option,function(){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
 
 	function enterShowSubLayer(op){
         var oldOperate=ProjectService.SaveCurrentOperate();
@@ -1037,22 +1102,99 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var selectObj=ProjectService.getCurrentSelectObject();
         var selectCursor=null;
         var selectModeId=null;
+        var selectThresholdModeId=null;
         if(selectObj.type==Type.MyProgress){
             selectCursor=$scope.component.progress.cursor;
             selectModeId=$scope.component.progress.progressModeId;
+            selectThresholdModeId=$scope.component.progress.thresholdModeId;
         }else{
             return;
         }
         var oldOperate=ProjectService.SaveCurrentOperate();
         var option={
             cursor:selectCursor,
-            progressModeId:selectModeId
-        };
+            progressModeId:selectModeId,
+            thresholdModeId:selectThresholdModeId
+        }
         ProjectService.ChangeAttributeCursor(option, function () {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
 
+    /**
+     * 在多色进度条模式下，更改阈值模式
+     * @param e
+     */
+    function enterThresholdMode(e){
+        var selectThresholdMode = $scope.component.progress.thresholdModeId;
+        $scope.component.progress.threshold2=null;
+        var  option = {
+            thresholdModeId:selectThresholdMode
+        };
+        var oldOperate= ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeProgressThreshold(option,function(){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+
+    /**
+     *输入阈值1
+     * @param e
+     */
+    function enterThresholdValue1(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.threshold1==initObject.level.info.threshold1){
+                return;
+            }
+            if($scope.component.object.level.info.threshold1<$scope.component.object.level.info.minValue||
+               $scope.component.object.level.info.threshold1>$scope.component.object.level.info.maxValue){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.threshold2){
+                if($scope.component.object.level.info.threshold1>$scope.component.object.level.info.threshold2){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+            }
+            var option = {
+                threshold1:$scope.component.object.level.info.threshold1
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeProgressThreshold(option,function(){
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
+    function enterThresholdValue2(e){
+        if(e.keyCode==13){
+            if($scope.component.object.level.info.threshold2==initObject.level.info.threshold2){
+                return;
+            }
+            if($scope.component.object.level.info.threshold2<$scope.component.object.level.info.minValue||
+                $scope.component.object.level.info.threshold2>$scope.component.object.level.info.maxValue){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if($scope.component.object.level.info.threshold1){
+                if($scope.component.object.level.info.threshold2<$scope.component.object.level.info.threshold1){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+            }
+            var option = {
+                threshold2:$scope.component.object.level.info.threshold2
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeProgressThreshold(option,function(){
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
+    }
 
     /**
      * 改变排列方向属性
@@ -2270,10 +2412,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option = {
             align :$scope.component.group.alignModeId
         };
-        var oldOperate = ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeGroupAlign(option,function(oldOperate){
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        });
+        // var oldOperate = ProjectService.SaveCurrentOperate();
+        ProjectService.ChangeAttributeGroupAlign(option);
     }
 
     function _getRandomColor(){

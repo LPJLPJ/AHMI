@@ -23,6 +23,40 @@
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css"/>
     <script src="../../public/general/js/versionTag.js"></script>
 
+    <!--  Jquery Core Script -->
+    <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
+    <!--  Core Bootstrap Script -->
+    <script src="../../public/login/assets/js/bootstrap.js"></script>
+    <!--  Flexslider Scripts -->
+    <script src="../../public/login/assets/js/jquery.flexslider.js"></script>
+    <!--  Scrolling Reveal Script -->
+    <script src="../../public/login/assets/js/scrollReveal.js"></script>
+    <!--  Scroll Scripts -->
+    <script src="../../public/login/assets/js/jquery.easing.min.js"></script>
+    <!--  Custom Scripts -->
+    <script src="../../public/login/assets/js/custom.js"></script>
+
+    <script src="../../public/login/assets/js/vector-zyj.js"></script>
+
+    <script>
+        $(function(){
+            // 初始化 传入dom id
+            var victor = new Victor("container-zyj", "output");
+            var theme = [
+                ["#002c4a", "#005584"],
+                ["#35ac03", "#3f4303"],
+                ["#ac0908", "#cd5726"],
+                ["#18bbff", "#00486b"]
+            ]
+            $(".color li").each(function(index, val) {
+                var color = theme[index];
+                $(this).mouseover(function(){
+                    victor(color).set();
+                })
+            });
+        });
+    </script>
+
 </head>
 <body>
 
@@ -37,26 +71,22 @@
             <a class="navbar-brand" href="/"><img class="logo-custom" src="../../public/login/assets/img/速显微.png"
                                                   alt=""/></a>
         </div>
-        <div class="navbar-collapse collapse move-me">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#home">首页</a></li>
-                <li id="list"><a href="html/personalProject.html">项目</a></li>
-                <li><a href="#features-sec">关于IDE</a></li>
-                <li><a href="#faculty-sec">员工信息</a></li>
-                <li><a href="#course-sec">产品介绍</a></li>
-                <li><a href="/private/space">IDE</a></li>
-                <!--<li><a href="#contact-sec">联系我们</a></li>-->
+            <ul class="nav nav-pills navbar-right move-me">
+                <li><a href="#home"><h4>首页</h4></a></li>
+                <li><a href="#features-sec"><h4>关于IDE</h4></a></li>
+                <!--<li><a href="#faculty-sec"><h4>员工信息</h4></a></li>-->
+                <li><a href="#course-sec"><h4>产品介绍</h4></a></li>
+                <li><a href="/private/space"><h4>IDE</h4></a></li>
+                <li><a href="#contact-sec"><h4>联系我们</h4></a></li>
             </ul>
-        </div>
-
     </div>
 </div>
 <!--NAVBAR SECTION END-->
 <div class="home-sec" id="home">
-    <div class="overlay">
-        <div class="container">
+    <div id="output">
+    <div class="overlay" id="container-zyj">
+        <div class="container slide-container">
             <div class="row text-center ">
-
                 <div class="col-lg-12  col-md-12 col-sm-12">
 
                     <div class="flexslider set-flexi" id="main-section">
@@ -67,7 +97,6 @@
                                 <h1>极速掌握</h1>
                                 <a class="btn btn-primary btn-lg" href="/user/login">登录</a>
                                 <a class="btn btn-primary btn-lg" href="/user/signup">注册</a>
-
                             </li>
                             <!-- End Slider 01 -->
 
@@ -96,7 +125,7 @@
                 </div>
             </div>
 
-
+        </div>
         </div>
 
     </div>
@@ -135,8 +164,10 @@
 
         <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.4s">
             <div class="about-div">
+                <div class="col-md-12 col-lg-offset-3">
                 <i class="fa fa-bolt fa-4x icon-round-border"></i>
                 <h3>快速掌握</h3>
+                </div>
                 <hr/>
                 <hr/>
                 <p>
@@ -147,8 +178,10 @@
         </div>
         <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.5s">
             <div class="about-div">
+                <div class="col-md-12 col-lg-offset-3">
                 <i class="fa fa-paper-plane-o fa-4x icon-round-border"></i>
                 <h3>云端发开</h3>
+                </div>
                 <hr/>
                 <hr/>
                 <p>
@@ -159,8 +192,10 @@
         </div>
         <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.6s">
             <div class="about-div">
+                <div class="col-md-12 col-lg-offset-3">
                 <i class="fa fa-magic fa-4x icon-round-border"></i>
                 <h3>操作便捷</h3>
+                </div>
                 <hr/>
                 <hr/>
                 <p>
@@ -174,7 +209,7 @@
     </div>
 </div>
 <!-- FEATURES SECTION END-->
-<div id="faculty-sec">
+<!--<div id="faculty-sec">
     <div class="container set-pad">
         <div class="row text-center">
             <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
@@ -185,7 +220,7 @@
             </div>
 
         </div>
-        <!--/.HEADER LINE END-->
+        &lt;!&ndash;/.HEADER LINE END&ndash;&gt;
 
         <div class="row">
 
@@ -203,7 +238,7 @@
             </div>
             <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.5s">
                 <div class="faculty-div">
-                    <!--<img src="../../public/login/assets/img/faculty/2.jpg" class="img-rounded"/>-->
+                    &lt;!&ndash;<img src="../../public/login/assets/img/faculty/2.jpg" class="img-rounded"/>&ndash;&gt;
                     <h3>王攀</h3>
                     <hr/>
                     <h4>公司联合创始人 CEO <br/>博士 </h4>
@@ -215,7 +250,7 @@
             </div>
             <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.6s">
                 <div class="faculty-div">
-                    <!--<img src="../../public/login/assets/img/faculty/3.jpg" class="img-rounded"/>-->
+                    &lt;!&ndash;<img src="../../public/login/assets/img/faculty/3.jpg" class="img-rounded"/>&ndash;&gt;
                     <h3>金西</h3>
                     <hr/>
                     <h4> 政府关系、产品战略顾问<br/>教授 </h4>
@@ -228,8 +263,14 @@
 
         </div>
     </div>
-</div>
+</div>-->
 <!-- FACULTY SECTION END-->
+<!--视频插入开始-->
+<div style="text-align: center">
+    <embed src="//static.youku.com/v1.0.0678/v/swf/loader.swf?VideoIDS=XMTg3NTc4Mjk5Mg%3D%3D&winType=BDskin&embedid=MTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%3D&wd=&partnerid=0edbfd2e4fc91b72&vext=pid%253D0edbfd2e4fc91b72%2526emb%253DMTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%253D%2526bc%253D%2526cna%253DIiFlEE3vEVACAXJiWyRODJ%2BW%2526vvlogext%253Dpc_i%25253D14741801227030QQ%252526pc_u%25253D424434612%252526rvpvid%25253D-%252526rycid%25253D-%252526yvft%25253D1482308433490%252526vsidc%25253D1%252526seid%25253D1482302058992FwV%252526vstp%25253D94%252526svstp%25253D33%2526type%253D0%2526embsig%253D1_1482311343_e5be9c4e97cbf58a5b835a01867641c5" allowFullScreen="true" quality="high" width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+</div>
+
+<!--视频插入结束-->
 <div id="course-sec" class="container set-pad">
     <div class="row text-center">
         <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
@@ -315,16 +356,16 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" id="contact-sec">
     <div class="row set-row-pad">
-        <div class="col-lg-4 col-md-4 col-sm-4   col-lg-offset-1 col-md-offset-1 col-sm-offset-1 "
+        <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1"
              data-scroll-reveal="enter from the bottom after 0.4s">
-
             <h2><strong>联系方式 </strong></h2>
             <hr/>
-            <h4>公司地址：江苏省苏州市虎丘区浒莲路68号</h4>
-            <h4><strong>联系电话:</strong> 400-0711-911 </h4>
-            <h4><strong>Email: </strong>tian.xiang@graphichina.com pan.wang@graphichina.com</h4>
+            <h4>苏州公司地址：江苏省苏州市吴江区联杨路139号清华汽车园1号楼</h4>
+            <h4>安徽公司地址：安徽省合肥市高新区创新产业园二期F1幢</h4>
+            <h4><strong>联系电话:</strong> 0512-63317830 </h4>
+            <h4><strong>Email: </strong>tian.xiang@graphichina.com</h4>
         </div>
 
 
@@ -339,18 +380,7 @@
 </div>
 <!-- FOOTER SECTION END-->
 
-<!--  Jquery Core Script -->
-<script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
-<!--  Core Bootstrap Script -->
-<script src="../../public/login/assets/js/bootstrap.js"></script>
-<!--  Flexslider Scripts -->
-<script src="../../public/login/assets/js/jquery.flexslider.js"></script>
-<!--  Scrolling Reveal Script -->
-<script src="../../public/login/assets/js/scrollReveal.js"></script>
-<!--  Scroll Scripts -->
-<script src="../../public/login/assets/js/jquery.easing.min.js"></script>
-<!--  Custom Scripts -->
-<script src="../../public/login/assets/js/custom.js"></script>
+
 
 </body>
 </html>

@@ -1,7 +1,7 @@
 /**
  * Created by shenaolin on 16/2/26.
  */
-var ide=angular.module('ide',['ui.bootstrap.contextMenu','colorpicker.module','btford.modal','ui.bootstrap','ngAnimate','GlobalModule','ui.tree','IDEServices']);
+var ide=angular.module('ide',['ui.bootstrap.contextMenu','colorpicker.module','ui.sortable','btford.modal','ui.bootstrap','ngAnimate','GlobalModule','ui.tree','IDEServices']);
 
 
 ide.config(['$compileProvider',
@@ -19,7 +19,7 @@ var MAX_DATA_LENGTH=100000;
 
 var ideScope;
 var isOffline;
-var mode = 'BUILD';
+var mode = 'DEBUG';
 
 console.log = (function (console) {
     if (mode === 'DEBUG'){
@@ -33,14 +33,14 @@ console.log = (function (console) {
 
 
 var logs=[];
-ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService',
+ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService',
     function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
                                     ResourceService,
                                     TagService,
-                                    TemplateProvider,TimerService,UserTypeService) {
+                                    TemplateProvider,TimerService,UserTypeService,WidgetService) {
 
     ideScope=$scope;
     $scope.ide={

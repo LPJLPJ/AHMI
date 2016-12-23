@@ -1,0 +1,1 @@
+var ideServices=angular.module("IDEServices",["ngFileUpload"]);

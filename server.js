@@ -70,12 +70,22 @@ if (!process.env.USING_HTTP){
 }
 
 
-// create a write stream (in append mode)
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'})
+//log
+
+var FileStreamRotator = require('file-stream-rotator')
+var morgan = require('morgan')
+var logDirectory = path.join(__dirname, 'log')
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
+
+var accessLogStream = FileStreamRotator.getStream({
+    date_format: 'YYYYMMDD',
+    filename: path.join(logDirectory, 'access-%DATE%.log'),
+    frequency: 'daily',
+    verbose: false
+})
 
 // setup the logger
-app.use(logger('combined', {stream: accessLogStream}))
-
+app.use(morgan('combined', {stream: accessLogStream}))
 
 //cookie
 app.use(CookieParser());
@@ -113,7 +123,11 @@ app.use(sessionControl);
 //router
 app.use(router);
 
+//404
 
+app.use(function (req,res) {
+    res.render('login/404.html')
+})
 
 //https
 var privateKey = fs.readFileSync('./credentials/privatekey.key');

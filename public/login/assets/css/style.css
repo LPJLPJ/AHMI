@@ -1,4 +1,4 @@
-﻿/*=============================================================
+﻿﻿/*=============================================================
     Authour URI: www.binarytheme.com
     License: Commons Attribution 3.0
 
@@ -30,16 +30,18 @@ body {
     ===================================*/
 
 .logo-custom {
-    max-height: 40px;
+    max-height: 62px;
+    position: absolute;
+    top:0;
 }
 
 #menu {
-    background-color: rgba(28, 43, 75, 1);
+    background-color: rgba(28, 43, 75, 0.5);
     color: #fff;
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 1px;
-    min-height: 70px;
+    min-height: 59px;
 }
 
 
@@ -59,7 +61,7 @@ body {
 .home-sec {
     padding-top: 10px;
     padding-bottom: 60px;
-    background: url(../img/header.jpg) no-repeat center center;
+    /*background: url(../img/header.jpg) no-repeat center center;*/
     padding: 0;
     -webkit-background-size: cover;
     background-size: cover;
@@ -68,8 +70,8 @@ body {
 }
 
     .home-sec .overlay {
-        background: rgba(38, 57, 88, 0.89);
-        min-height: 500px;
+       /* background: rgba(38, 57, 88, 0.89);*/
+       /* min-height: 500px;*/
     }
 
     .home-sec h1 {
@@ -93,7 +95,7 @@ body {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0);
     background-color: transparent;
     border: 0px solid #000;
-    padding-top: 120px;
+    /*padding-top: 120px;*/
 }
 
 .flex-control-nav {
@@ -239,11 +241,10 @@ h1::after {
 #contact-sec {
     padding-top: 10px;
     padding-bottom: 60px;
-    background: url(../img/contact.jpg) no-repeat center center;
+    /*background: url(../img/contact.jpg) no-repeat center center;*/
     padding: 0;
     -webkit-background-size: cover;
     background-size: cover;
-    color: #fff;
     background-attachment: fixed;
 }
 
@@ -264,8 +265,48 @@ h1::after {
   ===================================*/
 #footer {
     padding:5px 20px;
-    background-color:#2d3d5a;
+    background-color: rgba(28, 43, 75, 0.5);
     text-align:right;
     color:#fff;
     font-size:15px;
+}
+
+*{margin: 0;padding: 0;}
+#container-zyj {
+    position: absolute;
+    height: 700px;
+    width: 100%;
+}
+
+.slide-container{
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+}
+#output {
+    width: 100%;
+    height: 100%;
+}
+.color{
+    width: 120px;
+    height: 20px;
+    margin: 0 auto;
+    position: fixed;
+    left: 50%;
+    margin-left: -60px;
+    bottom: 20px;
+}
+.color li{
+    float: left;
+    margin: 0 5px;
+    width: 20px;
+    height: 20px;
+    background: #ccc;
+    box-shadow: 0 0 4px #FFF;
+    list-style: none;
+    cursor: pointer;
+}
+.color li:nth-child(1){
+    background: #002c4a;
 }
