@@ -933,13 +933,13 @@ ide.controller('NavModalCANConfig',['$scope','$uibModalInstance','data','NavModa
     $scope.CANInfo = data;
     $scope.selectCANId = NavModalCANConfigService.getCANId();
     $scope.ok = function(){
-        if($scope.selectCANId!=NavModalCANConfigService.getCANId()){
+        if(($scope.selectCANId==null)&&(NavModalCANConfigService.getCANId()==null)){
+            //console.log('未改变');
+            $uibModalInstance.dismiss('cancel');
+        }else{
             //console.log('改变了');
             NavModalCANConfigService.setCANId($scope.selectCANId);
             $uibModalInstance.close($scope.selectCANId);
-        }else{
-            //console.log('未改变');
-            $uibModalInstance.dismiss('cancel');
         }
 
     };
