@@ -1,7 +1,7 @@
 /**
  * Created by YangZitao on 2016/12/14.
  */
-ide.controller("sortCtrl",function($scope,$timeout){
+ide.controller("sortCtrl",['$scope','$timeout',function($scope,$timeout){
     $scope.cannotSort = false;
         $scope.sortableOptions = {
             // 数据有变化
@@ -24,4 +24,4 @@ ide.controller("sortCtrl",function($scope,$timeout){
                 //do nothing
             }
         }
-    })
+    }])
