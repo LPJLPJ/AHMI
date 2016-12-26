@@ -9,7 +9,7 @@ var getUsers = require('./getUsers');
 var route_space = require('./route_space');
 var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
-var UserModel = require('../db/models/UserModel')
+var UserModel = require('../db/models/UserModel');
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -22,6 +22,9 @@ var loginAPI = require('./api/loginAPI');
 //projects
 var projectInfo = require('./projectinfo');
 var generateProject = require('./generateProject');
+
+//CAN projects
+var CANProjectInfo = require('./CANProjectInfo');
 
 //sessionTouch
 var sessionTouch = require('../middlewares/sessionTouch');
@@ -170,6 +173,26 @@ router.route('/project/create')
     .post(projectInfo.createProject);
 router.route('/project/delete')
     .post(projectInfo.deleteProject);
+
+//CAN project
+router.route('/CANProject/create')
+    .post(CANProjectInfo.createCANProject);
+router.route('/CANProject/delete')
+    .post(CANProjectInfo.deleteCANProject);
+router.route('/CANProject/:id/editor')
+    .get(CANProjectInfo.getCANProjectById);
+router.route('/CANProject/:id/content')
+    .get(CANProjectInfo.getCANProjectContent);
+router.route('/CANProject/:id/save')
+    .post(CANProjectInfo.saveCANProject);
+router.route('/CANProject/:id/basicinfo')
+    .post(CANProjectInfo.updateCANProject);
+router.route('/CANProject/names')
+    .get(CANProjectInfo.getAllCANProjectNames);
+router.route('/CANProject/:id/importCANFile')
+    .post(CANProjectInfo.generateCANFile);
+router.route('/CANProject/:id/deleteCANFile')
+    .post(CANProjectInfo.deleteCANFile);
 
 //project file
 router.route('/project/:id/upload')

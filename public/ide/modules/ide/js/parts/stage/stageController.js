@@ -316,10 +316,10 @@
         var updateThumbInterval;
 
 
-        function holdLayer(){
-
-
-
+        function holdLayer(event){
+            //var pageNode = CanvasService.getPageNode();
+            //var point = pageNode.getPointer(event.e);
+            //console.log('point',point);
             if ($scope.status.gesture=='release'){
                 $scope.status.gesture='moving';
                 if (Preference.THUMB_REAL_TIME>0){
@@ -360,7 +360,6 @@
         }
 
         function selectLayer(event){
-
             if (layerDoubleClicking){
                 console.log('双击中');
                 return;
