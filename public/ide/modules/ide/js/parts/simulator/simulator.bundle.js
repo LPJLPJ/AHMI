@@ -20909,7 +20909,7 @@
 	                break;
 	        }
 	    },
-	    drawInputKeyboard: function (curX, curY, widget, options) {
+	    drawInputKeyboard: function (curX, curY, widget, options, cb) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offCtx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
@@ -20973,6 +20973,15 @@
 	            offCtx.drawImage(tempcanvas, curX + curKey.x, curY + curKey.y, curKey.width, curKey.height);
 	        }
 	        tempCtx.restore();
+	        if (widget.highlight) {
+	            var index = widget.highlightValue;
+	            var length = keys.length;
+	            if (index >= 0 && index < length) {
+	                curKey = keys[index];
+	                this.drawHighLight(curX + curKey.x, curY + curKey.y, curKey.width, curKey.height, null);
+	            }
+	        }
+	        cb && cb();
 	    },
 	    drawSlide: function (curX, curY, widget, options, cb) {
 	        var slideSlices = widget.texList[0].slices;
@@ -22923,7 +22932,7 @@
 	                this.handleModifyHighlightingWidget(targetWidget, direction);
 	            }
 	        } else {
-	            if (page && page.linkedWidgets) {
+	            if (page && page.linkedWidgets && page.linkedWidgets.length) {
 	                if (page.curHighlightIdx === undefined) {
 	                    page.curHighlightIdx = 0;
 	                } else {
@@ -51213,6 +51222,11 @@
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
 	                }
 	                break;
+	            case 'MyInputKeyboard':
+	                var keys = curWidget.info.keys;
+	                keys.forEach(function (key, index) {
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, index, key.x, key.y));
+	                });
 	            default:
 	                // linkedWidget.type = curWidget.subType;
 	                // linkedWidget.target = curWidget;
@@ -51223,9 +51237,14 @@
 
 	        }
 	    }
+
+	    linkedWidgetList.sort(function (a, b) {
+	        return a.left - b.left;
+	    });
 	    linkedWidgetList.sort(function (a, b) {
 	        return a.top - b.top;
 	    });
+
 	    return linkedWidgetList;
 	}
 
@@ -51287,6 +51306,7 @@
 	        case 'MyButton':
 	        case 'MyButtonGroup':
 	        case 'MyDateTime':
+	        case 'MyInputKeyboard':
 	            is = true;
 	            break;
 	        default:

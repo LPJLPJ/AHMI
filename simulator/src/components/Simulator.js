@@ -1224,7 +1224,7 @@ module.exports =   React.createClass({
 
 
     },
-    drawInputKeyboard:function(curX, curY, widget, options){
+    drawInputKeyboard:function(curX, curY, widget, options,cb){
         var offcanvas = this.refs.offcanvas;
         var offCtx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
@@ -1290,6 +1290,15 @@ module.exports =   React.createClass({
 
         }
         tempCtx.restore();
+        if (widget.highlight) {
+            var index = widget.highlightValue;
+            var length = keys.length;
+            if (index>=0 && index<length){
+                curKey = keys[index]
+                this.drawHighLight( curX + curKey.x, curY + curKey.y, curKey.width, curKey.height,null);
+            }
+        }
+        cb&&cb()
 
     },
     drawSlide: function (curX, curY, widget, options,cb) {
@@ -3328,7 +3337,7 @@ module.exports =   React.createClass({
                 this.handleModifyHighlightingWidget(targetWidget,direction);
             }
         }else{
-            if (page && page.linkedWidgets) {
+            if (page && page.linkedWidgets && page.linkedWidgets.length) {
                 if (page.curHighlightIdx === undefined) {
                     page.curHighlightIdx = 0;
                 } else {

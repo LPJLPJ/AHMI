@@ -107,6 +107,11 @@ function linkWidgets(widgetList) {
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
                 }
                 break;
+            case 'MyInputKeyboard':
+                var keys = curWidget.info.keys;
+                keys.forEach(function (key, index) {
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
+                })
             default:
                 // linkedWidget.type = curWidget.subType;
                 // linkedWidget.target = curWidget;
@@ -117,9 +122,14 @@ function linkWidgets(widgetList) {
 
         }
     }
+
+    linkedWidgetList.sort(function (a, b) {
+        return (a.left - b.left);
+    });
     linkedWidgetList.sort(function (a, b) {
         return (a.top - b.top);
     });
+
     return linkedWidgetList;
 }
 
@@ -181,6 +191,7 @@ function isInteractiveWidget(widget) {
         case 'MyButton':
         case 'MyButtonGroup':
         case 'MyDateTime':
+        case 'MyInputKeyboard':
             is = true;
             break;
         default:
