@@ -59,10 +59,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     {id:'0',name:'普通模式'},
                     {id:'1',name:'开关模式'}],
                 highlightModeId:'0',
-                highlightModes:[
-                    {id:'0',name:'启用高亮'},
-                    {id:'1',name:'禁用高亮'}
-                ],
                 enterButtonMode:enterButtonMode,
                 enterNormalImage:enterNormalImage,
                 enterPressImage:enterPressImage,
