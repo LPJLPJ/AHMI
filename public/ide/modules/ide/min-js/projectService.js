@@ -2426,11 +2426,7 @@ ideServices
 
 
             this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
-                if (renderingSubLayer){
-                    return;
-                }
-                console.log('SyncSubLayerImage',layer,subLayer)
-                renderingSubLayer=true;
+
                 var self = this;
                 var subLayerNode=CanvasService.getSubLayerNode();
                 var currentSubLayer=subLayer;
@@ -2458,7 +2454,6 @@ ideServices
                             layerFab = self.getFabLayerByLayer(currentLayer);
                             if (layerFab) {
                                 layerFab.fire('OnRefresh',function () {
-                                    renderingSubLayer = false;
                                     _successCallback && _successCallback();
                                 })
                             }else{
