@@ -12,4 +12,5 @@
         var body = document.body;
         body.appendChild(versionTag);
     }
+    
 })();
