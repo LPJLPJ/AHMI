@@ -543,7 +543,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         }
     }
 
-
     function addSubSlide(){
 
     }
