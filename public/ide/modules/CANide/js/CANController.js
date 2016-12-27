@@ -370,8 +370,10 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
         $scope.globalProject.IOConfig.enableConfig=state;
         if(state){
             $('#IOConfig').show("normal");
+            $('#addIOConfig').attr('disabled',false);
         }else{
             $('#IOConfig').hide('normal');
+            $('#addIOConfig').attr('disabled',true);
         }
     }
 

@@ -19,10 +19,8 @@
     <link href="../../public/login/assets/css/index.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="../../public/login/assets/css/css.css" type="text/css"/>
     <link rel="stylesheet" href="../../public/login/assets/css/zhuce.css" type="text/css"/>
-
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css"/>
     <script src="../../public/general/js/versionTag.js"></script>
-
     <!--  Jquery Core Script -->
     <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
     <!--  Core Bootstrap Script -->
@@ -37,25 +35,7 @@
     <script src="../../public/login/assets/js/custom.js"></script>
 
     <script src="../../public/login/assets/js/vector-zyj.js"></script>
-
-    <script>
-        $(function(){
-            // 初始化 传入dom id
-            var victor = new Victor("container-zyj", "output");
-            var theme = [
-                ["#002c4a", "#005584"],
-                ["#35ac03", "#3f4303"],
-                ["#ac0908", "#cd5726"],
-                ["#18bbff", "#00486b"]
-            ]
-            $(".color li").each(function(index, val) {
-                var color = theme[index];
-                $(this).mouseover(function(){
-                    victor(color).set();
-                })
-            });
-        });
-    </script>
+    <script src="../../public/login/assets/js/carousel-zyj.js"></script>
 
 </head>
 <body>
@@ -265,9 +245,51 @@
     </div>
 </div>-->
 <!-- FACULTY SECTION END-->
+
+<!--轮播开始-->
+<div id="myCarousel" class="carousel slide slide-zyj">
+    <ol class="carousel-indicators position-zyj" >
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+        <li data-target="#myCarousel" data-slide-to="3"></li>
+    </ol>
+    <div class="container">
+        <div class="carousel-inner row">
+            <div class="item active">
+                <img src="../../public/images/slide/01.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="1.png"/>
+            </div>
+            <div class="item">
+                <img src="../../public/images/slide/02.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="2.png"/>
+            </div>
+            <div class="item">
+                <img src="../../public/images/slide/03.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="3.png"/>
+            </div>
+            <div class="item">
+                <img src="../../public/images/slide/04.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="4.png"/>
+            </div>
+        </div>
+        <a href="#myCarousel" data-slide="prev" class="carousel-control left1"><span>&lsaquo;</span></a>
+        <a href="#myCarousel" data-slide="next" class="carousel-control right1"><span>&rsaquo;</span></a>
+    </div>
+</div>
+<!--轮播结束-->
+
+
+
 <!--视频插入开始-->
 <div style="text-align: center">
-    <embed src="//static.youku.com/v1.0.0678/v/swf/loader.swf?VideoIDS=XMTg3NTc4Mjk5Mg%3D%3D&winType=BDskin&embedid=MTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%3D&wd=&partnerid=0edbfd2e4fc91b72&vext=pid%253D0edbfd2e4fc91b72%2526emb%253DMTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%253D%2526bc%253D%2526cna%253DIiFlEE3vEVACAXJiWyRODJ%2BW%2526vvlogext%253Dpc_i%25253D14741801227030QQ%252526pc_u%25253D424434612%252526rvpvid%25253D-%252526rycid%25253D-%252526yvft%25253D1482308433490%252526vsidc%25253D1%252526seid%25253D1482302058992FwV%252526vstp%25253D94%252526svstp%25253D33%2526type%253D0%2526embsig%253D1_1482311343_e5be9c4e97cbf58a5b835a01867641c5" allowFullScreen="true" quality="high" width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+    <embed src="/public/resources/1.mp4" allowFullScreen="true" quality="high"
+           width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+
+   <!-- <embed src="//static.youku.com/v1.0.0678/v/swf/loader.swf?VideoIDS=XMTg3NTc4Mjk5Mg%3D%3D&winType
+    =BDskin&embedid=MTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%3D&wd=&partnerid=0edbfd2e4fc91b72&vext=pid%
+    253D0edbfd2e4fc91b72%2526emb%253DMTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%253D%2526bc%253D%2526cna%2
+    53DIiFlEE3vEVACAXJiWyRODJ%2BW%2526vvlogext%253Dpc_i%25253D14741801227030QQ%252526pc_u%25253D424
+    434612%252526rvpvid%25253D-%252526rycid%25253D-%252526yvft%25253D1482308433490%252526vsidc%2525
+    3D1%252526seid%25253D1482302058992FwV%252526vstp%25253D94%252526svstp%25253D33%2526type%253D0%2
+    526embsig%253D1_1482311343_e5be9c4e97cbf58a5b835a01867641c5" allowFullScreen="true" quality="high"
+           width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>-->
 </div>
 
 <!--视频插入结束-->
@@ -379,7 +401,6 @@
                   target="_blank">www.graphichina.com </a>All Rights Reserved
 </div>
 <!-- FOOTER SECTION END-->
-
 
 
 </body>
