@@ -452,6 +452,8 @@ module.exports =   React.createClass({
         var duration = (page.transition && page.transition.duration )|| 1000;
         var count = frames;
         var maxD = -100;
+        var hWidth = canvas.width/2
+        var hHeight = canvas.height/2;
         if (!page.state || page.state == LoadState.notLoad) {
             page.state = LoadState.willLoad
             //generate load trigger
@@ -492,20 +494,50 @@ module.exports =   React.createClass({
                         page.translate = null;
                     })
                     break;
+                case 'MOVE_TB':
+                    AnimationManager.step(-offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                    })
+                    break;
+                case 'MOVE_BT':
+                    AnimationManager.step(offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                    })
+                    break;
                 case 'SCALE':
                     var beforeTranslateMatrix = [
-                        [1,0,-400],
-                        [0,1,-240],
+                        [1,0,-hWidth],
+                        [0,1,-hHeight],
                         [0,0,1]
                     ];
                     var afterTranslateMatrix = [
-                        [1,0,400],
-                        [0,1,240],
+                        [1,0,hWidth],
+                        [0,1,hHeight],
                         [0,0,1]
                     ];
                     var beforeScaleMatrix = [
-                        [0.5,0,0],
-                        [0,0.5,0],
+                        [0.1,0,0],
+                        [0,0.1,0],
                         [0,0,1]
                     ];
                     var afterScaleMatrix = [
@@ -520,9 +552,9 @@ module.exports =   React.createClass({
                             [0,0,1]
                         ];
                         // console.log(curScaleMatrix)
-                        // var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
-                        // combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
-                        page.transform = curScaleMatrix;
+                        var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
+                        combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
+                        page.transform = combinedMatrix;
                         this.draw(null,options);
                     }.bind(this),function () {
                         page.transform = null
@@ -796,39 +828,39 @@ module.exports =   React.createClass({
         var dstTransformObj={};
         if(type === 'MyLayer'){
             srcTransformObj = {
-                a:srcScale.x,
+                a:srcScale.x||0,
                 b:0,
                 c:0,
-                d:srcScale.y,
-                e:srcTranslate-target.x,
-                f:srcTranslate-target.y
+                d:srcScale.y||0,
+                e:(srcTranslate.x-target.x)||0,
+                f:(srcTranslate.x-target.y)||0
 
             };
             dstTransformObj = {
-                a:dstScale.x,
+                a:dstScale.x||0,
                 b:0,
                 c:0,
-                d:dstScale.y,
-                e:dstTranslate.x-target.x,
-                f:dstTranslate.y-target.y
+                d:dstScale.y||0,
+                e:(dstTranslate.x-target.x)||0,
+                f:(dstTranslate.y-target.y)||0
             }
         }else{
             srcTransformObj = {
-                a:srcScale.x,
+                a:srcScale.x||0,
                 b:0,
                 c:0,
-                d:srcScale.y,
-                e:srcTranslate-target.info.left,
-                f:srcTranslate-target.info.top
+                d:srcScale.y||0,
+                e:(srcTranslate.x-target.info.left)||0,
+                f:(srcTranslate.x-target.info.top)||0
 
             };
             dstTransformObj = {
-                a:dstScale.x,
+                a:dstScale.x||0,
                 b:0,
                 c:0,
-                d:dstScale.y,
-                e:dstTranslate.x-target.info.left,
-                f:dstTranslate.y-target.info.top
+                d:dstScale.y||0,
+                e:(dstTranslate.x-target.info.left)||0,
+                f:(dstTranslate.y-target.info.top)||0
             }
         }
 
@@ -1012,6 +1044,8 @@ module.exports =   React.createClass({
             var duration = (transition && transition.duration )|| 1000;
             var frames = 30;
             var easing = 'easeInOutCubic';
+            var hWidth = w/2
+            var hHeight = h/2
             switch (method){
                 case 'MOVE_LR':
                     AnimationManager.step(-w,0,0,0,duration,frames,easing,function (deltas) {
@@ -1047,22 +1081,61 @@ module.exports =   React.createClass({
                         subCanvas.translate = null;
                     })
                     break;
+                // case 'SCALE':
+                //     AnimationManager.step(0.1,0.1,1,1,duration,frames,easing,function (deltas) {
+                //         // offctx.save();
+                //         // offctx.translate(deltas.curX,deltas.curY);
+                //         subCanvas.scale = {
+                //             w:deltas.curX,
+                //             h:deltas.curY
+                //         }
+                //         // subCanvas.info.x += deltas.deltaX;
+                //         // subCanvas.info.y += deltas.deltaY;
+                //         this.draw();
+                //         // offctx.restore();
+                //     }.bind(this),function () {
+                //         // offctx.restore()
+                //         subCanvas.scale = null;
+                //     })
+                //     break;
                 case 'SCALE':
-                    AnimationManager.step(0.5,0.5,1,1,duration,frames,easing,function (deltas) {
-                        // offctx.save();
-                        // offctx.translate(deltas.curX,deltas.curY);
-                        subCanvas.scale = {
-                            w:deltas.curX,
-                            h:deltas.curY
-                        }
-                        // subCanvas.info.x += deltas.deltaX;
-                        // subCanvas.info.y += deltas.deltaY;
-                        this.draw();
-                        // offctx.restore();
+                    var beforeTranslateMatrix = [
+                        [1,0,-hWidth],
+                        [0,1,-hHeight],
+                        [0,0,1]
+                    ];
+                    var afterTranslateMatrix = [
+                        [1,0,hWidth],
+                        [0,1,hHeight],
+                        [0,0,1]
+                    ];
+                    var beforeScaleMatrix = [
+                        [0.1,0,0],
+                        [0,0.1,0],
+                        [0,0,1]
+                    ];
+                    var afterScaleMatrix = [
+                        [1,0,0],
+                        [0,1,0],
+                        [0,0,1]
+                    ];
+                    AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
+                        var curScaleMatrix = [
+                            [deltas.a.curValue,deltas.c.curValue,deltas.e.curValue],
+                            [deltas.b.curValue,deltas.d.curValue,deltas.f.curValue],
+                            [0,0,1]
+                        ];
+                        // console.log(curScaleMatrix)
+                        var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
+                        combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
+                        subCanvas.transform = combinedMatrix;
+                        this.draw(null,options);
                     }.bind(this),function () {
-                        // offctx.restore()
-                        subCanvas.scale = null;
+                        subCanvas.transform = null
                     })
+
+
+
                     break;
                 default:
                     this.paintSubCanvas(subCanvas, x, y, w, h, options)
