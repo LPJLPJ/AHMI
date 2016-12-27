@@ -614,6 +614,32 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyProgress(level, object));
     };
     fabric.MyProgress.async = true;
+    /**
+     * 用于求渐变色
+     * @param initColor
+     * @param endColor
+     * @param value
+     */
+    function changeColor(initColor,endColor,progressValue){
+        var initColorArr = initColor.slice(5,initColor.length-1).split(','),
+            endColorArr = endColor.slice(5,endColor.length-1).split(',');
+        var initColorR = parseInt(initColorArr[0]),
+            initColorG = parseInt(initColorArr[1]),
+            initColorB = parseInt(initColorArr[2]),
+            initColorA = parseInt(initColorArr[3]),
+            endColorR = parseInt(endColorArr[0]),
+            endColorG = parseInt(endColorArr[1]),
+            endColorB = parseInt(endColorArr[2]),
+            endColorA = parseInt(endColorArr[3]);
+
+        var progressColorR = parseInt(initColorR+(endColorR-initColorR)*progressValue),
+            progressColorG = parseInt(initColorG+(endColorG-initColorG)*progressValue),
+            progressColorB = parseInt(initColorB+(endColorB-initColorB)*progressValue),
+            progressColorA = 1;
+
+        return  'rgba('+progressColorR+','+progressColorG+','+progressColorB+','+progressColorA+')';
+
+    }
 
 
     //osci
