@@ -433,21 +433,37 @@ ideServices
                 var _successCallback = function () {
                     inChangingPage = false;
                     successCallback && successCallback()
-                }
+                };
+                var oldPage=_self.getCurrentPage();
+                var oldPageIndex=-1;
+
                 if (inChangingPage) {
-                    console.log('inChangingPage')
+                    console.log('inChangingPage');
                     return;
                 }
                 inChangingPage = true;
                 if (isInit){
                     //console.log('初始化页面');
-                    intoNewPage();
+                    if(oldPage){
+                        if(oldPage.mode==1){
+                            _.forEach(project.pages, function (__page,__pageIndex) {
 
+                                if (__page.id==oldPage.id){
+                                    oldPageIndex=__pageIndex;
+                                }
+                            });
+                            if (oldPageIndex!=_pageIndex){
+                                _self.OnPageSelected(oldPageIndex,intoNewPage,true);
+
+                            }
+                        }else{
+                            intoNewPage();
+                        }
+                    }else{
+                        intoNewPage();
+                    }
                 }else if (_pageIndex>=0){
-
-                    var  oldPage=_self.getCurrentPage();
                     if (oldPage){
-                        var oldPageIndex=-1;
                         _.forEach(project.pages, function (__page,__pageIndex) {
 
                             if (__page.id==oldPage.id){
@@ -468,20 +484,14 @@ ideServices
 
                         }else{
                             //console.log('相同页面点击');
-
                             _self.OnPageSelected(_pageIndex,function(){
                                 _successCallback&&_successCallback(true);
                             },isInit);
-
-
-
                         }
                     }else {
                         console.log('异常情况');
                         intoNewPage();
-
                     }
-
                 }
 
                 function intoNewPage(){
