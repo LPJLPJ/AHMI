@@ -433,21 +433,40 @@ ideServices
                 var _successCallback = function () {
                     inChangingPage = false;
                     successCallback && successCallback()
-                }
+                };
+                var oldPage=_self.getCurrentPage();
+                var oldPageIndex=-1;
+
                 if (inChangingPage) {
-                    console.log('inChangingPage')
+                    console.log('inChangingPage');
                     return;
                 }
                 inChangingPage = true;
                 if (isInit){
-                    //console.log('初始化页面');
-                    intoNewPage();
+                    //console.log化页面');
+                    if(oldPage){
+                        if(oldPage.mode==1){
+                            _.forEach(project.pages, function (__page,__pageIndex) {
 
+                                if (__page.id==oldPage.id){
+                                    oldPageIndex=__pageIndex;
+                                }
+                            });
+                            if (oldPageIndex!=_pageIndex){
+                                _self.OnPageSelected(oldPageIndex,intoNewPage,true);
+
+                            }
+                        }else{
+                            intoNewPage();
+                        }
+                    }else{
+                        intoNewPage();
+                    }
                 }else if (_pageIndex>=0){
 
-                    var  oldPage=_self.getCurrentPage();
+
                     if (oldPage){
-                        var oldPageIndex=-1;
+
                         _.forEach(project.pages, function (__page,__pageIndex) {
 
                             if (__page.id==oldPage.id){
@@ -658,12 +677,11 @@ ideServices
                     newPageIndex=currentPageIndex + 1;
 
                 }
-                //console.log(project);
+
                 _self.changeCurrentPageIndex(newPageIndex, function () {
                     _cleanPageHashKey();
                     _successCallback && _successCallback();
                 },true);
-
 
             };
             /**
@@ -1934,7 +1952,7 @@ ideServices
                     currentPage=_self.getCurrentPage();
                 }
                 if (!currentPage){
-                    console.warn('找不到Page');
+                    console.warn('找不到操作前的Page');
                     return;
                 }
 
@@ -1946,8 +1964,6 @@ ideServices
                     editInSamePage=true;
                 }
                 var pageNode = CanvasService.getPageNode();
-
-
 
                 if (currentPage.mode==0&&editInSamePage&&!forceReload){
                     _self.OnPageClicked(pageIndex,null,skipClean);
