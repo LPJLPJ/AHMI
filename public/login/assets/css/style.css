@@ -1,4 +1,4 @@
-﻿﻿/*=============================================================
+﻿/*=============================================================
     Authour URI: www.binarytheme.com
     License: Commons Attribution 3.0
 
@@ -309,4 +309,31 @@ h1::after {
 }
 .color li:nth-child(1){
     background: #002c4a;
+}
+.container>a>span{
+    font-size: 110px;position:absolute;top:35%;text-decoration:none;color:white;
+}
+#myCarousel{
+    width:100%;
+}
+.position-zyj{
+    position: relative;
+    top:550px;
+}
+.slide-zyj{
+    height:670px;
+}
+.size-zyj{
+    position: relative;
+    top:-50px;
+    left:0;
+}
+#myCarousel .container a span{
+   font-size:180px ;
+    position:relative;
+    top:330px;
+}
+.position1-zyj{
+    position: relative;
+    top:-15px;
 }

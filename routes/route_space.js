@@ -1,7 +1,8 @@
-var UserModel = require('../db/models/UserModel')
-var ProjectModel = require('../db/models/ProjectModel')
-var path = require('path')
-var _ = require('lodash')
+var UserModel = require('../db/models/UserModel');
+var ProjectModel = require('../db/models/ProjectModel');
+var CANProjectModel = require('../db/models/CANProjectModel');
+var path = require('path');
+var _ = require('lodash');
 module.exports = function (req, res) {
 	var _user = req.session.user
 	if (_user && _user.username && _user.id) {
@@ -25,12 +26,29 @@ module.exports = function (req, res) {
                     projectInfo: info,
                     thumbnail:thumbnail
                 }
-            })
-            res.render('login/personalProject.html',{
-                                       username:_user.username,
-                                       projects:processedProjects
-                                   })
-
+            });
+            CANProjectModel.findByUser(_user.id,function(err,CANProjects){
+                if(err) {
+                    res.status(500), end('error');
+                }else{
+                    CANProjects.reverse();
+                    var processedCANProjects = _.cloneDeep(CANProjects).map(function(CANProject){
+                        var info = {};
+                        info._id = CANProject._id;
+                        info.userId = CANProject.userId;
+                        info.name = CANProject.name;
+                        info.lastModifiedTime = CANProject.lasModifiedTime;
+                        return {
+                            CANProjectInfo : info
+                        }
+                    });
+                    res.render('login/personalProject.html',{
+                        username:_user.username,
+                        projects:processedProjects,
+                        CANProjects:processedCANProjects,
+                    })
+                }
+            });
         })
 
 	}else{

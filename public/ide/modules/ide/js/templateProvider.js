@@ -433,7 +433,6 @@ ideServices
                 count:2,
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
                 disableHighlight:false
-
             };
             return {
                 id: Math.random().toString(36).substr(2),

@@ -3,7 +3,7 @@
  */
 ;(function () {
     window.onload = function () {
-        var versionNum ='1.8.2';
+        var versionNum ='1.8.3';
         window.ideVersion = versionNum;
         var versionTag = document.createElement('div');
         versionTag.id = 'version-tag';
@@ -12,5 +12,4 @@
         var body = document.body;
         body.appendChild(versionTag);
     }
-    
 })();

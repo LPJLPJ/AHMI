@@ -16,7 +16,12 @@ $(function(){
     var localProjectDir='';
 
     closeModalConfirmButton.on('click',function (e) {
-       deleteProject(curProject,curPanel);
+        console.log('project',curProject);
+        if(curProject.resolution){
+            deleteProject(curProject,curPanel);
+        }else{
+            deleteCANProject(curProject,curPanel);
+        }
     });
 
     var local = false;
@@ -235,7 +240,7 @@ $(function(){
         var result=false;
         $("#basicinfo-resolution option").each(function(){
             if($(this).val().trim()==resolution){
-                console.log('haha',$(this).val().trim());
+                //console.log('haha',$(this).val().trim());
                 result=true;
             }
         });
@@ -513,4 +518,158 @@ $(function(){
         // console.log(html,JSON.stringify(html));
         $('#addproject').after(html)
     }
-})
+
+    //edit by lixiang
+
+    //创建CAN工程
+    $('#addCANproject').on('click', function (e) {
+        $('#CAN-basicinfo-title').val('');
+        $('#CAN-basicinfo-author').val('');
+        $('#CAN-modal-ok').html('创建');
+    });
+
+    $('#CAN-modal-ok').on('click',changeCANProject);
+    function changeCANProject(e){
+        var op = $('#CAN-modal-ok').html();
+        console.log(op);
+        if(op=="确认"){
+            updateCANProject(e,local);
+        }else if(op=="创建"){
+            createCANProject(e,local);
+        }
+    }
+
+    $('#CANProjectlist')
+        .on('click','.CANProjectPanel',function(e){
+            curPanel=$(this);
+            curSelectedPanel = curPanel;
+            var project = $(this).attr('data-project');
+            project = JSON.parse(project);
+            curProject = project;
+            var curNodeName = e.target.nodeName;
+            if(curNodeName=='IMG'){
+                var targetUrl = '';
+                if(local){
+
+                }else{
+                    targetUrl='/CANProject/'+project._id+'/editor';
+                }
+                window.open(targetUrl);
+            }else if(curNodeName=='SPAN'){
+                $('#CAN-modal-ok').html('确认');
+                var title = $('#CAN-basicinfo-title');
+                var author = $('#CAN-basicinfo-author');
+                title.val(project.name);
+                author.val(project.author);
+            }else if(curNodeName=='I'){
+                //deleteCANProject(project,curPanel);
+                closeModal.modal('show');
+            }
+        });
+
+    $('#CANProjectlist').on('mouseenter','.CANProjectPanel',function(e){
+        var icon = $(this).find('.CANProjectdelete');
+        if(icon){
+            icon.css('display','block');
+        }
+    })
+        .on('mouseleave','.CANProjectPanel',function(e){
+            var icon = $(this).find('.CANProjectdelete');
+            if(icon){
+                icon.css('display','none');
+            }
+        });
+
+
+    function createCANProject(e,local){
+        //console.log('创建CAN项目');
+        var CANProject={};
+        var title = $('#CAN-basicinfo-title');
+        var author = $('#CAN-basicinfo-author');
+        if(title.val().trim()!=''){
+            CANProject.name = title.val().trim();
+            CANProject.author = author.val().trim();
+            if(!checkName(CANProject.name)){
+                toastr.error('名称只能是汉字、英文和数字');
+                return;
+            }
+            if(local){
+
+            }else{
+                $.ajax({
+                    type:'POST',
+                    url:'/CANProject/create',
+                    data:CANProject,
+                    success:function(data,status,xhr){
+                        var newCANProject = JSON.parse(data);
+                        addNewCANProject(newCANProject);
+                    }
+                })
+            }
+        }
+    };
+
+    function deleteCANProject(project,curPanel){
+        if(local){
+
+        }else{
+            $.ajax({
+                type:'POST',
+                url:'/CANProject/delete',
+                data:{projectId:project._id},
+                success:function(data,status,xhr){
+                    console.log('删除成功');
+                    curPanel.remove();
+                },
+                error:function(err,status,xhr){
+                    console.log('err',err);
+                    alert('删除失败');
+                }
+            })
+        }
+    }
+
+    function updateCANProject(e,local){
+        var curPanel = curSelectedPanel;
+        var project = curPanel.attr('data-project');
+        project = JSON.parse(project);
+        var title = $('#CAN-basicinfo-title');
+        var author = $('#CAN-basicinfo-author');
+        if(project.name!=title.val().trim()||project.author!=author.val().trim()){
+            //changed
+            if(title.val().trim()!=''){
+                //title not empty
+                project.name = title.val().trim();
+                project.author = author.val().trim();
+                if(!checkName(project.name,project.author)){
+                    toastr.error('名称只能是汉字、英文和数字');
+                    return;
+                }
+                if(local){
+
+                }else{
+                    $.ajax({
+                        type:'POST',
+                        url:'/CANProject/'+project._id+'/basicinfo',
+                        data:project,
+                        success:function(data,status,xhr){
+                            var html = new EJS({url:'../../public/login/assets/views/CANProjectPanel.ejs'}).render({project:project,thumbnail:null});
+                            curPanel.replaceWith(html);
+                        },
+                        error:function(err,status,xhr){
+                            console.log('err',err);
+                            alert('修改失败');
+                        }
+                    })
+                }
+            }else{
+                toastr.warning('名称不能为空');
+            }
+        }
+    }
+
+    function addNewCANProject(newCANProject){
+        var html = new EJS({url:'../../public/login/assets/views/CANProjectPanel.ejs'}).render({project:newCANProject,thumbnail:null});
+        $('#addCANproject').after(html)
+    }
+});
