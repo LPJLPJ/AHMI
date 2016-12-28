@@ -318,13 +318,22 @@ h1::after {
 }
 .position-zyj{
     position: relative;
-    top:570px;
+    top:550px;
 }
 .slide-zyj{
-    height:680px;
+    height:670px;
 }
 .size-zyj{
     position: relative;
     top:-50px;
-    left:32px;
+    left:0;
+}
+#myCarousel .container a span{
+   font-size:180px ;
+    position:relative;
+    top:330px;
+}
+.position1-zyj{
+    position: relative;
+    top:-15px;
 }
