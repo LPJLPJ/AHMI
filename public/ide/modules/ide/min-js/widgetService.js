@@ -1232,7 +1232,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @param scaleY
      * @returns {*}
      */
-    function translateAngle(value,scaleX,scaleY){
+    function translateAngle(value,scaleX,scaleY,NewValue){
         var tempAngle=null;
         while(value>360){
             value=value-360;
@@ -1252,6 +1252,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             tempAngle = Math.atan(Math.tan((value-270)*Math.PI/180)*(scaleX/scaleY));
             tempAngle+=Math.PI*3/2;
         }
+        if(NewValue==360)
+            tempAngle+= Math.PI*2;
         return tempAngle;
     }
 
