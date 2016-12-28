@@ -1085,7 +1085,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
                 if(this.lightBandImageElement){
                     //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
-                    var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
+                    var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY,newValue);
                     var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
                     var nowangle=translateAngle(taoValue,this.scaleX,this.scaleY);
                     var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY);
