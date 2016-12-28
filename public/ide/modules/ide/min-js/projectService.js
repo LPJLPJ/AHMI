@@ -463,10 +463,7 @@ ideServices
                         intoNewPage();
                     }
                 }else if (_pageIndex>=0){
-
-
                     if (oldPage){
-
                         _.forEach(project.pages, function (__page,__pageIndex) {
 
                             if (__page.id==oldPage.id){
@@ -487,20 +484,14 @@ ideServices
 
                         }else{
                             //console.log('相同页面点击');
-
                             _self.OnPageSelected(_pageIndex,function(){
                                 _successCallback&&_successCallback(true);
                             },isInit);
-
-
-
                         }
                     }else {
                         console.log('异常情况');
                         intoNewPage();
-
                     }
-
                 }
 
                 function intoNewPage(){
