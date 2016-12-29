@@ -2217,20 +2217,6 @@ module.exports =   React.createClass({
         // console.log(arrange)
 
         var tempcanvas = this.refs.tempcanvas;
-        // if (arrange == 'vertical'){
-        //     tempcanvas.width = curHeight;
-        //     tempcanvas.height = curWidth;
-        //
-        //     // tempcanvas.width = curHeight;
-        //     // tempcanvas.height = curWidth;
-        //     // tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
-        //     // tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
-        //
-        //
-        // }else{
-        //     tempcanvas.width = curWidth;
-        //     tempcanvas.height = curHeight;
-        // }
 
         tempcanvas.width = curWidth;
         tempcanvas.height = curHeight;
@@ -2248,12 +2234,6 @@ module.exports =   React.createClass({
         var shouldHandleAlarmAction = false;
         var tempNumValue='';
         if (curValue != undefined && curValue != null) {
-            // offctx.save();
-            // if (arrange==='vertical'){
-            //     offctx.translate(offcanvas.width/2,offcanvas.height/2);
-            //     offctx.rotate(Math.PI/2);
-            //     offctx.translate(-offcanvas.width/2,-offcanvas.height/2);
-            // }
             //handle action before
             if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
 
@@ -2271,15 +2251,9 @@ module.exports =   React.createClass({
                         imgSrc:'',
                         name:'数字背景'
                     }
-                    // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
-                    // tempCtx.globalCompositeOperation = "destination-in";
-                    // console.log(tempNumValue);
-                    // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
-                    // // tempCtx.fillText(tempNumValue,0,)
-                    // tempCtx.restore()
+
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                     offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height)
-                    //offCtx.restore();
 
 
                     shouldHandleAlarmAction = true;
@@ -2297,22 +2271,33 @@ module.exports =   React.createClass({
                         tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                         oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight
-                        offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+                        if (oldHeight>0){
+                            offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+                        }
 
                         tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                         oldHeight = widget.curFrameNum  / totalFrameNum * curHeight
-                        offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
+                        if (oldHeight>0){
+                            offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
+                        }
+
                     }else{
                         tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                         oldWidth = (totalFrameNum - widget.curFrameNum)  / totalFrameNum * curWidth
-                        offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+                        if (oleWidth>0){
+                            offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+                        }
 
                         tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+
                         oldWidth = widget.curFrameNum  / totalFrameNum * curWidth;
-                        offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                        if (oleWidth>0){
+                            offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                        }
+
                     }
 
 
@@ -2359,7 +2344,7 @@ module.exports =   React.createClass({
     drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempcanvas,_arrange) {
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
-
+        tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height)
         tempCtx.save()
         // console.log('arrange',arrange)
         if (arrange==='vertical'){
@@ -2369,15 +2354,6 @@ module.exports =   React.createClass({
             // tempCtx.translate(0,-tempcanvas.width)
         }
 
-
-
-
-        // tempCtx.fillRect(tempcanvas.width/2,tempcanvas.height/2,10,5)
-        //this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
-        //tempCtx.globalCompositeOperation = "destination-in";
-        // console.log(tempNumValue);
-        //tempCtx.textBaseline="middle"
-        tempCtx.fillStyle=bgTex.color;
         tempCtx.font=font;
         switch(tempCtx.textAlign){
             case 'left':
