@@ -337,3 +337,6 @@ h1::after {
     position: relative;
     top:-15px;
 }
+.video-center{
+    text-align: center;
+}

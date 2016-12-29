@@ -472,11 +472,13 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
+                        options.pageAnimate = true
                         this.draw(null,options);
 
 
                     }.bind(this),function () {
                         page.translate = null;
+                        options.pageAnimate = false
                     })
                     break;
                 case 'MOVE_RL':
@@ -487,11 +489,13 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
+                        options.pageAnimate = true;
                         this.draw(null,options);
 
 
                     }.bind(this),function () {
                         page.translate = null;
+                        options.pageAnimate = false
                     })
                     break;
                 case 'MOVE_TB':
@@ -502,11 +506,13 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
+                        options.pageAnimate = true;
                         this.draw(null,options);
 
 
                     }.bind(this),function () {
                         page.translate = null;
+                        options.pageAnimate = false
                     })
                     break;
                 case 'MOVE_BT':
@@ -517,11 +523,13 @@ module.exports =   React.createClass({
                             x:deltas.curX,
                             y:deltas.curY
                         }
+                        options.pageAnimate = true;
                         this.draw(null,options);
 
 
                     }.bind(this),function () {
                         page.translate = null;
+                        options.pageAnimate = false;
                     })
                     break;
                 case 'SCALE':
@@ -555,9 +563,11 @@ module.exports =   React.createClass({
                         var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
                         combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
                         page.transform = combinedMatrix;
+                        options.pageAnimate = true;
                         this.draw(null,options);
                     }.bind(this),function () {
                         page.transform = null
+                        options.pageAnimate = false;
                     })
 
 
@@ -1044,103 +1054,91 @@ module.exports =   React.createClass({
             var duration = (transition && transition.duration )|| 1000;
             var frames = 30;
             var easing = 'easeInOutCubic';
-            var hWidth = w/2
-            var hHeight = h/2
-            switch (method){
-                case 'MOVE_LR':
-                    AnimationManager.step(-w,0,0,0,duration,frames,easing,function (deltas) {
-                        // offctx.save();
-                        // offctx.translate(deltas.curX,deltas.curY);
-                        subCanvas.translate = {
-                            x:deltas.curX,
-                            y:deltas.curY
-                        }
-                        // subCanvas.info.x += deltas.deltaX;
-                        // subCanvas.info.y += deltas.deltaY;
-                        this.draw();
-                        // offctx.restore();
-                    }.bind(this),function () {
-                        // offctx.restore()
-                        subCanvas.translate = null;
-                    })
-                    break;
-                case 'MOVE_RL':
-                    AnimationManager.step(w,0,0,0,duration,frames,easing,function (deltas) {
-                        // offctx.save();
-                        // offctx.translate(deltas.curX,deltas.curY);
-                        subCanvas.translate = {
-                            x:deltas.curX,
-                            y:deltas.curY
-                        }
-                        // subCanvas.info.x += deltas.deltaX;
-                        // subCanvas.info.y += deltas.deltaY;
-                        this.draw();
-                        // offctx.restore();
-                    }.bind(this),function () {
-                        // offctx.restore()
-                        subCanvas.translate = null;
-                    })
-                    break;
-                // case 'SCALE':
-                //     AnimationManager.step(0.1,0.1,1,1,duration,frames,easing,function (deltas) {
-                //         // offctx.save();
-                //         // offctx.translate(deltas.curX,deltas.curY);
-                //         subCanvas.scale = {
-                //             w:deltas.curX,
-                //             h:deltas.curY
-                //         }
-                //         // subCanvas.info.x += deltas.deltaX;
-                //         // subCanvas.info.y += deltas.deltaY;
-                //         this.draw();
-                //         // offctx.restore();
-                //     }.bind(this),function () {
-                //         // offctx.restore()
-                //         subCanvas.scale = null;
-                //     })
-                //     break;
-                case 'SCALE':
-                    var beforeTranslateMatrix = [
-                        [1,0,-hWidth],
-                        [0,1,-hHeight],
-                        [0,0,1]
-                    ];
-                    var afterTranslateMatrix = [
-                        [1,0,hWidth],
-                        [0,1,hHeight],
-                        [0,0,1]
-                    ];
-                    var beforeScaleMatrix = [
-                        [0.1,0,0],
-                        [0,0.1,0],
-                        [0,0,1]
-                    ];
-                    var afterScaleMatrix = [
-                        [1,0,0],
-                        [0,1,0],
-                        [0,0,1]
-                    ];
-                    AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
-                        var curScaleMatrix = [
-                            [deltas.a.curValue,deltas.c.curValue,deltas.e.curValue],
-                            [deltas.b.curValue,deltas.d.curValue,deltas.f.curValue],
+            var hWidth = w/2+x
+            var hHeight = h/2+y
+            if (!options.pageAnimate){
+                switch (method){
+                    case 'MOVE_LR':
+                        AnimationManager.step(-w,0,0,0,duration,frames,easing,function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+                            subCanvas.translate = {
+                                x:deltas.curX,
+                                y:deltas.curY
+                            }
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            this.draw();
+                            // offctx.restore();
+                        }.bind(this),function () {
+                            // offctx.restore()
+                            subCanvas.translate = null;
+                        })
+                        break;
+                    case 'MOVE_RL':
+                        AnimationManager.step(w,0,0,0,duration,frames,easing,function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+                            subCanvas.translate = {
+                                x:deltas.curX,
+                                y:deltas.curY
+                            }
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            this.draw();
+                            // offctx.restore();
+                        }.bind(this),function () {
+                            // offctx.restore()
+                            subCanvas.translate = null;
+                        })
+                        break;
+                    case 'SCALE':
+                        var beforeTranslateMatrix = [
+                            [1,0,-hWidth],
+                            [0,1,-hHeight],
                             [0,0,1]
                         ];
-                        // console.log(curScaleMatrix)
-                        var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
-                        combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
-                        subCanvas.transform = combinedMatrix;
-                        this.draw(null,options);
-                    }.bind(this),function () {
-                        subCanvas.transform = null
-                    })
+                        var afterTranslateMatrix = [
+                            [1,0,hWidth],
+                            [0,1,hHeight],
+                            [0,0,1]
+                        ];
+                        var beforeScaleMatrix = [
+                            [0.1,0,0],
+                            [0,0.1,0],
+                            [0,0,1]
+                        ];
+                        var afterScaleMatrix = [
+                            [1,0,0],
+                            [0,1,0],
+                            [0,0,1]
+                        ];
+                        AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
+                            var curScaleMatrix = [
+                                [deltas.a.curValue,deltas.c.curValue,deltas.e.curValue],
+                                [deltas.b.curValue,deltas.d.curValue,deltas.f.curValue],
+                                [0,0,1]
+                            ];
+                            // console.log(curScaleMatrix)
+                            var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
+                            combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
+                            subCanvas.transform = combinedMatrix;
+                            this.draw(null,options);
+                        }.bind(this),function () {
+                            subCanvas.transform = null
+                        })
 
 
 
-                    break;
-                default:
-                    this.paintSubCanvas(subCanvas, x, y, w, h, options)
+                        break;
+                    default:
+                        this.paintSubCanvas(subCanvas, x, y, w, h, options)
 
+                }
+            }else {
+                this.paintSubCanvas(subCanvas, x, y, w, h, options)
             }
+
 
 
 
@@ -1160,13 +1158,19 @@ module.exports =   React.createClass({
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         offctx.save()
-        if (subCanvas.translate){
+        if (subCanvas.transform) {
+            var m = subCanvas.transform;
+            offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
+        }else{
+            if (subCanvas.translate){
 
-            offctx.translate(subCanvas.translate.x,subCanvas.translate.y);
+                offctx.translate(subCanvas.translate.x,subCanvas.translate.y);
+            }
+            if (subCanvas.scale){
+                offctx.scale(subCanvas.scale.w,subCanvas.scale.h);
+            }
         }
-        if (subCanvas.scale){
-            offctx.scale(subCanvas.scale.w,subCanvas.scale.h);
-        }
+
         this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
         this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
         var widgetList = subCanvas.widgetList;
@@ -2213,20 +2217,6 @@ module.exports =   React.createClass({
         // console.log(arrange)
 
         var tempcanvas = this.refs.tempcanvas;
-        // if (arrange == 'vertical'){
-        //     tempcanvas.width = curHeight;
-        //     tempcanvas.height = curWidth;
-        //
-        //     // tempcanvas.width = curHeight;
-        //     // tempcanvas.height = curWidth;
-        //     // tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
-        //     // tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
-        //
-        //
-        // }else{
-        //     tempcanvas.width = curWidth;
-        //     tempcanvas.height = curHeight;
-        // }
 
         tempcanvas.width = curWidth;
         tempcanvas.height = curHeight;
@@ -2244,12 +2234,6 @@ module.exports =   React.createClass({
         var shouldHandleAlarmAction = false;
         var tempNumValue='';
         if (curValue != undefined && curValue != null) {
-            // offctx.save();
-            // if (arrange==='vertical'){
-            //     offctx.translate(offcanvas.width/2,offcanvas.height/2);
-            //     offctx.rotate(Math.PI/2);
-            //     offctx.translate(-offcanvas.width/2,-offcanvas.height/2);
-            // }
             //handle action before
             if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
 
@@ -2267,15 +2251,9 @@ module.exports =   React.createClass({
                         imgSrc:'',
                         name:'数字背景'
                     }
-                    // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
-                    // tempCtx.globalCompositeOperation = "destination-in";
-                    // console.log(tempNumValue);
-                    // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
-                    // // tempCtx.fillText(tempNumValue,0,)
-                    // tempCtx.restore()
+
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                     offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height)
-                    //offCtx.restore();
 
 
                     shouldHandleAlarmAction = true;
@@ -2293,22 +2271,33 @@ module.exports =   React.createClass({
                         tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                         oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight
-                        offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+                        if (oldHeight>0){
+                            offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+                        }
 
                         tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                         oldHeight = widget.curFrameNum  / totalFrameNum * curHeight
-                        offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
+                        if (oldHeight>0){
+                            offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
+                        }
+
                     }else{
                         tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
                         oldWidth = (totalFrameNum - widget.curFrameNum)  / totalFrameNum * curWidth
-                        offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+                        if (oleWidth>0){
+                            offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+                        }
 
                         tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+
                         oldWidth = widget.curFrameNum  / totalFrameNum * curWidth;
-                        offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                        if (oleWidth>0){
+                            offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                        }
+
                     }
 
 
@@ -2355,7 +2344,7 @@ module.exports =   React.createClass({
     drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempcanvas,_arrange) {
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
-
+        tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height)
         tempCtx.save()
         // console.log('arrange',arrange)
         if (arrange==='vertical'){
@@ -2365,15 +2354,6 @@ module.exports =   React.createClass({
             // tempCtx.translate(0,-tempcanvas.width)
         }
 
-
-
-
-        // tempCtx.fillRect(tempcanvas.width/2,tempcanvas.height/2,10,5)
-        //this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
-        //tempCtx.globalCompositeOperation = "destination-in";
-        // console.log(tempNumValue);
-        //tempCtx.textBaseline="middle"
-        tempCtx.fillStyle=bgTex.color;
         tempCtx.font=font;
         switch(tempCtx.textAlign){
             case 'left':
