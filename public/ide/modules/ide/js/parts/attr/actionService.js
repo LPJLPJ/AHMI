@@ -108,7 +108,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
         }else{
             fCB&&fCB();
         }
-    }
+    };
 
     /**
      * 返回一个新的空Action

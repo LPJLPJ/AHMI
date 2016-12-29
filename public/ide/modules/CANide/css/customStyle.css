@@ -98,4 +98,50 @@ body {
       line-height: 0;
       opacity: 0;
 }
+body,div,img{
+  margin: 0;
+  padding: 0;
+
+}
+.header-background{
+  background: rgba(139, 155, 189, 0.74);
+  position:fixed;
+  z-index: 99999;
+  width:100%;
+  height:60px;
+}
+.header-center{
+  text-align: center;
+
+}
+.project-position{
+  position:absolute;
+  top:80px;
+  left:22%;
+}
+.header-center>h2{
+  color: rgba(39, 59, 155, 0.87);
+  font-weight: 900;
+  float:left;
+  position: absolute;
+  top:-11px;
+  left:38%;
+}
+.header-center>img{
+  float:left;
+  height:50px;
+  width:160px;
+  position: absolute;
+  top:5px;
+  left:20px;
+}
+.can-background{
+  background-color: rgba(155, 193, 227, 0.48);
+  border-radius: 10px;
+padding:20px;
+}
+.button-style{
+  font-size:20px;
+  margin-left:20px
+}
 
