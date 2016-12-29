@@ -28,20 +28,37 @@
 	<!-- loading spinner-->
 	<script src="../../public/ide/lib/spinner.bundle.js"></script>
 
-	<div class="container" >
-			<div class="header" display="inline-block">
+	<div class="header header-background" display="inline-block">
+		<div class="header-center">
+			<img src="../../public/login/assets/img/速显微.png" alt="速显logo"/>
+		<h2 class="text-muted">CAN配置工程
+			<button type="button" class="btn btn-default button-style"
+					ng-click="component.saveProject()" title="保存">
+				<span class="glyphicon glyphicon-saved" ></span>
+			</button>
+			<!--<button type="button" class="btn btn-default" style="font-size:20px;margin-left:20px"-->
+			<!--ng-click="component.downloadProject()" title="生成下载">-->
+			<!--<span class="glyphicon glyphicon-save" ></span>-->
+			<!--</button>-->
+		</h2>
+		</div>
+	</div>
+
+	<div class="container project-position" >
+
+			<!--<div class="header header-background" display="inline-block">
 				<h2 class="text-muted">CAN配置工程
 					<button type="button" class="btn btn-default" style="font-size:20px;margin-left:20px"
 							ng-click="component.saveProject()" title="保存">
 						<span class="glyphicon glyphicon-saved" ></span>
 					</button>
-					<!--<button type="button" class="btn btn-default" style="font-size:20px;margin-left:20px"-->
-							<!--ng-click="component.downloadProject()" title="生成下载">-->
-						<!--<span class="glyphicon glyphicon-save" ></span>-->
-					<!--</button>-->
+					&lt;!&ndash;<button type="button" class="btn btn-default" style="font-size:20px;margin-left:20px"&ndash;&gt;
+							&lt;!&ndash;ng-click="component.downloadProject()" title="生成下载">&ndash;&gt;
+						&lt;!&ndash;<span class="glyphicon glyphicon-save" ></span>&ndash;&gt;
+					&lt;!&ndash;</button>&ndash;&gt;
 				</h2>
-			</div>
-			<div class="baseConfig">
+			</div>-->
+			<div class="baseConfig can-background">
 				<h4><span>CAN接口配置</span></h4>
 				<form role="form" class="form-horizontal">
 
@@ -171,7 +188,7 @@
 					</button>
 				</h4>
 				<form role="form" class="form-horizontal">
-					<div class="dataFrameConfig" ng-repeat="dataFrame in globalProject.dataFrameArr track by $index">
+					<div class="dataFrameConfig can-background" ng-repeat="dataFrame in globalProject.dataFrameArr track by $index">
 						<div class="form-group">
 							<div class="col-sm-4">
 								<h5>
@@ -282,7 +299,7 @@
 					</div>
 				</form>
 			</div>
-			<div class="IOConfig">
+			<div class="IOConfig can-background">
 				<h4>
 					<span>IO配置</span>
 					<button id="addIOConfig"
