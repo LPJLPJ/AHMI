@@ -299,15 +299,13 @@
             </div>
 
             <div id="simulator-wrapper" style="" ng-show="component.simulator.show">
-                <div class="navbar navbar-default">
-                    <div class="collapse navbar-collapse">
-                        <div class="nav navbar-nav navbar-right">
-                            <button id="play" type="button" class=" btn btn-default navbar-btn"
-                                    ng-click="component.tool.runSimulator()">运行</button>
-                            <button id="close" type="button" class=" btn btn-default navbar-btn"
-                                    ng-click="component.tool.closeSimulator()">关闭
-                            </button>
-                        </div>
+                <div class="navbar navbar-default" style="text-align:center">
+                    <div class="nav">
+                        <button id="play" type="button" class=" btn btn-default navbar-btn"
+                                ng-click="component.tool.runSimulator()">运行</button>
+                        <button id="close" type="button" class=" btn btn-default navbar-btn"
+                                ng-click="component.tool.closeSimulator()">关闭
+                        </button>
                     </div>
                 </div>
                 <div id="simulator-container">
