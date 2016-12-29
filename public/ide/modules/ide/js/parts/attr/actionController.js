@@ -208,6 +208,9 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             $scope.action.commands.splice($scope.currentChosenIdx + 1, 0, _.cloneDeep(blankCmd));
             $scope.currentChosenIdx += 1;
             $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
+            if($scope.action.trigger==''){
+                toastr.error('未选择触发方式！');
+            }
         };
 
         //删除指令
