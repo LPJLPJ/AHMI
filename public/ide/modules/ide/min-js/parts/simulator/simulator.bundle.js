@@ -20227,9 +20227,11 @@
 	                            x: deltas.curX,
 	                            y: deltas.curY
 	                        };
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.translate = null;
+	                        options.pageAnimate = false;
 	                    });
 	                    break;
 	                case 'MOVE_RL':
@@ -20240,9 +20242,11 @@
 	                            x: deltas.curX,
 	                            y: deltas.curY
 	                        };
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.translate = null;
+	                        options.pageAnimate = false;
 	                    });
 	                    break;
 	                case 'MOVE_TB':
@@ -20253,9 +20257,11 @@
 	                            x: deltas.curX,
 	                            y: deltas.curY
 	                        };
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.translate = null;
+	                        options.pageAnimate = false;
 	                    });
 	                    break;
 	                case 'MOVE_BT':
@@ -20266,9 +20272,11 @@
 	                            x: deltas.curX,
 	                            y: deltas.curY
 	                        };
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.translate = null;
+	                        options.pageAnimate = false;
 	                    });
 	                    break;
 	                case 'SCALE':
@@ -20282,9 +20290,11 @@
 	                        var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix);
 	                        combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
 	                        page.transform = combinedMatrix;
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.transform = null;
+	                        options.pageAnimate = false;
 	                    });
 
 	                    break;
@@ -20737,80 +20747,67 @@
 	            var duration = transition && transition.duration || 1000;
 	            var frames = 30;
 	            var easing = 'easeInOutCubic';
-	            var hWidth = w / 2;
-	            var hHeight = h / 2;
-	            switch (method) {
-	                case 'MOVE_LR':
-	                    AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
-	                        // offctx.save();
-	                        // offctx.translate(deltas.curX,deltas.curY);
-	                        subCanvas.translate = {
-	                            x: deltas.curX,
-	                            y: deltas.curY
-	                        };
-	                        // subCanvas.info.x += deltas.deltaX;
-	                        // subCanvas.info.y += deltas.deltaY;
-	                        this.draw();
-	                        // offctx.restore();
-	                    }.bind(this), function () {
-	                        // offctx.restore()
-	                        subCanvas.translate = null;
-	                    });
-	                    break;
-	                case 'MOVE_RL':
-	                    AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
-	                        // offctx.save();
-	                        // offctx.translate(deltas.curX,deltas.curY);
-	                        subCanvas.translate = {
-	                            x: deltas.curX,
-	                            y: deltas.curY
-	                        };
-	                        // subCanvas.info.x += deltas.deltaX;
-	                        // subCanvas.info.y += deltas.deltaY;
-	                        this.draw();
-	                        // offctx.restore();
-	                    }.bind(this), function () {
-	                        // offctx.restore()
-	                        subCanvas.translate = null;
-	                    });
-	                    break;
-	                // case 'SCALE':
-	                //     AnimationManager.step(0.1,0.1,1,1,duration,frames,easing,function (deltas) {
-	                //         // offctx.save();
-	                //         // offctx.translate(deltas.curX,deltas.curY);
-	                //         subCanvas.scale = {
-	                //             w:deltas.curX,
-	                //             h:deltas.curY
-	                //         }
-	                //         // subCanvas.info.x += deltas.deltaX;
-	                //         // subCanvas.info.y += deltas.deltaY;
-	                //         this.draw();
-	                //         // offctx.restore();
-	                //     }.bind(this),function () {
-	                //         // offctx.restore()
-	                //         subCanvas.scale = null;
-	                //     })
-	                //     break;
-	                case 'SCALE':
-	                    var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
-	                    var afterTranslateMatrix = [[1, 0, hWidth], [0, 1, hHeight], [0, 0, 1]];
-	                    var beforeScaleMatrix = [[0.1, 0, 0], [0, 0.1, 0], [0, 0, 1]];
-	                    var afterScaleMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-	                    AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
-	                        var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
-	                        // console.log(curScaleMatrix)
-	                        var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix);
-	                        combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
-	                        subCanvas.transform = combinedMatrix;
-	                        this.draw(null, options);
-	                    }.bind(this), function () {
-	                        subCanvas.transform = null;
-	                    });
+	            var hWidth = w / 2 + x;
+	            var hHeight = h / 2 + y;
+	            if (!options.pageAnimate) {
+	                switch (method) {
+	                    case 'MOVE_LR':
+	                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
+	                            // offctx.save();
+	                            // offctx.translate(deltas.curX,deltas.curY);
+	                            subCanvas.translate = {
+	                                x: deltas.curX,
+	                                y: deltas.curY
+	                            };
+	                            // subCanvas.info.x += deltas.deltaX;
+	                            // subCanvas.info.y += deltas.deltaY;
+	                            this.draw();
+	                            // offctx.restore();
+	                        }.bind(this), function () {
+	                            // offctx.restore()
+	                            subCanvas.translate = null;
+	                        });
+	                        break;
+	                    case 'MOVE_RL':
+	                        AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
+	                            // offctx.save();
+	                            // offctx.translate(deltas.curX,deltas.curY);
+	                            subCanvas.translate = {
+	                                x: deltas.curX,
+	                                y: deltas.curY
+	                            };
+	                            // subCanvas.info.x += deltas.deltaX;
+	                            // subCanvas.info.y += deltas.deltaY;
+	                            this.draw();
+	                            // offctx.restore();
+	                        }.bind(this), function () {
+	                            // offctx.restore()
+	                            subCanvas.translate = null;
+	                        });
+	                        break;
+	                    case 'SCALE':
+	                        var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
+	                        var afterTranslateMatrix = [[1, 0, hWidth], [0, 1, hHeight], [0, 0, 1]];
+	                        var beforeScaleMatrix = [[0.1, 0, 0], [0, 0.1, 0], [0, 0, 1]];
+	                        var afterScaleMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+	                        AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
+	                            var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
+	                            // console.log(curScaleMatrix)
+	                            var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix);
+	                            combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
+	                            subCanvas.transform = combinedMatrix;
+	                            this.draw(null, options);
+	                        }.bind(this), function () {
+	                            subCanvas.transform = null;
+	                        });
 
-	                    break;
-	                default:
-	                    this.paintSubCanvas(subCanvas, x, y, w, h, options);
+	                        break;
+	                    default:
+	                        this.paintSubCanvas(subCanvas, x, y, w, h, options);
 
+	                }
+	            } else {
+	                this.paintSubCanvas(subCanvas, x, y, w, h, options);
 	            }
 	        } else {
 	            this.paintSubCanvas(subCanvas, x, y, w, h, options);
@@ -20826,13 +20823,19 @@
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        offctx.save();
-	        if (subCanvas.translate) {
+	        if (subCanvas.transform) {
+	            var m = subCanvas.transform;
+	            offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
+	        } else {
+	            if (subCanvas.translate) {
 
-	            offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
+	                offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
+	            }
+	            if (subCanvas.scale) {
+	                offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
+	            }
 	        }
-	        if (subCanvas.scale) {
-	            offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
-	        }
+
 	        this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
 	        this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
 	        var widgetList = subCanvas.widgetList;
