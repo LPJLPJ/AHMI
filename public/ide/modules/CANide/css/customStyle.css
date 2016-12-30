@@ -101,7 +101,6 @@ body {
 body,div,img{
   margin: 0;
   padding: 0;
-
 }
 .header-background{
   background: rgba(139, 155, 189, 0.74);
@@ -135,7 +134,7 @@ body,div,img{
 .can-background{
   background-color: rgba(155, 193, 227, 0.48);
   border-radius: 10px;
-padding:20px;
+padding:5px 20px 5px 20px;
 }
 .button-style{
   float:right;
