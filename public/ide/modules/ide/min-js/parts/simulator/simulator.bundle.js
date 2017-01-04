@@ -22052,6 +22052,60 @@
 	    },
 	    drawDashboard: function (curX, curY, widget, options, cb) {
 
+	        var lowAlarm = widget.info.lowAlarmValue;
+	        var highAlarm = widget.info.highAlarmValue;
+	        var minValue = widget.info.minValue;
+	        var maxValue = widget.info.maxValue;
+	        var curDashboardTag = this.findTagByName(widget.tag);
+	        var curDashboardTagValue;
+
+	        curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
+
+	        if (curDashboardTagValue != widget.oldValue) {
+	            //newValue consider animation
+	            var oldValue;
+	            if (widget.info.enableAnimation) {
+	                //using animation
+	                //clear old animation
+
+	                if (widget.animationKey != -1 && widget.animationKey != undefined) {
+	                    oldValue = widget.currentValue || 0;
+	                    AnimationManager.deleteAnimationKey(widget.animationKey);
+	                    widget.animationKey = -1;
+	                } else {
+	                    oldValue = widget.oldValue || 0;
+	                }
+	                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, 500, 30, null, function (obj) {
+	                    widget.currentValue = obj.curX;
+	                    // this.draw()
+	                }.bind(this), function () {
+	                    widget.currentValue = curDashboardTagValue;
+	                    widget.oldValue = oldValue;
+	                    this.handleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm);
+	                    widget.oldValue = curDashboardTagValue;
+	                }.bind(this));
+
+	                //initial
+	                widget.currentValue = oldValue;
+	                this.paintDashboard(curX, curY, widget, options, cb);
+	                widget.oldValue = curDashboardTagValue;
+
+	                cb && cb();
+	            } else {
+	                //paint
+
+	                widget.currentValue = curDashboardTagValue;
+	                this.paintDashboard(curX, curY, widget, options, cb);
+
+	                this.handleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm);
+	                widget.oldValue = curDashboardTagValue;
+	            }
+	        } else {
+	            this.paintDashboard(curX, curY, widget, options, cb);
+	        }
+	    },
+	    paintDashboard: function (curX, curY, widget, options, cb) {
+
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var offset = widget.info.offsetValue || 0;
@@ -22064,19 +22118,18 @@
 	            var maxValue = widget.info.maxValue;
 	            var minCoverAngle = widget.info.minCoverAngle;
 	            var maxCoverAngle = widget.info.maxCoverAngle;
+
 	            // var curArc = widget.info.value;
-	            var curDashboardTag = this.findTagByName(widget.tag);
-	            var curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
+
+	            var curDashboardTagValue = widget.currentValue || 0;
 	            if (curDashboardTagValue > maxValue) {
 	                curDashboardTagValue = maxValue;
 	            } else if (curDashboardTagValue < minValue) {
 	                curDashboardTagValue = minValue;
 	            }
 	            var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue - minValue);
-	            var currentValue = curDashboardTag && curDashboardTag.value || 0;
+
 	            var clockwise = widget.info.clockwise; // == '1' ? 1 : -1;
-	            var lowAlarm = widget.info.lowAlarmValue;
-	            var highAlarm = widget.info.highAlarmValue;
 	            var pointerLength = widget.info.pointerLength;
 	            var pointerWidth, pointerHeight;
 	            pointerWidth = pointerLength / Math.sqrt(2);
@@ -22163,12 +22216,9 @@
 	                    }
 	                }
 	            }
+
+	            cb && cb();
 	        }
-
-	        cb && cb();
-
-	        this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
-	        widget.oldValue = currentValue;
 	    },
 
 	    drawRotateImg: function (curX, curY, widget, options, cb) {
@@ -23355,7 +23405,7 @@
 	                var targetTag = this.findTagByName(param1.tag);
 
 	                if (targetTag) {
-	                    var nextValue = targetTag.value + Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23366,7 +23416,7 @@
 	            case 'DEC':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value - Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) - Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23376,7 +23426,7 @@
 	            case 'MUL':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value * Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) * Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23386,7 +23436,7 @@
 	            case 'DIV':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value / Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) / Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23396,7 +23446,7 @@
 	            case 'MOD':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value % Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) % Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23406,7 +23456,7 @@
 	            case 'OR':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value | Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) | Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23416,7 +23466,7 @@
 	            case 'XOR':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value ^ Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) ^ Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23436,7 +23486,7 @@
 	            case 'AND':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value & Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) & Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23446,7 +23496,7 @@
 	            case 'SL':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value << Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) << Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23456,7 +23506,7 @@
 	            case 'SR':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value >> Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) >> Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -51547,6 +51597,37 @@
 	        }
 	    }.bind(this), duration / frames);
 	    animationKeys.push(animationKey);
+	    return animationKey;
+	};
+
+	AnimationManager.stepValue = function (srcX, dstX, duration, frames, easing, intervalCb, finishCb) {
+	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
+	    var lastValue = 0;
+	    var curValue = 0;
+	    var count = frames;
+	    var deltaX = 0;
+	    var deltaY = 0;
+	    var curX = 0;
+	    var curY = 0;
+	    var rangeX = dstX - srcX;
+	    var animationKey = setInterval(function () {
+	        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+	        // offctx.save();
+	        curValue = easingFunc((frames - count) / frames);
+	        deltaX = rangeX * (curValue - lastValue);
+	        curX = srcX + rangeX * curValue;
+	        lastValue = curValue;
+	        intervalCb && intervalCb({ curX: curX, deltaX: deltaX });
+
+	        count--;
+	        if (count < 0) {
+	            //finished
+	            this.clearAnimationKey(animationKey);
+	            finishCb && finishCb();
+	        }
+	    }.bind(this), duration / frames);
+	    animationKeys.push(animationKey);
+	    return animationKey;
 	};
 
 	AnimationManager.stepObj = function (srcObj, dstObj, duration, frames, easing, intervalCb, finishCb) {
@@ -51586,6 +51667,7 @@
 	        }
 	    }.bind(this), duration / frames);
 	    animationKeys.push(animationKey);
+	    return animationKey;
 	};
 
 	AnimationManager.scaling = function (srcX, srcY, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {

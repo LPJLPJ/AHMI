@@ -2448,124 +2448,184 @@ module.exports =   React.createClass({
     },
     drawDashboard: function (curX, curY, widget, options,cb) {
 
+        var lowAlarm = widget.info.lowAlarmValue;
+        var highAlarm = widget.info.highAlarmValue;
+        var minValue = widget.info.minValue;
+        var maxValue = widget.info.maxValue;
+        var curDashboardTag = this.findTagByName(widget.tag);
+        var curDashboardTagValue;
+
+
+
+        curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
+
+        if (curDashboardTagValue != widget.oldValue){
+            //newValue consider animation
+            var oldValue
+            if (widget.info.enableAnimation){
+                //using animation
+                //clear old animation
+
+                if (widget.animationKey != -1 && widget.animationKey != undefined){
+                    oldValue = widget.currentValue || 0
+                    AnimationManager.deleteAnimationKey(widget.animationKey)
+                    widget.animationKey = -1
+                }else{
+                    oldValue = widget.oldValue || 0
+                }
+                widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,500,30,null,function (obj) {
+                    widget.currentValue = obj.curX
+                    // this.draw()
+                }.bind(this),function () {
+                    widget.currentValue = curDashboardTagValue
+                    widget.oldValue = oldValue
+                    this.handleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm);
+                    widget.oldValue = curDashboardTagValue
+
+                }.bind(this))
+
+                //initial
+                widget.currentValue = oldValue
+                this.paintDashboard(curX,curY,widget,options,cb)
+                widget.oldValue = curDashboardTagValue;
+
+                cb && cb()
+            }else{
+                //paint
+
+                widget.currentValue = curDashboardTagValue
+                this.paintDashboard(curX,curY,widget,options,cb)
+
+                this.handleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm);
+                widget.oldValue = curDashboardTagValue;
+            }
+
+
+
+        }else{
+            this.paintDashboard(curX,curY,widget,options,cb)
+        }
+
+
+
+    },
+    paintDashboard: function (curX, curY, widget, options,cb) {
+
         var width = widget.info.width;
         var height = widget.info.height;
         var offset = widget.info.offsetValue || 0;
         if (widget.texList) {
 
-                //pointer
-                var minArc = widget.info.minAngle;
-                var maxArc = widget.info.maxAngle;
-                var minValue = widget.info.minValue;
-                var maxValue = widget.info.maxValue;
-                var minCoverAngle=widget.info.minCoverAngle;
-                var maxCoverAngle=widget.info.maxCoverAngle;
-                // var curArc = widget.info.value;
-                var curDashboardTag = this.findTagByName(widget.tag);
-                var curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
-                if(curDashboardTagValue>maxValue){
-                    curDashboardTagValue=maxValue;
-                }else if(curDashboardTagValue<minValue){
-                    curDashboardTagValue=minValue;
-                }
-                var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue-minValue);
-                var currentValue = curDashboardTag && curDashboardTag.value || 0;
-                var clockwise = widget.info.clockwise;// == '1' ? 1 : -1;
-                var lowAlarm = widget.info.lowAlarmValue;
-                var highAlarm = widget.info.highAlarmValue;
-                var pointerLength = widget.info.pointerLength;
-                var pointerWidth, pointerHeight;
-                pointerWidth = pointerLength / Math.sqrt(2);
-                pointerHeight = pointerLength / Math.sqrt(2);
+            //pointer
+            var minArc = widget.info.minAngle;
+            var maxArc = widget.info.maxAngle;
+            var minValue = widget.info.minValue;
+            var maxValue = widget.info.maxValue;
+            var minCoverAngle=widget.info.minCoverAngle;
+            var maxCoverAngle=widget.info.maxCoverAngle;
 
-                //console.log('curDashboardTagValue',curDashboardTagValue,'curArc',curArc);
-                //if (curArc > maxArc) {
-                //    curArc = maxArc;
-                //} else if (curArc < minArc) {
-                //    curArc = minArc;
-                //}
-                minCoverAngle=minCoverAngle*Math.PI/180+Math.PI/2;
-                maxCoverAngle=maxCoverAngle*Math.PI/180+Math.PI/2;
-                // console.log(curArc,widget.oldValue);
-                var arcPhase = 45;
-                if (clockwise != '2') {
-                    clockwise = clockwise == '1' ? 1 : -1;
-                    if (widget.dashboardModeId == '0') {
-                        //simple mode
-                        //background
-                        var bgTex = widget.texList[0].slices[0];
-                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-                        //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
-                        //draw circle
-                        // var circleTex = widget.texList[2].slices[0]
-                        // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-                    } else if (widget.dashboardModeId == '1') {
-                        // complex mode
-                        //background
+            // var curArc = widget.info.value;
+
+            var curDashboardTagValue = widget.currentValue||0;
+            if (curDashboardTagValue > maxValue) {
+                curDashboardTagValue = maxValue;
+            } else if (curDashboardTagValue < minValue) {
+                curDashboardTagValue = minValue;
+            }
+            var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue-minValue);
+
+            var clockwise = widget.info.clockwise;// == '1' ? 1 : -1;
+            var pointerLength = widget.info.pointerLength;
+            var pointerWidth, pointerHeight;
+            pointerWidth = pointerLength / Math.sqrt(2);
+            pointerHeight = pointerLength / Math.sqrt(2);
+
+            //console.log('curDashboardTagValue',curDashboardTagValue,'curArc',curArc);
+            //if (curArc > maxArc) {
+            //    curArc = maxArc;
+            //} else if (curArc < minArc) {
+            //    curArc = minArc;
+            //}
+            minCoverAngle=minCoverAngle*Math.PI/180+Math.PI/2;
+            maxCoverAngle=maxCoverAngle*Math.PI/180+Math.PI/2;
+            // console.log(curArc,widget.oldValue);
+            var arcPhase = 45;
+            if (clockwise != '2') {
+                clockwise = clockwise == '1' ? 1 : -1;
+                if (widget.dashboardModeId == '0') {
+                    //simple mode
+                    //background
+                    var bgTex = widget.texList[0].slices[0];
+                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                    //draw pointer
+                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                    //draw circle
+                    // var circleTex = widget.texList[2].slices[0]
+                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+                } else if (widget.dashboardModeId == '1') {
+                    // complex mode
+                    //background
+                    var bgTex = widget.texList[0].slices[0];
+                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                    //draw light strip
+                    var lightStripTex = widget.texList[2].slices[0];
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                    //draw pointer
+                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset+minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+
+                    //draw circle
+                    // var circleTex = widget.texList[3].slices[0]
+                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+                } else if (widget.dashboardModeId == '2') {
+                    var lightStripTex = widget.texList[0].slices[0];
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                }
+            } else {
+                if (widget.dashboardModeId == '0') {
+                    //simple mode
+                    //background
+                    var bgTex = widget.texList[0].slices[0];
+                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                    //draw pointer
+                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight,  curArc + offset+ arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                    //draw circle
+                    // var circleTex = widget.texList[2].slices[0]
+                    // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
+                } else if (widget.dashboardModeId == '1') {
+                    // complex mode
+                    //background
+                    if (curArc >= 0) {
                         var bgTex = widget.texList[0].slices[0];
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                         //draw light strip
                         var lightStripTex = widget.texList[2].slices[0];
-                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset+minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 
-                        //draw circle
-                        // var circleTex = widget.texList[3].slices[0]
-                        // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-                    } else if (widget.dashboardModeId == '2') {
-                        var lightStripTex = widget.texList[0].slices[0];
-                        this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-                    }
-                } else {
-                    if (widget.dashboardModeId == '0') {
-                        //simple mode
-                        //background
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset+ arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                    } else if (curArc < 0) {
                         var bgTex = widget.texList[0].slices[0];
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                        //draw light strip
+                        var lightStripTex = widget.texList[2].slices[0];
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight,  curArc + offset+ arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
-                        //draw circle
-                        // var circleTex = widget.texList[2].slices[0]
-                        // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
-                    } else if (widget.dashboardModeId == '1') {
-                        // complex mode
-                        //background
-                        if (curArc >= 0) {
-                            var bgTex = widget.texList[0].slices[0];
-                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-                            //draw light strip
-                            var lightStripTex = widget.texList[2].slices[0];
-                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-                            //draw pointer
-
-                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset+ arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
-                        } else if (curArc < 0) {
-                            var bgTex = widget.texList[0].slices[0];
-                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
-                            //draw light strip
-                            var lightStripTex = widget.texList[2].slices[0];
-                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-                            //draw pointer
-                            this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0],null,null,null, minCoverAngle, maxCoverAngle);
-                        }
-                    } else if (widget.dashboardModeId == '2') {
-                        var lightStripTex = widget.texList[0].slices[0];
-                        if (curArc >= 0) {
-                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
-                        } else if (curArc < 0) {
-                            this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
-                        }
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0],null,null,null, minCoverAngle, maxCoverAngle);
+                    }
+                } else if (widget.dashboardModeId == '2') {
+                    var lightStripTex = widget.texList[0].slices[0];
+                    if (curArc >= 0) {
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                    } else if (curArc < 0) {
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
                     }
                 }
+            }
+
+
+            cb&&cb()
 
         }
-
-        cb && cb();
-
-        this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
-        widget.oldValue = currentValue;
     },
 
     drawRotateImg: function (curX, curY, widget, options,cb) {
@@ -3806,7 +3866,7 @@ module.exports =   React.createClass({
                 var targetTag = this.findTagByName(param1.tag);
 
                 if (targetTag) {
-                    var nextValue = targetTag.value + Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3817,7 +3877,7 @@ module.exports =   React.createClass({
             case 'DEC':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value - Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) - Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3827,7 +3887,7 @@ module.exports =   React.createClass({
             case 'MUL':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value * Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) * Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3837,7 +3897,7 @@ module.exports =   React.createClass({
             case 'DIV':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value / Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) / Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3847,7 +3907,7 @@ module.exports =   React.createClass({
             case 'MOD':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value % Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) % Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3857,7 +3917,7 @@ module.exports =   React.createClass({
             case 'OR':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value | Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) | Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3867,7 +3927,7 @@ module.exports =   React.createClass({
             case 'XOR':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value ^ Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) ^ Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3887,7 +3947,7 @@ module.exports =   React.createClass({
             case 'AND':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value & Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) & Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3897,7 +3957,7 @@ module.exports =   React.createClass({
             case 'SL':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value << Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) << Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
@@ -3907,7 +3967,7 @@ module.exports =   React.createClass({
             case 'SR':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = targetTag.value >> Number(this.getParamValue(param2));
+                    var nextValue = Number(targetTag.value) >> Number(this.getParamValue(param2));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null,{
                         updatedTagName:param1.tag
