@@ -2324,7 +2324,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontZeroMode=level.info.frontZeroMode;
             //设置canvas的宽度和高度
             if(this.numOfDigits&&this.fontSize){
-                this.setWidth(this.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                this.setWidth(this.numOfDigits*(this.symbolMode=='0'?(this.fontSize-3):this.fontSize));
                 this.setHeight(this.fontSize*1.2);
             }
 

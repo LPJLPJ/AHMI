@@ -113,7 +113,8 @@ ideServices
                     minCoverAngle:0,maxCoverAngle:0,
                     value:45,
                     offsetValue:0,
-                    pointerLength:185
+                    pointerLength:185,
+                    enableAnimation:false
                 },
                 texList:[{
                     currentSliceIdx:0,

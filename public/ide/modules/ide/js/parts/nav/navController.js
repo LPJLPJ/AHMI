@@ -819,7 +819,7 @@
         }
 
         function openCANPanel(){
-            var CANNames;
+            var CANInfo;
             $http({
                 method:'GET',
                 url:'/CANProject/names'
