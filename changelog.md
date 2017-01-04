@@ -18,4 +18,6 @@ v1.8.3_test
 add:
     1. CAN configure project for web IDE
 update:
+    1. the data structure of the trigger of a action is string
+    2. error message appear when trigger not selected 
 fix:
