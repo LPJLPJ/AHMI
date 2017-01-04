@@ -21947,7 +21947,7 @@
 	                                widget.oldValue = curValue;
 	                            }
 	                            this.draw();
-	                        }.bind(this), 100);
+	                        }.bind(this), 30);
 	                    }
 	                }
 	            }
