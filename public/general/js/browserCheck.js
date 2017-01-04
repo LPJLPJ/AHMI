@@ -2,16 +2,13 @@
  * Created by zzen1ss on 16/7/18.
  */
 ;(function () {
-    window.onload = function () {
-        var browserCheck = document.createElement('div');
-        browserCheck.innerHTML = '<p>系统检测到您的浏览器版本不兼容,推荐使用Chrome,切勿使用搜狗。</p>';
-        browserCheck.setAttribute('style',"position:absolute;display:inline-block;width:30%;height:20%;background:#F7F6F2;right:0;bottom:0;left:0;top:0;margin:auto;padding:0.2em;font:24px helvetica arial;z-index:99");
-        var body = document.body;
-        var userAgent = window.navigator.userAgent.toLowerCase();
-        if (!checkUserAgent(userAgent)){
-            body.appendChild(browserCheck);
-        }
-
+    var browserCheck = document.createElement('div');
+    browserCheck.innerHTML = '<p>系统检测到您的浏览器版本不兼容,推荐使用Chrome,切勿使用搜狗。</p>';
+    browserCheck.setAttribute('style',"position:absolute;display:inline-block;width:30%;height:20%;background:#F7F6F2;right:0;bottom:0;left:0;top:0;margin:auto;padding:0.2em;font:24px helvetica arial;z-index:99");
+    var body = document.body;
+    var userAgent = window.navigator.userAgent.toLowerCase();
+    if (!checkUserAgent(userAgent)){
+        body.appendChild(browserCheck);
     }
 
 
