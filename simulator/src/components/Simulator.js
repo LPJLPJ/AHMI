@@ -2234,6 +2234,10 @@ module.exports =   React.createClass({
         var shouldHandleAlarmAction = false;
         var tempNumValue='';
         if (curValue != undefined && curValue != null) {
+
+            var changeDirection = curValue - widget.oldValue
+
+
             //handle action before
             if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
 
@@ -2267,33 +2271,47 @@ module.exports =   React.createClass({
                     // //draw
                     var oldHeight=0;
                     var oleWidth=0;
+                    var curFrameNum = changeDirection < 0 ? (totalFrameNum - widget.curFrameNum) : widget.curFrameNum
+                    var newTempNumValue = ''
                     if (arrange==='horizontal'){
-                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        if (changeDirection<0){
+                            newTempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        }else{
+                            tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        }
+
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                        oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight
+                        oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight
                         if (oldHeight>0){
                             offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
                         }
 
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                        oldHeight = widget.curFrameNum  / totalFrameNum * curHeight
+
+                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                        oldHeight = curFrameNum  / totalFrameNum * curHeight
                         if (oldHeight>0){
                             offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
                         }
 
                     }else{
-                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        if (changeDirection<0){
+                            newTempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        }else{
+                            tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        }
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
-                        oldWidth = (totalFrameNum - widget.curFrameNum)  / totalFrameNum * curWidth
+                        oldWidth = (totalFrameNum - curFrameNum)  / totalFrameNum * curWidth
                         if (oleWidth>0){
                             offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
                         }
 
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
+                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange)
 
-                        oldWidth = widget.curFrameNum  / totalFrameNum * curWidth;
+                        oldWidth = curFrameNum  / totalFrameNum * curWidth;
                         if (oleWidth>0){
                             offctx.drawImage(tempcanvas, curWidth-oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
                         }
@@ -2318,7 +2336,7 @@ module.exports =   React.createClass({
                                 widget.oldValue = curValue
                             }
                             this.draw()
-                        }.bind(this), 16)
+                        }.bind(this), 30)
                     }
 
 

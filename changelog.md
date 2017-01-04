@@ -4,6 +4,13 @@ add:
 update:
 fix:
 
+v1.8.2
+add:
+    1. using sortable.js to sort resources
+update:
+    1. inputkeyboard supports highlight
+fix:fix:
+
 v1.8.3_test
 add:
     1. CAN configure project for web app

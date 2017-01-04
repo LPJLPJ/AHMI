@@ -549,7 +549,7 @@ body{
     position:absolute;
     min-width:1050px;
     min-height:660px;
-    height:95%;
+    height:100%;
     width:100%;
     z-index: 999;
     top:0;
