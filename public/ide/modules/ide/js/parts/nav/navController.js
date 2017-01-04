@@ -733,6 +733,7 @@
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
             temp.project.tagList = TagService.getAllTags();
             temp.project.timers = TagService.getTimerNum();
+            temp.project.CANId = NavModalCANConfigService.getCANId();
             //link widgets
             for (var i = 0; i < temp.project.pageList.length; i++) {
                 LinkPageWidgetsService.linkPageAllWidgets(temp.project.pageList[i]);
@@ -953,6 +954,6 @@ ide.service('NavModalCANConfigService',[function(){
         CANId=id;
     };
     this.getCANId = function(){
-        return CANId
+        return CANId||''
     };
 }]);
