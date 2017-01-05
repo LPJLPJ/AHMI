@@ -2372,7 +2372,7 @@
                         </thead>
                         <div ng-controller="sortCtrl">
                         <tbody ui-sortable="sortableOptions">
-                        <tr class="img-info" ng-repeat="file in component.top.files">
+                        <tr class="img-info" ng-repeat="file in component.top.files track by $index">
                             <td><img width="40px" height="40px" ng-src="{{file.src}}"/></td>
                             <td>
                                 <input class="img-name" type='text' style="width: 80px;border: 0;" ng-model="file.name">
