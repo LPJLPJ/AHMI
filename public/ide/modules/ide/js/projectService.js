@@ -2880,13 +2880,28 @@ ideServices
             this.ChangeAttributeHighLightMode = function(_option,_successCallback){
                 var selectObj = getCurrentSelectObject();
                 //console.log('_option',_option);
-                if(_option.highlightMode&&_option.highlightMode=='0'){
+                if(_option.highlightMode=='0'){
                     selectObj.level.info.disableHighlight=false;
                 }else{
                     selectObj.level.info.disableHighlight=true;
                 }
                 //console.log('selectObje.level',selectObj.level);
             };
+
+            /**
+             * 是否启用高亮，适用于仪表盘和进度条
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeEnableAnimationMode = function(_option,_successCallback){
+                var selectObj = getCurrentSelectObject();
+                if(_option.enableAnimationModeId=='1'){
+                    selectObj.level.info.enableAnimation=false;
+                }else {
+                    selectObj.level.info.enableAnimation=true;
+                }
+            }
 
             this.ChangeAttributeBackgroundImage= function (_option,_successCallback) {
                 var currentOperate=SaveCurrentOperate();

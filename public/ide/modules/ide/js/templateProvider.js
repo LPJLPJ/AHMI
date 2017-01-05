@@ -113,7 +113,8 @@ ideServices
                     minCoverAngle:0,maxCoverAngle:0,
                     value:45,
                     offsetValue:0,
-                    pointerLength:185
+                    pointerLength:185,
+                    enableAnimation:false
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -537,7 +538,7 @@ ideServices
         this.getDefaultNum = function(){
             var subLayerNode = CanvasService.getSubLayerNode();
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:75, height: 36,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
@@ -668,7 +669,7 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:80, height: 30,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
