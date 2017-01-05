@@ -35,6 +35,7 @@ ideServices.service('FontMesureService',[function () {
 
     this.getMaxWidth = function (chars, font) {
         var metrics = this.mesureChars(chars,font)
+        //console.log('each width',metrics);
         return Math.max.apply(null,metrics)
     }
 
