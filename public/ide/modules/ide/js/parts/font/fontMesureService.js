@@ -15,10 +15,10 @@ ideServices.service('FontMesureService',[function () {
     }
 
     this.mesureStr = function (str,font) {
-        _ctx.save()
-        _ctx.font = font
-        var metrics = _ctx.measureText(char)
-        _ctx.restore()
+        _ctx.save();
+        _ctx.font = font;
+        var metrics = _ctx.measureText(str);
+        _ctx.restore();
         return metrics.width
     }
 

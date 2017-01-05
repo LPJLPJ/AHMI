@@ -3,9 +3,9 @@
  * Manage widgets behaviour
  */
 
-ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService','CanvasService',function (ProjectService,
+ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService','CanvasService','FontMesureService',function (ProjectService,
                                 Type,
-                                ResourceService,CanvasService) {
+                                ResourceService,CanvasService,FontMesureService) {
 
     // var ProjectService = $injector.get('ProjectService');
     fabric.Object.prototype.toObject = (function (toObject) {
@@ -2323,10 +2323,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.symbolMode=level.info.symbolMode;
             this.fontZeroMode=level.info.frontZeroMode;
             //设置canvas的宽度和高度
-            if(this.numOfDigits&&this.fontSize){
-                this.setWidth(this.numOfDigits*(this.symbolMode=='0'?(this.fontSize-3):this.fontSize));
-                this.setHeight(this.fontSize*1.2);
-            }
+            //if(this.numOfDigits&&this.fontSize){
+            //    this.setWidth(this.numOfDigits*(this.symbolMode=='0'?(this.fontSize-3):this.fontSize));
+            //    this.setHeight(this.fontSize*1.2);
+            //}
 
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
@@ -2433,15 +2433,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
-
-
-
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                var numStr='0123456789';
+
                 //var offCanvas = CanvasService.getOffCanvas();
 
                 //offCanvas.width = this.width;
@@ -2462,6 +2461,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                     //offCtx.globalCompositeOperation = "destination-in";
                     ctx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
+                    var mesureW = FontMesureService.getMaxWidth(numStr,ctx.font);
+                    console.log('mesureW',mesureW);
                     ctx.textAlign = this.align;
 
                     ctx.textBaseline='middle';//设置数字垂直居中
