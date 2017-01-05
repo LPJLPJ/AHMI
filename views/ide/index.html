@@ -545,10 +545,8 @@
 
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-model="component.page.selectImage" ng-change="component.page.enterImage($event)">
-                                <option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}
+                                <option ng-repeat="image in component.images track by $index" value="{{image.src}}">{{image.name}}
                                 </option>
-
-
                             </select>
                         </div>
 
