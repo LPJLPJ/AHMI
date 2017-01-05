@@ -35,11 +35,11 @@ ideServices.service('FontMesureService',[function () {
 
     this.getMaxWidth = function (chars, font) {
         var metrics = this.mesureChars(chars,font)
-        return Math.max(metrics)
+        return Math.max.apply(null,metrics)
     }
 
     this.getMinWidth = function (chars,font) {
         var metrics = this.mesureChars(chars,font)
-        return Math.min(metrics)
+        return Math.min.apply(null,metrics)
     }
 }]);

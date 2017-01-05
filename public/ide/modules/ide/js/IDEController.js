@@ -52,7 +52,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     // showIDE();
 
-
     //var params=getUrlParams();
     //PID=params.pid;
     //
