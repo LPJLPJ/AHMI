@@ -2462,11 +2462,8 @@ module.exports =   React.createClass({
 
         if (curDashboardTagValue != widget.oldValue){
             var alarmValue = this.shouldHandleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm)
-            if (alarmValue){
-                //hanlde alarm
-                this.handleTargetAction(widget, alarmValue);
-            }
-            widget.oldValue = curDashboardTagValue
+
+
             //newValue consider animation
             var oldValue
             if (widget.info.enableAnimation){
@@ -2485,6 +2482,12 @@ module.exports =   React.createClass({
                     oldValue = widget.oldValue || 0
                 }
 
+                widget.oldValue = curDashboardTagValue
+                if (alarmValue){
+                    //hanlde alarm
+                    this.handleTargetAction(widget, alarmValue);
+                }
+
 
                 widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,500,30,null,function (obj) {
                     widget.currentValue = obj.curX
@@ -2499,6 +2502,11 @@ module.exports =   React.createClass({
                 this.paintDashboard(curX,curY,widget,options,cb)
 
             }else{
+                widget.oldValue = curDashboardTagValue
+                if (alarmValue){
+                    //hanlde alarm
+                    this.handleTargetAction(widget, alarmValue);
+                }
                 //paint
 
                 widget.currentValue = curDashboardTagValue
