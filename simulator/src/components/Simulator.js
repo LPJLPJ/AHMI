@@ -323,6 +323,7 @@ module.exports =   React.createClass({
         var canvas = this.refs.canvas;
         this.ctx = canvas.getContext('2d');
         this.offctx = offcanvas.getContext('2d');
+        this.offctx.setTransform(1, 0, 0, 1, 0, 0);
         // if (this.originalCanvasContext){
         //     this.offctx =this.originalCanvasContext;
         // }else{
@@ -2460,10 +2461,20 @@ module.exports =   React.createClass({
         curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
 
         if (curDashboardTagValue != widget.oldValue){
+            var alarmValue = this.shouldHandleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm)
+            if (alarmValue){
+                //hanlde alarm
+                this.handleTargetAction(widget, alarmValue);
+            }
+            widget.oldValue = curDashboardTagValue
             //newValue consider animation
             var oldValue
             if (widget.info.enableAnimation){
                 //using animation
+
+
+
+
                 //clear old animation
 
                 if (widget.animationKey != -1 && widget.animationKey != undefined){
@@ -2473,31 +2484,29 @@ module.exports =   React.createClass({
                 }else{
                     oldValue = widget.oldValue || 0
                 }
+
+
                 widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,500,30,null,function (obj) {
                     widget.currentValue = obj.curX
                     // this.draw()
                 }.bind(this),function () {
                     widget.currentValue = curDashboardTagValue
-                    widget.oldValue = oldValue
-                    this.handleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm);
-                    widget.oldValue = curDashboardTagValue
 
                 }.bind(this))
 
                 //initial
                 widget.currentValue = oldValue
                 this.paintDashboard(curX,curY,widget,options,cb)
-                widget.oldValue = curDashboardTagValue;
 
-                cb && cb()
             }else{
                 //paint
 
                 widget.currentValue = curDashboardTagValue
+
                 this.paintDashboard(curX,curY,widget,options,cb)
 
-                this.handleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm);
-                widget.oldValue = curDashboardTagValue;
+
+
             }
 
 
@@ -2892,6 +2901,24 @@ module.exports =   React.createClass({
         } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
             widget.oldValue = curValue
             this.handleTargetAction(widget, 'EnterLowAlarm');
+        }
+    },
+    shouldHandleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
+        //handle action
+        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+            //enter high alarm
+            return 'EnterHighAlarm'
+        } else if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+            //leave high alarm
+            return 'LeaveHighAlarm'
+        } else if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+            //leave low alarm
+            return 'LeaveLowAlarm'
+
+        } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+            return 'EnterLowAlarm'
+        }else{
+            return null
         }
     },
     drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice,transXratio,transYratio,type,minCoverAngle,maxCoverAngle) {
