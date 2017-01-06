@@ -21,3 +21,12 @@ update:
     1. the data structure of the trigger of a action is string
     2. error message appear when trigger not selected 
 fix:
+
+v1.8.4
+add:
+    1. dashboard animation
+    2. fontMesureService
+update:
+    1. num bi-direction animation
+fix:
+    1. font privilege
