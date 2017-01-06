@@ -443,7 +443,7 @@ ideServices
                 }
                 inChangingPage = true;
                 if (isInit){
-                    //console.log('初始化页面');
+                    //console.log化页面');
                     if(oldPage){
                         if(oldPage.mode==1){
                             _.forEach(project.pages, function (__page,__pageIndex) {
@@ -463,7 +463,10 @@ ideServices
                         intoNewPage();
                     }
                 }else if (_pageIndex>=0){
+
+
                     if (oldPage){
+
                         _.forEach(project.pages, function (__page,__pageIndex) {
 
                             if (__page.id==oldPage.id){
@@ -484,14 +487,20 @@ ideServices
 
                         }else{
                             //console.log('相同页面点击');
+
                             _self.OnPageSelected(_pageIndex,function(){
                                 _successCallback&&_successCallback(true);
                             },isInit);
+
+
+
                         }
                     }else {
                         console.log('异常情况');
                         intoNewPage();
+
                     }
+
                 }
 
                 function intoNewPage(){
@@ -668,12 +677,11 @@ ideServices
                     newPageIndex=currentPageIndex + 1;
 
                 }
-                //console.log(project);
+
                 _self.changeCurrentPageIndex(newPageIndex, function () {
                     _cleanPageHashKey();
                     _successCallback && _successCallback();
                 },true);
-
 
             };
             /**
@@ -1944,7 +1952,7 @@ ideServices
                     currentPage=_self.getCurrentPage();
                 }
                 if (!currentPage){
-                    console.warn('找不到Page');
+                    console.warn('找不到操作前的Page');
                     return;
                 }
 
@@ -1956,8 +1964,6 @@ ideServices
                     editInSamePage=true;
                 }
                 var pageNode = CanvasService.getPageNode();
-
-
 
                 if (currentPage.mode==0&&editInSamePage&&!forceReload){
                     _self.OnPageClicked(pageIndex,null,skipClean);
@@ -2874,13 +2880,28 @@ ideServices
             this.ChangeAttributeHighLightMode = function(_option,_successCallback){
                 var selectObj = getCurrentSelectObject();
                 //console.log('_option',_option);
-                if(_option.highlightMode&&_option.highlightMode=='0'){
+                if(_option.highlightMode=='0'){
                     selectObj.level.info.disableHighlight=false;
                 }else{
                     selectObj.level.info.disableHighlight=true;
                 }
                 //console.log('selectObje.level',selectObj.level);
             };
+
+            /**
+             * 是否启用高亮，适用于仪表盘和进度条
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeEnableAnimationMode = function(_option,_successCallback){
+                var selectObj = getCurrentSelectObject();
+                if(_option.enableAnimationModeId=='1'){
+                    selectObj.level.info.enableAnimation=false;
+                }else {
+                    selectObj.level.info.enableAnimation=true;
+                }
+            }
 
             this.ChangeAttributeBackgroundImage= function (_option,_successCallback) {
                 var currentOperate=SaveCurrentOperate();
@@ -3013,6 +3034,22 @@ ideServices
                 };
                 selectObj.target.fire('changeArrange',arg);
 
+            };
+
+            /**
+             * 是否禁止控件的高亮属性
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeAttributeHighlightMode = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                if(_option.highlightMode&&_option.highlightMode=='1'){
+                    selectObj.level.info.disableHighlight=false;
+                }else{
+                    selectObj.level.info.disableHightlight=true;
+                }
+                console.log('selectObj.level',selectObj.level);
             };
 
             /**

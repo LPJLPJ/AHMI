@@ -78,6 +78,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/operationService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/closeBrowser.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/font/fontMesureService.js"></script>
 
     <script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
@@ -109,6 +110,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/SortableController.js"></script>
 
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/font/fontMesureController.js"></script>
     <!--directive-->
 
     <script src="../../public/ide/modules/ide/min-js/parts/lexer/actionCompiler2.js"></script>
@@ -178,6 +180,9 @@
                 <!--<a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#projectFileModal">-->
                 <!--<span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>-->
                 <!--</a>-->
+                <a ng-click="component.tool.openCANPanel()" class="my-cmd-item" ng-class=""><span
+                        class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>
+                </a>
                 <a ng-click="component.tool.openPanel()" class="my-cmd-item" ng-class=""><span
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
                 </a>
@@ -188,6 +193,24 @@
                     <div class="modal-body dengModel-body">
                         <div class="modal-title form-group modelPart">
                             <select class="form-control dengModel-trigger" ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
+                <script type="text/ng-template" id="navCANModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">导入CAN配置</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">
+                            <select  class="form-control dengModel-trigger"
+                                     ng-options="item.id as item.name for item in CANInfo"
+                                     ng-model="selectCANId">
+                                <option value="">---</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -278,15 +301,13 @@
             </div>
 
             <div id="simulator-wrapper" style="" ng-show="component.simulator.show">
-                <div class="navbar navbar-default">
-                    <div class="collapse navbar-collapse">
-                        <div class="nav navbar-nav navbar-right">
-                            <button id="play" type="button" class=" btn btn-default navbar-btn"
-                                    ng-click="component.tool.runSimulator()">运行</button>
-                            <button id="close" type="button" class=" btn btn-default navbar-btn"
-                                    ng-click="component.tool.closeSimulator()">关闭
-                            </button>
-                        </div>
+                <div class="navbar navbar-default" style="text-align:center">
+                    <div class="nav">
+                        <button id="play" type="button" class=" btn btn-default navbar-btn"
+                                ng-click="component.tool.runSimulator()">运行</button>
+                        <button id="close" type="button" class=" btn btn-default navbar-btn"
+                                ng-click="component.tool.closeSimulator()">关闭
+                        </button>
                     </div>
                 </div>
                 <div id="simulator-container">
@@ -962,6 +983,16 @@
                             </select>
                         </div>
                         <div class="my-attr-item lg">
+                            <span class="my-attr-title">开启动画</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.progress.enableAnimationModeId"
+                                    ng-change="component.enterEnableAnimationMode($event)">
+                                <option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
                             <span class="my-attr-title">方向</span>
 
                             <select class="my-attr-number-input form-control" ng-model="component.progress.arrangeModel"
@@ -1292,7 +1323,16 @@
                                 </option>
                             </select>
                         </div>
-
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">开启动画</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.dashboard.enableAnimationModeId"
+                                    ng-change="component.enterEnableAnimationMode($event)">
+                                <option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
                     </div>
                     <div ng-show="component.object.type=='MyNum'">
                         <div class="my-attr-item lg">
@@ -2744,5 +2784,6 @@
 </script>
 <!--<script type="text/javascript" src="../../public/ide/modules/ide/js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
+<script type="text/javascript" src="../../public/general/js/versionTag.js"></script>
 </body>
 </html>

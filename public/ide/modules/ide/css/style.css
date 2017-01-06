@@ -547,8 +547,10 @@ body{
 
 #simulator-wrapper{
     position:absolute;
+    min-width:1050px;
+    min-height:660px;
+    height:100%;
     width:100%;
-    hight:100%;
     z-index: 999;
     top:0;
     bottom:0;

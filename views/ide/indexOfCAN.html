@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="CANApp">
+	<head>
+	<meta charset="UTF-8">
+		<title>AHMI CAN</title>
+
+		<!-- style -->
+		<link rel="stylesheet" href="../../public/ide/lib/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
+		<link rel="stylesheet" href="../../public/ide/modules/CANide/css/customStyle.css">
+		<link rel="stylesheet" href="../../public/ide/lib/bootstrap-switch/bootstrap-switch.css">
+
+		<!-- lib -->
+		<script type="text/javascript" src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="../../public/ide/lib/angular.min.js"></script>
+		<script type="text/javascript" src="../../public/ide/lib/angular-animate.js"></script>
+		<script type="text/javascript" src="../../public/ide/lib/lodash/lodash.js"></script>
+		<script type="text/javascript" src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+		<script src="../../public/ide/lib/toastr/toastr.min.js"></script>
+		<script src="../../public/ide/lib/bootstrap-switch/bootstrap-switch.js"></script>
+
+		<!-- modules -->
+		<script type="text/javascript" src="../../public/ide/modules/CANide/js/CANController.js"></script>
+		<script type="text/javascript" src="../../public/ide/modules/CANide/js/CANService.js"></script>
+
+	</head>
+	<body ng-controller="CANController">
+	<!-- loading spinner-->
+	<script src="../../public/ide/lib/spinner.bundle.js"></script>
+
+	<div class="header header-background" display="inline-block">
+		<div class="header-center">
+			<img src="../../public/login/assets/img/速显微.png" alt="速显logo"/>
+		<h2 class="text-muted"> <span>CAN配置工程</span>
+			<button type="button" class="btn btn-default button-style"
+					ng-click="component.saveProject()" title="保存">
+				<span class="glyphicon glyphicon-floppy-disk" ></span>
+			</button>
+			<!--<button type="button" class="btn btn-default" style="font-size:20px;margin-left:20px"-->
+			<!--ng-click="component.downloadProject()" title="生成下载">-->
+			<!--<span class="glyphicon glyphicon-save" ></span>-->
+			<!--</button>-->
+		</h2>
+		</div>
+	</div>
+
+	<div class="container project-position" >
+
+			<!--<div class="header header-background" display="inline-block">
+				<h2 class="text-muted">CAN配置工程
+					<button type="button" class="btn btn-default" style="font-size:20px;margin-left:20px"
+							ng-click="component.saveProject()" title="保存">
+						<span class="glyphicon glyphicon-saved" ></span>
+					</button>
+					&lt;!&ndash;<button type="button" class="btn btn-default" style="font-size:20px;margin-left:20px"&ndash;&gt;
+							&lt;!&ndash;ng-click="component.downloadProject()" title="生成下载">&ndash;&gt;
+						&lt;!&ndash;<span class="glyphicon glyphicon-save" ></span>&ndash;&gt;
+					&lt;!&ndash;</button>&ndash;&gt;
+				</h2>
+			</div>-->
+			<div class="baseConfig can-background">
+				<h4><span>CAN接口配置</span></h4>
+				<form role="form" class="form-horizontal">
+
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-1">
+							<label for="CANInterfaceId" class="control-label">CAN接口Id</label>
+						</div>
+						<div class="col-sm-3">
+							<select id="CANInterfaceId" class="form-control input-sm"
+									ng-model="globalProject.CANPort.CANPortId"
+									ng-options="item for item in component.CANPortId">
+							</select>
+						</div>
+						<div class="col-sm-2 col-sm-offset-1">
+							<label for="interfaceMap" class="control-label">接口映射</label>
+						</div>
+						<div class="col-sm-3">
+							<select id="interfaceMap" class="form-control input-sm"
+									ng-model="globalProject.CANPort.portMap"
+									ng-options="item for item in component.portMap"></select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-1">
+							<label for="dateFrameType" class="control-label">帧类型</label>
+						</div>
+						<div class="col-sm-3">
+							<select id="dateFrameType" class="form-control input-sm"
+									ng-model="globalProject.CANPort.normalOrExpand"
+									ng-options="item for item in component.normalOrExpand"></select>
+						</div>
+					</div>
+				</form>
+				<h4><span>波特率配置 </span>
+					<button type="button" class="btn btn-default btn-xs"
+							ng-click="component.setBaudRate()">
+						<span class="glyphicon glyphicon-wrench"></span>
+					</button>
+				</h4>
+				<form role="form" class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-1" title="时间段1的时间单元">
+							<label for="tbs1" class="control-label">tbs1</label>
+						</div>
+						<div class="col-sm-3">
+							<select id="tbs1" class="form-control input-sm"
+									ng-model="globalProject.CANPort.tbs1"
+									ng-options="item.value as item.name for item in component.tbs1">
+							</select>
+						</div>
+						<div class="col-sm-2 col-sm-offset-1" title="时间段2的时间单元">
+							<label for="tbs2" class="control-label">tbs2</label>
+						</div>
+						<div class="col-sm-3">
+							<select id="tbs2" class="form-control input-sm"
+									ng-model="globalProject.CANPort.tbs2"
+									ng-options="item.value as item.name for item in component.tbs2"></select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-1" title="重新同步跳跃时间单元">
+							<label for="tsjw" class="control-label">tsjw</label>
+						</div>
+						<div class="col-sm-3">
+							<select id="tsjw" class="form-control input-sm"
+									ng-model="globalProject.CANPort.tsjw"
+									ng-options="item.value as item.name for item in component.tsjw">
+							</select>
+						</div>
+						<div class="col-sm-2 col-sm-offset-1" title="波特率分频器">
+							<label for="brp" class="control-label">brp</label>
+						</div>
+						<div class="col-sm-3">
+							<input type="number" class="form-control input-sm"
+								   ng-model="globalProject.CANPort.brp" placeholder="1~1024">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-1">
+							<label for="baudRate" class="control-label">波特率kbps</label>
+						</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control input-sm"
+								   ng-model="globalProject.CANPort.baudRate" readonly>
+						</div>
+					</div>
+				</form>
+				<h4><span>定时器配置</span></h4>
+				<form role="form" class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-1">
+							<label class="control-label">定时时间(s)</label>
+						</div>
+						<div class="col-sm-3">
+							<input class="form-control input-sm" type="number"
+								   ng-model="globalProject.CANPort.timer.duration">
+						</div>
+						<div class="col-sm-2 col-sm-offset-1">
+							<label for="tbs2" class="control-label">发送ID</label>
+						</div>
+						<div class="col-sm-3">
+							<input class="form-control input-sm" type="text"
+								   placeholder="{{globalProject.CANPort.timer.CANId ? 'Username' : '十六进制'}}"
+								   ng-model="globalProject.CANPort.timer.CANId"
+								   ng-blur="component.checkCANId()">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-1">
+							<label class="control-label">具体数据</label>
+						</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control input-sm"
+								   ng-model="globalProject.CANPort.timer.data"
+								   placeholder="{{globalProject.CANPort.timer.data ? 'Username' : '最长8字节的十六进制数'}}"
+								   ng-blur="component.switchData()">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="dataFrame">
+				<h4>
+					<span>数据帧配置</span>
+					<button class="btn btn-default btn-xs"
+							ng-click="component.addDataFrame()">
+						<span class="glyphicon glyphicon-plus"></span>
+					</button>
+				</h4>
+				<form role="form" class="form-horizontal">
+					<div class="dataFrameConfig can-background" ng-repeat="dataFrame in globalProject.dataFrameArr track by $index">
+						<div class="form-group">
+							<div class="col-sm-4">
+								<h5>
+									<button type="button" class="btn btn-default btn-xs"
+											ng-click="component.showDataFrameConfig($index)">
+										<span ng-class="{true: 'glyphicon glyphicon-chevron-down', false: 'glyphicon glyphicon-chevron-right'}[dataFrame.showDataFrame]"></span>
+									</button>
+									<button type="button" class="btn btn-default btn-xs"
+											ng-click="component.deleteDataFrame($index)">
+										<span class="glyphicon glyphicon-trash"></span>
+									</button>
+									<span>配置{{$index+1}}</span>
+								</h5>
+							</div>
+						</div>
+						<div ng-show="dataFrame.showDataFrame" class="fadeCustom">
+							<div class="form-group">
+								<div class="col-sm-2 col-sm-offset-1">
+									<label for="CANId" class="control-label">CANId</label>
+								</div>
+								<div class="col-sm-3">
+									<input type="text" class="form-control input-sm"
+										   ng-model="dataFrame.CANId"
+										   placeholder="{{dataFrame.CANId ? 'Username' : '十六进制'}}" 
+										   ng-blur="component.checkCANId($index)">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-2 col-sm-offset-1">
+									<h5>
+										<span>具体信息</span>
+										<button class="btn btn-default btn-xs"
+												ng-click="component.addDataFrameInfo($index)">
+											<span class="glyphicon glyphicon-plus"></span>
+										</button>
+									</h5>
+								</div>
+							</div>
+							<div class="dataFrameInfo" class="fadeCustom"
+								 ng-repeat="dataFrameInfo in dataFrame.frameInfoArr track by $index">
+								<div class="form-group">
+									<div class="col-sm-4 col-sm-offset-1">
+										<h5>
+											<button type="button" class="btn btn-default btn-xs"
+													ng-click="component.showDataFrameInfo($index,dataFrame.index)">
+												<span ng-class="{true: 'glyphicon glyphicon-chevron-down', false: 'glyphicon glyphicon-chevron-right'}[dataFrameInfo.showDataFrameInfo]"></span>
+											</button>
+											<button type="button" class="btn btn-default btn-xs"
+													ng-click="component.deleteDataFrameInfo($index,dataFrame.index)">
+												<span class="glyphicon glyphicon-trash"></span>
+											</button>
+											<span>信息{{$index+1}}</span>
+										</h5>
+									</div>
+								</div>
+								<div ng-show="dataFrameInfo.showDataFrameInfo">
+									<div class="form-group">
+										<div class="col-sm-2 col-sm-offset-2">
+											<label for="tagId" class="control-label">tagId/reg</label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" class="form-control input-sm"
+												   ng-model="dataFrameInfo.registerId">
+										</div>
+										<div class="col-sm-1 col-sm-offset-1">
+											<label for="startBit" class="control-label">startBit</label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" class="form-control input-sm"
+												   ng-model="dataFrameInfo.startBit">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-sm-offset-2">
+											<label for="numOfBit" class="control-label">numOfBit</label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" class="form-control input-sm"
+												   ng-model="dataFrameInfo.numOfBit">
+										</div>
+										<div class="col-sm-1  col-sm-offset-1">
+											<label for="tagBit" class="control-label">tagBit</label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" class="form-control input-sm"
+												   ng-model="dataFrameInfo.tagBit">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-sm-offset-2">
+											<label for="scale" class="control-label">scale</label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" class="form-control input-sm"
+												   ng-model="dataFrameInfo.scale">
+										</div>
+										<div class="col-sm-1 col-sm-offset-1">
+											<label for="offset" class="control-label">offset</label>
+										</div>
+										<div class="col-sm-3">
+											<input type="number" class="form-control input-sm"
+												   ng-model="dataFrameInfo.offset">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="IOConfig can-background">
+				<h4>
+					<span>IO配置</span>
+					<button id="addIOConfig"
+							class="btn btn-default btn-xs"
+							ng-click="component.addIOConfig()">
+						<span class="glyphicon glyphicon-plus"></span>
+					</button>
+					<input type="checkbox" name="my-checkbox" data-size='mini'
+						   data-on-color='success'>
+				</h4>
+				<div id="IOConfig">
+					<form role="form" class="form-horizontal" ng-repeat="IOConfigInfo in globalProject.IOConfig.configArr track by $index">
+						<div class="form-group">
+							<div class="col-sm-1" >
+								<!--<label class="control-label">{{$index+1}}</label>-->
+								<button type="button" class="btn btn-default btn-xs"
+										ng-click="component.deleteIOConfig($index)">
+									<span class="glyphicon glyphicon-trash"></span>
+								</button>
+							</div>
+							<div class="col-sm-2">
+								<label for="IO" class="control-label">IO</label>
+							</div>
+							<div class="col-sm-3">
+								<select id="IO" class="form-control input-sm"
+										ng-model="IOConfigInfo.IO"
+										ng-options="item for item in component.GPIO">
+								</select>
+							</div>
+							<div class="col-sm-2 col-sm-offset-1">
+								<label for="pinId" class="control-label">PIN</label>
+							</div>
+							<div class="col-sm-3">
+								<input id="pinId" class="form-control input-sm"
+									   ng-model="IOConfigInfo.pinId"
+									   type="number">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-2 col-sm-offset-1">
+								<label for="Mode" class="control-label">Mode</label>
+							</div>
+							<div class="col-sm-3">
+								<select id="Mode" class="form-control input-sm"
+										ng-model="IOConfigInfo.mode"
+										ng-options="item for item in component.IOMode">
+								</select>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>	

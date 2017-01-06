@@ -457,7 +457,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             this.height
                         );
                         if (this.progressImageElement){
-                            ctx.drawImage(this.progressImageElement, -this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+                            if(this.progressValue !=0 )
+                                ctx.drawImage(this.progressImageElement, 0, 0,this.progressImageElement.width*this.progressValue,this.progressImageElement.height,-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
 
                         }
                         if(this.cursorImageElement){
@@ -473,7 +474,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             this.height*this.progressValue
                         );
                         if (this.progressImageElement){
-                            ctx.drawImage(this.progressImageElement, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            if(this.progressValue !=0 )
+                                ctx.drawImage(this.progressImageElement,0,this.progressImageElement.height*(1-this.progressValue),this.progressImageElement.width,this.progressImageElement.height*this.progressValue, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
                         }
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -2322,7 +2324,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontZeroMode=level.info.frontZeroMode;
             //设置canvas的宽度和高度
             if(this.numOfDigits&&this.fontSize){
-                this.setWidth(this.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
+                this.setWidth(this.numOfDigits*(this.symbolMode=='0'?(this.fontSize-3):this.fontSize));
                 this.setHeight(this.fontSize*1.2);
             }
 

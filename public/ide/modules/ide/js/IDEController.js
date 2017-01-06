@@ -33,14 +33,14 @@ console.log = (function (console) {
 
 
 var logs=[];
-ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService',
+ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService','NavModalCANConfigService',
     function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
                                     ResourceService,
                                     TagService,
-                                    TemplateProvider,TimerService,UserTypeService,WidgetService) {
+                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService) {
 
     ideScope=$scope;
     $scope.ide={
@@ -51,7 +51,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     var fs,path,__dirname;
 
     // showIDE();
-
 
     //var params=getUrlParams();
     //PID=params.pid;
@@ -394,7 +393,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             method:'GET',
             url:baseUrl+'/project/'+id+'/content'
         }).success(function (data) {
-            // console.log(data);
             LoadWithTemplate(data,id);
 
         }).error(function (msg) {
@@ -764,11 +762,12 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     function syncServices(globalProject){
         ResourceService.setMaxTotalSize(globalProject.maxSize||100*1024*1024);
-        ResourceService.syncFiles(globalProject.resourceList)
+        ResourceService.syncFiles(globalProject.resourceList);
         //tags tbc
-        TagService.syncCustomTags(globalProject.customTags)
-        TagService.syncTimerTags(globalProject.timerTags)
-        TagService.setTimerNum(globalProject.timers)
+        TagService.syncCustomTags(globalProject.customTags);
+        TagService.syncTimerTags(globalProject.timerTags);
+        TagService.setTimerNum(globalProject.timers);
+        NavModalCANConfigService.setCANId(globalProject.CANId);
     }
 
     function setTemplate(date,cb){

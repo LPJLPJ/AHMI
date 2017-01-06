@@ -27,7 +27,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
 
     var defaultActions = [{
         title:'action0',
-        trigger:'Press',
+        trigger:'',
         commands:[
 
         ]
@@ -108,7 +108,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
         }else{
             fCB&&fCB();
         }
-    }
+    };
 
     /**
      * 返回一个新的空Action
@@ -117,7 +117,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
     this.getNewAction = function () {
         return {
             title:'default',
-            trigger:tBlank,
+            trigger:'',
             commands :[]
         }
     }

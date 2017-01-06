@@ -20086,6 +20086,7 @@
 	        var canvas = this.refs.canvas;
 	        this.ctx = canvas.getContext('2d');
 	        this.offctx = offcanvas.getContext('2d');
+	        this.offctx.setTransform(1, 0, 0, 1, 0, 0);
 	        // if (this.originalCanvasContext){
 	        //     this.offctx =this.originalCanvasContext;
 	        // }else{
@@ -20207,6 +20208,8 @@
 	        var duration = page.transition && page.transition.duration || 1000;
 	        var count = frames;
 	        var maxD = -100;
+	        var hWidth = canvas.width / 2;
+	        var hHeight = canvas.height / 2;
 	        if (!page.state || page.state == LoadState.notLoad) {
 	            page.state = LoadState.willLoad;
 	            //generate load trigger
@@ -20225,9 +20228,11 @@
 	                            x: deltas.curX,
 	                            y: deltas.curY
 	                        };
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.translate = null;
+	                        options.pageAnimate = false;
 	                    });
 	                    break;
 	                case 'MOVE_RL':
@@ -20238,25 +20243,59 @@
 	                            x: deltas.curX,
 	                            y: deltas.curY
 	                        };
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.translate = null;
+	                        options.pageAnimate = false;
+	                    });
+	                    break;
+	                case 'MOVE_TB':
+	                    AnimationManager.step(-offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
+
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        page.translate = {
+	                            x: deltas.curX,
+	                            y: deltas.curY
+	                        };
+	                        options.pageAnimate = true;
+	                        this.draw(null, options);
+	                    }.bind(this), function () {
+	                        page.translate = null;
+	                        options.pageAnimate = false;
+	                    });
+	                    break;
+	                case 'MOVE_BT':
+	                    AnimationManager.step(offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
+
+	                        // offctx.translate(deltas.curX,deltas.curY);
+	                        page.translate = {
+	                            x: deltas.curX,
+	                            y: deltas.curY
+	                        };
+	                        options.pageAnimate = true;
+	                        this.draw(null, options);
+	                    }.bind(this), function () {
+	                        page.translate = null;
+	                        options.pageAnimate = false;
 	                    });
 	                    break;
 	                case 'SCALE':
-	                    var beforeTranslateMatrix = [[1, 0, -400], [0, 1, -240], [0, 0, 1]];
-	                    var afterTranslateMatrix = [[1, 0, 400], [0, 1, 240], [0, 0, 1]];
-	                    var beforeScaleMatrix = [[0.5, 0, 0], [0, 0.5, 0], [0, 0, 1]];
+	                    var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
+	                    var afterTranslateMatrix = [[1, 0, hWidth], [0, 1, hHeight], [0, 0, 1]];
+	                    var beforeScaleMatrix = [[0.1, 0, 0], [0, 0.1, 0], [0, 0, 1]];
 	                    var afterScaleMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 	                    AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
 	                        var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
 	                        // console.log(curScaleMatrix)
-	                        // var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
-	                        // combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
-	                        page.transform = curScaleMatrix;
+	                        var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix);
+	                        combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
+	                        page.transform = combinedMatrix;
+	                        options.pageAnimate = true;
 	                        this.draw(null, options);
 	                    }.bind(this), function () {
 	                        page.transform = null;
+	                        options.pageAnimate = false;
 	                    });
 
 	                    break;
@@ -20503,39 +20542,39 @@
 	        var dstTransformObj = {};
 	        if (type === 'MyLayer') {
 	            srcTransformObj = {
-	                a: srcScale.x,
+	                a: srcScale.x || 0,
 	                b: 0,
 	                c: 0,
-	                d: srcScale.y,
-	                e: srcTranslate - target.x,
-	                f: srcTranslate - target.y
+	                d: srcScale.y || 0,
+	                e: srcTranslate.x - target.x || 0,
+	                f: srcTranslate.x - target.y || 0
 
 	            };
 	            dstTransformObj = {
-	                a: dstScale.x,
+	                a: dstScale.x || 0,
 	                b: 0,
 	                c: 0,
-	                d: dstScale.y,
-	                e: dstTranslate.x - target.x,
-	                f: dstTranslate.y - target.y
+	                d: dstScale.y || 0,
+	                e: dstTranslate.x - target.x || 0,
+	                f: dstTranslate.y - target.y || 0
 	            };
 	        } else {
 	            srcTransformObj = {
-	                a: srcScale.x,
+	                a: srcScale.x || 0,
 	                b: 0,
 	                c: 0,
-	                d: srcScale.y,
-	                e: srcTranslate - target.info.left,
-	                f: srcTranslate - target.info.top
+	                d: srcScale.y || 0,
+	                e: srcTranslate.x - target.info.left || 0,
+	                f: srcTranslate.x - target.info.top || 0
 
 	            };
 	            dstTransformObj = {
-	                a: dstScale.x,
+	                a: dstScale.x || 0,
 	                b: 0,
 	                c: 0,
-	                d: dstScale.y,
-	                e: dstTranslate.x - target.info.left,
-	                f: dstTranslate.y - target.info.top
+	                d: dstScale.y || 0,
+	                e: dstTranslate.x - target.info.left || 0,
+	                f: dstTranslate.y - target.info.top || 0
 	            };
 	        }
 
@@ -20709,61 +20748,67 @@
 	            var duration = transition && transition.duration || 1000;
 	            var frames = 30;
 	            var easing = 'easeInOutCubic';
-	            switch (method) {
-	                case 'MOVE_LR':
-	                    AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
-	                        // offctx.save();
-	                        // offctx.translate(deltas.curX,deltas.curY);
-	                        subCanvas.translate = {
-	                            x: deltas.curX,
-	                            y: deltas.curY
-	                        };
-	                        // subCanvas.info.x += deltas.deltaX;
-	                        // subCanvas.info.y += deltas.deltaY;
-	                        this.draw();
-	                        // offctx.restore();
-	                    }.bind(this), function () {
-	                        // offctx.restore()
-	                        subCanvas.translate = null;
-	                    });
-	                    break;
-	                case 'MOVE_RL':
-	                    AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
-	                        // offctx.save();
-	                        // offctx.translate(deltas.curX,deltas.curY);
-	                        subCanvas.translate = {
-	                            x: deltas.curX,
-	                            y: deltas.curY
-	                        };
-	                        // subCanvas.info.x += deltas.deltaX;
-	                        // subCanvas.info.y += deltas.deltaY;
-	                        this.draw();
-	                        // offctx.restore();
-	                    }.bind(this), function () {
-	                        // offctx.restore()
-	                        subCanvas.translate = null;
-	                    });
-	                    break;
-	                case 'SCALE':
-	                    AnimationManager.step(0.5, 0.5, 1, 1, duration, frames, easing, function (deltas) {
-	                        // offctx.save();
-	                        // offctx.translate(deltas.curX,deltas.curY);
-	                        subCanvas.scale = {
-	                            w: deltas.curX,
-	                            h: deltas.curY
-	                        };
-	                        // subCanvas.info.x += deltas.deltaX;
-	                        // subCanvas.info.y += deltas.deltaY;
-	                        this.draw();
-	                        // offctx.restore();
-	                    }.bind(this), function () {
-	                        // offctx.restore()
-	                        subCanvas.scale = null;
-	                    });
-	                    break;
-	                default:
-	                    this.paintSubCanvas(subCanvas, x, y, w, h, options);
+	            var hWidth = w / 2 + x;
+	            var hHeight = h / 2 + y;
+	            if (!options.pageAnimate) {
+	                switch (method) {
+	                    case 'MOVE_LR':
+	                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
+	                            // offctx.save();
+	                            // offctx.translate(deltas.curX,deltas.curY);
+	                            subCanvas.translate = {
+	                                x: deltas.curX,
+	                                y: deltas.curY
+	                            };
+	                            // subCanvas.info.x += deltas.deltaX;
+	                            // subCanvas.info.y += deltas.deltaY;
+	                            this.draw();
+	                            // offctx.restore();
+	                        }.bind(this), function () {
+	                            // offctx.restore()
+	                            subCanvas.translate = null;
+	                        });
+	                        break;
+	                    case 'MOVE_RL':
+	                        AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
+	                            // offctx.save();
+	                            // offctx.translate(deltas.curX,deltas.curY);
+	                            subCanvas.translate = {
+	                                x: deltas.curX,
+	                                y: deltas.curY
+	                            };
+	                            // subCanvas.info.x += deltas.deltaX;
+	                            // subCanvas.info.y += deltas.deltaY;
+	                            this.draw();
+	                            // offctx.restore();
+	                        }.bind(this), function () {
+	                            // offctx.restore()
+	                            subCanvas.translate = null;
+	                        });
+	                        break;
+	                    case 'SCALE':
+	                        var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
+	                        var afterTranslateMatrix = [[1, 0, hWidth], [0, 1, hHeight], [0, 0, 1]];
+	                        var beforeScaleMatrix = [[0.1, 0, 0], [0, 0.1, 0], [0, 0, 1]];
+	                        var afterScaleMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+	                        AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
+	                            var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
+	                            // console.log(curScaleMatrix)
+	                            var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix);
+	                            combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
+	                            subCanvas.transform = combinedMatrix;
+	                            this.draw(null, options);
+	                        }.bind(this), function () {
+	                            subCanvas.transform = null;
+	                        });
 
+	                        break;
+	                    default:
+	                        this.paintSubCanvas(subCanvas, x, y, w, h, options);
+
+	                }
+	            } else {
+	                this.paintSubCanvas(subCanvas, x, y, w, h, options);
 	            }
 	        } else {
 	            this.paintSubCanvas(subCanvas, x, y, w, h, options);
@@ -20779,13 +20824,19 @@
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        offctx.save();
-	        if (subCanvas.translate) {
+	        if (subCanvas.transform) {
+	            var m = subCanvas.transform;
+	            offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
+	        } else {
+	            if (subCanvas.translate) {
 
-	            offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
+	                offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
+	            }
+	            if (subCanvas.scale) {
+	                offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
+	            }
 	        }
-	        if (subCanvas.scale) {
-	            offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
-	        }
+
 	        this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
 	        this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
 	        var widgetList = subCanvas.widgetList;
@@ -21788,20 +21839,6 @@
 	        // console.log(arrange)
 
 	        var tempcanvas = this.refs.tempcanvas;
-	        // if (arrange == 'vertical'){
-	        //     tempcanvas.width = curHeight;
-	        //     tempcanvas.height = curWidth;
-	        //
-	        //     // tempcanvas.width = curHeight;
-	        //     // tempcanvas.height = curWidth;
-	        //     // tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
-	        //     // tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
-	        //
-	        //
-	        // }else{
-	        //     tempcanvas.width = curWidth;
-	        //     tempcanvas.height = curHeight;
-	        // }
 
 	        tempcanvas.width = curWidth;
 	        tempcanvas.height = curHeight;
@@ -21819,12 +21856,9 @@
 	        var shouldHandleAlarmAction = false;
 	        var tempNumValue = '';
 	        if (curValue != undefined && curValue != null) {
-	            // offctx.save();
-	            // if (arrange==='vertical'){
-	            //     offctx.translate(offcanvas.width/2,offcanvas.height/2);
-	            //     offctx.rotate(Math.PI/2);
-	            //     offctx.translate(-offcanvas.width/2,-offcanvas.height/2);
-	            // }
+
+	            var changeDirection = curValue - widget.oldValue;
+
 	            //handle action before
 	            if (overFlowStyle == '0' && (curValue > maxValue || curValue < minValue)) {} else {
 	                curValue = this.limitValueBetween(curValue, minValue, maxValue);
@@ -21838,16 +21872,9 @@
 	                        imgSrc: '',
 	                        name: '数字背景'
 	                    };
-	                    // this.drawBg(0,0,curWidth,curHeight,bgTex.imgSrc,bgTex.color,tempCtx)
-	                    // tempCtx.globalCompositeOperation = "destination-in";
-	                    // console.log(tempNumValue);
-	                    // tempCtx.fillText(tempNumValue, curWidth/2, curHeight/2+numSize/4);
-	                    // // tempCtx.fillText(tempNumValue,0,)
-	                    // tempCtx.restore()
+
 	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
 	                    offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
-	                    //offCtx.restore();
-
 
 	                    shouldHandleAlarmAction = true;
 	                } else {
@@ -21860,26 +21887,48 @@
 	                    // //draw
 	                    var oldHeight = 0;
 	                    var oleWidth = 0;
+	                    var curFrameNum = changeDirection < 0 ? totalFrameNum - widget.curFrameNum : widget.curFrameNum;
+	                    var newTempNumValue = '';
 	                    if (arrange === 'horizontal') {
-	                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
-	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                        oldHeight = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curHeight;
-	                        offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
+	                        if (changeDirection < 0) {
+	                            newTempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                            tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        } else {
+	                            tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                            newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        }
 
-	                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                        oldHeight = widget.curFrameNum / totalFrameNum * curHeight;
-	                        offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
+	                        oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight;
+	                        if (oldHeight > 0) {
+	                            offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
+	                        }
+
+	                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        oldHeight = curFrameNum / totalFrameNum * curHeight;
+	                        if (oldHeight > 0) {
+	                            offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
+	                        }
 	                    } else {
-	                        tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        if (changeDirection < 0) {
+	                            newTempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                            tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        } else {
+	                            tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                            newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
+	                        }
 	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                        oldWidth = (totalFrameNum - widget.curFrameNum) / totalFrameNum * curWidth;
-	                        offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
+	                        oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth;
+	                        if (oleWidth > 0) {
+	                            offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
+	                        }
 
-	                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
-	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
-	                        oldWidth = widget.curFrameNum / totalFrameNum * curWidth;
-	                        offctx.drawImage(tempcanvas, curWidth - oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight);
+	                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+
+	                        oldWidth = curFrameNum / totalFrameNum * curWidth;
+	                        if (oleWidth > 0) {
+	                            offctx.drawImage(tempcanvas, curWidth - oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight);
+	                        }
 	                    }
 
 	                    // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
@@ -21899,7 +21948,7 @@
 	                                widget.oldValue = curValue;
 	                            }
 	                            this.draw();
-	                        }.bind(this), 16);
+	                        }.bind(this), 30);
 	                    }
 	                }
 	            }
@@ -21919,7 +21968,7 @@
 	    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempcanvas, _arrange) {
 	        var tempCtx = tempcanvas.getContext('2d');
 	        var arrange = _arrange || 'horizontal';
-
+	        tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
 	        tempCtx.save();
 	        // console.log('arrange',arrange)
 	        if (arrange === 'vertical') {
@@ -21929,12 +21978,6 @@
 	            // tempCtx.translate(0,-tempcanvas.width)
 	        }
 
-	        // tempCtx.fillRect(tempcanvas.width/2,tempcanvas.height/2,10,5)
-	        //this.drawBg(0, 0, curWidth, curHeight, bgTex.imgSrc, bgTex.color, tempCtx);
-	        //tempCtx.globalCompositeOperation = "destination-in";
-	        // console.log(tempNumValue);
-	        //tempCtx.textBaseline="middle"
-	        tempCtx.fillStyle = bgTex.color;
 	        tempCtx.font = font;
 	        switch (tempCtx.textAlign) {
 	            case 'left':
@@ -22010,6 +22053,61 @@
 	    },
 	    drawDashboard: function (curX, curY, widget, options, cb) {
 
+	        var lowAlarm = widget.info.lowAlarmValue;
+	        var highAlarm = widget.info.highAlarmValue;
+	        var minValue = widget.info.minValue;
+	        var maxValue = widget.info.maxValue;
+	        var curDashboardTag = this.findTagByName(widget.tag);
+	        var curDashboardTagValue;
+
+	        curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
+
+	        if (curDashboardTagValue != widget.oldValue) {
+	            var alarmValue = this.shouldHandleAlarmAction(curDashboardTagValue, widget, lowAlarm, highAlarm);
+	            if (alarmValue) {
+	                //hanlde alarm
+	                this.handleTargetAction(widget, alarmValue);
+	            }
+	            widget.oldValue = curDashboardTagValue;
+	            //newValue consider animation
+	            var oldValue;
+	            if (widget.info.enableAnimation) {
+	                //using animation
+
+
+	                //clear old animation
+
+	                if (widget.animationKey != -1 && widget.animationKey != undefined) {
+	                    oldValue = widget.currentValue || 0;
+	                    AnimationManager.deleteAnimationKey(widget.animationKey);
+	                    widget.animationKey = -1;
+	                } else {
+	                    oldValue = widget.oldValue || 0;
+	                }
+
+	                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, 500, 30, null, function (obj) {
+	                    widget.currentValue = obj.curX;
+	                    // this.draw()
+	                }.bind(this), function () {
+	                    widget.currentValue = curDashboardTagValue;
+	                }.bind(this));
+
+	                //initial
+	                widget.currentValue = oldValue;
+	                this.paintDashboard(curX, curY, widget, options, cb);
+	            } else {
+	                //paint
+
+	                widget.currentValue = curDashboardTagValue;
+
+	                this.paintDashboard(curX, curY, widget, options, cb);
+	            }
+	        } else {
+	            this.paintDashboard(curX, curY, widget, options, cb);
+	        }
+	    },
+	    paintDashboard: function (curX, curY, widget, options, cb) {
+
 	        var width = widget.info.width;
 	        var height = widget.info.height;
 	        var offset = widget.info.offsetValue || 0;
@@ -22022,19 +22120,18 @@
 	            var maxValue = widget.info.maxValue;
 	            var minCoverAngle = widget.info.minCoverAngle;
 	            var maxCoverAngle = widget.info.maxCoverAngle;
+
 	            // var curArc = widget.info.value;
-	            var curDashboardTag = this.findTagByName(widget.tag);
-	            var curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
+
+	            var curDashboardTagValue = widget.currentValue || 0;
 	            if (curDashboardTagValue > maxValue) {
 	                curDashboardTagValue = maxValue;
 	            } else if (curDashboardTagValue < minValue) {
 	                curDashboardTagValue = minValue;
 	            }
 	            var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue - minValue);
-	            var currentValue = curDashboardTag && curDashboardTag.value || 0;
+
 	            var clockwise = widget.info.clockwise; // == '1' ? 1 : -1;
-	            var lowAlarm = widget.info.lowAlarmValue;
-	            var highAlarm = widget.info.highAlarmValue;
 	            var pointerLength = widget.info.pointerLength;
 	            var pointerWidth, pointerHeight;
 	            pointerWidth = pointerLength / Math.sqrt(2);
@@ -22121,12 +22218,9 @@
 	                    }
 	                }
 	            }
+
+	            cb && cb();
 	        }
-
-	        cb && cb();
-
-	        this.handleAlarmAction(currentValue, widget, lowAlarm, highAlarm);
-	        widget.oldValue = currentValue;
 	    },
 
 	    drawRotateImg: function (curX, curY, widget, options, cb) {
@@ -22382,6 +22476,23 @@
 	        } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
 	            widget.oldValue = curValue;
 	            this.handleTargetAction(widget, 'EnterLowAlarm');
+	        }
+	    },
+	    shouldHandleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
+	        //handle action
+	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+	            //enter high alarm
+	            return 'EnterHighAlarm';
+	        } else if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+	            //leave high alarm
+	            return 'LeaveHighAlarm';
+	        } else if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+	            //leave low alarm
+	            return 'LeaveLowAlarm';
+	        } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+	            return 'EnterLowAlarm';
+	        } else {
+	            return null;
 	        }
 	    },
 	    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
@@ -23313,7 +23424,7 @@
 	                var targetTag = this.findTagByName(param1.tag);
 
 	                if (targetTag) {
-	                    var nextValue = targetTag.value + Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23324,7 +23435,7 @@
 	            case 'DEC':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value - Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) - Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23334,7 +23445,7 @@
 	            case 'MUL':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value * Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) * Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23344,7 +23455,7 @@
 	            case 'DIV':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value / Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) / Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23354,7 +23465,7 @@
 	            case 'MOD':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value % Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) % Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23364,7 +23475,7 @@
 	            case 'OR':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value | Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) | Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23374,7 +23485,7 @@
 	            case 'XOR':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value ^ Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) ^ Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23394,7 +23505,7 @@
 	            case 'AND':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value & Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) & Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23404,7 +23515,7 @@
 	            case 'SL':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value << Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) << Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -23414,7 +23525,7 @@
 	            case 'SR':
 	                var targetTag = this.findTagByName(param1.tag);
 	                if (targetTag) {
-	                    var nextValue = targetTag.value >> Number(this.getParamValue(param2));
+	                    var nextValue = Number(targetTag.value) >> Number(this.getParamValue(param2));
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -51505,6 +51616,37 @@
 	        }
 	    }.bind(this), duration / frames);
 	    animationKeys.push(animationKey);
+	    return animationKey;
+	};
+
+	AnimationManager.stepValue = function (srcX, dstX, duration, frames, easing, intervalCb, finishCb) {
+	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
+	    var lastValue = 0;
+	    var curValue = 0;
+	    var count = frames;
+	    var deltaX = 0;
+	    var deltaY = 0;
+	    var curX = 0;
+	    var curY = 0;
+	    var rangeX = dstX - srcX;
+	    var animationKey = setInterval(function () {
+	        // offctx.transform(1,0,0,1,0,0,maxD-(frames-count)*maxD/frames);
+	        // offctx.save();
+	        curValue = easingFunc((frames - count) / frames);
+	        deltaX = rangeX * (curValue - lastValue);
+	        curX = srcX + rangeX * curValue;
+	        lastValue = curValue;
+	        intervalCb && intervalCb({ curX: curX, deltaX: deltaX });
+
+	        count--;
+	        if (count < 0) {
+	            //finished
+	            this.clearAnimationKey(animationKey);
+	            finishCb && finishCb();
+	        }
+	    }.bind(this), duration / frames);
+	    animationKeys.push(animationKey);
+	    return animationKey;
 	};
 
 	AnimationManager.stepObj = function (srcObj, dstObj, duration, frames, easing, intervalCb, finishCb) {
@@ -51544,6 +51686,7 @@
 	        }
 	    }.bind(this), duration / frames);
 	    animationKeys.push(animationKey);
+	    return animationKey;
 	};
 
 	AnimationManager.scaling = function (srcX, srcY, dstX, dstY, duration, frames, easing, intervalCb, finishCb) {
