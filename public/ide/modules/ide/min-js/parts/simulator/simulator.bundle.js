@@ -21214,6 +21214,7 @@
 
 	        cb && cb();
 	    },
+	    drawProgress: function (curX, curY, widget, options, cb) {},
 	    drawProgress: function (curX, curY, widget, options, cb) {
 	        var width = widget.info.width;
 	        var height = widget.info.height;
@@ -22089,7 +22090,7 @@
 
 	                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, 500, 30, null, function (obj) {
 	                    widget.currentValue = obj.curX;
-	                    // this.draw()
+	                    this.draw();
 	                }.bind(this), function () {
 	                    widget.currentValue = curDashboardTagValue;
 	                }.bind(this));
