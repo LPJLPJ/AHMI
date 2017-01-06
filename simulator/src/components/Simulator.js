@@ -1564,14 +1564,85 @@ module.exports =   React.createClass({
     },
     drawProgress:function (curX, curY, widget, options,cb) {
 
+        // widget.currentValue = curProgress
+        // this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
+        // widget.oldValue = curProgress;
+
+        var lowAlarm = widget.info.lowAlarmValue;
+        var highAlarm = widget.info.highAlarmValue;
+
+        var curProgressTag = this.findTagByName(widget.tag);
+        var curProgress = parseFloat(curProgressTag && curProgressTag.value) || 0;
+
+        if (curProgress != widget.oldValue){
+            var alarmValue = this.shouldHandleAlarmAction(curProgress, widget, lowAlarm, highAlarm)
+
+
+            //newValue consider animation
+            var oldValue
+            if (widget.info.enableAnimation){
+                //using animation
+
+
+
+
+                //clear old animation
+
+                if (widget.animationKey != -1 && widget.animationKey != undefined){
+                    oldValue = widget.currentValue || 0
+                    AnimationManager.clearAnimationKey(widget.animationKey)
+                    widget.animationKey = -1
+                }else{
+                    oldValue = widget.oldValue || 0
+                }
+
+                widget.oldValue = curProgress
+                if (alarmValue){
+                    //hanlde alarm
+                    this.handleTargetAction(widget, alarmValue);
+                }
+
+
+                widget.animationKey = AnimationManager.stepValue(oldValue,curProgress,500,30,null,function (obj) {
+                    widget.currentValue = obj.curX
+                    this.draw()
+                }.bind(this),function () {
+                    widget.currentValue = curProgress
+
+                }.bind(this))
+
+                //initial
+                widget.currentValue = oldValue
+                this.paintProgress(curX,curY,widget,options,cb)
+
+            }else{
+                widget.oldValue = curProgress
+                if (alarmValue){
+                    //hanlde alarm
+                    this.handleTargetAction(widget, alarmValue);
+                }
+                //paint
+
+                widget.currentValue = curProgress
+
+                this.paintProgress(curX,curY,widget,options,cb)
+
+
+
+            }
+
+
+
+        }else{
+            this.paintProgress(curX,curY,widget,options,cb)
+        }
     },
-    drawProgress: function (curX, curY, widget, options,cb) {
+    paintProgress: function (curX, curY, widget, options,cb) {
         var width = widget.info.width;
         var height = widget.info.height;
         var cursor = (widget.info.cursor=='1');
         //get current value
-        var curProgressTag = this.findTagByName(widget.tag);
-        var curProgress = (curProgressTag && curProgressTag.value) || 0;
+        var curProgress = widget.currentValue||0
         var curScale = 1.0 * (curProgress - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
 
         curScale = (curScale >= 0 ? curScale : 0.0);
@@ -1679,8 +1750,7 @@ module.exports =   React.createClass({
 
 
         //handle action
-        this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
-        widget.oldValue = curProgress;
+
     },
     drawSlideBlock: function (curX, curY, widget, options,cb) {
         var width = widget.info.width;
@@ -2479,7 +2549,7 @@ module.exports =   React.createClass({
 
                 if (widget.animationKey != -1 && widget.animationKey != undefined){
                     oldValue = widget.currentValue || 0
-                    AnimationManager.deleteAnimationKey(widget.animationKey)
+                    AnimationManager.clearAnimationKey(widget.animationKey)
                     widget.animationKey = -1
                 }else{
                     oldValue = widget.oldValue || 0
