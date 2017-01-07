@@ -538,7 +538,7 @@ ideServices
         this.getDefaultNum = function(){
             var subLayerNode = CanvasService.getSubLayerNode();
             var info={
-                width:75, height: 36,
+                width:51, height: 33,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
@@ -669,7 +669,7 @@ ideServices
             var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:80, height: 30,
+                width:84, height: 22,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,

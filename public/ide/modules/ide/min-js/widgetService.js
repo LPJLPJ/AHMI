@@ -1735,16 +1735,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
 
+            //console.log('初始化中...');
             //设置canvas的宽度和高度
-            this.setHeight(this.fontSize*1.1);
-            var font = this.fontSize + "px" + " " + this.fontFamily;
-            var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-            if(this.dateTimeModeId=='0'){
-                this.setWidth(7*maxWidth);
-            }else if(this.dateTimeModeId=='1'){
-                this.setWidth(4.5*maxWidth);
-            }else
-                this.setWidth(9*maxWidth);
+            //this.setHeight(this.fontSize*1.1);
+            //var font = this.fontSize + "px" + " " + this.fontFamily;
+            //var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            //if(this.dateTimeModeId=='0'){
+            //    this.setWidth(7*maxWidth);
+            //}else if(this.dateTimeModeId=='1'){
+            //    this.setWidth(4.5*maxWidth);
+            //}else
+            //    this.setWidth(9*maxWidth);
             //if(this.dateTimeModeId=='0'){
             //    this.setWidth(4*this.fontSize);
             //}else if(this.dateTimeModeId=='1'){
@@ -2348,16 +2349,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.symbolMode=level.info.symbolMode;
             this.fontZeroMode=level.info.frontZeroMode;
             //设置canvas的宽度和高度
-            var font = this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
-            var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789',font));
-            if(this.numOfDigits&&this.fontSize){
-                var width = this.symbolMode=='0'?(this.numOfDigits*maxWidth):((this.numOfDigits+1)*maxWidth);
-                if(this.decimalCount!=0){
-                    width +=0.5*maxWidth;
-                }
-                this.set({width:width,height:this.fontSize*1.1});
-                //this.setHeight(this.fontSize*1.1);
-            }
+            //var font = this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
+            //var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789',font));
+            //if(this.numOfDigits&&this.fontSize){
+            //    var width = this.symbolMode=='0'?(this.numOfDigits*maxWidth):((this.numOfDigits+1)*maxWidth);
+            //    if(this.decimalCount!=0){
+            //        width +=0.5*maxWidth;
+            //    }
+            //    this.set({width:width,height:this.fontSize*1.1});
+            //    //this.setHeight(this.fontSize*1.1);
+            //}
             //if(this.numOfDigits&&this.fontSize){
             //    this.setWidth(this.numOfDigits*(this.symbolMode=='0'?(this.fontSize-3):this.fontSize));
             //    this.setHeight(this.fontSize*1.2);
