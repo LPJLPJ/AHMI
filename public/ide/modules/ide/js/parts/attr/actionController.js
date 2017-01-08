@@ -120,7 +120,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             }else if (index>=0&&index<$scope.actions.length){
                 targetAction = _.cloneDeep($scope.actions[index]);
             }
-
+            //console.log('targetAction',targetAction);
             /**
              * 利用$uiModal服务，制作模态窗口
              */
@@ -201,6 +201,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         $scope.chooseCmd = function (index) {
             $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
+            //console.log('chosenCmd',$scope.chosenCmd);
         };
 
         //增加新指令
