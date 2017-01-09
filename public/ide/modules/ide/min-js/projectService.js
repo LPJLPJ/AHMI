@@ -3281,9 +3281,10 @@ ideServices
                 var selectObj=_self.getCurrentSelectObject();
                 var fabNumObj=getFabricObject(selectObj.level.id,true);
                 var arg={
-                    scaleX:fabNumObj.getScaleX(),
-                    scaleY:fabNumObj.getScaleY(),
-                    callback:_successCallback
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
                 };
 
                 //下面是数字字体属性，如字体，字体大小，粗体，斜体
@@ -3435,7 +3436,6 @@ ideServices
                 selectObj.level.info.dateTimeModeId=dateTimeModeId;
                 selectObj.level.info.RTCModeId=RTCModeId;
                 var arg={
-                    level:selectObj.level,
                     dateTimeModeId:dateTimeModeId,
                     callback:function(){
                         var currentWidget=selectObj.level;

@@ -18,8 +18,9 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
             if(os){
                 fs = require('fs');
                 path = require('path');
+                __dirname = global.__dirname;
                 window.local = true;
-                
+
                 var platform = os.platform();
                 if(platform=='darwin'){
                     pathUrl = '/Users/lixiang/Desktop/CAN.json';
@@ -39,9 +40,64 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
     function loadProject(){
         //localStorage.clear();
         if(window.local){
-
+            readLocalCANProjectData();
         }else{
-            var url = window.location.href;
+            readServerCANProjectData()
+        }
+    };
+
+    /**
+     * 本地版读取工程数据
+     * @return {[type]} [description]
+     */
+    function readLocalCANProjectData(){
+        var url = window.location.href;
+        var CANProjectId = url.split('?')[1].split('=')[1]
+        if(CANProjectId[CANProjectId.length-1]==="#"){
+            CANProjectId = CANProjectId.slice(0,-1);
+        }
+        $scope.CANProjectBaseUrl = path.join(__dirname,'localproject','localCANProject',CANProjectId);
+        var data = readSingleFile(path.join($scope.CANProjectBaseUrl,'CANProject.json'),true);
+        data = JSON.parse(data);
+        //console.log('keke',data.content);
+        if(data.content){
+            var pro = JSON.parse(data.content);
+            console.log('pro',pro);
+            loadFromContent(pro);
+        }else{
+            loadFromBlank();
+        }
+        initUI();
+        showCANIDE();
+
+    }
+
+    /**
+     * 从本地文件中读取CAN数据信息
+     * @param  {string} filePath 文件路径
+     * @param  {boolen} check    是否执行检查
+     * @return {object}          CAN数据
+     */
+    function readSingleFile(filePath,check){
+        if(check){
+            try{
+                var stats = fs.statSync(filePath);
+                if(stats&&stats.isFile()){
+                    return fs.readFileSync(filePath,'utf-8');
+                }else
+                    return null
+            }catch(e){
+                return fs.readFileSync(filePath,'utf-8');
+            }
+        }
+    }
+
+    /**
+     * web版读取工程
+     * @return {null} 
+     */
+    function readServerCANProjectData(){
+        var url = window.location.href;
             var url_splices = url.split('/');
             for(var i=0;i<url_splices.length;i++){
                 if(url_splices[i]=='CANProject'){
@@ -69,8 +125,7 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
                 initUI();
                 showCANIDE();
             })
-        }
-    };
+    }
 
     /**
      * 获取空白工程
@@ -230,7 +285,16 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
         setBaudRate();
         //localStorage.CANProject = JSON.stringify(_.cloneDeep($scope.globalProject));
         if(window.local){
-
+            var dataUrl = path.join($scope.CANProjectBaseUrl,'CANProject.json');
+            try{
+                var oldData = JSON.parse(fs.readFileSync(dataUrl));
+                oldData.content=JSON.stringify($scope.globalProject);
+                console.log('oldData',oldData);
+                fs.writeFileSync(dataUrl,JSON.stringify(oldData));
+                toastr.info('保存成功');
+            }catch(e){
+                toastr.warning('保存失败！')
+            }
         }else{
             if(!$scope.haveSvaed){
                 $scope.haveSvaed = true;

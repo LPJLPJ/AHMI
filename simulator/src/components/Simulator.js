@@ -1579,7 +1579,7 @@ module.exports =   React.createClass({
         }
         cb && cb();
     },
-    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange) {
+    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth) {
 
         var text = text||'';
         var font = font||{};
@@ -1605,7 +1605,16 @@ module.exports =   React.createClass({
         tempctx.font = fontStr;
         // console.log('tempctx.font',fontStr);
         tempctx.fillStyle = font['font-color'];
-        tempctx.fillText(text,0.5*width,0.5*height);
+        if(byteMode){
+            var xCoordinate = maxFontWidth/2;
+            var yCoordinate = 0.5*height;
+            for(i=0;i<text.length;i++){
+                tempctx.fillText(text[i],xCoordinate,yCoordinate);
+                xCoordinate+=maxFontWidth;
+            }
+        }else{
+            tempctx.fillText(text,0.5*width,0.5*height);
+        }
         tempctx.restore();
         offctx.drawImage(tempcanvas,curX,curY,width,height);
     },
@@ -2061,6 +2070,7 @@ module.exports =   React.createClass({
         var fontSize = widget.info.fontSize;
         var fontColor = widget.info.fontColor;
         var tex = widget.texList&&widget.texList[0];
+        var maxFontWidth = widget.info.maxFontWidth;
         // lg(tex,widget)
 
         var font = {};
@@ -2088,8 +2098,9 @@ module.exports =   React.createClass({
             dateTimeString = this.getCurDate(curDate,dateTimeModeId);
         }
         //draw
-
-        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
+        //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
+        //逐字渲染字符串
+        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange,true,maxFontWidth);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
