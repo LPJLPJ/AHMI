@@ -565,7 +565,7 @@ ideServices
                             _successCallback&&_successCallback();
                         }else {
                             var layer=currentPage.layers[_index];
-                            console.log("layer: ",layer);
+                            // console.log("layer: ",layer);
                             _self.SyncSubLayerImage(layer,layer.showSubLayer,function () {
                                 updateLayerImage(_index+1,_successCallback);
                             })
