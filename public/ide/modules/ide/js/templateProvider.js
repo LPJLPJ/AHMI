@@ -2,7 +2,7 @@
  * Created by shenaolin on 16/3/12.
  */
 ideServices
-    .service('TemplateProvider', ['Type','CanvasService','Preference',function (Type,CanvasService,Preference) {
+    .service('TemplateProvider', ['Type','CanvasService','Preference','FontMesureService',function (Type,CanvasService,Preference,FontMesureService) {
 
 
         function Transition(name,show,duration){
@@ -666,10 +666,11 @@ ideServices
             }
         };
         this.getDefaultDateTime=function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
-
+            var font = "20px"+" "+"宋体";
+            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            var width = 8*maxFontWidth;
             var info={
-                width:84, height: 22,
+                width:width, height: 22,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
@@ -680,7 +681,8 @@ ideServices
                 fontColor:'rgba(0,0,0,1)',
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
-                disableHighlight:false
+                disableHighlight:false,
+                maxFontWidth:maxFontWidth   //最大字体宽度
             };
             return {
                 id: Math.random().toString(36).substr(2),

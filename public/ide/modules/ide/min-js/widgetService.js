@@ -1734,25 +1734,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.align=level.info.align;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
-
-            //console.log('初始化中...');
-            //设置canvas的宽度和高度
-            //this.setHeight(this.fontSize*1.1);
-            //var font = this.fontSize + "px" + " " + this.fontFamily;
-            //var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-            //if(this.dateTimeModeId=='0'){
-            //    this.setWidth(7*maxWidth);
-            //}else if(this.dateTimeModeId=='1'){
-            //    this.setWidth(4.5*maxWidth);
-            //}else
-            //    this.setWidth(9*maxWidth);
-            //if(this.dateTimeModeId=='0'){
-            //    this.setWidth(4*this.fontSize);
-            //}else if(this.dateTimeModeId=='1'){
-            //    this.setWidth(3*this.fontSize);
-            //}else
-            //    this.setWidth(6*this.fontSize);
-
+            this.maxFontWidth=level.info.maxFontWidth;
+            if(this.maxFontWidth===undefined){
+                //维护旧的时间控件
+                var font = this.fontSize + "px" + " " + this.fontFamily;
+                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+                this.maxFontWidth = maxWidth;
+                level.info.maxFontWidth = maxWidth;
+            }
             if(this.arrange=='vertical'){
                 this.setAngle(90);
                 this.set({
@@ -1765,42 +1754,27 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 });
             }
             this.on('changeDateTimeModeId',function(arg){
-                var dateTimeModeId=arg.dateTimeModeId;
                 var _callback=arg.callback;
-                self.dateTimeModeId=dateTimeModeId;
+                self.dateTimeModeId=arg.dateTimeModeId;
                 self.setHeight(self.fontSize*1.1);
-                var font = self.fontSize + "px" + " " + self.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 if(self.dateTimeModeId=='0'){
-                    self.setWidth(7*maxWidth);
+                    self.setWidth(8*self.maxFontWidth);
                 }else if(self.dateTimeModeId=='1'){
-                    self.setWidth(4.5*maxWidth);
+                    self.setWidth(5*self.maxFontWidth);
                 }else
-                    self.setWidth(9*maxWidth);
-                //if(self.dateTimeModeId=='0'){
-                //    self.setWidth(4*self.fontSize);
-                //}else if(self.dateTimeModeId=='1'){
-                //    self.setWidth(3*self.fontSize);
-                //}else
-                //    self.setWidth(6*self.fontSize);
+                    self.setWidth(10*self.maxFontWidth);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
             this.on('changeDateTimeText',function(arg){
+                var level = arg.level;
                 var _callback = arg.callback;
                 if(arg.hasOwnProperty('fontFamily')){
                     self.fontFamily = arg.fontFamily;
                 }
                 if(arg.hasOwnProperty('fontSize')){
                     self.fontSize=arg.fontSize;
-                    //self.setHeight(self.fontSize*1.1);
-                    //if(self.dateTimeModeId=='0'){
-                    //    self.setWidth(4*self.fontSize);
-                    //}else if(self.dateTimeModeId=='1'){
-                    //    self.setWidth(3*self.fontSize);
-                    //}else
-                    //    self.setWidth(6*self.fontSize);
                 }
                 if(arg.hasOwnProperty('fontColor')){
                     self.fontColor=arg.fontColor;
@@ -1808,12 +1782,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 self.setHeight(self.fontSize*1.1);
                 var font = self.fontSize + "px" + " " + self.fontFamily;
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+                level.info.maxFontWidth = maxWidth;
+                self.maxFontWidth = maxWidth;
+
                 if(self.dateTimeModeId=='0'){
-                    self.setWidth(7*maxWidth);
+                    self.setWidth(8*self.maxFontWidth);
                 }else if(self.dateTimeModeId=='1'){
-                    self.setWidth(4.5*maxWidth);
+                    self.setWidth(5*self.maxFontWidth);
                 }else
-                    self.setWidth(9*maxWidth);
+                    self.setWidth(10*self.maxFontWidth);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1852,9 +1829,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         _render: function (ctx) {
             try{
                 var fontString;
-                //ctx.fillStyle=this.fontColor;
                 fontString=this.fontSize+'px'+" "+this.fontFamily;
-                drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
+                //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
+                drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.width,this.maxFontWidth);
             }
             catch(err){
                 console.log('错误描述',err);
@@ -1880,7 +1857,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyDateTime.async = true;
 
     /**
-     *
+     * 按字符串渲染时间控件
      * @param mode
      * @param ctx
      * @param scaleX
@@ -1945,6 +1922,80 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             ctx.textBaseline='middle';
             ctx.fillText(arrDate.join("-"),0,0);
             ctx.scale(scaleX,scaleY);
+        }
+    }
+
+    /**
+     * [drawNewDateTime 逐个字符渲染时间控件]
+     * @param  {[type]} mode       [description]
+     * @param  {[type]} ctx        [description]
+     * @param  {[type]} fontString [description]
+     * @param  {[type]} align      [description]
+     * @param  {[type]} fontColor  [description]
+     * @return {[type]}            [description]
+     */
+    function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,maxFontWidth){
+        ctx.fillStyle=fontColor;
+        var dateObj = new Date(),
+            arrTime = [],
+            arrDate = [];
+        var i=0;
+        arrTime.push(dateObj.getHours());
+        arrTime.push(dateObj.getMinutes());
+        arrTime.push(dateObj.getSeconds());
+        for(i=0;i<arrTime.length;i++){
+            if(arrTime[i]<10){
+                arrTime[i]='0'+arrTime[i];
+            }
+        }
+
+        arrDate.push(dateObj.getFullYear());
+        arrDate.push(dateObj.getMonth()+1);
+        arrDate.push(dateObj.getDate());
+
+        for(i=0;i<arrDate.length;i++){
+            if(arrDate[i]<10){
+                arrDate[i]='0'+arrDate[i];
+            }
+        }
+        var dateTimeStr="";
+        //var maxWidth=0;
+
+        if(mode=='0'){
+            //时分秒
+            ctx.font=fontString;
+            ctx.textAlign=align;
+            ctx.textBaseline='middle';
+            dateTimeStr=arrTime.join(":").toString();
+            //maxWidth=width/8;
+        }else if(mode=='1'){
+            //时分
+            ctx.font=fontString;
+            ctx.textAlign=align;
+            ctx.textBaseline='middle';
+            dateTimeStr=arrTime.slice(0,2).join(":").toString();
+            //maxWidth=width/5;
+        }
+        else if(mode=='2'){
+            //斜杠日期
+            ctx.font=fontString;
+            ctx.textAlign=align;
+            ctx.textBaseline='middle';
+            dateTimeStr=arrDate.join("/").toString();
+            //maxWidth=width/10;
+        }else if(mode=='3'){
+            //减号日期
+            ctx.font=fontString;
+            ctx.textAlign=align;
+            ctx.textBaseline='middle';
+            dateTimeStr=arrDate.join("-").toString();
+            //maxWidth=width/10;
+        }
+        //console.log('dateTimeStr',dateTimeStr,'maxWidth',maxWidth,dateTimeStr[0]);
+        var xCoordinate = maxFontWidth/2-width/2;
+        for(i=0;i<dateTimeStr.length;i++){
+            ctx.fillText(dateTimeStr[i],xCoordinate,0);
+            xCoordinate+=maxFontWidth;
         }
     }
 
