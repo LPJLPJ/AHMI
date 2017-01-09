@@ -560,7 +560,7 @@ ideServices
                 numValue:1,
                 fontFamily:'宋体',
                 fontSize:30,
-                fontColor:'rgba(0,0,0,1)',
+                fontColor:'rgba(255,255,255,1)',
                 fontBold:"100",
                 fontItalic:""
             };
@@ -678,7 +678,7 @@ ideServices
                 RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
                 fontFamily:'宋体',
                 fontSize:20,
-                fontColor:'rgba(0,0,0,1)',
+                fontColor:'rgba(255,255,255,1)',
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
                 disableHighlight:false,
