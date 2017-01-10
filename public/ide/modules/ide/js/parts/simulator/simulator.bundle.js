@@ -21853,6 +21853,7 @@
 	        tempCtx.textAlign = widget.info.align;
 	        tempCtx.textAlign = tempCtx.textAlign || 'center';
 	        tempCtx.textBaseline = 'middle';
+	        tempCtx.fillStyle = numColor;
 
 	        widget.oldValue = widget.oldValue || 0;
 	        var shouldHandleAlarmAction = false;
