@@ -132,6 +132,46 @@ CANProjectRouter.updateCANProject = function(req,res){
     }
 };
 
+
+var rmdirAsync = function(_path, callback) {
+    fs.readdir(_path, function(err, files) {
+        if(err) {
+            // Pass the error on to callback
+            callback(err, []);
+            return;
+        }
+        var wait = files.length,
+            count = 0,
+            folderDone = function(err) {
+                count++;
+                // If we cleaned out all the files, continue
+                if( count >= wait || err) {
+                    fs.rmdir(_path,callback);
+                }
+            };
+        // Empty directory to bail early
+        if(!wait) {
+            folderDone();
+            return;
+        }
+
+        files.forEach(function(file) {
+            var curPath = path.join(_path,file);
+            fs.lstat(curPath, function(err, stats) {
+                if( err ) {
+                    callback(err, []);
+                    return;
+                }
+                if( stats.isDirectory() ) {
+                    rmdirAsync(curPath, folderDone);
+                } else {
+                    fs.unlink(curPath, folderDone);
+                }
+            });
+        });
+    });
+};
+
 CANProjectRouter.deleteCANProject = function(req,res){
     var projectId = req.body.projectId;
     if(projectId&&projectId!=""){
@@ -142,18 +182,18 @@ CANProjectRouter.deleteCANProject = function(req,res){
                 //delete directory
                 var targetDir = path.join(__dirname,'../project/',String(projectId));
                 fs.stat(targetDir,function(err,stats){
-                    if(err){
-                        errHandler(res,500,'CAN folder url error');
-                    }else{
-                        if(stats&&stats.isDirectory&&stats.isDirectory()){
-                            //exists and delete
-                            fs.rmdir(targetDir,function(){
+                    if(stats&&stats.isDirectory&&stats.isDirectory()){
+                        //exists and delete
+                        rmdirAsync(targetDir,function(rmerr){
+                            if(rmerr){
+                                errHandler(res,500,'rm directory error')
+                            }else{
                                 res.end('ok');
-                            })
-                        }else{
-                            res.end('ok');
-                        }
-                    }
+                            }
+                        })
+                    }else{
+                        res.end('ok');
+                    } 
                 })
             }
         })

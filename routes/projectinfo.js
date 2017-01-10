@@ -99,7 +99,7 @@ projectRoute.createProject = function (req, res) {
 
                 }else{
                     //create new directory
-                    console.log('create new directory',targetDir);
+                    //console.log('create new directory',targetDir);
                     mkdir(targetDir, function (err) {
                         if (err){
                             console.log('mk error')
@@ -216,7 +216,7 @@ var rmdirAsync = function(_path, callback) {
 
 projectRoute.deleteProject = function (req, res) {
     var projectId = req.body.projectId;
-    console.log(projectId)
+    //console.log(projectId)
     if (projectId){
         //exitst
         ProjectModel.deleteById(projectId, function (err) {
