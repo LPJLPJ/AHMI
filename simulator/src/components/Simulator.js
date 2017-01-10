@@ -837,45 +837,130 @@ module.exports =   React.createClass({
         var frames = 30;
         var srcTransformObj={};
         var dstTransformObj={};
-        if(type === 'MyLayer'){
-            srcTransformObj = {
-                a:srcScale.x||0,
-                b:0,
-                c:0,
-                d:srcScale.y||0,
-                e:(srcTranslate.x-target.x)||0,
-                f:(srcTranslate.x-target.y)||0
+        // if(type === 'MyLayer'){
+        //     srcTransformObj = {
+        //         a:srcScale.x||0,
+        //         b:0,
+        //         c:0,
+        //         d:srcScale.y||0,
+        //         e:(srcTranslate.x-target.x)||0,
+        //         f:(srcTranslate.y-target.y)||0
+        //
+        //     };
+        //     dstTransformObj = {
+        //         a:dstScale.x||0,
+        //         b:0,
+        //         c:0,
+        //         d:dstScale.y||0,
+        //         e:(dstTranslate.x-target.x)||0,
+        //         f:(dstTranslate.y-target.y)||0
+        //     }
+        // }else{
+        //     srcTransformObj = {
+        //         a:srcScale.x||0,
+        //         b:0,
+        //         c:0,
+        //         d:srcScale.y||0,
+        //         e:(srcTranslate.x-target.info.left)||0,
+        //         f:(srcTranslate.y-target.info.top)||0
+        //
+        //     };
+        //     dstTransformObj = {
+        //         a:dstScale.x||0,
+        //         b:0,
+        //         c:0,
+        //         d:dstScale.y||0,
+        //         e:(dstTranslate.x-target.info.left)||0,
+        //         f:(dstTranslate.y-target.info.top)||0
+        //     }
+        // }
+        var srcRelativeTranslate = {}
+        var dstRelativeTranslate = {}
+        var tempTranslate = {}
+        if (type == 'MyLayer'){
+            srcRelativeTranslate = {
+                x:srcTranslate.x-target.x,
+                y:srcTranslate.y-target.y
+            }
 
-            };
-            dstTransformObj = {
-                a:dstScale.x||0,
-                b:0,
-                c:0,
-                d:dstScale.y||0,
-                e:(dstTranslate.x-target.x)||0,
-                f:(dstTranslate.y-target.y)||0
+            dstRelativeTranslate = {
+                x:dstTranslate.x - target.x,
+                y:dstTranslate.y - target.y
+            }
+
+            tempTranslate = {
+                x:target.x,
+                y:target.y
             }
         }else{
-            srcTransformObj = {
-                a:srcScale.x||0,
-                b:0,
-                c:0,
-                d:srcScale.y||0,
-                e:(srcTranslate.x-target.info.left)||0,
-                f:(srcTranslate.x-target.info.top)||0
+            srcRelativeTranslate = {
+                x:srcTranslate.x-target.info.left,
+                y:srcTranslate.y-target.info.top
+            }
 
-            };
-            dstTransformObj = {
-                a:dstScale.x||0,
-                b:0,
-                c:0,
-                d:dstScale.y||0,
-                e:(dstTranslate.x-target.info.left)||0,
-                f:(dstTranslate.y-target.info.top)||0
+            dstRelativeTranslate = {
+                x:dstTranslate.x - target.info.left,
+                y:dstTranslate.y - target.info.top
+            }
+            tempTranslate = {
+                x:target.info.left,
+                y:target.info.top
             }
         }
 
+        srcTransformObj = this.matrixToObj(this.matrixMultiply([
+            [
+                [1,0,srcRelativeTranslate.x],
+                [0,1,srcRelativeTranslate.y],
+                [0,0,1]
+            ],
+            [
+                [1,0,tempTranslate.x],
+                [0,1,tempTranslate.y],
+                [0,0,1]
+            ],
+            [
+                [srcScale.x,0,0],
+                [0,srcScale.y,0],
+                [0,0,1]
+            ],
+            [
+                [1,0,-tempTranslate.x],
+                [0,1,-tempTranslate.y],
+                [0,0,1]
+            ]
+
+        ]))
+
+        dstTransformObj = this.matrixToObj(this.matrixMultiply([
+            [
+                [1,0,dstRelativeTranslate.x],
+                [0,1,dstRelativeTranslate.y],
+                [0,0,1]
+            ],
+            [
+                [1,0,tempTranslate.x],
+                [0,1,tempTranslate.y],
+                [0,0,1]
+            ],
+            [
+                [dstScale.x,0,0],
+                [0,dstScale.y,0],
+                [0,0,1]
+            ],
+            [
+                [1,0,-tempTranslate.x],
+                [0,1,-tempTranslate.y],
+                [0,0,1]
+            ]
+
+        ]))
+
+
+
         var easingFunc = 'easeInOutCubic';
+        // console.log('anAttr',animationAttrs)
+        // console.log('srcT',srcTransformObj,'dstT',dstTransformObj)
 
         AnimationManager.stepObj(srcTransformObj,dstTransformObj,duration,frames,easingFunc,function (deltas) {
 
@@ -896,6 +981,17 @@ module.exports =   React.createClass({
 
         })
 
+    },
+    matrixMultiply:function (matrixArray) {
+        var length = matrixArray.length
+        if (length<1){
+            return null
+        }
+        var result = matrixArray[0]
+        for (var i=1;i<length;i++){
+            result = math.multiply(result,matrixArray[i])
+        }
+        return result
     },
     scaleElement:function (target,scaleFactor) {
         // console.log('scaling element',target)
@@ -1171,7 +1267,7 @@ module.exports =   React.createClass({
                 offctx.scale(subCanvas.scale.w,subCanvas.scale.h);
             }
         }
-
+        //paint
         this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
         this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
         var widgetList = subCanvas.widgetList;
@@ -1483,7 +1579,7 @@ module.exports =   React.createClass({
         }
         cb && cb();
     },
-    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange) {
+    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth) {
 
         var text = text||'';
         var font = font||{};
@@ -1509,7 +1605,16 @@ module.exports =   React.createClass({
         tempctx.font = fontStr;
         // console.log('tempctx.font',fontStr);
         tempctx.fillStyle = font['font-color'];
-        tempctx.fillText(text,0.5*width,0.5*height);
+        if(byteMode){
+            var xCoordinate = maxFontWidth/2;
+            var yCoordinate = 0.5*height;
+            for(i=0;i<text.length;i++){
+                tempctx.fillText(text[i],xCoordinate,yCoordinate);
+                xCoordinate+=maxFontWidth;
+            }
+        }else{
+            tempctx.fillText(text,0.5*width,0.5*height);
+        }
         tempctx.restore();
         offctx.drawImage(tempcanvas,curX,curY,width,height);
     },
@@ -1965,6 +2070,7 @@ module.exports =   React.createClass({
         var fontSize = widget.info.fontSize;
         var fontColor = widget.info.fontColor;
         var tex = widget.texList&&widget.texList[0];
+        var maxFontWidth = widget.info.maxFontWidth;
         // lg(tex,widget)
 
         var font = {};
@@ -1992,8 +2098,9 @@ module.exports =   React.createClass({
             dateTimeString = this.getCurDate(curDate,dateTimeModeId);
         }
         //draw
-
-        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
+        //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
+        //逐字渲染字符串
+        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange,true,maxFontWidth);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
