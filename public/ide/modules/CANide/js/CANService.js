@@ -20,7 +20,7 @@ CAN.service('CANService', [function(){
     };
 
     function Timer(duration,CANId){
-        this.duration=duration;
+        this.duration=duration||null;
         this.CANId=CANId||"";
         this.data="";
         this.dataArr=[];
@@ -35,18 +35,23 @@ CAN.service('CANService', [function(){
         this.tbs1 = null;
         this.brp = null;
         this.baudRate = null;
-        this.timer=new Timer(null,null);
     }
 
-    function IOConfigInfo(IO,pin,mode){
-        this.IO=IO||'';
-        this.pinId=pin||null;
-        this.mode=mode||'';
+    function IOConfigInfo(IO,pin,mode,tagBit){
+        this.IO = IO||'';
+        this.pinId = pin||null;
+        this.mode = mode||'';
+        this.tagBit = tagBit||null;
     }
 
     function IOConfig(enableConfig){
         this.enableConfig=enableConfig;
         this.configArr=[new IOConfigInfo()];
+    }
+
+    function TimerConfig(enableConfig){
+        this.enableConfig = enableConfig;
+        this.configArr = [new Timer(null,null)];
     }
 
     var project={};
@@ -55,7 +60,8 @@ CAN.service('CANService', [function(){
         var newProject = {
             CANPort:new CANPort(),
             dataFrameArr:[],
-            IOConfig:new IOConfig(false)
+            IOConfig:new IOConfig(false),
+            timerConfig:new TimerConfig(false)
         };
         var newFrameInfo = new FrameInfo(0);
         var newDataFrame = new DataFrame(0);
@@ -88,7 +94,11 @@ CAN.service('CANService', [function(){
         return new FrameInfo(index);
     };
 
-    this.getNewTimer = function(){
+    this.getNewTimerConfig = function(){
+        return new TimerConfig(false);
+    }
+
+    this.getNewTimerConfigInfo = function(){
         return new Timer(null,null);
     };
 
@@ -99,7 +109,5 @@ CAN.service('CANService', [function(){
     this.getNewIOConfigInfo = function(){
         return new IOConfigInfo();
     }
-
-
 
 }]);

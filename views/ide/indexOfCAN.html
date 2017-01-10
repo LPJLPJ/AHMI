@@ -146,7 +146,7 @@
 						</div>
 					</div>
 				</form>
-				<h4><span>定时器配置</span></h4>
+<!-- 				<h4><span>定时器配置</span></h4>
 				<form role="form" class="form-horizontal">
 					<div class="form-group">
 						<div class="col-sm-2 col-sm-offset-1">
@@ -177,7 +177,7 @@
 								   ng-blur="component.switchData()">
 						</div>
 					</div>
-				</form>
+				</form> -->
 			</div>
 			<div class="dataFrame">
 				<h4>
@@ -213,7 +213,7 @@
 									<input type="text" class="form-control input-sm"
 										   ng-model="dataFrame.CANId"
 										   placeholder="{{dataFrame.CANId ? 'Username' : '十六进制'}}" 
-										   ng-blur="component.checkCANId($index)">
+										   ng-blur="component.checkCANId($index,'dataFrame')">
 								</div>
 							</div>
 							<div class="form-group">
@@ -307,7 +307,7 @@
 							ng-click="component.addIOConfig()">
 						<span class="glyphicon glyphicon-plus"></span>
 					</button>
-					<input type="checkbox" name="my-checkbox" data-size='mini'
+					<input type="checkbox" name="IO-checkbox" data-size='mini'
 						   data-on-color='success'>
 				</h4>
 				<div id="IOConfig">
@@ -347,6 +347,67 @@
 										ng-model="IOConfigInfo.mode"
 										ng-options="item for item in component.IOMode">
 								</select>
+							</div>
+							<div class="col-sm-2 col-sm-offset-1">
+								<label for="pinId" class="control-label">tagBit</label>
+							</div>
+							<div class="col-sm-3">
+								<input id="pinId" class="form-control input-sm"
+									   ng-model="IOConfigInfo.tagBit"
+									   type="number">
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="IOConfig can-background">
+				<h4>
+					<span>定时器</span>
+					<button id="addTimerConfig"
+							class="btn btn-default btn-xs"
+							ng-click="component.addTimerConfig()">
+						<span class="glyphicon glyphicon-plus"></span>
+					</button>
+					<input type="checkbox" name="timer-checkbox" data-size='mini'
+						   data-on-color='success'>
+				</h4>
+				<div id="timerConfig">
+					<form role="form" class="form-horizontal" ng-repeat="timerConfigInfo in globalProject.timerConfig.configArr track by $index">
+						<div class="form-group">
+							<div class="col-sm-1" >
+								<!--<label class="control-label">{{$index+1}}</label>-->
+								<button type="button" class="btn btn-default btn-xs"
+										ng-click="component.deleteTimerConfig($index)">
+									<span class="glyphicon glyphicon-trash"></span>
+								</button>
+							</div>
+							<div class="col-sm-2">
+								<label class="control-label">定时时间</label>
+							</div>
+							<div class="col-sm-3">
+								<input class="form-control input-sm" type="number"
+									   ng-model="timerConfigInfo.duration">
+							</div>
+							<div class="col-sm-2 col-sm-offset-1">
+								<label class="control-label">发送ID</label>
+							</div>
+							<div class="col-sm-3">
+								<input class="form-control input-sm"
+									   ng-model="timerConfigInfo.CANId"
+									   placeholder="{{timerConfigInfo.CANId ? 'Username' : '十六进制'}}"
+									   ng-blur="component.checkCANId($index,'timer')"
+									   type="text">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-2 col-sm-offset-1">
+								<label class="control-label">具体数据</label>
+							</div>
+							<div class="col-sm-3">
+								<input type="text" class="form-control input-sm"
+                                   	   ng-model="timerConfigInfo.data"
+                                       placeholder="{{timerConfigInfo.data ? 'Username' : '最长8字节的十六进制数'}}"
+                                       ng-blur="component.checkSendData($index)">
 							</div>
 						</div>
 					</form>
