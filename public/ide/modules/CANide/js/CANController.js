@@ -62,7 +62,7 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
         //console.log('keke',data.content);
         if(data.content){
             var pro = JSON.parse(data.content);
-            console.log('pro',pro);
+            //console.log('pro',pro);
             loadFromContent(pro);
         }else{
             loadFromBlank();
@@ -187,13 +187,14 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
         //jQuery 开启IO配置按钮
         var enableIO = $scope.globalProject.IOConfig.enableConfig;
         var IOConfigEle = $('#IOConfig');
-        console.log('enableIO',enableIO);
+        //console.log('enableIO',enableIO);
         $('input[name="my-checkbox"]').bootstrapSwitch('state',enableIO,true);
         if(enableIO){
             IOConfigEle.css('display','block');
         }else{
             IOConfigEle.css('display','none');
         }
+        updateIOState(enableIO);
 
     }
 
