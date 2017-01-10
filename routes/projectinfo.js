@@ -160,6 +160,59 @@ projectRoute.updateProject = function (req,res) {
         res.end('error')
     }
 }
+var deleteFolderRecursive = function(_path) {
+    var files = [];
+    if( fs.existsSync(_path) ) {
+        files = fs.readdirSync(_path);
+        files.forEach(function(file,index){
+            var curPath = path.join(_path , file);
+            if(fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(_path);
+    }
+};
+var rmdirAsync = function(_path, callback) {
+    fs.readdir(_path, function(err, files) {
+        if(err) {
+            // Pass the error on to callback
+            callback(err, []);
+            return;
+        }
+        var wait = files.length,
+            count = 0,
+            folderDone = function(err) {
+                count++;
+                // If we cleaned out all the files, continue
+                if( count >= wait || err) {
+                    fs.rmdir(_path,callback);
+                }
+            };
+        // Empty directory to bail early
+        if(!wait) {
+            folderDone();
+            return;
+        }
+
+        files.forEach(function(file) {
+            var curPath = path.join(_path,file);
+            fs.lstat(curPath, function(err, stats) {
+                if( err ) {
+                    callback(err, []);
+                    return;
+                }
+                if( stats.isDirectory() ) {
+                    rmdirAsync(curPath, folderDone);
+                } else {
+                    fs.unlink(curPath, folderDone);
+                }
+            });
+        });
+    });
+};
 
 projectRoute.deleteProject = function (req, res) {
     var projectId = req.body.projectId;
@@ -176,8 +229,25 @@ projectRoute.deleteProject = function (req, res) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //exists
                     //delete
-                    fs.rmdir(targetDir, function () {
-                        res.end('ok')
+                    // fs.rmdir(targetDir, function (err) {
+                    //     if (err){
+                    //         console.log('err',err)
+                    //     }
+                    //     res.end('ok')
+                    // })
+                    // try{
+                    //     deleteFolderRecursive(targetDir)
+                    //     res.end('ok')
+                    // }catch(err){
+                    //     console.log(err)
+                    //     errHandler(res,500,'delete fs error')
+                    // }
+                    rmdirAsync(targetDir,function (rmErr) {
+                        if (rmErr){
+                            errHandler(res,500,'rm directory error')
+                        }else{
+                            res.end('ok')
+                        }
                     })
                 }else{
                     res.end('ok')
