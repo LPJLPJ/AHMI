@@ -347,25 +347,44 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
      */
     function downloadProject(){
         setBaudRate();
-        localStorage.CANProject = JSON.stringify(_.cloneDeep($scope.globalProject));
-        var project = _.cloneDeep($scope.globalProject);
-        project.dataFrameArr.forEach(function(item){
-            if(item.CANId){
-                item.CANId = "0x"+item.CANId.toUpperCase();
-            }
-        });
-        var projectJSON = JSON.stringify(project,null,4);
         if(window.local){
-            console.log('path',global.__dirname);
-            fs.writeFile(pathUrl,projectJSON,function(err){
-                if(err){
-                    console.log('write file error!',err);
-                }else{
-                    console.log('write file success!');
-                    toastr.info('生成下载成功！');
+            localStorage.CANProject = JSON.stringify(_.cloneDeep($scope.globalProject));
+            var project = _.cloneDeep($scope.globalProject);
+            project.dataFrameArr.forEach(function(item){
+                if(item.CANId){
+                    item.CANId = "0x"+item.CANId.toUpperCase();
                 }
-            })
+            });
+            var projectJSON = JSON.stringify(project,null,4);
+            if(window.local){
+                console.log('path',global.__dirname);
+                fs.writeFile(pathUrl,projectJSON,function(err){
+                    if(err){
+                        console.log('write file error!',err);
+                    }else{
+                        console.log('write file success!');
+                        toastr.info('生成下载成功！');
+                    }
+                })
+            }  
+        }else{
+            $http({
+                    method:'POST',
+                    url:'/CANProject/'+$scope.projectId+'/writeCANFile',
+                    data:{data:$scope.globalProject}
+                }).success(function(data){
+                    if(data=='ok'){
+                        toastr.info('生成成功');
+                        window.location.href = '/CANProject/'+$scope.projectId+'/downloadCANFile'
+                    }else{
+                        toastr.warning('生成失败');
+                    }
+                }).error(function(err){
+                    console.log('err',err);
+                    toastr.warning('生成失败');
+                });
         }
+        
     }
 
     /**
