@@ -676,51 +676,61 @@
          */
 
         function generateDataFile(format){
-            generateData(format);
-            if (window){
-                if (window.spinner){
-                    window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                    window.spinner.show();
-                }
-                RenderSerive.renderProject(window.projectData,function () {
-                    toastr.info('生成成功');
-                    window.spinner&&window.spinner.hide();
-                },function () {
-                    toastr.info('生成失败');
-                    window.spinner&&window.spinner.hide();
-                });
-            }else{
-                saveProject(function () {
+            if(format=='local'){
+                console.log('keke',format);
+                saveProject(function(){
                     showSpinner();
                     $http({
                         method:'POST',
-                        url:'/project/'+$scope.project.projectId+'/generate',
-                        data:{
-                            dataStructure:window.projectData
-                        }
+                        url:'/project/'+$scope.project.projectId+'/generateLocal'
                     })
-                        .success(function (data,status,xhr) {
-                            hideSpinner();
-                            if (data == 'ok'){
-                                toastr.info('生成成功');
-                                //download
-                                window.location.href = '/project/'+$scope.project.projectId+'/download'
-                            }else{
-                                console.log(data);
-                                toastr.info('生成失败')
-                            }
-
-
-                        })
-                        .error(function (err,status,xhr) {
-                            hideSpinner();
-                            console.log(err);
-                            toastr.info('生成失败')
-
-                        })
                 })
-            }
+            }else{
+                generateData(format);
+                if (window){
+                    if (window.spinner){
+                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                        window.spinner.show();
+                    }
+                    RenderSerive.renderProject(window.projectData,function () {
+                        toastr.info('生成成功');
+                        window.spinner&&window.spinner.hide();
+                    },function () {
+                        toastr.info('生成失败');
+                        window.spinner&&window.spinner.hide();
+                    });
+                }else{
+                    saveProject(function () {
+                        showSpinner();
+                        $http({
+                            method:'POST',
+                            url:'/project/'+$scope.project.projectId+'/generate',
+                            data:{
+                                dataStructure:window.projectData
+                            }
+                        })
+                            .success(function (data,status,xhr) {
+                                hideSpinner();
+                                if (data == 'ok'){
+                                    toastr.info('生成成功');
+                                    //download
+                                    window.location.href = '/project/'+$scope.project.projectId+'/download'
+                                }else{
+                                    console.log(data);
+                                    toastr.info('生成失败')
+                                }
 
+
+                            })
+                            .error(function (err,status,xhr) {
+                                hideSpinner();
+                                console.log(err);
+                                toastr.info('生成失败')
+
+                            })
+                    })
+                }
+            }
         }
 
         function generateData(format){
@@ -1063,6 +1073,10 @@ ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uib
         {
             type:'dxt3',
             name:'压缩'
+        },
+        {
+            type:'local',
+            name:'本地'
         }
     ];
     $scope.generateFormat = 'normal';

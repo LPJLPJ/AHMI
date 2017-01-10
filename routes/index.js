@@ -157,6 +157,9 @@ router.route('/project/:id/thumbnail')
 router.route('/project/:id/generate')
     .post(projectInfo.generateProject);
 
+router.route('/project/:id/generateLocal')
+    .post(projectInfo.generateLocalProject);
+
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
 

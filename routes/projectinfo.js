@@ -420,6 +420,11 @@ projectRoute.generateProject = function (req, res) {
     }
 }
 
+projectRoute.generateLocalProject = function(req, res){
+    var projectId = req.params.id;
+    console.log('projectId',projectId);
+}
+
 projectRoute.saveDataAndCompress = function (req, res) {
     var projectId = req.params.id;
     var dataStructure = req.body.dataStructure;
