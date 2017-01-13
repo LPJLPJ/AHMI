@@ -509,7 +509,10 @@ projectRoute.generateLocalProject = function(req, res){
                         if(typeof(value)=='string'&&value!=''){
                             try{
                                 if(value.indexOf('http')==-1){
-                                    return value.replace('/project','../../localproject');;
+                                    value = value.replace('/project','../../localproject');
+                                    value = value.replace(/\//g,"\\");
+                                    //console.log('value',value);
+                                    return value
                                 }else{
                                     var arr = value.split('/');
                                     arr[0] = 'chrome-extension:';
