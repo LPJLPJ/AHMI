@@ -30,3 +30,13 @@ update:
     1. num bi-direction animation
 fix:
     1. font privilege
+    
+v1.8.5_test
+add:
+    1. export local project from web
+    2. download CAN project json file directly
+update:
+    1. CAN date structure
+    2. new draw datetime widget method
+fix:
+    
