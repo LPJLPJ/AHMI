@@ -314,7 +314,7 @@
                     curScope.project.version = window.ideVersion;
                     curScope.project.CANId = NavModalCANConfigService.getCANId();
                     var currentProject = curScope.project;
-                    // console.log(currentProject);
+                    console.log('currentProject',currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
                     scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
                         _.forEach(currentProject.pages,function (_page) {
@@ -677,14 +677,39 @@
 
         function generateDataFile(format){
             if(format=='local'){
-                console.log('keke',format);
-                saveProject(function(){
-                    showSpinner();
+                
+                //console.log('keke',format);
+                var curScope = {};
+                ProjectService.getProjectCopyTo(curScope);
+                curScope.project.resourceList = ResourceService.getAllResource();
+
+                curScope.project.customTags = TagService.getAllCustomTags();
+                curScope.project.timerTags = TagService.getAllTimerTags();
+                curScope.project.timers = TagService.getTimerNum();
+                curScope.project.version = window.ideVersion;
+                curScope.project.CANId = NavModalCANConfigService.getCANId();
+                var currentProject = curScope.project;
+                //saveProject(function(){
+                    window.spinner.show();
                     $http({
                         method:'POST',
-                        url:'/project/'+$scope.project.projectId+'/generateLocal'
+                        url:'/project/'+$scope.project.projectId+'/generateLocalProject'
+                        //data:{currentProject:currentProject}
                     })
-                })
+                    .success(function(data,status,xhr){
+                        console.log(data);
+                        window.spinner.hide();
+                        if(data=='ok'){
+                            toastr.info('生成本地版成功');
+                            window.location.href = '/project/'+$scope.project.projectId+'/downloadLocalProject'
+                        }else{
+                            toastr.error('生成失败')
+                        }
+                    })
+                    .error(function(err,status,xhr){
+                        console.log(err);
+                    })
+                //})
             }else{
                 generateData(format);
                 if (window){
@@ -1073,12 +1098,15 @@ ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uib
         {
             type:'dxt3',
             name:'压缩'
-        },
-        {
-            type:'local',
-            name:'本地'
         }
     ];
+    var localFormat = {
+        type:'local',
+        name:'本地'
+    }
+    if(!window.local){
+        $scope.formats[2] = localFormat;
+    };
     $scope.generateFormat = 'normal';
     $scope.ok = function () {
         $uibModalInstance.close({

@@ -13,6 +13,7 @@ var nodejszip = require('../utils/zip');
 var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
 var Canvas = require('canvas');
+var archiver = require('archiver');
 var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
@@ -364,14 +365,7 @@ projectRoute.generateProject = function (req, res) {
                                     //using myzip
                                     var SrcUrl = path.join(ProjectBaseUrl,'resources');
                                     var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                                    MyZip.zipDir(SrcUrl,DistUrl,function (err) {
-                                        if (err) {
-                                            errHandler(res, 500, err);
-                                        } else {
-                                            res.end('ok')
-
-                                        }
-                                    })
+                                    
                                 }
                             })
                         }
@@ -422,7 +416,103 @@ projectRoute.generateProject = function (req, res) {
 
 projectRoute.generateLocalProject = function(req, res){
     var projectId = req.params.id;
-    console.log('projectId',projectId);
+    if(projectId&&projectId!=''){
+        ProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'project model err!');                
+            }else{
+                //generate local project json
+                var filePath = path.join(__dirname,'../project/',projectId,'project.json');
+                var tempPro = {};
+                tempPro.name = project.name;
+                tempPro.author = project.author;
+                tempPro.template = project.template;
+                tempPro.supportTouch = project.supportTouch;
+                tempPro.resolution = project.resolution;
+                tempPro._id = project._id;
+                tempPro.createdTime = project.createTime;
+                tempPro.lastModifiedTime = project.lastModifiedTime;
+                //check and change resource url
+                var transformSrc = function(key,value){
+                    //console.log('key');
+                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'){
+                        if(typeof(value)=='string'&&value!=''){
+                            try{
+                                if(value.indexOf('http')==-1){
+                                    return value.replace('/project','../../localproject');;
+                                }else{
+                                    var arr = value.split('/');
+                                    arr[0] = 'chrome-extension:';
+                                    arr[2] = 'ide.graphichina.com';
+                                    arr[3] = 'localproject';
+                                    value = arr.join('/');
+                                    return value;
+                                }
+                            }catch(e){
+                                console.log(e);
+                                return value;
+                            }
+                        }else{
+                            return value;
+                        }
+                    }
+                    return value;
+                }
+                var contentObj = JSON.parse(project.content);
+                contentNewJSON = JSON.stringify(contentObj,transformSrc);
+                tempPro.content = contentNewJSON;
+
+                try{
+                    fs.writeFileSync(filePath,JSON.stringify(tempPro,null));
+                    //generate localpro zip
+                    var zipName = '/'+projectId+'.zip';
+                    var targetUrl = path.join(__dirname,'../project/',projectId,zipName);
+                    var srcResourcesFolderUrl = path.join(__dirname,'../project/',projectId,'resources/');
+                    var srcJsonUrl = path.join(__dirname,'../project/',projectId,'/project.json'); 
+                    var output = fs.createWriteStream(targetUrl);
+                    var archive = archiver('zip', {
+                                store: true 
+                        });
+                    output.on('close',function(){
+                            console.log(archive.pointer() + ' total bytes');
+                            res.end('ok');
+                    });
+                    archive.on('error',function(err){
+                        console.log('error',err);
+                        throw err;   
+                    });
+                    archive.pipe(output);
+                    archive.directory(srcResourcesFolderUrl,'/resources');
+                    archive.file(srcJsonUrl,{ name: 'project.json' });
+                    archive.finalize();
+                }catch(e){
+                    console.log(e);
+                    errHandler(res,500,'err');
+                }
+                
+            }
+        })
+    }else{
+        errHandler(res,500,'err');
+    }
+}
+
+projectRoute.downloadLocalProject = function(req, res) {
+    var projectId = req.params.id;
+    if(projectId!=''){
+        var zipName = String(projectId)+'.zip';
+        var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
+        var DistUrl = path.join(ProjectBaseUrl,zipName);
+        res.download(DistUrl,zipName, function (err) {
+            if (err){
+                errHandler(res,500,err);
+            }else{
+                res.end('ok');
+            }
+        })
+    }else{
+        errHandler(res,500,'projectId is null');
+    }
 }
 
 projectRoute.saveDataAndCompress = function (req, res) {
