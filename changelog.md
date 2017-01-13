@@ -34,7 +34,7 @@ fix:
 v1.8.5_test
 add:
     1. export local project from web
-    2. download CAN project json file directly
+    2. CAN configure project for NW
 update:
     1. CAN date structure
     2. new draw datetime widget method
