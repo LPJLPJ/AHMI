@@ -237,16 +237,20 @@ CANProjectRouter.generateCANFile = function(req,res){
             if(err){
                 errHandler(res,500,'CANProject not find!');
             }else{
-                var CANContent = JSON.parse(CANProject.content);
-                var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
-                var DataFileUrl = path.join(ProjectBaseUrl,'resources','CANFile.json');
-                fs.writeFile(DataFileUrl,JSON.stringify(CANContent,null,4),function(err){
-                    if(err){
-                        errHandler(res,500,'write CANCANFile error');
-                    }else{
-                        res.end('ok');
-                    }
-                })
+                if(CANProject.content){
+                    var CANContent = JSON.parse(CANProject.content);
+                    var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
+                    var DataFileUrl = path.join(ProjectBaseUrl,'resources','CANFile.json');
+                    fs.writeFile(DataFileUrl,JSON.stringify(CANContent,null,4),function(err){
+                        if(err){
+                            errHandler(res,500,'write CANCANFile error');
+                        }else{
+                            res.end('ok');
+                        }
+                    })
+                }else{
+                    errHandler(res,500,'CAN project is null');
+                }  
             }
         })
     }else{

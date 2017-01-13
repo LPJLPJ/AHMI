@@ -1042,6 +1042,7 @@
                     }
                 })
                 .error(function(data,status,xhr){
+                    toastr.error('导入失败');
                     console.log('导入失败',data);
                 });
             }
