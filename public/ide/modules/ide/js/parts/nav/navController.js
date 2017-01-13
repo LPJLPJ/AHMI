@@ -690,15 +690,18 @@
                 curScope.project.CANId = NavModalCANConfigService.getCANId();
                 var currentProject = curScope.project;
                 //saveProject(function(){
-                    window.spinner.show();
+                    if (window.spinner){
+                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                        window.spinner.show();
+                    }
                     $http({
                         method:'POST',
                         url:'/project/'+$scope.project.projectId+'/generateLocalProject'
                         //data:{currentProject:currentProject}
                     })
                     .success(function(data,status,xhr){
-                        console.log(data);
-                        window.spinner.hide();
+                        //console.log(data);
+                        window.spinner&&window.spinner.hide();
                         if(data=='ok'){
                             toastr.info('生成本地版成功');
                             window.location.href = '/project/'+$scope.project.projectId+'/downloadLocalProject'
