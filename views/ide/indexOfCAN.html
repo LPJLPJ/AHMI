@@ -311,6 +311,17 @@
 						   data-on-color='success'>
 				</h4>
 				<div id="IOConfig">
+					<form role="form" class="form-horizontal">
+						<div class="form-group">
+							<div class="col-sm-2 col-sm-offset-1">
+								<label class="control-label">tagId/reg</label>
+							</div>
+							<div class="col-sm-3">
+								<input type="number" class="form-control input-sm"
+												   ng-model="globalProject.IOConfig.registerId">
+							</div>
+						</div>
+					</form>
 					<form role="form" class="form-horizontal" ng-repeat="IOConfigInfo in globalProject.IOConfig.configArr track by $index">
 						<div class="form-group">
 							<div class="col-sm-1" >

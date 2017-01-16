@@ -377,6 +377,7 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
                         toastr.info('生成成功');
                         window.location.href = '/CANProject/'+$scope.projectId+'/downloadCANFile'
                     }else{
+                        console.log('data',data);
                         toastr.warning('生成失败');
                     }
                 }).error(function(err){

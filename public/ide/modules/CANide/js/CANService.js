@@ -46,6 +46,7 @@ CAN.service('CANService', [function(){
 
     function IOConfig(enableConfig){
         this.enableConfig=enableConfig;
+        this.registerId=null;
         this.configArr=[new IOConfigInfo()];
     }
 
