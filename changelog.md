@@ -38,5 +38,6 @@ add:
 update:
     1. CAN date structure
     2. new draw datetime widget method
+    3. new draw num widget method
 fix:
     
