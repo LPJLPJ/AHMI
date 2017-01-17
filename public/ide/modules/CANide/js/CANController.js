@@ -350,15 +350,16 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
         if(window.local){
             localStorage.CANProject = JSON.stringify(_.cloneDeep($scope.globalProject));
             var project = _.cloneDeep($scope.globalProject);
-            project.dataFrameArr.forEach(function(item){
-                if(item.CANId){
-                    item.CANId = "0x"+item.CANId.toUpperCase();
-                }
-            });
+            // project.dataFrameArr.forEach(function(item){
+            //     if(item.CANId){
+            //         item.CANId = "0x"+item.CANId.toUpperCase();
+            //     }
+            // });
             var projectJSON = JSON.stringify(project,null,4);
             if(window.local){
-                console.log('path',global.__dirname);
-                fs.writeFile(pathUrl,projectJSON,function(err){
+                //console.log('path',global.__dirname);
+                var fileUrl = path.join($scope.CANProjectBaseUrl,'CANFile.json');
+                fs.writeFile(fileUrl,projectJSON,function(err){
                     if(err){
                         console.log('write file error!',err);
                     }else{
