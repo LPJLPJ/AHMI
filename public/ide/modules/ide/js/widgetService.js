@@ -2399,6 +2399,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.decimalCount=level.info.decimalCount;
             this.symbolMode=level.info.symbolMode;
             this.fontZeroMode=level.info.frontZeroMode;
+            this.maxFontWidth=level.info.maxFontWidth;
+            if(this.maxFontWidth===undefined){
+                //维护旧的时间控件
+                var font = this.fontSize + "px" + " " + this.fontFamily;
+                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+                this.maxFontWidth = maxWidth;
+                level.info.maxFontWidth = maxWidth;
+            }
             //设置canvas的宽度和高度
             //var font = this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
             //var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789',font));
