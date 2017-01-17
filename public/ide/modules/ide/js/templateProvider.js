@@ -536,9 +536,11 @@ ideServices
         };
 
         this.getDefaultNum = function(){
-            var subLayerNode = CanvasService.getSubLayerNode();
+            var font = "30px"+" "+"宋体";
+            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font));
+            var width = 3*maxFontWidth;
             var info={
-                width:51, height: 33,
+                width:width, height: 33,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
@@ -562,7 +564,8 @@ ideServices
                 fontSize:30,
                 fontColor:'rgba(255,255,255,1)',
                 fontBold:"100",
-                fontItalic:""
+                fontItalic:"",
+                maxFontWidth:maxFontWidth   //最大字体宽度
             };
             return {
                 id: Math.random().toString(36).substr(2),
