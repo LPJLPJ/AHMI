@@ -41,3 +41,8 @@ update:
     3. new draw num widget method
 fix:
     
+v1.8.5
+add:
+update:
+    1. keep pace with v1.8.5_test
+fix:
