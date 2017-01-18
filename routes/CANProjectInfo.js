@@ -7,6 +7,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var errHandler = require('../utils/errHandler');
 var path = require('path');
+var mkdir = require('mkdir-p')
 
 var CANProjectRouter = {};
 
@@ -18,7 +19,7 @@ CANProjectRouter.createCANProject = function(req,res){
         var newCANProject = new CANProjectModel(data);
         newCANProject.save(function(err){
             if(err){
-                console.log('CAN project create err when save',err);
+                //console.log('CAN project create err when save',err);
                 errHandler(res,500,'save error');
             }
             var newCANProjectInfo = _.cloneDeep(newCANProject);
@@ -131,22 +132,71 @@ CANProjectRouter.updateCANProject = function(req,res){
     }
 };
 
+
+var rmdirAsync = function(_path, callback) {
+    fs.readdir(_path, function(err, files) {
+        if(err) {
+            // Pass the error on to callback
+            callback(err, []);
+            return;
+        }
+        var wait = files.length,
+            count = 0,
+            folderDone = function(err) {
+                count++;
+                // If we cleaned out all the files, continue
+                if( count >= wait || err) {
+                    fs.rmdir(_path,callback);
+                }
+            };
+        // Empty directory to bail early
+        if(!wait) {
+            folderDone();
+            return;
+        }
+
+        files.forEach(function(file) {
+            var curPath = path.join(_path,file);
+            fs.lstat(curPath, function(err, stats) {
+                if( err ) {
+                    callback(err, []);
+                    return;
+                }
+                if( stats.isDirectory() ) {
+                    rmdirAsync(curPath, folderDone);
+                } else {
+                    fs.unlink(curPath, folderDone);
+                }
+            });
+        });
+    });
+};
+
 CANProjectRouter.deleteCANProject = function(req,res){
     var projectId = req.body.projectId;
     if(projectId&&projectId!=""){
-        CANProjectModel.findById(projectId,function(err,project){
+        CANProjectModel.deleteById(projectId,function(err){
             if(err){
-                errHandler(res,500,'error')
+                errHandler(res,500,'delete error');
             }else{
-                CANProjectModel.deleteById(projectId,function(err){
-                    if(err){
-                        errHandler(res,500,'delete error');
+                //delete directory
+                var targetDir = path.join(__dirname,'../project/',String(projectId));
+                fs.stat(targetDir,function(err,stats){
+                    if(stats&&stats.isDirectory&&stats.isDirectory()){
+                        //exists and delete
+                        rmdirAsync(targetDir,function(rmerr){
+                            if(rmerr){
+                                errHandler(res,500,'rm directory error')
+                            }else{
+                                res.end('ok');
+                            }
+                        })
                     }else{
                         res.end('ok');
-                    }
+                    } 
                 })
             }
-        });
+        })
     }else{
         errHandler(res,500,'invalid project id');
     }
@@ -187,16 +237,20 @@ CANProjectRouter.generateCANFile = function(req,res){
             if(err){
                 errHandler(res,500,'CANProject not find!');
             }else{
-                var CANContent = JSON.parse(CANProject.content);
-                var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
-                var DataFileUrl = path.join(ProjectBaseUrl,'resources','CANFile.json');
-                fs.writeFile(DataFileUrl,JSON.stringify(CANContent,null,4),function(err){
-                    if(err){
-                        errHandler(res,500,'write CANCANFile error');
-                    }else{
-                        res.end('ok');
-                    }
-                })
+                if(CANProject.content){
+                    var CANContent = JSON.parse(CANProject.content);
+                    var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
+                    var DataFileUrl = path.join(ProjectBaseUrl,'resources','CANFile.json');
+                    fs.writeFile(DataFileUrl,JSON.stringify(CANContent,null,4),function(err){
+                        if(err){
+                            errHandler(res,500,'write CANCANFile error');
+                        }else{
+                            res.end('ok');
+                        }
+                    })
+                }else{
+                    errHandler(res,500,'CAN project is null');
+                }  
             }
         })
     }else{
@@ -219,5 +273,82 @@ CANProjectRouter.deleteCANFile = function(req,res){
         errHandler(res,500,'projectId error');
     }
 };
+CANProjectRouter.writeCANFile = function(req,res){
+    var projectId = req.params.id;
+    var curProjectContent = req.body.data;
+    //console.log('projectId',projectId,'data',curProjectContent);
+    if(projectId!=''){
+        CANProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'error');
+            }else{
+                //console.log('curProjectContent',curProjectContent);
+                if(curProjectContent){
+                    project.content = JSON.stringify(curProjectContent);
+                    project.save(function(err){
+                       if(err){
+                            errHandler(res,500,'save error');
+                       }else{
+                            
+                       }
+                    });
+                }else{
+                    errHandler(res,500,'save error');
+                }
+                var targetDir = path.join(__dirname,'../project/',String(projectId))
+                fs.stat(targetDir,function(err,stats){
+                    if(stats&&stats.isDirectory&&stats.isDirectory()){
+                        var DataFileUrl = path.join(targetDir,'CANFile.json');
+                        fs.writeFile(DataFileUrl,JSON.stringify(curProjectContent,null,4),function(err){
+                            if(err){
+                                errHandler(res,500,'write CANCANFile error');
+                            }else{
+                                res.end('ok');
+                            }
+                        })
+                    }else{
+                        //console.log('create dir');
+                        mkdir(targetDir,function(err){
+                            if(err){
+                                errHandler(res,500,'mkdir error');
+                            }else{
+                                var DataFileUrl = path.join(targetDir,'CANFile.json');
+                                fs.writeFile(DataFileUrl,JSON.stringify(curProjectContent,null,4),function(err){
+                                    if(err){
+                                        errHandler(res,500,'write CANCANFile error');
+                                    }else{
+                                        res.end('ok');
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        })
+
+    }else{
+        errHandler(res,500,'projectId is null')
+    }
+};
+CANProjectRouter.downloadCANFile = function(req,res){
+    var projectId = req.params.id;
+    if(projectId!=''){
+        var projectBaseUrl = path.join(__dirname,'../project',String(projectId));
+        var fileUrl = path.join(projectBaseUrl,'CANFile.json');
+        //console.log('fileUrl',fileUrl);
+        res.download(fileUrl,'CANFile.json',function(err){
+            if(err){
+                console.log('err',err);
+                errHandler(res,500,err);
+            }else{
+
+            }
+        })
+    }else{
+        errHandler(res,500,'projectId error');
+    }
+}
+
 
 module.exports = CANProjectRouter;

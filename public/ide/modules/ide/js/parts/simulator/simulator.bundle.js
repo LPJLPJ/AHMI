@@ -21882,6 +21882,9 @@
 	        var numBold = widget.info.fontBold;
 	        var numItalic = widget.info.fontItalic;
 	        var overFlowStyle = widget.info.overFlowStyle;
+	        var maxFontWidth = widget.info.maxFontWidth;
+	        var align = widget.info.align;
+	        //console.log('maxFontWidth',maxFontWidth,'align',align);
 	        //size
 	        var curWidth = widget.info.width;
 	        var curHeight = widget.info.height;
@@ -21900,8 +21903,8 @@
 	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
 	        //offCtx.fillStyle = this.numColor;
 	        tempCtx.font = numString;
-	        tempCtx.textAlign = widget.info.align;
-	        tempCtx.textAlign = tempCtx.textAlign || 'center';
+	        //tempCtx.textAlign=widget.info.align;
+	        //tempCtx.textAlign = tempCtx.textAlign||'center';
 	        tempCtx.textBaseline = 'middle';
 	        tempCtx.fillStyle = numColor;
 
@@ -21926,7 +21929,7 @@
 	                        name: '数字背景'
 	                    };
 
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                    offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
 
 	                    shouldHandleAlarmAction = true;
@@ -21950,13 +21953,13 @@
 	                            newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                        }
 
-	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                        oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight;
 	                        if (oldHeight > 0) {
 	                            offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
 	                        }
 
-	                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                        oldHeight = curFrameNum / totalFrameNum * curHeight;
 	                        if (oldHeight > 0) {
 	                            offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
@@ -21969,13 +21972,13 @@
 	                            tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                            newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                        }
-	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                        oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth;
 	                        if (oleWidth > 0) {
 	                            offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
 	                        }
 
-	                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange);
+	                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 
 	                        oldWidth = curFrameNum / totalFrameNum * curWidth;
 	                        if (oleWidth > 0) {
@@ -22015,7 +22018,7 @@
 	            widget.oldValue = Number(curValue);
 	        }
 	    },
-	    drawStyleString: function (tempNumValue, curWidth, curHeight, font, bgTex, tempcanvas, _arrange) {
+	    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas, _arrange, align, maxFontWidth, decimalCount) {
 	        var tempCtx = tempcanvas.getContext('2d');
 	        var arrange = _arrange || 'horizontal';
 	        tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
@@ -22029,18 +22032,50 @@
 	        }
 
 	        tempCtx.font = font;
-	        switch (tempCtx.textAlign) {
+	        // console.log('curWidth',curWidth,'tempcanvas.width',tempcanvas.width);
+	        // tempCtx.strokeStyle="#000";/*设置边框*/
+	        // tempCtx.lineWidth=1;/*边框的宽度*/
+	        // tempCtx.strokeRect(0,0,curWidth,curHeight);
+	        var xCoordinate, //渲染每个字符的x坐标
+	        initXPos, //渲染每个字符的起始位置
+	        widthOfNumStr; //渲染的字符串的长度
+	        widthOfNumStr = decimalCount == 0 ? maxFontWidth * numStr.length : maxFontWidth * (numStr.length - 0.5);
+	        switch (align) {
 	            case 'left':
-	                tempCtx.fillText(tempNumValue, 0, tempcanvas.height / 2);
+	                initXPos = 0;
 	                break;
 	            case 'right':
-	                tempCtx.fillText(tempNumValue, tempcanvas.width, tempcanvas.height / 2);
+	                initXPos = curWidth - widthOfNumStr;
 	                break;
 	            case 'center':
 	            default:
-	                tempCtx.fillText(tempNumValue, tempcanvas.width / 2, tempcanvas.height / 2);
+	                initXPos = (curWidth - widthOfNumStr) / 2;
 	                break;
 	        }
+	        xCoordinate = initXPos;
+	        for (i = 0; i < numStr.length; i++) {
+	            // tempCtx.strokeStyle="#00F";/*设置边框*/
+	            // tempCtx.lineWidth=1;边框的宽度
+	            // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
+	            tempCtx.fillText(numStr[i], xCoordinate, curHeight / 2);
+	            if (numStr[i] == '.') {
+	                xCoordinate += maxFontWidth / 2;
+	            } else {
+	                xCoordinate += maxFontWidth;
+	            }
+	        }
+	        // switch(tempCtx.textAlign){
+	        //     case 'left':
+	        //         tempCtx.fillText(tempNumValue, 0, tempcanvas.height / 2 );
+	        //         break;
+	        //     case 'right':
+	        //         tempCtx.fillText(tempNumValue, tempcanvas.width , tempcanvas.height / 2 );
+	        //         break;
+	        //     case 'center':
+	        //     default :
+	        //         tempCtx.fillText(tempNumValue, tempcanvas.width / 2, tempcanvas.height / 2 );
+	        //         break;
+	        // }
 	        // tempCtx.fillText(tempNumValue,0,)
 	        tempCtx.restore();
 	    },

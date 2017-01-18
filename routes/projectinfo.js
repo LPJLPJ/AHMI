@@ -13,6 +13,7 @@ var nodejszip = require('../utils/zip');
 var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
 var Canvas = require('canvas');
+var archiver = require('archiver');
 var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
@@ -99,7 +100,7 @@ projectRoute.createProject = function (req, res) {
 
                 }else{
                     //create new directory
-                    console.log('create new directory',targetDir);
+                    //console.log('create new directory',targetDir);
                     mkdir(targetDir, function (err) {
                         if (err){
                             console.log('mk error')
@@ -160,10 +161,63 @@ projectRoute.updateProject = function (req,res) {
         res.end('error')
     }
 }
+var deleteFolderRecursive = function(_path) {
+    var files = [];
+    if( fs.existsSync(_path) ) {
+        files = fs.readdirSync(_path);
+        files.forEach(function(file,index){
+            var curPath = path.join(_path , file);
+            if(fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(_path);
+    }
+};
+var rmdirAsync = function(_path, callback) {
+    fs.readdir(_path, function(err, files) {
+        if(err) {
+            // Pass the error on to callback
+            callback(err, []);
+            return;
+        }
+        var wait = files.length,
+            count = 0,
+            folderDone = function(err) {
+                count++;
+                // If we cleaned out all the files, continue
+                if( count >= wait || err) {
+                    fs.rmdir(_path,callback);
+                }
+            };
+        // Empty directory to bail early
+        if(!wait) {
+            folderDone();
+            return;
+        }
+
+        files.forEach(function(file) {
+            var curPath = path.join(_path,file);
+            fs.lstat(curPath, function(err, stats) {
+                if( err ) {
+                    callback(err, []);
+                    return;
+                }
+                if( stats.isDirectory() ) {
+                    rmdirAsync(curPath, folderDone);
+                } else {
+                    fs.unlink(curPath, folderDone);
+                }
+            });
+        });
+    });
+};
 
 projectRoute.deleteProject = function (req, res) {
     var projectId = req.body.projectId;
-    console.log(projectId)
+    //console.log(projectId)
     if (projectId){
         //exitst
         ProjectModel.deleteById(projectId, function (err) {
@@ -176,8 +230,25 @@ projectRoute.deleteProject = function (req, res) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //exists
                     //delete
-                    fs.rmdir(targetDir, function () {
-                        res.end('ok')
+                    // fs.rmdir(targetDir, function (err) {
+                    //     if (err){
+                    //         console.log('err',err)
+                    //     }
+                    //     res.end('ok')
+                    // })
+                    // try{
+                    //     deleteFolderRecursive(targetDir)
+                    //     res.end('ok')
+                    // }catch(err){
+                    //     console.log(err)
+                    //     errHandler(res,500,'delete fs error')
+                    // }
+                    rmdirAsync(targetDir,function (rmErr) {
+                        if (rmErr){
+                            errHandler(res,500,'rm directory error')
+                        }else{
+                            res.end('ok')
+                        }
                     })
                 }else{
                     res.end('ok')
@@ -364,14 +435,7 @@ projectRoute.generateProject = function (req, res) {
                                     //using myzip
                                     var SrcUrl = path.join(ProjectBaseUrl,'resources');
                                     var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                                    MyZip.zipDir(SrcUrl,DistUrl,function (err) {
-                                        if (err) {
-                                            errHandler(res, 500, err);
-                                        } else {
-                                            res.end('ok')
-
-                                        }
-                                    })
+                                    
                                 }
                             })
                         }
@@ -417,6 +481,110 @@ projectRoute.generateProject = function (req, res) {
 
     }else{
         errHandler(res,500,'projectId error');
+    }
+}
+
+projectRoute.generateLocalProject = function(req, res){
+    var projectId = req.params.id;
+    if(projectId&&projectId!=''){
+        ProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'project model err!');                
+            }else{
+                //generate local project json
+                var filePath = path.join(__dirname,'../project/',projectId,'project.json');
+                var tempPro = {};
+                tempPro.name = project.name;
+                tempPro.author = project.author;
+                tempPro.template = project.template;
+                tempPro.supportTouch = project.supportTouch;
+                tempPro.resolution = project.resolution;
+                tempPro._id = project._id;
+                tempPro.createdTime = project.createTime;
+                tempPro.lastModifiedTime = project.lastModifiedTime;
+                //check and change resource url
+                var transformSrc = function(key,value){
+                    //console.log('key');
+                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'){
+                        if(typeof(value)=='string'&&value!=''){
+                            try{
+                                if(value.indexOf('http')==-1){
+                                    value = value.replace('/project','../../localproject');
+                                    value = value.replace(/\//g,"\\");
+                                    //console.log('value',value);
+                                    return value
+                                }else{
+                                    var arr = value.split('/');
+                                    arr[0] = 'chrome-extension:';
+                                    arr[2] = 'ide.graphichina.com';
+                                    arr[3] = 'localproject';
+                                    value = arr.join('/');
+                                    return value;
+                                }
+                            }catch(e){
+                                console.log(e);
+                                return value;
+                            }
+                        }else{
+                            return value;
+                        }
+                    }
+                    return value;
+                }
+                var contentObj = JSON.parse(project.content);
+                contentNewJSON = JSON.stringify(contentObj,transformSrc);
+                tempPro.content = contentNewJSON;
+
+                try{
+                    fs.writeFileSync(filePath,JSON.stringify(tempPro,null));
+                    //generate localpro zip
+                    var zipName = '/'+projectId+'.zip';
+                    var targetUrl = path.join(__dirname,'../project/',projectId,zipName);
+                    var srcResourcesFolderUrl = path.join(__dirname,'../project/',projectId,'resources/');
+                    var srcJsonUrl = path.join(__dirname,'../project/',projectId,'/project.json'); 
+                    var output = fs.createWriteStream(targetUrl);
+                    var archive = archiver('zip', {
+                                store: true 
+                        });
+                    output.on('close',function(){
+                            console.log(archive.pointer() + ' total bytes');
+                            res.end('ok');
+                    });
+                    archive.on('error',function(err){
+                        console.log('error',err);
+                        throw err;   
+                    });
+                    archive.pipe(output);
+                    archive.directory(srcResourcesFolderUrl,'/resources');
+                    archive.file(srcJsonUrl,{ name: 'project.json' });
+                    archive.finalize();
+                }catch(e){
+                    console.log(e);
+                    errHandler(res,500,'err');
+                }
+                
+            }
+        })
+    }else{
+        errHandler(res,500,'err');
+    }
+}
+
+projectRoute.downloadLocalProject = function(req, res) {
+    var projectId = req.params.id;
+    if(projectId!=''){
+        var zipName = String(projectId)+'.zip';
+        var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
+        var DistUrl = path.join(ProjectBaseUrl,zipName);
+        res.download(DistUrl,zipName, function (err) {
+            if (err){
+                errHandler(res,500,err);
+            }else{
+                res.end('ok');
+            }
+        })
+    }else{
+        errHandler(res,500,'projectId is null');
     }
 }
 

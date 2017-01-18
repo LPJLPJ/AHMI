@@ -663,7 +663,14 @@ $(function(){
 
     function deleteCANProject(project,curPanel){
         if(local){
-
+            //console.log('project id',project._id);
+            var CANProjectdirpath = path.join(localCANProjectDir,String(project._id));
+            try{
+                rmdir(CANProjectdirpath);
+            }catch (e){
+                console.log(e);
+            }
+            curPanel.remove()
         }else{
             $.ajax({
                 type:'POST',
@@ -698,7 +705,11 @@ $(function(){
                     return;
                 }
                 if(local){
-
+                    var CANProjectPath = path.join(localCANProjectDir,String(project._id),'CANProject.json');
+                    fs.writeFileSync(CANProjectPath,JSON.stringify(project));
+                    updateSuccess = true;
+                    var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:project,thumbnail:null});
+                    curPanel.replaceWith(html)
                 }else{
                     $.ajax({
                         type:'POST',

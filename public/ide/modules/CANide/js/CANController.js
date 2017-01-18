@@ -30,7 +30,7 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
             }
         }
         catch(e){
-            console.log(e);
+            //console.log(e);
         }
     }
 
@@ -62,7 +62,7 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
         //console.log('keke',data.content);
         if(data.content){
             var pro = JSON.parse(data.content);
-            console.log('pro',pro);
+            //console.log('pro',pro);
             loadFromContent(pro);
         }else{
             loadFromBlank();
@@ -139,8 +139,8 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
      * @param data
      */
     function loadFromContent(data){
-        if(!data.CANPort.timer){
-            data.timer=CANService.getNewTimer();
+        if(!data.timerConfig){
+            data.timerConfig=CANService.getNewTimerConfig();
         }
         if(!data.IOConfig){
             data.IOConfig=CANService.getNewIOConfig();
@@ -163,6 +163,8 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
             deleteDataFrameInfo:deleteDataFrameInfo,
             addIOConfig:addIOConfig,
             deleteIOConfig:deleteIOConfig,
+            addTimerConfig:addTimerConfig,
+            deleteTimerConfig:deleteTimerConfig,
             saveProject:saveProject,
             setBaudRate:setBaudRate,
             downloadProject:downloadProject,
@@ -186,14 +188,18 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
 
         //jQuery 开启IO配置按钮
         var enableIO = $scope.globalProject.IOConfig.enableConfig;
-        var IOConfigEle = $('#IOConfig');
-        console.log('enableIO',enableIO);
-        $('input[name="my-checkbox"]').bootstrapSwitch('state',enableIO,true);
-        if(enableIO){
-            IOConfigEle.css('display','block');
-        }else{
-            IOConfigEle.css('display','none');
-        }
+        var enableTimer = $scope.globalProject.timerConfig.enableConfig;
+        // var IOConfigEle = $('#IOConfig');
+        //console.log('enableIO',enableIO);
+        $('input[name="IO-checkbox"]').bootstrapSwitch('state',enableIO,true);
+        // if(enableIO){
+        //     IOConfigEle.css('display','block');
+        // }else{
+        //     IOConfigEle.css('display','none');
+        // }
+        $('input[name="timer-checkbox"]').bootstrapSwitch('state',enableTimer,true);
+        updateIOState(enableIO);
+        updateTimerState(enableTimer);
 
     }
 
@@ -278,6 +284,21 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
     }
 
     /**
+     * 添加一个新的Timer配置
+     */
+    function addTimerConfig(){
+        var newTimerConfig = CANService.getNewTimerConfigInfo();
+        $scope.globalProject.timerConfig.configArr.push(newTimerConfig);
+    }
+
+    /**
+     * 删除一个Timer配置
+     */
+    function deleteTimerConfig(index){
+        $scope.globalProject.timerConfig.configArr.splice(index,1);
+    }
+
+    /**
      * 保存工程
      */
     function saveProject(){
@@ -326,25 +347,46 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
      */
     function downloadProject(){
         setBaudRate();
-        localStorage.CANProject = JSON.stringify(_.cloneDeep($scope.globalProject));
-        var project = _.cloneDeep($scope.globalProject);
-        project.dataFrameArr.forEach(function(item){
-            if(item.CANId){
-                item.CANId = "0x"+item.CANId.toUpperCase();
-            }
-        });
-        var projectJSON = JSON.stringify(project,null,4);
         if(window.local){
-            console.log('path',global.__dirname);
-            fs.writeFile(pathUrl,projectJSON,function(err){
-                if(err){
-                    console.log('write file error!',err);
-                }else{
-                    console.log('write file success!');
-                    toastr.info('生成下载成功！');
-                }
-            })
+            localStorage.CANProject = JSON.stringify(_.cloneDeep($scope.globalProject));
+            var project = _.cloneDeep($scope.globalProject);
+            // project.dataFrameArr.forEach(function(item){
+            //     if(item.CANId){
+            //         item.CANId = "0x"+item.CANId.toUpperCase();
+            //     }
+            // });
+            var projectJSON = JSON.stringify(project,null,4);
+            if(window.local){
+                //console.log('path',global.__dirname);
+                var fileUrl = path.join($scope.CANProjectBaseUrl,'CANFile.json');
+                fs.writeFile(fileUrl,projectJSON,function(err){
+                    if(err){
+                        console.log('write file error!',err);
+                    }else{
+                        console.log('write file success!');
+                        toastr.info('生成下载成功！');
+                    }
+                })
+            }  
+        }else{
+            $http({
+                    method:'POST',
+                    url:'/CANProject/'+$scope.projectId+'/writeCANFile',
+                    data:{data:$scope.globalProject}
+                }).success(function(data){
+                    if(data=='ok'){
+                        toastr.info('生成成功');
+                        window.location.href = '/CANProject/'+$scope.projectId+'/downloadCANFile'
+                    }else{
+                        console.log('data',data);
+                        toastr.warning('生成失败');
+                    }
+                }).error(function(err){
+                    console.log('err',err);
+                    toastr.warning('生成失败');
+                });
         }
+        
     }
 
     /**
@@ -370,24 +412,36 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
     }
 
     /**
-     *检查CANId是否为16进制
+     * 检查CANId是否为16进制
      * @param index
      */
-    function checkCANId(index){
+    function checkCANId(index,type){
         //console.log('index',index);
         var CANIdStr,
             pattern,
-            result;
-        if(index==undefined){
-            CANIdStr = $scope.globalProject.CANPort.timer.CANId;
+            result,
+            hexSymbol;
+        if(type=='timer'){
+            hexSymbol = $scope.globalProject.timerConfig.configArr[index].CANId.slice(0,2);
+            if(hexSymbol!='0x'){
+                CANIdStr = $scope.globalProject.timerConfig.configArr[index].CANId;
+                $scope.globalProject.timerConfig.configArr[index].CANId = '0x'+$scope.globalProject.timerConfig.configArr[index].CANId;
+            }else{
+                CANIdStr = $scope.globalProject.timerConfig.configArr[index].CANId.slice(2);
+            }
             pattern =/^[0-9a-fA-F]{0,8}$/;
             result = pattern.test(CANIdStr);
-        }else{
-            CANIdStr = $scope.globalProject.dataFrameArr[index].CANId;
+        }else if(type=='dataFrame'){
+            hexSymbol = $scope.globalProject.dataFrameArr[index].CANId.slice(0,2);
+            if(hexSymbol!='0x'){
+                CANIdStr = $scope.globalProject.dataFrameArr[index].CANId
+                $scope.globalProject.dataFrameArr[index].CANId = '0x'+$scope.globalProject.dataFrameArr[index].CANId
+            }else{
+                CANIdStr = $scope.globalProject.dataFrameArr[index].CANId.slice(2);
+            }
             pattern =/^[0-9a-fA-F]{0,8}$/;
             result = pattern.test(CANIdStr);
         }
-        // console.log('result',result);
         if(!result){
             toastr.error('ID格式有误');
         }
@@ -396,9 +450,9 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
     /**
      * 将定时器发送的数据，按字节形式存入数组
      */
-    function switchData(){
-        if(checkSendData()){
-            dataStr = $scope.globalProject.CANPort.timer.data;
+    function switchData(index){
+        if(checkSendData(index)){
+            dataStr = $scope.globalProject.timerConfig.configArr[index].data;
             if(dataStr.length%2!=0){
                 dataStr='0'+dataStr;
             }
@@ -406,7 +460,7 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
             for(var i=0;i<dataStr.length;i+=2){
                 arr.push(dataStr.slice(i,i+2));
             }
-            $scope.globalProject.CANPort.timer.dataArr=arr;
+            $scope.globalProject.timerConfig.configArr[index].dataArr=arr;
         }
     }
 
@@ -414,8 +468,14 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
      * 检查定时器所发数据是否为16进制
      * @returns {boolean}
      */
-    function checkSendData(){
-        dataStr = $scope.globalProject.CANPort.timer.data;
+    function checkSendData(index){
+        var hexSymbol = $scope.globalProject.timerConfig.configArr[index].data.slice(0,2);
+        if(hexSymbol!='0x'){
+            dataStr = $scope.globalProject.timerConfig.configArr[index].data
+            $scope.globalProject.timerConfig.configArr[index].data = '0x'+ $scope.globalProject.timerConfig.configArr[index].data;
+        }else{
+            dataStr = $scope.globalProject.timerConfig.configArr[index].data.slice(2);
+        }
         pattern = /^[0-9a-fA-F]{0,16}$/;
         result = pattern.test(dataStr);
         if(!result){
@@ -442,10 +502,28 @@ CAN.controller('CANController', ['$scope','$http','CANService','$timeout',functi
     }
 
     /**
+     * 根据状态更新是否显示Timer配置选项
+     * @param state
+     */
+    function updateTimerState(state){
+        $scope.globalProject.timerConfig.enableConfig=state;
+        if(state){
+            $('#timerConfig').show("normal");
+            $('#addTimerConfig').attr('disabled',false);
+        }else{
+            $('#timerConfig').hide('normal');
+            $('#addTimerConfig').attr('disabled',true);
+        }
+    }
+
+    /**
      * 使用jquery监听IO开关事件(bootstrap-switch仅支持此事件)
      */
-    $('input[name="my-checkbox"]').on('switchChange.bootstrapSwitch', function(event, state) {
+    $('input[name="IO-checkbox"]').on('switchChange.bootstrapSwitch', function(event, state) {
         updateIOState(state);
+    });
+    $('input[name="timer-checkbox"]').on('switchChange.bootstrapSwitch', function(event, state) {
+        updateTimerState(state);
     });
 
     /**

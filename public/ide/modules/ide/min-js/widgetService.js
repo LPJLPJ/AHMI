@@ -2399,22 +2399,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.decimalCount=level.info.decimalCount;
             this.symbolMode=level.info.symbolMode;
             this.fontZeroMode=level.info.frontZeroMode;
-            //设置canvas的宽度和高度
-            //var font = this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
-            //var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789',font));
-            //if(this.numOfDigits&&this.fontSize){
-            //    var width = this.symbolMode=='0'?(this.numOfDigits*maxWidth):((this.numOfDigits+1)*maxWidth);
-            //    if(this.decimalCount!=0){
-            //        width +=0.5*maxWidth;
-            //    }
-            //    this.set({width:width,height:this.fontSize*1.1});
-            //    //this.setHeight(this.fontSize*1.1);
-            //}
-            //if(this.numOfDigits&&this.fontSize){
-            //    this.setWidth(this.numOfDigits*(this.symbolMode=='0'?(this.fontSize-3):this.fontSize));
-            //    this.setHeight(this.fontSize*1.2);
-            //}
-
+            this.maxFontWidth=level.info.maxFontWidth;
+            if(this.maxFontWidth===undefined){
+                //维护旧的时间控件
+                var font = this.fontSize + "px" + " " + this.fontFamily;
+                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+                this.maxFontWidth = maxWidth;
+                level.info.maxFontWidth = maxWidth;
+            }
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -2474,6 +2466,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             });
 
             this.on('changeNumContent', function (arg) {
+                var _callback=arg.callback;
+                var level=arg.level;
                 if(arg.hasOwnProperty('numValue')){
                     self.numValue=arg.numValue;
                 }
@@ -2510,7 +2504,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 //设置宽高
                 var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font));
+                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.+-',font));
+                self.maxFontWidth = maxWidth;
+                level.info.maxFontWidth = maxWidth;
                 if(self.numOfDigits&&self.fontSize){
                     var width = self.symbolMode=='0'?(self.numOfDigits*maxWidth):((self.numOfDigits+1)*maxWidth);
                     if(self.decimalCount!=0){
@@ -2518,12 +2514,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     }
                     var height = self.fontSize*1.1;
                     self.set({width:width,height:height});
-                }
-                //if(self.numOfDigits&&self.fontSize){
-                //    self.setWidth(self.numOfDigits*(self.symbolMode=='0'?(self.fontSize-3):self.fontSize));
-                //    self.setHeight(self.fontSize*1.2);
-                //}
-                var _callback=arg.callback;
+                };
+                //console.log('width',width,'maxWidth',maxWidth);
                 var subLayerNode = CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -2535,28 +2527,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render: function (ctx) {
             try{
-                //var offCanvas = CanvasService.getOffCanvas();
-
-                //offCanvas.width = this.width;
-                //offCanvas.height = this.height;
-                //获取offCanvas
-                //var offCtx = offCanvas.getContext('2d');
-                //offCtx.clearRect(0,0,this.width,this.height);
-
                 ctx.fillStyle=this.fontColor;
-                //ctx.fillRect(0,0,this.width,this.height);
-                //if (this.backgroundImageElement) {
-                //    offCtx.drawImage(this.backgroundImageElement, 0, 0, this.width, this.height);
-                //}
-
                 //在数字框里展示数字预览效果
                 if(!isNaN(this.numValue)) {
-                    //offCtx.save();
-
-                    //offCtx.globalCompositeOperation = "destination-in";
                     ctx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
-                    ctx.textAlign = this.align;
-
+                    //ctx.textAlign = this.align;
                     ctx.textBaseline='middle';//设置数字垂直居中
                     var negative=false;
                     if(this.numValue<0){
@@ -2605,18 +2580,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     }
                     //ctx.scale(1/this.scaleX,1/this.scaleY);
                     //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
-                    if(this.align=='center'){
-                        ctx.fillText(tempNumValue, 0, 0);
+                    // if(this.align=='center'){
+                    //     ctx.fillText(tempNumValue, 0, 0);
+                    // }else if(this.align=='left') {
+                    //     ctx.fillText(tempNumValue, -this.width/2, 0);
+                    // }else if(this.align=='right'){
+                    //     ctx.fillText(tempNumValue,this.width/2,0);
+                    // }
 
-                    }else if(this.align=='left') {
-                        ctx.fillText(tempNumValue, -this.width/2, 0);
-                    }else if(this.align=='right'){
-                        ctx.fillText(tempNumValue,this.width/2,0);
-                    }
+                    drawNumByCharacter(ctx,tempNumValue,this.align,this.width,this.maxFontWidth,this.decimalCount);
+
                     //offCtx.restore();
                 }
-                //ctx.scale(1/this.scaleX,1/this.scaleY);
-                //ctx.drawImage(offCanvas,-this.width/2,-this.height/2);
             }
             catch(err){
                 console.log('错误描述',err);
@@ -2640,6 +2615,45 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyNum(level,object));
     };
     fabric.MyNum.async = true;
+
+    /**
+     * 逐字渲染数字控件
+     * @param  {[type]} ctx           [Canvas对象]
+     * @param  {[type]} numStr        [数字字符串]
+     * @param  {[type]} align         [对齐方式]
+     * @param  {[type]} width         [控件宽度]
+     * @param  {[type]} maxWidth      [字符最大宽度]
+     * @param  {[type]} decimalCount  [小数点模式]
+     * @return {[type]}               [description]
+     */
+    function drawNumByCharacter(ctx,numStr,align,width,maxFontWidth,decimalCount){
+        var xCoordinate,         //渲染每个字符的x坐标
+            initXPos,            //渲染每个字符的起始位置
+            widthOfNumStr;       //渲染的字符串的长度
+
+        widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
+        switch(align){
+            case 'left':
+                initXPos=0;
+                break;
+            case 'right':
+                initXPos=width-widthOfNumStr;
+                break;
+            case 'center':
+            default:
+                initXPos = (width-widthOfNumStr)/2;
+                break;
+        }
+        xCoordinate = initXPos-width/2;    
+        for(i=0;i<numStr.length;i++){
+            ctx.fillText(numStr[i],xCoordinate,0);
+            if(numStr[i]=='.'){
+                xCoordinate+=maxFontWidth/2;
+            }else{
+                xCoordinate+=maxFontWidth;
+            }
+        }
+    }
 
 
     fabric.MyButtonGroup = fabric.util.createClass(fabric.Object, {

@@ -3281,6 +3281,7 @@ ideServices
                 var selectObj=_self.getCurrentSelectObject();
                 var fabNumObj=getFabricObject(selectObj.level.id,true);
                 var arg={
+                    level:selectObj.level,
                     callback:function(){
                         var currentWidget=selectObj.level;
                         OnWidgetSelected(currentWidget,_successCallback);
