@@ -22033,6 +22033,7 @@
 	        var lowAlarmValue = widget.info.lowAlarmValue;
 	        var highAlarmValue = widget.info.highAlarmValue;
 	        var curValue = this.getValueByTagName(widget.tag);
+	        var numModeId = widget.info.numModeId;
 	        // console.log(curValue)
 	        if (curValue === null || curValue === 'undefined') {
 	            curValue = widget.info.numValue;
@@ -24111,7 +24112,7 @@
 	                'div',
 	                { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseMove: this.handleMove, onMouseUp: this.handleRelease },
 	                React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
-	                React.createElement('canvas', { ref: 'offcanvas', className: 'simulator-offcanvas' }),
+	                React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
 	                React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
 	            ),
 	            React.createElement(

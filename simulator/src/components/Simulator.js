@@ -2498,6 +2498,7 @@ module.exports =   React.createClass({
         var lowAlarmValue = widget.info.lowAlarmValue;
         var highAlarmValue = widget.info.highAlarmValue;
         var curValue = this.getValueByTagName(widget.tag);
+        var numModeId = widget.info.numModeId;
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -4681,7 +4682,7 @@ module.exports =   React.createClass({
             < div className='simulator'>
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>
                     <canvas ref='canvas' className='simulator-canvas' />
-                    < canvas ref='offcanvas'  className='simulator-offcanvas' />
+                    < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
                 <div className="phical-keyboard-wrapper">
