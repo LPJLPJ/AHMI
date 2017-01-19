@@ -1741,18 +1741,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 this.maxFontWidth = maxWidth;
                 level.info.maxFontWidth = maxWidth;
+                if(this.dateTimeModeId=='0'){
+                    this.setWidth(8*this.maxFontWidth);
+                }else if(this.dateTimeModeId=='1'){
+                    this.setWidth(5*this.maxFontWidth);
+                }else
+                    this.setWidth(10*this.maxFontWidth);
             }
-            if(this.arrange=='vertical'){
-                this.setAngle(90);
-                this.set({
-                    originY:'bottom'
-                });
-            }else if(this.arrange=='horizontal'){
-                this.setAngle(0);
-                this.set({
-                    originY:'top'
-                });
-            }
+            
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
                 self.dateTimeModeId=arg.dateTimeModeId;
@@ -1797,26 +1793,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             });
             this.on('changeArrange',function(arg){
                 var _callback=arg.callback;
-                var selectObj=ProjectService.getCurrentSelectObject();
                 self.arrange=arg.arrange;
                 if(arg.arrange=='vertical'){
                     self.setAngle(90);
                     self.set({
                         originY:'bottom'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getHeight());
-                    selectObj.level.info.height=Math.round(self.getWidth());
                 }else if(arg.arrange=='horizontal'){
                     self.setAngle(0);
                     self.set({
                         originY:'top'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getWidth());
-                    selectObj.level.info.height=Math.round(self.getHeight());
                 }
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
@@ -1927,15 +1914,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
     /**
      * [drawNewDateTime 逐个字符渲染时间控件]
-     * @param  {[type]} mode       [description]
-     * @param  {[type]} ctx        [description]
-     * @param  {[type]} fontString [description]
-     * @param  {[type]} align      [description]
-     * @param  {[type]} fontColor  [description]
+     * @param  {[type]} mode       [模式]
+     * @param  {[type]} ctx        [canvas对象]
+     * @param  {[type]} fontString [字体样式字符串]
+     * @param  {[type]} align      [对齐方式(未使用)]
+     * @param  {[type]} fontColor  [字体颜色]
      * @return {[type]}            [description]
      */
     function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,maxFontWidth){
         ctx.fillStyle=fontColor;
+        ctx.font=fontString;
+        ctx.textBaseline='middle';
+
         var dateObj = new Date(),
             arrTime = [],
             arrDate = [];
@@ -1959,40 +1949,27 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }
         }
         var dateTimeStr="";
-        //var maxWidth=0;
 
-        if(mode=='0'){
-            //时分秒
-            ctx.font=fontString;
-            ctx.textAlign=align;
-            ctx.textBaseline='middle';
-            dateTimeStr=arrTime.join(":").toString();
-            //maxWidth=width/8;
-        }else if(mode=='1'){
-            //时分
-            ctx.font=fontString;
-            ctx.textAlign=align;
-            ctx.textBaseline='middle';
-            dateTimeStr=arrTime.slice(0,2).join(":").toString();
-            //maxWidth=width/5;
+        switch(mode){
+            case '1':
+                //时分
+                dateTimeStr=arrTime.slice(0,2).join(":").toString();
+                break;
+            case '2':
+                //斜杠日期
+                dateTimeStr=arrDate.join("/").toString();
+                break;
+            case '3':
+                dateTimeStr=arrDate.join("-").toString();
+                break;
+            case '0':
+            default:
+                //时分秒
+                dateTimeStr=arrTime.join(":").toString();
+                break;
         }
-        else if(mode=='2'){
-            //斜杠日期
-            ctx.font=fontString;
-            ctx.textAlign=align;
-            ctx.textBaseline='middle';
-            dateTimeStr=arrDate.join("/").toString();
-            //maxWidth=width/10;
-        }else if(mode=='3'){
-            //减号日期
-            ctx.font=fontString;
-            ctx.textAlign=align;
-            ctx.textBaseline='middle';
-            dateTimeStr=arrDate.join("-").toString();
-            //maxWidth=width/10;
-        }
-        //console.log('dateTimeStr',dateTimeStr,'maxWidth',maxWidth,dateTimeStr[0]);
-        var xCoordinate = maxFontWidth/2-width/2;
+        
+        var xCoordinate = -width/2;
         for(i=0;i<dateTimeStr.length;i++){
             ctx.fillText(dateTimeStr[i],xCoordinate,0);
             xCoordinate+=maxFontWidth;
@@ -2025,17 +2002,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.fire('image:loaded');
             }
 
-            if(this.arrange=='vertical'){
-                this.setAngle(90);
-                this.set({
-                    originY:'bottom'
-                });
-            }else if(this.arrange=='horizontal'){
-                this.setAngle(0);
-                this.set({
-                    originY:'top'
-                });
-            }
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -2076,26 +2042,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             });
             this.on('changeArrange',function(arg){
                 var _callback=arg.callback;
-                var selectObj=ProjectService.getCurrentSelectObject();
                 self.arrange=arg.arrange;
                 if(arg.arrange=='vertical'){
                     self.setAngle(90);
                     self.set({
                         originY:'bottom'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getHeight());
-                    selectObj.level.info.height=Math.round(self.getWidth());
                 }else if(arg.arrange=='horizontal'){
                     self.setAngle(0);
                     self.set({
                         originY:'top'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getWidth());
-                    selectObj.level.info.height=Math.round(self.getHeight());
                 }
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
@@ -2211,17 +2168,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.setCoords();
                 this.fire('image:loaded');
             }
-            if(this.arrange=='vertical'){
-                this.setAngle(90);
-                this.set({
-                    originY:'bottom'
-                });
-            }else if(this.arrange=='horizontal'){
-                this.setAngle(0);
-                this.set({
-                    originY:'top'
-                });
-            }
 
             this.on('changeTex', function (arg) {
                 var level=arg.level;
@@ -2273,26 +2219,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             });
             this.on('changeArrange',function(arg){
                 var _callback=arg.callback;
-                var selectObj=ProjectService.getCurrentSelectObject();
                 self.arrange=arg.arrange;
                 if(arg.arrange=='vertical'){
                     self.setAngle(90);
                     self.set({
                         originY:'bottom'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getHeight());
-                    selectObj.level.info.height=Math.round(self.getWidth());
                 }else if(arg.arrange=='horizontal'){
                     self.setAngle(0);
                     self.set({
                         originY:'top'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getWidth());
-                    selectObj.level.info.height=Math.round(self.getHeight());
                 }
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
@@ -2401,11 +2338,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
             if(this.maxFontWidth===undefined){
-                //维护旧的时间控件
+                //维护旧的数字控件
                 var font = this.fontSize + "px" + " " + this.fontFamily;
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 this.maxFontWidth = maxWidth;
                 level.info.maxFontWidth = maxWidth;
+                if(this.numOfDigits&&this.fontSize){
+                    var width = this.symbolMode=='0'?(this.numOfDigits*maxWidth):((this.numOfDigits+1)*maxWidth);
+                    if(this.decimalCount!=0){
+                        width +=0.5*maxWidth;
+                    }
+                    var height = this.fontSize*1.1;
+                    this.set({width:width,height:height});
+                };
             }
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
@@ -2413,18 +2358,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.setCoords();
                 this.fire('image:loaded');
             }
-            if(this.arrange=='vertical'){
-                this.setAngle(90);
-                this.set({
-                    originY:'bottom'
-                });
-            }else if(this.arrange=='horizontal'){
-                this.setAngle(0);
-                this.set({
-                    originY:'top'
-                });
-            }
-
+            
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -2439,26 +2373,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             });
             this.on('changeArrange',function(arg){
                 var _callback=arg.callback;
-                var selectObj=ProjectService.getCurrentSelectObject();
                 self.arrange=arg.arrange;
                 if(arg.arrange=='vertical'){
                     self.setAngle(90);
                     self.set({
                         originY:'bottom'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getHeight());
-                    selectObj.level.info.height=Math.round(self.getWidth());
                 }else if(arg.arrange=='horizontal'){
                     self.setAngle(0);
                     self.set({
                         originY:'top'
                     });
-                    selectObj.level.info.top=Math.round(self.getTop());
-                    selectObj.level.info.right=Math.round(self.getLeft());
-                    selectObj.level.info.width=Math.round(self.getWidth());
-                    selectObj.level.info.height=Math.round(self.getHeight());
                 }
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
