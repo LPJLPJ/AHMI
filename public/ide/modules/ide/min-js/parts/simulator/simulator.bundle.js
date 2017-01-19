@@ -22026,6 +22026,8 @@
 	        cb && cb();
 	    },
 	    drawNum: function (curX, curY, widget, options, cb) {
+
+	        var overFlowStyle = widget.info.overFlowStyle;
 	        var minValue = widget.info.minValue;
 	        var maxValue = widget.info.maxValue;
 	        var lowAlarmValue = widget.info.lowAlarmValue;
