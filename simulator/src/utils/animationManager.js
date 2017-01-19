@@ -87,7 +87,7 @@ AnimationManager.step = function (srcX,srcY,dstX,dstY,duration,frames,easing,int
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),duration/frames);
+    }.bind(this),1000/frames);
     animationKeys.push(animationKey);
     return animationKey
 
@@ -119,7 +119,7 @@ AnimationManager.stepValue = function (srcX,dstX,duration,frames,easing,interval
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),duration/frames);
+    }.bind(this),1000/frames);
     animationKeys.push(animationKey);
     return animationKey
 
@@ -162,7 +162,7 @@ AnimationManager.stepObj = function (srcObj,dstObj,duration,frames,easing,interv
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),duration/frames);
+    }.bind(this),1000/frames);
     animationKeys.push(animationKey);
     return animationKey
 
@@ -195,7 +195,7 @@ AnimationManager.scaling = function (srcX,srcY,dstX,dstY,duration,frames,easing,
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),duration/frames);
+    }.bind(this),1000/frames);
     animationKeys.push(animationKey);
 
 }
