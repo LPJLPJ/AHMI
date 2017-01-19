@@ -1819,6 +1819,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 fontString=this.fontSize+'px'+" "+this.fontFamily;
                 //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
                 drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.width,this.maxFontWidth);
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
             }
             catch(err){
                 console.log('错误描述',err);
@@ -1968,8 +1979,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 dateTimeStr=arrTime.join(":").toString();
                 break;
         }
-        
-        var xCoordinate = -width/2;
+        var widthOfDateTimeStr=maxFontWidth*dateTimeStr.length;
+        var initXPos = (width-widthOfDateTimeStr)/2;
+        var xCoordinate=initXPos-width/2;
         for(i=0;i<dateTimeStr.length;i++){
             ctx.fillText(dateTimeStr[i],xCoordinate,0);
             xCoordinate+=maxFontWidth;
@@ -2517,6 +2529,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                     //offCtx.restore();
                 }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
             }
             catch(err){
                 console.log('错误描述',err);
