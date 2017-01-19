@@ -21220,6 +21220,7 @@
 	    drawSwitch: function (curX, curY, widget, options, cb) {
 	        var bindTagValue = this.getValueByTagName(widget.tag, 0);
 	        var switchState;
+	        var bindBit = parseInt(widget.info.bindBit);
 	        if (bindBit < 0 || bindBit > 31) {
 	            switchState = 0;
 	        } else {
@@ -21232,7 +21233,6 @@
 	        var tex = widget.texList[0];
 	        var width = widget.info.width;
 	        var height = widget.info.height;
-	        var bindBit = parseInt(widget.info.bindBit);
 
 	        //switch mode
 	        var switchState = widget.curSwitchState;
