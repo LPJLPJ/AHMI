@@ -2027,6 +2027,9 @@ module.exports =   React.createClass({
 
         }
     },
+    paintScriptTrigger:function (curX, curY, widget, options,cb) {
+
+    },
     drawScriptTrigger:function(curX, curY, widget, options,cb){
         //get current value
         var curScriptTriggerTag = this.findTagByName(widget.tag);
