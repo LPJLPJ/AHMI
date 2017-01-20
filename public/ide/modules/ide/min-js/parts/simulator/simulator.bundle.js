@@ -20110,8 +20110,8 @@
 	            this.drawingArray = [];
 	        }
 	        this.drawingArray.push({
-	            project: _.cloneDeep(_project),
-	            options: _.cloneDeep(options)
+	            project: _project,
+	            options: options
 	        });
 	        this.manageDraw();
 	    },
@@ -22045,7 +22045,10 @@
 	        if (curValue != undefined && curValue != null) {
 
 	            //handle action before
-	            if (overFlowStyle == '0' && (curValue > maxValue || curValue < minValue)) {} else {
+	            if (overFlowStyle == '0' && (curValue > maxValue || curValue < minValue)) {
+	                widget.curValue = null;
+	            } else {
+
 	                curValue = this.limitValueBetween(curValue, minValue, maxValue);
 	                widget.curValue = Number(curValue);
 	                if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
@@ -22087,6 +22090,7 @@
 	        var offctx = this.offctx;
 	        //get current value
 	        var curValue = widget.curValue;
+	        // console.log(curValue)
 	        // console.log(curValue);
 
 	        var numModeId = widget.info.numModeId;
@@ -22144,8 +22148,6 @@
 
 	                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
-
-	                shouldHandleAlarmAction = true;
 	            } else {
 	                //animate number
 
@@ -22200,25 +22202,8 @@
 	                    }
 	                }
 
-	                // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0 )
+	                // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0
 
-
-	                if (widget.animateTimerId == undefined || widget.animateTimerId == 0) {
-	                    widget.animateTimerId = setInterval(function () {
-	                        if (widget.curFrameNum != undefined) {
-	                            widget.curFrameNum += 1;
-	                        } else {
-	                            widget.curFrameNum = 1;
-	                        }
-	                        if (widget.curFrameNum > totalFrameNum - 1) {
-	                            clearInterval(widget.animateTimerId);
-	                            widget.animateTimerId = 0;
-	                            widget.curFrameNum = 0;
-	                            widget.oldValue = curValue;
-	                        }
-	                        this.draw();
-	                    }.bind(this), 30);
-	                }
 	            }
 
 	            // offctx.restore();
