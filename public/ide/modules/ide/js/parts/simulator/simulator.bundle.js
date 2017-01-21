@@ -20110,8 +20110,8 @@
 	            this.drawingArray = [];
 	        }
 	        this.drawingArray.push({
-	            project: _project,
-	            options: options
+	            project: _.cloneDeep(_project),
+	            options: _.cloneDeep(options)
 	        });
 	        this.manageDraw();
 	    },
@@ -20120,7 +20120,7 @@
 	            if (this.drawingArray.length) {
 	                var nextDrawElem = this.drawingArray.shift();
 	                this.drawingStatus = 'drawing';
-	                this.drawSingleProject(nextDrawElem.project, nextDrawElem.options);
+	                this.currentDrawedProject = this.drawSingleProject(nextDrawElem.project, nextDrawElem.options);
 	                this.drawingStatus = 'idle';
 	                this.manageDraw();
 	            }
@@ -20134,10 +20134,10 @@
 
 	        var canvas = this.refs.canvas;
 	        var ctx = canvas.getContext('2d');
-	        if (this.state.project) {
-	            var project = _.cloneDeep(this.state.project);
+	        if (this.currentDrawedProject) {
+	            var project = _.cloneDeep(this.currentDrawedProject);
 
-	            var page = project.pageList[project && project.curPaegIdx || 0];
+	            var page = project.pageList[project && project.curPageIdx || 0];
 	            if (page) {
 	                this.paintPage(page);
 	            }
@@ -20210,6 +20210,8 @@
 	        } else {
 	                // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            }
+
+	        return project;
 	    },
 	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
