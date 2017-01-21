@@ -3030,7 +3030,10 @@ ideServices
                 selectObj.level.info.arrange=_option.arrange;
                 var arg={
                     arrange:_option.arrange,
-                    callback:_successCallback
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
                 };
                 selectObj.target.fire('changeArrange',arg);
 

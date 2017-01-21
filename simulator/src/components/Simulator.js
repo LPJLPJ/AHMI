@@ -1709,7 +1709,10 @@ module.exports =   React.createClass({
         // console.log('tempctx.font',fontStr);
         tempctx.fillStyle = font['font-color'];
         if(byteMode){
-            var xCoordinate = maxFontWidth/2;
+            // var widthOfDateTimeStr=maxFontWidth*text.length;
+            // var initXPos = (width-widthOfDateTimeStr)/2;
+            // var xCoordinate = initXPos+maxFontWidth/2;
+            var xCoordinate = ((width-maxFontWidth*text.length)+maxFontWidth)/2;
             var yCoordinate = 0.5*height;
             for(i=0;i<text.length;i++){
                 tempctx.fillText(text[i],xCoordinate,yCoordinate);
