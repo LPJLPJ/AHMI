@@ -40,4 +40,10 @@ update:
     2. new draw datetime widget method
     3. new draw num widget method
 fix:
+
+v1.8.6_test
+add:
+update:
+    1. simulator now draw synchronously
+fix:
     
