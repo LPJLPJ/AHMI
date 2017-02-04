@@ -2618,6 +2618,8 @@ module.exports =   React.createClass({
         //console.log(tempNumValue);
         //配置小数位数
         if (parseInt(decimalCount) > 0) {
+            var baseCount = Math.pow(10,decimalCount);
+            tempNumValue = (Math.abs(curValue)/baseCount).toString();
             var tempNumValuePair = tempNumValue.split('.')
             if (tempNumValuePair.length > 1) {
                 //has original fraction

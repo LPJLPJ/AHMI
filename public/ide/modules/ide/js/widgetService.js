@@ -2478,7 +2478,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     tempNumValue= tempNumValue.toString();
                     var i=0;
                     //配置小数位数
-                    if(this.decimalCount){
+                    if(this.decimalCount>0){
+                        var baseCount = Math.pow(10,this.decimalCount);
+                        tempNumValue = (Math.abs(this.numValue)/baseCount).toString();
                         if(tempNumValue.indexOf('.')!=-1){
                             //console.log('输入有小数')
                             var tempDecimalCount=tempNumValue.split('.')[1];
@@ -2492,7 +2494,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                                 tempNumValue=tempNumValue+'0';
                             }
                         }
-
                     }
                     //配置前导0模式
                     if(this.frontZeroMode=='1'){

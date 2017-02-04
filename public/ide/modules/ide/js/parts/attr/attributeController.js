@@ -2044,34 +2044,38 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function enterNumValue(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.info.numValue==initObject.level.info.numValue){
+            var numValue = $scope.component.object.level.info.numValue;
+            var minValue = $scope.component.object.level.info.minValue;
+            var maxValue = $scope.component.object.level.info.maxValue;
+            var numValueStr = numValue.toString();
+            if(numValue==initObject.level.info.numValue){
                 return;
             }
-            if($scope.component.object.level.info.numValue<$scope.component.object.level.info.minValue||$scope.component.object.level.info.numValue>$scope.component.object.level.info.maxValue||isNaN($scope.component.object.level.info.numValue)){
+            if(numValue<minValue||numValue>maxValue||isNaN(numValue)||(numValueStr.indexOf('.')!=-1)){
                 toastr.warning('输入不合法');
                 restore();
                 return;
             }
             //判断输入的数字的小数位数是否超出
-            var tempNumStr = $scope.component.object.level.info.numValue.toString();
-            if(tempNumStr.indexOf('.')!=-1){
-                var tempDecimal = tempNumStr.split(".")[1];
-                //console.log('tempDecimal',tempDecimal);
-                if(tempDecimal.length>$scope.component.object.level.info.decimalCount){
-                    toastr.warning('小数位数超出');
-                    restore();
-                    return;
-                }
-            }
+            // var tempNumStr = $scope.component.object.level.info.numValue.toString();
+            // if(tempNumStr.indexOf('.')!=-1){
+            //     var tempDecimal = tempNumStr.split(".")[1];
+            //     //console.log('tempDecimal',tempDecimal);
+            //     if(tempDecimal.length>$scope.component.object.level.info.decimalCount){
+            //         toastr.warning('小数位数超出');
+            //         restore();
+            //         return;
+            //     }
+            // }
 
             //判断输入的数字是否小于可以显示的最大值(4位数字，不大于10000)
             var tempNumOfDigits = $scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.decimalCount;
             var maxValue = Math.pow(10,tempNumOfDigits);
             //console.log('maxValue',maxValue);
-            if($scope.component.object.level.info.numValue<maxValue){
+            if(numValue<=maxValue){
 
                 var option={
-                    numValue:$scope.component.object.level.info.numValue,
+                    numValue:numValue,
                 };
 
                 ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
