@@ -2808,7 +2808,7 @@ module.exports =   React.createClass({
         if(!negative){
             var symbol='';
             if(symbolMode=='1'){
-                symbol ='+';
+                symbol ='';
             }
             tempNumValue = symbol + tempNumValue;
         }else if(negative){

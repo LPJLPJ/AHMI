@@ -2511,9 +2511,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         }
                     }
                     //配置正负号
-                    if((this.symbolMode=='1')&&(!negative)){
-                        tempNumValue='+'+tempNumValue;
-                    }else if(negative){
+                    if((this.symbolMode=='1')&&(negative)){
                         tempNumValue='-'+tempNumValue;
                     }
                     //ctx.scale(1/this.scaleX,1/this.scaleY);
@@ -2577,7 +2575,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      */
     function drawNumByCharacter(ctx,numStr,align,width,maxFontWidth,decimalCount){
         var xCoordinate,         //渲染每个字符的x坐标
-            initXPos,            //渲染每个字符的起始位置
+            initXPos,            //渲染字符的起始位置
             widthOfNumStr;       //渲染的字符串的长度
 
         widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
