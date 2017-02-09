@@ -1860,7 +1860,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                    </div>
+                        </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1877,7 +1877,26 @@
                                ng-keypress="component.enterHeight($event)"
                                type="number">
                         </div>
+
+                        <div class = "my-attr-item lg">
+                            <span class="my-attr-title">视频源</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.video.sourceId"
+                                    ng-change="component.video.changeVideoSource($event)">
+                                <option ng-repeat="mode in component.video.source" value="{{mode.id}}">{{mode.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class = "my-attr-item lg">
+                            <span class="my-attr-title">比例</span>
+                            <select class="form-control my-attr-number-input form-control" 
+                                    ng-model="component.video.scaleId"
+                                    ng-change="component.video.changeVideoScale($event)">
+                                <option ng-repeat="mode in component.video.scale" value="{{mode.id}}">{{mode.name}}</option>
+                            </select>
+                        </div>
                     </div>
+                        
 
                     <div ng-show="component.object.type=='MyScriptTrigger'">
                         <div class="my-attr-item lg">
@@ -2657,7 +2676,7 @@
                                     ng-change="component.dateTime.changeDateTimeFontFamily()">
                                 <!--<option value="宋体" ng-selected="true">宋体</option>-->
                                 <!--<option value="times">Times</option>-->
-                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
+                                <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option> 
                             </select>
                         </div>
                         <div class="y-attr-item lg">

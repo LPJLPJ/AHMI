@@ -740,6 +740,7 @@ ideServices
                 width:215,height:110,
                 left:0,top:0,
                 originX: 'center', originY: 'center',
+                source:'AHMI',scale:'1',
             };
             return {
                 id:Math.random().toString(36).substr(2),
@@ -756,6 +757,7 @@ ideServices
                             imgSrc:'',
                             name:'影像'
                         }]
+
                     }]
 
             }
