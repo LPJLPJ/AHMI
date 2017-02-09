@@ -157,6 +157,11 @@ router.route('/project/:id/thumbnail')
 router.route('/project/:id/generate')
     .post(projectInfo.generateProject);
 
+router.route('/project/:id/generateLocalProject')
+    .post(projectInfo.generateLocalProject);
+router.route('/project/:id/downloadLocalProject')
+    .get(projectInfo.downloadLocalProject);
+
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
 
@@ -193,6 +198,10 @@ router.route('/CANProject/:id/importCANFile')
     .post(CANProjectInfo.generateCANFile);
 router.route('/CANProject/:id/deleteCANFile')
     .post(CANProjectInfo.deleteCANFile);
+router.route('/CANProject/:id/writeCANFile')
+    .post(CANProjectInfo.writeCANFile);
+router.route('/CANProject/:id/downloadCANFile')
+    .get(CANProjectInfo.downloadCANFile);
 
 //project file
 router.route('/project/:id/upload')

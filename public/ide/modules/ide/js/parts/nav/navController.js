@@ -314,7 +314,7 @@
                     curScope.project.version = window.ideVersion;
                     curScope.project.CANId = NavModalCANConfigService.getCANId();
                     var currentProject = curScope.project;
-                    // console.log(currentProject);
+                    console.log('currentProject',currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
                     scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
                         _.forEach(currentProject.pages,function (_page) {
@@ -676,51 +676,89 @@
          */
 
         function generateDataFile(format){
-            generateData(format);
-            if (window){
-                if (window.spinner){
-                    window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                    window.spinner.show();
-                }
-                RenderSerive.renderProject(window.projectData,function () {
-                    toastr.info('生成成功');
-                    window.spinner&&window.spinner.hide();
-                },function () {
-                    toastr.info('生成失败');
-                    window.spinner&&window.spinner.hide();
-                });
-            }else{
-                saveProject(function () {
-                    showSpinner();
+            if(format=='local'){
+                
+                //console.log('keke',format);
+                var curScope = {};
+                ProjectService.getProjectCopyTo(curScope);
+                curScope.project.resourceList = ResourceService.getAllResource();
+
+                curScope.project.customTags = TagService.getAllCustomTags();
+                curScope.project.timerTags = TagService.getAllTimerTags();
+                curScope.project.timers = TagService.getTimerNum();
+                curScope.project.version = window.ideVersion;
+                curScope.project.CANId = NavModalCANConfigService.getCANId();
+                var currentProject = curScope.project;
+                //saveProject(function(){
+                    if (window.spinner){
+                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                        window.spinner.show();
+                    }
                     $http({
                         method:'POST',
-                        url:'/project/'+$scope.project.projectId+'/generate',
-                        data:{
-                            dataStructure:window.projectData
+                        url:'/project/'+$scope.project.projectId+'/generateLocalProject'
+                        //data:{currentProject:currentProject}
+                    })
+                    .success(function(data,status,xhr){
+                        //console.log(data);
+                        window.spinner&&window.spinner.hide();
+                        if(data=='ok'){
+                            toastr.info('生成本地版成功');
+                            window.location.href = '/project/'+$scope.project.projectId+'/downloadLocalProject'
+                        }else{
+                            toastr.error('生成失败')
                         }
                     })
-                        .success(function (data,status,xhr) {
-                            hideSpinner();
-                            if (data == 'ok'){
-                                toastr.info('生成成功');
-                                //download
-                                window.location.href = '/project/'+$scope.project.projectId+'/download'
-                            }else{
-                                console.log(data);
-                                toastr.info('生成失败')
+                    .error(function(err,status,xhr){
+                        console.log(err);
+                    })
+                //})
+            }else{
+                generateData(format);
+                if (window){
+                    if (window.spinner){
+                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                        window.spinner.show();
+                    }
+                    RenderSerive.renderProject(window.projectData,function () {
+                        toastr.info('生成成功');
+                        window.spinner&&window.spinner.hide();
+                    },function () {
+                        toastr.info('生成失败');
+                        window.spinner&&window.spinner.hide();
+                    });
+                }else{
+                    saveProject(function () {
+                        showSpinner();
+                        $http({
+                            method:'POST',
+                            url:'/project/'+$scope.project.projectId+'/generate',
+                            data:{
+                                dataStructure:window.projectData
                             }
-
-
                         })
-                        .error(function (err,status,xhr) {
-                            hideSpinner();
-                            console.log(err);
-                            toastr.info('生成失败')
+                            .success(function (data,status,xhr) {
+                                hideSpinner();
+                                if (data == 'ok'){
+                                    toastr.info('生成成功');
+                                    //download
+                                    window.location.href = '/project/'+$scope.project.projectId+'/download'
+                                }else{
+                                    console.log(data);
+                                    toastr.info('生成失败')
+                                }
 
-                        })
-                })
+
+                            })
+                            .error(function (err,status,xhr) {
+                                hideSpinner();
+                                console.log(err);
+                                toastr.info('生成失败')
+
+                            })
+                    })
+                }
             }
-
         }
 
         function generateData(format){
@@ -818,12 +856,58 @@
             return status;
         }
 
+
+        /**
+         * 打开CAN配置模态框
+         * @return {[type]} [description]
+         */
         function openCANPanel(){
-            var CANNames;
-            $http({
-                method:'GET',
-                url:'/CANProject/names'
-            })
+            var CANInfo;
+            if(window.local){
+                var CANProjects = readLocalProjects('CAN').map(function(raw){
+                    return JSON.parse(raw);
+                });
+                var CANInfo = CANProjects.map(function(obj){
+                    return {
+                        name:obj.name,
+                        id:obj._id
+                    }
+                })
+                //console.log('CANProject',CANInfo);
+                var modalInstance = $uibModal.open({
+                        animation:$scope.animationsEnabled,
+                        templateUrl:'navCANModal.html',
+                        controller:'NavModalCANConfig',
+                        size:'md',
+                        resolve:{
+                            data:function(){
+                                return CANInfo;
+                            }
+                        }
+                    });
+                modalInstance.result.then(function(result){
+                    if(result){
+                        var targetPro = null;
+                        for(var i=0;i<CANProjects.length;i++){
+                            if(CANProjects[i]._id==result){
+                                targetPro=JSON.parse(CANProjects[i].content);
+                                break;
+                            }
+                        }
+                        if(targetPro){
+                            importCANConfig(result,targetPro);
+                        }else{
+                            toastr.error('导入失败');
+                        }
+                    }else{
+                        deleteCANConfig();
+                    }
+                },function(){})
+            }else{
+                $http({
+                    method:'GET',
+                    url:'/CANProject/names'
+                })
                 .success(function(data,status,xhr){
                     //console.log('data',data);
                     CANInfo = data;
@@ -853,41 +937,157 @@
                     console.log('err',err);
                     toastr.warning('获取失败');
                 });
+            } 
         }
 
-        function importCANConfig(id){
-            $http({
-                method:'POST',
-                url:'/CANProject/'+id+'/importCANFile',
-                data:{
-                    projectId:$scope.project.projectId
+        /**
+         * 读取本地CAN工程文件
+         * @param  {string} projectType 文件类型
+         * @return {arr}             文件数组
+         */
+        function readLocalProjects(projectType) {
+            var dir;
+            var fileName;
+            var localCANProjectDir = path.join(__dirname,'localproject','localCANProject');
+
+            switch(projectType){
+                case 'CAN':
+                    dir = localCANProjectDir;
+                    fileName ='CANProject.json';
+                    break;
+                case 'normal':
+                default:
+                    dir = localProjectDir;
+                    fileName = 'project.json';
+                    break;
+            }
+
+            // console.log('dir',dir);
+            var projects=[];
+            try {
+                var stats = fs.statSync(dir);
+                if (stats&&stats.isDirectory()){
+                    var projectNames = fs.readdirSync(dir);
+                    for (var i=0;i<projectNames.length;i++){
+                        var curProjectDir =  path.join(dir,projectNames[i]);
+                        var curProject = readSingleFile(path.join(curProjectDir,fileName),true);
+                        if (curProject){
+                            projects.push(curProject);
+                        }
+                    }
                 }
-            })
-            .success(function(data,status,xhr){
-                if(data=='ok'){
-                    toastr.info('导入成功');
-                }
-            })
-            .error(function(data,status,xhr){
-                console.log('导入失败',data);
-            });
+            }catch (err){
+
+            }
+
+            return projects;
         }
 
+        /**
+         * 读取一个文件
+         * @param  {[type]} filePath [description]
+         * @param  {[type]} check    [description]
+         * @return {[type]}          [description]
+         */
+        function readSingleFile(filePath,check) {
+            if (check){
+                try{
+                    var stats = fs.statSync(filePath);
+                    if (stats&&stats.isFile()){
+                        return fs.readFileSync(filePath,'utf-8');
+                    }else{
+                        return null;
+                    }
+                }catch (e){
+                    return null;
+                }
+
+
+            }else{
+                return fs.readFileSync(filePath,'utf-8');
+            }
+        }
+
+        /**
+         * 导入CAN配置
+         * @param  {[type]} id [CAN]
+         * @return {[type]}    [description]
+         */
+        function importCANConfig(id,pro){
+            if(window.local){
+                var localProjectResourcesDir = path.join(__dirname,'localproject',$scope.project.projectId,'resources');
+                try{
+                    var stats = fs.statSync(localProjectResourcesDir);
+                    if(stats.isDirectory()){
+                        var dataUrl = path.join(localProjectResourcesDir,'CANFile.json');
+                        fs.writeFileSync(dataUrl,JSON.stringify(pro,null,4));
+                        toastr.info('导入成功');
+                    }else{
+                        toastr.error('导入失败');
+                    }
+                }catch(e){
+                    toastr.error('导入失败');
+                }
+            }else{
+                $http({
+                    method:'POST',
+                    url:'/CANProject/'+id+'/importCANFile',
+                    data:{
+                        projectId:$scope.project.projectId
+                    }
+                })
+                .success(function(data,status,xhr){
+                    if(data=='ok'){
+                        toastr.info('导入成功');
+                    }
+                })
+                .error(function(data,status,xhr){
+                    toastr.error('导入失败');
+                    console.log('导入失败',data);
+                });
+            }
+        }
+
+        /**
+         * 删除CAN配置
+         * @return {[type]} [description]
+         */
         function deleteCANConfig(){
-            $http({
-                method:'POST',
-                url:'/CANProject/'+$scope.project.projectId+'/deleteCANFile',
-                data:{}
-            })
-            .success(function(data,status,xhr){
-                if(data=='ok'){
-                    //console.log('删除成功');
-                    toastr.info('取消CAN配置')
+            if(window.local){
+                var localProjectResourcesDir = path.join(__dirname,'localproject',$scope.project.projectId,'resources');
+                 try{
+                    var stats = fs.statSync(localProjectResourcesDir);
+                    if(stats.isDirectory()){
+                        var dataUrl = path.join(localProjectResourcesDir,'CANFile.json');
+                        fs.unlink(dataUrl,function(err){
+                            if(err){
+                                toastr.error('取消失败')
+                            }else{
+                                toastr.info('取消CAN配置');
+                            }
+                        });
+                        
+                    }else{
+                        toastr.error('取消失败');
+                    }
+                }catch(e){
+                    toastr.error('取消失败');
                 }
-            })
-            .error(function(data,status,xhr){
-                console.log('删除失败',data);
-            })
+            }else{
+                $http({
+                    method:'POST',
+                    url:'/CANProject/'+$scope.project.projectId+'/deleteCANFile',
+                    data:{}
+                })
+                .success(function(data,status,xhr){
+                    if(data=='ok'){
+                        toastr.info('取消CAN配置')
+                    }
+                })
+                .error(function(data,status,xhr){
+                    console.log('删除失败',data);
+                }) 
+            }
         }
     }]);
 
@@ -904,6 +1104,13 @@ ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uib
             name:'压缩'
         }
     ];
+    var localFormat = {
+        type:'local',
+        name:'本地'
+    }
+    if(!window.local){
+        $scope.formats[2] = localFormat;
+    };
     $scope.generateFormat = 'normal';
     $scope.ok = function () {
         $uibModalInstance.close({
@@ -930,6 +1137,10 @@ ide.controller('NavModalCloseWindwoCtl',['$scope','$uibModalInstance',function (
     };
 }]);
 
+/**
+ * CAN模态框控制器
+ * @return {[type]}
+ */
 ide.controller('NavModalCANConfig',['$scope','$uibModalInstance','data','NavModalCANConfigService',function($scope,$uibModalInstance,data,NavModalCANConfigService){
     $scope.CANInfo = data;
     $scope.selectCANId = NavModalCANConfigService.getCANId();
@@ -948,6 +1159,12 @@ ide.controller('NavModalCANConfig',['$scope','$uibModalInstance','data','NavModa
         $uibModalInstance.dismiss('cancel');
     };
 }]);
+
+/**
+ * CAN配置service
+ * @param  {[type]} )          
+ * @return {[type]}
+ */
 ide.service('NavModalCANConfigService',[function(){
     var CANId;
     this.setCANId = function(id){

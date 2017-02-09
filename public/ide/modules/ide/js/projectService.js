@@ -565,7 +565,7 @@ ideServices
                             _successCallback&&_successCallback();
                         }else {
                             var layer=currentPage.layers[_index];
-                            console.log("layer: ",layer);
+                            // console.log("layer: ",layer);
                             _self.SyncSubLayerImage(layer,layer.showSubLayer,function () {
                                 updateLayerImage(_index+1,_successCallback);
                             })
@@ -2880,13 +2880,28 @@ ideServices
             this.ChangeAttributeHighLightMode = function(_option,_successCallback){
                 var selectObj = getCurrentSelectObject();
                 //console.log('_option',_option);
-                if(_option.highlightMode&&_option.highlightMode=='0'){
+                if(_option.highlightMode=='0'){
                     selectObj.level.info.disableHighlight=false;
                 }else{
                     selectObj.level.info.disableHighlight=true;
                 }
                 //console.log('selectObje.level',selectObj.level);
             };
+
+            /**
+             * 是否启用高亮，适用于仪表盘和进度条
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeEnableAnimationMode = function(_option,_successCallback){
+                var selectObj = getCurrentSelectObject();
+                if(_option.enableAnimationModeId=='1'){
+                    selectObj.level.info.enableAnimation=false;
+                }else {
+                    selectObj.level.info.enableAnimation=true;
+                }
+            }
 
             this.ChangeAttributeBackgroundImage= function (_option,_successCallback) {
                 var currentOperate=SaveCurrentOperate();
@@ -3015,7 +3030,10 @@ ideServices
                 selectObj.level.info.arrange=_option.arrange;
                 var arg={
                     arrange:_option.arrange,
-                    callback:_successCallback
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
                 };
                 selectObj.target.fire('changeArrange',arg);
 
@@ -3266,9 +3284,11 @@ ideServices
                 var selectObj=_self.getCurrentSelectObject();
                 var fabNumObj=getFabricObject(selectObj.level.id,true);
                 var arg={
-                    scaleX:fabNumObj.getScaleX(),
-                    scaleY:fabNumObj.getScaleY(),
-                    callback:_successCallback
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
                 };
 
                 //下面是数字字体属性，如字体，字体大小，粗体，斜体
@@ -3420,7 +3440,6 @@ ideServices
                 selectObj.level.info.dateTimeModeId=dateTimeModeId;
                 selectObj.level.info.RTCModeId=RTCModeId;
                 var arg={
-                    level:selectObj.level,
                     dateTimeModeId:dateTimeModeId,
                     callback:function(){
                         var currentWidget=selectObj.level;

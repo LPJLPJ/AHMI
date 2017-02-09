@@ -2,7 +2,7 @@
  * Created by shenaolin on 16/3/12.
  */
 ideServices
-    .service('TemplateProvider', ['Type','CanvasService','Preference',function (Type,CanvasService,Preference) {
+    .service('TemplateProvider', ['Type','CanvasService','Preference','FontMesureService',function (Type,CanvasService,Preference,FontMesureService) {
 
 
         function Transition(name,show,duration){
@@ -113,7 +113,8 @@ ideServices
                     minCoverAngle:0,maxCoverAngle:0,
                     value:45,
                     offsetValue:0,
-                    pointerLength:185
+                    pointerLength:185,
+                    enableAnimation:false
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -535,9 +536,11 @@ ideServices
         };
 
         this.getDefaultNum = function(){
-            var subLayerNode = CanvasService.getSubLayerNode();
+            var font = "30px"+" "+"宋体";
+            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font));
+            var width = 3*maxFontWidth;
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:width, height: 33,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
@@ -559,9 +562,10 @@ ideServices
                 numValue:1,
                 fontFamily:'宋体',
                 fontSize:30,
-                fontColor:'rgba(0,0,0,1)',
+                fontColor:'rgba(255,255,255,1)',
                 fontBold:"100",
-                fontItalic:""
+                fontItalic:"",
+                maxFontWidth:maxFontWidth   //最大字体宽度
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -665,10 +669,11 @@ ideServices
             }
         };
         this.getDefaultDateTime=function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
-
+            var font = "20px"+" "+"宋体";
+            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            var width = 8*maxFontWidth;
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:width, height: 22,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
@@ -676,10 +681,11 @@ ideServices
                 RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
                 fontFamily:'宋体',
                 fontSize:20,
-                fontColor:'rgba(0,0,0,1)',
+                fontColor:'rgba(255,255,255,1)',
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
-                disableHighlight:false
+                disableHighlight:false,
+                maxFontWidth:maxFontWidth   //最大字体宽度
             };
             return {
                 id: Math.random().toString(36).substr(2),

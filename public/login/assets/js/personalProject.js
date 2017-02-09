@@ -14,6 +14,7 @@ $(function(){
     var fs,path,mkdir,__dirname;
     var closeModalConfirmButton = $('#closeModalConfirm');
     var localProjectDir='';
+    var localCANProjectDir='';
 
     closeModalConfirmButton.on('click',function (e) {
         console.log('project',curProject);
@@ -30,8 +31,6 @@ $(function(){
         if (os){
             local = true;
             console.log('os',os);
-
-
         }
     }catch (e){
 
@@ -60,6 +59,8 @@ $(function(){
         mkdir.sync = mkdirSync;
         __dirname = global.__dirname;
         localProjectDir = path.join(__dirname,'localproject');
+        localCANProjectDir = path.join(__dirname,'localproject','localCANProject');
+        console.log('localCANProjectDir',localCANProjectDir);
         function getResourceRelativePath(resourceFilePath) {
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
             if (resourceFilePath){
@@ -74,11 +75,16 @@ $(function(){
 
         try {
             stats = fs.statSync(localProjectDir);
+            statsCAN = fs.statSync(localCANProjectDir);
             if (!stats.isDirectory()){
                 mkdir.sync(localProjectDir);
             }
+            if(!statsCAN.isDirectory()){
+                mkdir.sync(localCANProjectDir);
+            }
         }catch (e){
             mkdir.sync(localProjectDir);
+            mkdir.sync(localCANProjectDir);
         }
     }
 
@@ -93,36 +99,68 @@ $(function(){
         $('#addproject').siblings().each(function (index,elem) {
             $(elem).remove();
         });
+        $('#addCANproject').siblings().each(function(index,elem){
+            $(elem).remove();
+        });
 
         //load projects
-        var projects = readLocalProjects().map(function (raw) {
+        var projects = readLocalProjects('normal').map(function (raw) {
+            return JSON.parse(raw);
+        });
+
+        var CANProjects = readLocalProjects('CAN').map(function(raw){
             return JSON.parse(raw);
         });
         
-        console.log(projects);
+        console.log('projects',projects);
+        console.log('CANprojects',CANProjects);
         
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
-            console.log(newProject);
+            //console.log('newProject'+i,newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
 
             addProjectButton.after(html);
         }
+
+        var addCANprojectButton = $('#addCANproject');
+        for(var i=CANProjects.length-1;i>=0;i--){
+            var newCANProject = CANProjects[i];
+            console.log('newCANProject'+i,newCANProject);
+            newCANProject.thumbnail = getResourceRelativePath(newCANProject.thumbnail);
+            delete newCANProject.content;
+            var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:newCANProject,thumbnail:newCANProject.thumbnail});
+            addCANprojectButton.after(html);
+        }
     }
 
-    function readLocalProjects() {
+    function readLocalProjects(projectType) {
+        var dir;
+        var fileName;
+        switch(projectType){
+            case 'CAN':
+                dir = localCANProjectDir;
+                fileName ='CANProject.json';
+                break;
+            case 'normal':
+            default:
+                dir = localProjectDir;
+                fileName = 'project.json';
+                break;
+        }
 
+        console.log('dir',dir);
         var projects=[];
         try {
-            var stats = fs.statSync(localProjectDir);
+            var stats = fs.statSync(dir);
             if (stats&&stats.isDirectory()){
-                var projectNames = fs.readdirSync(localProjectDir);
+                var projectNames = fs.readdirSync(dir);
                 for (var i=0;i<projectNames.length;i++){
-                    var curProjectDir =  path.join(localProjectDir,projectNames[i]);
-                    var curProject = readSingleFile(path.join(curProjectDir,'project.json'),true);
+                    var curProjectDir =  path.join(dir,projectNames[i]);
+                    var curProject = readSingleFile(path.join(curProjectDir,fileName),true);
                     if (curProject){
                         projects.push(curProject);
                     }
@@ -550,7 +588,7 @@ $(function(){
             if(curNodeName=='IMG'){
                 var targetUrl = '';
                 if(local){
-
+                    targetUrl='../ide/indexOfCAN.html?project_id='+project._id;
                 }else{
                     targetUrl='/CANProject/'+project._id+'/editor';
                 }
@@ -594,7 +632,21 @@ $(function(){
                 return;
             }
             if(local){
-
+                console.log('创建本地CAN');
+                CANProject.createdTime = Date.now();
+                CANProject.lastModified = Date.now();
+                CANProject._id=''+CANProject.createdTime+Math.round((Math.random()+1)*1000);
+                CANProject.maxSize = 1024*1024*100;
+                var localCANProjectpath = path.join(localCANProjectDir,String(CANProject._id));
+                console.log(localCANProjectpath);
+                try{
+                    mkdir.sync(localCANProjectpath);
+                    var filePath = path.join(localCANProjectpath,'CANProject.json');
+                    fs.writeFileSync(filePath,JSON.stringify(CANProject));
+                    addNewCANProject(CANProject);
+                }catch(e){
+                    console.log('write error',e);
+                }
             }else{
                 $.ajax({
                     type:'POST',
@@ -611,7 +663,14 @@ $(function(){
 
     function deleteCANProject(project,curPanel){
         if(local){
-
+            //console.log('project id',project._id);
+            var CANProjectdirpath = path.join(localCANProjectDir,String(project._id));
+            try{
+                rmdir(CANProjectdirpath);
+            }catch (e){
+                console.log(e);
+            }
+            curPanel.remove()
         }else{
             $.ajax({
                 type:'POST',
@@ -646,7 +705,11 @@ $(function(){
                     return;
                 }
                 if(local){
-
+                    var CANProjectPath = path.join(localCANProjectDir,String(project._id),'CANProject.json');
+                    fs.writeFileSync(CANProjectPath,JSON.stringify(project));
+                    updateSuccess = true;
+                    var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:project,thumbnail:null});
+                    curPanel.replaceWith(html)
                 }else{
                     $.ajax({
                         type:'POST',
