@@ -42,12 +42,7 @@ function getDigestOfContent(content,num) {
 function generateArticle() {
     var blogInfo = exportInfo()
     var blogContent = exportContent()
-    if (!isInfoValid(blogInfo)){
-        console.log('info incomplete')
-    }else{
-        blogInfo.digest = getDigestOfContent(blogContent,100)
-        // console.log(blogInfo)
-    }
+    blogInfo.digest = getDigestOfContent(blogContent,100)
     return {
         info:blogInfo,
         content:blogContent
@@ -78,15 +73,16 @@ function saveNewDraft(newDraft,scb,fcb) {
 }
 
 function publishToServer(newDraft,scb,fcb) {
+    console.log(newDraft)
     $.ajax({
         type:'POST',
         data:newDraft,
         url:"/blog/publish",
         success:function (msg) {
-            scb&&scb()
+            scb&&scb(msg)
         },
         fail:function (xhr, status) {
-            fcb && fcb()
+            fcb && fcb(xhr,status)
         }
     })
 }
@@ -99,6 +95,17 @@ $save.click(function (e) {
         console.log(msg)
     },function (xhr,status) {
         console.log(xhr)
+    })
+})
+
+$pubish.click(function (e) {
+    e.preventDefault();
+    var newBlog = generateArticle()
+    newBlog.blogId = currentId
+    publishToServer(newBlog,function (msg) {
+        console.log('success',msg)
+    },function (xhr, status) {
+        console.log('fail',xhr)
     })
 })
 
@@ -138,12 +145,25 @@ function loadFromServer() {
     }
 
 }
+
+function getUrlPrefix() {
+    var loc = window.location
+    if ((loc.protocol == "http:" && loc.port==80)||(loc.protocol=="https:"&&loc.port==443)){
+        //no need for port
+        return loc.protocol+"//"+loc.hostname
+    }else{
+        return loc.protocol+"//"+loc.hostname+":"+loc.port
+    }
+
+}
+
 function init() {
+    var urlPrefix = getUrlPrefix()
     currentId = parseQuery().id
-    $summernote.summernote('library.setUploadUrl','/blog/resources/upload?blogId='+currentId)
-    $summernote.summernote('library.setRetriveUrl','/blog/resources/getresources?blogId='+currentId)
-    $summernote.summernote('library.setResourceUrl','/public/blog/media')
-    $summernote.summernote('library.setDeleteUrl','/blog/resources/deleteresource?blogId='+currentId)
+    $summernote.summernote('library.setUploadUrl',urlPrefix+'/blog/resources/upload?blogId='+currentId)
+    $summernote.summernote('library.setRetriveUrl',urlPrefix+'/blog/resources/getresources?blogId='+currentId)
+    $summernote.summernote('library.setResourceUrl',urlPrefix+'/public/blog/media')
+    $summernote.summernote('library.setDeleteUrl',urlPrefix+'/blog/resources/deleteresource?blogId='+currentId)
 }
 
 init()

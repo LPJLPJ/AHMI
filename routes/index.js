@@ -287,11 +287,18 @@ router.route('/blog/createblog')
 router.route('/blog/savedraft')
     .post(BlogRoute.saveDrat)
 
+router.route('/blog/publish')
+    .post(BlogRoute.publishBlog)
+
 router.route('/blog/getlastmodified')
     .get(BlogRoute.getLastModified)
 
 router.route('/blog/getallblogs')
     .get(BlogRoute.getAllBlogs)
+
+router.route('/blog/getallpublishedblogs')
+    .get(BlogRoute.getAllPublishedBlogs)
+
 
 //blog library
 router.route('/blog/resources/upload')
@@ -301,6 +308,8 @@ router.route('/blog/resources/getresources')
 router.route('/blog/resources/deleteresource')
     .delete(BlogRoute.deleteResource)
 
+router.route('/blog/*')
+    .get(BlogRoute.getIndex)
 //router.route('*')
 //    .all(function (req,res,next) {
 //        res.render('login/404.html');

@@ -64,6 +64,23 @@ BlogSchema.statics = {
         }
 
     },
+    fetchPublishedBatch:function(from,limit,cb){
+        if (limit===0){
+            return this
+                .find({publish:true})
+                .sort('publishTime')
+                .skip(from)
+                .exec(cb)
+        }else{
+            return this
+                .find({})
+                .sort('publishTime')
+                .skip(from)
+                .limit(limit)
+                .exec(cb)
+        }
+
+    },
     findById:function(id,cb){
         return this
             .findOne({_id:id})
@@ -78,6 +95,11 @@ BlogSchema.statics = {
         return this
             .find({authorId:authorId})
             .sort('publishTime')
+            .exec(cb)
+    },
+    deleteById: function (blogId, cb) {
+        return this
+            .remove({_id:blogId})
             .exec(cb)
     }
 

@@ -9,12 +9,90 @@ var formidable = require('formidable')
 var _ = require('lodash')
 var BlogRoute = {}
 var baseUrl = path.join(__dirname,'../public/blog/media')
+BlogRoute.getIndex = function (req, res) {
+    res.render('blog/index.html')
+}
 BlogRoute.getEditor = function (req, res) {
     res.render('blog/editor.html')
 }
 
 BlogRoute.getManage = function (req, res) {
     res.render('blog/manage.html')
+}
+
+BlogRoute.getAllPublishedBlogs = function (req, res) {
+    BlogModel.fetchPublishedBatch(0,0,function (err,_blogs) {
+        if (err){
+            errHandler(res,500,'fetch failed')
+        }else{
+            //get _blogs
+            //generate info
+            var result = _blogs.map(function (_blog) {
+                var info = {}
+                info._id = _blog._id;
+                info.authorId = _blog.authorId;
+                info.desp = _blog.desp;
+                info.keywords = _blog.keywords;
+                info.digest = _blog.digest;
+                info.publishTime = _blog.publishTime;
+                return info
+            })
+            res.end(JSON.stringify(result))
+        }
+    })
+}
+
+BlogRoute.publishBlog = function (req,res) {
+    var user = req.session.user
+    if (user && user.username && user.id){
+        var blogId = req.body.blogId;
+        var blogData = {}
+        var info = req.body.info||{};
+        var content = req.body.content;
+        // console.log(blogId,info,content)
+        if (!blogId){
+            errHandler(res,500,'invalid blogId')
+        }else{
+
+            BlogModel.findById(blogId,function (err,_blog) {
+                if (err){
+                    errHandler(res,500,'blog not found')
+                }else{
+                    if (_blog.authorId != user.id){
+                        errHandler(res,500,'invalid user')
+                    }else{
+                        //update
+                        // console.log('updating',info,content)
+                        _blog.title = info.title;
+                        _blog.desp = info.desp;
+                        _blog.keywords = info.keywords;
+                        _blog.digest = info.digest;
+                        _blog.content = content;
+                        _blog.modifing = false;
+                        _blog.publish = true;
+                        _blog.drafts = [
+                            {
+                                title:info.title,
+                                desp:info.desp,
+                                keywords:info.keywords,
+                                content:content
+                            }
+                        ]
+                        _blog.save(function (err) {
+                            if (err){
+                                errHandler(res,500,'save error')
+                            }else{
+                                res.end('ok')
+                            }
+                        })
+                    }
+
+                }
+            })
+        }
+    }else{
+        errHandler(res,500,'not login')
+    }
 }
 
 BlogRoute.getAllBlogs = function (req, res) {
@@ -31,6 +109,8 @@ BlogRoute.getAllBlogs = function (req, res) {
 
 }
 
+
+
 BlogRoute.createBlog = function (req, res) {
     var user = req.session.user
     if (user && user.username && user.id){
@@ -45,6 +125,81 @@ BlogRoute.createBlog = function (req, res) {
                 res.end(''+currentBlog._id)
             }
         })
+    }
+}
+
+BlogRoute.deleteBlog = function (req, res) {
+    var user = req.session.user
+    if (user && user.username && user.id){
+        var blogId = req.body.blogId;
+
+        if (!blogId){
+            errHandler(res,500,'invalid blogId')
+        }else{
+
+            BlogModel.findById(blogId,function (err,_blog) {
+                if (err){
+                    errHandler(res,500,'blog not found')
+                }else{
+                    if (_blog.authorId != user.id){
+                        errHandler(res,500,'invalid user')
+                    }else{
+                        //valid
+                        //delete resources
+                        deleteBatchResources(_blog.resources,function (errFiles) {
+                            BlogModel.deleteById(blogId,function (err) {
+                                if (err){
+                                    errHandler(res,500,'delete error')
+                                }else{
+                                    res.end('ok')
+                                }
+                            })
+                        })
+                    }
+                }
+            })
+        }
+    }else{
+        errHandler(res,500,'not login')
+    }
+}
+function deleteBatchResources(files,cb) {
+    var count = files.length;
+    var errFiles = []
+    var deleteHandler = function (err,errFile) {
+        if (err){
+            errFiles.push(errFile)
+        }
+        count = count-1
+        if (count<=0){
+            //finish
+            cb && cb(errFiles)
+        }
+    }
+    files.map(function (_file) {
+        deleteTargetResource(_file,deleteHandler)
+    })
+}
+function deleteTargetResource(fileName,cb) {
+    if (fileName) {
+        var fileUrl = path.join(baseUrl,fileName)
+
+        fs.stat(fileUrl,function (err,stats) {
+            if (err){
+                //already not exist
+                cb && cb(null)
+            }else{
+                fs.unlink(fileUrl,function (err) {
+                    if (err) {
+                        cb && cb(err,fileName)
+                    }else{
+                        cb && cb(null)
+                    }
+                })
+            }
+        })
+    }else {
+        cb && cb(null)
     }
 }
 
@@ -87,22 +242,26 @@ BlogRoute.saveDrat = function (req, res) {
                 if (err){
                     errHandler(res,500,'blog not found')
                 }else{
-                    _blog.modifing = true
-                    _blog.drafts = [
-                        {
-                            title:info.title,
-                            desp:info.desp,
-                            keywords:info.keywords,
-                            content:req.body.content
-                        }
-                    ]
-                    _blog.save(function (err) {
-                        if (err){
-                            errHandler(res,500,'save error')
-                        }else{
-                            res.end('ok')
-                        }
-                    })
+                    if (_blog.authorId != user.id){
+                        errHandler(res,500,'invalid user')
+                    }else{
+                        _blog.modifing = true
+                        _blog.drafts = [
+                            {
+                                title:info.title,
+                                desp:info.desp,
+                                keywords:info.keywords,
+                                content:req.body.content
+                            }
+                        ]
+                        _blog.save(function (err) {
+                            if (err){
+                                errHandler(res,500,'save error')
+                            }else{
+                                res.end('ok')
+                            }
+                        })
+                    }
                 }
             })
         }
