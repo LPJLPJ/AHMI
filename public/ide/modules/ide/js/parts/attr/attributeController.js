@@ -218,7 +218,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             video:{
                 source:[
                     {id:'CVBS',name:'CVBS'},
-                    {id:'AHMI',name:'AHMI'},
+                    {id:'HDMI',name:'HDMI'},
                 ],
                 scale:[
                     {id:'0',name:'非原比例'},
@@ -483,7 +483,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MyVideo:
                     $scope.component.video.sourceId = $scope.component.object.level.info.source;
-                    $scope.component.video.scaleId = $scope.component.object.level.info.scale;
+                    //$scope.component.video.scaleId = $scope.component.object.level.info.scale;
                     break;
             }
 
