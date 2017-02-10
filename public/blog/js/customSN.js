@@ -191,8 +191,8 @@ var Library = function (context) {
         .done(function (msg) {
             scb && scb(msg)
         })
-        .fail(function (xhr, status) {
-            fcb && fcb(xhr,status)
+        .error(function (xhr) {
+            fcb && fcb(xhr)
         })
     }
 
@@ -369,7 +369,7 @@ var Library = function (context) {
             curFiles = files
             self.insertFiles(files)
         })
-        .fail(function (xhr,status) {
+        .error(function (xhr,status) {
             console.log('failed')
         })
     }
@@ -532,8 +532,8 @@ function sendFile(file,url,scb,fcb,pcb) {
         processData: false
     }).done(function (msg) {
         scb && scb(msg)
-    }).fail(function (xhr, status) {
-        fcb && fcb(xhr,status)
+    }).error(function (xhr) {
+        fcb && fcb(xhr)
     })
 }
 
@@ -575,8 +575,8 @@ function sendFiles(files,url,scb,fcb,pcb) {
     .done(function (msg) {
         scb && scb(msg)
     })
-    .fail(function (xhr, status) {
-        fcb && fcb(xhr,status)
+    .error(function (xhr) {
+        fcb && fcb(xhr)
     })
 }
 

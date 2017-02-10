@@ -102,9 +102,24 @@ BlogRoute.getAllBlogs = function (req, res) {
             if (err){
                 errHandler(res,500,'find error')
             }else{
-                res.end(JSON.stringify(blogs))
+                var results = blogs.map(function (blog) {
+                    return {
+                        _id: blog._id,
+                        title: blog.title,
+                        desp: blog.desp,
+                        keywords: blog.keywords,
+                        digest: blog.digest,
+                        modifing: blog.modifing,
+                        publish: blog.publish,
+                        lastModifyTime: blog.lastModifyTime
+                    }
+
+                })
+                res.end(JSON.stringify(results))
             }
         })
+    }else{
+        errHandler(res,500,'not login')
     }
 
 }

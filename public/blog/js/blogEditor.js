@@ -66,8 +66,8 @@ function saveNewDraft(newDraft,scb,fcb) {
         success:function (msg) {
             scb&&scb(msg)
         },
-        fail:function (xhr, status) {
-            fcb && fcb(xhr,status)
+        error:function (xhr) {
+            fcb && fcb(xhr)
         }
     })
 }
@@ -81,8 +81,8 @@ function publishToServer(newDraft,scb,fcb) {
         success:function (msg) {
             scb&&scb(msg)
         },
-        fail:function (xhr, status) {
-            fcb && fcb(xhr,status)
+        error:function (xhr) {
+            fcb && fcb(xhr)
         }
     })
 }
@@ -138,7 +138,7 @@ function loadFromServer() {
                 console.log(msg)
                 updateBlogFromData(JSON.parse(msg))
             },
-            fail:function (xhr, status) {
+            error:function (xhr) {
 
             }
         })
