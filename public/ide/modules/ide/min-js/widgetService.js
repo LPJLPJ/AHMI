@@ -1930,6 +1930,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @param  {[type]} fontString [字体样式字符串]
      * @param  {[type]} align      [对齐方式(未使用)]
      * @param  {[type]} fontColor  [字体颜色]
+     * @param  {[type]} width      [控件宽度]
      * @return {[type]}            [description]
      */
     function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,maxFontWidth){
@@ -1959,6 +1960,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 arrDate[i]='0'+arrDate[i];
             }
         }
+        var colonWidth = ctx.measureText(':');
         var dateTimeStr="";
 
         switch(mode){
@@ -1982,7 +1984,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         var widthOfDateTimeStr=maxFontWidth*dateTimeStr.length;
         var initXPos = (width-widthOfDateTimeStr)/2;
         var xCoordinate=initXPos-width/2;
+        var colonCoordinate = maxFontWidth/2-colonWidth.width/2;
         for(i=0;i<dateTimeStr.length;i++){
+            if(dateTimeStr[i] ==":"){
+                ctx.fillText(dateTimeStr[i],xCoordinate+colonCoordinate,0);
+            }
+            else
             ctx.fillText(dateTimeStr[i],xCoordinate,0);
             xCoordinate+=maxFontWidth;
         }
