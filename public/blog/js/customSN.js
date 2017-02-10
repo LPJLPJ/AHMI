@@ -95,6 +95,8 @@ var Library = function (context) {
     var curFiles
     var uploadUrl = ""
     var retriveUrl = ""
+    var resourceUrl = ""
+    var deleteUrl = ""
     var progress
 
 
@@ -197,7 +199,7 @@ var Library = function (context) {
 
     this.setPreview = function (fileName,type) {
         var node
-        var baseUrl = 'http://127.0.0.1:3001/public/images/'
+        var baseUrl = resourceUrl+'/'
         var $libraryPreview = self.$dialog.find('.library-preview')
 
         switch (type){
@@ -221,10 +223,18 @@ var Library = function (context) {
         retriveUrl = url
     }
 
+    this.setResourceUrl = function (url) {
+        resourceUrl = url
+    }
+
+    this.setDeleteUrl = function (url) {
+        deleteUrl = url
+    }
+
     this.deleteFile = function (fileName,cb) {
         $.ajax({
             type:"DELETE",
-            url:'http://127.0.0.1:3001/deleteresource',
+            url:deleteUrl,
             data:{fileName:fileName}
         })
         .done(function (msg) {
@@ -237,7 +247,7 @@ var Library = function (context) {
     }
 
     this.showLibrary = function () {
-        var baseUrl = 'http://127.0.0.1:3001/public/images/'
+        var baseUrl = resourceUrl
         return $.Deferred(function (deferred) {
 
 
@@ -571,8 +581,6 @@ function sendFiles(files,url,scb,fcb,pcb) {
 }
 
 
-$summernote.summernote('library.setUploadUrl','http://127.0.0.1:3001/uploadimage')
-$summernote.summernote('library.setRetriveUrl','http://127.0.0.1:3001/getresources')
 // $summernote.summernote('library.showLibrary')
 
 

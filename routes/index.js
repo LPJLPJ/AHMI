@@ -37,6 +37,9 @@ var userVerify = require('./userVerify');
 //password
 var findPassword = require('./findPassword');
 
+//blog
+var BlogRoute = require('./routeBlog');
+
 // router.route('/userlist')
 // .get(function(req, res){
 // 	res.render('client/index.html')
@@ -271,6 +274,32 @@ router.route('/delete-user')
 
     })
 });
+
+
+//blog
+router.route('/blog/manage')
+    .get(BlogRoute.getManage)
+router.route('/blog/editor')
+    .get(BlogRoute.getEditor)
+
+router.route('/blog/createblog')
+    .get(BlogRoute.createBlog)
+router.route('/blog/savedraft')
+    .post(BlogRoute.saveDrat)
+
+router.route('/blog/getlastmodified')
+    .get(BlogRoute.getLastModified)
+
+router.route('/blog/getallblogs')
+    .get(BlogRoute.getAllBlogs)
+
+//blog library
+router.route('/blog/resources/upload')
+    .post(BlogRoute.uploadImage)
+router.route('/blog/resources/getresources')
+    .get(BlogRoute.getResources)
+router.route('/blog/resources/deleteresource')
+    .delete(BlogRoute.deleteResource)
 
 //router.route('*')
 //    .all(function (req,res,next) {
