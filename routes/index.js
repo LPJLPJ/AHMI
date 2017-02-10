@@ -299,6 +299,9 @@ router.route('/blog/getallblogs')
 router.route('/blog/getallpublishedblogs')
     .get(BlogRoute.getAllPublishedBlogs)
 
+router.route('/blog/deleteblog')
+    .delete(BlogRoute.deleteBlog)
+
 
 //blog library
 router.route('/blog/resources/upload')

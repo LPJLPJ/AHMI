@@ -191,9 +191,14 @@ function deleteBatchResources(files,cb) {
             cb && cb(errFiles)
         }
     }
-    files.map(function (_file) {
-        deleteTargetResource(_file,deleteHandler)
-    })
+    if (count>0){
+        files.map(function (_file) {
+            deleteTargetResource(_file,deleteHandler)
+        })
+    }else{
+        cb &&cb(errFiles)
+    }
+
 }
 function deleteTargetResource(fileName,cb) {
     if (fileName) {
