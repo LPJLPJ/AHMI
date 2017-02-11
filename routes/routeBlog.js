@@ -108,9 +108,13 @@ BlogRoute.getAllBlogs = function (req, res) {
                 errHandler(res,500,'find error')
             }else{
                 var results = blogs.map(function (blog) {
+                    var backTitle=""
+                    if (blog.drafts&&blog.drafts.length){
+                        backTitle = blog.drafts[0].title;
+                    }
                     return {
                         _id: blog._id,
-                        title: blog.title,
+                        title: blog.title||backTitle,
                         desp: blog.desp,
                         keywords: blog.keywords,
                         digest: blog.digest,
