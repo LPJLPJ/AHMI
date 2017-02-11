@@ -3030,7 +3030,10 @@ ideServices
                 selectObj.level.info.arrange=_option.arrange;
                 var arg={
                     arrange:_option.arrange,
-                    callback:_successCallback
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
                 };
                 selectObj.target.fire('changeArrange',arg);
 
@@ -3600,6 +3603,16 @@ ideServices
                     callback:_successCallback
                 };
                 selectObj.target.fire('changeDashboardMode',arg);
+            };
+            this.changeVideoSource=function(_option,_successCallback){
+                var VideoSource = _option.source;
+                var selectObj= _self.getCurrentSelectObject();
+                selectObj.level.info.source=VideoSource;
+            };
+            this.changeVideoScale=function(_option,_successCallback){
+                var VideoScale = _option.scale;
+                var selectObj= _self.getCurrentSelectObject();
+                selectObj.level.info.scale=VideoScale;
             };
             //改变仪表盘的转动方向
             this.ChangeAttributeDashboardClockwise=function(_option,_successCallback){

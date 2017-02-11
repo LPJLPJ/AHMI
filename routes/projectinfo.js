@@ -135,6 +135,7 @@ projectRoute.updateProject = function (req,res) {
                 //err
                 console.log(err)
                 res.end(err)
+                return
             }
             if (project){
                 //update project
@@ -148,6 +149,7 @@ projectRoute.updateProject = function (req,res) {
                     if (err){
                         console.log(err)
                         res.end('save error')
+                        return
                     }
                     res.end('ok')
                 })

@@ -214,6 +214,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterInitValue:enterInitValue,
                 enterArrange:enterArrange
             },
+            //视频
+            video:{
+                source:[
+                    {id:'CVBS',name:'CVBS'},
+                    {id:'HDMI',name:'HDMI'},
+                ],
+                scale:[
+                    {id:'0',name:'非原比例'},
+                    {id:'1',name:'原比例'},
+                ],
+                changeVideoSource:changeVideoSource,
+                changeVideoScale:changeVideoScale
+            },
             group:{
                 align:[
                     {id:'top',name:'上对齐'},
@@ -467,6 +480,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MySlideBlock:
                     $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
+                    break;
+                case Type.MyVideo:
+                    $scope.component.video.sourceId = $scope.component.object.level.info.source;
+                    //$scope.component.video.scaleId = $scope.component.object.level.info.scale;
                     break;
             }
 
@@ -2044,34 +2061,38 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function enterNumValue(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.info.numValue==initObject.level.info.numValue){
+            var numValue = $scope.component.object.level.info.numValue;
+            var minValue = $scope.component.object.level.info.minValue;
+            var maxValue = $scope.component.object.level.info.maxValue;
+            var numValueStr = numValue.toString();
+            if(numValue==initObject.level.info.numValue){
                 return;
             }
-            if($scope.component.object.level.info.numValue<$scope.component.object.level.info.minValue||$scope.component.object.level.info.numValue>$scope.component.object.level.info.maxValue||isNaN($scope.component.object.level.info.numValue)){
+            if(numValue<minValue||numValue>maxValue||isNaN(numValue)||(numValueStr.indexOf('.')!=-1)){
                 toastr.warning('输入不合法');
                 restore();
                 return;
             }
             //判断输入的数字的小数位数是否超出
-            var tempNumStr = $scope.component.object.level.info.numValue.toString();
-            if(tempNumStr.indexOf('.')!=-1){
-                var tempDecimal = tempNumStr.split(".")[1];
-                //console.log('tempDecimal',tempDecimal);
-                if(tempDecimal.length>$scope.component.object.level.info.decimalCount){
-                    toastr.warning('小数位数超出');
-                    restore();
-                    return;
-                }
-            }
+            // var tempNumStr = $scope.component.object.level.info.numValue.toString();
+            // if(tempNumStr.indexOf('.')!=-1){
+            //     var tempDecimal = tempNumStr.split(".")[1];
+            //     //console.log('tempDecimal',tempDecimal);
+            //     if(tempDecimal.length>$scope.component.object.level.info.decimalCount){
+            //         toastr.warning('小数位数超出');
+            //         restore();
+            //         return;
+            //     }
+            // }
 
             //判断输入的数字是否小于可以显示的最大值(4位数字，不大于10000)
             var tempNumOfDigits = $scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.decimalCount;
             var maxValue = Math.pow(10,tempNumOfDigits);
             //console.log('maxValue',maxValue);
-            if($scope.component.object.level.info.numValue<maxValue){
+            if(numValue<=maxValue){
 
                 var option={
-                    numValue:$scope.component.object.level.info.numValue,
+                    numValue:numValue,
                 };
 
                 ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
@@ -2361,6 +2382,30 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var g = _.random(64, 255);
         var b = _.random(64, 255);
         return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
+    }
+    function changeVideoSource(e){
+        var selectVideoSource=$scope.component.video.sourceId;
+        var option = {
+            source:selectVideoSource
+        }
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.changeVideoSource(option, function (oldOperate) {
+           $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function changeVideoScale(e){
+        // if (selectObj.type==Type.scare){
+        var selectVideoScale=$scope.component.video.scaleId;
+        // }else {
+        //     return;
+        // }
+        var option = {
+            scale:selectVideoScale
+        }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.changeVideoScale(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
     }
 
 }]);
