@@ -20,6 +20,10 @@ BlogRoute.getManage = function (req, res) {
     res.render('blog/manage.html')
 }
 
+BlogRoute.getBlog = function (req, res) {
+    res.render('blog/post.html')
+}
+
 BlogRoute.getAllPublishedBlogs = function (req, res) {
     BlogModel.fetchPublishedBatch(0,0,function (err,_blogs) {
         if (err){
@@ -31,6 +35,7 @@ BlogRoute.getAllPublishedBlogs = function (req, res) {
                 var info = {}
                 info._id = _blog._id;
                 info.authorId = _blog.authorId;
+                info.title = _blog.title;
                 info.desp = _blog.desp;
                 info.keywords = _blog.keywords;
                 info.digest = _blog.digest;
@@ -178,6 +183,42 @@ BlogRoute.deleteBlog = function (req, res) {
         errHandler(res,500,'not login')
     }
 }
+
+BlogRoute.unpublishBlog = function (req, res) {
+    var user = req.session.user
+    if (user && user.username && user.id){
+        var blogId = req.body.blogId;
+
+        if (!blogId){
+            errHandler(res,500,'invalid blogId')
+        }else{
+
+            BlogModel.findById(blogId,function (err,_blog) {
+                if (err){
+                    errHandler(res,500,'blog not found')
+                }else{
+                    if (_blog.authorId != user.id){
+                        errHandler(res,500,'invalid user')
+                    }else{
+                        //valid
+                        //delete resources
+                        _blog.publish = false;
+                        _blog.save(function (err) {
+                            if (err){
+                                errHandler(res,500,'save error')
+                            }else{
+                                res.end('ok')
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    }else{
+        errHandler(res,500,'not login')
+    }
+}
+
 function deleteBatchResources(files,cb) {
     var count = files.length;
     var errFiles = []
@@ -329,6 +370,34 @@ BlogRoute.getLastModified = function (req, res) {
 
 }
 
+BlogRoute.getBlogData = function (req, res) {
+
+    var blogId = req.query.blogId
+    if (blogId){
+        BlogModel.findById(blogId,function (err,_blog) {
+            if (err){
+                errHandler(res,500,'blog not found')
+            }else{
+                if (_blog.publish){
+                    var result = {}
+                    result.title = _blog.title;
+                    result.authorId =_blog.authorId;
+                    result.desp = _blog.desp;
+                    result.keywords = _blog.keywords;
+                    result.content = _blog.content;
+                    res.end(JSON.stringify(result))
+                }else{
+                    errHandler(res,500,'not published')
+                }
+
+            }
+        })
+    }else{
+        errHandler(res,500,'invalid blogId')
+    }
+
+
+}
 
 
 BlogRoute.getResources = function (req,res) {

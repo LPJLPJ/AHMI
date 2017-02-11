@@ -28,8 +28,11 @@ function renderBlogs(blogs) {
 }
 
 function renderSingleBlog(blog) {
+    // console.log(blog)
+    var showHide = blog.publish?"":"hidden";
     var result =  '<li class="blog-list-li" data-id="'+blog._id+'">'+'<div class="blog-panel"><div class="blog-panel-title">'+(blog.title||"")+'</div><div class="blog-panel-keywords">'+(blog.keywords||"")+'</div><div class="blog-panel-digest">'+(blog.digest||"")+
         '</div></dvi><div class="blog-panel-button"><span class="dropdown-toggle glyphicon glyphicon-menu-down" data-toggle="dropdown"></span><ul class="dropdown-menu dropdown-menu-right"><li><a class="blog-panel-menuitem blog-panel-menuitem-edit">Edit</a></li>' +
+        '<li '+(showHide)+'><a class="blog-panel-menuitem blog-panel-menuitem-unpublish">UnPublish</a></li>'+
         '<li><a class="blog-panel-menuitem blog-panel-menuitem-delete">Delete</a></li></ul></div>'+'</li>'
     return result;
 }
@@ -44,6 +47,25 @@ function bindEvent() {
     $('.blog-list').on('click','.blog-panel-menuitem-edit',function (e) {
         var id=$(e.target).closest('.blog-list-li').data('id')
         window.open('/blog/editor?id='+id)
+    })
+
+    $('.blog-list').on('click','.blog-panel-menuitem-unpublish',function (e) {
+        var curLi = $(e.target).closest('.blog-list-li')
+        var id=curLi.data('id')
+        $.ajax({
+            type:"POST",
+            url:'/blog/unpublish',
+            data:{
+                blogId:id
+            },
+            success:function (msg) {
+                console.log(msg)
+                $(e.target).hide()
+            },
+            error:function (xhr) {
+                console.log(xhr)
+            }
+        })
     })
 
     $('.blog-list').on('click','.blog-panel-menuitem-delete',function (e) {

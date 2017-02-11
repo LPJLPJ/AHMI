@@ -281,6 +281,11 @@ router.route('/blog/manage')
     .get(BlogRoute.getManage)
 router.route('/blog/editor')
     .get(BlogRoute.getEditor)
+router.route('/blog/post')
+    .get(BlogRoute.getBlog)
+
+router.route('/blog/getblogdata')
+    .get(BlogRoute.getBlogData)
 
 router.route('/blog/createblog')
     .get(BlogRoute.createBlog)
@@ -298,7 +303,8 @@ router.route('/blog/getallblogs')
 
 router.route('/blog/getallpublishedblogs')
     .get(BlogRoute.getAllPublishedBlogs)
-
+router.route('/blog/unpublish')
+    .post(BlogRoute.unpublishBlog)
 router.route('/blog/deleteblog')
     .delete(BlogRoute.deleteBlog)
 
