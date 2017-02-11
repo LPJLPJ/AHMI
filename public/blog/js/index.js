@@ -48,8 +48,8 @@ function renderSingleBlog(blog) {
 function bindEvent() {
 
     $('.blog-list').on('click','.blog-panel-title',function (e) {
-
-        // window.open('/blog/editor?id='+e.currentTarget.parentNode.parentNode.dataset.id)
+        var id=$(e.target).closest('.blog-list-li').data('id')
+        window.open('/blog/post?id='+id)
     })
 
     $('.blog-list').on('click','.blog-panel-menuitem-edit',function (e) {

@@ -278,8 +278,10 @@ router.route('/delete-user')
 
 //blog
 router.route('/blog/manage')
+    .all(UserControl.admin)
     .get(BlogRoute.getManage)
 router.route('/blog/editor')
+    .all(UserControl.admin)
     .get(BlogRoute.getEditor)
 router.route('/blog/post')
     .get(BlogRoute.getBlog)
@@ -288,11 +290,14 @@ router.route('/blog/getblogdata')
     .get(BlogRoute.getBlogData)
 
 router.route('/blog/createblog')
+    .all(UserControl.admin)
     .get(BlogRoute.createBlog)
 router.route('/blog/savedraft')
+    .all(UserControl.admin)
     .post(BlogRoute.saveDrat)
 
 router.route('/blog/publish')
+    .all(UserControl.admin)
     .post(BlogRoute.publishBlog)
 
 router.route('/blog/getlastmodified')
@@ -304,8 +309,10 @@ router.route('/blog/getallblogs')
 router.route('/blog/getallpublishedblogs')
     .get(BlogRoute.getAllPublishedBlogs)
 router.route('/blog/unpublish')
+    .all(UserControl.admin)
     .post(BlogRoute.unpublishBlog)
 router.route('/blog/deleteblog')
+    .all(UserControl.admin)
     .delete(BlogRoute.deleteBlog)
 
 
