@@ -456,6 +456,7 @@ $summernote.summernote({
     buttons:{
         lib:LibraryButton
     },
+    height:400,
     lang:'zh-CN',
     popover: {
       image: [

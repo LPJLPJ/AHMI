@@ -10,6 +10,31 @@ var $keywords = $('#keyword')
 var $category = $('#category')
 var $summernote = $('#summernote')
 var currentId = null;
+var editorStatus={}
+editorStatus.types = {
+    normal:'normal',
+    success:'success',
+    warning:'warning',
+    error:'error'
+}
+editorStatus.init = function (elem) {
+    this.elem = $(elem)
+}
+editorStatus.show = function (msg,type) {
+    this.elem.text(msg);
+    if (!type){
+        type = this.types.normal
+    }
+    this.changeType(type)
+}
+editorStatus.changeType = function (type) {
+    if (type){
+        this.elem.addClass('editor-status-'+type)
+    }
+}
+editorStatus.clear = function (msg,type) {
+    this.show("")
+}
 function exportContent() {
     return $content.html()
 }
@@ -73,7 +98,7 @@ function saveNewDraft(newDraft,scb,fcb) {
 }
 
 function publishToServer(newDraft,scb,fcb) {
-    console.log(newDraft)
+
     $.ajax({
         type:'POST',
         data:newDraft,
@@ -87,14 +112,25 @@ function publishToServer(newDraft,scb,fcb) {
     })
 }
 
+function toggleSubmitButtons(op) {
+    op = !(!!op)
+    $save.attr('disabled',op)
+    $pubish.attr('disabled',op)
+}
+
 $save.click(function (e) {
     e.preventDefault();
     var newDraft = generateDraft()
     newDraft.blogId = currentId
+    toggleSubmitButtons(false);
+    editorStatus.show('保存中...')
     saveNewDraft(newDraft,function (msg) {
-        console.log(msg)
+        editorStatus.show('保存成功','success')
+        toggleSubmitButtons(true)
+
     },function (xhr,status) {
-        console.log(xhr)
+        editorStatus.show('保存失败','error')
+        toggleSubmitButtons(true)
     })
 })
 
@@ -102,10 +138,14 @@ $pubish.click(function (e) {
     e.preventDefault();
     var newBlog = generateArticle()
     newBlog.blogId = currentId
+    toggleSubmitButtons(false)
+    editorStatus.show('发布中...')
     publishToServer(newBlog,function (msg) {
-        console.log('success',msg)
+        editorStatus.show('发布成功','success')
+        toggleSubmitButtons(true)
     },function (xhr, status) {
-        console.log('fail',xhr)
+        editorStatus.show('发布失败','error')
+        toggleSubmitButtons(true)
     })
 })
 
@@ -128,6 +168,7 @@ function updateBlogFromData(data) {
 }
 function loadFromServer() {
     if (currentId){
+        editorStatus.show("载入中...")
         $.ajax({
             type:'GET',
             url:"/blog/getlastmodified",
@@ -135,11 +176,11 @@ function loadFromServer() {
                 blogId:currentId
             },
             success:function (msg) {
-                console.log(msg)
                 updateBlogFromData(JSON.parse(msg))
+                editorStatus.show("载入成功")
             },
             error:function (xhr) {
-
+                editorStatus.show("载入失败",'error')
             }
         })
     }
@@ -164,6 +205,8 @@ function init() {
     $summernote.summernote('library.setRetriveUrl',urlPrefix+'/blog/resources/getresources?blogId='+currentId)
     $summernote.summernote('library.setResourceUrl',urlPrefix+'/public/blog/media')
     $summernote.summernote('library.setDeleteUrl',urlPrefix+'/blog/resources/deleteresource?blogId='+currentId)
+    //init status
+    editorStatus.init('.editor-status')
 }
 
 init()

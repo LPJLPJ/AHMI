@@ -65,14 +65,16 @@ function bindEvent() {
     })
 
     $('#create').click(function (e) {
+        var newWindow = window.open("","_blank");
         $.ajax({
             type:"GET",
             url:'/blog/createblog',
             success:function (msg) {
                 console.log(msg)
-            },
+                newWindow.location.href = '/blog/editor?id='+msg;
+            }.bind(this),
             error:function (xhr) {
-
+                console.log(xhr)
             }
         })
     })

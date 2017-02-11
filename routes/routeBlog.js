@@ -291,35 +291,41 @@ BlogRoute.saveDrat = function (req, res) {
 }
 
 BlogRoute.getLastModified = function (req, res) {
-    var blogId = req.query.blogId
-    if (blogId){
-        BlogModel.findById(blogId,function (err,_blog) {
-            if (err){
-                errHandler(res,500,'blog not found')
-            }else{
-                if (_blog.modifing){
-                    //return draft
-                    if (_blog.drafts.length){
-                        res.end(JSON.stringify(_blog.drafts[0]))
+    var user = req.session.user
+    if (user && user.username && user.id){
+        var blogId = req.query.blogId
+        if (blogId){
+            BlogModel.findById(blogId,function (err,_blog) {
+                if (err){
+                    errHandler(res,500,'blog not found')
+                }else{
+                    if (_blog.modifing){
+                        //return draft
+                        if (_blog.drafts.length){
+                            res.end(JSON.stringify(_blog.drafts[0]))
+                        }else{
+                            res.end(JSON.stringify({}))
+                        }
+
                     }else{
-                        res.end(JSON.stringify({}))
+                        //return blog
+                        var result = {}
+                        result.title = _blog.title;
+                        result.desp = _blog.desp;
+                        result.keywords = _blog.keywords;
+                        result.content = _blog.content;
+                        res.end(JSON.stringify(result))
                     }
 
-                }else{
-                    //return blog
-                    var result = {}
-                    result.title = _blog.title;
-                    result.desp = _blog.desp;
-                    result.keywords = _blog.keywords;
-                    result.content = _blog.content;
-                    res.end(JSON.stringify(result))
                 }
-
-            }
-        })
+            })
+        }else{
+            res.end("new blog")
+        }
     }else{
-        res.end("new blog")
+        errHandler(res,500,'not login')
     }
+
 
 }
 
