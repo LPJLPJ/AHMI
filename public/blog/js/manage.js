@@ -69,21 +69,33 @@ function bindEvent() {
     })
 
     $('.blog-list').on('click','.blog-panel-menuitem-delete',function (e) {
+        var $deletemodal = $('#deletemodal');
+        $('.modal-body').html("确认删除吗？")
+        $deletemodal.modal('show')
         var curLi = $(e.target).closest('.blog-list-li')
-        var id=curLi.data('id')
-        $.ajax({
-            type:"DELETE",
-            url:'/blog/deleteblog',
-            data:{
-                blogId:id
-            },
-            success:function (msg) {
-                curLi.remove()
-            },
-            error:function (xhr) {
-                console.log(xhr)
-            }
+        var deleteHandler = function () {
+            var id=curLi.data('id')
+            $.ajax({
+                type:"DELETE",
+                url:'/blog/deleteblog',
+                data:{
+                    blogId:id
+                },
+                success:function (msg) {
+                    curLi.remove()
+                },
+                error:function (xhr) {
+                    console.log(xhr)
+                }
+            })
+        }
+        $('#modal-confirm').on('click',deleteHandler)
+
+        $deletemodal.on('hide.bs.modal',function () {
+            $('#modal-confirm').off('#modal-confirm','click',deleteHandler)
         })
+
+
     })
 
     $('#create').click(function (e) {
