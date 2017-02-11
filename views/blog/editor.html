@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <title>Blog Editor</title>
+    <script type="text/javascript" src="../../public/blog/libs/clipboard/clipboard.min.js"></script>
+    <script type="text/javascript" src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.css">
+
+    <script type="text/javascript" src ="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.js"></script>
+    <!-- <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet"> -->
+    <link rel="stylesheet" type="text/css" href="../../public/blog/libs/summernote/summernote.css">
+    <link rel="stylesheet" type="text/css" href="../../public/blog/css/editor.css">
+    <!-- <script  src="./lib/summernote/summernote.js"></script> -->
+    <script type="text/javascript" src="../../public/blog/libs/summernote.js"></script>
+    <script type="text/javascript" src="../../public/blog/libs/summernote/lang/summernote-zh-CN.js"></script>
+</head>
+<body>
+
+    <header>
+        <% include header.html %>
+    </header>
+    <div class="main-container row">
+        <div class="editor-info-wrapper col-lg-3 ">
+            <div class="editor-info">
+                <form class="form">
+                    <div class="form-group">
+                        <label class="">Title:</label><input id="title" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="">Description:</label><input id="desp" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="">Keywords:</label><input id="keyword" class="form-control" placeholder="separate by ;" />
+                    </div>
+                    <div class="form-group">
+                        <label class="">Category:</label><select id="category" class="form-control"><option>hah</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="">&nbsp;</label>
+                        <div class="submit-wrapper">
+                            <button id="publish" class="btn btn-default" >Publish</button>
+                            <button id="save" class="btn btn-default" >Save</button>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+
+                        <div class="editor-status-wrapper">
+                            <span class="editor-status"></span>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-9 editor-wrapper">
+
+            <div id="summernote">Hello Blog</div>
+        </div>
+    </div>
+    <footer>
+        <% include footer.html %>
+    </footer>
+    <script src="../../public/blog/js/customSN.js"></script>
+    <script src="../../public/blog/js/blogEditor.js"></script>
+</body>
+</html>

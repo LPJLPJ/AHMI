@@ -29,7 +29,7 @@ module.exports = function (req, res) {
             });
             CANProjectModel.findByUser(_user.id,function(err,CANProjects){
                 if(err) {
-                    res.status(500), end('error');
+                    res.status(500).end('error');
                 }else{
                     CANProjects.reverse();
                     var processedCANProjects = _.cloneDeep(CANProjects).map(function(CANProject){

@@ -1,0 +1,43 @@
+.editor-wrapper{
+    padding:1em;
+}
+
+.editor-info-wrapper{
+    padding:2em;
+}
+
+.submit-wrapper{
+    display:-webkit-box;
+    display:-webkit-flex;
+    display:-ms-flexbox;
+    display:flex;
+    -webkit-box-pack:justify;
+    -webkit-justify-content:space-between;
+    -ms-flex-pack:justify;
+    justify-content:space-between;
+}
+
+.editor-status-wrapper{
+    padding:0.5em;
+    background-color:#f8f8f8;
+    border: 1px solid #dee8ef;
+    border-radius: 5px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, .08);
+}
+.editor-status{
+    word-break: break-all;
+}
+.editor-status-normal{
+    color:black;
+}
+
+.editor-status-success{
+    color:green;
+}
+
+.editor-status-warning{
+    color:yellow;
+}
+.editor-status-error{
+    color:red;
+}
