@@ -52,3 +52,10 @@ add:
 update:
     1. keep pace with v1.8.5_test
 fix:
+
+v1.8.7
+add:
+    1. blog service
+update:
+    1. video widget
+fix:
