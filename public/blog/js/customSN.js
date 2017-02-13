@@ -188,7 +188,7 @@ var Library = function (context) {
             contentType: false,
             processData: false
         })
-        .done(function (msg) {
+        .success(function (msg) {
             scb && scb(msg)
         })
         .error(function (xhr) {
@@ -237,7 +237,7 @@ var Library = function (context) {
             url:deleteUrl,
             data:{fileName:fileName}
         })
-        .done(function (msg) {
+        .success(function (msg) {
             console.log(msg)
             cb && cb()
         })
@@ -357,7 +357,7 @@ var Library = function (context) {
             type:"GET",
             url:url
         })
-        .done(function (msg) {
+        .success(function (msg) {
             //all files
             var files = JSON.parse(msg);
             files = files.filter(function (file) {
@@ -471,14 +471,15 @@ $summernote.summernote({
     prettifyHtml:true,
     callbacks:{
         onImageUpload:function (files) {
-            var url = "http://127.0.0.1:3001/uploadimage"
+            var currentId = parseQuery().id
+            var url = '/blog/resources/upload?blogId='+currentId
             $summernote.summernote('progressBar.showProgress')
             sendFiles(files,url,function (msg) {
                 //close dialog
                 $summernote.summernote('progressBar.hideProgress')
                 $summernote.summernote('restoreRange')
 
-                var baseUrl = 'http://127.0.0.1:3001/public/images/'
+                var baseUrl = '/public/blog/media/'
                 for (var i=0;i<files.length;i++){
                     insertSingleImage($summernote,baseUrl+files[i].name,files[i].name)
                 }
@@ -491,6 +492,17 @@ $summernote.summernote({
     }
 
 });
+
+function parseQuery() {
+    var query = window.location.search.slice(1)
+    var querys = query.split('&')
+    var results = {}
+    for (var i=0;i<querys.length;i++){
+        var pair = querys[i].split('=')
+        results[pair[0]] = pair[1]
+    }
+    return results;
+}
 
 
 
@@ -531,7 +543,7 @@ function sendFile(file,url,scb,fcb,pcb) {
         cache: false,
         contentType: false,
         processData: false
-    }).done(function (msg) {
+    }).success(function (msg) {
         scb && scb(msg)
     }).error(function (xhr) {
         fcb && fcb(xhr)
@@ -573,7 +585,7 @@ function sendFiles(files,url,scb,fcb,pcb) {
         contentType: false,
         processData: false
     })
-    .done(function (msg) {
+    .success(function (msg) {
         scb && scb(msg)
     })
     .error(function (xhr) {
