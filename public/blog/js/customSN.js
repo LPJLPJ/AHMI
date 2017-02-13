@@ -188,10 +188,10 @@ var Library = function (context) {
             contentType: false,
             processData: false
         })
-        .success(function (msg) {
+        .done(function (msg) {
             scb && scb(msg)
         })
-        .error(function (xhr) {
+        .fail(function (xhr) {
             fcb && fcb(xhr)
         })
     }
@@ -237,7 +237,7 @@ var Library = function (context) {
             url:deleteUrl,
             data:{fileName:fileName}
         })
-        .success(function (msg) {
+        .done(function (msg) {
             console.log(msg)
             cb && cb()
         })
@@ -356,8 +356,7 @@ var Library = function (context) {
         $.ajax({
             type:"GET",
             url:url
-        })
-        .success(function (msg) {
+        }).done(function (msg) {
             //all files
             var files = JSON.parse(msg);
             files = files.filter(function (file) {
@@ -369,7 +368,7 @@ var Library = function (context) {
             curFiles = files
             self.insertFiles(files)
         })
-        .error(function (xhr,status) {
+        .fail(function (xhr,status) {
             console.log('failed')
         })
     }
@@ -543,9 +542,9 @@ function sendFile(file,url,scb,fcb,pcb) {
         cache: false,
         contentType: false,
         processData: false
-    }).success(function (msg) {
+    }).done(function (msg) {
         scb && scb(msg)
-    }).error(function (xhr) {
+    }).fail(function (xhr) {
         fcb && fcb(xhr)
     })
 }
@@ -585,10 +584,10 @@ function sendFiles(files,url,scb,fcb,pcb) {
         contentType: false,
         processData: false
     })
-    .success(function (msg) {
+    .done(function (msg) {
         scb && scb(msg)
     })
-    .error(function (xhr) {
+    .fail(function (xhr) {
         fcb && fcb(xhr)
     })
 }

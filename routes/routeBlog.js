@@ -428,11 +428,18 @@ BlogRoute.deleteResource = function (req, res) {
                 if (err){
                     errHandler(res,500,'invalid blogId')
                 }else{
-                    _.pull(_blog.resources,fileName)
+                    for(var i=0;i<_blog.resources.length;i++){
+                        if (_blog.resources[i]==fileName){
+                            _blog.resources.splice(i,1);
+                            break;
+                        }
+                    }
+                    // console.log(_blog)
                     _blog.save(function (err) {
                         if (err) {
                             errHandler(res, 500, 'save error')
                         }else{
+                            console.log(_blog._id,_blog.resources)
                             res.end('ok')
                         }
                     })
