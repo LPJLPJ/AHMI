@@ -214,6 +214,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterInitValue:enterInitValue,
                 enterArrange:enterArrange
             },
+            //视频
+            video:{
+                source:[
+                    {id:'CVBS',name:'CVBS'},
+                    {id:'HDMI',name:'HDMI'},
+                ],
+                scale:[
+                    {id:'0',name:'非原比例'},
+                    {id:'1',name:'原比例'},
+                ],
+                changeVideoSource:changeVideoSource,
+                changeVideoScale:changeVideoScale
+            },
             group:{
                 align:[
                     {id:'top',name:'上对齐'},
@@ -467,6 +480,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MySlideBlock:
                     $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
+                    break;
+                case Type.MyVideo:
+                    $scope.component.video.sourceId = $scope.component.object.level.info.source;
+                    //$scope.component.video.scaleId = $scope.component.object.level.info.scale;
                     break;
             }
 
@@ -2365,6 +2382,30 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var g = _.random(64, 255);
         var b = _.random(64, 255);
         return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
+    }
+    function changeVideoSource(e){
+        var selectVideoSource=$scope.component.video.sourceId;
+        var option = {
+            source:selectVideoSource
+        }
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.changeVideoSource(option, function (oldOperate) {
+           $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
+    }
+    function changeVideoScale(e){
+        // if (selectObj.type==Type.scare){
+        var selectVideoScale=$scope.component.video.scaleId;
+        // }else {
+        //     return;
+        // }
+        var option = {
+            scale:selectVideoScale
+        }
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.changeVideoScale(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
     }
 
 }]);
