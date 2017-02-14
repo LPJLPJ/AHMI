@@ -13,7 +13,6 @@
     <script src="../../public/login/assets/js/ejs_production.js"></script>
     <script src="../../public/login/assets/js/personalProject.js"></script>
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
-    <script src="../../public/nw/menubar.js"></script>
 </head>
 <body>
     <div class="header">
@@ -162,27 +161,6 @@
                 </li>
 
 
-                <% for(var i=0;i<projects.length;i++){ %>
-                <li data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel">
-                         <div class="img">
-                             <i class="projectdelete iconfont">&#xe607;</i>
-                             <a href="#"><img src=<%= projects[i].thumbnail||"../../public/login/assets/img/pro_1.png" %> /></a>
-                             <!--<div class="img_bot">-->
-                                 <!--<div class="img_bg">haha</div>-->
-                                 <!--<div class="img_bot_test">-->
-                                     <!--<a href="#">编辑</a>-->
-                                     <!--<a href="#">预览</a>-->
-                                 <!--</div>-->
-                             <!--</div>-->
-                         </div>
-
-                         <p class="text projectinfo" data-toggle="modal" data-target="#myModal">
-                             <span><%= projects[i].projectInfo.name %></span>
-                             <span hidden class="day"><%= projects[i].projectInfo.lastModifiedTime %></span>
-                         </p>
-                 </li>
-                <% } %>
-
             </ul>
         </div>
         <div class="main">
@@ -223,20 +201,15 @@
                         </a>
                         <p class="text">创建项目</p>
                     </li>
-                    <% for(var i=0;i<CANProjects.length;i++){ %>
-                    <li data-project='<%= JSON.stringify(CANProjects[i].CANProjectInfo) %>'  class="CANProjectPanel">
-                        <div class="img">
-                            <i class="CANProjectdelete iconfont">&#xe607;</i>
-                            <a href="#"><img src="../../public/login/assets/img/pro_2.png"/></a>
-                        </div>
-
-                        <p class="text projectinfo" data-toggle="modal" data-target="#myCANModal">
-                            <span><%= CANProjects[i].CANProjectInfo.name %></span>
-                            <span hidden class="day"><%= CANProjects[i].CANProjectInfo.lastModifiedTime %></span>
-                        </p>
-                    </li>
-                    <% } %>
+              
                 </ul>
+            </div>
+        </div>`
+    <div id="updater_wrapper">
+        <div class="displayInfo">
+            <p id="updateInfoText"></p>
+            <div id="myprogressBackground">
+                <div id="myprogress"></div>
             </div>
         </div>
     </div>
@@ -259,4 +232,5 @@
 </body>
 <script src="../../public/general/js/versionTag.js"></script>
 <script src="../../public/general/js/browserCheck.js"></script>
+<script src="../../public/nw/menubar.js"></script>
 </html>

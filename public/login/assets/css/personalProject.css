@@ -37,7 +37,7 @@ body{
 }
 .nav ul li a{
     color:#fff;
-    font-family: "微软雅黑";
+    font-family: "微软雅黑",serif ;
     font-size: 14px;
     font-weight: bold;
 }
@@ -67,7 +67,6 @@ body{
 .menu a{
     display: inline-block;
     font-weight: 600;
-    color:#000;
     font-size: 13px;
     color:#fff;
     padding-left: -10px;
@@ -82,7 +81,7 @@ body{
 .top{
     height:50px;
     line-height: 65px;
-    font-family: "微软雅黑";
+    font-family: "微软雅黑",serif;
     font-size: 18px;
     border-bottom: 1px solid #ccc;
 }
@@ -285,4 +284,44 @@ body{
 
 .header_main_logo a img{
     max-height:40px;
+}
+
+#updater_wrapper {
+    position:absolute;
+    min-width:1050px;
+    min-height:660px;
+    height:100%;
+    width:100%;
+    z-index: 999;
+    top:0;
+    bottom:0;
+    overflow: auto;
+    /*background-color: rgba(0,0,0,0.6);*/
+    /*edit by lixiang*/
+    background-color: rgba(15,56,76,0.9);
+    display: none;
+}
+
+
+
+#updater_wrapper .displayInfo{
+    position: fixed;
+    top:48%;
+    left:25%;
+}
+
+#myprogressBackground{
+    width:400px;
+    height: 20px;
+    background-color:#e0e0e0;
+}
+
+#myprogress{
+    width: 35%;
+    height: 100%;
+    background-color:#00bfff;
+}
+
+#updateInfoText{
+    color:#ffffff;
 }
