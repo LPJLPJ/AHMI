@@ -2354,7 +2354,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.numOfDigits=level.info.numOfDigits;
             this.decimalCount=level.info.decimalCount;
             this.symbolMode=level.info.symbolMode;
-            this.fontZeroMode=level.info.frontZeroMode;
+            this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
             if(this.maxFontWidth===undefined){
                 //维护旧的数字控件
