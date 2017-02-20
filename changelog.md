@@ -43,6 +43,7 @@ fix:
 
 v1.8.6_test
 add:
+    1. support update local IDE
 update:
     1. simulator now draw synchronously
 fix:
