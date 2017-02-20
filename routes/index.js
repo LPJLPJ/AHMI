@@ -37,6 +37,16 @@ var userVerify = require('./userVerify');
 //password
 var findPassword = require('./findPassword');
 
+//update local
+var updateLocal = require('./updateLocal');
+
+
+//update local IDE
+router.route('/checkUpdate/manifest.json')
+    .get(updateLocal.getCurrentVer);
+router.route('/releases/updapp/win/updFiles.zip')
+    .get(updateLocal.downloadNewVerZip);
+
 //blog
 var BlogRoute = require('./routeBlog');
 
@@ -62,13 +72,13 @@ router.route('/admin/manage/*')
     .all(UserControl.admin);
 
 router.route('/admin/manage/space')
-    .get(route_admin.getManageSpace)
+    .get(route_admin.getManageSpace);
 
 router.route('/admin/manage/users')
-    .get(route_admin.getUsers)
+    .get(route_admin.getUsers);
 
 router.route('/admin/manage/changeusertype')
-    .post(route_admin.changeUserType)
+    .post(route_admin.changeUserType);
 
 //user control
 //signup
@@ -227,7 +237,7 @@ router.route('/mail/sendverifymail')
     .post(sendMail.sendVerifyMail);
 //
 router.route('/mail/sendpasswordmail')
-    .get(sendMail.sendPasswordMail)
+    .get(sendMail.sendPasswordMail);
 
 //router.route('/mail/test')
 //    .get(sendMail.sendTestMail)
