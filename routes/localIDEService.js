@@ -2,11 +2,11 @@
  * Created by lixiang on 2017/2/8.
  */
 
-var updateLocal = {};
+var localIDEService = {};
 var fs = require('fs');
 var path = require('path');
 
-updateLocal.getCurrentVer = function(req,res){
+localIDEService.getCurrentVer = function(req,res){
     var manifestPath = path.join(__dirname,'../manifest.json');
     var manifest = require(manifestPath);
     console.log('manifest.version',manifest.version);
@@ -14,9 +14,9 @@ updateLocal.getCurrentVer = function(req,res){
     res.end(manifestJson);
 };
 
-updateLocal.downloadNewVerZip = function(req,res){
+localIDEService.downloadNewVerZip = function(req,res){
     //console.log('req',req.path);
-    var updFilesPath = path.join(__dirname,'../releaseUpdate/updFiles.zip');
+    var updFilesPath = path.join(__dirname,'../release/update/updFiles.zip');
     var options = {};
     res.sendFile(updFilesPath,options,function(err){
         if(err){
@@ -27,4 +27,4 @@ updateLocal.downloadNewVerZip = function(req,res){
     })
 };
 
-module.exports = updateLocal;
+module.exports = localIDEService;

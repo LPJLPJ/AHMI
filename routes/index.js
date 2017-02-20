@@ -38,14 +38,14 @@ var userVerify = require('./userVerify');
 var findPassword = require('./findPassword');
 
 //update local
-var updateLocal = require('./updateLocal');
+var localIDEService = require('./localIDEService');
 
 
 //update local IDE
 router.route('/checkUpdate/manifest.json')
-    .get(updateLocal.getCurrentVer);
+    .get(localIDEService.getCurrentVer);
 router.route('/releases/updapp/win/updFiles.zip')
-    .get(updateLocal.downloadNewVerZip);
+    .get(localIDEService.downloadNewVerZip);
 
 //blog
 var BlogRoute = require('./routeBlog');
