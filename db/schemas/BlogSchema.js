@@ -10,6 +10,7 @@ var BlogSchema = new mongoose.Schema({
     desp:String,
     keywords:String,
     digest:String,
+    category:String,
     content:String,
     modifing:{type:Boolean,default:true},
     drafts:[
@@ -17,6 +18,7 @@ var BlogSchema = new mongoose.Schema({
             title:String,
             desp:String,
             keywords:String,
+            category:String,
             content:String
         }
     ],

@@ -38,6 +38,7 @@ BlogRoute.getAllPublishedBlogs = function (req, res) {
                 info.title = _blog.title;
                 info.desp = _blog.desp;
                 info.keywords = _blog.keywords;
+                info.category = _blog.category;
                 info.digest = _blog.digest;
                 info.publishTime = _blog.publishTime;
                 return info
@@ -71,6 +72,7 @@ BlogRoute.publishBlog = function (req,res) {
                         _blog.title = info.title;
                         _blog.desp = info.desp;
                         _blog.keywords = info.keywords;
+                        _blog.category = info.category;
                         _blog.digest = info.digest;
                         _blog.content = content;
                         _blog.modifing = false;
@@ -80,6 +82,7 @@ BlogRoute.publishBlog = function (req,res) {
                                 title:info.title,
                                 desp:info.desp,
                                 keywords:info.keywords,
+                                category:info.category,
                                 content:content
                             }
                         ]
@@ -117,6 +120,7 @@ BlogRoute.getAllBlogs = function (req, res) {
                         title: blog.title||backTitle,
                         desp: blog.desp,
                         keywords: blog.keywords,
+                        category:blog.category,
                         digest: blog.digest,
                         modifing: blog.modifing,
                         publish: blog.publish,
@@ -316,6 +320,7 @@ BlogRoute.saveDrat = function (req, res) {
                                 title:info.title,
                                 desp:info.desp,
                                 keywords:info.keywords,
+                                category:info.category,
                                 content:req.body.content
                             }
                         ]
@@ -358,6 +363,7 @@ BlogRoute.getLastModified = function (req, res) {
                         result.title = _blog.title;
                         result.desp = _blog.desp;
                         result.keywords = _blog.keywords;
+                        result.category = _blog.category;
                         result.content = _blog.content;
                         res.end(JSON.stringify(result))
                     }
@@ -388,6 +394,7 @@ BlogRoute.getBlogData = function (req, res) {
                     result.authorId =_blog.authorId;
                     result.desp = _blog.desp;
                     result.keywords = _blog.keywords;
+                    result.category = _blog.category;
                     result.content = _blog.content;
                     res.end(JSON.stringify(result))
                 }else{
