@@ -10,7 +10,21 @@ var _ = require('lodash')
 var BlogRoute = {}
 var baseUrl = path.join(__dirname,'../public/blog/media')
 BlogRoute.getIndex = function (req, res) {
-    res.render('blog/index.html')
+
+    var page = req.query.page || 1;
+    var singlePageNum = req.query.singlePageNum || 5;
+    BlogModel.countPublished(function (err, c) {
+        if (err){
+            errHandler(res,500,'count err')
+        }else{
+            //valid
+            res.render('blog/index.html',{
+                currentPage:page,
+                totalPage:Math.ceil(c/singlePageNum)
+            })
+        }
+    })
+
 }
 BlogRoute.getEditor = function (req, res) {
     res.render('blog/editor.html')
@@ -25,8 +39,10 @@ BlogRoute.getBlog = function (req, res) {
 }
 
 BlogRoute.getAllPublishedBlogs = function (req, res) {
-    BlogModel.fetchPublishedBatch(0,0,function (err,_blogs) {
-        if (err){
+    var pageBlogNum = req.query.singlePageNum||5;
+    var page = req.query.page||1;
+    BlogModel.fetchPublishedBatch(pageBlogNum*(page-1),pageBlogNum,function (_err,_blogs) {
+        if (_err){
             errHandler(res,500,'fetch failed')
         }else{
             //get _blogs
@@ -446,7 +462,6 @@ BlogRoute.deleteResource = function (req, res) {
                         if (err) {
                             errHandler(res, 500, 'save error')
                         }else{
-                            console.log(_blog._id,_blog.resources)
                             res.end('ok')
                         }
                     })
