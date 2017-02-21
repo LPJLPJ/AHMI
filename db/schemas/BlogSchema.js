@@ -66,21 +66,25 @@ BlogSchema.statics = {
         }
 
     },
+    countPublished:function (cb) {
+        return this.find({publish:true}).count().exec(cb)
+    },
     fetchPublishedBatch:function(from,limit,cb){
         if (limit===0){
             return this
                 .find({publish:true})
-                .sort('publishTime')
+                .sort({'publishTime':-1})
                 .skip(from)
                 .exec(cb)
         }else{
             return this
-                .find({})
-                .sort('publishTime')
+                .find({publish:true})
+                .sort({'publishTime':-1})
                 .skip(from)
                 .limit(limit)
                 .exec(cb)
         }
+
 
     },
     findById:function(id,cb){
