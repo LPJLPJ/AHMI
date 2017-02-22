@@ -61,3 +61,12 @@ add:
 update:
     1. video widget
 fix:
+
+v1.8.8
+add:
+    1. remove duplicated files for rendering
+    2. pagination for blog
+    3. update for local ide
+update:
+    1. update blog category
+fix:
