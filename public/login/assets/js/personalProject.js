@@ -452,7 +452,7 @@ $(function(){
         try {
             for (var i=0;i<arguments.length;i++){
                 var name = arguments[i];
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF]/)){
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)){
                     return false;
                 }
             }
