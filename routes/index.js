@@ -10,6 +10,7 @@ var route_space = require('./route_space');
 var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
+var DownloadRouter = require('./routeDownload');
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -336,6 +337,12 @@ router.route('/blog/resources/deleteresource')
 
 router.route('/blog/*')
     .get(BlogRoute.getIndex)
+
+
+router.route('/download/index.html')
+    .get(DownloadRouter.getDownloadPage)
+
+
 //router.route('*')
 //    .all(function (req,res,next) {
 //        res.render('login/404.html');
