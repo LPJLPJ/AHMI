@@ -342,6 +342,9 @@ router.route('/blog/*')
 router.route('/download/index.html')
     .get(DownloadRouter.getDownloadPage)
 
+router.route('/download/pcclient/latest')
+    .get(DownloadRouter.downloadPCClinet)
+
 
 //router.route('*')
 //    .all(function (req,res,next) {

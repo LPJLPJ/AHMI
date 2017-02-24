@@ -12,4 +12,8 @@ DownloadRouter.downloadUpdate  = function (req,res) {
 
 }
 
+DownloadRouter.downloadPCClinet  = function (req,res) {
+    res.download(path.join(__dirname,'../release/test.exe'),'ahmi-local.exe')
+}
+
 module.exports = DownloadRouter;
