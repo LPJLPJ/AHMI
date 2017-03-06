@@ -127,7 +127,7 @@
                     changeUpdateState('正在下载 1/3',0);
                     var newVersion = upd.download(function(error, filename) {
                         if(!error){
-                            //     ------------- Step 3 下载完成，拷贝旧的程序至临时文件夹-------------
+                            //     ------------- Step 3 下载完成，拷贝旧的程序 至临时文件夹-------------
             
                             var tempFolderPath = path.join(getFolderPathByFilePath(filename),'tempNW');
                             var oldAppPath = getFolderPathByFilePath(process.execPath);
