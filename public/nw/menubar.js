@@ -134,9 +134,6 @@
 
                             console.log('tempFolderPath',tempFolderPath);
                             //创建临时程序文件夹
-                            // if(!fs.existsSync(tempFolderPath)){
-                            //     fs.mkdirSync(tempFolderPath);
-                            // }
                             try{
                                 fse.emptyDirSync(tempFolderPath)
                             }catch(e){
@@ -144,11 +141,9 @@
                                 hideUpdaterWrapper();
                                 return console.log('err in create temp folder',e);
                             }
- 
                             changeUpdateState('下载完成，正在解压 2/3',0);
                             //模拟一个解压的假线程
                             simulatorProcess();
-
                             //拷贝旧APP至临时程序文件夹
                             fse.copy(oldAppPath,tempFolderPath,{filter:function(path){return path.indexOf('localproject')==-1;}},function(err){
                                 if(err){
@@ -156,41 +151,7 @@
                                     hideUpdaterWrapper();
                                     return console.error('err in copy old NW to temp dir',err)
                                 }
-                                //console.log('copy old APP success');
-                                //解压下载好的新文件,然后拷贝到临时程序文件夹
-                                // upd.unpack(filename,function(err,newAppPath){
-                                //     console.log('newAppPath',newAppPath);
-                                //     if(!err){
-                                //         console.log('unpack success');
-                                //         var zipFileFolder = getFolderPathByFilePath(newAppPath);
-                                //         //停止定时器
-                                //         clearInterval(timer);
-                                //         changeUpdateState('解压完成，程序即将重启 2/3',100);
-                                //         if(fs.existsSync(zipFileFolder)){
-                                //             var NWPackagePath = path.join(tempFolderPath,'package.nw');
-                                //             fse.copy(zipFileFolder,NWPackagePath,function(err){
-                                //                 if(err){
-                                //                     alert('更新失败');
-                                //                     return console.error(err)
-                                //                 }
-                                //                 console.log('copy updateFile success');
-                                //                 var newNWPath = path.join(tempFolderPath,'NW.exe');
-                                //                 setTimeout(function(){
-                                //                     //运行临时程序
-                                //                     upd.runInstaller(newNWPath, [upd.getAppPath(), upd.getAppExec(), zipFileFolder],{});
-                                //                     //关闭当前程序
-                                //                     gui.App.quit();
-                                //                 },1000);
-                                //             });
-                                //         }
-                                //     }else{
-                                //         alert('解压失败');
-                                //         hideUpdaterWrapper();
-                                //         console.error('err in unpack zip',err);
-                                //     }
-                                // },manifest);
-
-                                //use unzip2
+                                //use unzip2 to unpack
                                 var zipFileFolder = path.join(getFolderPathByFilePath(filename),'updFiles');
                                 console.log('filename',filename);
                                 fs.createReadStream(filename).pipe(unzip2.Extract({ path: zipFileFolder }))
