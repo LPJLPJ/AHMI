@@ -83,6 +83,35 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
         return resRepo
     }
 
+    //track resources usage
+    function TextInfo(text,style) {
+        this.text = text;
+        this.style = style
+
+    }
+    function ResTrack(img,color,text,outFile,w,h,slice) {
+        this.img = img;
+        this.color = color;
+        this.text = text;
+        this.outFile = outFile;
+        this.w = w;
+        this.h = h;
+        this.slice = slice;
+    }
+
+    ResTrack.prototype.equal = function (nextResTrack) {
+        var comparedKeys = ['img','color','text','w','h'];
+        for (var i=0;i<comparedKeys.length;i++){
+            var curKey = comparedKeys[i];
+            if (this[curKey] != nextResTrack[curKey]){
+                return false
+            }
+        }
+        return true;
+    }
+
+
+
     //define canvas object
 
     function Canvas(width, height) {
@@ -183,6 +212,19 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
         this.images = images||{};
         window.images = this.images;
         this.customFonts = customFonts || {};
+        this.trackedRes = [];
+    }
+
+    //compare tracked resources
+    renderer.prototype.compareTrackedRes = function (nextTrackedRes) {
+        for (var i=0;i<this.trackedRes.length;i++){
+            var curTrackedRes = this.trackedRes[i];
+            if (curTrackedRes.eq(nextTrackedRes)){
+                //hit
+                return true;
+            }
+        }
+        return false;
     }
 
     renderer.prototype.getTargetImage = function (url) {
@@ -268,6 +310,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                             cb && cb(err);
                         }
                     }else{
+                        //track res
+                        this.trackedRes.push(new ResTrack(img,slice.color,new TextInfo(info.text,style),outputFilename,info.width,info.height,slice))
+                        //
                         widget.texList[0].slices[index].imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -354,6 +399,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                             cb && cb(err);
                         }
                     }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height),slice)
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -426,6 +472,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                             cb && cb(err);
                         }
                     }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -493,6 +540,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     if (err){
                         cb && cb(err);
                     }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
                         //write widget
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         //if last trigger cb
@@ -620,6 +668,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 if (err){
                     cb && cb(err);
                 }else{
+                    this.trackedRes.push(new ResTrack(bgSlice.imgSrc,bgSlice.color,new TextInfo(info.text,style),outputFilename,width,height,bgSlice))
                     bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                     var stopTime = new Date();
                     console.log('Output stream costs: ',(stopTime-startTime)/1000.0+'s');
@@ -659,7 +708,26 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
         }
     };
 
+    renderer.prototype.removeSameOutputFiles = function () {
+        var needRemoveFiles = []
+        for (var i=0;i<this.trackedRes.length;i++){
+            var curJudgeTrack = this.trackedRes[i];
+            for (var j=0;j<i;j++){
+                //compare with former restracks
+                if (this.trackedRes[j].equal(curJudgeTrack)){
+                    //same;
+                    needRemoveFiles.push(curJudgeTrack.slice.imgSrc)
+                    curJudgeTrack.slice.imgSrc = this.trackedRes[j].slice.imgSrc;
+
+                    break;
+                }
+            }
+        }
+        return needRemoveFiles;
+    }
+
     this.renderProject = function (dataStructure,sCb, fCb) {
+        var Renderer
         var errReported = false;
         function errHandler(err) {
             console.log(err);
@@ -717,6 +785,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         if (okFlag){
                             //ok
                             console.log('trans finished');
+                            var shouldRemoveFiles = Renderer.removeSameOutputFiles();
+                            // console.log('trackedRes',Renderer.trackedRes,shouldRemoveFiles)
                             if (local){
                                 fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
                                     if (err){
@@ -762,7 +832,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     }
                 }
             }.bind(this);
-            var Renderer
+
 
             if (local){
                 Renderer = new renderer();

@@ -10,6 +10,7 @@
     <script src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
     <script src="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
     <script src="../../public/blog/libs/moment.min.js"></script>
+    <script src="../../public/blog/libs/paginationer.js"></script>
 </head>
 <body>
 <header>
@@ -18,11 +19,18 @@
 <div class="main-container">
     <div class="blog-list-container">
         <ul class="blog-list"></ul>
+        <div id="paginator"></div>
     </div>
     <footer>
         <% include footer.html %>
     </footer>
 </div>
+<script>
+    ;(function () {
+        var paginationer = new Paginationer(5,<%=currentPage%>,<%=totalPage%>);
+        paginationer.setElem(document.getElementById('paginator'))
+    }())
+</script>
 
 <script src="../../public/blog/js/index.js"></script>
 </body>

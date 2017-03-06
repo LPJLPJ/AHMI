@@ -126,7 +126,9 @@ $(function(){
 
 	});
 
-
+    $('#submit').on('hover',function () {
+        checkSubmit()
+    })
 
 	$('#submit').on('click',function(){
 		var userInfo = {

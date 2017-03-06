@@ -10,6 +10,7 @@ var BlogSchema = new mongoose.Schema({
     desp:String,
     keywords:String,
     digest:String,
+    category:String,
     content:String,
     modifing:{type:Boolean,default:true},
     drafts:[
@@ -17,6 +18,7 @@ var BlogSchema = new mongoose.Schema({
             title:String,
             desp:String,
             keywords:String,
+            category:String,
             content:String
         }
     ],
@@ -64,21 +66,25 @@ BlogSchema.statics = {
         }
 
     },
+    countPublished:function (cb) {
+        return this.find({publish:true}).count().exec(cb)
+    },
     fetchPublishedBatch:function(from,limit,cb){
         if (limit===0){
             return this
                 .find({publish:true})
-                .sort('publishTime')
+                .sort({'publishTime':-1})
                 .skip(from)
                 .exec(cb)
         }else{
             return this
-                .find({})
-                .sort('publishTime')
+                .find({publish:true})
+                .sort({'publishTime':-1})
                 .skip(from)
                 .limit(limit)
                 .exec(cb)
         }
+
 
     },
     findById:function(id,cb){

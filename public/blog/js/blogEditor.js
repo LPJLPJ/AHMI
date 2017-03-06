@@ -163,7 +163,7 @@ function updateBlogFromData(data) {
     $title.val(data.title)
     $desp.val(data.desp)
     $keywords.val(data.keywords)
-    // $category.val()
+    $category.val(data.category)
     $summernote.summernote('code',data.content)
 }
 function loadFromServer() {

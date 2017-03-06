@@ -41,6 +41,12 @@ update:
     3. new draw num widget method
 fix:
 
+v1.8.5
+add:
+update:
+    1. keep pace with v1.8.5_test
+fix:
+
 v1.8.6_test
 add:
     1. support update local IDE
@@ -48,3 +54,19 @@ update:
     1. simulator now draw synchronously
 fix:
     
+
+v1.8.7
+add:
+    1. blog service
+update:
+    1. video widget
+fix:
+
+v1.8.8
+add:
+    1. remove duplicated files for rendering
+    2. pagination for blog
+    3. update for local ide
+update:
+    1. update blog category
+fix:

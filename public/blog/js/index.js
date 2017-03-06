@@ -5,13 +5,13 @@
 var blogs
 var $blogUL =$('.blog-list')
 function loadFromServer() {
+    var pageQuery = window.location.search
     $.ajax({
         type:'GET',
-        url:"/blog/getallpublishedblogs",
+        url:"/blog/getallpublishedblogs"+pageQuery,
 
         success:function (msg) {
             blogs = JSON.parse(msg)
-            console.log(blogs)
             $blogUL.html(renderBlogs(blogs))
         },
         error:function (xhr) {
@@ -38,7 +38,6 @@ function renderSingleBlog(blog) {
     }else{
         showTime = moment().local().format('YYYY-MM-DD')
     }
-    console.log(pTime,showTime)
 
     var result =  '<li class="blog-list-li" data-id="'+blog._id+'">'+'<div class="blog-panel"><div class="blog-panel-title">'+(blog.title||"")+'</div><div class="blog-panel-keywords">'+(blog.keywords||"")+'</div><div class="blog-panel-digest">'+(blog.digest||"")+
         '</div><div class="blog-panel-time">'+showTime+'</div></div>'+'</li>'
