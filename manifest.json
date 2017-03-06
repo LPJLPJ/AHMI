@@ -2,13 +2,13 @@
     "name": "AHMI_IDE",
     "version": "1.8.6",
     "author": "graphichina",
-    "manifestUrl": "https://ide.graphichina.com/checkUpdate/manifest.json",
+    "manifestUrl": "https://test.graphichina.com/checkUpdate/manifest.json",
     "packages": {
         "mac": {
            "url": "https://ide.graphichina.com/releases/updapp/mac/updFiles.zip"
         },
         "win": {
-           "url": "http://localhost:3000/releases/updapp/win/updFiles.zip"
+           "url": "https://test/releases/updapp/win/updFiles.zip"
         },
         "linux32": {
            "url": "https://ide.graphichina/releases/updapp/linux32/updFiles.tar.gz"

@@ -1,8 +1,8 @@
 /**
  * Created by ChangeCheng on 2016/11/11.
  */
-var UserModel = require('../db/models/UserModel')
-var errHandler = require('../utils/errHandler')
+var UserModel = require('../db/models/UserModel');
+var errHandler = require('../utils/errHandler');
 var fse = require('fs-extra');
 var path = require('path');
 var archiver = require('archiver');
@@ -15,14 +15,14 @@ Route_admin.getLogin = function(req, res){
 
 Route_admin.postLogin = function (req,res) {
     
-}
+};
 
 Route_admin.getManageSpace = function (req,res) {
     res.render('login/manageSpace.html',{userName:req.session.user.username});
-}
+};
 Route_admin.getReleaseVerSpace = function(req,res){
     res.render('login/releaseVerSpace.html',{userName:req.session.user.username});
-}
+};
 
 Route_admin.getUsers = function (req, res) {
     var from = parseInt(req.query.from)||0;
@@ -40,7 +40,7 @@ Route_admin.getUsers = function (req, res) {
                 data = {
                     users:limitUsers,
                     count:count
-                }
+                };
                 res.end(JSON.stringify(data));
             }
         })
@@ -60,14 +60,14 @@ Route_admin.getUsers = function (req, res) {
                         data={
                             users:users,
                             count:count
-                        }
+                        };
                         res.end(JSON.stringify(data));
                     }
                 })            
             }
         })
     }
-}
+};
 
 
 Route_admin.changeUserType = function (req, res) {
@@ -88,7 +88,7 @@ Route_admin.changeUserType = function (req, res) {
             })
         }
     })
-}
+};
 
 //获取更新信息
 Route_admin.getReleaseInfo = function(req,res){
@@ -96,7 +96,7 @@ Route_admin.getReleaseInfo = function(req,res){
     var from = parseInt(req.query.from)||0;
     var limit = parseInt(req.query.limit)||0;
     if(!fse.existsSync(logPath)){
-        var tempArr = []
+        var tempArr = [];
         fse.writeFile(logPath,JSON.stringify(tempArr),function(err){
             if(err){
                 errHandler(res,500,'create log.json err');
@@ -132,7 +132,7 @@ Route_admin.getReleaseInfo = function(req,res){
         })        
     }
 
-}
+};
 
 //生成更新文件
 Route_admin.releaseUpdate = function(req,res){
@@ -150,7 +150,7 @@ Route_admin.releaseUpdate = function(req,res){
     //public文件夹过滤函数
     var filterFunForPub = function(src){
         var blogPattern = /public[\\\/]blog/;
-        var srcJSPattern = /public[\\\/]ide[\\\/]modules[\\\/]ide[\\\/]js/
+        var srcJSPattern = /public[\\\/]ide[\\\/]modules[\\\/]ide[\\\/]js/;
         return !(blogPattern.test(src)||srcJSPattern.test(src));
     }
     //views文件夹过滤函数
@@ -185,14 +185,14 @@ Route_admin.releaseUpdate = function(req,res){
                     var tempData = {
                         data:infoArr,
                         count:tempLogFile.length
-                    }
+                    };
                     res.send(JSON.stringify(tempData));
                 }
             })
-        })
+        });
         archive.on('error',function(err){
             errHandler(res,500,'package folder err');
-        })
+        });
         archive.pipe(output);
         if(selectPublic==="true"){
             archive.directory(tempPublicFolderPath,'/public');
@@ -202,7 +202,7 @@ Route_admin.releaseUpdate = function(req,res){
         }
         archive.file(manifestPath,{name:'manifest.json'});
         archive.finalize();
-    }
+    };
 
     /**
      * 文件对象构造函数
@@ -263,7 +263,7 @@ Route_admin.releaseUpdate = function(req,res){
             copyFiles();
         }
     })
-}
+};
 
 /**
  * 重新编辑personalProject.html 的内容，删除ejs语句
