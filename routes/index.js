@@ -73,13 +73,17 @@ router.route('/admin/manage/*')
 
 router.route('/admin/manage/space')
     .get(route_admin.getManageSpace);
-
 router.route('/admin/manage/users')
     .get(route_admin.getUsers);
-
 router.route('/admin/manage/changeusertype')
     .post(route_admin.changeUserType);
-
+//release and update
+router.route('/admin/manage/releaseVersion')
+    .get(route_admin.getReleaseVerSpace);
+router.route('/admin/manage/releaseInfo')
+    .get(route_admin.getReleaseInfo);
+router.route('/admin/manage/release/update')
+    .post(route_admin.releaseUpdate);
 //user control
 //signup
 router.route('/user/signup')

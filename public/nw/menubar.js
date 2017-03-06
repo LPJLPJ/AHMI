@@ -2,8 +2,8 @@
  * Created by ChangeCheng on 16/7/12.
  */
 
-;(function () {
-    try {
+(function () {
+    // try {
         //basic modules
         var os = require('os');
         var fs = require('fs');
@@ -15,6 +15,7 @@
         var gui = require('nw.gui');
         var pkg = require(manifestPath); // Insert your app's manifest here
         var updater = require('node-webkit-updater');
+        var unzip2 = require('unzip2');
         var upd = new updater(pkg);
         var copyPath, execPath;
         var fse = require('fs-extra');
@@ -157,37 +158,69 @@
                                 }
                                 //console.log('copy old APP success');
                                 //解压下载好的新文件,然后拷贝到临时程序文件夹
-                                upd.unpack(filename,function(err,newAppPath){
-                                    console.log('newAppPath',newAppPath);
-                                    if(!err){
-                                        console.log('unpack success');
-                                        var zipFileFolder = getFolderPathByFilePath(newAppPath);
-                                        //停止定时器
-                                        clearInterval(timer);
-                                        changeUpdateState('解压完成，程序即将重启 2/3',100);
-                                        if(fs.existsSync(zipFileFolder)){
-                                            var NWPackagePath = path.join(tempFolderPath,'package.nw');
-                                            fse.copy(zipFileFolder,NWPackagePath,function(err){
-                                                if(err){
-                                                    alert('更新失败');
-                                                    return console.error(err)
-                                                }
-                                                console.log('copy updateFile success');
-                                                var newNWPath = path.join(tempFolderPath,'NW.exe');
-                                                setTimeout(function(){
-                                                    //运行临时程序
-                                                    upd.runInstaller(newNWPath, [upd.getAppPath(), upd.getAppExec(), zipFileFolder],{});
-                                                    //关闭当前程序
-                                                    gui.App.quit();
-                                                },1000);
-                                            });
-                                        }
-                                    }else{
-                                        alert('解压失败');
-                                        hideUpdaterWrapper();
-                                        console.error('err in unpack zip',err);
+                                // upd.unpack(filename,function(err,newAppPath){
+                                //     console.log('newAppPath',newAppPath);
+                                //     if(!err){
+                                //         console.log('unpack success');
+                                //         var zipFileFolder = getFolderPathByFilePath(newAppPath);
+                                //         //停止定时器
+                                //         clearInterval(timer);
+                                //         changeUpdateState('解压完成，程序即将重启 2/3',100);
+                                //         if(fs.existsSync(zipFileFolder)){
+                                //             var NWPackagePath = path.join(tempFolderPath,'package.nw');
+                                //             fse.copy(zipFileFolder,NWPackagePath,function(err){
+                                //                 if(err){
+                                //                     alert('更新失败');
+                                //                     return console.error(err)
+                                //                 }
+                                //                 console.log('copy updateFile success');
+                                //                 var newNWPath = path.join(tempFolderPath,'NW.exe');
+                                //                 setTimeout(function(){
+                                //                     //运行临时程序
+                                //                     upd.runInstaller(newNWPath, [upd.getAppPath(), upd.getAppExec(), zipFileFolder],{});
+                                //                     //关闭当前程序
+                                //                     gui.App.quit();
+                                //                 },1000);
+                                //             });
+                                //         }
+                                //     }else{
+                                //         alert('解压失败');
+                                //         hideUpdaterWrapper();
+                                //         console.error('err in unpack zip',err);
+                                //     }
+                                // },manifest);
+
+                                //use unzip2
+                                var zipFileFolder = path.join(getFolderPathByFilePath(filename),'updFiles');
+                                console.log('filename',filename);
+                                fs.createReadStream(filename).pipe(unzip2.Extract({ path: zipFileFolder }))
+                                .on('error',function(err){
+                                    alert('解压失败');
+                                    hideUpdaterWrapper();
+                                    console.error('err in unpack zip',err);
+                                })
+                                .on('close',function(){
+                                    //解压成功
+                                    clearInterval(timer);
+                                    changeUpdateState('解压完成，程序即将重启 2/3',100);
+                                    if(fs.existsSync(zipFileFolder)){
+                                        var NWPackagePath = path.join(tempFolderPath,'package.nw');
+                                        fse.copy(zipFileFolder,NWPackagePath,function(err){
+                                            if(err){
+                                                alert('更新失败');
+                                                return console.error(err)
+                                            }
+                                            console.log('copy updateFile success');
+                                            var newNWPath = path.join(tempFolderPath,'NW.exe');
+                                            setTimeout(function(){
+                                                //运行临时程序
+                                                upd.runInstaller(newNWPath, [upd.getAppPath(), upd.getAppExec(), zipFileFolder],{});
+                                                //关闭当前程序
+                                                gui.App.quit();
+                                            },1000);
+                                        });
                                     }
-                                },manifest);
+                                })
                             })
                         }else{
                             alert('下载失败');
@@ -198,7 +231,6 @@
                     var loaded = 0;
                     newVersion.on('data', function(chunk){
                         loaded += chunk.length;
-                        //console.log("New version loading " + Math.floor(loaded / newVersion['content-length'] * 100) + '%');
                         var downloadValue = Math.floor(loaded / newVersion['content-length']*100);
                         changeUpdateState(null,downloadValue);
                     })
@@ -291,7 +323,7 @@
         console.log(menu);
 
         nw.Window.get().menu = menu;
-    } catch (e) {
-        console.log(e);
-    }
+    // } catch (e) {
+    //     console.log(e);
+    // }
 })();

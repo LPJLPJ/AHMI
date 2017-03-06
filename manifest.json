@@ -8,7 +8,7 @@
            "url": "https://ide.graphichina.com/releases/updapp/mac/updFiles.zip"
         },
         "win": {
-           "url": "https://ide.graphichina.com/releases/updapp/win/updFiles.zip"
+           "url": "http://localhost:3000/releases/updapp/win/updFiles.zip"
         },
         "linux32": {
            "url": "https://ide.graphichina/releases/updapp/linux32/updFiles.tar.gz"

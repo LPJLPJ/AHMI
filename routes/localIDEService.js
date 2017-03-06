@@ -8,10 +8,10 @@ var path = require('path');
 
 localIDEService.getCurrentVer = function(req,res){
     var manifestPath = path.join(__dirname,'../manifest.json');
-    var manifest = require(manifestPath);
-    console.log('manifest.version',manifest.version);
-    var manifestJson = JSON.stringify(manifest);
-    res.end(manifestJson);
+    fs.readFile(manifestPath, function (err,data) {
+        //console.log(JSON.parse(data));
+        res.send(data);
+    });
 };
 
 localIDEService.downloadNewVerZip = function(req,res){
@@ -22,7 +22,7 @@ localIDEService.downloadNewVerZip = function(req,res){
         if(err){
             console.log('err',err);
         }else{
-            console.log('sent',updFilesPath);
+            console.log('send',updFilesPath);
         }
     })
 };
