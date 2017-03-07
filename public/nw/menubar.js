@@ -3,7 +3,7 @@
  */
 
 (function () {
-    // try {
+     try {
         //basic modules
         var os = require('os');
         var fs = require('fs');
@@ -284,7 +284,7 @@
         console.log(menu);
 
         nw.Window.get().menu = menu;
-    // } catch (e) {
-    //     console.log(e);
-    // }
+     } catch (e) {
+         console.log(e);
+     }
 })();
