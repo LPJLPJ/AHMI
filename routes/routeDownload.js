@@ -13,7 +13,7 @@ DownloadRouter.downloadUpdate  = function (req,res) {
 }
 
 DownloadRouter.downloadPCClinet  = function (req,res) {
-    res.download(path.join(__dirname,'../release/test.exe'),'ahmi-local.exe')
+    res.download(path.join(__dirname,'../release/complete/IDENW.zip'),'ahmi-local.zip');
 }
 
 module.exports = DownloadRouter;
