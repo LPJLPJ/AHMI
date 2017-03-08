@@ -122,7 +122,7 @@ $(function(){
         var textArea = $('#message-text').val();
         var selectPublic = $('#checkboxPublic').prop('checked');
         var selectViews = $('#checkboxViews').prop('checked');
-        //$('.overlay').show();
+        showOverLay();
         if(selectPublic||selectViews){
           var postData = {
             description:textArea,
@@ -138,9 +138,11 @@ $(function(){
             renderLogToView(releaseInfo);
             generatePageIndexTag();
             addClickEvtToPageIndex();
+              hideOverLay();
             changeReleaseBtnState('reset');
             toastr.info('发布成功！');
           },function(){
+              hideOverLay();
               changeReleaseBtnState('reset');
               toastr.error('发布失败');
           });
@@ -157,11 +159,10 @@ $(function(){
      * 模态框事件
      */
     $('#myModal').on('hidden.bs.modal', function (e) {
-  	// do something...
-  		//console.log('dismiss');
+  	    // do something...
 	  })
     $('#myModal').on('show.bs.modal', function (e) {
-    // do something...
+        // do something...
       //console.log('show');
       $('#message-text').val('');
       $('#checkboxPublic').attr('checked',false);
@@ -313,5 +314,12 @@ $(function(){
             getReleaseInfo(getInfoUrl,renderLogToView);
         })
     };
+
+    function showOverLay(){
+        $('.overlay').show();
+    }
+    function  hideOverLay(){
+        $('.overlay').hide();
+    }
     
 })
