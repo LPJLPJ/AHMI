@@ -140,6 +140,9 @@ $(function(){
             addClickEvtToPageIndex();
             changeReleaseBtnState('reset');
             toastr.info('发布成功！');
+          },function(){
+              changeReleaseBtnState('reset');
+              toastr.error('发布失败');
           });
         }else{
           toastr.warning('未选择更新文件');
@@ -171,15 +174,16 @@ $(function(){
      * @param  {Function} cb 回调函数
      * @return {[type]}      [description]
      */
-    function postUpdateRequest(data,cb){
+    function postUpdateRequest(data,scb,fcb){
     	$.ajax({
     		type:"POST",
     		url:"/admin/manage/release/update",
         data:data,
     		success:function(data,status,xhr){
-    			cb&&cb(data);
+    			scb&&scb(data);
     		},
     		error:function(err,status,xhr){
+                fcb&&fcb();
     			console.log(err);
     		}
     	})

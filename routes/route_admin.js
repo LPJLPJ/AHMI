@@ -134,7 +134,7 @@ Route_admin.getReleaseInfo = function(req,res){
 
 };
 
-//生成更新文件
+//生成更新文件,并生成新的完全版本地版压缩包，目前一并完成
 Route_admin.releaseUpdate = function(req,res){
     var data = req.body;
     var selectPublic = req.body.selectPublic;
@@ -146,6 +146,8 @@ Route_admin.releaseUpdate = function(req,res){
     var tempViewsFolderPath = path.join(tempFolderPath,'views');
     var publicFolderPath = path.join(__dirname,'../public');
     var viewsFolderPath = path.join(__dirname,'../views');
+    var manifestPath = path.join(__dirname,'../manifest.json');
+    var completeIDENWFolderPath = path.join(__dirname,'../release','complete','IDENW','package.nw');
 
     //public文件夹过滤函数
     var filterFunForPub = function(src){
@@ -158,37 +160,15 @@ Route_admin.releaseUpdate = function(req,res){
         var blogPattern = /views[\\\/]blog/;
         return !blogPattern.test(src);
     };
-    //打包函数
+    //打包更新包
     var zipDistFiles = function(){
         var targetZipPath = path.join(updateFolderPath,'updFiles.zip');
-        var manifestPath = path.join(__dirname,'../manifest.json');
         var output = fse.createWriteStream(targetZipPath);
         var archive = archiver('zip',{store:true});
         output.on('close',function(){
             console.log(archive.pointer()+"total bytes",'relese new updfiles success');
-            //编辑log.json
-            var logPath = path.join(updateFolderPath,'log.json');
-            var tempLogFile = require(logPath);
-            var manifest = require(manifestPath);
-            var newLog = {};
-            var dateNow = new Date();
-            newLog.version = manifest.version;
-            newLog.releaseDate = String(dateNow.getFullYear())+'-'+String(dateNow.getMonth()+1)+'-'+String(dateNow.getDate());
-            newLog.admin = req.session.user.username;
-            newLog.description = data.description;
-            tempLogFile.unshift(newLog);
-            fse.writeFile(logPath,JSON.stringify(tempLogFile),function(err){
-                if(err){
-                    errHandler(res,500,'write logFile err');
-                }else{
-                    var infoArr = tempLogFile.slice(0,limit);
-                    var tempData = {
-                        data:infoArr,
-                        count:tempLogFile.length
-                    };
-                    res.send(JSON.stringify(tempData));
-                }
-            })
+            //将文件拷贝至complete文件夹并打包新的完全版
+            copyToCompleteAndZip();
         });
         archive.on('error',function(err){
             errHandler(res,500,'package folder err');
@@ -203,6 +183,64 @@ Route_admin.releaseUpdate = function(req,res){
         archive.file(manifestPath,{name:'manifest.json'});
         archive.finalize();
     };
+
+    //将文件拷贝至complete文件夹并打包新的完全版
+    function copyToCompleteAndZip(){
+        fse.copy(tempFolderPath,completeIDENWFolderPath,function(err){
+            if(err){
+                errHandler(res,500,'err in copy files to complete');
+            }else{
+                fse.copy(manifestPath,path.join(completeIDENWFolderPath,'manifest.json'),function(err){
+                    if(err){
+                        console.log('err',err);
+                        errHandler(res,500,'err in copy manifest to complete');
+                    }else{
+                        var targetZipPath = path.join(__dirname,'../release','complete','localIDE.zip');
+                        var output = fse.createWriteStream(targetZipPath);
+                        var archive = archiver('zip',{store:true});
+                        output.on('close',function(){
+                            console.log(archive.pointer()+"total bytes",'relese new updfiles success');
+                            //编辑Log文件并返回响应
+                            editLogAndRes();
+                        });
+                        archive.on('error',function(err){
+                            errHandler(res,500,'package folder err');
+                        });
+                        archive.pipe(output);
+                        archive.directory(path.join(__dirname,'../release','complete','IDENW'),'/IDENW');
+                        archive.finalize();
+                    }
+                })
+            }
+        })
+    }
+
+    //编辑Log文件并返回响应
+    function editLogAndRes(){
+        //编辑log.json
+        var logPath = path.join(updateFolderPath,'log.json');
+        var tempLogFile = require(logPath);
+        var manifest = require(manifestPath);
+        var newLog = {};
+        var dateNow = new Date();
+        newLog.version = manifest.version;
+        newLog.releaseDate = String(dateNow.getFullYear())+'-'+String(dateNow.getMonth()+1)+'-'+String(dateNow.getDate());
+        newLog.admin = req.session.user.username;
+        newLog.description = data.description;
+        tempLogFile.unshift(newLog);
+        fse.writeFile(logPath,JSON.stringify(tempLogFile),function(err){
+            if(err){
+                errHandler(res,500,'write logFile err');
+            }else{
+                var infoArr = tempLogFile.slice(0,limit);
+                var tempData = {
+                    data:infoArr,
+                    count:tempLogFile.length
+                };
+                res.send(JSON.stringify(tempData));
+            }
+        })
+    }
 
     /**
      * 文件对象构造函数
