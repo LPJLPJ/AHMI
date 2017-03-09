@@ -183,6 +183,40 @@ ideServices
                     }]
                 }]
             },
+            defaultGeneral={
+                info :{
+                    width:100,
+                    height: 50,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    arrange:'horizontal',
+
+                    text:'button',
+                    fontFamily:"宋体",
+                    fontSize:20,
+                    fontColor:'rgba(0,0,0,1)',
+                    fontBold:"100",
+                    fontItalic:'',
+                    disableHighlight:false
+                },
+                texList:[{
+                    name:'按钮纹理',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(220,82,74,1)',
+                        imgSrc:'',
+                        name:'按下前'
+                    },{
+                        color:'rgba(254,205,82,1)',
+                        imgSrc:'',
+                        name:'按下后'
+                    },{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
+                    }]
+                }]
+            },
             defaultButtonGroup={};
 
         this.setDefaultWidget=function(widget){
@@ -349,6 +383,24 @@ ideServices
                 pressImg:'',
                 name: 'NewButton',
                 type: Type.MyButton,
+                expand:true,
+                url:'',
+                buttonModeId:'0',
+                zIndex:0,
+                texList:texList
+            }
+        };
+
+        this.getDefaultGeneral= function () {
+            var info = _.cloneDeep(defaultGeneral.info);
+            var texList = _.cloneDeep(defaultGeneral.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                normalImg:'',
+                pressImg:'',
+                name: 'general',
+                type: Type.General,
                 expand:true,
                 url:'',
                 buttonModeId:'0',

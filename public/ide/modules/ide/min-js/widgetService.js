@@ -3073,5 +3073,85 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MySlide.async = true;
 
+    //general
+    fabric.General = fabric.util.createClass(fabric.Object, {
+        type: Type.General,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            // this.normalColor=level.texList[0].slices[0].color;
+            // this.arrange=level.info.arrange;
+            //
+            // this.text=level.info.text;
+            // this.fontFamily=level.info.fontFamily;
+            // this.fontSize=level.info.fontSize;
+            // this.fontColor=level.info.fontColor;
+            // this.fontBold=level.info.fontBold;
+            // this.fontItalic=level.info.fontItalic;
+            //
+            // this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            // if (this.normalImageElement) {
+            //     this.loaded = true;
+            //     this.setCoords();
+            //     this.fire('image:loaded');
+            // }
+            var x = level.info.left;
+            var y = level.info.top;
+            var w = level.info.width;
+            var h = level.info.height;
+
+            console.log(level.type)
+            this.curWidget = new WidgetModel['Button'](x,y,w,h,'button',null,level.texList[0].slices)
+            this.curWidgetInfo = this.curWidget.toObject()
+            console.log(this.curWidgetInfo)
+            this.curWidgetInfo.onInitialize();
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+
+                // console.log('drawing general',this.level,this)
+                var firstLayer = this.curWidgetInfo.layers[0];
+                ctx.fillStyle=firstLayer.subLayers.color;
+                ctx.fillRect(
+                    -(this.curWidgetInfo.w / 2),
+                    -(this.curWidgetInfo.h / 2) ,
+                    this.curWidgetInfo.w ,
+                    this.curWidgetInfo.h );
+                // if (this.currentImageElement){
+                //     ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                //
+                // }
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染按钮出错');
+            }
+        }
+    });
+    fabric.General.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.General(level, option));
+    };
+    fabric.General.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                // normalImageElement:this.normalImageElement,
+                // normalColor:this.normalColor
+            });
+        }
+    })(fabric.General.prototype.toObject);
+    fabric.General.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.General(level, object));
+    };
+    fabric.General.async = true;
+
+
+
+
 
 }])

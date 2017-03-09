@@ -425,6 +425,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
 
                 case Type.MyButton:
+                case Type.General:
 
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
                     $scope.component.button.arrangeModel=$scope.component.object.level.info.arrange;

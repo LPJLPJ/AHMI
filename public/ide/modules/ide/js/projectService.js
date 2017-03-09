@@ -1035,6 +1035,22 @@ ideServices
 
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if (_newWidget.type==Type.General){
+
+                    fabric.General.fromLevel(_newWidget, function (fabWidget) {
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+
+
+
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
+
+
                 }
 
 
