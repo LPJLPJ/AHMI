@@ -197,7 +197,7 @@ Route_admin.releaseUpdate = function(req,res){
                     }else{
                         var targetZipPath = path.join(__dirname,'../release','complete','localIDE.zip');
                         var output = fse.createWriteStream(targetZipPath);
-                        var archive = archiver('zip',{store:true});
+                        var archive = archiver('zip');
                         output.on('close',function(){
                             console.log(archive.pointer()+"total bytes",'relese new updfiles success');
                             //编辑Log文件并返回响应
