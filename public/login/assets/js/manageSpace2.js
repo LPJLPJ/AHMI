@@ -197,6 +197,8 @@ $(function(){
             }
             postHTTPReqForUsers(getUsersUrl,renderUserToView);
         })
+
+        pageIndexLiNodes = null;
     };
 
     /**
@@ -274,6 +276,8 @@ $(function(){
                 handleSearch();
             }
         });
+
+        searchInput = null;
     }
 
     /**
@@ -295,7 +299,9 @@ $(function(){
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize,searchStr);
             searchState=true;
             getUsers(getUsersUrl);
-        }  
+        }
+
+        searchInput = null;
     }
 
     /**
@@ -311,6 +317,7 @@ $(function(){
             //console.log('userId',userId,'newValue',newValue,'trNode',trNode);
             changeTypeById(userId,newValue,$(this));
         })
+        userTableUl = null;
     }
 
     /**

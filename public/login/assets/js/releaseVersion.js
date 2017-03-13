@@ -153,6 +153,7 @@ $(function(){
 
     	})
 
+        confirmReleaseBtnNode=null;
     }
 
     /**
@@ -313,6 +314,7 @@ $(function(){
             var getInfoUrl = generateGetInfoUrl((selectIndex-1)*pageSize,pageSize);
             getReleaseInfo(getInfoUrl,renderLogToView);
         })
+        pageIndexLiNodes = null;
     };
 
     function showOverLay(){
