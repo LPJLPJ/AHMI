@@ -12,11 +12,11 @@ module.exports = {
         //login:"./src/js/login.js",
         //personal:"./src/js/personal.js",
         // test:"./src/js/test.js",
-        simulator: "./src/js/simulator.js",
+        simulator: "./simulator/src/js/simulator.js",
         // simulator:"../public/ide/modules/ide/js/parts/simulator"
     },
     output: {
-        path: path.join(__dirname,'../public/ide/modules/ide/js/parts/simulator/'),
+        path: path.join(__dirname,'./public/ide/modules/ide/js/parts/simulator/'),
         filename: "[name].bundle.js",
         publicPath: '/'
     },
@@ -25,12 +25,12 @@ module.exports = {
     // ],
     module: {
         loaders: [
-            {test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: "url?limit=100000"},
-            {test: /\.css$/, exclude: /(node_modules|bower_components)/, loader: "style!css"},
+            {test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: "url-loader?limit=100000"},
+            {test: /\.css$/, exclude: /(node_modules|bower_components)/, loader: "style-loader!css-loader"},
             {
                 test: /\.jsx?$/,
                 exclude: /(node_modules|bower_components)/,
-                loader: 'babel',
+                loader: 'babel-loader',
                 query: {
                     compact: false,
                     presets: ['react']

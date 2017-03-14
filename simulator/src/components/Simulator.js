@@ -10,6 +10,8 @@ var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
+var WidgetModel = require('../../../public/ide/modules/ide/js/widgetModel/widget')
+console.log(WidgetModel)
 
 var env = 'dev' //dev or build
 var lg = (function () {
