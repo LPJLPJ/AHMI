@@ -51900,10 +51900,12 @@ module.exports = React.createClass({
         }
     },
     paintGeneralLayer: function (curX, curY, layer) {
-        var subLayers = layer.subLayers;
-        this.paintColorSL(curX, curY, subLayers.color);
-        this.paintTextureSL(curX, curY, subLayers.texture);
-        this.paintFontSL(curX, curY, subLayers.font);
+        if (!layer.hidden) {
+            var subLayers = layer.subLayers;
+            this.paintColorSL(curX, curY, subLayers.color);
+            this.paintTextureSL(curX, curY, subLayers.texture);
+            this.paintFontSL(curX, curY, subLayers.font);
+        }
     },
     paintROISL: function (curX, curY, subLayer) {},
     paintFontSL: function (curX, curY, subLayer) {
@@ -51911,27 +51913,21 @@ module.exports = React.createClass({
         var slY = curY + subLayer.y;
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        if (!subLayer.hidden) {
-            this.drawTextByTempCanvas(slX, slY, slWidth, slHeight, subLayer.text, subLayer.fontStyle);
-        }
+        this.drawTextByTempCanvas(slX, slY, slWidth, slHeight, subLayer.text, subLayer.fontStyle);
     },
     paintTextureSL: function (curX, curY, subLayer) {
         var slX = curX + subLayer.x;
         var slY = curY + subLayer.y;
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        if (!subLayer.hidden) {
-            this.drawBg(slX, slY, slWidth, slHeight, subLayer.texture);
-        }
+        this.drawBg(slX, slY, slWidth, slHeight, subLayer.texture);
     },
     paintColorSL: function (curX, curY, subLayer) {
         var slX = curX + subLayer.x;
         var slY = curY + subLayer.y;
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        if (!subLayer.hidden) {
-            this.drawBg(slX, slY, slWidth, slHeight, null, subLayer.color);
-        }
+        this.drawBg(slX, slY, slWidth, slHeight, null, subLayer.color);
     },
     isIn: function (res, resList, key) {
         if (key) {
@@ -55390,6 +55386,13 @@ module.exports = React.createClass({
 
                 break;
             // case 'MyInputKeyboard':
+            case 'general-Button':
+                if (typeof widget.onMouseDown != 'function') {
+                    this.transFunction(widget, 'onMouseDown');
+                }
+
+                widget.onMouseDown();
+                needRedraw = true;
 
             default:
                 widget.mouseState = mouseState;
@@ -55444,6 +55447,12 @@ module.exports = React.createClass({
                         elem.curPressedKey = null;
                         needRedraw = true;
                         break;
+                    case 'general-Button':
+                        if (typeof elem.onMouseUp != 'function') {
+                            this.transFunction(elem, 'onMouseUp');
+                        }
+                        elem.onMouseUp();
+                        needRedraw = true;
                 }
                 break;
         }
@@ -56223,7 +56232,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 height: this.info.height
             },
             layers: this.layers,
-            onInitialize: this.onInitialize
+            onInitialize: this.onInitialize,
+            onMouseDown: this.onMouseDown,
+            onMouseUp: this.onMouseUp
         };
     };
 
@@ -56267,7 +56278,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     //     console.log('onInitializing')
     //     this.layers[1].hidden = true;
     // }
-    Button.prototype.onInitialize = [['temp', 'a', '__tag'], ['if'], ['pred', '==', 'a', '100'], ['set', 'this.layers[1].hidden', true], ['else'], ['set', 'this.layers[1].hidden', false], ['end if']];
+    Button.prototype.onInitialize = [
+        // ['temp','a','__tag'],
+        // ['if'],
+
+        // ['pred','==','a','100'],
+        // ['set','this.layers[1].hidden',true],
+        // ['else'],
+        // ['set','this.layers[1].hidden',false],
+        // ['end if']
+    ];
+
+    Button.prototype.onMouseDown = [['set', 'this.layers[1].hidden', false], ['set', 'this.layers[0].hidden', true]];
+
+    Button.prototype.onMouseUp = [['set', 'this.layers[1].hidden', true], ['set', 'this.layers[0].hidden', false]];
 
     var WidgetCommandParser = {};
     var scope = {};

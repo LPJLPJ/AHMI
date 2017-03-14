@@ -51,7 +51,9 @@
                 height:this.info.height
             },
             layers:this.layers,
-            onInitialize:this.onInitialize
+            onInitialize:this.onInitialize,
+            onMouseDown:this.onMouseDown,
+            onMouseUp:this.onMouseUp
         }
     }
 
@@ -98,14 +100,24 @@
     //     this.layers[1].hidden = true;
     // }
     Button.prototype.onInitialize = [
-        ['temp','a','__tag'],
-        ['if'],
+        // ['temp','a','__tag'],
+        // ['if'],
 
-        ['pred','==','a','100'],
-        ['set','this.layers[1].hidden',true],
-        ['else'],
+        // ['pred','==','a','100'],
+        // ['set','this.layers[1].hidden',true],
+        // ['else'],
+        // ['set','this.layers[1].hidden',false],
+        // ['end if']
+    ]
+
+    Button.prototype.onMouseDown = [
         ['set','this.layers[1].hidden',false],
-        ['end if']
+        ['set','this.layers[0].hidden',true]
+    ]
+
+    Button.prototype.onMouseUp = [
+        ['set','this.layers[1].hidden',true],
+        ['set','this.layers[0].hidden',false]
     ]
 
     var WidgetCommandParser = {};
