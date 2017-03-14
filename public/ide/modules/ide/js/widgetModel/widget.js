@@ -25,6 +25,25 @@
             onInitialize:this.onInitialize
         }
     }
+
+    Widget.getTag = function () {
+        return 100;
+    }
+
+    Widget.setTag = function (value) {
+        console.log('set tag: ',value)
+        return 1;
+    }
+
+    Widget.execute = function (exp) {
+        if (exp == '__tag'){
+            return this.getTag()
+        }else if (typeof  exp == 'string'){
+            return "\""+exp+"\"";
+        }else{
+            return exp;
+        }
+    }
     
     
     function Button(x,y,w,h,text,fontStyle,slices) {
@@ -43,15 +62,27 @@
     Button.prototype = Object.create(Widget.prototype);
     Button.prototype.constructor = Button;
 
-    Button.prototype.onInitialize = function () {
-        console.log('onInitializing')
-        this.layers[1].hidden = true;
-    }
+
+    // function () {
+    //     console.log('onInitializing')
+    //     this.layers[1].hidden = true;
+    // }
+    Button.prototype.onInitialize = [
+        ['temp','a','__tag'],
+        ['if'],
+
+        ['pred','==','a','100'],
+        ['set','this.layers[1].hidden',true],
+        ['else'],
+        ['set','this.layers[1].hidden',false],
+        ['end if']
+    ]
     
 
     var WidgetModel = {};
 
     WidgetModel.Button = Button;
+    WidgetModel.Widget = Widget;
 
     window.WidgetModel = WidgetModel;
 }(window))

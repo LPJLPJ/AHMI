@@ -3106,6 +3106,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.curWidget = new WidgetModel['Button'](x,y,w,h,'button',null,level.texList[0].slices)
             this.curWidgetInfo = this.curWidget.toObject()
             console.log(this.curWidgetInfo)
+            var functionBody = WidgetCommandParser.transFunction(this.curWidgetInfo.onInitialize);
+            console.log(functionBody)
+            this.curWidgetInfo.onInitialize = new Function(functionBody)
             this.curWidgetInfo.onInitialize();
         },
         toObject: function () {
