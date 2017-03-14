@@ -164,16 +164,16 @@ ideServices.service('LinkPageWidgetsService', [function () {
         for (var i = 0; i < page.canvasList.length; i++) {//get all widgets
             curCanvas = page.canvasList[i];
             curSubCanvas = curCanvas.subCanvasList[curCanvas.curSubCanvasIdx || 0];
-            curSubCanvas.widgetList.map(function (widget) {
+            curSubCanvas.widgetList.filter(isInteractiveWidget).map(function (widget) {
                 widget.info.absoluteLeft = widget.info.left + curCanvas.x;
                 widget.info.absoluteTop = widget.info.top + curCanvas.y;
             });
             allWidgets = allWidgets.concat(curSubCanvas.widgetList);
         }
 
-        allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
+        // allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
         // console.log(allInteractiveWidgets,allWidgets);
-        return allInteractiveWidgets;
+        return allWidgets;
     }
 
     function isInteractiveWidget(widget) {

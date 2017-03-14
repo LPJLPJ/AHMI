@@ -21,7 +21,7 @@ var lg = (function () {
         };
     }else{
         return function () {
-            
+
         }
     }
 }());
@@ -196,6 +196,10 @@ module.exports =   React.createClass({
         // callBack(data);
 
 
+        //load widgets
+        this.registerWidgets();
+
+
         if (requiredResourceNum > 0) {
             requiredResourceList.map(function (resource) {
                 if (this.isIn(resource, imageList, 'id')) {
@@ -249,6 +253,67 @@ module.exports =   React.createClass({
 
         } else {
             callBack(data)
+        }
+    },
+    transFunction:function (widget,f) {
+        console.log(widget[f])
+        widget[f] = new Function(WidgetModel.WidgetCommandParser.transFunction(widget[f]));
+    },
+    registerWidgets:function () {
+        this.gWidgets = {}
+        this.transFunction(WidgetModel.Button.prototype,'onInitialize')
+    },
+    transGeneralWidget:function (widget) {
+
+
+    },
+    drawGeneralButton:function (curX,curY,widget,options,cb) {
+        if (!widget.initialzed){
+            widget.initialzed = true;
+            this.transFunction(widget,'onInitialize')
+        }
+
+    },
+    paintGeneralButton:function (curX,curY,widget,options,cb) {
+        for (var i=widget.layers.length-1;i>=0;i--){
+            this.paintGeneralLayer(curX,curY,widget.layers[i]);
+        }
+    },
+    paintGeneralLayer:function (curX,curY,layer) {
+        var subLayers = layer.subLayers;
+        this.paintColorSL(curX,curY,subLayers.color)
+        this.paintTextureSL(curX,curY,subLayers.texture)
+        this.paintFontSL(curX,curY,subLayers.font)
+    },
+    paintROISL:function (curX,curY,subLayer) {
+
+    },
+    paintFontSL:function (curX,curY,subLayer) {
+        var slX = curX + subLayer.x;
+        var slY = curY + subLayer.y;
+        var slWidth = subLayer.width;
+        var slHeight = subLayer.height;
+        if (!subLayer.hidden){
+            this.drawTextByTempCanvas(slX,slY,slWidth,slHeight,subLayer.text,subLayer.fontStyle);
+        }
+
+    },
+    paintTextureSL:function (curX,curY,subLayer) {
+        var slX = curX + subLayer.x;
+        var slY = curY + subLayer.y;
+        var slWidth = subLayer.width;
+        var slHeight = subLayer.height;
+        if (!subLayer.hidden){
+            this.drawBg(slX,slY,slWidth,slHeight,subLayer.texture)
+        }
+    },
+    paintColorSL:function (curX,curY,subLayer) {
+        var slX = curX + subLayer.x;
+        var slY = curY + subLayer.y;
+        var slWidth = subLayer.width;
+        var slHeight = subLayer.height;
+        if (!subLayer.hidden){
+            this.drawBg(slX,slY,slWidth,slHeight,null,subLayer.color)
         }
     },
     isIn: function (res, resList, key) {
@@ -1393,6 +1458,9 @@ module.exports =   React.createClass({
                 case 'MyInputKeyboard':
                     this.drawInputKeyboard(curX, curY, widget, options,cb);
                     break;
+                case 'general-Button':
+                    this.drawGeneralButton(curX,curX,widget,options,cb);
+                    break;
             }
 
         }
@@ -1484,6 +1552,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyInputKeyboard':
                 this.paintInputKeyboard(curX, curY, widget, options,cb);
+                break;
+            case 'general-Button':
+                this.paintGeneralButton(curX,curY,widget,options,cb);
                 break;
         }
 
@@ -2723,7 +2794,7 @@ module.exports =   React.createClass({
         tempCtx.font=font;
         // console.log('curWidth',curWidth,'tempcanvas.width',tempcanvas.width);
         // tempCtx.strokeStyle="#000";/*设置边框*/
-        // tempCtx.lineWidth=1;/*边框的宽度*/ 
+        // tempCtx.lineWidth=1;/*边框的宽度*/
         // tempCtx.strokeRect(0,0,curWidth,curHeight);
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染每个字符的起始位置
@@ -2741,10 +2812,10 @@ module.exports =   React.createClass({
                 initXPos = (curWidth-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos;   
+        xCoordinate = initXPos;
         for(i=0;i<numStr.length;i++){
             // tempCtx.strokeStyle="#00F";/*设置边框*/
-            // tempCtx.lineWidth=1;边框的宽度 
+            // tempCtx.lineWidth=1;边框的宽度
             // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
             tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
             if(numStr[i]=='.'){
@@ -3116,7 +3187,7 @@ module.exports =   React.createClass({
 
 
 
-            
+
            //draw bg
             var bgSlice = widget.texList[0].slices[0];
             this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
@@ -3349,7 +3420,7 @@ module.exports =   React.createClass({
         //draw color
         offctx.fillStyle = texSlice.color;
         offctx.fillRect(0,0,elemWidth,elemHeight);
-        
+
         var image = this.getImageName(texSlice.imgSrc);
         if (image && image != '') {
             var imageList = this.state.imageList;

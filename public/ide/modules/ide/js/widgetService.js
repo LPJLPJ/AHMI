@@ -3119,12 +3119,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 // console.log('drawing general',this.level,this)
                 var firstLayer = this.curWidgetInfo.layers[0];
-                ctx.fillStyle=firstLayer.subLayers.color;
+                ctx.fillStyle=firstLayer.subLayers.color.color;
+                var info = this.curWidgetInfo.info;
                 ctx.fillRect(
-                    -(this.curWidgetInfo.w / 2),
-                    -(this.curWidgetInfo.h / 2) ,
-                    this.curWidgetInfo.w ,
-                    this.curWidgetInfo.h );
+                    -(info.left / 2),
+                    -(info.top / 2) ,
+                    info.width,
+                    info.height );
                 // if (this.currentImageElement){
                 //     ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 //

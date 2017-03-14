@@ -24,10 +24,17 @@
     var ColorSubLayer = LayerModel.ColorSubLayer;
 
     function Widget(x,y,w,h,layers) {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+        // this.x = x;
+        // this.y = y;
+        // this.w = w;
+        // this.h = h;
+        this.info = {
+            left:x,
+            top:y,
+            width:w,
+            height:h
+        }
+        this.type = 'general'
         if (!layers||!layers.length){
             this.layers= [new Layer(w,h)]
         }else{
@@ -37,10 +44,12 @@
 
     Widget.prototype.toObject = function () {
         return {
-            x:this.x,
-            y:this.y,
-            w:this.w,
-            h:this.h,
+            info:{
+                left:this.info.left,
+                top:this.info.top,
+                width:this.info.width,
+                height:this.info.height
+            },
             layers:this.layers,
             onInitialize:this.onInitialize
         }
@@ -69,13 +78,14 @@
     function Button(x,y,w,h,text,fontStyle,slices) {
         var layerUp = new Layer(w,h);
         layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        layerUp.subLayers.texture =slices[0].imgSrc;
-        layerUp.subLayers.color = slices[0].color;
+        layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
+        layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
         var layerDown = new Layer(w,h);
         layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        layerDown.subLayers.texture =slices[1].imgSrc;
-        layerDown.subLayers.color = slices[1].color;
+        layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
+        layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
         var layers = [layerUp,layerDown]
+        this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)
     }
 

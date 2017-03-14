@@ -58,7 +58,7 @@
     }
     FontSubLayer.prototype = Object.create(SubLayer.prototype);
 
-    FontSubLayer.prototype.constructor = ROISubLayer;
+    FontSubLayer.prototype.constructor = FontSubLayer;
 
 //img
     function TextureSubLayer(x,y,w,h,texture) {
@@ -67,15 +67,16 @@
     }
     TextureSubLayer.prototype = Object.create(SubLayer.prototype);
 
-    TextureSubLayer.prototype.constructor = ROISubLayer;
+    TextureSubLayer.prototype.constructor = TextureSubLayer;
 
 //color
     function ColorSubLayer(x,y,w,h,color) {
+        SubLayer.call(this,x,y,w,h)
         this.color = color;
     }
     ColorSubLayer.prototype = Object.create(SubLayer.prototype);
 
-    ColorSubLayer.prototype.constructor = ROISubLayer;
+    ColorSubLayer.prototype.constructor = ColorSubLayer;
 
     var LayerModel = {
         Layer:Layer,

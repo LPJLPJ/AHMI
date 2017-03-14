@@ -97,10 +97,27 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //targetWidget.info = rawWidget.info;
 
         targetWidget = _.cloneDeep(rawWidget);
-        transActions(targetWidget);
-        targetWidget.type = 'widget';
-        targetWidget.subType = rawWidget.type;
-        targetWidget.id = subLayerIdx+'.'+widgetIdx;
+        if (targetWidget.type == 'general'){
+            //default Button
+            var info = targetWidget.info;
+            var x = info.left;
+            var y = info.top;
+            var w = info.width;
+            var h = info.height;
+            targetWidget =  new WidgetModel['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
+            targetWidget = targetWidget.toObject();
+            targetWidget.type = 'widget';
+            targetWidget.subType = 'general-Button';
+            targetWidget.id = subLayerIdx+'.'+widgetIdx;
+
+        }else{
+            transActions(targetWidget);
+            targetWidget.type = 'widget';
+            targetWidget.subType = rawWidget.type;
+            targetWidget.id = subLayerIdx+'.'+widgetIdx;
+        }
+
+
 
         return targetWidget;
     }
