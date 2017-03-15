@@ -21,6 +21,7 @@ module.exports = function (req, res) {
                 info.template = project.template;
                 info.lastModifiedTime = project.lastModifiedTime;
                 info.supportTouch = project.supportTouch;
+                info.author = project.author;
                 var thumbnail = project.thumbnail;
                 return {
                     projectInfo: info,

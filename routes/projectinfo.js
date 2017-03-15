@@ -270,62 +270,125 @@ projectRoute.saveProject = function (req, res) {
             if (err){
                 errHandler(res,500,'project error')
             }else{
-                var curProjectContent = req.body.project
-                if (curProjectContent){
-                    project.content = JSON.stringify(curProjectContent)
-                    project.save(function (err) {
-                        if (err){
-                            console.log(err)
-                            errHandler(res, 500, 'project resave error')
-                        }else{
-
-                            res.end('ok')
-                            //delete files
-                            var resourceList = curProjectContent.resourceList;
-                            var resourceNames = resourceList.map(function(res){
-                                return res.id;
-                            })
-                            //console.log(resourceNames);
-                            var url = path.join(__dirname,'../project',projectId,'resources');
-                            fs.readdir(url, function (err, files) {
-                                if (err){
-                                    console.log(err)
-                                }
-                                //console.log(files)
-                                if (files && files.length){
-
-                                    var diffResources = _.difference(files,resourceNames);
-                                    // console.log(diffResources)
-                                    // for (var i=0;i<diffResources.length;i++){
-                                    //     fs.unlink(path.join(url,diffResources[i]));
-                                    // }
-
-                                    //filter
-                                    diffResources.map(function (dFile) {
-                                        var dFilePath = path.join(url,dFile);
-                                        // console.log(dFilePath)
-                                        fs.stat(dFilePath,function (err,stats) {
-                                            // console.log(stats)
-                                            if (stats && stats.isFile()){
-                                                fs.unlink(dFilePath);
-                                            }
-                                        })
-                                    });
-                                }
-                            })
-
-                        }
-                    })
+                if(!project){
+                    errHandler(res,500,'project is null');
                 }else{
-                    errHandler(res,500,'project save error')
+                    var curProjectContent = req.body.project
+                    if (curProjectContent){
+                        project.content = JSON.stringify(curProjectContent)
+                        project.save(function (err) {
+                            if (err){
+                                console.log(err)
+                                errHandler(res, 500, 'project resave error')
+                            }else{
+
+                                res.end('ok')
+                                //delete files
+                                var resourceList = curProjectContent.resourceList;
+                                var resourceNames = resourceList.map(function(res){
+                                    return res.id;
+                                })
+                                //console.log(resourceNames);
+                                var url = path.join(__dirname,'../project',projectId,'resources');
+                                fs.readdir(url, function (err, files) {
+                                    if (err){
+                                        console.log(err)
+                                    }
+                                    //console.log(files)
+                                    if (files && files.length){
+
+                                        var diffResources = _.difference(files,resourceNames);
+                                        // console.log(diffResources)
+                                        // for (var i=0;i<diffResources.length;i++){
+                                        //     fs.unlink(path.join(url,diffResources[i]));
+                                        // }
+
+                                        //filter
+                                        diffResources.map(function (dFile) {
+                                            var dFilePath = path.join(url,dFile);
+                                            // console.log(dFilePath)
+                                            fs.stat(dFilePath,function (err,stats) {
+                                                // console.log(stats)
+                                                if (stats && stats.isFile()){
+                                                    fs.unlink(dFilePath);
+                                                }
+                                            })
+                                        });
+                                    }
+                                })
+
+                            }
+                        })
+                    }else{
+                        errHandler(res,500,'project save error')
+                    }
                 }
+
             }
 
         })
     }else{
         errHandler(res,500,'projectId error')
     }
-}
+};
+
+projectRoute.saveProjectAs = function(req,res){
+    var projectId = req.params.id;
+    var data = req.body;
+    if(projectId!=''){
+        ProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'find project err');
+                if(!project){
+                    errHandler(res,500,'project is null');
+                }else{
+                    var copyProject = {};
+                    copyProject.name = _.cloneDeep(project.name);
+                    copyProject.userId = _.cloneDeep(project.userId);
+                    copyProject.author = _.cloneDeep(project.author);
+                    copyProject.resolution = _.cloneDeep(project.resolution);
+                    copyProject.type = _.cloneDeep(project.type);
+                    copyProject.template = _.cloneDeep(project.template);
+                    copyProject.supportTouch = _.cloneDeep(project.supportTouch);
+                    copyProject.curSize = _.cloneDeep(project.curSize);
+                    copyProject.thumbnail = _.cloneDeep(project.thumbnail);
+                    copyProject.content = _.cloneDeep(project.content);
+
+                    copyProject.name = data.saveAsName?(data.saveAsName):(copyProject.name+"副本");
+                    copyProject.author = data.saveAsAuthor?(data.saveAsAuthor):(copyProject.author);
+                    var newProject = new ProjectModel(copyProject);
+                    var newId = newProject._id;
+                    if(newProject.content){
+                        newProject.content=newProject.content.replace(/project\/[\S]+?\/resources/g,'project/'+newId+'/resources');
+                    }
+                    newProject.save(function(err){
+                        if(err){
+                            errHandler(res,500,'save new project err')
+                        }else{
+                            var targetDir = path.join(__dirname,'../project/',String(newProject._id));
+                            var srcDir = path.join(__dirname,'../project/',projectId);
+                            fse.ensureDir(targetDir,function(err){
+                                if(err){
+                                    console.log(err);
+                                    errHandler(res,500,'ensureDir err');
+                                }else{
+                                    fse.copy(srcDir,targetDir,function(err){
+                                        if(err){
+                                            console.log(err);
+                                            errHandler(res,500,'copy project folder err')
+                                        }else{
+                                            res.send('ok');
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    });
+                }
+            }
+        })
+    }
+};
 
 projectRoute.saveThumbnail = function (req, res) {
     var projectId = req.params.id;
@@ -334,22 +397,25 @@ projectRoute.saveThumbnail = function (req, res) {
             if (err){
                 errHandler(res,500,'project error')
             }else{
-                var thumbnail = req.body.thumbnail;
-                if (!!thumbnail){
-                    project.thumbnail = thumbnail;
-                    //console.log('thumbnail',thumbnail)
-                    project.save(function (err) {
-                        if (err){
-                            errHandler(res, 500, 'project resave error')
-                        }else{
-                            res.end('ok')
-                        }
-                    })
+                if(!project){
+                    errHandler(res,500,'project is null');
                 }else{
-                    errHandler(res,500,'project save error')
+                    var thumbnail = req.body.thumbnail;
+                    if (!!thumbnail){
+                        project.thumbnail = thumbnail;
+                        //console.log('thumbnail',thumbnail)
+                        project.save(function (err) {
+                            if (err){
+                                errHandler(res, 500, 'project resave error')
+                            }else{
+                                res.end('ok')
+                            }
+                        })
+                    }else{
+                        errHandler(res,500,'project save error')
+                    }
                 }
             }
-
         })
     }else{
         errHandler(res,500,'projectId error');
