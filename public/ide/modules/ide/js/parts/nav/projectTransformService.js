@@ -97,6 +97,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //targetWidget.info = rawWidget.info;
 
         targetWidget = _.cloneDeep(rawWidget);
+        console.log('targetWidget',targetWidget)
         if (targetWidget.type == 'general'){
             //default Button
             var info = targetWidget.info;
@@ -109,6 +110,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             targetWidget.type = 'widget';
             targetWidget.subType = 'general-Button';
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
+            // console.log(targetWidget,JSON.stringify(targetWidget))
 
         }else{
             transActions(targetWidget);

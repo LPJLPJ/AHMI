@@ -51881,10 +51881,15 @@ module.exports = React.createClass({
     },
     transFunction: function (widget, f) {
         console.log(widget[f]);
-        widget[f] = new Function(WidgetModel.WidgetCommandParser.transFunction(widget[f]));
+        widget[f] = new Function(WidgetModel.WidgetCommandParser.transFunction(widget, widget[f]));
     },
     registerWidgets: function () {
         this.gWidgets = {};
+        //register getTag setTag
+
+        WidgetModel.Widget.getTag = function (tag) {
+            return tag;
+        };
         this.transFunction(WidgetModel.Button.prototype, 'onInitialize');
     },
     transGeneralWidget: function (widget) {},
@@ -51892,6 +51897,7 @@ module.exports = React.createClass({
         if (!widget.initialzed) {
             widget.initialzed = true;
             this.transFunction(widget, 'onInitialize');
+            console.log('transed', widget);
         }
     },
     paintGeneralButton: function (curX, curY, widget, options, cb) {
@@ -56215,6 +56221,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             width: w,
             height: h
         };
+        this.tag = 'defaultTag';
         this.type = 'general';
         if (!layers || !layers.length) {
             this.layers = [new Layer(w, h)];
@@ -56231,6 +56238,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 width: this.info.width,
                 height: this.info.height
             },
+            tag: this.tag,
             layers: this.layers,
             onInitialize: this.onInitialize,
             onMouseDown: this.onMouseDown,
@@ -56238,7 +56246,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
     };
 
-    Widget.getTag = function () {
+    Widget.getTag = function (tag) {
+        console.log('ctx tag', tag);
         return 100;
     };
 
@@ -56247,9 +56256,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return 1;
     };
 
-    Widget.execute = function (exp) {
+    Widget.execute = function (ctx, exp) {
         if (exp == '__tag') {
-            return this.getTag();
+            return this.getTag(ctx.tag);
         } else if (typeof exp == 'string') {
             return "\"" + exp + "\"";
         } else {
@@ -56278,15 +56287,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     //     console.log('onInitializing')
     //     this.layers[1].hidden = true;
     // }
-    Button.prototype.onInitialize = [
-        // ['temp','a','__tag'],
-        // ['if'],
+    Button.prototype.onInitialize = [['temp', 'a', '__tag']
+    // ['if'],
 
-        // ['pred','==','a','100'],
-        // ['set','this.layers[1].hidden',true],
-        // ['else'],
-        // ['set','this.layers[1].hidden',false],
-        // ['end if']
+    // ['pred','==','a','100'],
+    // ['set','this.layers[1].hidden',true],
+    // ['else'],
+    // ['set','this.layers[1].hidden',false],
+    // ['end if']
     ];
 
     Button.prototype.onMouseDown = [['set', 'this.layers[1].hidden', false], ['set', 'this.layers[0].hidden', true]];
@@ -56295,7 +56303,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     var WidgetCommandParser = {};
     var scope = {};
-    WidgetCommandParser.transCommand = function (command) {
+    WidgetCommandParser.transCommand = function (ctx, command) {
         var op = command[0];
         var result;
         var variable;
@@ -56303,13 +56311,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         switch (op) {
             case 'temp':
                 variable = command[1];
-                value = Widget.execute(command[2]);
+                value = Widget.execute(ctx, command[2]);
                 scope[variable] = value;
                 result = 'var ' + variable + '=' + value + ';\n';
                 break;
             case 'set':
                 variable = command[1];
-                value = Widget.execute(command[2]);
+                value = Widget.execute(ctx, command[2]);
                 if (variable in scope) {
                     scope[variable] = value;
                 }
@@ -56322,10 +56330,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 var pred1 = command[2];
                 var pred2 = command[3];
                 if (!(pred1 in scope)) {
-                    pred1 = Widget.execute(pred1);
+                    pred1 = Widget.execute(ctx, pred1);
                 }
                 if (!(pred2 in scope)) {
-                    pred2 = Widget.execute(pred2);
+                    pred2 = Widget.execute(ctx, pred2);
                 }
 
                 result = "(" + pred1 + command[1] + pred2 + "){\n";
@@ -56339,12 +56347,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
         return result;
     };
-    WidgetCommandParser.transFunction = function (commands) {
-        console.log(JSON.stringify(commands));
+    WidgetCommandParser.transFunction = function (ctx, commands) {
         scope = {};
         var result = "";
         for (var i = 0; i < commands.length; i++) {
-            result += this.transCommand(commands[i]);
+            result += this.transCommand(ctx, commands[i]);
         }
         return result;
     };

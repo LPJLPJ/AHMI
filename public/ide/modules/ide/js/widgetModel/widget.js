@@ -34,6 +34,7 @@
             width:w,
             height:h
         }
+        this.tag = 'defaultTag'
         this.type = 'general'
         if (!layers||!layers.length){
             this.layers= [new Layer(w,h)]
@@ -50,6 +51,7 @@
                 width:this.info.width,
                 height:this.info.height
             },
+            tag:this.tag,
             layers:this.layers,
             onInitialize:this.onInitialize,
             onMouseDown:this.onMouseDown,
@@ -57,7 +59,8 @@
         }
     }
 
-    Widget.getTag = function () {
+    Widget.getTag = function (tag) {
+        console.log('ctx tag',tag)
         return 100;
     }
 
@@ -66,9 +69,9 @@
         return 1;
     }
 
-    Widget.execute = function (exp) {
+    Widget.execute = function (ctx,exp) {
         if (exp == '__tag'){
-            return this.getTag()
+            return this.getTag(ctx.tag)
         }else if (typeof  exp == 'string'){
             return "\""+exp+"\"";
         }else{
@@ -100,7 +103,7 @@
     //     this.layers[1].hidden = true;
     // }
     Button.prototype.onInitialize = [
-        // ['temp','a','__tag'],
+        ['temp','a','__tag']
         // ['if'],
 
         // ['pred','==','a','100'],
@@ -122,7 +125,7 @@
 
     var WidgetCommandParser = {};
     var scope = {}
-    WidgetCommandParser.transCommand = function (command) {
+    WidgetCommandParser.transCommand = function (ctx,command) {
         var op = command[0];
         var result;
         var variable;
@@ -130,13 +133,13 @@
         switch (op){
             case 'temp':
                 variable = command[1];
-                value = Widget.execute(command[2])
+                value = Widget.execute(ctx,command[2])
                 scope[variable] = value;
                 result = 'var '+variable+'='+value+';\n';
                 break;
             case 'set':
                 variable = command[1];
-                value = Widget.execute(command[2])
+                value = Widget.execute(ctx,command[2])
                 if (variable in scope){
                     scope[variable] = value;
                 }
@@ -149,10 +152,10 @@
                 var pred1 = command[2];
                 var pred2 = command[3];
                 if (!(pred1 in scope)){
-                    pred1 = Widget.execute(pred1)
+                    pred1 = Widget.execute(ctx,pred1)
                 }
                 if (!(pred2 in scope)){
-                    pred2 = Widget.execute(pred2)
+                    pred2 = Widget.execute(ctx,pred2)
                 }
 
                 result = "("+pred1+command[1]+pred2+"){\n"
@@ -166,12 +169,11 @@
         }
         return result;
     }
-    WidgetCommandParser.transFunction = function (commands) {
-        console.log(JSON.stringify(commands))
+    WidgetCommandParser.transFunction = function (ctx,commands) {
         scope = {}
         var result = "";
         for (var i=0;i<commands.length;i++){
-            result +=this.transCommand(commands[i])
+            result +=this.transCommand(ctx,commands[i])
         }
         return result;
     }

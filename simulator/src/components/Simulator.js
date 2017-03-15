@@ -257,10 +257,15 @@ module.exports =   React.createClass({
     },
     transFunction:function (widget,f) {
         console.log(widget[f])
-        widget[f] = new Function(WidgetModel.WidgetCommandParser.transFunction(widget[f]));
+        widget[f] = new Function(WidgetModel.WidgetCommandParser.transFunction(widget,widget[f]));
     },
     registerWidgets:function () {
         this.gWidgets = {}
+        //register getTag setTag
+        
+        WidgetModel.Widget.getTag = function (tag) {
+            return tag;
+        }
         this.transFunction(WidgetModel.Button.prototype,'onInitialize')
     },
     transGeneralWidget:function (widget) {
@@ -271,6 +276,7 @@ module.exports =   React.createClass({
         if (!widget.initialzed){
             widget.initialzed = true;
             this.transFunction(widget,'onInitialize')
+            console.log('transed',widget)
         }
 
     },
