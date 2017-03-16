@@ -38,9 +38,10 @@ $(function(){
     /**
      * 获取用户信息
      * param  string getUsersUrl 请求地址
+     * cb 回调函数
      * @return {[type]} [description]
      */
-    function getUsers(getUsersUrl){
+    function getUsers(getUsersUrl,cb){
         //console.log(getUserUrl);
         $.ajax({
             type:'GET',
@@ -57,9 +58,11 @@ $(function(){
                 pageCount = Math.ceil(usersCount/pageSize);
                 curPageIdx = 1;
                 initUI();
+                cb&&cb();
             },
             error:function(err,status,xhr){
                 console.log('err',err);
+                cb&&cb();
             }
         })
     }
@@ -286,6 +289,7 @@ $(function(){
      * @return {[type]} [description]
      */
     function handleSearch(){
+        showOverLay();
         var searchInput = $('#search-input');
         searchStr = searchInput.val().trim();
         //console.log('searchStr',searchStr);
@@ -294,11 +298,11 @@ $(function(){
             console.log('取消搜索');
             searchState=false;
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize);
-            getUsers(getUsersUrl);
+            getUsers(getUsersUrl,hideOverLay);
         }else if(searchStr!=""){
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize,searchStr);
             searchState=true;
-            getUsers(getUsersUrl);
+            getUsers(getUsersUrl,hideOverLay);
         }
 
         searchInput = null;
@@ -391,6 +395,13 @@ $(function(){
                 console.log(err);
             }
         })
+    }
+
+    function showOverLay(){
+        $('.overlay').show();
+    }
+    function  hideOverLay(){
+        $('.overlay').hide();
     }
 
 })
