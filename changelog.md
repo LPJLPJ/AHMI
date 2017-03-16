@@ -73,11 +73,11 @@ fix:
 
 v1.8.9
 add:
-    1. new IDE manage space
-    2. admin can release new local version in manage space
-    3. add download link to download local version
-    4. IDE support save project as XX in web
+    1. admin can release new local version in manage space
+    2. add download link to download local version
+    3. IDE support save project as XX in web
 update:
+    1. new IDE manage space
 fix:
     1. fix a bug that versionTag didn't display in page
     2. fix a bug that delete a project that mongodb cause server crash
