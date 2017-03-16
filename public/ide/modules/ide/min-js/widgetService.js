@@ -3103,13 +3103,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             var h = level.info.height;
 
             console.log(level.type)
-            this.curWidget = new WidgetModel['Button'](x,y,w,h,'button',null,level.texList[0].slices)
+            this.curWidget = new WidgetModel.models['Button'](x,y,w,h,'button',null,level.texList[0].slices)
             this.curWidgetInfo = this.curWidget.toObject()
             // console.log(this.curWidgetInfo)
-            var functionBody = WidgetModel.WidgetCommandParser.transFunction(this.curWidgetInfo,this.curWidgetInfo.onInitialize);
-            console.log(functionBody)
-            this.curWidgetInfo.onInitialize = new Function(functionBody)
-            this.curWidgetInfo.onInitialize();
+            // console.log(WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(this.curWidgetInfo.onInitialize)))
+            // var functionBody = WidgetModel.WidgetCommandParser.transFunction(this.curWidgetInfo,this.curWidgetInfo.onInitialize);
+            // console.log(functionBody)
+            // this.curWidgetInfo.onInitialize = new Function(functionBody)
+            // this.curWidgetInfo.onInitialize();
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));

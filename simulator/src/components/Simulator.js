@@ -11,7 +11,10 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
 var WidgetModel = require('../../../public/ide/modules/ide/js/widgetModel/widget')
-console.log(WidgetModel)
+var WidgetExecutor = {
+
+}
+window.WidgetExecutor = WidgetExecutor;
 
 var env = 'dev' //dev or build
 var lg = (function () {
@@ -263,10 +266,23 @@ module.exports =   React.createClass({
         this.gWidgets = {}
         //register getTag setTag
         
-        WidgetModel.Widget.getTag = function (tag) {
-            return tag;
-        }
-        this.transFunction(WidgetModel.Button.prototype,'onInitialize')
+        // WidgetModel.Widget.getTag = function (tag) {
+        //     return tag;
+        // }
+
+        // WidgetModel.Widget.setTag = function (tag,value) {
+        //     console.log('aaa',tag,value)
+        //     // this.setTagByName(tag,value)
+        // }
+        // WidgetModel.Widget.prototype.setTag = function (tag,value) {
+        //     console.log('aaaproto',tag,value)
+        //     // this.setTagByName(tag,value)
+        // }
+        WidgetExecutor.setTag = function (tag,value) {
+            console.log('aaa',tag,value)
+            this.setTagByName(tag,value)
+        }.bind(this)
+        console.log(WidgetModel.Widget.setTag)
     },
     transGeneralWidget:function (widget) {
 
@@ -276,7 +292,7 @@ module.exports =   React.createClass({
         if (!widget.initialzed){
             widget.initialzed = true;
             this.transFunction(widget,'onInitialize')
-            console.log('transed',widget)
+            console.log('transed',widget,widget.onInitialize)
         }
 
     },
@@ -4109,7 +4125,12 @@ module.exports =   React.createClass({
                 if (typeof widget.onMouseDown != 'function') {
                     this.transFunction(widget,'onMouseDown');
                 }
-
+                // widget.onMouseDown = function() {
+                //     this.layers[1].hidden=false;
+                //     this.layers[0].hidden=true;
+                //     WidgetModel.Widget.setTag("defaultTag",101)
+                // }
+                console.log(widget.onMouseDown)
                 widget.onMouseDown()
                 needRedraw = true;
 

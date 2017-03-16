@@ -2,6 +2,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     this.transDataFile = transDataFile;
 
+
     function transCmds(cmds,changelt){
         // actionCompiler
         return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
@@ -16,13 +17,31 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         }
     }
-
+    function registerGeneralCommands() {
+        var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown']
+        var commands = {}
+        var models = WidgetModel.models;
+        for (var model in models){
+            if (models.hasOwnProperty(model)) {
+                //Button
+                console.log(models,model)
+                var modelCommands = models[model].prototype.commands;
+                console.log(modelCommands,_.cloneDeep(modelCommands))
+                transGeneralWidgetMultiCommands(modelCommands,generalWidgetFunctions)
+                commands[model] = modelCommands;
+            }
+        }
+        
+        return commands;
+    }
     function transDataFile(rawProject){
         var targetProject = {};
         targetProject.version = rawProject.version;
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
         targetProject.size = rawProject.currentSize;
+        //register general commands
+        targetProject.generalWidgetCommands = registerGeneralCommands()
         targetProject.pageList = [];
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
@@ -95,9 +114,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //targetWidget.x = rawWidget.info.left;
         //targetWidget.y = rawWidget.info.top;
         //targetWidget.info = rawWidget.info;
-
+        
         targetWidget = _.cloneDeep(rawWidget);
-        console.log('targetWidget',targetWidget)
         if (targetWidget.type == 'general'){
             //default Button
             var info = targetWidget.info;
@@ -105,12 +123,12 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             var y = info.top;
             var w = info.width;
             var h = info.height;
-            targetWidget =  new WidgetModel['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
+            targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
             targetWidget = targetWidget.toObject();
             targetWidget.type = 'widget';
             targetWidget.subType = 'general-Button';
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
-            // console.log(targetWidget,JSON.stringify(targetWidget))
+            // transGeneralWidgetCommands(targetWidget,'onInitialize')
 
         }else{
             transActions(targetWidget);
@@ -122,6 +140,19 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
 
         return targetWidget;
+    }
+
+    function transGeneralWidgetMultiCommands(widget,mfs) {
+        for (var i=0;i<mfs.length;i++){
+            var curF = mfs[i];
+            transGeneralWidgetCommands(widget,curF)
+        }
+    }
+
+    function transGeneralWidgetCommands(widget,f) {
+        widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f])).map(function (cmd) {
+            return cmd['cmd']
+        })
     }
 
     function deepCopyAttributes(srcObj,dstObj,attrList){
