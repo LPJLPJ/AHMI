@@ -81,6 +81,12 @@ UserSchema.statics = {
         }
 
     },
+    fetchFuzzy:function(keyword,cb){
+		return this
+		     .find({$or:[{accountName:{$regex:keyword}},{email:{$regex:keyword}},{type:{$regex:keyword}}]})
+		     .sort('accountName')
+		     .exec(cb)
+    },
 	findById:function(id,cb){
 		return this
 		.findOne({_id:id})

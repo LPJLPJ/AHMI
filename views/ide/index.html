@@ -163,11 +163,31 @@
                     </script>
 
                 </a>
-                <!--===========================-->
-                <!--暂时屏蔽ide中的另存为功能-->
-                <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe611;</span><span class="caption">另存为</span></a>-->
-                <!--===========================-->
-
+                <a ng-click="component.tool.saveProjectAs()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe611;</span><span class="caption">另存为</span></a>
+                <script type="text/ng-template" id="saveAsModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">另存为</h3>
+                        <h6 class="modal-title">将已经保存的工程另存为一份副本</h6>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">
+                            <form>
+                                <div class="form-group">
+                                    <label for="projectName" class="control-label">工程名:</label>
+                                    <input type="text" class="form-control" id="projectName" ng-model="saveAsName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="author" class="control-label">作者:</label>
+                                    <input type="text" class="form-control" id="author" ng-model="saveAsAuthor">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
                 <!--<a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal"-->
                 <!--data-target="#projectFileModal">-->
                 <!--<span class="iconfont icon">&#xe612;</span><span class="caption">打开</span>-->

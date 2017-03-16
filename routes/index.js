@@ -10,6 +10,7 @@ var route_space = require('./route_space');
 var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
+var DownloadRouter = require('./routeDownload');
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -38,14 +39,14 @@ var userVerify = require('./userVerify');
 var findPassword = require('./findPassword');
 
 //update local
-var updateLocal = require('./updateLocal');
+var localIDEService = require('./localIDEService');
 
 
 //update local IDE
 router.route('/checkUpdate/manifest.json')
-    .get(updateLocal.getCurrentVer);
+    .get(localIDEService.getCurrentVer);
 router.route('/releases/updapp/win/updFiles.zip')
-    .get(updateLocal.downloadNewVerZip);
+    .get(localIDEService.downloadNewVerZip);
 
 //blog
 var BlogRoute = require('./routeBlog');
@@ -73,13 +74,17 @@ router.route('/admin/manage/*')
 
 router.route('/admin/manage/space')
     .get(route_admin.getManageSpace);
-
 router.route('/admin/manage/users')
     .get(route_admin.getUsers);
-
 router.route('/admin/manage/changeusertype')
     .post(route_admin.changeUserType);
-
+//release and update
+router.route('/admin/manage/releaseVersion')
+    .get(route_admin.getReleaseVerSpace);
+router.route('/admin/manage/releaseInfo')
+    .get(route_admin.getReleaseInfo);
+router.route('/admin/manage/release/update')
+    .post(route_admin.releaseUpdate);
 //user control
 //signup
 router.route('/user/signup')
@@ -162,6 +167,8 @@ router.route('/project/:id/content')
 
 router.route('/project/:id/save')
     .put(projectInfo.saveProject);
+router.route('/project/:id/saveAs')
+    .post(projectInfo.saveProjectAs);
 
 
 router.route('/project/:id/thumbnail')
@@ -336,6 +343,15 @@ router.route('/blog/resources/deleteresource')
 
 router.route('/blog/*')
     .get(BlogRoute.getIndex)
+
+
+router.route('/download/index.html')
+    .get(DownloadRouter.getDownloadPage)
+
+router.route('/download/pcclient/latest')
+    .get(DownloadRouter.downloadPCClinet)
+
+
 //router.route('*')
 //    .all(function (req,res,next) {
 //        res.render('login/404.html');

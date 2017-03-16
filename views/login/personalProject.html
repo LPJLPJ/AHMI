@@ -159,7 +159,9 @@
                     </a>
                     <p class="text">创建项目</p>
                 </li>
-                <% for(var i=0;i<projects.length;i++){ %>
+                <!-- 识别符 勿删 -->
+                <!-- webProFlag -->
+                <%for(var i=0;i<projects.length;i++){%>
                 <li data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel">
                     <div class="img">
                         <i class="projectdelete iconfont">&#xe607;</i>
@@ -178,7 +180,8 @@
                         <span hidden class="day"><%= projects[i].projectInfo.lastModifiedTime %></span>
                     </p>
                 </li>
-                <% } %>
+                <%}%>
+                <!-- webProFlag_end -->
 
             </ul>
         </div>
@@ -220,7 +223,8 @@
                         </a>
                         <p class="text">创建项目</p>
                     </li>
-                    <% for(var i=0;i<CANProjects.length;i++){ %>
+                    <!-- webProFlag -->
+                    <%for(var i=0;i<CANProjects.length;i++){%>
                     <li data-project='<%= JSON.stringify(CANProjects[i].CANProjectInfo) %>'  class="CANProjectPanel">
                         <div class="img">
                             <i class="CANProjectdelete iconfont">&#xe607;</i>
@@ -232,10 +236,11 @@
                             <span hidden class="day"><%= CANProjects[i].CANProjectInfo.lastModifiedTime %></span>
                         </p>
                     </li>
-                    <% } %>
+                    <%}%>
+                    <!-- webProFlag_end -->
                 </ul>
             </div>
-        </div>`
+        </div>
     <div id="updater_wrapper">
         <div class="displayInfo">
             <p id="updateInfoText"></p>

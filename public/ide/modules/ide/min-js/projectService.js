@@ -228,6 +228,10 @@ ideServices
                 scb && scb();
             };
 
+            //get project id
+            this.getProjectId = function(){
+                return project.projectId;
+            };
 
             /**
              * 获得当前Page

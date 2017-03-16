@@ -245,6 +245,7 @@ $(function(){
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
 
+            console.log('project',project)
             title.val(project.name);
             author.val(project.author);
             if(identifyCustomResolution(project.resolution)){
@@ -452,7 +453,7 @@ $(function(){
         try {
             for (var i=0;i<arguments.length;i++){
                 var name = arguments[i];
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF]/)){
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)){
                     return false;
                 }
             }
@@ -526,7 +527,7 @@ $(function(){
                         console.log('success',data)
                         //update panel
                         updateSuccess = true;
-                        console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
+                        //console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
                         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
                         curPanel.replaceWith(html)
 

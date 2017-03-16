@@ -215,7 +215,7 @@ var TextSlice = exports.TextSlice = function (_Slice) {
             for (i in customFonts) {
                 ctx.addFont(customFonts[i]);
             }
-            console.log(customFonts)
+            // console.log(customFonts)
 
             ctx.translate(this.originPos.x, this.originPos.y);
             //clip
@@ -223,7 +223,7 @@ var TextSlice = exports.TextSlice = function (_Slice) {
 
             ctx.font = this.style.font;
             // ctx.font = '40px helvetica';
-            console.log('font', this.style.font);
+            // console.log('font', this.style.font);
             // console.log(this.style.font);
             ctx.textAlign = this.style.textAlign;
             ctx.textBaseline = this.style.textBaseline;
@@ -245,7 +245,7 @@ var TextSlice = exports.TextSlice = function (_Slice) {
 
             ctx.restore();
             var stopTime = new Date();
-            console.log('Text Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
+            // console.log('Text Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
 
             cb && cb();
         }
@@ -309,7 +309,7 @@ var ImageSlice = exports.ImageSlice = function (_Slice2) {
             //     }
             // }.bind(this);
             // img.src = this.imgSrc;
-            console.log('drawing: ', this.imgObj);
+            // console.log('drawing: ', this.imgObj);
             if (!this.imgObj) {
                 cb && cb();
             } else {
@@ -330,7 +330,7 @@ var ImageSlice = exports.ImageSlice = function (_Slice2) {
                     }
                     ctx.restore();
                     var stopTime = new Date();
-                    console.log('Image Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
+                    // console.log('Image Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
                     cb && cb();
                 } catch (e) {
                     ctx.restore();
@@ -426,10 +426,10 @@ var ColorSlice = exports.ColorSlice = function (_Slice4) {
             ctx.fillStyle = this.color;
             // console.log('size',this.size);
             ctx.fillRect(0, 0, this.size.w, this.size.h);
-            console.log('rendering color ', this.color);
+            // console.log('rendering color ', this.color);
             ctx.restore();
             var stopTime = new Date();
-            console.log('Color Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
+            // console.log('Color Drawing Elapsed: ', (stopTime - startTime) / 1000.0 + 's');
             cb && cb();
         }
     }]);
