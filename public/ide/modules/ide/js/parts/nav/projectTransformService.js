@@ -31,6 +31,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 commands[model] = modelCommands;
             }
         }
+        console.log(commands)
         
         return commands;
     }
@@ -125,17 +126,43 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             var h = info.height;
             targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
             targetWidget = targetWidget.toObject();
-            targetWidget.type = 'widget';
-            targetWidget.subType = 'general';
+            
             targetWidget.generalType = 'Button'
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
+            targetWidget.type = 'widget';
+            targetWidget.subType = 'general';
             // transGeneralWidgetCommands(targetWidget,'onInitialize')
+            // console.log(targetWidget)
 
         }else{
-            transActions(targetWidget);
-            targetWidget.type = 'widget';
-            targetWidget.subType = rawWidget.type;
+            var info = targetWidget.info;
+            var x = info.left;
+            var y = info.top;
+            var w = info.width;
+            var h = info.height;
+            switch(targetWidget.type){
+                case 'MyButton':
+
+                    targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
+                    targetWidget = targetWidget.toObject();
+                    targetWidget.generalType = 'Button'
+                    targetWidget.mode = Number(rawWidget.buttonModeId);
+                    targetWidget.subType = 'general';
+                break;
+                default:
+                    transActions(targetWidget);
+                    targetWidget.subType = rawWidget.type;
+                    
+
+            }
+            
+            
+            
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
+            targetWidget.type = 'widget';
+            
+
+            
         }
 
 

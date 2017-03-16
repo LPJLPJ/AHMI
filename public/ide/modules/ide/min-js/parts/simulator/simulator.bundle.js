@@ -51890,10 +51890,13 @@ module.exports = React.createClass({
 
         console.log(this.project);
         WidgetExecutor.setTag = function (tag, value) {
-            console.log('aaa', tag, value);
+            // console.log('aaa',tag,value)
             this.setTagByName(tag, value);
         }.bind(this);
-        console.log(WidgetModel.Widget.setTag);
+        WidgetExecutor.getTag = function (tag) {
+            return this.getValueByTagName(tag);
+        }.bind(this);
+        // console.log(WidgetModel.Widget.setTag)
     },
     transGeneralWidget: function (widget) {},
     drawGeneralWidget: function (curX, curY, widget, options, cb) {
@@ -51977,7 +51980,7 @@ module.exports = React.createClass({
         }
     },
     interpretGeneralCommand: function (widget, f) {
-        console.log(widget, f);
+        // console.log(widget,f)
         var command = this.generalCommands[widget.generalType][f];
         this.processGeneralWidgetCommand(widget, command, 0);
     },
@@ -52019,6 +52022,8 @@ module.exports = React.createClass({
                     upperRef[refs[rLen - 1]] = this.evalParam(widget, value);
                 }
                 break;
+            default:
+                console.error('set error');
         }
     },
     processGeneralWidgetCommand: function (widget, cmds, index) {
@@ -52028,24 +52033,32 @@ module.exports = React.createClass({
         } else if (index > totalLength - 1) {
             return;
         }
+        if (index == 0) {
+            console.log('start');
+        }
         var step = 1;
         var curInst = cmds[index];
-        console.log(curInst);
+        // console.log(curInst)
         var op = curInst[0];
+        console.log(_.cloneDeep(curInst), _.cloneDeep(widget.scope));
         switch (op) {
             case 'temp':
                 if (!widget.scope) {
                     widget.scope = {};
                 }
-                widget.scope[curInst[1]] = curInst[2];
+                widget.scope[curInst[1]] = this.evalParam(widget, curInst[2]);
                 break;
             case 'set':
-                console.log(_.cloneDeep(widget));
+
                 this.setByParam(widget, curInst[1], curInst[2]);
-                console.log(_.cloneDeep(widget));
+
+                break;
+            case 'get':
+                widget.scope[curInst[1]] = this.evalParam(widget, curInst[2]);
                 break;
             case 'eq':
-                if (this.evalParam(widget, curInst[1] == this.evalParam(widget, curInst[2]))) {
+                // console.log(this.evalParam(widget,curInst[1]),this.evalParam(widget,curInst[2]))
+                if (this.evalParam(widget, curInst[1]) == this.evalParam(widget, curInst[2])) {
                     step = 2;
                 } else {
                     step = 1;
@@ -52053,7 +52066,7 @@ module.exports = React.createClass({
 
                 break;
             case 'gte':
-                if (this.evalParam(widget, curInst[1] >= this.evalParam(widget, curInst[2]))) {
+                if (this.evalParam(widget, curInst[1]) >= this.evalParam(widget, curInst[2])) {
                     step = 2;
                 } else {
                     step = 1;
@@ -52061,7 +52074,7 @@ module.exports = React.createClass({
 
                 break;
             case 'gt':
-                if (this.evalParam(widget, curInst[1] > this.evalParam(widget, curInst[2]))) {
+                if (this.evalParam(widget, curInst[1]) > this.evalParam(widget, curInst[2])) {
                     step = 2;
                 } else {
                     step = 1;
@@ -52073,6 +52086,12 @@ module.exports = React.createClass({
                 break;
             case 'end':
                 step = 1;
+                break;
+            case 'setTag':
+                WidgetExecutor.setTag(widget.tag, this.evalParam(widget, curInst[1]));
+                break;
+            case 'getTag':
+                this.setByParam(widget, { type: 'ID', value: curInst[1] }, { type: 'Int', value: WidgetExecutor.getTag(widget.tag) });
                 break;
             default:
                 console.log("inst", curInst);
@@ -55513,22 +55532,15 @@ module.exports = React.createClass({
 
                 break;
             // case 'MyInputKeyboard':
-            case 'general-Button':
-                if (typeof widget.onMouseDown != 'function') {
-                    this.transFunction(widget, 'onMouseDown');
-                }
-                // widget.onMouseDown = function() {
-                //     this.layers[1].hidden=false;
-                //     this.layers[0].hidden=true;
-                //     WidgetModel.Widget.setTag("defaultTag",101)
-                // }
-                console.log(widget.onMouseDown);
-                widget.onMouseDown();
+            case 'general':
+                this.interpretGeneralCommand(widget, 'onMouseDown');
                 needRedraw = true;
+                break;
 
             default:
                 widget.mouseState = mouseState;
                 needRedraw = true;
+                break;
         }
         if (needRedraw) {
             this.drawAfterMouseAction(mouseState);
@@ -55579,14 +55591,12 @@ module.exports = React.createClass({
                         elem.curPressedKey = null;
                         needRedraw = true;
                         break;
-                    case 'general-Button':
-                        if (typeof elem.onMouseUp != 'function') {
-                            this.transFunction(elem, 'onMouseUp');
-                        }
-                        elem.onMouseUp();
+                    case 'general':
+                        this.interpretGeneralCommand(elem, 'onMouseUp');
                         needRedraw = true;
+                        break;
                 }
-                break;
+
         }
         if (needRedraw) {
             this.drawAfterMouseAction(mouseState);
@@ -56349,6 +56359,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
         this.tag = 'defaultTag';
         this.type = 'general';
+        this.mode = 0;
         if (!layers || !layers.length) {
             this.layers = [new Layer(w, h)];
         } else {
@@ -56364,6 +56375,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 width: this.info.width,
                 height: this.info.height
             },
+            mode: this.mode,
             tag: this.tag,
             layers: this.layers
             // onInitialize:this.onInitialize,
@@ -56371,6 +56383,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             // onMouseUp:this.onMouseUp
         };
     };
+    Widget.prototype.commands = {};
 
     // Widget.getTag = function (tag) {
     //     console.log('ctx tag',tag)
@@ -56402,6 +56415,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     var ID = 'ID';
     var EXP = 'EXP';
 
+    //general button
+
     function Button(x, y, w, h, text, fontStyle, slices) {
         var layerUp = new Layer(w, h);
         layerUp.subLayers.font = new FontSubLayer(0, 0, w, h, text, fontStyle);
@@ -56424,11 +56439,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     //     this.layers[1].hidden = true;
     // }
     Button.prototype.commands = {};
-    Button.prototype.commands.onInitialize = [['temp', 'a', new Param(Int, 12)], ['setTag', new Param(Int, 1)], ['if'], ['gte', new Param(ID, 'a'), new Param(Int, 100)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['else'], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['end']];
+    Button.prototype.commands.onInitialize = [['temp', 'a', new Param(EXP, 'this.mode')], ['setTag', new Param(Int, 1)], ['set', new Param(ID, 'a'), new Param(Int, 3)], ['if'], ['gte', new Param(ID, 'a'), new Param(Int, 100)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['else'], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['end']];
 
-    Button.prototype.commands.onMouseDown = [['set', 'this.layers[1].hidden', false], ['set', 'this.layers[0].hidden', true], ['setTag', 101]];
+    Button.prototype.commands.onMouseDown = [['temp', 'b', new Param(EXP, 'this.mode')], ['if'], ['eq', new Param(ID, 'b'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['setTag', new Param(Int, 101)], ['else'], ['temp', 'c', new Param(Int, 0)], ['getTag', 'c'], ['if'], ['gt', new Param(ID, 'c'), new Param(Int, 0)],
+    //bounce up
+    ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['setTag', new Param(Int, 0)], ['else'], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['setTag', new Param(Int, 1)], ['end'], ['end']
 
-    Button.prototype.commands.onMouseUp = [['set', 'this.layers[1].hidden', true], ['set', 'this.layers[0].hidden', false], ['setTag', 12]];
+    //
+
+    ];
+
+    Button.prototype.commands.onMouseUp = [['temp', 'b', new Param(EXP, 'this.mode')], ['if'], ['eq', new Param(ID, 'b'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['setTag', new Param(Int, 12)], ['end']];
 
     var WidgetCommandParser = {};
     var scope = {};
