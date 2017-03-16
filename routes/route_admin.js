@@ -152,8 +152,9 @@ Route_admin.releaseUpdate = function(req,res){
     //public文件夹过滤函数
     var filterFunForPub = function(src){
         var blogPattern = /public[\\\/]blog/;
+        var downloadPattern = /public[\\\/]download/;
         var srcJSPattern = /public[\\\/]ide[\\\/]modules[\\\/]ide[\\\/]js/;
-        return !(blogPattern.test(src)||srcJSPattern.test(src));
+        return !(blogPattern.test(src)||srcJSPattern.test(src)||srcJSPattern.test(downloadPattern));
     }
     //views文件夹过滤函数
     var filterFunForViews = function(src){
