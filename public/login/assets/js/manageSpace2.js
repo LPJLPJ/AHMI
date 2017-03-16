@@ -192,7 +192,7 @@ $(function(){
             curPageIdx = selectIndex;
 
             //step 4
-            var getUsersUrl
+            var getUsersUrl;
             if(searchState&&searchStr!=""){
                 getUsersUrl = generateGetUsersUrl((selectIndex-1)*pageSize,pageSize,searchStr);
             }else{
