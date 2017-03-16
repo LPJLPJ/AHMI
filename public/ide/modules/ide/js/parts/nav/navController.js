@@ -432,7 +432,7 @@
         function saveProjectAs(){
             var projectId = ProjectService.getProjectId();
             if(window.local){
-
+                //for local
             }else{
                 var modalInstance = $uibModal.open({
                     animation:$scope.animationsEnabled,
