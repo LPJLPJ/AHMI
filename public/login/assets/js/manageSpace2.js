@@ -274,6 +274,7 @@ $(function(){
             return;
         }
 
+        searchInput.off('keyup');
         searchInput.on('keyup',function(e){
             if(e.keyCode==13){
                 handleSearch();
@@ -289,17 +290,18 @@ $(function(){
      * @return {[type]} [description]
      */
     function handleSearch(){
-        showOverLay();
         var searchInput = $('#search-input');
         searchStr = searchInput.val().trim();
         //console.log('searchStr',searchStr);
         curPageIdx=1;
         if(searchState&&searchStr==""){
+            showOverLay();
             console.log('取消搜索');
             searchState=false;
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize);
             getUsers(getUsersUrl,hideOverLay);
         }else if(searchStr!=""){
+            showOverLay();
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize,searchStr);
             searchState=true;
             getUsers(getUsersUrl,hideOverLay);
