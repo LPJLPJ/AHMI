@@ -24,9 +24,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
-                console.log(models,model)
+            
                 var modelCommands = models[model].prototype.commands;
-                console.log(modelCommands,_.cloneDeep(modelCommands))
+            
                 transGeneralWidgetMultiCommands(modelCommands,generalWidgetFunctions)
                 commands[model] = modelCommands;
             }
@@ -126,7 +126,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
             targetWidget = targetWidget.toObject();
             targetWidget.type = 'widget';
-            targetWidget.subType = 'general-Button';
+            targetWidget.subType = 'general';
+            targetWidget.generalType = 'Button'
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
             // transGeneralWidgetCommands(targetWidget,'onInitialize')
 

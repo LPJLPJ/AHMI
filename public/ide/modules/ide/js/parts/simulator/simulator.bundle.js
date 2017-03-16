@@ -51724,7 +51724,7 @@ module.exports = React.createClass({
         //draw initialization
         lg('initializing: ', data);
         //initialize canvas context
-
+        this.generalCommands = data.generalWidgetCommands || {};
 
         //initialize inputkeyboard
         var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
@@ -51888,18 +51888,7 @@ module.exports = React.createClass({
         this.gWidgets = {};
         //register getTag setTag
 
-        // WidgetModel.Widget.getTag = function (tag) {
-        //     return tag;
-        // }
-
-        // WidgetModel.Widget.setTag = function (tag,value) {
-        //     console.log('aaa',tag,value)
-        //     // this.setTagByName(tag,value)
-        // }
-        // WidgetModel.Widget.prototype.setTag = function (tag,value) {
-        //     console.log('aaaproto',tag,value)
-        //     // this.setTagByName(tag,value)
-        // }
+        console.log(this.project);
         WidgetExecutor.setTag = function (tag, value) {
             console.log('aaa', tag, value);
             this.setTagByName(tag, value);
@@ -51907,11 +51896,24 @@ module.exports = React.createClass({
         console.log(WidgetModel.Widget.setTag);
     },
     transGeneralWidget: function (widget) {},
+    drawGeneralWidget: function (curX, curY, widget, options, cb) {
+        switch (widget.generalType) {
+            case 'Button':
+                this.drawGeneralButton(curX, curY, widget, options, cb);
+                break;
+        }
+    },
     drawGeneralButton: function (curX, curY, widget, options, cb) {
         if (!widget.initialzed) {
             widget.initialzed = true;
-            this.transFunction(widget, 'onInitialize');
-            console.log('transed', widget, widget.onInitialize);
+            this.interpretGeneralCommand(widget, 'onInitialize');
+        }
+    },
+    paintGeneralWidget: function (curX, curY, widget, options, cb) {
+        switch (widget.generalType) {
+            case 'Button':
+                this.paintGeneralButton(curX, curY, widget, options, cb);
+                break;
         }
     },
     paintGeneralButton: function (curX, curY, widget, options, cb) {
@@ -51973,6 +51975,111 @@ module.exports = React.createClass({
         } else {
             this.draw.bind(this, null, { reLinkWidgets: true });
         }
+    },
+    interpretGeneralCommand: function (widget, f) {
+        console.log(widget, f);
+        var command = this.generalCommands[widget.generalType][f];
+        this.processGeneralWidgetCommand(widget, command, 0);
+    },
+    evalParam: function (widget, param) {
+        var value = param.value;
+        switch (param.type) {
+            case 'Int':
+                return parseInt(value);
+            case 'String':
+                return "" + value;
+            case 'ID':
+                return widget.scope[value];
+            case 'EXP':
+                var variables = value.split('.');
+                var result;
+                for (var i = 0; i < variables.length; i++) {
+                    var curV = variables[i];
+                    if (curV == 'this') {
+                        result = widget;
+                    } else {
+                        result = result[curV];
+                    }
+                }
+                return result;
+        }
+    },
+    setByParam: function (widget, param, value) {
+        switch (param.type) {
+            case 'ID':
+                widget.scope[param.value] = this.evalParam(widget, value);
+                break;
+            case 'EXP':
+                var refs = param.value.split('.');
+                var rLen = refs.length;
+                if (rLen < 2) {
+                    return;
+                } else {
+                    var upperRef = this.evalParam(widget, { type: 'EXP', value: refs.slice(0, rLen - 1).join('.') });
+                    upperRef[refs[rLen - 1]] = this.evalParam(widget, value);
+                }
+                break;
+        }
+    },
+    processGeneralWidgetCommand: function (widget, cmds, index) {
+        var totalLength = cmds.length;
+        if (index < 0) {
+            return;
+        } else if (index > totalLength - 1) {
+            return;
+        }
+        var step = 1;
+        var curInst = cmds[index];
+        console.log(curInst);
+        var op = curInst[0];
+        switch (op) {
+            case 'temp':
+                if (!widget.scope) {
+                    widget.scope = {};
+                }
+                widget.scope[curInst[1]] = curInst[2];
+                break;
+            case 'set':
+                console.log(_.cloneDeep(widget));
+                this.setByParam(widget, curInst[1], curInst[2]);
+                console.log(_.cloneDeep(widget));
+                break;
+            case 'eq':
+                if (this.evalParam(widget, curInst[1] == this.evalParam(widget, curInst[2]))) {
+                    step = 2;
+                } else {
+                    step = 1;
+                }
+
+                break;
+            case 'gte':
+                if (this.evalParam(widget, curInst[1] >= this.evalParam(widget, curInst[2]))) {
+                    step = 2;
+                } else {
+                    step = 1;
+                }
+
+                break;
+            case 'gt':
+                if (this.evalParam(widget, curInst[1] > this.evalParam(widget, curInst[2]))) {
+                    step = 2;
+                } else {
+                    step = 1;
+                }
+
+                break;
+            case 'jump':
+                step = curInst[2];
+                break;
+            case 'end':
+                step = 1;
+                break;
+            default:
+                console.log("inst", curInst);
+                break;
+
+        }
+        this.processGeneralWidgetCommand(widget, cmds, index + step);
     },
     componentDidMount: function () {
         //this.load();
@@ -52923,8 +53030,8 @@ module.exports = React.createClass({
                 case 'MyInputKeyboard':
                     this.drawInputKeyboard(curX, curY, widget, options, cb);
                     break;
-                case 'general-Button':
-                    this.drawGeneralButton(curX, curX, widget, options, cb);
+                case 'general':
+                    this.drawGeneralWidget(curX, curX, widget, options, cb);
                     break;
             }
         }
@@ -53013,8 +53120,8 @@ module.exports = React.createClass({
             case 'MyInputKeyboard':
                 this.paintInputKeyboard(curX, curY, widget, options, cb);
                 break;
-            case 'general-Button':
-                this.paintGeneralButton(curX, curY, widget, options, cb);
+            case 'general':
+                this.paintGeneralWidget(curX, curY, widget, options, cb);
                 break;
         }
     },
@@ -56285,6 +56392,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
     };
 
+    function Param(type, value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    var Int = 'Int';
+    var Str = 'String';
+    var ID = 'ID';
+    var EXP = 'EXP';
+
     function Button(x, y, w, h, text, fontStyle, slices) {
         var layerUp = new Layer(w, h);
         layerUp.subLayers.font = new FontSubLayer(0, 0, w, h, text, fontStyle);
@@ -56307,9 +56424,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     //     this.layers[1].hidden = true;
     // }
     Button.prototype.commands = {};
-    Button.prototype.commands.onInitialize = [
-    // ['temp','a','__tag'],
-    ['setTag', 1], ['if'], ['gte', 'a', 100], ['set', 'this.layers[1].hidden', true], ['else'], ['set', 'this.layers[1].hidden', false], ['end']];
+    Button.prototype.commands.onInitialize = [['temp', 'a', new Param(Int, 12)], ['setTag', new Param(Int, 1)], ['if'], ['gte', new Param(ID, 'a'), new Param(Int, 100)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['else'], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['end']];
 
     Button.prototype.commands.onMouseDown = [['set', 'this.layers[1].hidden', false], ['set', 'this.layers[0].hidden', true], ['setTag', 101]];
 

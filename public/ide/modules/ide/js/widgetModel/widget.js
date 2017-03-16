@@ -79,6 +79,15 @@
         }
     }
 
+    function Param(type,value) {
+        this.type = type
+        this.value = value
+    }
+
+    var Int = 'Int';
+    var Str = 'String'
+    var ID = 'ID'
+    var EXP = 'EXP'
 
     function Button(x,y,w,h,text,fontStyle,slices) {
         var layerUp = new Layer(w,h);
@@ -104,13 +113,13 @@
     // }
     Button.prototype.commands = {}
     Button.prototype.commands.onInitialize = [
-        // ['temp','a','__tag'],
-        ['setTag',1],
+        ['temp','a',new Param(Int,12)],
+        ['setTag',new Param(Int,1)],
         ['if'],
-        ['gte','a',100],
-        ['set','this.layers[1].hidden',true],
+        ['gte',new Param(ID,'a'),new Param(Int,100)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
         ['else'],
-        ['set','this.layers[1].hidden',false],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
         ['end']
     ]
 
