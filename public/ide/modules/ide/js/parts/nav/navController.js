@@ -443,7 +443,7 @@
                     }
                 });
                 modalInstance.result.then(function(result){
-                    console.log('result',result);
+                    //console.log('result',result);
                     showSpinner();
                     $http({
                         method:'POST',
@@ -451,6 +451,7 @@
                         data:result
                     })
                         .success(function(data){
+                            console.log('data',data);
                             if(data=='ok'){
                                 hideSpinner();
                                 toastr.info('另存为成功');
