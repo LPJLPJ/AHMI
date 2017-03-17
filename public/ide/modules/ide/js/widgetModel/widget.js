@@ -135,19 +135,19 @@
         ['eq',new Param(ID,'b'),new Param(Int,0)],
         ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
         ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-        ['setTag',new Param(Int,101)],
+        ['setTag',new Param(Int,0)],
         ['else'],
         ['temp','c',new Param(Int,0)],
         ['getTag','c'],
         ['if'],
         ['gt',new Param(ID,'c'),new Param(Int,0)],
         //bounce up
-        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
         ['setTag',new Param(Int,0)],
         ['else'],
-        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
         ['setTag',new Param(Int,1)],
         ['end'],
         ['end']
@@ -163,6 +163,24 @@
         ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
         ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
         ['setTag',new Param(Int,12)],
+        ['end']
+    ]
+
+    Button.prototype.commands.onTagChange = [
+        ['temp','a',new Param(Int,0)],
+        ['temp','b',new Param(EXP,'this.mode')],
+        ['getTag','a'],
+        ['if'],
+        ['eq',new Param(ID,'b'),new Param(Int,1)],
+        ['if'],
+        ['gt',new Param(ID,'a'),new Param(Int,0)],
+        //bounce up
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        ['else'],
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        ['end'],
         ['end']
     ]
 

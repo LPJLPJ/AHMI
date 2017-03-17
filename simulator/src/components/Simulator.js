@@ -282,18 +282,14 @@ module.exports =   React.createClass({
 
     },
     drawGeneralWidget:function (curX,curY,widget,options,cb) {
-        switch (widget.generalType){
-            case 'Button':
-                this.drawGeneralButton(curX,curY,widget,options,cb)
-                break;
-        }
-    },
-    drawGeneralButton:function (curX,curY,widget,options,cb) {
         if (!widget.initialzed){
             widget.initialzed = true;
-            this.interpretGeneralCommand(widget,'onInitialize');
-            
+            this.interpretGeneralCommand(widget,'onInitialize');  
         }
+        this.interpretGeneralCommand(widget,'onTagChange')
+    },
+    drawGeneralButton:function (curX,curY,widget,options,cb) {
+        
 
     },
     paintGeneralWidget:function (curX,curY,widget,options,cb) {

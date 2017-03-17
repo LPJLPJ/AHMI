@@ -18,7 +18,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         }
     }
     function registerGeneralCommands() {
-        var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown']
+        var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange']
         var commands = {}
         var models = WidgetModel.models;
         for (var model in models){
@@ -42,7 +42,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.author = rawProject.author || 'author';
         targetProject.size = rawProject.currentSize;
         //register general commands
-        targetProject.generalWidgetCommands = registerGeneralCommands()
+        targetProject.generalWidgetCommands = _.cloneDeep(registerGeneralCommands())
         targetProject.pageList = [];
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
