@@ -21,17 +21,18 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange']
         var commands = {}
         var models = WidgetModel.models;
+        console.log('models',models)
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
             
-                var modelCommands = models[model].prototype.commands;
+                var modelCommands = _.cloneDeep(models[model].prototype.commands);
             
                 transGeneralWidgetMultiCommands(modelCommands,generalWidgetFunctions)
                 commands[model] = modelCommands;
             }
         }
-        console.log(commands)
+        console.log('registered commands',commands)
         
         return commands;
     }
@@ -42,7 +43,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.author = rawProject.author || 'author';
         targetProject.size = rawProject.currentSize;
         //register general commands
-        targetProject.generalWidgetCommands = _.cloneDeep(registerGeneralCommands())
+        targetProject.generalWidgetCommands = registerGeneralCommands()
         targetProject.pageList = [];
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));

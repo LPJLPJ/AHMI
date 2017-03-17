@@ -337,6 +337,7 @@
         var BLANK = ''
         
         function trans(block,changeIfConditon) {
+            labelCount = 0;
             var tempResult = transBlock(block,changeIfConditon);
             adjustJumps(tempResult);
             return tempResult;
