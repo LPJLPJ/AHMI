@@ -293,23 +293,22 @@ module.exports =   React.createClass({
 
     },
     paintGeneralWidget:function (curX,curY,widget,options,cb) {
-        switch (widget.generalType){
-            case 'Button':
-                this.paintGeneralButton(curX,curY,widget,options,cb)
-                break;
-        }
-    },
-    paintGeneralButton:function (curX,curY,widget,options,cb) {
         for (var i=widget.layers.length-1;i>=0;i--){
             this.paintGeneralLayer(curX,curY,widget.layers[i]);
         }
     },
+    paintGeneralButton:function (curX,curY,widget,options,cb) {
+        
+    },
     paintGeneralLayer:function (curX,curY,layer) {
         if (!layer.hidden) {
             var subLayers = layer.subLayers;
-            this.paintColorSL(curX,curY,subLayers.color)
-            this.paintTextureSL(curX,curY,subLayers.texture)
-            this.paintFontSL(curX,curY,subLayers.font)
+            var baseX = curX+ layer.x;
+            var baseY =  curY+layer.y;
+        
+            this.paintColorSL(baseX,baseY,subLayers.color)
+            this.paintTextureSL(baseX,baseY,subLayers.texture)
+            this.paintFontSL(baseX,baseY,subLayers.font)
         }
         
     },
@@ -317,26 +316,25 @@ module.exports =   React.createClass({
 
     },
     paintFontSL:function (curX,curY,subLayer) {
-        var slX = curX + subLayer.x;
-        var slY = curY + subLayer.y;
+        // var slX = curX + subLayer.x;
+        // var slY = curY + subLayer.y;
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        this.drawTextByTempCanvas(slX,slY,slWidth,slHeight,subLayer.text,subLayer.fontStyle);
+        this.drawTextByTempCanvas(curX,curY,slWidth,slHeight,subLayer.text,subLayer.fontStyle);
 
     },
     paintTextureSL:function (curX,curY,subLayer) {
-        var slX = curX + subLayer.x;
-        var slY = curY + subLayer.y;
+        // var slX = curX + subLayer.x;
+        // var slY = curY + subLayer.y;
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        this.drawBg(slX,slY,slWidth,slHeight,subLayer.texture)
+        this.drawBg(curX,curY,slWidth,slHeight,subLayer.texture)
     },
     paintColorSL:function (curX,curY,subLayer) {
-        var slX = curX + subLayer.x;
-        var slY = curY + subLayer.y;
+        
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        this.drawBg(slX,slY,slWidth,slHeight,null,subLayer.color)
+        this.drawBg(curX,curY,slWidth,slHeight,null,subLayer.color)
     },
     isIn: function (res, resList, key) {
         if (key) {
@@ -426,7 +424,7 @@ module.exports =   React.createClass({
         var curInst = cmds[index]
         // console.log(curInst)
         var op = curInst[0]
-        console.log(_.cloneDeep(curInst),_.cloneDeep(widget.scope))
+        // console.log(_.cloneDeep(curInst),_.cloneDeep(widget.scope))
         switch(op){
             case 'temp':
                 if (!widget.scope) {

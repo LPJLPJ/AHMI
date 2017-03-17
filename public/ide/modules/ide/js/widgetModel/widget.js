@@ -95,14 +95,14 @@
     //general button
 
     function Button(x,y,w,h,text,fontStyle,slices) {
-        var layerUp = new Layer(w,h);
-        layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
-        layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
-        var layerDown = new Layer(w,h);
-        layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
-        layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
+        var layerUp = new Layer(0,0,w,h);
+        layerUp.subLayers.font = new FontSubLayer(w,h,text,fontStyle);
+        layerUp.subLayers.texture =new TextureSubLayer(w,h,slices[0].imgSrc);
+        layerUp.subLayers.color = new ColorSubLayer(w,h,slices[0].color);
+        var layerDown = new Layer(0,0,w,h);
+        layerDown.subLayers.font = new FontSubLayer(w,h,text,fontStyle);
+        layerDown.subLayers.texture =new TextureSubLayer(w,h,slices[1].imgSrc);
+        layerDown.subLayers.color = new ColorSubLayer(w,h,slices[1].color);
         var layers = [layerUp,layerDown]
         this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)
@@ -184,6 +184,112 @@
         ['end']
     ]
 
+
+    // //button group
+    // function ButtonGroup(x,y,w,h,num,align,space,slices) {
+    //     // var layerUp = new Layer(w,h);
+    //     // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+    //     // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
+    //     // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
+    //     // var layerDown = new Layer(w,h);
+    //     // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+    //     // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
+    //     // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
+    //     // var layers = [layerUp,layerDown]
+    //     var sWidth = 0;
+    //     var sHeight = 0;
+        
+
+    //     if (align==0) {
+    //             //hori
+    //             sWidth = (w-(num-1)*space)/num;
+    //             sHeight = h;
+    //             for (var i=0;i<num;i++){
+    //                 var curLayer = new Layer()
+    //             }
+                
+    //         }else{
+
+    //         }
+    //     this.subType = 'ButtonGroup'
+    //     Widget.call(this,x,y,w,h,layers)
+    // }
+
+    // Button.prototype = Object.create(Widget.prototype);
+    // Button.prototype.constructor = Button;
+
+
+    // // function () {
+    // //     console.log('onInitializing')
+    // //     this.layers[1].hidden = true;
+    // // }
+    // Button.prototype.commands = {}
+    // Button.prototype.commands.onInitialize = [
+    //     ['temp','a',new Param(EXP,'this.mode')],
+    //     ['setTag',new Param(Int,1)],
+    //     ['set',new Param(ID,'a'),new Param(Int,3)],
+    //     ['if'],
+    //     ['gte',new Param(ID,'a'),new Param(Int,100)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['else'],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['end']
+    // ]
+
+    // Button.prototype.commands.onMouseDown = [
+    //     ['temp','b',new Param(EXP,'this.mode')],
+    //     ['if'],
+    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['setTag',new Param(Int,0)],
+    //     ['else'],
+    //     ['temp','c',new Param(Int,0)],
+    //     ['getTag','c'],
+    //     ['if'],
+    //     ['gt',new Param(ID,'c'),new Param(Int,0)],
+    //     //bounce up
+    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['setTag',new Param(Int,0)],
+    //     ['else'],
+    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['setTag',new Param(Int,1)],
+    //     ['end'],
+    //     ['end']
+
+    //     //
+
+    // ]
+
+    // Button.prototype.commands.onMouseUp = [
+    //     ['temp','b',new Param(EXP,'this.mode')],
+    //     ['if'],
+    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['setTag',new Param(Int,12)],
+    //     ['end']
+    // ]
+
+    // Button.prototype.commands.onTagChange = [
+    //     ['temp','a',new Param(Int,0)],
+    //     ['temp','b',new Param(EXP,'this.mode')],
+    //     ['getTag','a'],
+    //     ['if'],
+    //     ['eq',new Param(ID,'b'),new Param(Int,1)],
+    //     ['if'],
+    //     ['gt',new Param(ID,'a'),new Param(Int,0)],
+    //     //bounce up
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['else'],
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['end'],
+    //     ['end']
+    // ]
 
 
     var WidgetCommandParser = {};

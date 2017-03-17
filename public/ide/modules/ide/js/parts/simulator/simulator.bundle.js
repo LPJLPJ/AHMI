@@ -51908,46 +51908,42 @@ module.exports = React.createClass({
     },
     drawGeneralButton: function (curX, curY, widget, options, cb) {},
     paintGeneralWidget: function (curX, curY, widget, options, cb) {
-        switch (widget.generalType) {
-            case 'Button':
-                this.paintGeneralButton(curX, curY, widget, options, cb);
-                break;
-        }
-    },
-    paintGeneralButton: function (curX, curY, widget, options, cb) {
         for (var i = widget.layers.length - 1; i >= 0; i--) {
             this.paintGeneralLayer(curX, curY, widget.layers[i]);
         }
     },
+    paintGeneralButton: function (curX, curY, widget, options, cb) {},
     paintGeneralLayer: function (curX, curY, layer) {
         if (!layer.hidden) {
             var subLayers = layer.subLayers;
-            this.paintColorSL(curX, curY, subLayers.color);
-            this.paintTextureSL(curX, curY, subLayers.texture);
-            this.paintFontSL(curX, curY, subLayers.font);
+            var baseX = curX + layer.x;
+            var baseY = curY + layer.y;
+
+            this.paintColorSL(baseX, baseY, subLayers.color);
+            this.paintTextureSL(baseX, baseY, subLayers.texture);
+            this.paintFontSL(baseX, baseY, subLayers.font);
         }
     },
     paintROISL: function (curX, curY, subLayer) {},
     paintFontSL: function (curX, curY, subLayer) {
-        var slX = curX + subLayer.x;
-        var slY = curY + subLayer.y;
+        // var slX = curX + subLayer.x;
+        // var slY = curY + subLayer.y;
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        this.drawTextByTempCanvas(slX, slY, slWidth, slHeight, subLayer.text, subLayer.fontStyle);
+        this.drawTextByTempCanvas(curX, curY, slWidth, slHeight, subLayer.text, subLayer.fontStyle);
     },
     paintTextureSL: function (curX, curY, subLayer) {
-        var slX = curX + subLayer.x;
-        var slY = curY + subLayer.y;
+        // var slX = curX + subLayer.x;
+        // var slY = curY + subLayer.y;
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        this.drawBg(slX, slY, slWidth, slHeight, subLayer.texture);
+        this.drawBg(curX, curY, slWidth, slHeight, subLayer.texture);
     },
     paintColorSL: function (curX, curY, subLayer) {
-        var slX = curX + subLayer.x;
-        var slY = curY + subLayer.y;
+
         var slWidth = subLayer.width;
         var slHeight = subLayer.height;
-        this.drawBg(slX, slY, slWidth, slHeight, null, subLayer.color);
+        this.drawBg(curX, curY, slWidth, slHeight, null, subLayer.color);
     },
     isIn: function (res, resList, key) {
         if (key) {
@@ -52035,7 +52031,7 @@ module.exports = React.createClass({
         var curInst = cmds[index];
         // console.log(curInst)
         var op = curInst[0];
-        console.log(_.cloneDeep(curInst), _.cloneDeep(widget.scope));
+        // console.log(_.cloneDeep(curInst),_.cloneDeep(widget.scope))
         switch (op) {
             case 'temp':
                 if (!widget.scope) {
@@ -56237,30 +56233,30 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         window.LayerModel = factory();
     }
 })(function () {
-    function Layer(w, h, hidden, interaction) {
+    function Layer(x, y, w, h, hidden, interaction) {
         this.subLayers = {
             roi: null,
             font: null,
             texture: null,
             color: null
         };
-        this.width = w;
-        this.height = h;
+        this.x = x || 0;
+        this.y = y || 0;
+        this.width = w || 0;
+        this.height = h || 0;
         this.hidden = hidden || false;
         this.interaction = interaction || true;
     }
 
-    function SubLayer(x, y, w, h) {
-        this.x = x;
-        this.y = y;
+    function SubLayer(w, h) {
         this.width = w;
         this.height = h;
         this.hidden = false;
     }
 
     //roi
-    function ROISubLayer(x, y, w, h, basePoint, theta, beta) {
-        SubLayer.call(this, x, y, w, h);
+    function ROISubLayer(w, h, basePoint, theta, beta) {
+        SubLayer.call(this, w, h);
         this.basePoint = basePoint;
         this.theta = theta;
         this.beta = beta;
@@ -56271,8 +56267,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     ROISubLayer.prototype.constructor = ROISubLayer;
 
     //font
-    function FontSubLayer(x, y, w, h, text, fontStyle) {
-        SubLayer.call(this, x, y, w, h);
+    function FontSubLayer(w, h, text, fontStyle) {
+        SubLayer.call(this, w, h);
         this.text = text;
         this.fontStyle = fontStyle;
     }
@@ -56281,8 +56277,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     FontSubLayer.prototype.constructor = FontSubLayer;
 
     //img
-    function TextureSubLayer(x, y, w, h, texture) {
-        SubLayer.call(this, x, y, w, h);
+    function TextureSubLayer(w, h, texture) {
+        SubLayer.call(this, w, h);
         this.texture = texture;
     }
     TextureSubLayer.prototype = Object.create(SubLayer.prototype);
@@ -56290,8 +56286,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     TextureSubLayer.prototype.constructor = TextureSubLayer;
 
     //color
-    function ColorSubLayer(x, y, w, h, color) {
-        SubLayer.call(this, x, y, w, h);
+    function ColorSubLayer(w, h, color) {
+        SubLayer.call(this, w, h);
         this.color = color;
     }
     ColorSubLayer.prototype = Object.create(SubLayer.prototype);
@@ -56413,14 +56409,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     //general button
 
     function Button(x, y, w, h, text, fontStyle, slices) {
-        var layerUp = new Layer(w, h);
-        layerUp.subLayers.font = new FontSubLayer(0, 0, w, h, text, fontStyle);
-        layerUp.subLayers.texture = new TextureSubLayer(0, 0, w, h, slices[0].imgSrc);
-        layerUp.subLayers.color = new ColorSubLayer(0, 0, w, h, slices[0].color);
-        var layerDown = new Layer(w, h);
-        layerDown.subLayers.font = new FontSubLayer(0, 0, w, h, text, fontStyle);
-        layerDown.subLayers.texture = new TextureSubLayer(0, 0, w, h, slices[1].imgSrc);
-        layerDown.subLayers.color = new ColorSubLayer(0, 0, w, h, slices[1].color);
+        var layerUp = new Layer(0, 0, w, h);
+        layerUp.subLayers.font = new FontSubLayer(w, h, text, fontStyle);
+        layerUp.subLayers.texture = new TextureSubLayer(w, h, slices[0].imgSrc);
+        layerUp.subLayers.color = new ColorSubLayer(w, h, slices[0].color);
+        var layerDown = new Layer(0, 0, w, h);
+        layerDown.subLayers.font = new FontSubLayer(w, h, text, fontStyle);
+        layerDown.subLayers.texture = new TextureSubLayer(w, h, slices[1].imgSrc);
+        layerDown.subLayers.color = new ColorSubLayer(w, h, slices[1].color);
         var layers = [layerUp, layerDown];
         this.subType = 'Button';
         Widget.call(this, x, y, w, h, layers);
@@ -56454,6 +56450,113 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     Button.prototype.commands.onTagChange = [['temp', 'a', new Param(Int, 0)], ['temp', 'b', new Param(EXP, 'this.mode')], ['getTag', 'a'], ['if'], ['eq', new Param(ID, 'b'), new Param(Int, 1)], ['if'], ['gt', new Param(ID, 'a'), new Param(Int, 0)],
     //bounce up
     ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['else'], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['end'], ['end']];
+
+    // //button group
+    // function ButtonGroup(x,y,w,h,num,align,space,slices) {
+    //     // var layerUp = new Layer(w,h);
+    //     // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+    //     // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
+    //     // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
+    //     // var layerDown = new Layer(w,h);
+    //     // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+    //     // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
+    //     // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
+    //     // var layers = [layerUp,layerDown]
+    //     var sWidth = 0;
+    //     var sHeight = 0;
+
+
+    //     if (align==0) {
+    //             //hori
+    //             sWidth = (w-(num-1)*space)/num;
+    //             sHeight = h;
+    //             for (var i=0;i<num;i++){
+    //                 var curLayer = new Layer()
+    //             }
+
+    //         }else{
+
+    //         }
+    //     this.subType = 'ButtonGroup'
+    //     Widget.call(this,x,y,w,h,layers)
+    // }
+
+    // Button.prototype = Object.create(Widget.prototype);
+    // Button.prototype.constructor = Button;
+
+
+    // // function () {
+    // //     console.log('onInitializing')
+    // //     this.layers[1].hidden = true;
+    // // }
+    // Button.prototype.commands = {}
+    // Button.prototype.commands.onInitialize = [
+    //     ['temp','a',new Param(EXP,'this.mode')],
+    //     ['setTag',new Param(Int,1)],
+    //     ['set',new Param(ID,'a'),new Param(Int,3)],
+    //     ['if'],
+    //     ['gte',new Param(ID,'a'),new Param(Int,100)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['else'],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['end']
+    // ]
+
+    // Button.prototype.commands.onMouseDown = [
+    //     ['temp','b',new Param(EXP,'this.mode')],
+    //     ['if'],
+    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['setTag',new Param(Int,0)],
+    //     ['else'],
+    //     ['temp','c',new Param(Int,0)],
+    //     ['getTag','c'],
+    //     ['if'],
+    //     ['gt',new Param(ID,'c'),new Param(Int,0)],
+    //     //bounce up
+    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['setTag',new Param(Int,0)],
+    //     ['else'],
+    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['setTag',new Param(Int,1)],
+    //     ['end'],
+    //     ['end']
+
+    //     //
+
+    // ]
+
+    // Button.prototype.commands.onMouseUp = [
+    //     ['temp','b',new Param(EXP,'this.mode')],
+    //     ['if'],
+    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['setTag',new Param(Int,12)],
+    //     ['end']
+    // ]
+
+    // Button.prototype.commands.onTagChange = [
+    //     ['temp','a',new Param(Int,0)],
+    //     ['temp','b',new Param(EXP,'this.mode')],
+    //     ['getTag','a'],
+    //     ['if'],
+    //     ['eq',new Param(ID,'b'),new Param(Int,1)],
+    //     ['if'],
+    //     ['gt',new Param(ID,'a'),new Param(Int,0)],
+    //     //bounce up
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    //     ['else'],
+    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    //     ['end'],
+    //     ['end']
+    // ]
+
 
     var WidgetCommandParser = {};
     var scope = {};

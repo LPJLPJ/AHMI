@@ -16,30 +16,30 @@
         window.LayerModel = factory();
     }
 }(function () {
-    function Layer(w,h,hidden,interaction) {
+    function Layer(x,y,w,h,hidden,interaction) {
         this.subLayers = {
             roi:null,
             font:null,
             texture:null,
             color:null
         };
-        this.width = w;
-        this.height = h;
+        this.x = x||0;
+        this.y = y||0;
+        this.width = w||0;
+        this.height = h||0;
         this.hidden = hidden||false;
         this.interaction = interaction||true;
     }
 
-    function SubLayer(x,y,w,h) {
-        this.x = x
-        this.y = y
+    function SubLayer(w,h) {
         this.width = w
         this.height = h
         this.hidden = false
     }
 
 //roi
-    function ROISubLayer(x,y,w,h,basePoint,theta,beta) {
-        SubLayer.call(this,x,y,w,h)
+    function ROISubLayer(w,h,basePoint,theta,beta) {
+        SubLayer.call(this,w,h)
         this.basePoint = basePoint;
         this.theta = theta;
         this.beta = beta
@@ -51,8 +51,8 @@
     ROISubLayer.prototype.constructor = ROISubLayer;
 
 //font
-    function FontSubLayer(x,y,w,h,text,fontStyle) {
-        SubLayer.call(this,x,y,w,h)
+    function FontSubLayer(w,h,text,fontStyle) {
+        SubLayer.call(this,w,h)
         this.text = text;
         this.fontStyle = fontStyle;
     }
@@ -61,8 +61,8 @@
     FontSubLayer.prototype.constructor = FontSubLayer;
 
 //img
-    function TextureSubLayer(x,y,w,h,texture) {
-        SubLayer.call(this,x,y,w,h)
+    function TextureSubLayer(w,h,texture) {
+        SubLayer.call(this,w,h)
         this.texture = texture;
     }
     TextureSubLayer.prototype = Object.create(SubLayer.prototype);
@@ -70,8 +70,8 @@
     TextureSubLayer.prototype.constructor = TextureSubLayer;
 
 //color
-    function ColorSubLayer(x,y,w,h,color) {
-        SubLayer.call(this,x,y,w,h)
+    function ColorSubLayer(w,h,color) {
+        SubLayer.call(this,w,h)
         this.color = color;
     }
     ColorSubLayer.prototype = Object.create(SubLayer.prototype);
