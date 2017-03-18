@@ -150,6 +150,19 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     targetWidget.mode = Number(rawWidget.buttonModeId);
                     targetWidget.subType = 'general';
                 break;
+                case 'MyButtonGroup':
+                    console.log(targetWidget)
+                    var slices = [];
+                   targetWidget.texList.map(function (tex) {
+                        slices.push(tex.slices[0])
+                        slices.push(tex.slices[1])
+                    })
+                    targetWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
+                    targetWidget = targetWidget.toObject();
+                    targetWidget.generalType = 'ButtonGroup'
+                    // targetWidget.mode = Number(rawWidget.buttonModeId);
+                    targetWidget.subType = 'general';
+                break;
                 default:
                     transActions(targetWidget);
                     targetWidget.subType = rawWidget.type;
@@ -179,7 +192,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
     }
 
     function transGeneralWidgetCommands(widget,f) {
-        widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f])).map(function (cmd) {
+        widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f]),true).map(function (cmd) {
             return cmd['cmd']
         })
     }

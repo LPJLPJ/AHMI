@@ -51928,22 +51928,27 @@ module.exports = React.createClass({
     paintFontSL: function (curX, curY, subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
-        var slWidth = subLayer.width;
-        var slHeight = subLayer.height;
-        this.drawTextByTempCanvas(curX, curY, slWidth, slHeight, subLayer.text, subLayer.fontStyle);
+        if (subLayer) {
+            var slWidth = subLayer.width;
+            var slHeight = subLayer.height;
+            this.drawTextByTempCanvas(curX, curY, slWidth, slHeight, subLayer.text, subLayer.fontStyle);
+        }
     },
     paintTextureSL: function (curX, curY, subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
-        var slWidth = subLayer.width;
-        var slHeight = subLayer.height;
-        this.drawBg(curX, curY, slWidth, slHeight, subLayer.texture);
+        if (subLayer) {
+            var slWidth = subLayer.width;
+            var slHeight = subLayer.height;
+            this.drawBg(curX, curY, slWidth, slHeight, subLayer.texture);
+        }
     },
     paintColorSL: function (curX, curY, subLayer) {
-
-        var slWidth = subLayer.width;
-        var slHeight = subLayer.height;
-        this.drawBg(curX, curY, slWidth, slHeight, null, subLayer.color);
+        if (subLayer) {
+            var slWidth = subLayer.width;
+            var slHeight = subLayer.height;
+            this.drawBg(curX, curY, slWidth, slHeight, null, subLayer.color);
+        }
     },
     isIn: function (res, resList, key) {
         if (key) {
@@ -51992,10 +51997,20 @@ module.exports = React.createClass({
                     if (curV == 'this') {
                         result = widget;
                     } else {
+                        curV = this.evalVariable(widget, curV);
+                        // console.log('curV',curV);
                         result = result[curV];
+                        // console.log('result',result)
                     }
                 }
                 return result;
+        }
+    },
+    evalVariable: function (widget, v) {
+        if (widget.scope && v in widget.scope) {
+            return widget.scope[v];
+        } else {
+            return v;
         }
     },
     setByParam: function (widget, param, value) {
@@ -52010,7 +52025,9 @@ module.exports = React.createClass({
                     return;
                 } else {
                     var upperRef = this.evalParam(widget, { type: 'EXP', value: refs.slice(0, rLen - 1).join('.') });
-                    upperRef[refs[rLen - 1]] = this.evalParam(widget, value);
+                    var nextV = this.evalVariable(widget, refs[rLen - 1]);
+                    // console.log('nextV ',nextV)
+                    upperRef[nextV] = this.evalParam(widget, value);
                 }
                 break;
             default:
@@ -52040,7 +52057,7 @@ module.exports = React.createClass({
                 widget.scope[curInst[1]] = this.evalParam(widget, curInst[2]);
                 break;
             case 'set':
-
+                // console.log('set ',_.cloneDeep(curInst))
                 this.setByParam(widget, curInst[1], curInst[2]);
 
                 break;
@@ -52078,11 +52095,27 @@ module.exports = React.createClass({
             case 'end':
                 step = 1;
                 break;
+            //algorithm:
+            case 'add':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] + this.evalParam(widget, curInst[2]);
+                break;
+            case 'minus':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] - this.evalParam(widget, curInst[2]);
+                break;
+            case 'multiply':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] * this.evalParam(widget, curInst[2]);
+                break;
+            case 'divide':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] / this.evalParam(widget, curInst[2]);
+                break;
             case 'setTag':
                 WidgetExecutor.setTag(widget.tag, this.evalParam(widget, curInst[1]));
                 break;
             case 'getTag':
                 this.setByParam(widget, { type: 'ID', value: curInst[1] }, { type: 'Int', value: WidgetExecutor.getTag(widget.tag) });
+                break;
+            case 'print':
+                console.log('print value: ', this.evalParam(widget, curInst[1]));
                 break;
             default:
                 console.log("inst", curInst);
@@ -56451,112 +56484,82 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     //bounce up
     ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['else'], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['end'], ['end']];
 
-    // //button group
-    // function ButtonGroup(x,y,w,h,num,align,space,slices) {
-    //     // var layerUp = new Layer(w,h);
-    //     // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-    //     // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
-    //     // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
-    //     // var layerDown = new Layer(w,h);
-    //     // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-    //     // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
-    //     // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
-    //     // var layers = [layerUp,layerDown]
-    //     var sWidth = 0;
-    //     var sHeight = 0;
+    //button group
+    function ButtonGroup(x, y, w, h, num, align, space, slices) {
+        // var layerUp = new Layer(w,h);
+        // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+        // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
+        // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
+        // var layerDown = new Layer(w,h);
+        // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+        // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
+        // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
+        // var layers = [layerUp,layerDown]
+        var sWidth = 0;
+        var sHeight = 0;
 
+        var layers = [];
+        if (align == 0) {
+            //hori
+            sWidth = (w - (num - 1) * space) / num;
+            sHeight = h;
 
-    //     if (align==0) {
-    //             //hori
-    //             sWidth = (w-(num-1)*space)/num;
-    //             sHeight = h;
-    //             for (var i=0;i<num;i++){
-    //                 var curLayer = new Layer()
-    //             }
+            for (var i = 0; i < num; i++) {
+                var upLayer = new Layer(i * (sWidth + space) + x, y, sWidth, sWidth);
+                upLayer.subLayers.texture = new TextureSubLayer(sWidth, sHeight, slices[2 * i].imgSrc);
+                upLayer.subLayers.color = new ColorSubLayer(sWidth, sHeight, slices[2 * i].color);
+                var downLayer = new Layer(i * (sWidth + space) + x, y, sWidth, sWidth, true);
+                downLayer.subLayers.texture = new TextureSubLayer(sWidth, sHeight, slices[2 * i + 1].imgSrc);
+                downLayer.subLayers.color = new ColorSubLayer(sWidth, sHeight, slices[2 * i + 1].color);
+                layers.push(upLayer);
+                layers.push(downLayer);
+            }
+        } else {
+            sWidth = w;
+            sHeight = (h - (num - 1) * space) / num;
 
-    //         }else{
+            for (var i = 0; i < num; i++) {
+                var curLayer = new Layer(x, y + i * (sHeight + space), sWidth, sWidth);
+                curLayer.subLayers.texture = new TextureSubLayer(sWidth, sHeight, slices[i].imgSrc);
+                curLayer.subLayers.color = new ColorSubLayer(sWidth, sHeight, slices[i].color);
+                layers.push(curLayer);
+            }
+        }
+        this.subType = 'ButtonGroup';
+        Widget.call(this, x, y, w, h, layers);
+    }
 
-    //         }
-    //     this.subType = 'ButtonGroup'
-    //     Widget.call(this,x,y,w,h,layers)
-    // }
+    ButtonGroup.prototype = Object.create(Widget.prototype);
+    ButtonGroup.prototype.constructor = ButtonGroup;
 
-    // Button.prototype = Object.create(Widget.prototype);
-    // Button.prototype.constructor = Button;
+    ButtonGroup.prototype.commands.onInitialize = [
+        // ['temp','a',new Param(EXP,'this.mode')],
+        // ['setTag',new Param(Int,1)],
+        // ['set',new Param(ID,'a'),new Param(Int,3)],
+        // ['if'],
+        // ['gte',new Param(ID,'a'),new Param(Int,100)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        // ['else'],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        // ['end']
+    ];
 
+    ButtonGroup.prototype.commands.onMouseDown = [['temp', 'b', new Param(EXP, 'this.mode')], ['if'], ['eq', new Param(ID, 'b'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['setTag', new Param(Int, 0)], ['else'], ['temp', 'c', new Param(Int, 0)], ['getTag', 'c'], ['if'], ['gt', new Param(ID, 'c'), new Param(Int, 0)],
+    //bounce up
+    // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+    // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+    ['setTag', new Param(Int, 0)], ['else'],
+    // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+    // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+    ['setTag', new Param(Int, 1)], ['end'], ['end']
 
-    // // function () {
-    // //     console.log('onInitializing')
-    // //     this.layers[1].hidden = true;
-    // // }
-    // Button.prototype.commands = {}
-    // Button.prototype.commands.onInitialize = [
-    //     ['temp','a',new Param(EXP,'this.mode')],
-    //     ['setTag',new Param(Int,1)],
-    //     ['set',new Param(ID,'a'),new Param(Int,3)],
-    //     ['if'],
-    //     ['gte',new Param(ID,'a'),new Param(Int,100)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['else'],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['end']
-    // ]
+    //
 
-    // Button.prototype.commands.onMouseDown = [
-    //     ['temp','b',new Param(EXP,'this.mode')],
-    //     ['if'],
-    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['setTag',new Param(Int,0)],
-    //     ['else'],
-    //     ['temp','c',new Param(Int,0)],
-    //     ['getTag','c'],
-    //     ['if'],
-    //     ['gt',new Param(ID,'c'),new Param(Int,0)],
-    //     //bounce up
-    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['setTag',new Param(Int,0)],
-    //     ['else'],
-    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['setTag',new Param(Int,1)],
-    //     ['end'],
-    //     ['end']
+    ];
 
-    //     //
+    ButtonGroup.prototype.commands.onMouseUp = [['temp', 'b', new Param(EXP, 'this.mode')], ['if'], ['eq', new Param(ID, 'b'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['setTag', new Param(Int, 12)], ['end']];
 
-    // ]
-
-    // Button.prototype.commands.onMouseUp = [
-    //     ['temp','b',new Param(EXP,'this.mode')],
-    //     ['if'],
-    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['setTag',new Param(Int,12)],
-    //     ['end']
-    // ]
-
-    // Button.prototype.commands.onTagChange = [
-    //     ['temp','a',new Param(Int,0)],
-    //     ['temp','b',new Param(EXP,'this.mode')],
-    //     ['getTag','a'],
-    //     ['if'],
-    //     ['eq',new Param(ID,'b'),new Param(Int,1)],
-    //     ['if'],
-    //     ['gt',new Param(ID,'a'),new Param(Int,0)],
-    //     //bounce up
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['else'],
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['end'],
-    //     ['end']
-    // ]
-
+    ButtonGroup.prototype.commands.onTagChange = [['temp', 'a', new Param(Int, 0)], ['temp', 'b', new Param(Int, 0)], ['temp', 'c', new Param(Int, 0)], ['set', new Param(ID, 'a'), new Param(EXP, 'this.layers.length')], ['set', new Param(ID, 'c'), new Param(ID, 'a')], ['divide', 'c', new Param(Int, 2)], ['while'], ['gt', new Param(ID, 'a'), new Param(Int, 0)], ['minus', 'a', new Param(Int, 1)], ['print', new Param(ID, 'a')], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 1)], ['minus', 'a', new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 0)], ['end'], ['getTag', 'a'], ['print', new Param(ID, 'a')], ['if'], ['gte', new Param(ID, 'a'), new Param(Int, 0)], ['if'], ['gt', new Param(ID, 'c'), new Param(ID, 'a')], ['multiply', 'a', new Param(Int, 2)], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 1)], ['add', 'a', new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 0)], ['end'], ['end']];
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -56708,6 +56711,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         function trans(block, changeIfConditon) {
             labelCount = 0;
             var tempResult = transBlock(block, changeIfConditon);
+            // console.log(_.cloneDeep(tempResult))
             adjustJumps(tempResult);
             return tempResult;
         }
@@ -56856,7 +56860,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             transedThenBlock[0].label = String(l2);
             [].push.apply(results, transedThenBlock);
             results.push(new Command(l3, [END, '', '']));
-
+            // console.log('while', _.cloneDeep(results))
             return results;
         }
 
@@ -56868,6 +56872,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     WidgetModel.models = {};
 
     WidgetModel.models.Button = Button;
+    WidgetModel.models.ButtonGroup = ButtonGroup;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

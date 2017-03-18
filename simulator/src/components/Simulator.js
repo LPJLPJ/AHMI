@@ -318,23 +318,32 @@ module.exports =   React.createClass({
     paintFontSL:function (curX,curY,subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
-        var slWidth = subLayer.width;
-        var slHeight = subLayer.height;
-        this.drawTextByTempCanvas(curX,curY,slWidth,slHeight,subLayer.text,subLayer.fontStyle);
+        if (subLayer) {
+            var slWidth = subLayer.width;
+            var slHeight = subLayer.height;
+            this.drawTextByTempCanvas(curX,curY,slWidth,slHeight,subLayer.text,subLayer.fontStyle);
+        }
+        
 
     },
     paintTextureSL:function (curX,curY,subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
-        var slWidth = subLayer.width;
-        var slHeight = subLayer.height;
-        this.drawBg(curX,curY,slWidth,slHeight,subLayer.texture)
+        if (subLayer) {
+            var slWidth = subLayer.width;
+            var slHeight = subLayer.height;
+            this.drawBg(curX,curY,slWidth,slHeight,subLayer.texture)
+        }
+        
     },
     paintColorSL:function (curX,curY,subLayer) {
+        if (subLayer) {
+            var slWidth = subLayer.width;
+            var slHeight = subLayer.height;
+            this.drawBg(curX,curY,slWidth,slHeight,null,subLayer.color)
+        }
         
-        var slWidth = subLayer.width;
-        var slHeight = subLayer.height;
-        this.drawBg(curX,curY,slWidth,slHeight,null,subLayer.color)
+        
     },
     isIn: function (res, resList, key) {
         if (key) {
@@ -385,10 +394,20 @@ module.exports =   React.createClass({
                     if (curV == 'this') {
                         result = widget;
                     }else{
+                        curV = this.evalVariable(widget,curV)
+                        // console.log('curV',curV);
                         result = result[curV]
+                        // console.log('result',result)
                     }
                 }
                 return result;
+        }
+    },
+    evalVariable:function (widget,v) {
+        if (widget.scope && (v in widget.scope)) {
+            return widget.scope[v]
+        }else{
+            return v;
         }
     },
     setByParam:function (widget,param,value) {
@@ -403,7 +422,9 @@ module.exports =   React.createClass({
                     return
                 }else {
                     var upperRef = this.evalParam(widget,{type:'EXP',value:refs.slice(0,rLen-1).join('.')})
-                    upperRef[refs[rLen-1]] = this.evalParam(widget,value)
+                    var nextV = this.evalVariable(widget,refs[rLen-1])
+                    // console.log('nextV ',nextV)
+                    upperRef[nextV] = this.evalParam(widget,value)
                 }
                 break;
             default:
@@ -433,7 +454,7 @@ module.exports =   React.createClass({
                 widget.scope[curInst[1]] = this.evalParam(widget,curInst[2])
                 break;
             case 'set':
-                
+                // console.log('set ',_.cloneDeep(curInst))
                 this.setByParam(widget,curInst[1],curInst[2])
             
                 break;
@@ -471,11 +492,27 @@ module.exports =   React.createClass({
             case 'end':
                 step = 1;
                 break;
+            //algorithm:
+            case 'add':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] + this.evalParam(widget,curInst[2])
+                break;
+            case 'minus':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] - this.evalParam(widget,curInst[2])
+                break;
+            case 'multiply':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] * this.evalParam(widget,curInst[2])
+                break;
+            case 'divide':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] / this.evalParam(widget,curInst[2])
+                break;
             case 'setTag':
                 WidgetExecutor.setTag(widget.tag,this.evalParam(widget,curInst[1]))
                 break;
             case 'getTag':
                 this.setByParam(widget,{type:'ID',value:curInst[1]},{type:'Int',value:WidgetExecutor.getTag(widget.tag)})
+                break;
+            case 'print':
+                console.log('print value: ',this.evalParam(widget,curInst[1]))
                 break;
             default:
                 console.log("inst",curInst)

@@ -185,111 +185,134 @@
     ]
 
 
-    // //button group
-    // function ButtonGroup(x,y,w,h,num,align,space,slices) {
-    //     // var layerUp = new Layer(w,h);
-    //     // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-    //     // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
-    //     // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
-    //     // var layerDown = new Layer(w,h);
-    //     // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-    //     // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
-    //     // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
-    //     // var layers = [layerUp,layerDown]
-    //     var sWidth = 0;
-    //     var sHeight = 0;
+    //button group
+    function ButtonGroup(x,y,w,h,num,align,space,slices) {
+        // var layerUp = new Layer(w,h);
+        // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+        // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
+        // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
+        // var layerDown = new Layer(w,h);
+        // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+        // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
+        // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
+        // var layers = [layerUp,layerDown]
+        var sWidth = 0;
+        var sHeight = 0;
         
+        var layers = [];
+        if (align==0) {
+                //hori
+            sWidth = (w-(num-1)*space)/num;
+            sHeight = h;
 
-    //     if (align==0) {
-    //             //hori
-    //             sWidth = (w-(num-1)*space)/num;
-    //             sHeight = h;
-    //             for (var i=0;i<num;i++){
-    //                 var curLayer = new Layer()
-    //             }
-                
-    //         }else{
+            for (var i=0;i<num;i++){
+                var upLayer = new Layer(i*(sWidth+space)+x,y,sWidth,sWidth)
+                upLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i].imgSrc)
+                upLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i].color)
+                var downLayer = new Layer(i*(sWidth+space)+x,y,sWidth,sWidth,true)
+                downLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i+1].imgSrc)
+                downLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i+1].color)
+                layers.push(upLayer)
+                layers.push(downLayer)
+            }
+            
+        }else{
+            sWidth = w;
+            sHeight = (h-(num-1)*space)/num;
 
-    //         }
-    //     this.subType = 'ButtonGroup'
-    //     Widget.call(this,x,y,w,h,layers)
-    // }
+            for (var i=0;i<num;i++){
+                var curLayer = new Layer(x,y+i*(sHeight+space),sWidth,sWidth)
+                curLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[i].imgSrc)
+                curLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[i].color)
+                layers.push(curLayer)
+            }
 
-    // Button.prototype = Object.create(Widget.prototype);
-    // Button.prototype.constructor = Button;
+        }
+        this.subType = 'ButtonGroup'
+        Widget.call(this,x,y,w,h,layers)
+    }
 
+    ButtonGroup.prototype = Object.create(Widget.prototype);
+    ButtonGroup.prototype.constructor = ButtonGroup;
 
-    // // function () {
-    // //     console.log('onInitializing')
-    // //     this.layers[1].hidden = true;
-    // // }
-    // Button.prototype.commands = {}
-    // Button.prototype.commands.onInitialize = [
-    //     ['temp','a',new Param(EXP,'this.mode')],
-    //     ['setTag',new Param(Int,1)],
-    //     ['set',new Param(ID,'a'),new Param(Int,3)],
-    //     ['if'],
-    //     ['gte',new Param(ID,'a'),new Param(Int,100)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['else'],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['end']
-    // ]
+    ButtonGroup.prototype.commands.onInitialize = [
+        // ['temp','a',new Param(EXP,'this.mode')],
+        // ['setTag',new Param(Int,1)],
+        // ['set',new Param(ID,'a'),new Param(Int,3)],
+        // ['if'],
+        // ['gte',new Param(ID,'a'),new Param(Int,100)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        // ['else'],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        // ['end']
+    ]
 
-    // Button.prototype.commands.onMouseDown = [
-    //     ['temp','b',new Param(EXP,'this.mode')],
-    //     ['if'],
-    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['setTag',new Param(Int,0)],
-    //     ['else'],
-    //     ['temp','c',new Param(Int,0)],
-    //     ['getTag','c'],
-    //     ['if'],
-    //     ['gt',new Param(ID,'c'),new Param(Int,0)],
-    //     //bounce up
-    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['setTag',new Param(Int,0)],
-    //     ['else'],
-    //     // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-    //     // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['setTag',new Param(Int,1)],
-    //     ['end'],
-    //     ['end']
+    ButtonGroup.prototype.commands.onMouseDown = [
+        ['temp','b',new Param(EXP,'this.mode')],
+        ['if'],
+        ['eq',new Param(ID,'b'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        ['setTag',new Param(Int,0)],
+        ['else'],
+        ['temp','c',new Param(Int,0)],
+        ['getTag','c'],
+        ['if'],
+        ['gt',new Param(ID,'c'),new Param(Int,0)],
+        //bounce up
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        ['setTag',new Param(Int,0)],
+        ['else'],
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        ['setTag',new Param(Int,1)],
+        ['end'],
+        ['end']
 
-    //     //
+        //
 
-    // ]
+    ]
 
-    // Button.prototype.commands.onMouseUp = [
-    //     ['temp','b',new Param(EXP,'this.mode')],
-    //     ['if'],
-    //     ['eq',new Param(ID,'b'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['setTag',new Param(Int,12)],
-    //     ['end']
-    // ]
+    ButtonGroup.prototype.commands.onMouseUp = [
+        ['temp','b',new Param(EXP,'this.mode')],
+        ['if'],
+        ['eq',new Param(ID,'b'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        ['setTag',new Param(Int,12)],
+        ['end']
+    ]
 
-    // Button.prototype.commands.onTagChange = [
-    //     ['temp','a',new Param(Int,0)],
-    //     ['temp','b',new Param(EXP,'this.mode')],
-    //     ['getTag','a'],
-    //     ['if'],
-    //     ['eq',new Param(ID,'b'),new Param(Int,1)],
-    //     ['if'],
-    //     ['gt',new Param(ID,'a'),new Param(Int,0)],
-    //     //bounce up
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    //     ['else'],
-    //     ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-    //     ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    //     ['end'],
-    //     ['end']
-    // ]
+    ButtonGroup.prototype.commands.onTagChange = [
+        ['temp','a',new Param(Int,0)],
+        ['temp','b',new Param(Int,0)],
+        ['temp','c',new Param(Int,0)],
+        ['set',new Param(ID,'a'),new Param(EXP,'this.layers.length')],
+        ['set',new Param(ID,'c'),new Param(ID,'a')],
+        ['divide','c',new Param(Int,2)],
+        ['while'],
+        ['gt',new Param(ID,'a'),new Param(Int,0)],
+        ['minus','a',new Param(Int,1)],
+        ['print',new Param(ID,'a')],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,1)],
+        ['minus','a',new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,0)],
+        ['end'],
+        ['getTag','a'],
+        ['print',new Param(ID,'a')],
+        ['if'],
+        ['gte',new Param(ID,'a'),new Param(Int,0)],
+        ['if'],
+        ['gt',new Param(ID,'c'),new Param(ID,'a')],
+        ['multiply','a',new Param(Int,2)],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,1)],
+        ['add','a',new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,0)],
+        ['end'],
+        ['end']
+        
+    ]
 
 
     var WidgetCommandParser = {};
@@ -445,6 +468,7 @@
         function trans(block,changeIfConditon) {
             labelCount = 0;
             var tempResult = transBlock(block,changeIfConditon);
+            // console.log(_.cloneDeep(tempResult))
             adjustJumps(tempResult);
             return tempResult;
         }
@@ -600,7 +624,7 @@
             transedThenBlock[0].label = String(l2);
             [].push.apply(results, transedThenBlock);
             results.push(new Command(l3, [END, '', '']));
-
+            // console.log('while', _.cloneDeep(results))
             return results;
         }
 
@@ -616,6 +640,7 @@
     WidgetModel.models = {}
 
     WidgetModel.models.Button = Button;
+    WidgetModel.models.ButtonGroup = ButtonGroup;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 
