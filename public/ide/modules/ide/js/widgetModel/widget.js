@@ -206,10 +206,10 @@
             sHeight = h;
 
             for (var i=0;i<num;i++){
-                var upLayer = new Layer(i*(sWidth+space)+x,y,sWidth,sWidth)
+                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
                 upLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i].imgSrc)
                 upLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i].color)
-                var downLayer = new Layer(i*(sWidth+space)+x,y,sWidth,sWidth,true)
+                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
                 downLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i+1].imgSrc)
                 downLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i+1].color)
                 layers.push(upLayer)
@@ -217,15 +217,15 @@
             }
             
         }else{
-            sWidth = w;
-            sHeight = (h-(num-1)*space)/num;
+            // sWidth = w;
+            // sHeight = (h-(num-1)*space)/num;
 
-            for (var i=0;i<num;i++){
-                var curLayer = new Layer(x,y+i*(sHeight+space),sWidth,sWidth)
-                curLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[i].imgSrc)
-                curLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[i].color)
-                layers.push(curLayer)
-            }
+            // for (var i=0;i<num;i++){
+            //     var curLayer = new Layer(x,y+i*(sHeight+space),sWidth,sWidth)
+            //     curLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[i].imgSrc)
+            //     curLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[i].color)
+            //     layers.push(curLayer)
+            // }
 
         }
         this.subType = 'ButtonGroup'
@@ -248,40 +248,74 @@
     ]
 
     ButtonGroup.prototype.commands.onMouseDown = [
-        ['temp','b',new Param(EXP,'this.mode')],
-        ['if'],
-        ['eq',new Param(ID,'b'),new Param(Int,0)],
-        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-        ['setTag',new Param(Int,0)],
-        ['else'],
+        ['temp','a',new Param(Int,0)],
+        ['temp','b',new Param(Int,0)],
         ['temp','c',new Param(Int,0)],
-        ['getTag','c'],
+        ['set',new Param(ID,'c'),new Param(EXP,'this.layers.length')],
+        // ['divide','c',new Param(Int,2)],
+        ['minus','c',new Param(Int,2)],
+        // ['getMouseRW','a',new Param(Int,0)],
+        // ['getMouseRW','b',new Param(Int,1)],
+        ['set',new Param(ID,'a'),new Param(EXP,'this.innerX')],
+        ['set',new Param(ID,'b'),new Param(EXP,'this.innerY')],
+        // ['print',new Param(ID,'a'),'innerX'],
+        // ['print',new Param(ID,'b'),'innerY'],
+        ['temp','lx',new Param(Int,0)],
+        ['temp','ly',new Param(Int,0)],
+        ['temp','lw',new Param(Int,0)],
+        ['temp','lh',new Param(Int,0)],
+        ['temp','rx',new Param(Int,0)],
+        ['temp','ry',new Param(Int,0)],
+        ['while'],
+        ['gte',new Param(ID,'c'),new Param(Int,0)],
+        // ['print',new Param(ID,'c'),'while c'],
+        ['set',new Param(ID,'lx'),new Param(EXP,'this.layers.c.x')],
+        ['set',new Param(ID,'ly'),new Param(EXP,'this.layers.c.y')],
+        ['set',new Param(ID,'lw'),new Param(EXP,'this.layers.c.width')],
+        ['set',new Param(ID,'lh'),new Param(EXP,'this.layers.c.height')],
+        ['set',new Param(ID,'rx'),new Param(ID,'lx')],
+        ['set',new Param(ID,'ry'),new Param(ID,'ly')],
+        ['add','rx',new Param(ID,'lw')],
+        ['add','ry',new Param(ID,'lh')],
+        // ['print',new Param(ID,'lx'),'lx'],
+        // ['print',new Param(ID,'rx'),'rx'],
+        // ['print',new Param(ID,'ly'),'ly'],
+        // ['print',new Param(ID,'ry'),'ry'],
         ['if'],
-        ['gt',new Param(ID,'c'),new Param(Int,0)],
-        //bounce up
-        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-        ['setTag',new Param(Int,0)],
-        ['else'],
-        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-        ['setTag',new Param(Int,1)],
+        ['gte',new Param(ID,'a'),new Param(ID,'lx')],
+        // ['print',new Param(Int,0),'lx ok'],
+        ['if'],
+        ['gt',new Param(ID,'rx'),new Param(ID,'a')],
+        // ['print',new Param(Int,0),'rx ok'],
+        ['if'],
+        ['gte',new Param(ID,'b'),new Param(ID,'ly')],
+        // ['print',new Param(Int,0),'ly ok'],
+        ['if'],
+        ['gt',new Param(ID,'ry'),new Param(ID,'b')],
+        // ['print',new Param(Int,0),'ry ok'],
+        //hit
+        ['print',new Param(ID,'c'),'hit'],
+        ['divide','c',new Param(Int,2)],
+        ['setTag',new Param(ID,'c')],
+        ['set',new Param(ID,'c'),new Param(Int,0)],
         ['end'],
+        ['end'],
+        ['end'],
+        ['end'],
+        ['minus','c',new Param(Int,2)],
         ['end']
 
-        //
 
     ]
 
     ButtonGroup.prototype.commands.onMouseUp = [
-        ['temp','b',new Param(EXP,'this.mode')],
-        ['if'],
-        ['eq',new Param(ID,'b'),new Param(Int,0)],
-        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-        ['setTag',new Param(Int,12)],
-        ['end']
+        // ['temp','b',new Param(EXP,'this.mode')],
+        // ['if'],
+        // ['eq',new Param(ID,'b'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        // ['setTag',new Param(Int,12)],
+        // ['end']
     ]
 
     ButtonGroup.prototype.commands.onTagChange = [

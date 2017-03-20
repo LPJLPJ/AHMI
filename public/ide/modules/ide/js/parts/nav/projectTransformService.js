@@ -159,6 +159,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     })
                     targetWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
                     targetWidget = targetWidget.toObject();
+
                     targetWidget.generalType = 'ButtonGroup'
                     // targetWidget.mode = Number(rawWidget.buttonModeId);
                     targetWidget.subType = 'general';
@@ -169,6 +170,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     
 
             }
+            console.log(_.cloneDeep(targetWidget))
             
             
             

@@ -296,6 +296,7 @@ module.exports =   React.createClass({
         for (var i=widget.layers.length-1;i>=0;i--){
             this.paintGeneralLayer(curX,curY,widget.layers[i]);
         }
+        cb &&cb();
     },
     paintGeneralButton:function (curX,curY,widget,options,cb) {
         
@@ -486,6 +487,22 @@ module.exports =   React.createClass({
                 }
                 
                 break;
+            case 'lt':
+                if (this.evalParam(widget,curInst[1])<this.evalParam(widget,curInst[2])) {
+                    step = 2;
+                }else{
+                    step = 1;
+                }
+                
+                break;
+            case 'lte':
+                if (this.evalParam(widget,curInst[1])<=this.evalParam(widget,curInst[2])) {
+                    step = 2;
+                }else{
+                    step = 1;
+                }
+                
+                break;
             case 'jump':
                 step = curInst[2];
                 break;
@@ -505,14 +522,29 @@ module.exports =   React.createClass({
             case 'divide':
                 widget.scope[curInst[1]] = widget.scope[curInst[1]] / this.evalParam(widget,curInst[2])
                 break;
+            case 'mod':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] % this.evalParam(widget,curInst[2])
+                break;
             case 'setTag':
                 WidgetExecutor.setTag(widget.tag,this.evalParam(widget,curInst[1]))
                 break;
             case 'getTag':
                 this.setByParam(widget,{type:'ID',value:curInst[1]},{type:'Int',value:WidgetExecutor.getTag(widget.tag)})
                 break;
+            //mouse
+            case 'getMouse':
+                var mouseV = this.evalParam(widget,curInst[2])
+                mouseV = (mouseV==1)?'y':'x';
+                this.setByParam(widget,{type:'ID',value:curInst[1]},{type:'Int',value:this.mouseState.position[mouseV]||0})
+                break;
+            case 'getMouseRW':
+                //relative widget
+                var mouseV = this.evalParam(widget,curInst[2])
+                mouseV = (mouseV==1)?'y':'x';
+                this.setByParam(widget,{type:'ID',value:curInst[1]},{type:'Int',value:this.mouseState.position[mouseV]||0})
+                break;
             case 'print':
-                console.log('print value: ',this.evalParam(widget,curInst[1]))
+                console.log('print value: ',this.evalParam(widget,curInst[1]),curInst[2]||'')
                 break;
             default:
                 console.log("inst",curInst)
@@ -3794,6 +3826,8 @@ module.exports =   React.createClass({
                         // this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
                         if (this.inRect(curCanvasRealPoint.x, curCanvasRealPoint.y, canvasList[i])) {
                             // console.log('inrect');
+                            canvasList[i].innerX = curCanvasRealPoint.x;
+                            canvasList[i].innerY = curCanvasRealPoint.y;
                             targets.push(canvasList[i]);
                             canvases.push(canvasList[i]);
                         }
@@ -3841,6 +3875,9 @@ module.exports =   React.createClass({
                                     curWidgetRealPoint = this.invertPointFromTransform({x:curWidgetRealPoint.x,y:curWidgetRealPoint.y},{x:widget.info.left,y:widget.info.top},widget.transform);
                                 }
                                 if (this.inRect(curWidgetRealPoint.x, curWidgetRealPoint.y, widget, 'widget')) {
+                                    // console.log(_.cloneDeep(widget),_.cloneDeep(canvas))
+                                    widget.innerX = curWidgetRealPoint.x-widget.info.left;
+                                    widget.innerY = curWidgetRealPoint.y-widget.info.top;
                                     targets.push(widget);
                                     //handle widget like buttongroup
                                     // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
@@ -4283,6 +4320,7 @@ module.exports =   React.createClass({
                 break;
             // case 'MyInputKeyboard':
             case 'general':
+            console.log('press general')
                 this.interpretGeneralCommand(widget,'onMouseDown');
                 needRedraw = true;
                 break;

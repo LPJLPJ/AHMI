@@ -51911,6 +51911,7 @@ module.exports = React.createClass({
         for (var i = widget.layers.length - 1; i >= 0; i--) {
             this.paintGeneralLayer(curX, curY, widget.layers[i]);
         }
+        cb && cb();
     },
     paintGeneralButton: function (curX, curY, widget, options, cb) {},
     paintGeneralLayer: function (curX, curY, layer) {
@@ -52089,6 +52090,22 @@ module.exports = React.createClass({
                 }
 
                 break;
+            case 'lt':
+                if (this.evalParam(widget, curInst[1]) < this.evalParam(widget, curInst[2])) {
+                    step = 2;
+                } else {
+                    step = 1;
+                }
+
+                break;
+            case 'lte':
+                if (this.evalParam(widget, curInst[1]) <= this.evalParam(widget, curInst[2])) {
+                    step = 2;
+                } else {
+                    step = 1;
+                }
+
+                break;
             case 'jump':
                 step = curInst[2];
                 break;
@@ -52108,14 +52125,29 @@ module.exports = React.createClass({
             case 'divide':
                 widget.scope[curInst[1]] = widget.scope[curInst[1]] / this.evalParam(widget, curInst[2]);
                 break;
+            case 'mod':
+                widget.scope[curInst[1]] = widget.scope[curInst[1]] % this.evalParam(widget, curInst[2]);
+                break;
             case 'setTag':
                 WidgetExecutor.setTag(widget.tag, this.evalParam(widget, curInst[1]));
                 break;
             case 'getTag':
                 this.setByParam(widget, { type: 'ID', value: curInst[1] }, { type: 'Int', value: WidgetExecutor.getTag(widget.tag) });
                 break;
+            //mouse
+            case 'getMouse':
+                var mouseV = this.evalParam(widget, curInst[2]);
+                mouseV = mouseV == 1 ? 'y' : 'x';
+                this.setByParam(widget, { type: 'ID', value: curInst[1] }, { type: 'Int', value: this.mouseState.position[mouseV] || 0 });
+                break;
+            case 'getMouseRW':
+                //relative widget
+                var mouseV = this.evalParam(widget, curInst[2]);
+                mouseV = mouseV == 1 ? 'y' : 'x';
+                this.setByParam(widget, { type: 'ID', value: curInst[1] }, { type: 'Int', value: this.mouseState.position[mouseV] || 0 });
+                break;
             case 'print':
-                console.log('print value: ', this.evalParam(widget, curInst[1]));
+                console.log('print value: ', this.evalParam(widget, curInst[1]), curInst[2] || '');
                 break;
             default:
                 console.log("inst", curInst);
@@ -55090,6 +55122,8 @@ module.exports = React.createClass({
                         // this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
                         if (this.inRect(curCanvasRealPoint.x, curCanvasRealPoint.y, canvasList[i])) {
                             // console.log('inrect');
+                            canvasList[i].innerX = curCanvasRealPoint.x;
+                            canvasList[i].innerY = curCanvasRealPoint.y;
                             targets.push(canvasList[i]);
                             canvases.push(canvasList[i]);
                         }
@@ -55136,6 +55170,9 @@ module.exports = React.createClass({
                                     curWidgetRealPoint = this.invertPointFromTransform({ x: curWidgetRealPoint.x, y: curWidgetRealPoint.y }, { x: widget.info.left, y: widget.info.top }, widget.transform);
                                 }
                                 if (this.inRect(curWidgetRealPoint.x, curWidgetRealPoint.y, widget, 'widget')) {
+                                    // console.log(_.cloneDeep(widget),_.cloneDeep(canvas))
+                                    widget.innerX = curWidgetRealPoint.x - widget.info.left;
+                                    widget.innerY = curWidgetRealPoint.y - widget.info.top;
                                     targets.push(widget);
                                     //handle widget like buttongroup
                                     // console.log('inner rect',x-canvas.x,y-canvas.y,canvas);
@@ -55557,6 +55594,7 @@ module.exports = React.createClass({
                 break;
             // case 'MyInputKeyboard':
             case 'general':
+                console.log('press general');
                 this.interpretGeneralCommand(widget, 'onMouseDown');
                 needRedraw = true;
                 break;
@@ -56505,25 +56543,26 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             sHeight = h;
 
             for (var i = 0; i < num; i++) {
-                var upLayer = new Layer(i * (sWidth + space) + x, y, sWidth, sWidth);
+                var upLayer = new Layer(i * (sWidth + space), 0, sWidth, sHeight);
                 upLayer.subLayers.texture = new TextureSubLayer(sWidth, sHeight, slices[2 * i].imgSrc);
                 upLayer.subLayers.color = new ColorSubLayer(sWidth, sHeight, slices[2 * i].color);
-                var downLayer = new Layer(i * (sWidth + space) + x, y, sWidth, sWidth, true);
+                var downLayer = new Layer(i * (sWidth + space), 0, sWidth, sHeight, true);
                 downLayer.subLayers.texture = new TextureSubLayer(sWidth, sHeight, slices[2 * i + 1].imgSrc);
                 downLayer.subLayers.color = new ColorSubLayer(sWidth, sHeight, slices[2 * i + 1].color);
                 layers.push(upLayer);
                 layers.push(downLayer);
             }
         } else {
-            sWidth = w;
-            sHeight = (h - (num - 1) * space) / num;
+            // sWidth = w;
+            // sHeight = (h-(num-1)*space)/num;
 
-            for (var i = 0; i < num; i++) {
-                var curLayer = new Layer(x, y + i * (sHeight + space), sWidth, sWidth);
-                curLayer.subLayers.texture = new TextureSubLayer(sWidth, sHeight, slices[i].imgSrc);
-                curLayer.subLayers.color = new ColorSubLayer(sWidth, sHeight, slices[i].color);
-                layers.push(curLayer);
-            }
+            // for (var i=0;i<num;i++){
+            //     var curLayer = new Layer(x,y+i*(sHeight+space),sWidth,sWidth)
+            //     curLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[i].imgSrc)
+            //     curLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[i].color)
+            //     layers.push(curLayer)
+            // }
+
         }
         this.subType = 'ButtonGroup';
         Widget.call(this, x, y, w, h, layers);
@@ -56544,20 +56583,41 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         // ['end']
     ];
 
-    ButtonGroup.prototype.commands.onMouseDown = [['temp', 'b', new Param(EXP, 'this.mode')], ['if'], ['eq', new Param(ID, 'b'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 0)], ['setTag', new Param(Int, 0)], ['else'], ['temp', 'c', new Param(Int, 0)], ['getTag', 'c'], ['if'], ['gt', new Param(ID, 'c'), new Param(Int, 0)],
-    //bounce up
-    // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
-    // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
-    ['setTag', new Param(Int, 0)], ['else'],
-    // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
-    // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
-    ['setTag', new Param(Int, 1)], ['end'], ['end']
+    ButtonGroup.prototype.commands.onMouseDown = [['temp', 'a', new Param(Int, 0)], ['temp', 'b', new Param(Int, 0)], ['temp', 'c', new Param(Int, 0)], ['set', new Param(ID, 'c'), new Param(EXP, 'this.layers.length')],
+    // ['divide','c',new Param(Int,2)],
+    ['minus', 'c', new Param(Int, 2)],
+    // ['getMouseRW','a',new Param(Int,0)],
+    // ['getMouseRW','b',new Param(Int,1)],
+    ['set', new Param(ID, 'a'), new Param(EXP, 'this.innerX')], ['set', new Param(ID, 'b'), new Param(EXP, 'this.innerY')],
+    // ['print',new Param(ID,'a'),'innerX'],
+    // ['print',new Param(ID,'b'),'innerY'],
+    ['temp', 'lx', new Param(Int, 0)], ['temp', 'ly', new Param(Int, 0)], ['temp', 'lw', new Param(Int, 0)], ['temp', 'lh', new Param(Int, 0)], ['temp', 'rx', new Param(Int, 0)], ['temp', 'ry', new Param(Int, 0)], ['while'], ['gte', new Param(ID, 'c'), new Param(Int, 0)],
+    // ['print',new Param(ID,'c'),'while c'],
+    ['set', new Param(ID, 'lx'), new Param(EXP, 'this.layers.c.x')], ['set', new Param(ID, 'ly'), new Param(EXP, 'this.layers.c.y')], ['set', new Param(ID, 'lw'), new Param(EXP, 'this.layers.c.width')], ['set', new Param(ID, 'lh'), new Param(EXP, 'this.layers.c.height')], ['set', new Param(ID, 'rx'), new Param(ID, 'lx')], ['set', new Param(ID, 'ry'), new Param(ID, 'ly')], ['add', 'rx', new Param(ID, 'lw')], ['add', 'ry', new Param(ID, 'lh')],
+    // ['print',new Param(ID,'lx'),'lx'],
+    // ['print',new Param(ID,'rx'),'rx'],
+    // ['print',new Param(ID,'ly'),'ly'],
+    // ['print',new Param(ID,'ry'),'ry'],
+    ['if'], ['gte', new Param(ID, 'a'), new Param(ID, 'lx')],
+    // ['print',new Param(Int,0),'lx ok'],
+    ['if'], ['gt', new Param(ID, 'rx'), new Param(ID, 'a')],
+    // ['print',new Param(Int,0),'rx ok'],
+    ['if'], ['gte', new Param(ID, 'b'), new Param(ID, 'ly')],
+    // ['print',new Param(Int,0),'ly ok'],
+    ['if'], ['gt', new Param(ID, 'ry'), new Param(ID, 'b')],
+    // ['print',new Param(Int,0),'ry ok'],
+    //hit
+    ['print', new Param(ID, 'c'), 'hit'], ['divide', 'c', new Param(Int, 2)], ['setTag', new Param(ID, 'c')], ['set', new Param(ID, 'c'), new Param(Int, 0)], ['end'], ['end'], ['end'], ['end'], ['minus', 'c', new Param(Int, 2)], ['end']];
 
-    //
-
+    ButtonGroup.prototype.commands.onMouseUp = [
+        // ['temp','b',new Param(EXP,'this.mode')],
+        // ['if'],
+        // ['eq',new Param(ID,'b'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        // ['setTag',new Param(Int,12)],
+        // ['end']
     ];
-
-    ButtonGroup.prototype.commands.onMouseUp = [['temp', 'b', new Param(EXP, 'this.mode')], ['if'], ['eq', new Param(ID, 'b'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.0.hidden'), new Param(Int, 0)], ['set', new Param(EXP, 'this.layers.1.hidden'), new Param(Int, 1)], ['setTag', new Param(Int, 12)], ['end']];
 
     ButtonGroup.prototype.commands.onTagChange = [['temp', 'a', new Param(Int, 0)], ['temp', 'b', new Param(Int, 0)], ['temp', 'c', new Param(Int, 0)], ['set', new Param(ID, 'a'), new Param(EXP, 'this.layers.length')], ['set', new Param(ID, 'c'), new Param(ID, 'a')], ['divide', 'c', new Param(Int, 2)], ['while'], ['gt', new Param(ID, 'a'), new Param(Int, 0)], ['minus', 'a', new Param(Int, 1)], ['print', new Param(ID, 'a')], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 1)], ['minus', 'a', new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 0)], ['end'], ['getTag', 'a'], ['print', new Param(ID, 'a')], ['if'], ['gte', new Param(ID, 'a'), new Param(Int, 0)], ['if'], ['gt', new Param(ID, 'c'), new Param(ID, 'a')], ['multiply', 'a', new Param(Int, 2)], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 1)], ['add', 'a', new Param(Int, 1)], ['set', new Param(EXP, 'this.layers.a.hidden'), new Param(Int, 0)], ['end'], ['end']];
 
