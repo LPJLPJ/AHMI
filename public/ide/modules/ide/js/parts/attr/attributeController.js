@@ -218,11 +218,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             video:{
                 source:[
                     {id:'CVBS',name:'CVBS'},
-                    {id:'HDMI',name:'HDMI'},
+                    {id:'HDMI',name:'HDMI'}
                 ],
                 scale:[
                     {id:'0',name:'非原比例'},
-                    {id:'1',name:'原比例'},
+                    {id:'1',name:'原比例'}
                 ],
                 changeVideoSource:changeVideoSource,
                 changeVideoScale:changeVideoScale
