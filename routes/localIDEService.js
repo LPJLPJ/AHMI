@@ -178,7 +178,7 @@ localIDEService.uploadProject = function (req,res) {
     function fixProjectContent(content,id,host){
         var contentObj = JSON.parse(content);
         //var pattern1 = /[\\]/g;
-        var pattern2 = /..\/..\/localproject\/\d+\//g;
+        var pattern2 = /..\/..\/localproject\/[a-z\d]+\//g;
         var str = '/project/'+id+'/';
 
         var transformSrc = function(key,value) {
