@@ -27,7 +27,6 @@ projectRoute.getAllProjects=function(req, res){
     })
 }
 
-
 projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id
     var userId = req.session.user&&req.session.user.id;
@@ -38,7 +37,9 @@ projectRoute.getProjectById = function (req, res) {
                 errHandler(res,500,'error')
             }
             //console.log(project)
-            if (project.userId == userId){
+            if(!project){
+                errHandler(res,500,'project is null');
+            }else if (project.userId == userId){
                 res.render('ide/index.html')
             }else{
                 res.render('login/login.html',{
@@ -232,19 +233,6 @@ projectRoute.deleteProject = function (req, res) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //exists
                     //delete
-                    // fs.rmdir(targetDir, function (err) {
-                    //     if (err){
-                    //         console.log('err',err)
-                    //     }
-                    //     res.end('ok')
-                    // })
-                    // try{
-                    //     deleteFolderRecursive(targetDir)
-                    //     res.end('ok')
-                    // }catch(err){
-                    //     console.log(err)
-                    //     errHandler(res,500,'delete fs error')
-                    // }
                     rmdirAsync(targetDir,function (rmErr) {
                         if (rmErr){
                             errHandler(res,500,'rm directory error')
@@ -434,28 +422,6 @@ projectRoute.generateProject = function (req, res) {
     if (projectId!=""){
         var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
-        // fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
-        //     if (err){
-        //         errHandler(res,500,err);
-        //     }else{
-        //         //write ok
-        //         var zip = new nodejszip();
-        //         var SrcUrl = path.join(ProjectBaseUrl,'resources');
-        //         var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-        //         try {
-        //             zip.compress(DistUrl, SrcUrl, ['-rj'], function (err) {
-        //                 if (err) {
-        //                     errHandler(res, 500, err);
-        //                 } else {
-        //                     res.end('ok')
-        //
-        //                 }
-        //             })
-        //         }catch (err){
-        //             errHandler(res, 500, err);
-        //         }
-        //     }
-        // })
         //trans all widgets
         var allWidgets = [];
         for (var i=0;i<dataStructure.pageList.length;i++){
@@ -545,9 +511,9 @@ projectRoute.generateProject = function (req, res) {
                             errHandler(res, 500, err);
                         } else {
                             res.end('ok')
-
                         }
                     })
+
                 }
             })
         }
@@ -667,30 +633,41 @@ projectRoute.saveDataAndCompress = function (req, res) {
     if (projectId!=""){
         var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
-        //
-
-
 
         fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
             if (err){
                 errHandler(res,500,err);
             }else{
+                //console.log('compress');
                 var SrcUrl = path.join(ProjectBaseUrl,'resources');
                 var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                MyZip.zipDir(SrcUrl,DistUrl,function (err) {
-                    if (err) {
-                        errHandler(res, 500, err);
-                    } else {
-                        res.end('ok')
-
-                    }
-                })
+                //MyZip.zipDir(SrcUrl,DistUrl,function (err) {
+                //    if (err) {
+                //        errHandler(res, 500, err);
+                //    } else {
+                //        res.end('ok')
+                //
+                //    }
+                //})
+                var output = fse.createWriteStream(DistUrl);
+                var archive = archiver('zip');
+                output.on('close',function(){
+                    //console.log(archive.pointer()+"total bytes",'relese new updfiles success');
+                    //编辑Log文件并返回响应
+                    res.send('ok');
+                });
+                archive.on('error',function(err){
+                    errHandler(res,500,'package folder err');
+                });
+                archive.pipe(output);
+                archive.directory(SrcUrl,'/');
+                archive.finalize();
             }
         })
     }else{
         errHandler(res,500,'projectId error');
     }
-}
+};
 
 function isFont(font) {
     var names = font.src.split('.');
