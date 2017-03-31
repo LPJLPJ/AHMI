@@ -9,7 +9,8 @@
         init();
     }
     function init(){
-        var filedrag = document.getElementById('filedrag');
+        //var filedrag = document.getElementById('filedrag');
+        var filedrag = document.getElementsByTagName('body')[0];
         filedrag.addEventListener('dragover', FileDragHover, false);
         filedrag.addEventListener('dragleave',FileDragHover,false);
         filedrag.addEventListener('drop',FileDrop,false);
@@ -32,7 +33,7 @@
         e.stopPropagation();
         e.preventDefault();
         //console.log(e.type);
-        e.target.className = (e.type=='dragover'?'hover':'');
+        //e.target.className = (e.type=='dragover'?'hover':'');
     }
 
     function FileDrop(e){
@@ -84,7 +85,7 @@
                         var fileReader = new FileReader();
                         fileReader.onload = function(e){
                             project.thumbnail = e.target.result;
-                            formData.append('project',JSON.stringify(project));
+                            //formData.append('project',JSON.stringify(project));
                         };
                         fileReader.readAsDataURL(file);
                     }else{
@@ -109,6 +110,7 @@
      * @return {null} [description]
      */
     function sendFiles(cb){
+        formData.append('project',JSON.stringify(project));
         changeUpdateState('正在上传',0);
         $.ajax({
             type:"POST",
