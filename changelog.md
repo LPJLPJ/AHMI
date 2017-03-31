@@ -87,4 +87,4 @@ add:
     1. support drag and drop local pro folder to add it to web server 
 update:
 fix:
-    1.fix a bug which cause upload a folder who is a download local project fail
+    1.fix a bug that cause upload a folder who is a download local project fail
