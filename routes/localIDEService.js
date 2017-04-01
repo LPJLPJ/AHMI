@@ -88,7 +88,7 @@ localIDEService.uploadProject = function (req,res) {
                 delete project.lastModified;
                 for (var key in project) {
                     if (key === 'content') {
-                        var host = process.env.CUR_HOST||'ide.graphichina.com';
+                        var host = String(process.env.CUR_HOST).split('//')[1]||req.hostname;
                         newProject.content = fixProjectContent(project.content,newProject._id,host);
                     }else{
                         newProject[key] = project[key];
@@ -140,8 +140,8 @@ localIDEService.uploadProject = function (req,res) {
                     //console.log()
                     res.format({
                         text:function(){
-                            //var host = String(process.env.CUR_HOST).split('//').[1];
-                            res.send('cur_host:'+process.env.CUR_HOST);
+                            var host = String(process.env.CUR_HOST).split('//')[1];
+                            res.send('cur_host:'+host);
                         },
                         html:function(){
                             res.send('<p>ok</p>');
