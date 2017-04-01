@@ -6,7 +6,9 @@ var uglify = require('gulp-uglify');
 var pump = require('pump');
 var watch = require('gulp-watch');
 var path = require('path');
+var babel = require('gulp-babel');
 var baseUrl = './public/ide/modules/ide/js/';
+
 
 gulp.task('compress', function (cb) {
     pump([
@@ -39,8 +41,8 @@ gulp.task('transNormalFiles',function (cb) {
 
 
 gulp.task('keepCompressing',function () {
-    return gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js'],{base:baseUrl})
-        .pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js']))
+    return gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}'],{base:baseUrl})
+        .pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}']))
         .pipe(uglify())
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
@@ -56,6 +58,14 @@ gulp.task('transferAllFiles',function () {
     return gulp.src([baseUrl+'**/*.js'],{base:baseUrl})
         .pipe(watch([baseUrl+'**/*.js'],{base:baseUrl}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
+})
+
+gulp.task('transWidgetCommands',function () {
+    return gulp.src(baseUrl+'widgetModel/es6/widgetCommands.js')
+            .pipe(babel({
+                presets:['es2015']
+            }))
+            .pipe(gulp.dest(baseUrl+'widgetModel/'))
 })
 
 gulp.task('build',['keepCompressing','transferNormalFiles']);

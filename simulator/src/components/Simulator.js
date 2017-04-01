@@ -10,7 +10,6 @@ var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
-var WidgetModel = require('../../../public/ide/modules/ide/js/widgetModel/widget')
 var WidgetExecutor = {
 
 }
@@ -261,7 +260,6 @@ module.exports =   React.createClass({
     },
     transFunction:function (widget,f) {
         console.log(widget[f])
-        widget[f] = new Function(WidgetModel.WidgetCommandParser.transFunction(widget,widget[f]));
     },
     registerWidgets:function () {
         this.gWidgets = {}
@@ -275,7 +273,6 @@ module.exports =   React.createClass({
         WidgetExecutor.getTag = function (tag) {
             return this.getValueByTagName(tag)
         }.bind(this)
-        // console.log(WidgetModel.Widget.setTag)
     },
     transGeneralWidget:function (widget) {
 

@@ -21,6 +21,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange']
         var commands = {}
         var models = WidgetModel.models;
+        var testModels = WidgetCommands;
+
         console.log('models',models)
         for (var model in models){
             if (models.hasOwnProperty(model)) {
@@ -33,6 +35,11 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         }
         console.log('registered commands',commands)
+        console.log(_.cloneDeep(testModels['Button']))
+        testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
+        console.log(testModels)
+        transGeneralWidgetMultiCommands(testModels['Button'],generalWidgetFunctions)
+        console.log('testModelsButtonCommands',testModels)
         
         return commands;
     }
@@ -194,9 +201,12 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
     }
 
     function transGeneralWidgetCommands(widget,f) {
-        widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f]),true).map(function (cmd) {
-            return cmd['cmd']
-        })
+        if (f in widget) {
+            widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f]),true).map(function (cmd) {
+                return cmd['cmd']
+            })
+        }
+        
     }
 
     function deepCopyAttributes(srcObj,dstObj,attrList){
