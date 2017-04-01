@@ -140,8 +140,8 @@ localIDEService.uploadProject = function (req,res) {
                     //console.log()
                     res.format({
                         text:function(){
-                            var host = String(process.env.CUR_HOST).split('//').[1];
-                            res.send('cur_host:'+host);
+                            //var host = String(process.env.CUR_HOST).split('//').[1];
+                            res.send('cur_host:'+process.env.CUR_HOST);
                         },
                         html:function(){
                             res.send('<p>ok</p>');
