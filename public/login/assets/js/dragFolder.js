@@ -119,6 +119,7 @@
             contentType:false,
             data:formData,
             success:function(data){
+                console.log(data);
                 formData = new FormData();
                 project = null;
                 changeUpdateState('上传成功,正在解析。',100);

@@ -140,7 +140,7 @@ localIDEService.uploadProject = function (req,res) {
                     //console.log()
                     res.format({
                         text:function(){
-                            res.send(newProject.content);
+                            res.send('hostname:'+req.hostname+'originalUrl:'+req.originalUrl);
                         },
                         html:function(){
                             res.send('<p>ok</p>');
