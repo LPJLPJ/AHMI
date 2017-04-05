@@ -2045,16 +2045,12 @@ module.exports =   React.createClass({
                         break
                 }
             }
-
-
-            cb && cb();
-
-
-
+            
         }
+        cb && cb();
     },
     paintScriptTrigger:function (curX, curY, widget, options,cb) {
-
+        cb&&cb()
     },
     drawScriptTrigger:function(curX, curY, widget, options,cb){
         //get current value
