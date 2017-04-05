@@ -36,13 +36,48 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         }
         console.log('registered commands',commands)
         console.log(_.cloneDeep(testModels['Button']))
-        testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
-        console.log(testModels)
-        transGeneralWidgetMultiCommands(testModels['Button'],generalWidgetFunctions)
+        // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
+        // testModels.map(function (model) {
+        //     //Button
+        //     for(var i=0;i<generalWidgetFunctions.length;i++){
+        //         var curF = generalWidgetFunctions[i]
+        //         if (curF in model) {
+        //             //button.onInitialize
+        //             model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]))
+        //             //trans to jump end
+        //             model[curF] = transGeneralWidgetCommands(model,curF)
+        //         }
+        //     }
+        //     return model;
+        // })
+        for (var model in testModels){
+            if (testModels.hasOwnProperty(model)) {
+                model = testModels[model]
+                for(var i=0;i<generalWidgetFunctions.length;i++){
+                    var curF = generalWidgetFunctions[i]
+                    if (curF in model) {
+                        //button.onInitialize
+                        model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]))
+                        //trans to jump end
+                        transGeneralWidgetCommands(model,curF)
+                    }
+                }
+            }
+        }
         console.log('testModelsButtonCommands',testModels)
         
+
+        //original
+        console.log('commands',commands)
         return commands;
+
+        //new
+        // return testModels
     }
+
+
+
+
     function transDataFile(rawProject){
         var targetProject = {};
         targetProject.version = rawProject.version;

@@ -45,7 +45,7 @@
 				return 'Int'
 			case 'string':
 				if (a.value.indexOf('this')!=-1) {
-					return 'Exp'
+					return 'EXP'
 				}else{
 					return 'String'
 				}
@@ -63,7 +63,7 @@
 			case 'string':
 				return 'String'
 			case 'EXP':
-				return 'Exp'
+				return 'EXP'
 		}
 	}
 
