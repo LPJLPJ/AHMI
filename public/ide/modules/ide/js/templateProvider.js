@@ -768,6 +768,34 @@ ideServices
 
             }
         };
+        this.getDefaultAnimation = function(){
+            var subLayerNode = CanvasService.getSubLayerNode();
+            var info = {
+                width:200, height: 150,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center'
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                subSlides: [],
+                name: 'NewAnimation',
+                type: Type.MyAnimation,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    name:'纹理',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(239,162,68,1)',
+                        imgSrc:'',
+                        name:'图片'
+                    }]
+                }]
+
+            }
+        }
 
 
         function _getRandomColor(){

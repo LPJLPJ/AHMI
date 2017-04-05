@@ -3073,5 +3073,76 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MySlide.async = true;
 
+    //myAnimation
+    fabric.MyAnimation = fabric.util.createClass(fabric.Object, {
+        type: Type.MyAnimation,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
 
-}])
+            var tex=level.texList[0];
+            this.currentColor=tex.slices[tex.currentSliceIdx].color;
+
+            this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+            if (this.currentImageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+            this.on('changeTex', function (arg) {
+
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.currentColor=tex.slices[tex.currentSliceIdx].color;
+                self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                ctx.fillStyle=this.currentColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height );
+                if (this.currentImageElement){
+                    ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                }
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染Slide出错');
+            }
+        }
+    });
+    fabric.MyAnimation.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyAnimation(level, option));
+    }
+    fabric.MyAnimation.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                currentColor:this.currentColor,
+                currentImageElement:this.currentImageElement
+            });
+        }
+    })(fabric.MyAnimation.prototype.toObject);
+    fabric.MyAnimation.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyAnimation(level, object));
+    };
+    fabric.MyAnimation.async = true;
+
+
+}]);

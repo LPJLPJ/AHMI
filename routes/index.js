@@ -47,6 +47,9 @@ router.route('/checkUpdate/manifest.json')
     .get(localIDEService.getCurrentVer);
 router.route('/releases/updapp/win/updFiles.zip')
     .get(localIDEService.downloadNewVerZip);
+//upload local project
+router.route('/upload/project')
+    .post(localIDEService.uploadProject);
 
 //blog
 var BlogRoute = require('./routeBlog');
