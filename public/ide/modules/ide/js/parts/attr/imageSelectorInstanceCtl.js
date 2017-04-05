@@ -79,7 +79,11 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     };
 
     $scope.removeSlice = function (index) {
-        $scope.tex.slices.splice(index,1);
+        if($scope.tex.slices.length==1){
+            toastr.warning('至少有一张纹理');
+        }else{
+            $scope.tex.slices.splice(index,1);
+        }
     };
 
     $scope.save = function () {
