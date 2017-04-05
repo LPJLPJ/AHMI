@@ -2014,7 +2014,6 @@ module.exports =   React.createClass({
         if (widget.texList) {
             var hori = widget.info.arrange == 'horizontal';
             if (!widget.slideSize){
-
                 var defaultSize = hori? widget.info.h:widget.info.w;
                 widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc,defaultSize,defaultSize);
             }
@@ -2045,7 +2044,7 @@ module.exports =   React.createClass({
                         break
                 }
             }
-            
+
         }
         cb && cb();
     },
