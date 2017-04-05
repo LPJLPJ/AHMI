@@ -5,7 +5,7 @@
     var formData = new FormData();
     var project;
     if(window.File&&window.FileList&&window.FileReader){
-        console.log('support File API congratulations!!');
+        console.log('support File API congratulations!');
         init();
     }
     function init(){
@@ -89,22 +89,30 @@
                         var fileReader = new FileReader();
                         fileReader.onload = function(e){
                             project.thumbnail = e.target.result;
-                            //formData.append('project',JSON.stringify(project));
                         };
                         fileReader.readAsDataURL(file);
                     }else{
-                        //console.log('filename',file.name);
                         formData.append('/'+path,file);
                     }
                 }
             });
         }else if(item.isDirectory){
             var dirReader = item.createReader();
-            dirReader.readEntries(function(entries){
-                for(var i=0;i<entries.length;i++){
-                    traverseFileTree(entries[i],path+item.name+"/");
-                }
-            });
+            var readDir = function(){
+                dirReader.readEntries(function(entries){
+                    if(entries.length){
+                        readDir();
+                        console.log('entries.length',entries.length);
+                        for(var i=0;i<entries.length;i++){
+                            traverseFileTree(entries[i],path+item.name+"/");
+                        }
+                    }else{
+                        return;
+                    }
+
+                });
+            };
+            readDir();
         }
     }
 
