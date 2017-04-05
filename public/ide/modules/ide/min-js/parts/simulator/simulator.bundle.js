@@ -20926,6 +20926,9 @@
 	                case 'MyInputKeyboard':
 	                    this.drawInputKeyboard(curX, curY, widget, options, cb);
 	                    break;
+	                case 'MyAnimation':
+	                    this.drawAnimation(curX, curY, widget, options, cb);
+	                    break;
 	            }
 	        }
 	    },
@@ -21013,6 +21016,9 @@
 	            case 'MyInputKeyboard':
 	                this.paintInputKeyboard(curX, curY, widget, options, cb);
 	                break;
+	            case 'MyAnimation':
+	                this.paintAnimation(curX, curY, widget, options, cb);
+	                break;
 	        }
 	    },
 	    drawInputKeyboard: function (curX, curY, widget, options, cb) {},
@@ -21096,6 +21102,22 @@
 	        widget.curSlideIdx = slideIdx;
 	    },
 	    paintSlide: function (curX, curY, widget, options, cb) {
+	        var slideSlices = widget.texList[0].slices;
+	        var slideIdx = widget.curSlideIdx;
+	        if (slideIdx >= 0 && slideIdx < slideSlices.length) {
+	            var curSlice = slideSlices[slideIdx];
+	            var width = widget.info.width;
+	            var height = widget.info.height;
+	            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+	        }
+	        cb && cb();
+	    },
+	    drawAnimation: function (curX, curY, widget, options, cb) {
+	        var tag = this.findTagByName(widget.tag);
+	        var slideIdx = tag && tag.value || 0;
+	        widget.curSlideIdx = slideIdx;
+	    },
+	    paintAnimation: function (curX, curY, widget, options, cb) {
 	        var slideSlices = widget.texList[0].slices;
 	        var slideIdx = widget.curSlideIdx;
 	        if (slideIdx >= 0 && slideIdx < slideSlices.length) {

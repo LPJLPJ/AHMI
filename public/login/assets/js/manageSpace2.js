@@ -294,15 +294,15 @@ $(function(){
         //console.log('searchStr',searchStr);
         curPageIdx=1;
         if(searchState&&searchStr==""){
+            showOverLay();
             console.log('取消搜索');
             searchState=false;
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize);
-            showOverLay();
             getUsers(getUsersUrl,hideOverLay);
         }else if(searchStr!=""){
+            showOverLay();
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize,searchStr);
             searchState=true;
-            showOverLay();
             getUsers(getUsersUrl,hideOverLay);
         }
 

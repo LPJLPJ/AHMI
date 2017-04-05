@@ -290,7 +290,7 @@
 
         function saveProject(_saveCb, useSpinner) {
             // ProjectService.getProjectTo($scope);
-            console.log('save arguments',arguments);
+            //console.log('save arguments',arguments);
             if (useSpinner) {
                 showSpinner();
             }
@@ -346,7 +346,6 @@
                                     ProjectService.LoadCurrentOperate(projectClone, function () {
                                         $scope.$emit('UpdateProject');
                                     });
-
                                 }
                                 if (useSpinner) {
                                     hideSpinner();
@@ -360,9 +359,7 @@
                                     url: '/project/' + currentProject.projectId + '/save',
                                     data: {
                                         project: currentProject
-
                                     }
-
                                 })
                                     .success(function (t) {
                                         if (t == 'ok') {
@@ -407,7 +404,7 @@
                                 .error(function (err) {
                                     console.log(err);
                                     toastr.warning('上传失败');
-                                })
+                                });
                             //_callback && _callback();
                         }
 
@@ -595,6 +592,8 @@
                 newWidget=TemplateProvider.getDefaultSlideBlock();
             } else if(_index == 12){
                 newWidget=TemplateProvider.getDefaultVideo();
+            } else if(_index == 13){
+                newWidget = TemplateProvider.getDefaultAnimation();
             }
             else {
                 return;

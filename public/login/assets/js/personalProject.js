@@ -17,7 +17,7 @@ $(function(){
     var localCANProjectDir='';
 
     closeModalConfirmButton.on('click',function (e) {
-        console.log('project',curProject);
+        //console.log('project',curProject);
         if(curProject.resolution){
             deleteProject(curProject,curPanel);
         }else{
@@ -60,7 +60,7 @@ $(function(){
         __dirname = global.__dirname;
         localProjectDir = path.join(__dirname,'localproject');
         localCANProjectDir = path.join(__dirname,'localproject','localCANProject');
-        console.log('localCANProjectDir',localCANProjectDir);
+        //console.log('localCANProjectDir',localCANProjectDir);
         function getResourceRelativePath(resourceFilePath) {
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
             if (resourceFilePath){
@@ -112,8 +112,8 @@ $(function(){
             return JSON.parse(raw);
         });
         
-        console.log('projects',projects);
-        console.log('CANprojects',CANProjects);
+        //console.log('projects',projects);
+        //console.log('CANprojects',CANProjects);
         
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
@@ -129,7 +129,7 @@ $(function(){
         var addCANprojectButton = $('#addCANproject');
         for(var i=CANProjects.length-1;i>=0;i--){
             var newCANProject = CANProjects[i];
-            console.log('newCANProject'+i,newCANProject);
+            //console.log('newCANProject'+i,newCANProject);
             newCANProject.thumbnail = getResourceRelativePath(newCANProject.thumbnail);
             delete newCANProject.content;
             var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:newCANProject,thumbnail:newCANProject.thumbnail});
@@ -152,7 +152,7 @@ $(function(){
                 break;
         }
 
-        console.log('dir',dir);
+        //console.log('dir',dir);
         var projects=[];
         try {
             var stats = fs.statSync(dir);
@@ -245,7 +245,7 @@ $(function(){
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
 
-            console.log('project',project)
+            //console.log('project',project)
             title.val(project.name);
             author.val(project.author);
             if(identifyCustomResolution(project.resolution)){
@@ -335,7 +335,7 @@ $(function(){
 
     function changeProject(e){
         var op = $('#modal-ok').html();
-        console.log(op);
+        //console.log(op);
         if (op == '确认'){
             updateProject(e,local)
         }else{
@@ -343,7 +343,7 @@ $(function(){
         }
     }
     function createProject(e,local) {
-        console.log('create');
+        //console.log('create');
         var project = {};
         var title = $('#basicinfo-title');
         var author = $('#basicinfo-author');
@@ -382,7 +382,7 @@ $(function(){
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources')
-                console.log(localprojectpath);
+                //console.log(localprojectpath);
 
                 try {
                     mkdir.sync(localresourcepath);
@@ -416,9 +416,9 @@ $(function(){
 
 
     function deleteProject(project,curPanel){
-        console.log('delete')
+        //console.log('delete')
         if (local){
-            console.log('project id',project._id);
+            //console.log('project id',project._id);
             var projectdirpath = path.join(localProjectDir,String(project._id));
             try{
                 rmdir(projectdirpath);
@@ -435,7 +435,7 @@ $(function(){
                 data:{projectId:project._id},
                 success:function (data, status, xhr){
                     //delete ok
-                    console.log(data)
+                    //console.log(data)
                     curPanel.remove()
 
                 },
@@ -524,7 +524,7 @@ $(function(){
                     data:project,
                     success: function (data, status, xhr) {
                         //update success
-                        console.log('success',data)
+                        //console.log('success',data)
                         //update panel
                         updateSuccess = true;
                         //console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
@@ -570,7 +570,7 @@ $(function(){
     $('#CAN-modal-ok').on('click',changeCANProject);
     function changeCANProject(e){
         var op = $('#CAN-modal-ok').html();
-        console.log(op);
+        //console.log(op);
         if(op=="确认"){
             updateCANProject(e,local);
         }else if(op=="创建"){
@@ -633,13 +633,13 @@ $(function(){
                 return;
             }
             if(local){
-                console.log('创建本地CAN');
+                //console.log('创建本地CAN');
                 CANProject.createdTime = Date.now();
                 CANProject.lastModified = Date.now();
                 CANProject._id=''+CANProject.createdTime+Math.round((Math.random()+1)*1000);
                 CANProject.maxSize = 1024*1024*100;
                 var localCANProjectpath = path.join(localCANProjectDir,String(CANProject._id));
-                console.log(localCANProjectpath);
+                //console.log(localCANProjectpath);
                 try{
                     mkdir.sync(localCANProjectpath);
                     var filePath = path.join(localCANProjectpath,'CANProject.json');

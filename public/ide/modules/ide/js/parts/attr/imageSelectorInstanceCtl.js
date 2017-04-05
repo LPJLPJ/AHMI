@@ -66,6 +66,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         case Type.MySlideBlock:
             initConfigure(false,1,widgetInfo.tex);
             break;
+        case Type.MyAnimation:
+            initConfigure(true,1,widgetInfo.tex);
+            break;
         default:
             initConfigure(true,1,widgetInfo.tex);
             break;
