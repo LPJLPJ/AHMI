@@ -23,7 +23,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var models = WidgetModel.models;
         var testModels = WidgetCommands;
 
-        console.log('models',models)
+        console.log('models',models);
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
