@@ -82,7 +82,7 @@ fix:
     1. fix a bug that versionTag didn't display in page
     2. fix a bug that delete a project that mongodb cause server crash
     
-v1.9.0_test
+v1.9.0
 add:
     1. support drag and drop local pro folder to add it to web server 
 update:
