@@ -115,7 +115,8 @@ localIDEService.uploadProject = function (req,res) {
                     console.log('save err in upload',err);
                     ProjectModel.deleteById(projectId, function (err) {
                         if (err){
-                            errHandler(res,500,'delete error')
+                            //errHandler(res,500,'delete error')
+                            console.log('err in delete upload project',err);
                         }
                         //delete directory
                         var targetDir = path.join(__dirname,'../project/',String(projectId))
@@ -125,17 +126,20 @@ localIDEService.uploadProject = function (req,res) {
                                 //delete
                                 rmdirAsync(targetDir,function (rmErr) {
                                     if (rmErr){
-                                        errHandler(res,500,'rm directory error in upload')
+                                        //errHandler(res,500,'rm directory error in upload')
+                                        console.log('err in directory in upload');
                                     }else{
-                                        errHandler(res,500,'err in save newProject');
+                                        //errHandler(res,500,'err in save newProject');
                                     }
                                 })
                             }else{
-                                errHandler(res,500,'err in save newProject');
+                                //errHandler(res,500,'err in save newProject');
+                                console.log('err in save newProject');
                             }
                         })
 
-                    })
+                    });
+                    errHandler(res,500,'err in save upload project'+err);
                 }else{
                     //console.log()
                     res.format({

@@ -83,7 +83,7 @@ fix:
     2. fix a bug that delete a project that mongodb cause server crash
     
 v1.9.0
-add: b
+add:
     1. support drag and drop local pro folder to add it to web server 
 update:
 fix:
