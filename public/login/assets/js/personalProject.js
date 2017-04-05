@@ -245,6 +245,7 @@ $(function(){
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
 
+            console.log('project',project)
             title.val(project.name);
             author.val(project.author);
             if(identifyCustomResolution(project.resolution)){
@@ -526,7 +527,7 @@ $(function(){
                         console.log('success',data)
                         //update panel
                         updateSuccess = true;
-                        console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
+                        //console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
                         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
                         curPanel.replaceWith(html)
 

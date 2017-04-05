@@ -167,6 +167,8 @@ router.route('/project/:id/content')
 
 router.route('/project/:id/save')
     .put(projectInfo.saveProject);
+router.route('/project/:id/saveAs')
+    .post(projectInfo.saveProjectAs);
 
 
 router.route('/project/:id/thumbnail')

@@ -122,7 +122,7 @@ $(function(){
         var textArea = $('#message-text').val();
         var selectPublic = $('#checkboxPublic').prop('checked');
         var selectViews = $('#checkboxViews').prop('checked');
-        //$('.overlay').show();
+        showOverLay();
         if(selectPublic||selectViews){
           var postData = {
             description:textArea,
@@ -138,8 +138,13 @@ $(function(){
             renderLogToView(releaseInfo);
             generatePageIndexTag();
             addClickEvtToPageIndex();
+              hideOverLay();
             changeReleaseBtnState('reset');
             toastr.info('发布成功！');
+          },function(){
+              hideOverLay();
+              changeReleaseBtnState('reset');
+              toastr.error('发布失败');
           });
         }else{
           toastr.warning('未选择更新文件');
@@ -148,17 +153,17 @@ $(function(){
 
     	})
 
+        confirmReleaseBtnNode=null;
     }
 
     /**
      * 模态框事件
      */
     $('#myModal').on('hidden.bs.modal', function (e) {
-  	// do something...
-  		//console.log('dismiss');
+  	    // do something...
 	  })
     $('#myModal').on('show.bs.modal', function (e) {
-    // do something...
+        // do something...
       //console.log('show');
       $('#message-text').val('');
       $('#checkboxPublic').attr('checked',false);
@@ -171,15 +176,16 @@ $(function(){
      * @param  {Function} cb 回调函数
      * @return {[type]}      [description]
      */
-    function postUpdateRequest(data,cb){
+    function postUpdateRequest(data,scb,fcb){
     	$.ajax({
     		type:"POST",
     		url:"/admin/manage/release/update",
         data:data,
     		success:function(data,status,xhr){
-    			cb&&cb(data);
+    			scb&&scb(data);
     		},
     		error:function(err,status,xhr){
+                fcb&&fcb();
     			console.log(err);
     		}
     	})
@@ -308,6 +314,14 @@ $(function(){
             var getInfoUrl = generateGetInfoUrl((selectIndex-1)*pageSize,pageSize);
             getReleaseInfo(getInfoUrl,renderLogToView);
         })
+        pageIndexLiNodes = null;
     };
+
+    function showOverLay(){
+        $('.overlay').show();
+    }
+    function  hideOverLay(){
+        $('.overlay').hide();
+    }
     
 })

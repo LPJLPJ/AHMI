@@ -38,9 +38,10 @@ $(function(){
     /**
      * 获取用户信息
      * param  string getUsersUrl 请求地址
+     * cb 回调函数
      * @return {[type]} [description]
      */
-    function getUsers(getUsersUrl){
+    function getUsers(getUsersUrl,cb){
         //console.log(getUserUrl);
         $.ajax({
             type:'GET',
@@ -57,9 +58,11 @@ $(function(){
                 pageCount = Math.ceil(usersCount/pageSize);
                 curPageIdx = 1;
                 initUI();
+                cb&&cb();
             },
             error:function(err,status,xhr){
                 console.log('err',err);
+                cb&&cb();
             }
         })
     }
@@ -197,6 +200,8 @@ $(function(){
             }
             postHTTPReqForUsers(getUsersUrl,renderUserToView);
         })
+
+        pageIndexLiNodes = null;
     };
 
     /**
@@ -269,11 +274,14 @@ $(function(){
             return;
         }
 
+        searchInput.off('keyup');
         searchInput.on('keyup',function(e){
             if(e.keyCode==13){
                 handleSearch();
             }
         });
+
+        searchInput = null;
     }
 
     /**
@@ -287,15 +295,19 @@ $(function(){
         //console.log('searchStr',searchStr);
         curPageIdx=1;
         if(searchState&&searchStr==""){
+            showOverLay();
             console.log('取消搜索');
             searchState=false;
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize);
-            getUsers(getUsersUrl);
+            getUsers(getUsersUrl,hideOverLay);
         }else if(searchStr!=""){
+            showOverLay();
             var getUsersUrl = generateGetUsersUrl((curPageIdx-1)*pageSize,pageSize,searchStr);
             searchState=true;
-            getUsers(getUsersUrl);
-        }  
+            getUsers(getUsersUrl,hideOverLay);
+        }
+
+        searchInput = null;
     }
 
     /**
@@ -311,6 +323,7 @@ $(function(){
             //console.log('userId',userId,'newValue',newValue,'trNode',trNode);
             changeTypeById(userId,newValue,$(this));
         })
+        userTableUl = null;
     }
 
     /**
@@ -384,6 +397,13 @@ $(function(){
                 console.log(err);
             }
         })
+    }
+
+    function showOverLay(){
+        $('.overlay').show();
+    }
+    function  hideOverLay(){
+        $('.overlay').hide();
     }
 
 })

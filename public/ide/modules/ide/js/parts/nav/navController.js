@@ -89,6 +89,7 @@
                     runSimulator:runSimulator,
                     closeSimulator:closeSimulator,
                     saveProject: saveProject.bind(null, null, true),
+                    saveProjectAs:saveProjectAs,
                     showLeft:showLeft,
                     showRight:showRight,
                     showBottom:showBottom,
@@ -288,19 +289,12 @@
 
 
         function saveProject(_saveCb, useSpinner) {
-
-
             // ProjectService.getProjectTo($scope);
-
+            console.log('save arguments',arguments);
             if (useSpinner) {
                 showSpinner();
             }
-            //edit by lixiang
-
-
             var projectClone=ProjectService.SaveCurrentOperate();
-
-
             ProjectService.changeCurrentPageIndex(0,
 
                 function () {
@@ -327,12 +321,7 @@
                                 })
 
                             })
-                        })
-                        //console.log(JSON.stringify(currentProject));
-
-                        //if (isOffline){
-                        //    return;
-                        //}
+                        });
                         if (window.local) {
                             saveThumb(scaledThumb, function () {
                                 //save
@@ -362,9 +351,6 @@
                                 if (useSpinner) {
                                     hideSpinner();
                                 }
-
-
-
                             });
                         } else {
                             uploadThumb(scaledThumb, function () {
@@ -440,15 +426,51 @@
                         }
                     });
                     //console.log(thumb)
-
             });
-
-
-
-
-
-
         }
+
+        function saveProjectAs(){
+            var projectId = ProjectService.getProjectId();
+            if(window.local){
+                //for local
+            }else{
+                var modalInstance = $uibModal.open({
+                    animation:$scope.animationsEnabled,
+                    templateUrl:'saveAsModal.html',
+                    controller:'NavModalSaveAsCtrl',
+                    size:'md',
+                    resolve:{
+                    }
+                });
+                modalInstance.result.then(function(result){
+                    //console.log('result',result);
+                    showSpinner();
+                    $http({
+                        method:'POST',
+                        url:'/project/'+projectId+'/saveAs',
+                        data:result
+                    })
+                        .success(function(data){
+                            console.log('data',data);
+                            if(data=='ok'){
+                                hideSpinner();
+                                toastr.info('另存为成功');
+                                if(window.opener){
+                                    window.opener.location.reload();
+                                }
+                            }
+                        })
+                        .error(function(err){
+                            console.log(err);
+                            toastr.info('另存为失败');
+                            hideSpinner();
+                        })
+
+                },function(str){
+                    //console.log(str);
+                })
+            }
+        };
 
         /**
          * 改变nav
@@ -1175,4 +1197,20 @@ ide.service('NavModalCANConfigService',[function(){
     this.getCANId = function(){
         return CANId||''
     };
+}]);
+
+ide.controller('NavModalSaveAsCtrl',['$scope','$uibModalInstance',function($scope,$uibModalInstance){
+    $scope.saveAsName = "";
+    $scope.saveAsAuthor = "";
+
+    $scope.ok = function(){
+        var data = {
+            saveAsName:$scope.saveAsName,
+            saveAsAuthor:$scope.saveAsAuthor
+        };
+        $uibModalInstance.close(data);
+    }
+    $scope.cancel = function(){
+        $uibModalInstance.dismiss('cancel');
+    }
 }]);
