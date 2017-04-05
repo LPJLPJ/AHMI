@@ -18,13 +18,15 @@
         var confirmReleaseBtnNode = $("#confirmReleaseBtn");
         confirmReleaseBtnNode.off('click');
         confirmReleaseBtnNode.on('click',function(e){
-            sendFiles(hideWrapper);
             $('#uploadModal').modal('hide');
+            sendFiles(hideWrapper);
         });
         var cancelReleaseBtnNode = $('#cancelReleaseBtn');
         cancelReleaseBtnNode.off('click');
         cancelReleaseBtnNode.on('click',function(e){
-           hideWrapper();
+            formData = new FormData();
+            project = null;
+            hideWrapper();
         });
 
     }
@@ -59,7 +61,8 @@
                     traverseFileTree(item);
                     setTimeout(function(){
                         //hideWrapper();
-                        $('#uploadModal').modal('show');
+                        $('#uploadModal').modal({backdrop:'static',keyboard:false});
+
                     },1000);
                 };
                 readJSONFile(item,scb,fcb);
@@ -80,6 +83,7 @@
         var path = path||'';
         if(item.isFile){
             item.file(function(file){
+                console.log('file.name',file.name);
                 if(!!(file.name.match(/(jpeg|png|ttf|jpg)/))){
                     if(file.name==='thumbnail.jpg'){
                         var fileReader = new FileReader();
@@ -227,5 +231,6 @@
             }
         }
     }
+
 
 })();
