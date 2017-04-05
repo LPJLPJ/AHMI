@@ -62,6 +62,7 @@ gulp.task('transferAllFiles',function () {
 
 gulp.task('transWidgetCommands',function () {
     return gulp.src(baseUrl+'widgetModel/es6/widgetCommands.js')
+            .pipe(watch(baseUrl+'widgetModel/es6/widgetCommands.js'))
             .pipe(babel({
                 presets:['es2015']
             }))
