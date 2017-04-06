@@ -89,3 +89,4 @@ update:
 fix:
     1.fix a bug that cause upload a folder who is a download local project fail
     2.fix a bug that only can upload max 100 files
+    3.fix a bug in generate
