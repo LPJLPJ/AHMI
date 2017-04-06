@@ -2,6 +2,16 @@
  * Created by lixiang on 2017/3/30.
  */
 (function(){
+    var local = false;
+    try {
+        var os = require('os');
+        if (os){
+            local = true;
+            //console.log('os',os);
+        }
+    }catch (e){
+
+    }
     var formData = new FormData();
     var project;
     if(window.File&&window.FileList&&window.FileReader){
@@ -40,33 +50,36 @@
 
     function FileDrop(e){
         e.preventDefault();
-        showWrapper();
-        changeUpdateState('正在预处理工程...',100);
-        if(!isDropFileIsFolder(e)){
-            hideWrapper();
-            toastr.error('不合法的工程');
-            return
-        }
-        var items = e.dataTransfer.items;
-        for(var i=0;i<items.length;i++){
-            //webkitGetAsEntry is the key point
-            var item = items[i].webkitGetAsEntry();
-            if(item){
-                var fcb = function(){
-                    hideWrapper();
-                    toastr.error('不合法的工程');
-                    legal = false;
-                };
-                var scb = function(item){
-                    traverseFileTree(item);
-                    setTimeout(function(){
-                        //hideWrapper();
-                        $('#uploadModal').modal({backdrop:'static',keyboard:false});
+        if(local){
 
-                    },1000);
-                };
-                readJSONFile(item,scb,fcb);
+        }else{
+            showWrapper();
+            changeUpdateState('正在预处理工程...',100);
+            if(!isDropFileIsFolder(e)){
+                hideWrapper();
+                toastr.error('不合法的工程');
+                return
+            }
+            var items = e.dataTransfer.items;
+            for(var i=0;i<items.length;i++){
+                //webkitGetAsEntry is the key point
+                var item = items[i].webkitGetAsEntry();
+                if(item){
+                    var fcb = function(){
+                        hideWrapper();
+                        toastr.error('不合法的工程');
+                        legal = false;
+                    };
+                    var scb = function(item){
+                        traverseFileTree(item);
+                        setTimeout(function(){
+                            //hideWrapper();
+                            $('#uploadModal').modal({backdrop:'static',keyboard:false});
 
+                        },1000);
+                    };
+                    readJSONFile(item,scb,fcb);
+                }
             }
         }
         return false;
