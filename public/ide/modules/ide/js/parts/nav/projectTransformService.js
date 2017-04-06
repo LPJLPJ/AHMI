@@ -68,7 +68,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         
 
         //original
-        console.log('commands',commands)
+        console.log('commands',commands);
+        console.log('testModels',testModels);
         return commands;
 
         //new
@@ -217,7 +218,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             
             
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
-            targetWidget.type = 'widget';
+            targetWidget.type = 'widget'; 
             
 
             

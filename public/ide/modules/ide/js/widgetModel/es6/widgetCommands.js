@@ -11,7 +11,7 @@
         window.WidgetCommands = factory();
     }
 }(function () {
-    var WidgetCommands = {}
+    var WidgetCommands = {};
     WidgetCommands['Button'] = {
         onInitialize:`
             var(a,'this.mode')
@@ -50,14 +50,21 @@
         onTagChange:`
             var(a,0)
             var(b,'this.mode')
+            getTag(a)
             if(b==1){
-                if(a)
+                if(a>0){
+                    set('this.layer.0.hidden',1)
+                    set('this.layer.1.hidden',0)
+                }else{
+                    set('this.layer.0.hidden',0)
+                    set('this.layer.1.hidden',1)
+                }
             }else{
 
             }
         `
 
-    }
+    };
 
     return WidgetCommands;
 
