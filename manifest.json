@@ -1,6 +1,6 @@
 {
     "name": "AHMI_IDE",
-    "version": "1.8.9",
+    "version": "1.9.0",
     "author": "graphichina",
     "manifestUrl": "https://ide.graphichina.com/checkUpdate/manifest.json",
     "packages": {
