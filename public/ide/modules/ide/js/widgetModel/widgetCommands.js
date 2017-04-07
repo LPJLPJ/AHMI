@@ -20,7 +20,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onInitialize: '\n            var(a,\'this.mode\')\n            setTag(1)\n            set(a,3)\n            if(a>=100){\n                set(\'this.layers.1.hidden\',1)\n            }else{\n                set(\'this.layers.1.hidden\',0)\n            }\n        ',
         onMouseDown: '\n            var(b,\'this.mode\')\n            if(b==0){\n                set(\'this.layers.0.hidden\',1)\n                set(\'this.layers.1.hidden0\',0)\n                setTag(0);\n            }else{\n                var(c,0)\n                getTag(c)\n                if(c>0){\n                    setTag(0)\n                }else{\n                    setTag(1)\n                }\n            }\n        ',
         onMouseUp: '\n            var(b,\'this.mode\')\n            if(b==0){\n                set(\'this.layer.0.hidden\',0)\n                set(\'this.layer.0.hidden\',1)\n                setTag(12)\n            }\n        ',
-        onTagChange: '\n            var(a,0)\n            var(b,\'this.mode\')\n            if(b==1){\n                if(a)\n            }else{\n\n            }\n        '
+        onTagChange: '\n            var(a,0)\n            var(b,\'this.mode\')\n            getTag(a)\n            if(b==1){\n                if(a>0){\n                    set(\'this.layer.0.hidden\',1)\n                    set(\'this.layer.1.hidden\',0)\n                }else{\n                    set(\'this.layer.0.hidden\',0)\n                    set(\'this.layer.1.hidden\',1)\n                }\n            }else{\n\n            }\n        '
 
     };
 
