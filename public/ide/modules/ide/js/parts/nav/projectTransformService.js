@@ -21,7 +21,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange']
         var commands = {}
         var models = WidgetModel.models;
-        var testModels = WidgetCommands;
+        var testModels = _.cloneDeep(WidgetCommands);
 
         console.log('models',models);
         for (var model in models){
