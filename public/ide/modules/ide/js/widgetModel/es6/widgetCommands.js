@@ -16,7 +16,7 @@
         onInitialize:`
             var(a,1)
             if(a>=3){
-                set('this.layers',2)
+                set('this.layers.1.hidden',2)
             }
         `
     }

@@ -21,7 +21,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange']
         var commands = {}
         var models = WidgetModel.models;
-        var testModels = WidgetCommands;
+        var testModels = _.cloneDeep(WidgetCommands);
 
         console.log('models',models)
         for (var model in models){
@@ -60,11 +60,14 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                         model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]))
                         //trans to jump end
                         transGeneralWidgetCommands(model,curF)
+                        console.log('testModelsButtonCommands1',_.cloneDeep(testModels))
+                        model[curF] = cppWidgetCommandTranslator.transJSWidgetCommands(model[curF])
+                        console.log('testModelsButtonCommands2',_.cloneDeep(testModels))
                     }
                 }
             }
         }
-        console.log('testModelsButtonCommands',testModels)
+        
         
 
         //original
@@ -74,6 +77,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //new
         // return testModels
     }
+
 
 
 

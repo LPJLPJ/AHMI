@@ -17,7 +17,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })(function () {
     var WidgetCommands = {};
     WidgetCommands['Button'] = {
-        onInitialize: '\n            var(a,1)\n            if(a>=3){\n                set(\'this.layers\',2)\n            }\n        '
+        onInitialize: '\n            var(a,1)\n            if(a>=3){\n                set(\'this.layers.1.hidden\',2)\n            }\n        '
     };
 
     return WidgetCommands;
