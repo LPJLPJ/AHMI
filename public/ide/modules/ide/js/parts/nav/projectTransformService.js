@@ -23,7 +23,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var models = WidgetModel.models;
         var testModels = _.cloneDeep(WidgetCommands);
 
-        console.log('models',models)
+        console.log('models',models);
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
@@ -71,7 +71,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         
 
         //original
-        console.log('commands',commands)
+        console.log('commands',commands);
+        console.log('testModels',testModels);
         return commands;
 
         //new
@@ -221,7 +222,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             
             
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
-            targetWidget.type = 'widget';
+            targetWidget.type = 'widget'; 
             
 
             

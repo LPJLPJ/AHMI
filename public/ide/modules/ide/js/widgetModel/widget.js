@@ -671,7 +671,7 @@
 
 
     var WidgetModel = {};
-    WidgetModel.models = {}
+    WidgetModel.models = {};
 
     WidgetModel.models.Button = Button;
     WidgetModel.models.ButtonGroup = ButtonGroup;
@@ -681,4 +681,4 @@
     return WidgetModel;
 
 
-}))
+}));

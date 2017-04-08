@@ -71,7 +71,7 @@
 
 //color
     function ColorSubLayer(w,h,color) {
-        SubLayer.call(this,w,h)
+        SubLayer.call(this,w,h);
         this.color = color;
     }
     ColorSubLayer.prototype = Object.create(SubLayer.prototype);
