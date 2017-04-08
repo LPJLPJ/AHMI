@@ -42,8 +42,8 @@
         onMouseUp:`
             var(b,'this.mode')
             if(b==0){
-                set('this.layer.0.hidden',0)
-                set('this.layer.0.hidden',1)
+                set('this.layers.0.hidden',0)
+                set('this.layers.0.hidden',1)
                 setTag(12)
             }
         `,
@@ -53,11 +53,11 @@
             getTag(a)
             if(b==1){
                 if(a>0){
-                    set('this.layer.0.hidden',1)
-                    set('this.layer.1.hidden',0)
+                    set('this.layers.0.hidden',1)
+                    set('this.layers.1.hidden',0)
                 }else{
-                    set('this.layer.0.hidden',0)
-                    set('this.layer.1.hidden',1)
+                    set('this.layers.0.hidden',0)
+                    set('this.layers.1.hidden',1)
                 }
             }
         `
@@ -104,7 +104,7 @@
             var(a,0)
             var(b,0)
             var(c,0)
-            set(a,'this.lalyers.length')
+            set(a,'this.layers.length')
             set(c,a)
             divide(c,2)
             while(a>0){

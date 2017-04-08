@@ -23,7 +23,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var models = WidgetModel.models;
         var testModels = _.cloneDeep(WidgetCommands);
 
-        console.log('models',models);
+        //console.log('models',models);
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
@@ -34,8 +34,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 commands[model] = modelCommands;
             }
         }
-        console.log('registered commands',commands)
-        console.log(_.cloneDeep(testModels['Button']))
+        //console.log('registered commands',commands)
+        //console.log(_.cloneDeep(testModels['Button']))
         // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
         // testModels.map(function (model) {
         //     //Button
@@ -57,12 +57,10 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     var curF = generalWidgetFunctions[i]
                     if (curF in model) {
                         //button.onInitialize
-                        model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]))
+                        model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]));
                         //trans to jump end
-                        transGeneralWidgetCommands(model,curF)
-                        console.log('testModelsButtonCommands1',_.cloneDeep(testModels))
+                        transGeneralWidgetCommands(model,curF);
                         model[curF] = cppWidgetCommandTranslator.transJSWidgetCommands(model[curF])
-                        console.log('testModelsButtonCommands2',_.cloneDeep(testModels))
                     }
                 }
             }
@@ -76,7 +74,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         return commands;
 
         //new
-        // return testModels
+        //return testModels
     }
 
 
