@@ -1,1 +1,685 @@
-!function(e){if("function"==typeof define&&define.amd)define("WidgetModel",["./layer"],e);else if("object"==typeof module&&module.exports){console.log(__dirpath);var n=require("./layer");module.exports=e(n)}else window.WidgetModel=e(window.LayerModel)}(function(e){function n(e,n,t,s,a){this.info={left:e,top:n,width:t,height:s},this.tag="defaultTag",this.type="general",this.mode=0,a&&a.length?this.layers=a:this.layers=[new r(t,s)]}function t(e,n){this.type=e,this.value=n}function s(e,t,s,a,h,p,l){var u=new r(0,0,s,a);u.subLayers.font=new i(s,a,h,p),u.subLayers.texture=new w(s,a,l[0].imgSrc),u.subLayers.color=new o(s,a,l[0].color);var d=new r(0,0,s,a);d.subLayers.font=new i(s,a,h,p),d.subLayers.texture=new w(s,a,l[1].imgSrc),d.subLayers.color=new o(s,a,l[1].color);var c=[u,d];this.subType="Button",n.call(this,e,t,s,a,c)}function a(e,t,s,a,i,h,p,l){var u=0,d=0,c=[];if(0==h){u=(s-(i-1)*p)/i,d=a;for(var y=0;y<i;y++){var g=new r(y*(u+p),0,u,d);g.subLayers.texture=new w(u,d,l[2*y].imgSrc),g.subLayers.color=new o(u,d,l[2*y].color);var f=new r(y*(u+p),0,u,d,!0);f.subLayers.texture=new w(u,d,l[2*y+1].imgSrc),f.subLayers.color=new o(u,d,l[2*y+1].color),c.push(g),c.push(f)}}this.subType="ButtonGroup",n.call(this,e,t,s,a,c)}var r=e.Layer,i=(e.ROISubLayer,e.FontSubLayer),w=e.TextureSubLayer,o=e.ColorSubLayer;n.prototype.toObject=function(){return{info:{left:this.info.left,top:this.info.top,width:this.info.width,height:this.info.height},mode:this.mode,tag:this.tag,layers:this.layers}},n.prototype.commands={},n.execute=function(e,n,t){return"__tag"==n?this.getTag(e.tag):"string"==typeof n?'"'+n+'"':n};var h="Int",p="ID",l="EXP";s.prototype=Object.create(n.prototype),s.prototype.constructor=s,s.prototype.commands={},s.prototype.commands.onInitialize=[["temp","a",new t(l,"this.mode")],["setTag",new t(h,1)],["set",new t(p,"a"),new t(h,3)],["if"],["gte",new t(p,"a"),new t(h,100)],["set",new t(l,"this.layers.1.hidden"),new t(h,1)],["else"],["set",new t(l,"this.layers.1.hidden"),new t(h,0)],["end"]],s.prototype.commands.onMouseDown=[["temp","b",new t(l,"this.mode")],["print",new t(p,"b")],["if"],["eq",new t(p,"b"),new t(h,0)],["set",new t(l,"this.layers.0.hidden"),new t(h,1)],["set",new t(l,"this.layers.1.hidden"),new t(h,0)],["setTag",new t(h,0)],["else"],["temp","c",new t(h,0)],["getTag","c"],["if"],["gt",new t(p,"c"),new t(h,0)],["setTag",new t(h,0)],["else"],["setTag",new t(h,1)],["end"],["end"]],s.prototype.commands.onMouseUp=[["temp","b",new t(l,"this.mode")],["if"],["eq",new t(p,"b"),new t(h,0)],["set",new t(l,"this.layers.0.hidden"),new t(h,0)],["set",new t(l,"this.layers.1.hidden"),new t(h,1)],["setTag",new t(h,12)],["end"]],s.prototype.commands.onTagChange=[["temp","a",new t(h,0)],["temp","b",new t(l,"this.mode")],["getTag","a"],["if"],["eq",new t(p,"b"),new t(h,1)],["if"],["gt",new t(p,"a"),new t(h,0)],["set",new t(l,"this.layers.0.hidden"),new t(h,1)],["set",new t(l,"this.layers.1.hidden"),new t(h,0)],["else"],["set",new t(l,"this.layers.0.hidden"),new t(h,0)],["set",new t(l,"this.layers.1.hidden"),new t(h,1)],["end"],["end"]],a.prototype=Object.create(n.prototype),a.prototype.constructor=a,a.prototype.commands.onInitialize=[],a.prototype.commands.onMouseDown=[["temp","a",new t(h,0)],["temp","b",new t(h,0)],["temp","c",new t(h,0)],["set",new t(p,"c"),new t(l,"this.layers.length")],["minus","c",new t(h,2)],["set",new t(p,"a"),new t(l,"this.innerX")],["set",new t(p,"b"),new t(l,"this.innerY")],["temp","lx",new t(h,0)],["temp","ly",new t(h,0)],["temp","lw",new t(h,0)],["temp","lh",new t(h,0)],["temp","rx",new t(h,0)],["temp","ry",new t(h,0)],["while"],["gte",new t(p,"c"),new t(h,0)],["set",new t(p,"lx"),new t(l,"this.layers.c.x")],["set",new t(p,"ly"),new t(l,"this.layers.c.y")],["set",new t(p,"lw"),new t(l,"this.layers.c.width")],["set",new t(p,"lh"),new t(l,"this.layers.c.height")],["set",new t(p,"rx"),new t(p,"lx")],["set",new t(p,"ry"),new t(p,"ly")],["add","rx",new t(p,"lw")],["add","ry",new t(p,"lh")],["if"],["gte",new t(p,"a"),new t(p,"lx")],["if"],["gt",new t(p,"rx"),new t(p,"a")],["if"],["gte",new t(p,"b"),new t(p,"ly")],["if"],["gt",new t(p,"ry"),new t(p,"b")],["print",new t(p,"c"),"hit"],["divide","c",new t(h,2)],["setTag",new t(p,"c")],["set",new t(p,"c"),new t(h,0)],["end"],["end"],["end"],["end"],["minus","c",new t(h,2)],["end"]],a.prototype.commands.onMouseUp=[],a.prototype.commands.onTagChange=[["temp","a",new t(h,0)],["temp","b",new t(h,0)],["temp","c",new t(h,0)],["set",new t(p,"a"),new t(l,"this.layers.length")],["set",new t(p,"c"),new t(p,"a")],["divide","c",new t(h,2)],["while"],["gt",new t(p,"a"),new t(h,0)],["minus","a",new t(h,1)],["print",new t(p,"a")],["set",new t(l,"this.layers.a.hidden"),new t(h,1)],["minus","a",new t(h,1)],["set",new t(l,"this.layers.a.hidden"),new t(h,0)],["end"],["getTag","a"],["print",new t(p,"a")],["if"],["gte",new t(p,"a"),new t(h,0)],["if"],["gt",new t(p,"c"),new t(p,"a")],["multiply","a",new t(h,2)],["set",new t(l,"this.layers.a.hidden"),new t(h,1)],["add","a",new t(h,1)],["set",new t(l,"this.layers.a.hidden"),new t(h,0)],["end"],["end"]];var u={},d={};u.transCommand=function(e,t){var s,a,r,i=t[0];switch(i){case"temp":a=t[1],r=n.execute(e,t[2]),d[a]=r,s="var "+a+"="+r+";\n";break;case"set":a=t[1],r=n.execute(e,t[2]),a in d&&(d[a]=r),s=a+"="+r+";\n";break;case"if":s="if";break;case"pred":var w=t[2],o=t[3];w in d||(w=n.execute(e,w)),o in d||(o=n.execute(e,o)),s="("+w+t[1]+o+"){\n";break;case"else":s="}else{\n";break;case"end":s="}\n";break;case"setTag":s='WidgetExecutor.setTag("'+e.tag+'",'+t[1]+")"}return s},u.transFunction=function(e,n){d={};for(var t="",s=0;s<n.length;s++)t+=this.transCommand(e,n[s]);return t},u.complier={},function(e){"use strict";function n(e){for(var t=[],s=!0;e.length&&s;){var a,r=e[0];switch(r[0]){case"if":a={},a.type="IF",a.args=[],e.shift(),a.args.push(e.shift()),a.args.push(n(e)),"else"===e[0][0]&&(e.shift(),a.args.push(n(e))),e.shift(),t.push(a);break;case"while":a={type:"WHILE",args:[]},e.shift(),a.args.push(e.shift()),a.args.push(n(e)),e.shift(),t.push(a);break;case"else":case"end":s=!1;break;default:t.push({type:"EXP",args:[r]}),e.shift()}}return t}function t(e,n){this.label=String(e),this.cmd=n}function s(e,n){p=0;var t=r(e,n);return a(t),t}function a(e){for(var n,t={},s=0;s<e.length;s++)n=e[s],""!==n.label&&(t[n.label]=s);for(s=0;s<e.length;s++){n=e[s];var a=n.cmd;if("jump"===a[0]){var r=t[a[2]];a[2]=r-s}}}function r(e,n){for(var s=[],a=0;a<e.length;a++){var r=e[a];switch(r.type){case"EXP":s.push(new t("",r.args[0]));break;case"IF":[].push.apply(s,i(r,n));break;case"WHILE":[].push.apply(s,w(r,n));break;default:s.push(new t("",r.args[0]))}}return s}function i(e,n){var s=[],a=e.args;2===a.length&&a.push([]);var i=a[0],w=a[2],o=a[1];if(n=n||!1){var h=i[0],y=l[h];y&&(i[0]=y,w=a[1],o=a[2])}s.push(new t("",i));var g=p;p+=1,s.push(new t("",[u,c,g])),[].push.apply(s,r(o,n));var f=p;p+=1,s.push(new t("",[u,c,f]));var m=r(w,n);return m.length>0?m[0].label=String(g):m.push(new t(g,[d,"",""])),[].push.apply(s,m),s.push(new t(f,[d,"",""])),s}function w(e,n){var s=[],a=e.args,i=a[0],w=a[1],o=p++,h=p++,y=p++;if(n){var g=l[i[0]];g?(i[0]=g,s.push(new t(o,i)),s.push(new t("",[u,c,h])),s.push(new t("",[u,c,y]))):(s.push(new t(o,i)),s.push(new t("",[u,c,y])),s.push(new t("",[u,c,h])))}var f=r(w,n);return f.push(new t("",[u,c,o])),f[0].label=String(h),[].push.apply(s,f),s.push(new t(y,[d,"",""])),s}var o={};o.parse=n;var h={},p=0,l={gte:"lt",lte:"gt"};h.trans=s;var u="jump",d="end",c="";e.parser=o,e.transformer=h}(u.complier);var c={};return c.models={},c.models.Button=s,c.models.ButtonGroup=a,c.Widget=n,c.WidgetCommandParser=u,c});
+/**
+ * Created by changecheng on 2017/3/9.
+ */
+
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+
+        define('WidgetModel',['./layer'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node/CommonJS
+        console.log(__dirpath)
+        var LayerModel = require('./layer');
+        module.exports = factory(LayerModel)
+    } else {
+        // Browser globals
+        window.WidgetModel = factory(window.LayerModel);
+    }
+}(function (LayerModel) {
+    var Layer = LayerModel.Layer;
+    var ROISubLayer = LayerModel.ROISubLayer;
+    var FontSubLayer = LayerModel.FontSubLayer;
+    var TextureSubLayer = LayerModel.TextureSubLayer;
+    var ColorSubLayer = LayerModel.ColorSubLayer;
+
+    function Widget(x,y,w,h,layers) {
+        // this.x = x;
+        // this.y = y;
+        // this.w = w;
+        // this.h = h;
+        this.info = {
+            left:x,
+            top:y,
+            width:w,
+            height:h
+        }
+        this.tag = 'defaultTag'
+        this.type = 'general'
+        this.mode = 0
+        if (!layers||!layers.length){
+            this.layers= [new Layer(w,h)]
+        }else{
+            this.layers = layers
+        }
+    }
+
+    Widget.prototype.toObject = function () {
+        return {
+            info:{
+                left:this.info.left,
+                top:this.info.top,
+                width:this.info.width,
+                height:this.info.height
+            },
+            mode:this.mode,
+            tag:this.tag,
+            layers:this.layers
+            // onInitialize:this.onInitialize,
+            // onMouseDown:this.onMouseDown,
+            // onMouseUp:this.onMouseUp
+        }
+    }
+    Widget.prototype.commands = {}
+
+    // Widget.getTag = function (tag) {
+    //     console.log('ctx tag',tag)
+    //     return 100;
+    // }
+
+    // Widget.setTag = function (tag,value) {
+    //     console.log('set tag: ',value)
+    //     return 1;
+    // }
+
+    Widget.execute = function (ctx,exp,value) {
+        if (exp == '__tag'){
+            return this.getTag(ctx.tag)
+        }else if (typeof  exp == 'string'){
+            return "\""+exp+"\"";
+        }else{
+            return exp;
+        }
+    }
+
+    function Param(type,value) {
+        this.type = type
+        this.value = value
+    }
+
+    var Int = 'Int';
+    var Str = 'String'
+    var ID = 'ID'
+    var EXP = 'EXP'
+
+    //general button
+
+    function Button(x,y,w,h,text,fontStyle,slices) {
+        var layerUp = new Layer(0,0,w,h);
+        layerUp.subLayers.font = new FontSubLayer(w,h,text,fontStyle);
+        layerUp.subLayers.texture =new TextureSubLayer(w,h,slices[0].imgSrc);
+        layerUp.subLayers.color = new ColorSubLayer(w,h,slices[0].color);
+        var layerDown = new Layer(0,0,w,h);
+        layerDown.subLayers.font = new FontSubLayer(w,h,text,fontStyle);
+        layerDown.subLayers.texture =new TextureSubLayer(w,h,slices[1].imgSrc);
+        layerDown.subLayers.color = new ColorSubLayer(w,h,slices[1].color);
+        var layers = [layerUp,layerDown]
+        this.subType = 'Button'
+        Widget.call(this,x,y,w,h,layers)
+    }
+
+    Button.prototype = Object.create(Widget.prototype);
+    Button.prototype.constructor = Button;
+
+
+    // function () {
+    //     console.log('onInitializing')
+    //     this.layers[1].hidden = true;
+    // }
+    Button.prototype.commands = {}
+    Button.prototype.commands.onInitialize = [
+        ['temp','a',new Param(EXP,'this.mode')],
+        ['setTag',new Param(Int,1)],
+        ['set',new Param(ID,'a'),new Param(Int,3)],
+        ['if'],
+        ['gte',new Param(ID,'a'),new Param(Int,100)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        ['else'],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        ['end']
+    ]
+
+    Button.prototype.commands.onMouseDown = [
+        ['temp','b',new Param(EXP,'this.mode')],
+        ['print',new Param(ID,'b')],
+        ['if'],
+        ['eq',new Param(ID,'b'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        ['setTag',new Param(Int,0)],
+        ['else'],
+        ['temp','c',new Param(Int,0)],
+        ['getTag','c'],
+        ['if'],
+        ['gt',new Param(ID,'c'),new Param(Int,0)],
+        //bounce up
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        ['setTag',new Param(Int,0)],
+        ['else'],
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        ['setTag',new Param(Int,1)],
+        ['end'],
+        ['end']
+
+        //
+
+    ]
+
+    Button.prototype.commands.onMouseUp = [
+        ['temp','b',new Param(EXP,'this.mode')],
+        ['if'],
+        ['eq',new Param(ID,'b'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        ['setTag',new Param(Int,12)],
+        ['end']
+    ]
+
+    Button.prototype.commands.onTagChange = [
+        ['temp','a',new Param(Int,0)],
+        ['temp','b',new Param(EXP,'this.mode')],
+        ['getTag','a'],
+        ['if'],
+        ['eq',new Param(ID,'b'),new Param(Int,1)],
+        ['if'],
+        ['gt',new Param(ID,'a'),new Param(Int,0)],
+        //bounce up
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        ['else'],
+        ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        ['end'],
+        ['end']
+    ]
+
+
+    //button group
+    function ButtonGroup(x,y,w,h,num,align,space,slices) {
+        // var layerUp = new Layer(w,h);
+        // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+        // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
+        // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
+        // var layerDown = new Layer(w,h);
+        // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
+        // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
+        // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
+        // var layers = [layerUp,layerDown]
+        var sWidth = 0;
+        var sHeight = 0;
+        
+        var layers = [];
+        if (align==0) {
+                //hori
+            sWidth = (w-(num-1)*space)/num;
+            sHeight = h;
+
+            for (var i=0;i<num;i++){
+                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
+                upLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i].imgSrc)
+                upLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i].color)
+                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+                downLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i+1].imgSrc)
+                downLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i+1].color)
+                layers.push(upLayer)
+                layers.push(downLayer)
+            }
+            
+        }else{
+            // sWidth = w;
+            // sHeight = (h-(num-1)*space)/num;
+
+            // for (var i=0;i<num;i++){
+            //     var curLayer = new Layer(x,y+i*(sHeight+space),sWidth,sWidth)
+            //     curLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[i].imgSrc)
+            //     curLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[i].color)
+            //     layers.push(curLayer)
+            // }
+
+        }
+        this.subType = 'ButtonGroup'
+        Widget.call(this,x,y,w,h,layers)
+    }
+
+    ButtonGroup.prototype = Object.create(Widget.prototype);
+    ButtonGroup.prototype.constructor = ButtonGroup;
+
+    ButtonGroup.prototype.commands.onInitialize = [
+        // ['temp','a',new Param(EXP,'this.mode')],
+        // ['setTag',new Param(Int,1)],
+        // ['set',new Param(ID,'a'),new Param(Int,3)],
+        // ['if'],
+        // ['gte',new Param(ID,'a'),new Param(Int,100)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        // ['else'],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
+        // ['end']
+    ]
+
+    ButtonGroup.prototype.commands.onMouseDown = [
+        ['temp','a',new Param(Int,0)],
+        ['temp','b',new Param(Int,0)],
+        ['temp','c',new Param(Int,0)],
+        ['set',new Param(ID,'c'),new Param(EXP,'this.layers.length')],
+        // ['divide','c',new Param(Int,2)],
+        ['minus','c',new Param(Int,2)],
+        // ['getMouseRW','a',new Param(Int,0)],
+        // ['getMouseRW','b',new Param(Int,1)],
+        ['set',new Param(ID,'a'),new Param(EXP,'this.innerX')],
+        ['set',new Param(ID,'b'),new Param(EXP,'this.innerY')],
+        // ['print',new Param(ID,'a'),'innerX'],
+        // ['print',new Param(ID,'b'),'innerY'],
+        ['temp','lx',new Param(Int,0)],
+        ['temp','ly',new Param(Int,0)],
+        ['temp','lw',new Param(Int,0)],
+        ['temp','lh',new Param(Int,0)],
+        ['temp','rx',new Param(Int,0)],
+        ['temp','ry',new Param(Int,0)],
+        ['while'],
+        ['gte',new Param(ID,'c'),new Param(Int,0)],
+        // ['print',new Param(ID,'c'),'while c'],
+        ['set',new Param(ID,'lx'),new Param(EXP,'this.layers.c.x')],
+        ['set',new Param(ID,'ly'),new Param(EXP,'this.layers.c.y')],
+        ['set',new Param(ID,'lw'),new Param(EXP,'this.layers.c.width')],
+        ['set',new Param(ID,'lh'),new Param(EXP,'this.layers.c.height')],
+        ['set',new Param(ID,'rx'),new Param(ID,'lx')],
+        ['set',new Param(ID,'ry'),new Param(ID,'ly')],
+        ['add','rx',new Param(ID,'lw')],
+        ['add','ry',new Param(ID,'lh')],
+        // ['print',new Param(ID,'lx'),'lx'],
+        // ['print',new Param(ID,'rx'),'rx'],
+        // ['print',new Param(ID,'ly'),'ly'],
+        // ['print',new Param(ID,'ry'),'ry'],
+        ['if'],
+        ['gte',new Param(ID,'a'),new Param(ID,'lx')],
+        // ['print',new Param(Int,0),'lx ok'],
+        ['if'],
+        ['gt',new Param(ID,'rx'),new Param(ID,'a')],
+        // ['print',new Param(Int,0),'rx ok'],
+        ['if'],
+        ['gte',new Param(ID,'b'),new Param(ID,'ly')],
+        // ['print',new Param(Int,0),'ly ok'],
+        ['if'],
+        ['gt',new Param(ID,'ry'),new Param(ID,'b')],
+        // ['print',new Param(Int,0),'ry ok'],
+        //hit
+        ['print',new Param(ID,'c'),'hit'],
+        ['divide','c',new Param(Int,2)],
+        ['setTag',new Param(ID,'c')],
+        ['set',new Param(ID,'c'),new Param(Int,0)],
+        ['end'],
+        ['end'],
+        ['end'],
+        ['end'],
+        ['minus','c',new Param(Int,2)],
+        ['end']
+
+
+    ]
+
+    ButtonGroup.prototype.commands.onMouseUp = [
+        // ['temp','b',new Param(EXP,'this.mode')],
+        // ['if'],
+        // ['eq',new Param(ID,'b'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,0)],
+        // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,1)],
+        // ['setTag',new Param(Int,12)],
+        // ['end']
+    ]
+
+    ButtonGroup.prototype.commands.onTagChange = [
+        ['temp','a',new Param(Int,0)],
+        ['temp','b',new Param(Int,0)],
+        ['temp','c',new Param(Int,0)],
+        ['set',new Param(ID,'a'),new Param(EXP,'this.layers.length')],
+        ['set',new Param(ID,'c'),new Param(ID,'a')],
+        ['divide','c',new Param(Int,2)],
+        ['while'],
+        ['gt',new Param(ID,'a'),new Param(Int,0)],
+        ['minus','a',new Param(Int,1)],
+        ['print',new Param(ID,'a')],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,1)],
+        ['minus','a',new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,0)],
+        ['end'],
+        ['getTag','a'],
+        ['print',new Param(ID,'a')],
+        ['if'],
+        ['gte',new Param(ID,'a'),new Param(Int,0)],
+        ['if'],
+        ['gt',new Param(ID,'c'),new Param(ID,'a')],
+        ['multiply','a',new Param(Int,2)],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,1)],
+        ['add','a',new Param(Int,1)],
+        ['set',new Param(EXP,'this.layers.a.hidden'),new Param(Int,0)],
+        ['end'],
+        ['end']
+        
+    ]
+
+
+    var WidgetCommandParser = {};
+    var scope = {}
+    WidgetCommandParser.transCommand = function (ctx,command) {
+        var op = command[0];
+        var result;
+        var variable;
+        var value;
+        switch (op){
+            case 'temp':
+                variable = command[1];
+                value = Widget.execute(ctx,command[2])
+                scope[variable] = value;
+                result = 'var '+variable+'='+value+';\n';
+                break;
+            case 'set':
+                variable = command[1];
+                value = Widget.execute(ctx,command[2])
+                if (variable in scope){
+                    scope[variable] = value;
+                }
+                result = variable+'='+value+';\n';
+                break;
+            case 'if':
+                result = 'if';
+                break;
+            case 'pred':
+                var pred1 = command[2];
+                var pred2 = command[3];
+                if (!(pred1 in scope)){
+                    pred1 = Widget.execute(ctx,pred1)
+                }
+                if (!(pred2 in scope)){
+                    pred2 = Widget.execute(ctx,pred2)
+                }
+
+                result = "("+pred1+command[1]+pred2+"){\n"
+                break;
+            case 'else':
+                result = '}else{\n'
+                break;
+            case 'end':
+                result = '}\n';
+                break;
+            case 'setTag':
+                result = "WidgetExecutor.setTag("+"\""+ctx.tag+"\""+","+command[1]+")"
+                
+                break;
+        }
+        return result;
+    }
+    WidgetCommandParser.transFunction = function (ctx,commands) {
+        scope = {}
+        var result = "";
+        for (var i=0;i<commands.length;i++){
+            result +=this.transCommand(ctx,commands[i])
+        }
+        return result;
+    }
+
+    // WidgetCommandParser.transIfAndWhile = function (commands) {
+    //     console.log(parse(commands))
+    // }
+
+    WidgetCommandParser.complier = {}
+
+    ;(function (actionCompiler) {
+        'use strict';
+        var parser = {};
+        parser.parse = parse;
+
+        /**
+         * parse a program;
+         */
+        function parse(program) {
+            var results = [];
+            var loopFLag = true;
+            while (program.length&&loopFLag) {
+                var line = program[0];
+                var block;
+                // console.log(line[0]);
+                switch (line[0]) {
+                    //if
+                    case 'if':
+                        block = {};
+                        block.type = 'IF';
+                        block.args = [];
+                        program.shift(); // if
+                        block.args.push(program.shift()); //condition
+                        block.args.push(parse(program)); //then
+                        if (program[0][0]==='else') {
+                            program.shift();
+                            block.args.push(parse(program)); //else
+                        }
+                        program.shift();
+                        results.push(block);
+                        break;
+                    //while
+                    case 'while':
+                        block = {
+                            type:'WHILE',
+                            args:[]
+                        };
+                        program.shift();
+                        block.args.push(program.shift());
+                        block.args.push(parse(program));
+                        program.shift();
+                        results.push(block);
+                        break;
+                    case 'else':
+                    case 'end':
+                        loopFLag = false;
+                        break;
+                    default:
+                        results.push({
+                            type:'EXP',
+                            args:[line]
+                        });
+                        program.shift();
+                        break;
+
+                }
+            }
+            return results;
+        }
+
+
+
+        var transformer = {};
+        var labelCount = 0;
+
+        function Command(label,cmd) {
+            this.label = String(label);
+            this.cmd = cmd;
+        }
+
+        var targetCompareOps = {
+            'gte':'lt',
+            'lte':'gt'
+        };
+
+        // transformer.transSingleIf = transSingleIf;
+        // transformer.transBlock = transBlock;
+        transformer.trans = trans;
+
+        var JUMP = 'jump'
+
+        var END = 'end'
+
+        var BLANK = ''
+        
+        function trans(block,changeIfConditon) {
+            labelCount = 0;
+            var tempResult = transBlock(block,changeIfConditon);
+            // console.log(_.cloneDeep(tempResult))
+            adjustJumps(tempResult);
+            return tempResult;
+        }
+
+        function adjustJumps(transedBlockResults) {
+            var labels = {};
+            var curLine;
+            //build label index
+            for (var i = 0; i < transedBlockResults.length; i++) {
+                curLine = transedBlockResults[i];
+                if (curLine.label !== '') {
+                    labels[curLine.label] = i;
+                }
+            }
+            //change jumps
+            for (i = 0; i < transedBlockResults.length; i++) {
+                curLine = transedBlockResults[i];
+                var curCmd = curLine.cmd;
+                if (curCmd[0] === 'jump') {
+                    //jump
+                    var labelIdx = labels[curCmd[2]];
+                    curCmd[2] = labelIdx - i;
+                }
+            }
+        }
+
+        function transBlock(block,changeIfConditon) {
+            var results = [];
+            for (var i = 0; i < block.length; i++) {
+                var curExp = block[i];
+                switch (curExp.type) {
+                    case 'EXP':
+                        results.push(new Command('', curExp.args[0]));
+                        break;
+                    case 'IF':
+                        [].push.apply(results, transSingleIf(curExp,changeIfConditon));
+                        break;
+                    case 'WHILE':
+                        [].push.apply(results, transSingleWhile(curExp,changeIfConditon));
+                        break;
+                    default:
+                        results.push(new Command('', curExp.args[0]));
+                        break;
+                }
+            }
+            return results;
+        }
+
+
+
+        function transSingleIf(ifBlock, changeCondition) {
+            var results = [];
+            var args = ifBlock.args;
+            if (args.length === 2) {
+                //only then
+                args.push([]);
+            }
+            var condition = args[0];
+            var thenBlock = args[2];
+            var elseBlock = args[1];
+
+            changeCondition = changeCondition || false;
+            if (changeCondition){
+                //adjust if then else
+                ///
+
+                var ifBlockOp = condition[0];
+                var oppositeOp = targetCompareOps[ifBlockOp];
+                if (!!oppositeOp){
+                    condition[0] = oppositeOp;
+                    thenBlock = args[1];
+                    elseBlock = args[2];
+                }
+            }
+
+            //condition
+            results.push(new Command('', condition));
+            
+            //jump to then
+            var l1 = labelCount;
+            labelCount = labelCount + 1;
+            results.push(new Command('', [JUMP, BLANK, l1]));
+
+            [].push.apply(results, transBlock(elseBlock,changeCondition));
+            //jump to END
+            var l2 = labelCount;
+            labelCount = labelCount + 1;
+            results.push(new Command('', [JUMP, BLANK, l2]));
+
+            //then block;
+            var transedThenBlock = transBlock(thenBlock,changeCondition);
+            if (transedThenBlock.length > 0) {
+                transedThenBlock[0].label = String(l1);
+            } else {
+                // transedThenBlock.push({
+                //   label:String(l1),
+                //   cmd:['END','','']
+                // });
+                transedThenBlock.push(new Command(l1, [END, '', '']));
+            }
+
+            // results.concat(transedThenBlock);
+            [].push.apply(results, transedThenBlock);
+            //END
+
+            // results.push({
+            //   label:String(l2),
+            //   cmd:['END','','']
+            // });
+            results.push(new Command(l2, [END, '', '']));
+            return results;
+
+
+        }
+
+
+        function transSingleWhile(whileBlock,changeCondition) {
+            var results = [];
+            var args = whileBlock.args;
+            var condition = args[0];
+            var block = args[1];
+            var l1 = labelCount++;
+            var l2 = labelCount++;
+            var l3 = labelCount++;
+
+            if (changeCondition){
+                var oppositeOp = targetCompareOps[condition[0]];
+                if (!!oppositeOp){
+                    condition[0] = oppositeOp;
+                    //condition
+                    results.push(new Command(l1, condition));
+
+                    //jump to then block;
+                    results.push(new Command('', [JUMP, BLANK, l2]));
+                    //jump to end;
+                    results.push(new Command('', [JUMP, BLANK, l3]));
+                }else{
+                    //condition
+                    results.push(new Command(l1, condition));
+
+                    //jump to then block;
+                    results.push(new Command('', [JUMP, BLANK, l3]));
+                    //jump to end;
+                    results.push(new Command('', [JUMP, BLANK, l2]));
+                }
+            }
+
+
+
+            //then block;
+            var transedThenBlock = transBlock(block,changeCondition);
+            transedThenBlock.push(new Command('', [JUMP, BLANK, l1]));
+            transedThenBlock[0].label = String(l2);
+            [].push.apply(results, transedThenBlock);
+            results.push(new Command(l3, [END, '', '']));
+            // console.log('while', _.cloneDeep(results))
+            return results;
+        }
+
+
+    
+        actionCompiler.parser = parser;
+        actionCompiler.transformer = transformer;
+        
+    })(WidgetCommandParser.complier);
+
+
+    var WidgetModel = {};
+    WidgetModel.models = {};
+
+    WidgetModel.models.Button = Button;
+    WidgetModel.models.ButtonGroup = ButtonGroup;
+    WidgetModel.Widget = Widget;
+    WidgetModel.WidgetCommandParser = WidgetCommandParser;
+
+    return WidgetModel;
+
+
+}));

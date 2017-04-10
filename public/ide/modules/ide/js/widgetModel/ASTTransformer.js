@@ -108,17 +108,20 @@
 					case 'getTag':
 						insts.push(['getTag',Param(judgeType(parameters[0]),parameters[0].value)]);
 					break;
+					case 'print':
+						insts.push(['print',Param(judgeType(parameters[0]),parameters[0].value)]);
+						break;
 					case 'add':
-						insts.push(['add',Param('ID',parameters[0].value),Param(judgeType(parameters[1]),parameters[1].value)])
+						insts.push(['add',parameters[0].value,Param(judgeType(parameters[1]),parameters[1].value)])
 					break;
 					case 'minus':
-						insts.push(['minus',Param('ID',parameters[0].value),Param(judgeType(parameters[1]),parameters[1].value)])
+						insts.push(['minus',parameters[0].value,Param(judgeType(parameters[1]),parameters[1].value)])
 					break;
 					case 'multiply':
-						insts.push(['multiply',Param('ID',parameters[0].value),Param(judgeType(parameters[1]),parameters[1].value)])
+						insts.push(['multiply',parameters[0].value,Param(judgeType(parameters[1]),parameters[1].value)])
 					break;
 					case 'divide':
-						insts.push(['divide',Param('ID',parameters[0].value),Param(judgeType(parameters[1]),parameters[1].value)])
+						insts.push(['divide',parameters[0].value,Param(judgeType(parameters[1]),parameters[1].value)])
 					break;
 
 				}

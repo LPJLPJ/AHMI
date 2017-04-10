@@ -21,7 +21,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange']
         var commands = {}
         var models = WidgetModel.models;
-        var testModels = _.cloneDeep(WidgetCommands);
+        var testModels =_.cloneDeep(WidgetCommands);
 
         //console.log('models',models);
         for (var model in models){
@@ -52,7 +52,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         // })
         for (var model in testModels){
             if (testModels.hasOwnProperty(model)) {
-                model = testModels[model]
+                model = testModels[model];
                 for(var i=0;i<generalWidgetFunctions.length;i++){
                     var curF = generalWidgetFunctions[i]
                     if (curF in model) {
@@ -71,10 +71,10 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //original
         console.log('commands',commands);
         console.log('testModels',testModels);
-        return commands;
+        //return commands;
 
         //new
-        //return testModels
+        return testModels
     }
 
 
@@ -206,8 +206,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     })
                     targetWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
                     targetWidget = targetWidget.toObject();
+                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
 
-                    targetWidget.generalType = 'ButtonGroup'
+                    targetWidget.generalType = 'ButtonGroup';
                     // targetWidget.mode = Number(rawWidget.buttonModeId);
                     targetWidget.subType = 'general';
                 break;
