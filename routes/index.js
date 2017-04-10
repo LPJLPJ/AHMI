@@ -50,6 +50,9 @@ router.route('/releases/updapp/win/updFiles.zip')
 //upload local project
 router.route('/upload/project')
     .post(localIDEService.uploadProject);
+//return user type
+router.route('/user/checkUserType')
+    .post(localIDEService.returnUserType);
 
 //blog
 var BlogRoute = require('./routeBlog');

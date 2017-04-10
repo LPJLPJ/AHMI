@@ -210,4 +210,40 @@ localIDEService.uploadProject = function (req,res) {
     }
 };
 
+localIDEService.returnUserType = function(req,res){
+    var username = req.body.username;
+    var password = req.body.password;
+    UserModel.findByMailOrName(username,username,function(err,user){
+        if(err){
+            res.send('err in find user',err);
+        }
+        if (user) {
+            if (!user.verified){
+                errHandler(res,500,'not verified');
+                return;
+            }else{
+                user.comparePassword(password,function(err, isMatch){
+                    if (err) {
+                        errHandler(res,500,err);
+                    }else{
+                        if (isMatch) {
+                            var data={
+                                confirm:'ok',
+                                userType:user.type
+                            };
+                            res.send(data);
+                        }else{
+                            errHandler(res,500,'not match')
+                        }
+                    }
+
+                })
+            }
+        }else{
+            errHandler(res,500,'no user');
+        }
+    })
+
+};
+
 module.exports = localIDEService;
