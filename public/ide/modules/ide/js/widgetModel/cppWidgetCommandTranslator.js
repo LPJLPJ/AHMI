@@ -279,7 +279,8 @@
                                 break;
                             }
                         }else{
-                            throw new Error('invalid exp',param2)
+                            //console.log(param2);
+                            //throw new Error('invalid exp',param2)
                         }
                     }
                 }else if (param1.type == 'EXP'){
@@ -312,7 +313,7 @@
                                 break;
                             }
                         }else{
-                            throw new Error('invalid exp',param2)
+                            //throw new Error('invalid exp',param2)
                         }
                     }else if(param2.type == 'ID'){
                         curExp = expDepth(param1)
@@ -343,7 +344,7 @@
                                 break;
                             }
                         }else{
-                            throw new Error('invalid exp',param2)
+                            //throw new Error('invalid exp',param2)
                         }
                     }
                 }

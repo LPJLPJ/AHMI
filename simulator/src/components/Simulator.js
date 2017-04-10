@@ -370,7 +370,7 @@ module.exports =   React.createClass({
         }
     },
     interpretGeneralCommand:function (widget,f) {
-        // console.log(widget,f)
+        console.log(widget,f)
         var command = this.generalCommands[widget.generalType][f]
         this.processGeneralWidgetCommand(widget,command,0)
 

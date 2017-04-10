@@ -60,7 +60,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                         model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]));
                         //trans to jump end
                         transGeneralWidgetCommands(model,curF);
-                        model[curF] = cppWidgetCommandTranslator.transJSWidgetCommands(model[curF])
+                        //model[curF] = cppWidgetCommandTranslator.transJSWidgetCommands(model[curF])
                     }
                 }
             }
@@ -176,6 +176,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             targetWidget.generalType = 'Button'
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
             targetWidget.type = 'widget';
+            targetWidget.tag = rawWidget.tag;
             targetWidget.subType = 'general';
             // transGeneralWidgetCommands(targetWidget,'onInitialize')
             // console.log(targetWidget)
@@ -191,12 +192,13 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
                     targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
                     targetWidget = targetWidget.toObject();
-                    targetWidget.generalType = 'Button'
+                    targetWidget.generalType = 'Button';
                     targetWidget.mode = Number(rawWidget.buttonModeId);
+                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
                     targetWidget.subType = 'general';
                 break;
                 case 'MyButtonGroup':
-                    console.log(targetWidget)
+                    //console.log(targetWidget)
                     var slices = [];
                    targetWidget.texList.map(function (tex) {
                         slices.push(tex.slices[0])
@@ -215,7 +217,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     
 
             }
-            console.log(_.cloneDeep(targetWidget))
+            //console.log(_.cloneDeep(targetWidget))
             
             
             
