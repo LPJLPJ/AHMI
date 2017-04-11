@@ -76,7 +76,7 @@
                             //hideWrapper();
                             $('#uploadModal').modal({backdrop:'static',keyboard:false});
 
-                        },1000);
+                        },500);
                     };
                     readJSONFile(item,scb,fcb);
                 }
