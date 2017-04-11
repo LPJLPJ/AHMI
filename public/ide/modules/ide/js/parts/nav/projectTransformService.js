@@ -61,9 +61,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                         modelObj[curF] = ASTTransformer.transAST(widgetCompiler.parse(modelObj[curF]))
                         //trans to jump end
                         transGeneralWidgetCommands(modelObj,curF)
-                    
+
                         cppModels[model][curF] = cppWidgetCommandTranslator.transJSWidgetCommands(modelObj[curF])
-                        
+
                     }
                 }
             }
@@ -182,6 +182,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             targetWidget.generalType = 'Button'
             targetWidget.id = subLayerIdx+'.'+widgetIdx;
             targetWidget.type = 'widget';
+            targetWidget.tag = rawWidget.tag;
             targetWidget.subType = 'general';
             // transGeneralWidgetCommands(targetWidget,'onInitialize')
             // console.log(targetWidget)
@@ -197,12 +198,13 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
                     targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
                     targetWidget = targetWidget.toObject();
-                    targetWidget.generalType = 'Button'
+                    targetWidget.generalType = 'Button';
                     targetWidget.mode = Number(rawWidget.buttonModeId);
+                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
                     targetWidget.subType = 'general';
                 break;
                 case 'MyButtonGroup':
-                    console.log(targetWidget)
+                    //console.log(targetWidget)
                     var slices = [];
                    targetWidget.texList.map(function (tex) {
                         slices.push(tex.slices[0])
@@ -210,8 +212,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     })
                     targetWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
                     targetWidget = targetWidget.toObject();
+                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
 
-                    targetWidget.generalType = 'ButtonGroup'
+                    targetWidget.generalType = 'ButtonGroup';
                     // targetWidget.mode = Number(rawWidget.buttonModeId);
                     targetWidget.subType = 'general';
                 break;
@@ -221,7 +224,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     
 
             }
-            console.log(_.cloneDeep(targetWidget))
+            //console.log(_.cloneDeep(targetWidget))
             
             
             

@@ -131,6 +131,7 @@
 
     Button.prototype.commands.onMouseDown = [
         ['temp','b',new Param(EXP,'this.mode')],
+        ['print',new Param(ID,'b')],
         ['if'],
         ['eq',new Param(ID,'b'),new Param(Int,0)],
         ['set',new Param(EXP,'this.layers.0.hidden'),new Param(Int,1)],

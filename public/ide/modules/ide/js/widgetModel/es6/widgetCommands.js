@@ -1,4 +1,4 @@
- ;(function (factory) {
+;(function (factory) {
 	if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
 
@@ -14,11 +14,8 @@
     var WidgetCommands = {};
     WidgetCommands['Button'] = {
         onInitialize:`
-            var(a,1)
-            set('this.otherAttrs.1',1)
-            set('this.layers.1.subLayers.color.r',a)
-            set('this.layers.a.subLayers.color.r',a)
-            set(a,'this.layers.2.subLayers.roi.p1x')
+
+            var(a,'this.mode')
             setTag(1)
             set(a,3)
             if(a>=100){
@@ -47,7 +44,7 @@
             var(b,'this.mode')
             if(b==0){
                 set('this.layers.0.hidden',0)
-                set('this.layers.0.hidden',1)
+                set('this.layers.1.hidden',1)
                 setTag(12)
             }
         `,
@@ -67,12 +64,17 @@
         `
     };
     WidgetCommands['ButtonGroup'] = {
+        onInitialize:`
+            var(a,1)
+        `,
         onMouseDown:`
             var(a,0)
             var(b,0)
             var(c,0)
             set(c,'this.layers.length')
             minus(c,2)
+            set(a,'this.innerX')
+            set(b,'this.innerY')
             var(lx,0)
             var(ly,0)
             var(lw,0)
@@ -102,6 +104,9 @@
                 minus(c,2)
             }
         `,
+        onMouseUp:`
+            var(d,1)
+        `,
         onTagChange:`
             var(a,0)
             var(b,0)
@@ -116,6 +121,7 @@
                 set('this.layers.a.hidden',0)
             }
             getTag(a)
+            print(a)
             if(a>=0){
                 if(c>a){
                     multiply(a,2)
