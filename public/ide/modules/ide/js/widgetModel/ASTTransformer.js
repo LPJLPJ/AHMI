@@ -106,7 +106,7 @@
 						insts.push(['setTag',Param(judgeType(parameters[0]),parameters[0].value)]);
 					break;
 					case 'getTag':
-						insts.push(['getTag',Param(judgeType(parameters[0]),parameters[0].value)]);
+						insts.push(['getTag',parameters[0].value]);
 					break;
 					case 'print':
 						insts.push(['print',Param(judgeType(parameters[0]),parameters[0].value)]);
