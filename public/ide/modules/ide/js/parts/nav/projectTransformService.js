@@ -35,7 +35,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         }
         console.log('registered commands',commands)
-        console.log(_.cloneDeep(testModels['Button']))
         // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
         // testModels.map(function (model) {
         //     //Button
@@ -72,7 +71,11 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         
         
         console.log('cppModels',cppModels)
-        return commands;
+        // return commands;
+        return {
+            commands:commands,
+            cppModels:cppModels
+        }
 
         //new
         // return testModels
@@ -89,7 +92,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.author = rawProject.author || 'author';
         targetProject.size = rawProject.currentSize;
         //register general commands
-        targetProject.generalWidgetCommands = registerGeneralCommands()
+        var commandsObj = registerGeneralCommands()
+        targetProject.generalWidgetCommands = commandsObj.commands
+        targetProject.cppWidgetCommands = commandsObj.cppModels;
         targetProject.pageList = [];
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));

@@ -29,35 +29,60 @@
     var opCodes = [
         'OPEND' ,	//end;
         'OPSTART',
-        'OPSETLAYIM',	//set layer attribute;
-        'OPSETLAYIN',
-        'OPSETSUBLAYIM',//set sublayer attribute;
-        'OPSETSUBLAYIN',
-        'OPSETTEMPIM',	//set temp value;
-        'OPSETTEMPIN',
+        'OPSETLAY',	//set layer attribute;
+        'OPSETLAYTE',
+        'OPGETLAY',
+        'OPGETLAYTE',
+        'OPSETSUBLAY',//set sublayer attribute;
+        'OPSETSUBLAYTE',
+        'OPSETSUBLAYT',
+        'OPSETSUBLAYTET',
+        'OPGETSUBLAY',
+        'OPGETSUBLAYTE',
+        'OPSETTEMP',	//set temp value;
+        'OPGETTEMP',
         'OPGETTAG',	//set tag value;
         'OPSETTAGIM',	//get the value of tag;
-        'OPSETTAGIN',
         'OPSETTAGTE',
+        
         'OPEQIM',		//if a EQ (int)Imm jump 1;
-        'OPEQIN',
+        'OPEQTE',
+        'OPGTIM',
+        'OPGTTE',
+        'OPGTEIM',
+        'OPGTETE',
+        'OPLTIM',
+        'OPLTTE',
+        'OPLTEIM',
+        'OPLTETE',
+
         'OPJUMP',		//jump Imm codes;
         'OPADDIM',		//a = a + Imm;
-        'OPADDIN',
+        'OPADDTE',
         'OPMINUSIM',	//a = a - Imm;
-        'OPMINUSIN',
+        'OPMINUSTE',
         'OPMULIM',		//a = a * Imm;
-        'OPMULIN',
+        'OPMULTE',
         'OPDIVIM',		//a = a / Imm;
-        'OPDIVIN',
-        'OPANDIM',		//a = a & Imm;
-        'OPANDIN',
-        'OPORIM',		//a = a | Imm;
-        'OPORIN',
+        'OPDIVTE',
+        'OPANDIM',		//a = a & Imm;     
+        'OPORIM',		//a = a | Imm;    
         'OPXORIM',		//a = a ^ Imm;
-        'OPXORIN',
         'OPNOTIM',		//a = !a;
-        'OPNOTIN'
+        'OPANDTE',
+        'OPORTE',
+        'OPXORTE',
+        'OPNOTTE',
+        'OPSETWIDIM',
+        'OPSETWIDTE',
+        'OPGETWIDTE',
+        'OPSETWIDOFFSETIM',
+        'OPSETWIDOFFSETTE',
+        'OPGETWIDOFFSET',
+        'OPSETLAYOFFSETIM',
+        'OPSETLAYOFFSETTE',
+        'OPGETLAYOFFSET',
+        'OPNOP'
 
     ]
     var cppOPTable = {}
@@ -247,34 +272,40 @@
     function Instruction(op) {
         this.op = op;
         this.operands = [].slice.call(arguments,1)
+        this.index = 0
     }
 
     var cppWidgetInsts = {
         OPEND :new Instruction('OPEND',new InstOperand(7,true)),
         OPSTART:new Instruction('OPSTART',new InstOperand(1),new InstOperand(2),new InstOperand(4,true)),
-        OPSETLAY:new Instruction('OPSETLAY',new InstOperand(1),new InstOperand(2),new InstOperand(4)),
-        OPSETLAYTE:new Instruction('OPSETLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1,true),new InstOperand(4)),
+        //lay
+        OPSETLAY:new Instruction('OPSETLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4)),
+        OPSETLAYTE:new Instruction('OPSETLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
         OPGETLAY:new Instruction('OPGETLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
-        OPGETLAYTE:new Instruction('OPGETLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        OPGETLAYTE:new Instruction('OPGETLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
+        //sublay
         OPSETSUBLAY:new Instruction('OPSETSUBLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4)),
         OPSETSUBLAYTE:new Instruction('OPSETSUBLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4)),
+        OPSETSUBLAYT:new Instruction('OPSETSUBLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        OPSETSUBLAYTET:new Instruction('OPSETSUBLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
         OPGETSUBLAY:new Instruction('OPGETSUBLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
         OPGETSUBLAYTE:new Instruction('OPGETSUBLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        //temp
         OPSETTEMP:new Instruction('OPSETTEMP',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
         OPGETTEMP:new Instruction('OPGETTEMP',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
         OPGETTAG:new Instruction('OPGETTAG',new InstOperand(1),new InstOperand(6,true)),
         OPSETTAGIM:new Instruction('OPSETTAGIM',new InstOperand(3,true),new InstOperand(4)),
         OPSETTAGTE:new Instruction('OPSETTAGTE',new InstOperand(1),new InstOperand(6,true)),
         OPEQIM:new Instruction('OPEQIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
-        OPEQTE:new Instruction('OPEQTE',new InstOperand(1),new InstOperand(1),new Instruction(5,true)),
+        OPEQTE:new Instruction('OPEQTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
         OPGTIM:new Instruction('OPGTIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
-        OPGTTE:new Instruction('OPGTTE',new InstOperand(1),new InstOperand(1),new Instruction(5,true)),
+        OPGTTE:new Instruction('OPGTTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
         OPGTEIM:new Instruction('OPGTEIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
-        OPGTETE:new Instruction('OPGTETE',new InstOperand(1),new InstOperand(1),new Instruction(5,true)),
+        OPGTETE:new Instruction('OPGTETE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
         OPLTIM:new Instruction('OPLTIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
-        OPLTTE:new Instruction('OPLTTE',new InstOperand(1),new InstOperand(1),new Instruction(5,true)),
+        OPLTTE:new Instruction('OPLTTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
         OPLTEIM:new Instruction('OPLTEIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
-        OPLTETE:new Instruction('OPLTETE',new InstOperand(1),new InstOperand(1),new Instruction(5,true)),
+        OPLTETE:new Instruction('OPLTETE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
         OPJUMP:new Instruction('OPJUMP',new InstOperand(5,true),new InstOperand(2)),
         OPADDIM:new Instruction('OPADDIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
         OPMINUSIM:new Instruction('OPMINUSIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
@@ -308,6 +339,11 @@
         OPNOP:new Instruction('OPNOP',new InstOperand(7,true))
 
     }
+    for (var i=0;i<opCodes.length;i++){
+        cppWidgetInsts[opCodes[i]].index = i;
+    }
+
+    console.log('cppWidgetInsts',cppWidgetInsts)
 
     function AttrType(type,value) {
         this.type = type
@@ -980,8 +1016,64 @@
         return inst;
     }
 
+    function buf2hex(buffer) { // buffer is an ArrayBuffer
+      return Array.prototype.map.call(new Uint8Array(buffer), function (x) {
+          return ('00' + x.toString(16)).slice(-2)
+      }).join('')
+    }
+
+    function mapArrayCmdToBuffer(cmd) {
+        var buf = new ArrayBuffer(8)
+        var dv = new DataView(buf)
+        var count = 1//cmd parameters
+        var bytesCount = 0
+        var op = cmd[0]
+        var cmdProto = cppWidgetInsts[op];
+        if (!cmdProto) {
+            console.log(cmd)
+        }
+        var bytes = 0;
+        var reserve = false;
+        dv.setUint8(bytesCount,cmdProto.index);
+        bytesCount +=1;
+        for (var i=0;i<cmdProto.operands.length;i++){
+            bytes = cmdProto.operands[i].bytes
+            reserve = cmdProto.operands[i].reserve
+            if (!reserve) {
+                //write cmd[count]
+                switch(bytes){
+                    case 1:
+                        dv.setUint8(bytesCount,cmd[count])
+                    break;
+                    case 2:
+                        dv.setUint16(bytesCount,cmd[count])
+                    break;
+                    case 4:
+                        dv.setUint32(bytesCount,cmd[count])
+                    break;
+                    default:
+                        console.log('writing to buffer error',cmd)
+                }
+
+                count = count +1;
+            }else{
+
+            }
+            bytesCount += bytes;
+        }
+        console.log(new Uint8Array(buf))
+        return buf2hex(buf)
+
+    }
+
+    function mapArrayCmdsToBuffer(cmds) {
+        return cmds.map(function (c) {
+            return mapArrayCmdToBuffer(c)
+        })
+    }
 
     function transJSWidgetCommands(commands){
+        var transedCommands = []
         //scan temps
         var tempCommands = commands.filter(function (cmd) {
             return cmd[0] == 'temp'
@@ -995,9 +1087,16 @@
                 count++;
             }
         }
-        return commands.map(function(c){
-            return transJSWidgetCommandToCPPForm(c);
-        })
+        //total num count
+        transedCommands.push(['OPSTART',count,commands.length])
+        for (var j=0;j<commands.length;j++){
+            transedCommands.push(transJSWidgetCommandToCPPForm(commands[j]))
+        }
+        transedCommands.push(['OPEND'])
+
+        var bufCommands = mapArrayCmdsToBuffer(transedCommands)
+        // console.log(bufCommands)
+        return bufCommands
     }
     translator.transJSWidgetCommandToCPPForm = transJSWidgetCommandToCPPForm
     translator.transJSWidgetCommands = transJSWidgetCommands;
