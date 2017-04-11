@@ -133,7 +133,9 @@
         new Attr('mInteraction',4),
         new Attr('mMode',4),
         new Attr('mArrange',4),
-        new Attr('generalType',4)
+        new Attr('generalType',4),
+        new Attr('innerX',4),
+        new Attr('innerY',4)
     ]
 
     var cppWidgetAttrsTable = {}
@@ -167,7 +169,9 @@
         interaction:'mInteraction',
         tag:'mBindTagID',
         generalType:'generalType',
-        otherAttrs:'otherAttrs'
+        otherAttrs:'otherAttrs',
+        innerX:'innerX',
+        innerY:'innerY'
     }
 
 
@@ -410,7 +414,6 @@
 
             }
         }
-
         return null;
     }
 
@@ -488,6 +491,7 @@
                                             inst = ['OPGETWIDOFFSET',TempID(param1.value),1]
                                         break;
                                         default:
+                                            console.log('command',command)
                                             inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
                                     }
                     
@@ -1027,6 +1031,7 @@
         var dv = new DataView(buf)
         var count = 1//cmd parameters
         var bytesCount = 0
+        console.log(cmd)
         var op = cmd[0]
         var cmdProto = cppWidgetInsts[op];
         if (!cmdProto) {
@@ -1093,7 +1098,7 @@
             transedCommands.push(transJSWidgetCommandToCPPForm(commands[j]))
         }
         transedCommands.push(['OPEND'])
-
+        console.log('transedCmd',transedCommands)
         var bufCommands = mapArrayCmdsToBuffer(transedCommands)
         // console.log(bufCommands)
         return bufCommands
