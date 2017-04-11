@@ -17,25 +17,39 @@ $(function(){
 	$('#cancel').on('click',cancel);
 
 	function SendInformation(e){
-	 	var username = $('#username');
-	 	var password = $('#password');
-	 	console.log(username,password,username[0].value,password[0].value);
-	 	if(username[0].value ==""&&password[0].value !="")
-	 		alert(ErrMessage.username.empty);
-	 	if(username[0].value !=""&&password[0].value =="")
-	 		alert(ErrMessage.password.empty);
-	 	if(username[0].value ==""&&password[0].value =="")
-	 		alert(ErrMessage.general.empty);
-	 	usernameVerify(username[0].value);
-	 	passwordVerify(password[0].value);
+		var username = $('#username');
+		var password = $('#password');
+		if(username[0].value ==""&&password[0].value !="")
+			alert(ErrMessage.username.empty);
+		if(username[0].value !=""&&password[0].value =="")
+			alert(ErrMessage.password.empty);
+		if(username[0].value ==""&&password[0].value =="")
+			alert(ErrMessage.general.empty);
+		username = username[0].value;
+		password = $.md5(password[0].value);
+		updateVerify(username,password)
 
 
 	}
-	function usernameVerify(username){
-
-	}
-	function passwordVerify(password){
-
+	function updateVerify(username,password){
+		$.ajax({
+			type:'POST',
+			url:'https://localhost/user/checkUserType',
+			data:{
+				username:username,
+				password:password
+			},
+			success:function(msg){
+				if(msg.confirm == 'ok'){
+					
+				}
+				else
+					console.log(msg);
+			},
+			error:function(xhr){
+				console.log(xhr);
+			}
+		})
 	}
 	function cancel(e){
 		window.location.href="personalProject.html";
