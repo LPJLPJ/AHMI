@@ -50,29 +50,28 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //     }
         //     return model;
         // })
+        var cppModels = {}
         for (var model in testModels){
+            cppModels[model] = {}
             if (testModels.hasOwnProperty(model)) {
-                model = testModels[model]
+                modelObj = testModels[model]
                 for(var i=0;i<generalWidgetFunctions.length;i++){
                     var curF = generalWidgetFunctions[i]
-                    if (curF in model) {
+                    if (curF in modelObj) {
                         //button.onInitialize
-                        model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]))
+                        modelObj[curF] = ASTTransformer.transAST(widgetCompiler.parse(modelObj[curF]))
                         //trans to jump end
-                        transGeneralWidgetCommands(model,curF)
-                        console.log('testModelsButtonCommands1',_.cloneDeep(testModels))
-                        model[curF] = cppWidgetCommandTranslator.transJSWidgetCommands(model[curF])
-                        console.log('testModelsButtonCommands2',_.cloneDeep(testModels))
+                        transGeneralWidgetCommands(modelObj,curF)
+                    
+                        cppModels[model][curF] = cppWidgetCommandTranslator.transJSWidgetCommands(modelObj[curF])
+                        
                     }
                 }
             }
         }
         
         
-
-        //original
-        console.log('commands',commands);
-        console.log('testModels',testModels);
+        console.log('cppModels',cppModels)
         return commands;
 
         //new

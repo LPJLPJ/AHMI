@@ -16,7 +16,7 @@
         window.LayerModel = factory();
     }
 }(function () {
-    function Layer(x,y,w,h,hidden,interaction) {
+    function Layer(x,y,w,h,hidden,interaction,validSubLayer) {
         this.subLayers = {
             roi:null,
             font:null,
@@ -29,20 +29,21 @@
         this.height = h||0;
         this.hidden = hidden||false;
         this.interaction = interaction||true;
+        this.validSubLayer = validSubLayer||7;//0111
     }
 
     function SubLayer(w,h) {
         this.width = w
         this.height = h
-        this.hidden = false
     }
 
 //roi
-    function ROISubLayer(w,h,basePoint,theta,beta) {
+    function ROISubLayer(w,h,p1,p2,p3,p4) {
         SubLayer.call(this,w,h)
-        this.basePoint = basePoint;
-        this.theta = theta;
-        this.beta = beta
+        this.p1 = p1;
+        this.p2 = p2;
+        this.p3 = p3;
+        this.p4 = p4;
     }
 
 
