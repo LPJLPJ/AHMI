@@ -18,7 +18,7 @@
 }(function () {
     // trans general widget commands to c++ insts
     var translator = {}
-
+    var temps = {}
 
     function Attr(name,bytes,index) {
         this.name = name||''
@@ -127,8 +127,8 @@
 
     var widgetAttrMap = {
         info:{
-            left:'mWidgetOffsetX',
-            top:'mWidgetOffsetY',
+            left:'x',
+            top:'y',
             width:'widgetWidth',
             height:'widgetHeight'
         },
@@ -179,8 +179,8 @@
     console.log('layerAttrTable',layerAttrTable)
 
     var layerAttrMap = {
-        x:'mLayerOffsetX',
-        y:'mLayerOffsetY',
+        x:'x',
+        y:'y',
         width:'mWidth',
         height:'mHeight',
         hidden:'mHidden'
@@ -378,18 +378,35 @@
         return null;
     }
 
+    function TempID(attr) {
+        return temps[attr]
+    }
+
     function WidgetAttrID(attr) {
-        return attr;
+        // return attr;
+        return cppWidgetAttrsTable[attr].index
     }
 
     function LayerAttrID(attr) {
-        return attr
+        // return attr
+        return layerAttrTable[attr].index
     }
     function SubLayerID(attr) {
-        return attr
+        // return attr
+        return subLayerAttrTable[attr].index
     }
-    function SubLayerAttrID(sublayer,attr) {
-        return attr
+    function SubLayerAttrID(subLayer,attr) {
+        // return attr
+        switch(subLayer){
+            case 'SubLayerClassROI':
+                return roiAttrTable[attr].index
+            case 'SubLayerClassImage':
+                return textureAttrTable[attr].index
+            case 'SubLayerClassFont':
+                return fontAttrTable[attr].index
+            case 'SubLayerClassColor':
+                return colorAttrTable[attr].index
+        }
     }
 
     function transJSWidgetCommandToCPPForm(command) {
@@ -403,7 +420,7 @@
                 //     tempID:command[1],
                 //     imm:command[2].value
                 // }
-                inst = ['OPSETTEMP',command[1],command[2].value]
+                inst = ['OPSETTEMP',TempID(command[1]),command[2].value]
                 break;
             case 'set':
                 var param1 = command[1]
@@ -416,41 +433,71 @@
                         //     tempID:command[1].value,
                         //     imm:command[2].value
                         // }
-                        inst = ['OPSETTEMP',command[1].value,command[2].value]
+                        inst = ['OPSETTEMP',TempID(command[1].value),command[2].value]
                     }else if (param2.type == 'ID'){
                         // a = b
                         
-                        inst = ['OPGETTEMP',command[1].value,command[2].value];
+                        inst = ['OPGETTEMP',TempID(command[1].value),TempID(command[2].value)];
                     }else if (param2.type == 'EXP'){
                         // a = this.layers.1.hidden
                         curExp = expDepth(param2)
                         if (curExp) {
                             switch(curExp.type){
                                 case 'widget':
+                                    switch(curExp.value){
+                                        case 'x':
+                                            inst = ['OPGETWIDOFFSET',TempID(param1.value),0]
+                                        break;
+                                        case 'y':
+                                            inst = ['OPGETWIDOFFSET',TempID(param1.value),1]
+                                        break;
+                                        default:
+                                            inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
+                                    }
                     
-                                    inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),param1.value]
+                                    
                                 break;
                                 case 'layer':
-                                    if (curExp.aVals[1]=='IMM'){
-                                        // inst = {
-                                        //     type:'OPGETLAY1',
-                                        //     tempID:param1.value,
-                                        //     attrID:curExp.value,
-                                        //     layerID:curExp.aVals[0]
-                                        // }
-                                        inst = ['OPGETLAY',curExp.aVals[0],LayerAttrID(curExp.value),param1.value]
-                                    }else{
-                                        // inst = {
-                                        //     type:'OPGETLAY2',
-                                        //     tempID:param1.value,
-                                        //     attrID:curExp.value,
-                                        //     layerID:curExp.aVals[0]
-                                        // }
-                                        inst = ['OPGETLAYTE',curExp.aVals[0],LayerAttrID(curExp.value),param1.value]
+                                    switch(curExp.value){
+                                        case 'x':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPGETLAYOFFSET',curExp.aVals[0],0,TempID(param1.value),0]
+                                            }else{
+                                                inst = ['OPGETLAYOFFSET',TempID(curExp.aVals[0]),0,TempID(param1.value),1]
+                                            }
+                                            
+                                        break;
+                                        case 'y':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPGETLAYOFFSET',curExp.aVals[0],1,TempID(param1.value),0]
+                                            }else{
+                                                inst = ['OPGETLAYOFFSET',TempID(curExp.aVals[0]),1,TempID(param1.value),1]
+                                            }
+                                        break;
+                                        default:
+                                            if (curExp.aVals[1]=='IMM'){
+                                            // inst = {
+                                            //     type:'OPGETLAY1',
+                                            //     tempID:param1.value,
+                                            //     attrID:curExp.value,
+                                            //     layerID:curExp.aVals[0]
+                                            // }
+                                            inst = ['OPGETLAY',curExp.aVals[0],LayerAttrID(curExp.value),TempID(param1.value)]
+                                        }else{
+                                            // inst = {
+                                            //     type:'OPGETLAY2',
+                                            //     tempID:param1.value,
+                                            //     attrID:curExp.value,
+                                            //     layerID:curExp.aVals[0]
+                                            // }
+                                            inst = ['OPGETLAYTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),TempID(param1.value)]
+                                        }
                                     }
+                                    
 
                                 break;
                                 case 'subLayer':
+
                                     if (curExp.aVals[2]=='IMM'){
                                         // inst = {
                                         //     type:'OPGETSUBLAY1',
@@ -459,7 +506,7 @@
                                         //     layerID:curExp.aVals[0]
                                         // }
                                         // curExp.value = sublayAttr,sublayattr,layerID,imm
-                                       inst = ['OPGETSUBLAY',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param1.value]
+                                       inst = ['OPGETSUBLAY',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param1.value)]
                                     }else{
                                         // inst = {
                                         //     type:'OPGETSUBLAY2',
@@ -467,7 +514,7 @@
                                         //     attrID:curExp.value,
                                         //     layerID:curExp.aVals[0]
                                         // }
-                                       inst = ['OPGETSUBLAYTE',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param1.value]
+                                       inst = ['OPGETSUBLAYTE',TempID(curExp.aVals[1]),SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param1.value)]
                                     }
                                 break;
                             }
@@ -487,26 +534,56 @@
                                     //     attrID:curExp.value,
                                     //     imm:param2.value
                                     // }
-                                    inst = ['OPSETWIDIM',WidgetAttrID(curExp.value),param2.value]
+                                    switch(curExp.value){
+                                        case 'x':
+                                            inst = ['OPSETWIDOFFSETIM',0,param1.value]
+                                        break;
+                                        case 'y':
+                                            inst = ['OPSETWIDOFFSETIM',1,param1.value]
+                                        break;
+                                        default:
+                                            inst = ['OPSETWIDIM',WidgetAttrID(curExp.value),param2.value]
+                                    }
+                                    
                                 break;
                                 case 'layer':
-                                    if (curExp.aVals[1]=='IMM'){
-                                        // inst = {
-                                        //     type:'OPSETLAY1',
-                                        //     attrID:curExp.value,
-                                        //     layerID:curExp.aVals[0],
-                                        //     imm:param2.value
-                                        // }
-                                        inst = ['OPSETLAY',curExp.aVals[0],LayerAttrID(curExp.value),0,param2.value]
-                                    }else{
-                                        // inst = {
-                                        //     type:'OPSETLAY1',
-                                        //     attrID:curExp.value,
-                                        //     layerID:curExp.aVals[0],
-                                        //     imm:param2.value
-                                        // }
-                                        inst = ['OPSETLAY',curExp.aVals[0],LayerAttrID(curExp.value),1,param2.value]
+                                    switch(curExp.value){
+                                        case 'x':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],LayerAttrID(curExp.value),0,0,param2.value]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),0,1,param2.value]
+                                            }
+                                            
+                                        break;
+                                        case 'y':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],LayerAttrID(curExp.value),1,0,param2.value]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,1,param2.value]
+                                            }
+                                        break;
+                                        default:
+                                            if (curExp.aVals[1]=='IMM'){
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAY',curExp.aVals[0],LayerAttrID(curExp.value),0,param2.value]
+                                            }else{
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAY',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,param2.value]
+                                            }
                                     }
+                                    
+                                    
                                 break;
                                 case 'subLayer':
                                     if (curExp.aVals[2]=='IMM'){
@@ -526,7 +603,7 @@
                                         //     layerID:curExp.aVals[0],
                                         //     imm:param2.value
                                         // }
-                                        inst = ['OPSETSUBLAYTE',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param2.value]
+                                        inst = ['OPSETSUBLAYTE',TempID(curExp.aVals[1]),SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param2.value]
                                     }
                                 break;
                             }
@@ -547,23 +624,42 @@
                                     inst = ['OPSETWIDTE',WidgetAttrID(curExp.value),param2.value]
                                 break;
                                 case 'layer':
-                                    if (curExp.aVals[1]=='IMM'){
-                                        // inst = {
-                                        //     type:'OPSETLAY1',
-                                        //     attrID:curExp.value,
-                                        //     layerID:curExp.aVals[0],
-                                        //     imm:param2.value
-                                        // }
-                                        inst = ['OPSETLAYTE',curExp.aVals[0],LayerAttrID(curExp.value),0,param2.value]
-                                    }else{
-                                        // inst = {
-                                        //     type:'OPSETLAY1',
-                                        //     attrID:curExp.value,
-                                        //     layerID:curExp.aVals[0],
-                                        //     imm:param2.value
-                                        // }
-                                        inst = ['OPSETLAYTE',curExp.aVals[0],LayerAttrID(curExp.value),1,param2.value]
+                                    switch(curExp.value){
+                                        case 'x':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],LayerAttrID(curExp.value),0,TempID(param2.value),0]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),0,TempID(param2.value),1]
+                                            }
+                                            
+                                        break;
+                                        case 'y':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],LayerAttrID(curExp.value),1,TempID(param2.value),0]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,TempID(param2.value),1]
+                                            }
+                                        break;
+                                        default:
+                                            if (curExp.aVals[1]=='IMM'){
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAYTE',curExp.aVals[0],LayerAttrID(curExp.value),0,TempID(param2.value)]
+                                            }else{
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAYTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,TempID(param2.value)]
+                                            }
                                     }
+                                    
                                 break;
                                 case 'subLayer':
                                     if (curExp.aVals[2]=='IMM'){
@@ -574,7 +670,7 @@
                                         //     layerID:curExp.aVals[0],
                                         //     imm:param2.value
                                         // }
-                                        inst = ['OPSETSUBLAYT',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param2.value]
+                                        inst = ['OPSETSUBLAYT',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param2.value)]
                                     }else{
                                         // inst = {
                                         //     type:'OPSETSUBLAY1',
@@ -583,7 +679,7 @@
                                         //     layerID:curExp.aVals[0],
                                         //     imm:param2.value
                                         // }
-                                        inst = ['OPSETSUBLAYTET',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param2.value]
+                                        inst = ['OPSETSUBLAYTET',TempID(curExp.aVals[1]),SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param2.value)]
                                     }
                                 break;
                             }
@@ -613,7 +709,7 @@
                 //     type:'OPGETTAG',
                 //     tempID:command[1].value
                 // }
-                inst =['OPGETTAG',command[1].value]
+                inst =['OPGETTAG',TempID(command[1].value)]
                 break;
             case 'setTag':
                 if (command[1].type == 'ID'){
@@ -621,7 +717,7 @@
                     //     type:'OPSETTAGTE',
                     //     tempID:command[1].value
                     // }
-                    inst = ['OPSETTAGTE',command[1].value]
+                    inst = ['OPSETTAGTE',TempID(command[1].value)]
                 }else{
                     // inst = {
                     //     type:'OPSETTAGIM',
@@ -640,7 +736,7 @@
                     //     tempID2:command[2].value
 
                     // }
-                    inst = ['OPEQTE',command[1].value,command[2].value]
+                    inst = ['OPEQTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPEQIM',
@@ -648,7 +744,7 @@
                     //     imm:command[2].value
 
                     // }
-                    inst = ['OPEQIM',command[1].value,command[2].value]
+                    inst = ['OPEQIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'lt':
@@ -661,7 +757,7 @@
 
                     // }
 
-                    inst = ['OPLTTE',command[1].value,command[2].value]
+                    inst = ['OPLTTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPLTIM',
@@ -669,7 +765,7 @@
                     //     imm:command[2].value
 
                     // }
-                    inst = ['OPLTIM',command[1].value,command[2].value]
+                    inst = ['OPLTIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'lte':
@@ -681,7 +777,7 @@
                     //     tempID2:command[2].value
 
                     // }
-                    inst = ['OPLTETE',command[1].value,command[2].value]
+                    inst = ['OPLTETE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPLTEIM',
@@ -689,7 +785,7 @@
                     //     imm:command[2].value
 
                     // }
-                    inst = ['OPLTIM',command[1].value,command[2].value]
+                    inst = ['OPLTIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'gt':
@@ -701,17 +797,17 @@
                     //     tempID2:command[2].value
 
                     // }
-                    inst = ['OPGTTE',command[1].value,command[2].value]
+                    inst = ['OPGTTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
-                    inst = ['OPGTIM',command[1].value,command[2].value]
+                    inst = ['OPGTIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'gte':
                 if (command[2].type == 'ID'){
                     //comapare two id
-                    inst = ['OPGTETE',command[1].value,command[2].value]
+                    inst = ['OPGTETE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
-                    inst = ['OPGTEIM',command[1].value,command[2].value]
+                    inst = ['OPGTEIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             //algebra
@@ -723,14 +819,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPADDTE',command[1].value,command[2].value]
+                    inst = ['OPADDTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPADDIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPADDIM',command[1].value,command[2].value]
+                    inst = ['OPADDIM',TempID(command[1].value),command[2].value]
                 }
                 
                 break;
@@ -742,14 +838,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPMINUSTE',command[1].value,command[2].value]
+                    inst = ['OPMINUSTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPMINUSIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPMINUSIM',command[1].value,command[2].value]
+                    inst = ['OPMINUSIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'multiply':
@@ -760,14 +856,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPMULTE',command[1].value,command[2].value]
+                    inst = ['OPMULTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPMULIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPMULIM',command[1].value,command[2].value]
+                    inst = ['OPMULIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'divide':
@@ -778,14 +874,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPDIVTE',command[1].value,command[2].value]
+                    inst = ['OPDIVTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPDIVIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPDIVIM',command[1].value,command[2].value]
+                    inst = ['OPDIVIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'mod':
@@ -796,14 +892,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPMODTE',command[1].value,command[2].value]
+                    inst = ['OPMODTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPMODIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPMODIM',command[1].value,command[2].value]
+                    inst = ['OPMODIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             //bit operation
@@ -815,14 +911,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPANDTE',command[1].value,command[2].value]
+                    inst = ['OPANDTE',TempID(command[1].value),cTempID(ommand[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPANDIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPANDIM',command[1].value,command[2].value]
+                    inst = ['OPANDIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'or':
@@ -833,14 +929,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPORTE',command[1].value,command[2].value]
+                    inst = ['OPORTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPORIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPORIM',command[1].value,command[2].value]
+                    inst = ['OPORIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'xor':
@@ -851,14 +947,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPXORTE',command[1].value,command[2].value]
+                    inst = ['OPXORTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPXORIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPXORIM',command[1].value,command[2].value]
+                    inst = ['OPXORIM',TempID(command[1].value),command[2].value]
                 }
                 break;
             case 'not':
@@ -869,14 +965,14 @@
                     //     tempID1:command[1].value,
                     //     tempID2:command[2].value
                     // }
-                    inst = ['OPNOTTE',command[1].value,command[2].value]
+                    inst = ['OPNOTTE',TempID(command[1].value),TempID(command[2].value)]
                 }else{
                     // inst = {
                     //     type:'OPNOTIM',
                     //     tempID:command[1].value,
                     //     imm:command[2].value
                     // }
-                    inst = ['OPNOTIM',command[1].value]
+                    inst = ['OPNOTIM',TempID(command[1].value)]
                 }
                 break;
 
@@ -886,6 +982,19 @@
 
 
     function transJSWidgetCommands(commands){
+        //scan temps
+        var tempCommands = commands.filter(function (cmd) {
+            return cmd[0] == 'temp'
+        })
+        var count = 0;
+        temps = {}
+        for (var i=0;i<tempCommands.length;i++){
+            var curTemp = tempCommands[i][1]
+            if (!(curTemp in temps)) {
+                temps[curTemp] = count
+                count++;
+            }
+        }
         return commands.map(function(c){
             return transJSWidgetCommandToCPPForm(c);
         })

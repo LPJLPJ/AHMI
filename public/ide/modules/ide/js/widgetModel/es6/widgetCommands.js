@@ -73,8 +73,6 @@
             var(c,0)
             set(c,'this.layers.length')
             minus(c,2)
-            set(a,'this.innerX')
-            set(b,'this.innerY')
             var(lx,0)
             var(ly,0)
             var(lw,0)
