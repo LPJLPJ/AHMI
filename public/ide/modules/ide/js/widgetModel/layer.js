@@ -20,7 +20,7 @@
         this.subLayers = {
             roi:null,
             font:null,
-            texture:null,
+            image:null,
             color:null
         };
         this.x = x||0;
@@ -28,22 +28,26 @@
         this.width = w||0;
         this.height = h||0;
         this.hidden = hidden||false;
-        this.interaction = interaction||true;
         this.validSubLayer = validSubLayer||7;//0111
     }
 
-    function SubLayer(w,h) {
-        this.width = w
-        this.height = h
+    function SubLayer() {
+        // this.width = w
+        // this.height = h
     }
 
 //roi
-    function ROISubLayer(w,h,p1,p2,p3,p4) {
-        SubLayer.call(this,w,h)
-        this.p1 = p1;
-        this.p2 = p2;
-        this.p3 = p3;
-        this.p4 = p4;
+    function ROISubLayer(p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y) {
+        SubLayer.call(this)
+        this.p1x = p1x;
+        this.p1y = p1y;
+
+        this.p2x = p2x;
+        this.p2y = p2y;
+        this.p3x = p3x;
+        this.p3y = p3y;
+        this.p4x = p4y;
+        this.p4y = p4y;
     }
 
 
@@ -52,8 +56,8 @@
     ROISubLayer.prototype.constructor = ROISubLayer;
 
 //font
-    function FontSubLayer(w,h,text,fontStyle) {
-        SubLayer.call(this,w,h)
+    function FontSubLayer(text,fontStyle) {
+        SubLayer.call(this)
         this.text = text;
         this.fontStyle = fontStyle;
     }
@@ -62,18 +66,21 @@
     FontSubLayer.prototype.constructor = FontSubLayer;
 
 //img
-    function TextureSubLayer(w,h,texture) {
-        SubLayer.call(this,w,h)
-        this.texture = texture;
+    function TextureSubLayer(imgSrc) {
+        SubLayer.call(this)
+        this.imgSrc = imgSrc;
     }
     TextureSubLayer.prototype = Object.create(SubLayer.prototype);
 
     TextureSubLayer.prototype.constructor = TextureSubLayer;
 
 //color
-    function ColorSubLayer(w,h,color) {
-        SubLayer.call(this,w,h);
-        this.color = color;
+    function ColorSubLayer(colorElems) {
+        SubLayer.call(this);
+        this.r = colorElems.r;
+        this.g = colorElems.g;
+        this.b = colorElems.b;
+        this.a = colorElems.a;
     }
     ColorSubLayer.prototype = Object.create(SubLayer.prototype);
 

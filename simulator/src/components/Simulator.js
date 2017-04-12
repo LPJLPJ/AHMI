@@ -304,41 +304,39 @@ module.exports =   React.createClass({
             var baseX = curX+ layer.x;
             var baseY =  curY+layer.y;
         
-            this.paintColorSL(baseX,baseY,subLayers.color)
-            this.paintTextureSL(baseX,baseY,subLayers.texture)
-            this.paintFontSL(baseX,baseY,subLayers.font)
+            this.paintColorSL(baseX,baseY,layer.width,layer.height,subLayers.color)
+            this.paintTextureSL(baseX,baseY,layer.width,layer.height,subLayers.image)
+            this.paintFontSL(baseX,baseY,layer.width,layer.height,subLayers.font)
         }
         
     },
     paintROISL:function (curX,curY,subLayer) {
 
     },
-    paintFontSL:function (curX,curY,subLayer) {
+    paintFontSL:function (curX,curY,slWidth,slHeight,subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
         if (subLayer) {
-            var slWidth = subLayer.width;
-            var slHeight = subLayer.height;
+            
             this.drawTextByTempCanvas(curX,curY,slWidth,slHeight,subLayer.text,subLayer.fontStyle);
         }
         
 
     },
-    paintTextureSL:function (curX,curY,subLayer) {
+    paintTextureSL:function (curX,curY,slWidth,slHeight,subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
         if (subLayer) {
-            var slWidth = subLayer.width;
-            var slHeight = subLayer.height;
-            this.drawBg(curX,curY,slWidth,slHeight,subLayer.texture)
+            
+            this.drawBg(curX,curY,slWidth,slHeight,subLayer.imgSrc)
         }
         
     },
-    paintColorSL:function (curX,curY,subLayer) {
+    paintColorSL:function (curX,curY,slWidth,slHeight,subLayer) {
         if (subLayer) {
-            var slWidth = subLayer.width;
-            var slHeight = subLayer.height;
-            this.drawBg(curX,curY,slWidth,slHeight,null,subLayer.color)
+            var color = subLayer;
+            var colorStr = 'rgba('+color.r+','+color.g+','+color.b+','+(color.a/255.0)+')'
+            this.drawBg(curX,curY,slWidth,slHeight,null,colorStr)
         }
         
         

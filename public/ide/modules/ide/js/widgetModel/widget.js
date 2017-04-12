@@ -93,16 +93,51 @@
     var EXP = 'EXP'
 
     //general button
+    function parseColor(color) {
+        var colorElems = []
+        var result = {
+            r:0,
+            g:0,
+            b:0,
+            a:0
+        }
+        if (color.indexOf('rgba')!==-1) {
+            //rgba(r,g,b,a)
+            colorElems = color.split(/[\(|\)]/)[1].split(',').map(function (c) {
+                return Number(c)
+            })
+            result = {
+                r:colorElems[0],
+                g:colorElems[1],
+                b:colorElems[2],
+                a:colorElems[3]*255
+            }
+        }else if (color.indexOf('rgb')!==-1){
+            colorElems = color.split(/[\(|\)]/)[1].split(',')
+            result = {
+                r:colorElems[0],
+                g:colorElems[1],
+                b:colorElems[2],
+                a:255
+            }
+        }else{
+            throw new Error('parsing color error: '+color)
+        }
+        return result
+    }
 
     function Button(x,y,w,h,text,fontStyle,slices) {
         var layerUp = new Layer(0,0,w,h);
-        layerUp.subLayers.font = new FontSubLayer(w,h,text,fontStyle);
-        layerUp.subLayers.texture =new TextureSubLayer(w,h,slices[0].imgSrc);
-        layerUp.subLayers.color = new ColorSubLayer(w,h,slices[0].color);
+        var colorElems
+        layerUp.subLayers.font = new FontSubLayer(text,fontStyle);
+        layerUp.subLayers.image =new TextureSubLayer(slices[0].imgSrc);
+        colorElems = parseColor(slices[0].color)
+        layerUp.subLayers.color = new ColorSubLayer(colorElems);
         var layerDown = new Layer(0,0,w,h);
-        layerDown.subLayers.font = new FontSubLayer(w,h,text,fontStyle);
-        layerDown.subLayers.texture =new TextureSubLayer(w,h,slices[1].imgSrc);
-        layerDown.subLayers.color = new ColorSubLayer(w,h,slices[1].color);
+        layerDown.subLayers.font = new FontSubLayer(text,fontStyle);
+        layerDown.subLayers.image =new TextureSubLayer(slices[1].imgSrc);
+        colorElems = parseColor(slices[1].color)
+        layerDown.subLayers.color = new ColorSubLayer(colorElems);
         var layers = [layerUp,layerDown]
         this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)
@@ -199,7 +234,7 @@
         // var layers = [layerUp,layerDown]
         var sWidth = 0;
         var sHeight = 0;
-        
+        var colorElems
         var layers = [];
         if (align==0) {
                 //hori
@@ -208,11 +243,13 @@
 
             for (var i=0;i<num;i++){
                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-                upLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i].imgSrc)
-                upLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i].color)
+                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
+                colorElems = parseColor(slices[2*i].color);
+                upLayer.subLayers.color = new ColorSubLayer(colorElems)
                 var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                downLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[2*i+1].imgSrc)
-                downLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[2*i+1].color)
+                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
+                colorElems = parseColor(slices[2*i+1].color);
+                downLayer.subLayers.color = new ColorSubLayer(colorElems)
                 layers.push(upLayer)
                 layers.push(downLayer)
             }
