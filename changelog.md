@@ -93,4 +93,4 @@ fix:
 
 v1.9.1_test
 add:
-   1. add local IDE user type update
+   1. add local IDE user type update fun
