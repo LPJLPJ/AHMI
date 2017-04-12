@@ -1,3 +1,4 @@
+var fs = require('fs');
 $(function(){
 	var ErrMessage = {
 		username:{
@@ -41,7 +42,17 @@ $(function(){
 			},
 			success:function(msg){
 				if(msg.confirm == 'ok'){
-					
+					var data = {
+						name:username,
+						type:msg.userType
+					}
+					data.json = JSON.stringify(data);
+					fs.writeFile('public\\nw\\userInfo.json',data.json,function(err){
+						if(err)
+							console.log(err);
+						else
+							alert('升级成功');
+					})
 				}
 				else
 					console.log(msg);
