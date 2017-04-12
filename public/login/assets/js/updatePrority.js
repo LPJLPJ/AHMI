@@ -39,7 +39,7 @@ $(function(){
 	function updateVerify(username,password){
 		$.ajax({
 			type:'POST',
-			url:'https://localhost/user/checkUserType',
+			url:'https://test.graphichina.com/user/checkUserType',
 			data:{
 				username:username,
 				password:password
