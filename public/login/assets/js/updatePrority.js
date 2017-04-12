@@ -20,6 +20,7 @@ $(function(){
 	function SendInformation(e){
 		var username = $('#username');
 		var password = $('#password');
+		buttonDisabled();
 		if(username[0].value ==""&&password[0].value !=""){
 			alert(ErrMessage.username.empty);
 		}
@@ -32,9 +33,8 @@ $(function(){
 		else{
 			username = username[0].value;
 			password = $.md5(password[0].value);
-			updateVerify(username,password)
+			updateVerify(username,password);
 		}
-
 	}
 	function updateVerify(username,password){
 		$.ajax({
@@ -88,4 +88,10 @@ $(function(){
 		window.location.href="personalProject.html";
 	}
 
+	function buttonDisabled(){
+		$('#submit').prop('disabled',true);
+		setTimeout(function(){
+			$('#submit').prop('disabled',false);
+		},500);
+	}
 })
