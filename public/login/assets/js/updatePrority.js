@@ -34,11 +34,13 @@ $(function(){
 			username = username[0].value;
 			password = $.md5(password[0].value);
 			updateVerify(username,password);
+			window.location.href="personalProject.html";
 		}
 	}
 	function updateVerify(username,password){
 		$.ajax({
 			type:'POST',
+			async:false,
 			url:'https://test.graphichina.com/user/checkUserType',
 			data:{
 				username:username,
