@@ -20,16 +20,20 @@ $(function(){
 	function SendInformation(e){
 		var username = $('#username');
 		var password = $('#password');
-		if(username[0].value ==""&&password[0].value !="")
+		if(username[0].value ==""&&password[0].value !=""){
 			alert(ErrMessage.username.empty);
-		if(username[0].value !=""&&password[0].value =="")
+		}
+		else if(username[0].value !=""&&password[0].value ==""){
 			alert(ErrMessage.password.empty);
-		if(username[0].value ==""&&password[0].value =="")
+		}
+		else if(username[0].value ==""&&password[0].value ==""){
 			alert(ErrMessage.general.empty);
-		username = username[0].value;
-		password = $.md5(password[0].value);
-		updateVerify(username,password)
-
+		}
+		else{
+			username = username[0].value;
+			password = $.md5(password[0].value);
+			updateVerify(username,password)
+		}
 
 	}
 	function updateVerify(username,password){
@@ -46,13 +50,31 @@ $(function(){
 						name:username,
 						type:msg.userType
 					}
-					data.json = JSON.stringify(data);
-					fs.writeFile('public\\nw\\userInfo.json',data.json,function(err){
-						if(err)
-							console.log(err);
-						else
-							alert('升级成功');
-					})
+					if(data){
+						fs.readFile('public\\nw\\userInfo.json','utf-8',function(err,ddata){
+							if(err)
+								alert('本地版权限读取错误');
+							else{
+								var ddata = JSON.parse(ddata);
+								if(ddata.type ==data.type){
+									alert('已提升至最新权限等级');
+								}
+								else{
+									data.json = JSON.stringify(data);
+									fs.writeFile('public\\nw\\userInfo.json',data.json,function(err){
+										if(err)
+											console.log(err);
+										else{
+											alert('升级成功');
+										}
+									})
+								}
+							}
+						})
+					}					
+				}
+				else if(msg.confirm =='account err'){
+						alert(ErrMessage.general.wrong);
 				}
 				else
 					console.log(msg);
