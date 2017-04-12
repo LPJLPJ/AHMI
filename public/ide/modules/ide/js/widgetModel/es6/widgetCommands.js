@@ -116,7 +116,6 @@
             divide(c,2)
             while(a>0){
                 minus(a,1)
-                print(a)
                 set('this.layers.a.hidden',1)
                 minus(a,1)
                 set('this.layers.a.hidden',0)

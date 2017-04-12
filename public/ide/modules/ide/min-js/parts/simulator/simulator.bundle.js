@@ -53484,7 +53484,7 @@ module.exports = React.createClass({
                 break;
             //algorithm:
             case 'add':
-                widget.scope[curInst[1]] = widget.scope[curInst[1].value] + this.evalParam(widget, curInst[2]);
+                widget.scope[curInst[1].value] = widget.scope[curInst[1].value] + this.evalParam(widget, curInst[2]);
                 break;
             case 'minus':
                 widget.scope[curInst[1].value] = widget.scope[curInst[1].value] - this.evalParam(widget, curInst[2]);
