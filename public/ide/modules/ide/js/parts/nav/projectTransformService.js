@@ -62,7 +62,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                         //trans to jump end
                         transGeneralWidgetCommands(modelObj,curF)
 
-                        //cppModels[model][curF] = cppWidgetCommandTranslator.transJSWidgetCommands(modelObj[curF])
+                        cppModels[model][curF] = cppWidgetCommandTranslator.transJSWidgetCommands(modelObj[curF])
 
                     }
                 }

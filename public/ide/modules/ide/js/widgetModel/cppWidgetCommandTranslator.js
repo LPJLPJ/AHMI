@@ -1033,6 +1033,8 @@
                     inst = ['OPNOTIM',TempID(command[1].value)]
                 }
                 break;
+            default:
+                inst = ['OPNOP']
 
         }
         return inst;
@@ -1049,7 +1051,7 @@
         var dv = new DataView(buf)
         var count = 1//cmd parameters
         var bytesCount = 0
-        console.log(cmd)
+        // console.log(cmd)
         var op = cmd[0]
         var cmdProto = cppWidgetInsts[op];
         if (!cmdProto) {
@@ -1084,7 +1086,7 @@
             }
             bytesCount += bytes;
         }
-        console.log(new Uint8Array(buf))
+        // console.log(new Uint8Array(buf))
         return buf2hex(buf)
 
     }
