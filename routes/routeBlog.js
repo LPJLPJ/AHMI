@@ -427,9 +427,9 @@ BlogRoute.getBlogData = function (req, res) {
                                 return info;
                             });
                             result.comments = comments;
+                            res.end(JSON.stringify(result))
                         }
                     });
-                    res.end(JSON.stringify(result))
                 }else{
                     errHandler(res,500,'not published')
                 }

@@ -3,5 +3,5 @@
  */
 var mongoose = require('mongoose');
 var CommentSchema = require('../schemas/CommentSchema.js');
-var CommentModel = new mongoose.model('CommentModel',CommentSchema);
+var CommentModel = mongoose.model('CommentModel',CommentSchema);
 module.exports = CommentModel;
