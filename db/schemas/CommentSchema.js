@@ -10,7 +10,7 @@ var CommentSchema = new mongoose.Schema({
     content:String,
     email:String,
     authorName:String,
-    createTime:{type:Data,default:Data.now},
+    createTime:{type:Date,default:Date.now},
     resources:[String]
 });
 
