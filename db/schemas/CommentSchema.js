@@ -9,7 +9,7 @@ var CommentSchema = new mongoose.Schema({
     blogId:mongoose.Schema.Types.ObjectId,
     content:String,
     email:String,
-    tempName:String,
+    authorName:String,
     createTime:{type:Data,default:Data.now},
     resources:[String]
 });

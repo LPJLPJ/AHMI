@@ -596,13 +596,47 @@ function uploadSingleFile(req, res,cb){
 }
 
 //Comments
-BlogRoute.postComments = function(req,res){
+BlogRoute.postComment = function(req,res){
     var blogId  = req.query.id;
     var _user = req.session.user;
+    var raw = req.body;
     if(_user&&_user.username&&_user.id){
-
+        var data = {};
+        data.authorId = _user.id;
+        data.authorName = _user.username;
+        data.blogId = blogId;
+        data.content = raw.content;
+        var newComment = new CommentModel(data);
+        newComment.save(function(err){
+            if(err){
+                errHandler(res,500,'save comment err');
+            }else{
+                var newCommentInfo = _.cloneDeep(newComment);
+                res.send(newCommentInfo);
+            }
+        })
+    }else{
+        res.send('not login');
+        //res.redirect('/user/login')
     }
 
 };
+
+BlogRoute.deleteComment = function(req,res){
+    var blogId = req.query.id;
+    var _user = req.session.user;
+    var commentId = req.body.commentId;
+    if(_user&&_user.username&&_user.id){
+        CommentModel.deleteById(commentId,function(err){
+            if(err){
+                errHandler(res,500,'err in delete comment');
+            }else{
+                res.send('ok');
+            }
+        })
+    }else{
+        res.send('not login')
+    }
+}
 
 module.exports = BlogRoute;

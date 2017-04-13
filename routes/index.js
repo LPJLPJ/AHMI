@@ -351,7 +351,10 @@ router.route('/blog/*')
     .get(BlogRoute.getIndex)
 
 //comment
-
+router.route('/blog/post/comment')
+    .post(BlogRoute.postComment);
+router.route('/blog/post/deleteComment')
+    .delete(BlogRoute.deleteComment);
 
 //download pcclient
 router.route('/download/index.html')
