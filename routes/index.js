@@ -350,12 +350,18 @@ router.route('/blog/resources/deleteresource')
 router.route('/blog/*')
     .get(BlogRoute.getIndex)
 
+//comment
 
+
+//download pcclient
 router.route('/download/index.html')
     .get(DownloadRouter.getDownloadPage)
 
 router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
+
+
+
 
 
 //router.route('*')

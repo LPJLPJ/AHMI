@@ -1,14 +1,15 @@
 /**
  * Created by changecheng on 2017/2/9.
  */
-var BlogModel = require('../db/models/BlogModel')
-var path = require('path')
-var fs = require('fs')
-var errHandler = require('../utils/errHandler')
-var formidable = require('formidable')
-var _ = require('lodash')
-var BlogRoute = {}
-var baseUrl = path.join(__dirname,'../public/blog/media')
+var BlogModel = require('../db/models/BlogModel');
+var CommentModel = require('../db/models/CommentModel');
+var path = require('path');
+var fs = require('fs');
+var errHandler = require('../utils/errHandler');
+var formidable = require('formidable');
+var _ = require('lodash');
+var BlogRoute = {};
+var baseUrl = path.join(__dirname,'../public/blog/media');
 BlogRoute.getIndex = function (req, res) {
 
     var page = req.query.page || 1;
@@ -405,6 +406,7 @@ BlogRoute.getBlogData = function (req, res) {
                 errHandler(res,500,'blog not found')
             }else{
                 if (_blog.publish){
+
                     var result = {}
                     result.title = _blog.title;
                     result.authorId =_blog.authorId;
@@ -412,6 +414,21 @@ BlogRoute.getBlogData = function (req, res) {
                     result.keywords = _blog.keywords;
                     result.category = _blog.category;
                     result.content = _blog.content;
+                    // find and add comments
+                    CommentModel.findByBlog(blogId,function(err,_comments){
+                        if(err){
+                            errHandler(res,500,'err in find comments')
+                        }else{
+                            var comments = _comments.map(function(_comment){
+                                var info = {};
+                                info.authorId = _comment.authorId;
+                                info.content = _comment.content;
+                                info.createTime = _comment.createTime;
+                                return info;
+                            });
+                            result.comments = comments;
+                        }
+                    });
                     res.end(JSON.stringify(result))
                 }else{
                     errHandler(res,500,'not published')
@@ -578,4 +595,14 @@ function uploadSingleFile(req, res,cb){
     }
 }
 
-module.exports = BlogRoute
+//Comments
+BlogRoute.postComments = function(req,res){
+    var blogId  = req.query.id;
+    var _user = req.session.user;
+    if(_user&&_user.username&&_user.id){
+
+    }
+
+};
+
+module.exports = BlogRoute;
