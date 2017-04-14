@@ -50,7 +50,7 @@ $(function(){
         }
 
     }
-    
+
     if (local){
         //create localproject folder
         fs = require('fs');
@@ -91,7 +91,7 @@ $(function(){
     //render projects
     if (local){
         //delte projectPanels
-        
+
         // $('.projectpanel').each(function (index,elem) {
         //     $(elem).remove();
         // });
@@ -111,10 +111,10 @@ $(function(){
         var CANProjects = readLocalProjects('CAN').map(function(raw){
             return JSON.parse(raw);
         });
-        
+
         //console.log('projects',projects);
         //console.log('CANprojects',CANProjects);
-        
+
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
@@ -208,7 +208,7 @@ $(function(){
             }
         }
     }
-    
+
 
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
@@ -513,7 +513,11 @@ $(function(){
             var updateSuccess = false;
             if (local){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');
-                fs.writeFileSync(projectPath,JSON.stringify(project));
+                var oldProject = JSON.parse(readSingleFile(projectPath,true));
+                for(var key in project){
+                    oldProject[key] = project[key];
+                }
+                fs.writeFileSync(projectPath,JSON.stringify(oldProject));
                 updateSuccess = true;
                 var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
                 curPanel.replaceWith(html)
@@ -707,7 +711,11 @@ $(function(){
                 }
                 if(local){
                     var CANProjectPath = path.join(localCANProjectDir,String(project._id),'CANProject.json');
-                    fs.writeFileSync(CANProjectPath,JSON.stringify(project));
+                    var oldCANProject = JSON.parse(readSingleFile(CANProjectPath,true));
+                    for(var key in project){
+                        oldCANProject[key] = project[key];
+                    }
+                    fs.writeFileSync(CANProjectPath,JSON.stringify(oldCANProject));
                     updateSuccess = true;
                     var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:project,thumbnail:null});
                     curPanel.replaceWith(html)
