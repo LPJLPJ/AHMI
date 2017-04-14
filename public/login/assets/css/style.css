@@ -355,10 +355,6 @@ h1::after {
     margin:0 auto;
     top:20px;
 }
-.move-me{
-    position: relative;
-    left:3%
-}
 .move-bar a{
     height:62px ;
 }
