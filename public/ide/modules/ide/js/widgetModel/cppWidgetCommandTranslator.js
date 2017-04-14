@@ -22,7 +22,7 @@
 
     function Attr(name,bytes,index) {
         this.name = name||''
-        this.bytes = bytes||0
+        this.bytes = bytes||4
         this.index = index||0
     }
 
@@ -57,22 +57,29 @@
         'OPLTETE',
 
         'OPJUMP',		//jump Imm codes;
+
         'OPADDIM',		//a = a + Imm;
-        'OPADDTE',
-        'OPMINUSIM',	//a = a - Imm;
-        'OPMINUSTE',
-        'OPMULIM',		//a = a * Imm;
-        'OPMULTE',
+        'OPMINUSIM',	//a = a - Imm;   
+        'OPMULIM',		//a = a * Imm;     
         'OPDIVIM',		//a = a / Imm;
+        'OPMODIM',
+
+        'OPADDTE',
+        'OPMINUSTE',
+        'OPMULTE',
         'OPDIVTE',
+        'OPMODTE',
+
         'OPANDIM',		//a = a & Imm;     
         'OPORIM',		//a = a | Imm;    
         'OPXORIM',		//a = a ^ Imm;
         'OPNOTIM',		//a = !a;
+
         'OPANDTE',
         'OPORTE',
         'OPXORTE',
         'OPNOTTE',
+
         'OPSETWIDIM',
         'OPSETWIDTE',
         'OPGETWIDTE',
@@ -82,6 +89,7 @@
         'OPSETLAYOFFSETIM',
         'OPSETLAYOFFSETTE',
         'OPGETLAYOFFSET',
+        'OPCHKVALALARM',
         'OPNOP'
 
     ]
@@ -130,7 +138,7 @@
         new Attr('mWDGNextWidgetID',4),
         new Attr('mWDGTotalFrame',4),
         new Attr('mWDGNowFrame',4),
-        new Attr('mWDGInteraction',4),
+        new Attr('mWDGInteractionMode',4),
         new Attr('mWDGMode',4),
         new Attr('mWDGArrange',4),
         new Attr('mWDGType'),
@@ -153,7 +161,13 @@
         new Attr('mWDGOnKeyBoardRight'),
         new Attr('mWDGOnKeyBoardOK'),
         new Attr('mWDGMouseInnerX'),
-        new Attr('mWDGMouseInnerY')
+        new Attr('mWDGMouseInnerY'),
+        new Attr('mWDGOnAnimationFrame'),
+        new Attr('mWDGEnterLowAlarmAction'),
+        new Attr('mWDGLeaveLowAlarmAction'),
+        new Attr('mWDGEnterHighAlarmAction'),
+        new Attr('mWDGLeaveHighAlarmAction'),
+        new Attr('mWDGMouseReleaseAction')
     ]
 
     var cppWidgetAttrsTable = {}
@@ -184,7 +198,7 @@
         minAngle:'mWDGMinAngle',
         maxAngle:'mWDGMaxAngle',
         numOfLayers:'mWDGNumOfLayers',
-        interaction:'mWDGInteraction',
+        interaction:'mWDGInteractionMode',
         tag:'mWDGBindTagID',
         generalType:'mWDGType',
         otherAttrs:'otherAttrs',
@@ -197,7 +211,7 @@
     var cppLayerAttrs = [
         new Attr('mLayerOffsetX',4),
         new Attr('mLayerOffsetY',4),
-        new Attr('tileBoxClass',4),
+        
         new Attr('scalerX',4),
         new Attr('scalerY',4),
         new Attr('MovingX',4),
@@ -210,7 +224,8 @@
         new Attr('mWidth',4),
         new Attr('mHeight',4),
         new Attr('mValidSubLayer',4),
-        new Attr('mHidden',4)
+        new Attr('mHidden',4),
+        new Attr('tileBoxClass',4)
     ]
 
     var layerAttrTable = {
@@ -328,7 +343,7 @@
         OPLTTE:new Instruction('OPLTTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
         OPLTEIM:new Instruction('OPLTEIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
         OPLTETE:new Instruction('OPLTETE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
-        OPJUMP:new Instruction('OPJUMP',new InstOperand(5,true),new InstOperand(2)),
+        OPJUMP:new Instruction('OPJUMP',new InstOperand(1,true),new InstOperand(2),new InstOperand(4,true)),
         OPADDIM:new Instruction('OPADDIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
         OPMINUSIM:new Instruction('OPMINUSIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
         OPMULIM:new Instruction('OPMULIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
@@ -358,6 +373,7 @@
         OPSETLAYOFFSETIM:new Instruction('OPSETLAYOFFSETIM',new InstOperand(1),new InstOperand(1),new InstOperand(1,true),new InstOperand(4)),
         OPSETLAYOFFSETTE:new Instruction('OPSETLAYOFFSETTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
         OPGETLAYOFFSET:new Instruction('OPGETLAYOFFSET',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
+        OPCHKVALALARM:new Instruction('OPCHKVALALARM',new InstOperand(7,true)),
         OPNOP:new Instruction('OPNOP',new InstOperand(7,true))
 
     }
@@ -1047,6 +1063,7 @@
     }
 
     function mapArrayCmdToBuffer(cmd) {
+        var bigEndian = true;
         var buf = new ArrayBuffer(8)
         var dv = new DataView(buf)
         var count = 1//cmd parameters
@@ -1059,7 +1076,7 @@
         }
         var bytes = 0;
         var reserve = false;
-        dv.setUint8(bytesCount,cmdProto.index);
+        dv.setUint8(bytesCount,cmdProto.index,bigEndian);
         bytesCount +=1;
         for (var i=0;i<cmdProto.operands.length;i++){
             bytes = cmdProto.operands[i].bytes
@@ -1068,13 +1085,13 @@
                 //write cmd[count]
                 switch(bytes){
                     case 1:
-                        dv.setUint8(bytesCount,cmd[count])
+                        dv.setUint8(bytesCount,cmd[count],bigEndian)
                     break;
                     case 2:
-                        dv.setUint16(bytesCount,cmd[count])
+                        dv.setUint16(bytesCount,cmd[count],bigEndian)
                     break;
                     case 4:
-                        dv.setUint32(bytesCount,cmd[count])
+                        dv.setUint32(bytesCount,cmd[count],bigEndian)
                     break;
                     default:
                         console.log('writing to buffer error',cmd)

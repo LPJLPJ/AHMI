@@ -16,7 +16,6 @@
         onInitialize:`
 
             var(a,'this.mode')
-            setTag(1)
             set(a,3)
             if(a>=100){
                 set('this.layers.1.hidden',1)
