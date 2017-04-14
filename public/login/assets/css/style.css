@@ -266,7 +266,7 @@ h1::after {
 #footer {
     padding:5px 20px;
     background-color: rgba(28, 43, 75, 0.5);
-    text-align:right;
+    text-align:center;
     color:#fff;
     font-size:15px;
 }
