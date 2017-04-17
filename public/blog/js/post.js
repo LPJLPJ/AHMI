@@ -20,7 +20,7 @@
         if (currentId){
             $.ajax({
                 type:'GET',
-                url:"/blog/getblogdata",
+                url:"/blog/manage",
                 data:{
                     blogId:currentId
                 },

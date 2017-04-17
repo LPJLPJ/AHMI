@@ -34,15 +34,17 @@ body {
     max-height: 62px;
     position: absolute;
     top:0;
+    left:0;
 }
 
 #menu {
-    background-color: rgba(28, 43, 75, 0.5);
+   /* background-color: rgba(28, 43, 75, 0.5);*/
     color: #fff;
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 1px;
-    min-height: 59px;
+    min-height: 9px;
+    height: 5px;
 }
 
 
@@ -60,8 +62,6 @@ body {
   HOME STYLES 
     ===================================*/
 .home-sec {
-    padding-top: 10px;
-    padding-bottom: 60px;
     /*background: url(../img/header.jpg) no-repeat center center;*/
     padding: 0;
     -webkit-background-size: cover;
@@ -95,7 +95,7 @@ body {
     -o-box-shadow: 0 1px 4px rgba(0, 0, 0, 0);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0);
     background-color: transparent;
-    border: 0px solid #000;
+    border: 0 solid #000;
     /*padding-top: 120px;*/
 }
 
@@ -193,9 +193,9 @@ h1::after {
 }
 
 .btn-set {
-    border-radius: 0px;
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
     margin-bottom: 20px;
 }
 /*=====================================
@@ -243,7 +243,6 @@ h1::after {
     padding-top: 10px;
     padding-bottom: 60px;
     /*background: url(../img/contact.jpg) no-repeat center center;*/
-    padding: 0;
     -webkit-background-size: cover;
     background-size: cover;
     background-attachment: fixed;
@@ -267,7 +266,7 @@ h1::after {
 #footer {
     padding:5px 20px;
     background-color: rgba(28, 43, 75, 0.5);
-    text-align:right;
+    text-align:center;
     color:#fff;
     font-size:15px;
 }
@@ -277,6 +276,7 @@ h1::after {
     position: absolute;
     height: 700px;
     width: 100%;
+
 }
 
 .slide-container{
@@ -320,12 +320,11 @@ h1::after {
 }
 .position-zyj{
     position: absolute;
-    top:75% !important;
+    top:80% !important;
 }
 .slide-zyj{
     height:auto !important;
     max-width: 1170px;
-    position: relative;
     margin: 0 auto;
 }
 .control-zyj{
@@ -334,7 +333,6 @@ h1::after {
     left:20% !important;
     right:0 !important;
 }
-
 .size-zyj{
     height:auto !important;
     vertical-align:middle;
@@ -347,6 +345,7 @@ h1::after {
     position: relative;
     top:auto;
     margin: 0 auto;
+    left:-0%;
 
 }
 .video-center{
@@ -355,4 +354,69 @@ h1::after {
     position:relative;
     margin:0 auto;
     top:20px;
+}
+.move-bar a{
+    height:62px ;
+}
+.move-bar{
+    position: relative;
+    padding-left:80px;
+}
+.nav-bar{
+    height:39px;
+    color:#aaabac;
+    font-weight: 600;
+    font-size:19px ;
+    position: relative;
+    top:2px;
+    left:20px;
+
+}
+.nav-bar:hover{
+    color:#222222;
+    height: 25px;
+    border-bottom-style: solid;
+    border-bottom-width:2px;
+    border-bottom-color:#222222;
+    transition:height 0.5s;
+    -moz-transition:height 0.5s; /* Firefox 4 */
+    -webkit-transition:height 0.5s; /* Safari and Chrome */
+    -o-transition:height 0.5s; /* Opera */
+}
+.container-zyj1{
+    height:32px;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+    text-decoration: none;
+    background-color: rgba(255, 255, 255, 0);
+}
+.back1{
+    position: fixed;
+    right: 15px;
+    bottom: 0.3%;
+    z-index: 9999;
+}
+.back{
+    width: 50px;
+    height: 50px;
+    padding:15px;
+    background-color:rgba(162, 201, 235, 0.79) ;
+    border-radius: 50%;
+}
+.back a img{
+    position: relative;
+    top:-10px;
+    left:-8.5px;
+}
+.back:hover{
+ background-color:#a2c9eb;
+    transition-duration: 1s;
+    -moz-transform:scale(1.2,1.2);
+    -webkit-transform:scale(1.2,1.2);
+    -o-transform:scale(1.2,1.2);
+}
+.video-p{
+    position: relative;
+    top:160px;
 }

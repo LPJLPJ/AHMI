@@ -94,3 +94,5 @@ fix:
 v1.9.1_test
 add:
    1. add local IDE user type update fun
+fix:
+    1.fix a bug that change a project's attr will empty this project in local version
