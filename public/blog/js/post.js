@@ -20,7 +20,7 @@
         if (currentId){
             $.ajax({
                 type:'GET',
-                url:"/blog/getblogdata",
+                url:"https://test.graphichina.com/blog/manage",
                 data:{
                     blogId:currentId
                 },
