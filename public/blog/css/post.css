@@ -161,3 +161,7 @@ body{
 .input{
     width: 90%;
 }
+
+form>textarea{
+    border-radius: 4px
+}

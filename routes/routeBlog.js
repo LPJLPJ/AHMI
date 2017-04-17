@@ -424,10 +424,13 @@ BlogRoute.getBlogData = function (req, res) {
                                 info.authorId = _comment.authorId;
                                 info.content = _comment.content;
                                 info.createTime = _comment.createTime;
+                                info.authorName = _comment.authorName;
+                                info._id = _comment._id;
                                 return info;
                             });
                             result.comments = comments;
                             res.end(JSON.stringify(result))
+                            //res.send(result);
                         }
                     });
                 }else{
@@ -615,9 +618,10 @@ BlogRoute.postComment = function(req,res){
                 res.send(newCommentInfo);
             }
         })
+        //req.send(data);
     }else{
-        res.send('not login');
-        //res.redirect('/user/login')
+        //res.send('not login');
+        res.redirect('/user/login')
     }
 
 };

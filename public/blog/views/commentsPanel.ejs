@@ -1,0 +1,11 @@
+<% for(var j=0;j<comments.length;j++) {%>
+    <div class="box-footer" commentId="<%=comments[j]._id%>" authorId="<%=comments[j].authorId%>">
+        <div class="comment-text">
+            <span class="username">
+                <%=comments[j].authorName%>
+                <span class="text-muted pull-right"><%=comments[j].createTime%></span>
+            </span>
+            <p><%=comments[j].content%></p>
+        </div>
+    </div>
+<%}%>
