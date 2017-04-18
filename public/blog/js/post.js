@@ -70,7 +70,7 @@
     $('#commentForm').submit(function(e){
         e.preventDefault();
         e.stopPropagation();
-        var comment = $(this).find('textarea').val().trim();
+        var comment =$.trim(this.comment.value);
         var currentId = parseQuery().id;
         if(comment===''){
             alert('评论不能为空');
