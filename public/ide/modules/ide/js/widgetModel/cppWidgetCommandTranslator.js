@@ -238,7 +238,7 @@
         layerAttrTable[curLayerAttr.name] = curLayerAttr
     }
 
-    console.log('layerAttrTable',layerAttrTable)
+    // console.log('layerAttrTable',layerAttrTable)
 
     var layerAttrMap = {
         x:'x',
@@ -381,7 +381,7 @@
         cppWidgetInsts[opCodes[i]].index = i;
     }
 
-    console.log('cppWidgetInsts',cppWidgetInsts)
+    // console.log('cppWidgetInsts',cppWidgetInsts)
 
     function AttrType(type,value) {
         this.type = type
@@ -1135,7 +1135,7 @@
             transedCommands.push(transJSWidgetCommandToCPPForm(commands[j]))
         }
         transedCommands.push(['OPEND'])
-        console.log('transedCmd',transedCommands)
+        // console.log('transedCmd',transedCommands)
         var bufCommands = mapArrayCmdsToBuffer(transedCommands)
         // console.log(bufCommands)
         return bufCommands

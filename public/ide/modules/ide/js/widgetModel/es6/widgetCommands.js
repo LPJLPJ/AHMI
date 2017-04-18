@@ -64,7 +64,7 @@
     };
     WidgetCommands['ButtonGroup'] = {
         onInitialize:`
-            var(a,1)
+            
         `,
         onMouseDown:`
             var(a,0)
@@ -105,6 +105,7 @@
         `,
         onMouseUp:`
             var(d,1)
+            set(d,1)
         `,
         onTagChange:`
             var(a,0)

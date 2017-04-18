@@ -79,7 +79,10 @@
 prog
     :stmts EOF
         {return $1;}
+    |EOF
+        {return [];}
         ;
+        
 
 stmts
     : stmt

@@ -69,7 +69,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         }
         
-        
+        console.log('testModels',testModels)
         console.log('cppModels',cppModels)
         // return commands;
         return {
