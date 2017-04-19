@@ -155,6 +155,12 @@
             var(ttempDist,0)
             set(toffsetValue,'this.otherAttrs.0')
             getTag(ttagValue)
+            if (ttagValue>tmaxValue) {
+                set(ttagValue,tmaxValue)
+            }
+            if (ttagValue<tminValue) {
+                set(ttagValue,tminValue)
+            }
             set(ttempDist,tmaxValue)
             minus(ttempDist,tminValue)
             var(ttagDist,0)
@@ -165,9 +171,17 @@
             divide(tvalueRatio,ttempDist)
             multiply(tvalueRatio,tangleDist)
             add(tvalueRatio,tminAngle)
-            add(tvalueRatio,45)
-            add(tvalueRatio,toffsetValue)
+            var(tclockwise,0)
+            set(tclockwise,'this.clockwise')
+            if (clockwise==1) {
+                add(tvalueRatio,45)
+                add(tvalueRatio,toffsetValue)
+            }else{
+
+            }
             set('this.layers.1.rotateAngle',tvalueRatio)
+            checkalarm()
+            set('this.oldValue',ttagValue)
 
         `
     }

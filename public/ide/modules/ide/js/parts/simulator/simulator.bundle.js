@@ -52156,9 +52156,27 @@ module.exports = React.createClass({
                 mouseV = mouseV == 1 ? 'y' : 'x';
                 this.setByParam(widget, { type: 'ID', value: curInst[1] }, { type: 'Int', value: this.mouseState.position[mouseV] || 0 });
                 break;
+            case 'checkalarm':
+                //checkalarm
+                console.log('alarm', curInst);
+                var curValue = this.getValueByTagName(widget.tag);
+                if (curValue > widget.maxValue) {
+                    curValue = widget.maxValue;
+                }
+                if (curValue < widget.minValue) {
+                    curValue = widget.minValue;
+                }
+
+                var alarmValue = this.shouldHandleAlarmAction(curValue, widget, widget.lowAlarmValue, widget.highAlarmValue);
+                if (alarmValue) {
+                    this.handleTargetAction(widget, alarmValue);
+                }
+
+                break;
             case 'print':
                 console.log('print value: ', this.evalParam(widget, curInst[1]), curInst[2] || '');
                 break;
+
             default:
                 console.log("inst", curInst);
                 break;
