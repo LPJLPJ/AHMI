@@ -133,7 +133,14 @@
     };
     WidgetCommands['Progress'] = {
         onInitialize:`
-            var(a,'this.mode')
+            var(mod,'this.mode')
+            var(cur,'this.cursor')
+            set('this.layers.0.hidden',0)
+            set('this.layers.1.hidden',0)
+            if(cur==1){
+                set('this.layers.2.hidden',0)
+            }
+            set('this.layers.1.width',0)
         `,
         onMouseUp:`
             var(a,1)
@@ -146,7 +153,6 @@
             if(a==0){
                var(tag,0)
                getTag(tag)
-               print(tag)
                var(min,'this.minValue')
                var(max,'this.maxValue')
                if(tag>=min){
@@ -157,69 +163,72 @@
                       set(temp1,tag)
                       set(temp2,max)
                       minus(temp1,min)
-                      minus(temp2,max)
+                      minus(temp2,min)
                       divide(temp1,temp2)
-                      var(w,'this.layers.1.width')
+                      print(temp1)
+                      var(w,'this.layers.0.width')
                       multiply(temp1,w)
-                      print(w)
+                      print(temp1)
+                      set('this.layers.1.hidden',0)
+                      set('this.layers.1.width',temp1)
                    }
                }
             }
         `
     };
-
-    WidgetCommands['Dashboard'] = {
-        onInitialize:`
-        `,
-        onMouseDown:``,
-        onMouseUp:``,
-        onTagChange:`
-            var(toffsetValue,0)
-            var(tminValue,0)
-            var(tmaxValue,0)
-            var(tminAngle,0)
-            var(tmaxAngle,0)
-            var(ttagValue,0)
-            var(tangleDist,0)
-            set(tminValue,'this.minValue')
-            set(tmaxValue,'this.maxValue')
-            set(tminAngle,'this.minAngle')
-            set(tmaxAngle,'this.maxAngle')
-            set(tangleDist,tmaxAngle)
-            minus(tangleDist,tminAngle)
-            var(ttempDist,0)
-            set(toffsetValue,'this.otherAttrs.0')
-            getTag(ttagValue)
-            if (ttagValue>tmaxValue) {
-                set(ttagValue,tmaxValue)
-            }
-            if (ttagValue<tminValue) {
-                set(ttagValue,tminValue)
-            }
-            set(ttempDist,tmaxValue)
-            minus(ttempDist,tminValue)
-            var(ttagDist,0)
-            set(ttagDist,ttagValue)
-            minus(ttagValue,tminValue)
-            var(tvalueRatio,0)
-            set(tvalueRatio,ttagDist)
-            divide(tvalueRatio,ttempDist)
-            multiply(tvalueRatio,tangleDist)
-            add(tvalueRatio,tminAngle)
-            var(tclockwise,0)
-            set(tclockwise,'this.clockwise')
-            if (clockwise==1) {
-                add(tvalueRatio,45)
-                add(tvalueRatio,toffsetValue)
-            }else{
-
-            }
-            set('this.layers.1.rotateAngle',tvalueRatio)
-            checkalarm()
-            set('this.oldValue',ttagValue)
-
-        `
-    }
+    //
+    //WidgetCommands['Dashboard'] = {
+    //    onInitialize:`
+    //    `,
+    //    onMouseDown:``,
+    //    onMouseUp:``,
+    //    onTagChange:`
+    //        var(toffsetValue,0)
+    //        var(tminValue,0)
+    //        var(tmaxValue,0)
+    //        var(tminAngle,0)
+    //        var(tmaxAngle,0)
+    //        var(ttagValue,0)
+    //        var(tangleDist,0)
+    //        set(tminValue,'this.minValue')
+    //        set(tmaxValue,'this.maxValue')
+    //        set(tminAngle,'this.minAngle')
+    //        set(tmaxAngle,'this.maxAngle')
+    //        set(tangleDist,tmaxAngle)
+    //        minus(tangleDist,tminAngle)
+    //        var(ttempDist,0)
+    //        set(toffsetValue,'this.otherAttrs.0')
+    //        getTag(ttagValue)
+    //        if (ttagValue>tmaxValue) {
+    //            set(ttagValue,tmaxValue)
+    //        }
+    //        if (ttagValue<tminValue) {
+    //            set(ttagValue,tminValue)
+    //        }
+    //        set(ttempDist,tmaxValue)
+    //        minus(ttempDist,tminValue)
+    //        var(ttagDist,0)
+    //        set(ttagDist,ttagValue)
+    //        minus(ttagValue,tminValue)
+    //        var(tvalueRatio,0)
+    //        set(tvalueRatio,ttagDist)
+    //        divide(tvalueRatio,ttempDist)
+    //        multiply(tvalueRatio,tangleDist)
+    //        add(tvalueRatio,tminAngle)
+    //        var(tclockwise,0)
+    //        set(tclockwise,'this.clockwise')
+    //        if (clockwise==1) {
+    //            add(tvalueRatio,45)
+    //            add(tvalueRatio,toffsetValue)
+    //        }else{
+    //
+    //        }
+    //        set('this.layers.1.rotateAngle',tvalueRatio)
+    //        checkalarm()
+    //        set('this.oldValue',ttagValue)
+    //
+    //    `
+    //}
 
 
 

@@ -245,19 +245,18 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     targetWidget.texList.map(function(tex){
                         slices.push(tex.slices[0]);
                     });
-                    targetWidget = new  WidgetModel.models['Progress'](x,y,w,h,targetWidget.info.cursor,slices);
-                    targetWidget = targetWidget.toObject();
-                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
-                    targetWidget.mode= Number(rawWidget.info.progressModeId);
-                    targetWidget.minValue = Number(rawWidget.info.minValue);
-                    targetWidget.maxValue = Number(rawWidget.info.maxValue);
-                    console.log('targetWidget.mode',targetWidget.mode);
-                    targetWidget.generalType = 'Progress';
-                    targetWidget.subType = 'general';
+                    generalWidget = new  WidgetModel.models['Progress'](x,y,w,h,targetWidget.info.cursor,slices);
+                    generalWidget= generalWidget.toObject();
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.mode= Number(rawWidget.info.progressModeId);
+                    generalWidget.cursor = Number(rawWidget.info.cursor);
+                    generalWidget.minValue = Number(rawWidget.info.minValue);
+                    generalWidget.maxValue = Number(rawWidget.info.maxValue);
+                    generalWidget.actions = targetWidget.actions;
+                    generalWidget.generalType = 'Progress';
+                    generalWidget.subType = 'general';
                     break;
                 default:
-
-
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget
 

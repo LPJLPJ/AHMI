@@ -129,18 +129,18 @@
 
     function Button(x,y,w,h,text,fontStyle,slices) {
         var layerUp = new Layer(0,0,w,h);
-        var colorElems
+        var colorElems;
         layerUp.subLayers.font = new FontSubLayer(text,fontStyle);
         layerUp.subLayers.image =new TextureSubLayer(slices[0].imgSrc);
-        colorElems = parseColor(slices[0].color)
+        colorElems = parseColor(slices[0].color);
         layerUp.subLayers.color = new ColorSubLayer(colorElems);
         var layerDown = new Layer(0,0,w,h);
         layerDown.subLayers.font = new FontSubLayer(text,fontStyle);
         layerDown.subLayers.image =new TextureSubLayer(slices[1].imgSrc);
-        colorElems = parseColor(slices[1].color)
+        colorElems = parseColor(slices[1].color);
         layerDown.subLayers.color = new ColorSubLayer(colorElems);
-        var layers = [layerUp,layerDown]
-        this.subType = 'Button'
+        var layers = [layerUp,layerDown];
+        this.subType = 'Button';
         Widget.call(this,x,y,w,h,layers)
     }
 
@@ -235,7 +235,7 @@
         // var layers = [layerUp,layerDown]
         var sWidth = 0;
         var sHeight = 0;
-        var colorElems
+        var colorElems;
         var layers = [];
         if (align==0) {
                 //hori
@@ -243,15 +243,15 @@
             sHeight = h;
 
             for (var i=0;i<num;i++){
-                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
+                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight);
+                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc);
                 colorElems = parseColor(slices[2*i].color);
-                upLayer.subLayers.color = new ColorSubLayer(colorElems)
-                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
+                upLayer.subLayers.color = new ColorSubLayer(colorElems);
+                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true);
+                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
                 colorElems = parseColor(slices[2*i+1].color);
-                downLayer.subLayers.color = new ColorSubLayer(colorElems)
-                layers.push(upLayer)
+                downLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(upLayer);
                 layers.push(downLayer)
             }
             
@@ -267,7 +267,7 @@
             // }
 
         }
-        this.subType = 'ButtonGroup'
+        this.subType = 'ButtonGroup';
         Widget.call(this,x,y,w,h,layers)
     }
 
@@ -447,7 +447,7 @@
             layerCursor.subLayers.image = new TextureSubLayer(slices[2].imgSrc);
         }
 
-        var layers = [layerBackground,layerProcess,layerCursor];
+        var layers = [layerCursor,layerProcess,layerBackground];
         this.subType = 'Progress';
         Widget.call(this,x,y,w,h,layers);
     }
