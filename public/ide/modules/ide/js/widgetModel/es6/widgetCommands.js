@@ -135,7 +135,6 @@
 
     WidgetCommands['Dashboard'] = {
         onInitialize:`
-            set('this.layers.1.rotateAngle',60)
         `,
         onMouseDown:``,
         onMouseUp:``,

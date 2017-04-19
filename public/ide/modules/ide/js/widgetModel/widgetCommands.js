@@ -30,7 +30,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     WidgetCommands['Dashboard'] = {
-        onInitialize: '\n            set(\'this.layers.1.rotateAngle\',60)\n        ',
+        onInitialize: '\n        ',
         onMouseDown: '',
         onMouseUp: '',
         onTagChange: '\n            var(toffsetValue,0)\n            var(tminValue,0)\n            var(tmaxValue,0)\n            var(tminAngle,0)\n            var(tmaxAngle,0)\n            var(ttagValue,0)\n            var(tangleDist,0)   \n            set(tminValue,\'this.minValue\')\n            set(tmaxValue,\'this.maxValue\')\n            set(tminAngle,\'this.minAngle\')\n            set(tmaxAngle,\'this.maxAngle\')\n            set(tangleDist,tmaxAngle)\n            minus(tangleDist,tminAngle)\n            var(ttempDist,0)\n            set(toffsetValue,\'this.otherAttrs.0\')\n            getTag(ttagValue)\n            set(ttempDist,tmaxValue)\n            minus(ttempDist,tminValue)\n            var(ttagDist,0)\n            set(ttagDist,ttagValue)\n            minus(ttagValue,tminValue)\n            var(tvalueRatio,0)\n            set(tvalueRatio,ttagDist)\n            divide(tvalueRatio,ttempDist)\n            multiply(tvalueRatio,tangleDist)\n            add(tvalueRatio,tminAngle)\n            add(tvalueRatio,45)\n            add(tvalueRatio,toffsetValue)\n            set(\'this.layers.1.rotateAngle\',tvalueRatio)\n\n        '

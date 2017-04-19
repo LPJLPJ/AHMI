@@ -51995,11 +51995,11 @@ module.exports = React.createClass({
         var value = param.value;
         switch (param.type) {
             case 'Int':
-                return parseInt(value);
+                return parseInt(value) || 0;
             case 'String':
                 return "" + value;
             case 'ID':
-                return widget.scope[value];
+                return widget.scope[value] || 0;
             case 'EXP':
                 var variables = value.split('.');
                 var result;
@@ -52014,7 +52014,7 @@ module.exports = React.createClass({
                         // console.log('result',result)
                     }
                 }
-                return result;
+                return result || 0;
         }
     },
     evalVariable: function (widget, v) {
