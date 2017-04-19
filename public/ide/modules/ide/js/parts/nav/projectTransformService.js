@@ -33,7 +33,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 commands[model] = modelCommands;
             }
         }
-        //console.log('registered commands',commands)
+        console.log('registered commands',commands)
         // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
         // testModels.map(function (model) {
         //     //Button
@@ -98,7 +98,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
-        //console.log('targetProject',targetProject);
         return targetProject;
     }
 
@@ -158,6 +157,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     function transWidget(rawWidget,widgetIdx,subLayerIdx){
         var targetWidget = {};
+        var generalWidget = {};
         //targetWidget.id = subLayerIdx+'.'+widgetIdx;
         //targetWidget.type = 'widget';
         //targetWidget.subType = rawWidget.type;
@@ -169,6 +169,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //targetWidget.info = rawWidget.info;
         
         targetWidget = _.cloneDeep(rawWidget);
+        transActions(targetWidget);
+        // console.log(_.cloneDeep(targetWidget))
         //console.log('targetWidget.type',targetWidget.type);
         if (targetWidget.type == 'general'){
             //default Button
@@ -177,14 +179,14 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             var y = info.top;
             var w = info.width;
             var h = info.height;
-            targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
-            targetWidget = targetWidget.toObject();
+            generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
+            generalWidget = generalWidget.toObject();
             
-            targetWidget.generalType = 'Button'
-            targetWidget.id = subLayerIdx+'.'+widgetIdx;
-            targetWidget.type = 'widget';
-            targetWidget.tag = rawWidget.tag;
-            targetWidget.subType = 'general';
+            generalWidget.generalType = 'Button'
+            generalWidget.id = subLayerIdx+'.'+widgetIdx;
+            generalWidget.type = 'widget';
+            generalWidget.tag = rawWidget.tag;
+            generalWidget.subType = 'general';
             // transGeneralWidgetCommands(targetWidget,'onInitialize')
             // console.log(targetWidget)
 
@@ -197,12 +199,13 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             switch(targetWidget.type){
                 case 'MyButton':
 
-                    targetWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
-                    targetWidget = targetWidget.toObject();
-                    targetWidget.generalType = 'Button';
-                    targetWidget.mode = Number(rawWidget.buttonModeId);
-                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
-                    targetWidget.subType = 'general';
+                    generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Button';
+                    generalWidget.mode = Number(rawWidget.buttonModeId);
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions
                 break;
                 case 'MyButtonGroup':
                     //console.log(targetWidget)
@@ -211,13 +214,31 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                         slices.push(tex.slices[0]);
                         slices.push(tex.slices[1])
                     })
-                    targetWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
-                    targetWidget = targetWidget.toObject();
-                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
 
-                    targetWidget.generalType = 'ButtonGroup';
+                    generalWidget.generalType = 'ButtonGroup';
                     // targetWidget.mode = Number(rawWidget.buttonModeId);
-                    targetWidget.subType = 'general';
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions
+                break;
+                case 'MyDashboard':
+                    generalWidget =  new WidgetModel.models['Dashboard'](x,y,w,h,targetWidget.dashboardModeId,targetWidget.texList,targetWidget.info)
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Dashboard';
+                    generalWidget.mode = Number(rawWidget.dashboardModeId);
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+                    //otherAttrs
+                    generalWidget.otherAttrs[0] = info['offsetValue']||0
+                    generalWidget.otherAttrs[1] = Number(info['clockwise'])
+                    generalWidget.actions = targetWidget.actions
                 break;
                 case 'MyProgress':
                     var  slices = [];
@@ -235,18 +256,20 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     targetWidget.subType = 'general';
                     break;
                 default:
-                    console.log('only one',rawWidget.type);
-                    transActions(targetWidget);
+
+
                     targetWidget.subType = rawWidget.type;
-                    
+                    generalWidget = targetWidget
+
 
             }
-            //console.log(_.cloneDeep(targetWidget))
             
             
-            
-            targetWidget.id = subLayerIdx+'.'+widgetIdx;
-            targetWidget.type = 'widget'; 
+
+
+
+            generalWidget.id = subLayerIdx+'.'+widgetIdx;
+            generalWidget.type = 'widget';
             
 
             
@@ -254,7 +277,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
 
 
-        return targetWidget;
+        return generalWidget;
     }
 
     function transGeneralWidgetMultiCommands(widget,mfs) {

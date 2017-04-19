@@ -51912,14 +51912,29 @@ module.exports = React.createClass({
     },
     paintGeneralButton: function (curX, curY, widget, options, cb) {},
     paintGeneralLayer: function (curX, curY, layer) {
+        var offcanvas = this.refs.offcanvas;
+        var offCtx = offcanvas.getContext('2d');
+        var transX, transY;
         if (!layer.hidden) {
             var subLayers = layer.subLayers;
             var baseX = curX + layer.x;
             var baseY = curY + layer.y;
-
-            this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
-            this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
-            this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+            if (!!layer.rotateAngle) {
+                transX = baseX;
+                transY = baseY;
+                offCtx.save();
+                offCtx.translate(transX, transY);
+                offCtx.rotate(layer.rotateAngle / 180.0 * Math.PI);
+                offCtx.translate(-transX, -transY);
+                this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
+                this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
+                this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+                offCtx.restore();
+            } else {
+                this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
+                this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
+                this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+            }
         }
     },
     paintROISL: function (curX, curY, subLayer) {},
@@ -51980,11 +51995,11 @@ module.exports = React.createClass({
         var value = param.value;
         switch (param.type) {
             case 'Int':
-                return parseInt(value);
+                return parseInt(value) || 0;
             case 'String':
                 return "" + value;
             case 'ID':
-                return widget.scope[value];
+                return widget.scope[value] || 0;
             case 'EXP':
                 var variables = value.split('.');
                 var result;
@@ -51999,7 +52014,7 @@ module.exports = React.createClass({
                         // console.log('result',result)
                     }
                 }
-                return result;
+                return result || 0;
         }
     },
     evalVariable: function (widget, v) {
@@ -52141,9 +52156,27 @@ module.exports = React.createClass({
                 mouseV = mouseV == 1 ? 'y' : 'x';
                 this.setByParam(widget, { type: 'ID', value: curInst[1] }, { type: 'Int', value: this.mouseState.position[mouseV] || 0 });
                 break;
+            case 'checkalarm':
+                //checkalarm
+                console.log('alarm', curInst);
+                var curValue = this.getValueByTagName(widget.tag);
+                if (curValue > widget.maxValue) {
+                    curValue = widget.maxValue;
+                }
+                if (curValue < widget.minValue) {
+                    curValue = widget.minValue;
+                }
+
+                var alarmValue = this.shouldHandleAlarmAction(curValue, widget, widget.lowAlarmValue, widget.highAlarmValue);
+                if (alarmValue) {
+                    this.handleTargetAction(widget, alarmValue);
+                }
+
+                break;
             case 'print':
                 console.log('print value: ', this.evalParam(widget, curInst[1]), curInst[2] || '');
                 break;
+
             default:
                 console.log("inst", curInst);
                 break;

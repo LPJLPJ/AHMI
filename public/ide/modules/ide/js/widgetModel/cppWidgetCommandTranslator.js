@@ -191,6 +191,7 @@
             width:'mWDGWidgetWidth',
             height:'mWDGWidgetHeight'
         },
+        oldValue:'mWDGOldValue',
         minValue:'mWDGMinValue',
         maxValue:'mWDGMaxValue',
         lowAlarmValue:'mWDGLowAlarmValue',
@@ -245,7 +246,8 @@
         y:'y',
         width:'mWidth',
         height:'mHeight',
-        hidden:'mHidden'
+        hidden:'mHidden',
+        rotateAngle:'rotateAngle'
     }
 
     var cppSublayerAttrs = [
@@ -1049,6 +1051,9 @@
                     inst = ['OPNOTIM',TempID(command[1].value)]
                 }
                 break;
+            case 'checkalarm':
+                inst = ['OPCHKVALALARM']
+            break;
             default:
                 inst = ['OPNOP']
 

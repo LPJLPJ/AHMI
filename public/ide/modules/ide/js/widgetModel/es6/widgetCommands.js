@@ -167,6 +167,64 @@
             }
         `
     };
+
+    WidgetCommands['Dashboard'] = {
+        onInitialize:`
+        `,
+        onMouseDown:``,
+        onMouseUp:``,
+        onTagChange:`
+            var(toffsetValue,0)
+            var(tminValue,0)
+            var(tmaxValue,0)
+            var(tminAngle,0)
+            var(tmaxAngle,0)
+            var(ttagValue,0)
+            var(tangleDist,0)
+            set(tminValue,'this.minValue')
+            set(tmaxValue,'this.maxValue')
+            set(tminAngle,'this.minAngle')
+            set(tmaxAngle,'this.maxAngle')
+            set(tangleDist,tmaxAngle)
+            minus(tangleDist,tminAngle)
+            var(ttempDist,0)
+            set(toffsetValue,'this.otherAttrs.0')
+            getTag(ttagValue)
+            if (ttagValue>tmaxValue) {
+                set(ttagValue,tmaxValue)
+            }
+            if (ttagValue<tminValue) {
+                set(ttagValue,tminValue)
+            }
+            set(ttempDist,tmaxValue)
+            minus(ttempDist,tminValue)
+            var(ttagDist,0)
+            set(ttagDist,ttagValue)
+            minus(ttagValue,tminValue)
+            var(tvalueRatio,0)
+            set(tvalueRatio,ttagDist)
+            divide(tvalueRatio,ttempDist)
+            multiply(tvalueRatio,tangleDist)
+            add(tvalueRatio,tminAngle)
+            var(tclockwise,0)
+            set(tclockwise,'this.clockwise')
+            if (clockwise==1) {
+                add(tvalueRatio,45)
+                add(tvalueRatio,toffsetValue)
+            }else{
+
+            }
+            set('this.layers.1.rotateAngle',tvalueRatio)
+            checkalarm()
+            set('this.oldValue',ttagValue)
+
+        `
+    }
+
+
+
+
+
     return WidgetCommands;
 
 }));

@@ -34,6 +34,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onMouseDown: '\n            var(a,1)\n        ',
         onTagChange: '\n            var(a,\'this.mode\')\n            if(a==0){\n               var(tag,0)\n               getTag(tag)\n               print(tag)\n               var(min,\'this.minValue\')\n               var(max,\'this.maxValue\')\n               if(tag>=min){\n                   if(tag<=max){\n                      var(v,0)\n                      var(temp1,0)\n                      var(temp2,0)\n                      set(temp1,tag)\n                      set(temp2,max)\n                      minus(temp1,min)\n                      minus(temp2,max)\n                      divide(temp1,temp2)\n                      var(w,\'this.layers.1.width\')\n                      multiply(temp1,w)\n                      print(w)\n                   }\n               }\n            }\n        '
     };
+
+    WidgetCommands['Dashboard'] = {
+        onInitialize: '\n        ',
+        onMouseDown: '',
+        onMouseUp: '',
+        onTagChange: '\n            var(toffsetValue,0)\n            var(tminValue,0)\n            var(tmaxValue,0)\n            var(tminAngle,0)\n            var(tmaxAngle,0)\n            var(ttagValue,0)\n            var(tangleDist,0)   \n            set(tminValue,\'this.minValue\')\n            set(tmaxValue,\'this.maxValue\')\n            set(tminAngle,\'this.minAngle\')\n            set(tmaxAngle,\'this.maxAngle\')\n            set(tangleDist,tmaxAngle)\n            minus(tangleDist,tminAngle)\n            var(ttempDist,0)\n            set(toffsetValue,\'this.otherAttrs.0\')\n            getTag(ttagValue)\n            if (ttagValue>tmaxValue) {\n                set(ttagValue,tmaxValue)\n            }\n            if (ttagValue<tminValue) {\n                set(ttagValue,tminValue)\n            }\n            set(ttempDist,tmaxValue)\n            minus(ttempDist,tminValue)\n            var(ttagDist,0)\n            set(ttagDist,ttagValue)\n            minus(ttagValue,tminValue)\n            var(tvalueRatio,0)\n            set(tvalueRatio,ttagDist)\n            divide(tvalueRatio,ttempDist)\n            multiply(tvalueRatio,tangleDist)\n            add(tvalueRatio,tminAngle)\n            var(tclockwise,0)\n            set(tclockwise,\'this.clockwise\')\n            if (clockwise==1) {\n                add(tvalueRatio,45)\n                add(tvalueRatio,toffsetValue)\n            }else{\n\n            }\n            set(\'this.layers.1.rotateAngle\',tvalueRatio)\n            checkalarm()\n            set(\'this.oldValue\',ttagValue)\n\n        '
+    };
+
     return WidgetCommands;
 });
 
