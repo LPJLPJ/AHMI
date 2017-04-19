@@ -51905,7 +51905,7 @@ module.exports = React.createClass({
     },
     drawGeneralButton: function (curX, curY, widget, options, cb) {},
     paintGeneralWidget: function (curX, curY, widget, options, cb) {
-        for (var i = widget.layers.length - 1; i >= 0; i--) {
+        for (var i = 0; i < widget.layers.length; i++) {
             this.paintGeneralLayer(curX, curY, widget.layers[i]);
         }
         cb && cb();
@@ -51924,17 +51924,56 @@ module.exports = React.createClass({
                 transY = baseY;
                 offCtx.save();
                 offCtx.translate(transX, transY);
-                offCtx.rotate(layer.rotateAngle / 180.0 * Math.PI);
+                offCtx.rotate((layer.rotateAngle + 45) / 180.0 * Math.PI);
                 offCtx.translate(-transX, -transY);
-                this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
-                this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
-                this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+
+                this.paintSubLayers(baseX, baseY, layer.width, layer.height, subLayers);
                 offCtx.restore();
             } else {
-                this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
-                this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
-                this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+                this.paintSubLayers(baseX, baseY, layer.width, layer.height, subLayers);
             }
+        }
+    },
+    paintSubLayers: function (baseX, baseY, width, height, subLayers) {
+        var offcanvas = this.refs.offcanvas;
+        var offCtx = offcanvas.getContext('2d');
+        var hasROI = false;
+        var roi;
+        var p1x, p1y, alpha, beta;
+
+        if (subLayers.roi) {
+            hasROI = true;
+            roi = subLayers.roi;
+            p1x = roi.p1x, p1y = roi.p1y;
+            alpha = roi.alpha;
+            beta = roi.beta;
+        }
+        if (hasROI) {
+            offCtx.save();
+            if (roi.mode == 1) {
+                //ray
+                var lt = Math.pow(p1x, 2) + Math.pow(p1y, 2);
+                var rt = Math.pow(width - p1x, 2) + Math.pow(p1y, 2);
+                var lb = Math.pow(p1x, 2) + Math.pow(height - p1y, 2);
+                var rb = Math.pow(width - p1x, 2) + Math.pow(height - p1y, 2);
+                var longestD = Math.max(lt, rt, lb, rb);
+                longestD = Math.sqrt(longestD);
+                offCtx.beginPath();
+                offCtx.moveTo(baseX + p1x, baseY + p1y);
+                offCtx.arc(baseX + p1x, baseY + p1y, longestD, Math.PI * (alpha + 45) / 180, Math.PI * (beta + 45) / 180);
+                offCtx.closePath();
+                offCtx.clip();
+            } else {
+                //four points
+                console.log('unsupported');
+            }
+        }
+        this.paintColorSL(baseX, baseY, width, height, subLayers.color);
+        this.paintTextureSL(baseX, baseY, width, height, subLayers.image);
+        this.paintFontSL(baseX, baseY, width, height, subLayers.font);
+
+        if (hasROI) {
+            offCtx.restore();
         }
     },
     paintROISL: function (curX, curY, subLayer) {},

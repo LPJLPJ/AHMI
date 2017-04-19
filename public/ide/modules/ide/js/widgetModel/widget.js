@@ -391,7 +391,7 @@
     function Dashboard(x,y,w,h,mode,texList,valueObj) {
         valueObj = valueObj||{}
         var slices
-        var bgLayer,pointerLayer
+        var bgLayer,pointerLayer,lightLayer
         var layers = []
         if (mode == 0) {
             // console.log(slices)
@@ -405,13 +405,25 @@
             pointerLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
             layers.push(bgLayer)
             layers.push(pointerLayer)
+        }else if(mode==1){
+            slices = [texList[0].slices[0],texList[1].slices[0],texList[2].slices[0]]
+            bgLayer = new Layer(0,0,w,h)
+            bgLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+            bgLayer.subLayers.color = new ColorSubLayer(parseColor(slices[0].color))
+            lightLayer = new Layer(0,0,w,h)
+            lightLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc);
+            lightLayer.subLayers.color = new ColorSubLayer(parseColor(slices[2].color))
+            var pointerW = valueObj.pointerLength/Math.sqrt(2)
+            pointerLayer = new Layer(w/2,h/2,pointerW,pointerW)
+            pointerLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc);
+            pointerLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
+            pointerLayer.subLayers.roi = new ROISubLayer(1)
+            layers.push(bgLayer)
+            layers.push(pointerLayer)
+            layers.push(lightLayer)
         }
         Widget.call(this,x,y,w,h,layers)
-        this.mode = mode;
-        var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue'
-        attrs.split(',').forEach(function (attr) {
-            this[attr] = valueObj[attr]||0
-        })
+        
     }
 
     Dashboard.prototype = Object.create(Widget.prototype);

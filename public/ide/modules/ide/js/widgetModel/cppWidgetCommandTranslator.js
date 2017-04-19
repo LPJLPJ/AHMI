@@ -271,7 +271,7 @@
         'SubLayerClassColor':new Attr('SubLayerClassColor',4,3)
     }
 
-    var roiAttrs = ['p1x','p1y','p2x','p2y','p3x','p3y','p4x','p4y','p5x','p5y','p6x','p6y','p7x','p7y','p8x','p8y']
+    var roiAttrs = ['p1x','p1y','p2x','p2y','p3x','p3y','p4x','p4y','p5x','p5y','p6x','p6y','p7x','p7y','p8x','p8y','mode','alpha','beta']
 
     var roiAttrTable = {
         // p1x:new Attr('p1x',1,0),

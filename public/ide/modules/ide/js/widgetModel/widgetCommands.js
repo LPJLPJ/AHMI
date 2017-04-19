@@ -33,61 +33,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onMouseUp: '\n            var(a,1)\n        ',
         onMouseDown: '\n            var(a,1)\n        ',
         onTagChange: '\n            var(a,\'this.mode\')\n            if(a==0){\n               var(tag,0)\n               getTag(tag)\n               var(min,\'this.minValue\')\n               var(max,\'this.maxValue\')\n               if(tag>=min){\n                   if(tag<=max){\n                      var(v,0)\n                      var(temp1,0)\n                      var(temp2,0)\n                      set(temp1,tag)\n                      set(temp2,max)\n                      minus(temp1,min)\n                      minus(temp2,min)\n                      divide(temp1,temp2)\n                      print(temp1)\n                      var(w,\'this.layers.0.width\')\n                      multiply(temp1,w)\n                      print(temp1)\n                      set(\'this.layers.1.hidden\',0)\n                      set(\'this.layers.1.width\',temp1)\n                   }\n               }\n            }\n        '
-    };
-    //
-    //WidgetCommands['Dashboard'] = {
-    //    onInitialize:`
-    //    `,
-    //    onMouseDown:``,
-    //    onMouseUp:``,
-    //    onTagChange:`
-    //        var(toffsetValue,0)
-    //        var(tminValue,0)
-    //        var(tmaxValue,0)
-    //        var(tminAngle,0)
-    //        var(tmaxAngle,0)
-    //        var(ttagValue,0)
-    //        var(tangleDist,0)
-    //        set(tminValue,'this.minValue')
-    //        set(tmaxValue,'this.maxValue')
-    //        set(tminAngle,'this.minAngle')
-    //        set(tmaxAngle,'this.maxAngle')
-    //        set(tangleDist,tmaxAngle)
-    //        minus(tangleDist,tminAngle)
-    //        var(ttempDist,0)
-    //        set(toffsetValue,'this.otherAttrs.0')
-    //        getTag(ttagValue)
-    //        if (ttagValue>tmaxValue) {
-    //            set(ttagValue,tmaxValue)
-    //        }
-    //        if (ttagValue<tminValue) {
-    //            set(ttagValue,tminValue)
-    //        }
-    //        set(ttempDist,tmaxValue)
-    //        minus(ttempDist,tminValue)
-    //        var(ttagDist,0)
-    //        set(ttagDist,ttagValue)
-    //        minus(ttagValue,tminValue)
-    //        var(tvalueRatio,0)
-    //        set(tvalueRatio,ttagDist)
-    //        divide(tvalueRatio,ttempDist)
-    //        multiply(tvalueRatio,tangleDist)
-    //        add(tvalueRatio,tminAngle)
-    //        var(tclockwise,0)
-    //        set(tclockwise,'this.clockwise')
-    //        if (clockwise==1) {
-    //            add(tvalueRatio,45)
-    //            add(tvalueRatio,toffsetValue)
-    //        }else{
-    //
-    //        }
-    //        set('this.layers.1.rotateAngle',tvalueRatio)
-    //        checkalarm()
-    //        set('this.oldValue',ttagValue)
-    //
-    //    `
-    //}
 
+    WidgetCommands['Dashboard'] = {
+        onInitialize: '\n        ',
+        onMouseDown: '',
+        onMouseUp: '',
+        onTagChange: '\n            var(toffsetValue,0)\n            var(tminValue,0)\n            var(tmaxValue,0)\n            var(tminAngle,0)\n            var(tmaxAngle,0)\n            var(ttagValue,0)\n            var(tangleDist,0)   \n            set(tminValue,\'this.minValue\')\n            set(tmaxValue,\'this.maxValue\')\n            set(tminAngle,\'this.minAngle\')\n            set(tmaxAngle,\'this.maxAngle\')\n            set(tangleDist,tmaxAngle)\n            minus(tangleDist,tminAngle)\n            var(ttempDist,0)\n            set(toffsetValue,\'this.otherAttrs.0\')\n            getTag(ttagValue)\n            if (ttagValue>tmaxValue) {\n                set(ttagValue,tmaxValue)\n            }\n            if (ttagValue<tminValue) {\n                set(ttagValue,tminValue)\n            }\n            set(ttempDist,tmaxValue)\n            minus(ttempDist,tminValue)\n            var(ttagDist,0)\n            set(ttagDist,ttagValue)\n            minus(ttagValue,tminValue)\n            var(tvalueRatio,0)\n            set(tvalueRatio,ttagDist)\n            divide(tvalueRatio,ttempDist)\n            multiply(tvalueRatio,tangleDist)\n            add(tvalueRatio,tminAngle)\n            var(tclockwise,0)\n            var(tStartAngle,0)\n            set(tclockwise,\'this.otherAttrs.1\')\n            if (clockwise==1) {\n\n                add(tvalueRatio,toffsetValue)\n                add(tStartAngle,toffsetValue)\n            }else{\n                var(uValueRatio,0)\n                minus(uValueRatio,tvalueRatio)\n                minus(uValueRatio,toffsetValue)\n                set(tvalueRatio,uValueRatio)\n                minus(tStartAngle,toffsetValue)\n            }\n            set(\'this.layers.1.rotateAngle\',tvalueRatio)\n            checkalarm(0)\n            set(\'this.oldValue\',ttagValue)\n\n        '
+    };
 
     return WidgetCommands;
 });
