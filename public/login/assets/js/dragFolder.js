@@ -2,15 +2,25 @@
  * Created by lixiang on 2017/3/30.
  */
 (function(){
+    var local = false;
+    try {
+        var os = require('os');
+        if (os){
+            local = true;
+            //console.log('os',os);
+        }
+    }catch (e){
+
+    }
     var formData = new FormData();
     var project;
     if(window.File&&window.FileList&&window.FileReader){
-        console.log('support File API congratulations!!');
+        console.log('support File API congratulations!');
         init();
     }
     function init(){
         //var filedrag = document.getElementById('filedrag');
-        var filedrag = document.getElementsByTagName('body')[0];
+        var filedrag = document.getElementById('filedrag');
         filedrag.addEventListener('dragover', FileDragHover, false);
         filedrag.addEventListener('dragleave',FileDragHover,false);
         filedrag.addEventListener('drop',FileDrop,false);
@@ -18,13 +28,15 @@
         var confirmReleaseBtnNode = $("#confirmReleaseBtn");
         confirmReleaseBtnNode.off('click');
         confirmReleaseBtnNode.on('click',function(e){
-            sendFiles(hideWrapper);
             $('#uploadModal').modal('hide');
+            sendFiles(hideWrapper);
         });
         var cancelReleaseBtnNode = $('#cancelReleaseBtn');
         cancelReleaseBtnNode.off('click');
         cancelReleaseBtnNode.on('click',function(e){
-           hideWrapper();
+            formData = new FormData();
+            project = null;
+            hideWrapper();
         });
 
     }
@@ -32,38 +44,42 @@
     function FileDragHover(e){
         e.stopPropagation();
         e.preventDefault();
-        //console.log(e.type);
-        //e.target.className = (e.type=='dragover'?'hover':'');
+        filedrag.className = (e.type=='dragover'?'hover':'');
     }
 
     function FileDrop(e){
         e.preventDefault();
-        showWrapper();
-        changeUpdateState('正在预处理工程...',100);
-        if(!isDropFileIsFolder(e)){
-            hideWrapper();
-            toastr.error('不合法的工程');
-            return
-        }
-        var items = e.dataTransfer.items;
-        for(var i=0;i<items.length;i++){
-            //webkitGetAsEntry is the key point
-            var item = items[i].webkitGetAsEntry();
-            if(item){
-                var fcb = function(){
-                    hideWrapper();
-                    toastr.error('不合法的工程');
-                    legal = false;
-                };
-                var scb = function(item){
-                    traverseFileTree(item);
-                    setTimeout(function(){
-                        //hideWrapper();
-                        $('#uploadModal').modal('show');
-                    },1000);
-                };
-                readJSONFile(item,scb,fcb);
+        filedrag.className = '';
+        if(local){
 
+        }else{
+            showWrapper();
+            changeUpdateState('正在预处理工程...',100);
+            if(!isDropFileIsFolder(e)){
+                hideWrapper();
+                toastr.error('不合法的工程');
+                return
+            }
+            var items = e.dataTransfer.items;
+            for(var i=0;i<items.length;i++){
+                //webkitGetAsEntry is the key point
+                var item = items[i].webkitGetAsEntry();
+                if(item){
+                    var fcb = function(){
+                        hideWrapper();
+                        toastr.error('不合法的工程');
+                        legal = false;
+                    };
+                    var scb = function(item){
+                        traverseFileTree(item);
+                        setTimeout(function(){
+                            //hideWrapper();
+                            $('#uploadModal').modal({backdrop:'static',keyboard:false});
+
+                        },500);
+                    };
+                    readJSONFile(item,scb,fcb);
+                }
             }
         }
         return false;
@@ -80,27 +96,36 @@
         var path = path||'';
         if(item.isFile){
             item.file(function(file){
+                console.log('file.name',file.name);
                 if(!!(file.name.match(/(jpeg|png|ttf|jpg)/))){
                     if(file.name==='thumbnail.jpg'){
                         var fileReader = new FileReader();
                         fileReader.onload = function(e){
                             project.thumbnail = e.target.result;
-                            //formData.append('project',JSON.stringify(project));
                         };
                         fileReader.readAsDataURL(file);
                     }else{
-                        //console.log('filename',file.name);
                         formData.append('/'+path,file);
                     }
                 }
             });
         }else if(item.isDirectory){
             var dirReader = item.createReader();
-            dirReader.readEntries(function(entries){
-                for(var i=0;i<entries.length;i++){
-                    traverseFileTree(entries[i],path+item.name+"/");
-                }
-            });
+            var readDir = function(){
+                dirReader.readEntries(function(entries){
+                    if(entries.length){
+                        readDir();
+                        console.log('entries.length',entries.length);
+                        for(var i=0;i<entries.length;i++){
+                            traverseFileTree(entries[i],path+item.name+"/");
+                        }
+                    }else{
+                        return;
+                    }
+
+                });
+            };
+            readDir();
         }
     }
 
@@ -227,5 +252,6 @@
             }
         }
     }
+
 
 })();

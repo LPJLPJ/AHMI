@@ -50,6 +50,9 @@ router.route('/releases/updapp/win/updFiles.zip')
 //upload local project
 router.route('/upload/project')
     .post(localIDEService.uploadProject);
+//return user type
+router.route('/user/checkUserType')
+    .post(localIDEService.returnUserType);
 
 //blog
 var BlogRoute = require('./routeBlog');
@@ -347,12 +350,21 @@ router.route('/blog/resources/deleteresource')
 router.route('/blog/*')
     .get(BlogRoute.getIndex)
 
+//comment
+router.route('/blog/post/comment')
+    .post(BlogRoute.postComment);
+router.route('/blog/post/deleteComment')
+    .delete(BlogRoute.deleteComment);
 
+//download pcclient
 router.route('/download/index.html')
     .get(DownloadRouter.getDownloadPage)
 
 router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
+
+
+
 
 
 //router.route('*')

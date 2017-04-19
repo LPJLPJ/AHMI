@@ -22,14 +22,37 @@
     <% include header.html %>
 </header>
 <div class="main-container">
-    <div class="blog-wrapper">
-        <div class="blog-info">
+    <div class="box box-widget">
+        <div class="box-header">
             <div class="blog-panel">
                 <div class="blog-panel-title"></div>
                 <div class="blog-panel-keywords"></div>
             </div>
         </div>
-        <div class="note-editable panel-body main-content"></div>
+        <div class="box-body" id="blogContent">
+            <div class="note-editable panel-body main-content"></div>
+        </div>
+        <!--<div class="box-footer">-->
+            <!--<div class="comment-text">-->
+                <!--<span class="username">-->
+                    <!--qqwedcrrrr-->
+                    <!--<span class="text-muted pull-right">8:03 PM Today</span>-->
+                <!--</span>-->
+                <!--<p>这个blog真好玩</p>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="box-body" id="submitComment">
+            <form method="post" id="commentForm">
+                <!--<span>-->
+                <!--<input class="form-control input" placeholder="请输入评论" type="text">-->
+                <!--<button class="btn btn-default xs" type="button">发送</button>-->
+                <!--</span>-->
+                <textarea name="comment" class="form-control" rows="3"  placeholder="Leave a Replay"></textarea>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-default btn-sm">提交评论</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <footer>
@@ -38,6 +61,7 @@
 
 </div>
 
+<script src="../../public/blog/libs/ejs_production.js"></script>
 <script src="../../public/blog/js/post.js"></script>
 </body>
 </html>

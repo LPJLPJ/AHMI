@@ -10,7 +10,6 @@ var UserModel = require('./db/models/UserModel');
 var dbConfig = require('./db/config/config');
 //logger
 var logger = require('morgan');
-
 //Captcha
 var CaptchaGenerator = require('./utils/CaptchaGenerator');
 //Session

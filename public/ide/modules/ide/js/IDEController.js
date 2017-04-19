@@ -115,33 +115,22 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     }
 
     function readUserType(){
-        //var url = window.location.href;
-        //var url_splices = url.split('/');
-        //var id = '';
-        //for (var i=0;i<url_splices.length;i++){
-        //    if (url_splices[i] == 'project'){
-        //        id = url_splices[i+1]
-        //        //console.log(id)
-        //        break
-        //    }
-        //}
-        //if(window.local){
-        //    UserTypeService.setUserType(false);
-        //}else{
-        //    $http({
-        //        method:'GET',
-        //        url:baseUrl+'/project/'+id+'/userType'
-        //    }).success(function(data){
-        //        UserTypeService.setUserType(data);
-        //    }).error(function(err){
-        //    })
-        //}
+        var userType = 'basic';
         if(window.local){
-            UserTypeService.setUserType('basic');
+            var userInfoUrl = path.join(__dirname,'public','nw','userInfo.json');
+            var userInfo = {
+                name:'',
+                type:'basic'
+            };
+            if(!fs.existsSync(userInfoUrl)){
+                fs.writeFileSync(userInfoUrl,JSON.stringify(userInfo));
+            }
+            var data = JSON.parse(fs.readFileSync(userInfoUrl,'utf-8'));
+            userType = data.type;
         }else{
-            var userType=localStorage.getItem('userType');
-            UserTypeService.setUserType(userType);
+            userType=localStorage.getItem('userType');
         }
+        UserTypeService.setUserType(userType);
     }
 
     function readLocalProjectData() {
