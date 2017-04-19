@@ -387,6 +387,49 @@
     ]
 
 
+    //progress
+    function Progress(x,y,w,h,cursor,slices){
+        var layerBackground = new Layer(0,0,w,y);
+        var layerProcess = new Layer(0,0,w,y);
+        var layerCursor = new Layer(0,0,w,y);
+        var colorElems;
+
+        //background
+        colorElems = parseColor(slices[0].color);
+        layerBackground.subLayers.color = new ColorSubLayer(colorElems);
+        layerBackground.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+
+        //progress
+        colorElems = parseColor(slices[1].color);
+        layerProcess.subLayers.color = new ColorSubLayer(colorElems);
+        layerProcess.subLayers.image = new TextureSubLayer(slices[1].imgSrc);
+
+        //cursor
+        if(cursor=='1'){
+            layerCursor.subLayers.image = new TextureSubLayer(slices[2].imgSrc);
+        }
+
+        var layers = [layerBackground,layerProcess,layerCursor];
+        this.subType = 'Progress';
+        Widget.call(this,x,y,w,h,layers);
+    }
+
+    Progress.prototype = Object.create(Widget.prototype);
+    Progress.prototype.constructor = Progress;
+    Progress.prototype.commands.onInitialize = [
+        ['temp','a',new Param(Int,0)]
+    ];
+    Progress.prototype.commands.onMouseDown = [
+        ['temp','a',new Param(Int,0)]
+    ];
+    Progress.prototype.commands.onMouseUp = [
+        ['temp','a',new Param(Int,0)]
+    ];
+    Progress.prototype.commands.onTagChange = [
+        ['temp','a',new Param(Int,0)]
+    ];
+
+
     var WidgetCommandParser = {};
     var scope = {}
     WidgetCommandParser.transCommand = function (ctx,command) {
@@ -713,6 +756,7 @@
 
     WidgetModel.models.Button = Button;
     WidgetModel.models.ButtonGroup = ButtonGroup;
+    WidgetModel.models.Progress = Progress;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

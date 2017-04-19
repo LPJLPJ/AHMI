@@ -23,7 +23,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var models = WidgetModel.models;
         var testModels = _.cloneDeep(WidgetCommands);
 
-        console.log('models',models);
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
@@ -34,7 +33,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 commands[model] = modelCommands;
             }
         }
-        console.log('registered commands',commands)
+        //console.log('registered commands',commands)
         // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
         // testModels.map(function (model) {
         //     //Button
@@ -99,6 +98,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
+        //console.log('targetProject',targetProject);
         return targetProject;
     }
 
@@ -169,6 +169,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         //targetWidget.info = rawWidget.info;
         
         targetWidget = _.cloneDeep(rawWidget);
+        //console.log('targetWidget.type',targetWidget.type);
         if (targetWidget.type == 'general'){
             //default Button
             var info = targetWidget.info;
@@ -206,8 +207,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 case 'MyButtonGroup':
                     //console.log(targetWidget)
                     var slices = [];
-                   targetWidget.texList.map(function (tex) {
-                        slices.push(tex.slices[0])
+                    targetWidget.texList.map(function (tex) {
+                        slices.push(tex.slices[0]);
                         slices.push(tex.slices[1])
                     })
                     targetWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
@@ -218,7 +219,19 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     // targetWidget.mode = Number(rawWidget.buttonModeId);
                     targetWidget.subType = 'general';
                 break;
+                case 'MyProgress':
+                    var  slices = [];
+                    targetWidget.texList.map(function(tex){
+                        slices.push(tex.slices[0]);
+                    });
+                    targetWidget = new  WidgetModel.models['Progress'](x,y,w,h,targetWidget.info.cursor,slices);
+                    targetWidget = targetWidget.toObject();
+                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
+                    targetWidget.generalType = 'Progress';
+                    targetWidget.subType = 'general';
+                    break;
                 default:
+                    console.log('only one',rawWidget.type);
                     transActions(targetWidget);
                     targetWidget.subType = rawWidget.type;
                     

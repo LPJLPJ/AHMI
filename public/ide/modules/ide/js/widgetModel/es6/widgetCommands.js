@@ -14,7 +14,6 @@
     var WidgetCommands = {};
     WidgetCommands['Button'] = {
         onInitialize:`
-
             var(a,'this.mode')
             set(a,3)
             if(a>=100){
@@ -130,6 +129,20 @@
                 }
             }
 
+        `
+    };
+    WidgetCommands['Progress'] = {
+        onInitialize:`
+            var(a,'this.mode')
+        `,
+        onMouseUp:`
+            var(a,1)
+        `,
+        onMouseDown:`
+            var(a,1)
+        `,
+        onTagChange:`
+            var(a,1)
         `
     };
     return WidgetCommands;
