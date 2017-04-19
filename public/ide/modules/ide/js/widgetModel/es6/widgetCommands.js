@@ -26,8 +26,8 @@
         onMouseDown:`
             var(b,'this.mode')
             if(b==0){
-                set('this.layers.0.hidden',1)
-                set('this.layers.1.hidden',0)
+                set('this.layers.0.hidden',0)
+                set('this.layers.1.hidden',1)
                 setTag(0)
             }else{
                 var(c,0)
@@ -42,8 +42,8 @@
         onMouseUp:`
             var(b,'this.mode')
             if(b==0){
-                set('this.layers.0.hidden',0)
-                set('this.layers.1.hidden',1)
+                set('this.layers.0.hidden',1)
+                set('this.layers.1.hidden',0)
                 setTag(12)
             }
         `,
@@ -53,11 +53,11 @@
             getTag(a)
             if(b==1){
                 if(a>0){
-                    set('this.layers.0.hidden',1)
-                    set('this.layers.1.hidden',0)
-                }else{
                     set('this.layers.0.hidden',0)
                     set('this.layers.1.hidden',1)
+                }else{
+                    set('this.layers.0.hidden',1)
+                    set('this.layers.1.hidden',0)
                 }
             }
         `
@@ -116,17 +116,17 @@
             divide(c,2)
             while(a>0){
                 minus(a,1)
-                set('this.layers.a.hidden',1)
-                minus(a,1)
                 set('this.layers.a.hidden',0)
+                minus(a,1)
+                set('this.layers.a.hidden',1)
             }
             getTag(a)
             if(a>=0){
                 if(c>a){
                     multiply(a,2)
-                    set('this.layers.a.hidden',1)
-                    add(a,1)
                     set('this.layers.a.hidden',0)
+                    add(a,1)
+                    set('this.layers.a.hidden',1)
                 }
             }
 
@@ -190,9 +190,53 @@
             set('this.oldValue',ttagValue)
 
         `
-    }
+    };
 
-
+    WidgetCommands['Progress'] = {
+        onInitialize:`
+            var(mod,'this.mode')
+            var(cur,'this.cursor')
+            set('this.layers.0.hidden',0)
+            set('this.layers.1.hidden',0)
+            if(cur==1){
+                set('this.layers.2.hidden',0)
+            }
+            set('this.layers.1.width',0)
+        `,
+        onMouseUp:`
+            var(a,1)
+        `,
+        onMouseDown:`
+            var(a,1)
+        `,
+        onTagChange:`
+            var(a,'this.mode')
+            if(a==0){
+               var(tag,0)
+               getTag(tag)
+               var(min,'this.minValue')
+               var(max,'this.maxValue')
+               if(tag>=min){
+                   if(tag<=max){
+                      var(v,0)
+                      var(temp1,0)
+                      var(temp2,0)
+                      set(temp1,tag)
+                      set(temp2,max)
+                      minus(temp1,min)
+                      minus(temp2,min)
+                      divide(temp1,temp2)
+                      print(temp1)
+                      var(w,'this.layers.0.width')
+                      multiply(temp1,w)
+                      print(temp1)
+                      set('this.layers.1.hidden',0)
+                      set('this.layers.1.width',temp1)
+                   }
+               }
+            }
+        `
+    };
 
 
 

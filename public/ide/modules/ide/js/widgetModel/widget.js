@@ -139,7 +139,7 @@
         layerDown.subLayers.image =new TextureSubLayer(slices[1].imgSrc);
         colorElems = parseColor(slices[1].color);
         layerDown.subLayers.color = new ColorSubLayer(colorElems);
-        var layers = [layerUp,layerDown];
+        var layers = [layerDown,layerUp];
         this.subType = 'Button';
         Widget.call(this,x,y,w,h,layers)
     }
@@ -251,8 +251,8 @@
                 downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
                 colorElems = parseColor(slices[2*i+1].color);
                 downLayer.subLayers.color = new ColorSubLayer(colorElems);
-                layers.push(upLayer);
                 layers.push(downLayer)
+                layers.push(upLayer);
             }
             
         }else{
@@ -459,7 +459,7 @@
             layerCursor.subLayers.image = new TextureSubLayer(slices[2].imgSrc);
         }
 
-        var layers = [layerCursor,layerProcess,layerBackground];
+        var layers = [layerBackground,layerProcess,layerCursor];
         this.subType = 'Progress';
         Widget.call(this,x,y,w,h,layers);
     }
