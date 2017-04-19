@@ -38,17 +38,20 @@
     }
 
 //roi
-    function ROISubLayer(p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y) {
+    function ROISubLayer(mode,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,alpha,beta) {
         SubLayer.call(this)
-        this.p1x = p1x;
-        this.p1y = p1y;
+        this.p1x = p1x||0;
+        this.p1y = p1y||0;
 
-        this.p2x = p2x;
-        this.p2y = p2y;
-        this.p3x = p3x;
-        this.p3y = p3y;
-        this.p4x = p4y;
-        this.p4y = p4y;
+        this.p2x = p2x||0;
+        this.p2y = p2y||0;
+        this.p3x = p3x||0;
+        this.p3y = p3y||0;
+        this.p4x = p4y||0;
+        this.p4y = p4y||0;
+        this.mode = mode||0 // four points
+        this.alpha = alpha ||0
+        this.beta = beta || 0
     }
 
 

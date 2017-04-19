@@ -172,15 +172,21 @@
             multiply(tvalueRatio,tangleDist)
             add(tvalueRatio,tminAngle)
             var(tclockwise,0)
-            set(tclockwise,'this.clockwise')
+            var(tStartAngle,0)
+            set(tclockwise,'this.otherAttrs.1')
             if (clockwise==1) {
-                add(tvalueRatio,45)
-                add(tvalueRatio,toffsetValue)
-            }else{
 
+                add(tvalueRatio,toffsetValue)
+                add(tStartAngle,toffsetValue)
+            }else{
+                var(uValueRatio,0)
+                minus(uValueRatio,tvalueRatio)
+                minus(uValueRatio,toffsetValue)
+                set(tvalueRatio,uValueRatio)
+                minus(tStartAngle,toffsetValue)
             }
             set('this.layers.1.rotateAngle',tvalueRatio)
-            checkalarm()
+            checkalarm(0)
             set('this.oldValue',ttagValue)
 
         `
