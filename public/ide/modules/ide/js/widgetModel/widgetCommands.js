@@ -32,7 +32,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onInitialize: '\n            var(a,\'this.mode\')\n        ',
         onMouseUp: '\n            var(a,1)\n        ',
         onMouseDown: '\n            var(a,1)\n        ',
-        onTagChange: '\n            var(a,1)\n        '
+        onTagChange: '\n            var(a,\'this.mode\')\n            if(a==0){\n               var(tag,0)\n               getTag(tag)\n               print(tag)\n               var(min,\'this.minValue\')\n               var(max,\'this.maxValue\')\n               if(tag>=min){\n                   if(tag<=max){\n                      var(v,0)\n                      var(temp1,0)\n                      var(temp2,0)\n                      set(temp1,tag)\n                      set(temp2,max)\n                      minus(temp1,min)\n                      minus(temp2,max)\n                      divide(temp1,temp2)\n                      var(w,\'this.layers.1.width\')\n                      multiply(temp1,w)\n                      print(w)\n                   }\n               }\n            }\n        '
     };
     return WidgetCommands;
 });

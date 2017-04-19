@@ -227,6 +227,10 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     targetWidget = new  WidgetModel.models['Progress'](x,y,w,h,targetWidget.info.cursor,slices);
                     targetWidget = targetWidget.toObject();
                     targetWidget.tag = _.cloneDeep(rawWidget.tag);
+                    targetWidget.mode= Number(rawWidget.info.progressModeId);
+                    targetWidget.minValue = Number(rawWidget.info.minValue);
+                    targetWidget.maxValue = Number(rawWidget.info.maxValue);
+                    console.log('targetWidget.mode',targetWidget.mode);
                     targetWidget.generalType = 'Progress';
                     targetWidget.subType = 'general';
                     break;

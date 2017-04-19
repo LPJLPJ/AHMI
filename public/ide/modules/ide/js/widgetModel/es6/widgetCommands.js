@@ -142,7 +142,29 @@
             var(a,1)
         `,
         onTagChange:`
-            var(a,1)
+            var(a,'this.mode')
+            if(a==0){
+               var(tag,0)
+               getTag(tag)
+               print(tag)
+               var(min,'this.minValue')
+               var(max,'this.maxValue')
+               if(tag>=min){
+                   if(tag<=max){
+                      var(v,0)
+                      var(temp1,0)
+                      var(temp2,0)
+                      set(temp1,tag)
+                      set(temp2,max)
+                      minus(temp1,min)
+                      minus(temp2,max)
+                      divide(temp1,temp2)
+                      var(w,'this.layers.1.width')
+                      multiply(temp1,w)
+                      print(w)
+                   }
+               }
+            }
         `
     };
     return WidgetCommands;
