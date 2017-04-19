@@ -245,7 +245,8 @@
         y:'y',
         width:'mWidth',
         height:'mHeight',
-        hidden:'mHidden'
+        hidden:'mHidden',
+        rotateAngle:'rotateAngle'
     }
 
     var cppSublayerAttrs = [

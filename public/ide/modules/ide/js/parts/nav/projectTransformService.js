@@ -158,6 +158,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     function transWidget(rawWidget,widgetIdx,subLayerIdx){
         var targetWidget = {};
+        var generalWidget = {};
         //targetWidget.id = subLayerIdx+'.'+widgetIdx;
         //targetWidget.type = 'widget';
         //targetWidget.subType = rawWidget.type;
@@ -217,6 +218,23 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     targetWidget.generalType = 'ButtonGroup';
                     // targetWidget.mode = Number(rawWidget.buttonModeId);
                     targetWidget.subType = 'general';
+                break;
+                case 'MyDashboard':
+                    targetWidget =  new WidgetModel.models['Dashboard'](x,y,w,h,targetWidget.dashboardModeId,targetWidget.texList,targetWidget.info)
+                    targetWidget = targetWidget.toObject();
+                    targetWidget.generalType = 'Dashboard';
+                    targetWidget.mode = Number(rawWidget.dashboardModeId);
+                    targetWidget.tag = _.cloneDeep(rawWidget.tag);
+                    targetWidget.subType = 'general';
+                    //additional attrs
+                    console.log('info',info)
+                    var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        targetWidget[attr] = info[attr]||0
+                    })
+                    //otherAttrs
+                    targetWidget.otherAttrs[0] = info['offsetValue']||0
+                    console.log('targetWidget',targetWidget)
                 break;
                 default:
                     transActions(targetWidget);

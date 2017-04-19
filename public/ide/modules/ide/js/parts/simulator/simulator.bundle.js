@@ -51912,14 +51912,29 @@ module.exports = React.createClass({
     },
     paintGeneralButton: function (curX, curY, widget, options, cb) {},
     paintGeneralLayer: function (curX, curY, layer) {
+        var offcanvas = this.refs.offcanvas;
+        var offCtx = offcanvas.getContext('2d');
+        var transX, transY;
         if (!layer.hidden) {
             var subLayers = layer.subLayers;
             var baseX = curX + layer.x;
             var baseY = curY + layer.y;
-
-            this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
-            this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
-            this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+            if (!!layer.rotateAngle) {
+                transX = baseX;
+                transY = baseY;
+                offCtx.save();
+                offCtx.translate(transX, transY);
+                offCtx.rotate(layer.rotateAngle / 180.0 * Math.PI);
+                offCtx.translate(-transX, -transY);
+                this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
+                this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
+                this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+                offCtx.restore();
+            } else {
+                this.paintColorSL(baseX, baseY, layer.width, layer.height, subLayers.color);
+                this.paintTextureSL(baseX, baseY, layer.width, layer.height, subLayers.image);
+                this.paintFontSL(baseX, baseY, layer.width, layer.height, subLayers.font);
+            }
         }
     },
     paintROISL: function (curX, curY, subLayer) {},

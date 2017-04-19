@@ -27,6 +27,7 @@
         this.y = y||0;
         this.width = w||0;
         this.height = h||0;
+        this.rotateAngle = 0;
         this.hidden = hidden||false;
         this.validSubLayer = validSubLayer||7;//0111
     }

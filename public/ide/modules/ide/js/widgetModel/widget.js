@@ -37,6 +37,7 @@
         this.tag = 'defaultTag'
         this.type = 'general'
         this.mode = 0
+        this.otherAttrs = []
         if (!layers||!layers.length){
             this.layers= [new Layer(w,h)]
         }else{
@@ -54,7 +55,8 @@
             },
             mode:this.mode,
             tag:this.tag,
-            layers:this.layers
+            layers:this.layers,
+            otherAttrs:this.otherAttrs
             // onInitialize:this.onInitialize,
             // onMouseDown:this.onMouseDown,
             // onMouseUp:this.onMouseUp
@@ -386,6 +388,43 @@
         
     ]
 
+    //minAngle,maxAngle,minValue,maxValue,lowAlarmValue,maxAlarmValue
+    function Dashboard(x,y,w,h,mode,texList,valueObj) {
+        valueObj = valueObj||{}
+        var slices
+        var bgLayer,pointerLayer
+        var layers = []
+        if (mode == 0) {
+            // console.log(slices)
+            slices = [texList[0].slices[0],texList[1].slices[0]]
+            bgLayer = new Layer(0,0,w,h)
+            bgLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+            bgLayer.subLayers.color = new ColorSubLayer(parseColor(slices[0].color))
+            var pointerW = valueObj.pointerLength/Math.sqrt(2)
+            pointerLayer = new Layer(w/2,h/2,pointerW,pointerW)
+            pointerLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc);
+            pointerLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
+            layers.push(bgLayer)
+            layers.push(pointerLayer)
+        }
+        Widget.call(this,x,y,w,h,layers)
+        this.mode = mode;
+        var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue'
+        attrs.split(',').forEach(function (attr) {
+            this[attr] = valueObj[attr]||0
+        })
+    }
+
+    Dashboard.prototype = Object.create(Widget.prototype);
+    Dashboard.prototype.constructor = Dashboard;
+
+
+
+
+
+
+
+
 
     var WidgetCommandParser = {};
     var scope = {}
@@ -713,6 +752,7 @@
 
     WidgetModel.models.Button = Button;
     WidgetModel.models.ButtonGroup = ButtonGroup;
+    WidgetModel.models.Dashboard = Dashboard;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

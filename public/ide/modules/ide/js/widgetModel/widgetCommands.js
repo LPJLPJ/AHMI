@@ -28,6 +28,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onMouseUp: '\n            var(d,1)\n            set(d,1)\n        ',
         onTagChange: '\n            var(a,0)\n            var(b,0)\n            var(c,0)\n            set(a,\'this.layers.length\')\n            set(c,a)\n            divide(c,2)\n            while(a>0){\n                minus(a,1)\n                set(\'this.layers.a.hidden\',1)\n                minus(a,1)\n                set(\'this.layers.a.hidden\',0)\n            }\n            getTag(a)\n            if(a>=0){\n                if(c>a){\n                    multiply(a,2)\n                    set(\'this.layers.a.hidden\',1)\n                    add(a,1)\n                    set(\'this.layers.a.hidden\',0)\n                }\n            }\n\n        '
     };
+
+    WidgetCommands['Dashboard'] = {
+        onInitialize: '\n            set(\'this.layers.1.rotateAngle\',60)\n        ',
+        onMouseDown: '',
+        onMouseUp: '',
+        onTagChange: '\n            var(toffsetValue,0)\n            var(tminValue,0)\n            var(tmaxValue,0)\n            var(tminAngle,0)\n            var(tmaxAngle,0)\n            var(ttagValue,0)\n            var(tangleDist,0)   \n            set(tminValue,\'this.minValue\')\n            set(tmaxValue,\'this.maxValue\')\n            set(tminAngle,\'this.minAngle\')\n            set(tmaxAngle,\'this.maxAngle\')\n            set(tangleDist,tmaxAngle)\n            minus(tangleDist,tminAngle)\n            var(ttempDist,0)\n            set(toffsetValue,\'this.otherAttrs.0\')\n            getTag(ttagValue)\n            set(ttempDist,tmaxValue)\n            minus(ttempDist,tminValue)\n            var(ttagDist,0)\n            set(ttagDist,ttagValue)\n            minus(ttagValue,tminValue)\n            var(tvalueRatio,0)\n            set(tvalueRatio,ttagDist)\n            divide(tvalueRatio,ttempDist)\n            multiply(tvalueRatio,tangleDist)\n            add(tvalueRatio,tminAngle)\n            add(tvalueRatio,45)\n            add(tvalueRatio,toffsetValue)\n            set(\'this.layers.1.rotateAngle\',tvalueRatio)\n\n        '
+    };
+
     return WidgetCommands;
 });
 
