@@ -311,7 +311,8 @@ module.exports =   React.createClass({
                 transY = baseY
                 offCtx.save()
                 offCtx.translate(transX,transY)
-                offCtx.rotate((layer.rotateAngle+45)/180.0*Math.PI)
+                // console.log('rotateAngle',layer.rotateAngle)
+                offCtx.rotate((layer.rotateAngle)/180.0*Math.PI)
                 offCtx.translate(-transX,-transY)
                 
                 this.paintSubLayers(baseX,baseY,layer.width,layer.height,subLayers)
@@ -353,7 +354,7 @@ module.exports =   React.createClass({
                 longestD = Math.sqrt(longestD)
                 offCtx.beginPath()
                 offCtx.moveTo(baseX+p1x,baseY+p1y)
-                offCtx.arc(baseX+p1x, baseY+p1y,longestD,Math.PI * (alpha+45) / 180, Math.PI * (beta+45) / 180);
+                offCtx.arc(baseX+p1x, baseY+p1y,longestD,Math.PI * (alpha) / 180, Math.PI * (beta) / 180);
                 offCtx.closePath()
                 offCtx.clip()
             }else{
@@ -512,6 +513,7 @@ module.exports =   React.createClass({
             case 'set':
                 // console.log('set ',_.cloneDeep(curInst))
                 this.setByParam(widget,curInst[1],curInst[2])
+                // console.log(widget)
             
                 break;
             case 'get':
@@ -616,6 +618,7 @@ module.exports =   React.createClass({
                 
                 break;
             case 'print':
+                console.log(curInst)
                 console.log('print value: ',this.evalParam(widget,curInst[1]),curInst[2]||'')
                 break;
 

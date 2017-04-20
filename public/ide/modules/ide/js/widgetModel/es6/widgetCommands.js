@@ -174,18 +174,43 @@
             var(tclockwise,0)
             var(tStartAngle,0)
             set(tclockwise,'this.otherAttrs.1')
-            if (clockwise==1) {
-
+            if (tclockwise==1) {
+                add(tvalueRatio,45)
                 add(tvalueRatio,toffsetValue)
                 add(tStartAngle,toffsetValue)
+                add(tStartAngle,90)
             }else{
                 var(uValueRatio,0)
                 minus(uValueRatio,tvalueRatio)
                 minus(uValueRatio,toffsetValue)
                 set(tvalueRatio,uValueRatio)
                 minus(tStartAngle,toffsetValue)
+                add(tStartAngle,90)
+                add(tvalueRatio,45)
             }
+            var(tp1x,0)
+            var(tp1y,0)
+            var(tMode,0)
+            var(talpha,0)
+            var(tbeta,0)
+            set(tMode,'this.mode')
             set('this.layers.1.rotateAngle',tvalueRatio)
+            add(tvalueRatio,45)
+            if (tMode==1) {
+                set(tp1x,'this.layers.1.x')
+                set(tp1y,'this.layers.1.y')
+                set('this.layers.2.subLayers.roi.p1x',tp1x)
+                set('this.layers.2.subLayers.roi.p1y',tp1y)
+                if (tclockwise==1) {
+                    set('this.layers.2.subLayers.roi.alpha',tStartAngle)
+                    set('this.layers.2.subLayers.roi.beta',tvalueRatio)
+                }else{
+                    set('this.layers.2.subLayers.roi.alpha',tvalueRatio)
+                    set('this.layers.2.subLayers.roi.beta',tStartAngle)
+                }
+
+            }
+            
             checkalarm(0)
             set('this.oldValue',ttagValue)
 
