@@ -37,7 +37,7 @@
 "=="                  return '=='
 "="                   return '='
 [0-9]+("."[0-9]+)?\b  return 'NUMBER'
-[a-zA-Z]+([0-9]+)?\b return 'WORD'
+[a-zA-Z]+([a-zA-Z0-9_]+)?\b return 'WORD'
 <<EOF>>               return 'EOF'
 .                     return 'INVALID'
 

@@ -191,6 +191,7 @@
             width:'mWDGWidgetWidth',
             height:'mWDGWidgetHeight'
         },
+        mode:'mWDGMode',
         oldValue:'mWDGOldValue',
         minValue:'mWDGMinValue',
         maxValue:'mWDGMaxValue',
@@ -450,6 +451,7 @@
 
             }
         }
+        throw new Error('unsupported exp '+param.value)
         return null;
     }
 
@@ -459,6 +461,9 @@
 
     function WidgetAttrID(attr) {
         // return attr;
+        if (!cppWidgetAttrsTable[attr]) {
+            console.log('unsupported attr',attr)
+        }
         return cppWidgetAttrsTable[attr].index
     }
 
@@ -527,7 +532,7 @@
                                             inst = ['OPGETWIDOFFSET',TempID(param1.value),1]
                                         break;
                                         default:
-                                            console.log('command',command)
+                                            console.log('command',command,curExp)
                                             inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
                                     }
                     

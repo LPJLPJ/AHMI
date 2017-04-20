@@ -413,11 +413,12 @@
             lightLayer = new Layer(0,0,w,h)
             lightLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc);
             lightLayer.subLayers.color = new ColorSubLayer(parseColor(slices[2].color))
+            lightLayer.subLayers.roi = new ROISubLayer(1)
             var pointerW = valueObj.pointerLength/Math.sqrt(2)
             pointerLayer = new Layer(w/2,h/2,pointerW,pointerW)
             pointerLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc);
             pointerLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
-            pointerLayer.subLayers.roi = new ROISubLayer(1)
+
             layers.push(bgLayer)
             layers.push(pointerLayer)
             layers.push(lightLayer)
