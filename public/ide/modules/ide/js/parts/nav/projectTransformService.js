@@ -240,6 +240,21 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.otherAttrs[1] = Number(info['clockwise'])
                     generalWidget.actions = targetWidget.actions
                 break;
+                case 'MyRotateImg':
+                console.log('RotateImg')
+                    generalWidget =  new WidgetModel.models['RotateImg'](x,y,w,h,targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'RotateImg';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'minValue,maxValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+                    //otherAttrs
+                    generalWidget.actions = targetWidget.actions
+                break;
                 default:
 
                     

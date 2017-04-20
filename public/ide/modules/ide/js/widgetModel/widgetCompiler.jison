@@ -110,6 +110,8 @@ stmt
         {$$={type:'if',args:[$3,$6]};}
     | 'IF' '(' e ')' '{' stmts '}' 'ELSE' '{' stmts '}'
     {$$={type:'if',args:[$3,$6,$10]};}
+    | 'IF' '(' e ')' '{' '}' 'ELSE' '{' stmts '}'
+    {$$={type:'if',args:[$3,[],$9]};}
     | 'WHILE' '(' e ')' '{' stmts '}'
         {$$={type:'while',args:[$3,$6]};}
     | 'WORD' '(' parameters ')'

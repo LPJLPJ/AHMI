@@ -168,8 +168,8 @@
             minus(ttagValue,tminValue)
             var(tvalueRatio,0)
             set(tvalueRatio,ttagDist)
-            divide(tvalueRatio,ttempDist)
             multiply(tvalueRatio,tangleDist)
+            divide(tvalueRatio,ttempDist)
             add(tvalueRatio,tminAngle)
             var(tclockwise,0)
             var(tStartAngle,0)
@@ -235,6 +235,26 @@
             checkalarm(0)
             set('this.oldValue',ttagValue)
 
+        `
+    }
+
+    WidgetCommands['RotateImg'] = {
+        onInitialize:`
+        `,
+        onTagChange:`
+            var(tTagValue,0)
+            getTag(tTagValue)
+            var(tMinAngle,0)
+            var(tMaxAngle,0)
+            set(tMinAngle,'this.minValue')
+            set(tMaxAngle,'this.maxValue')
+            if (tTagValue>tMaxAngle) {
+                set(tTagValue,tMaxAngle)
+            }
+            if(tTagValue<tMinAngle){
+                set(tTagValue,tMinAngle)
+            }
+            set('this.layers.0.rotateAngle',tTagValue)
         `
     }
 
