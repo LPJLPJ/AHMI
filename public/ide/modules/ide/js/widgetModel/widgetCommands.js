@@ -38,7 +38,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     WidgetCommands['RotateImg'] = {
         onInitialize: '\n        ',
-        onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            var(tMinAngle,0)\n            var(tMaxAngle,0)\n            set(tMinAngle,\'this.minValue\')\n            set(tMaxAngle,\'this.maxValue\')\n            if (tTagValue>tMaxAngle) {\n                set(tTagValue,tMaxAngle)\n            }\n            if(tTagValue<tMinAngle){\n                set(tTagValue,tMinAngle)\n            }\n            set(\'this.layers.0.rotateAngle\',tTagValue)\n        '
+        onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            var(tMinAngle,0)\n            var(tMaxAngle,0)\n            set(tMinAngle,\'this.minValue\')\n            set(tMaxAngle,\'this.maxValue\')\n            if (tTagValue>tMaxAngle) {\n                set(tTagValue,tMaxAngle)\n            }\n            if(tTagValue<tMinAngle){\n                set(tTagValue,tMinAngle)\n            }\n            set(\'this.layers.0.x\',tTagValue)\n            set(\'this.layers.0.rotateAngle\',tTagValue)\n        '
     };
 
     return WidgetCommands;

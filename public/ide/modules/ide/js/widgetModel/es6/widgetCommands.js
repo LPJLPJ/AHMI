@@ -254,6 +254,7 @@
             if(tTagValue<tMinAngle){
                 set(tTagValue,tMinAngle)
             }
+            set('this.layers.0.x',tTagValue)
             set('this.layers.0.rotateAngle',tTagValue)
         `
     }
