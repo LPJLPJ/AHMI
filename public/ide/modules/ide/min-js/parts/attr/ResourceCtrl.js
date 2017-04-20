@@ -1,1 +1,111 @@
-ide.controller("ResourceCtrl",["ResourceService","$scope","$timeout","ProjectService","Type","CanvasService","$uibModal",function(e,o,t,n,c,r,l){function i(){o.component={top:{uploadingArray:[],files:[],deleteFile:s,basicUrl:"",resources:[]}},o.component.top.resources=e.getAllResource(),o.component.top.basicUrl=e.getResourceUrl(),o.component.top.maxSize=e.getMaxTotalSize(),o.component.top.files=e.getAllCustomResources(),o.component.top.totalSize=e.getCurrentTotalSize(),o.openPanel=function(e){o.resIndex=e,l.open({animation:!0,templateUrl:"deletePanelModal.html",controller:"deleteResCtrl",size:"sm",resolve:{selectedResIndex:function(){return o.resIndex}}}).result.then(function(e){s(e)})}}function s(t){for(var c=n.getRequiredResourceNames(),r=0;r<c.length;r++)if(o.component.top.files[t].src==c[r])return void toastr.warning("该资源已经被使用");var l=o.component.top.files[t].id;e.deleteFileById(l,function(){o.$emit("ResourceUpdate")}.bind(this))}o.$on("GlobalProjectReceived",function(){i()}),o.$on("ResourceChanged",function(){o.component.top.files=e.getAllCustomResources(),o.component.top.totalSize=e.getCurrentTotalSize(),o.$emit("ChangeCurrentPage")})}]).controller("deleteResCtrl",["$scope","$uibModalInstance","selectedResIndex",function(e,o,t){e.confirm=function(){o.close(t)},e.cancel=function(){o.dismiss("cancel")}}]);
+/**
+ * Created by shenaolin on 16/3/10.
+ */
+ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal', function(ResourceService,$scope,$timeout,
+                                          ProjectService,
+                                          Type,
+                                          CanvasService,$uibModal) {
+    $scope.$on('GlobalProjectReceived', function () {
+
+        initUserInterface();
+
+        initProject();
+
+    });
+
+    $scope.$on('ResourceChanged', function () {
+        $scope.component.top.files = ResourceService.getAllCustomResources();
+        $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
+        $scope.$emit('ChangeCurrentPage');
+    });
+
+    function initUserInterface(){
+
+    }
+
+    function initProject(){
+        $scope.component={
+
+            top: {
+                uploadingArray:[],
+
+                files:[],
+
+                deleteFile:deleteFile,
+                basicUrl:'',
+                resources:[]
+
+            }
+
+        };
+
+        $scope.component.top.resources = ResourceService.getAllResource();
+
+        $scope.component.top.basicUrl = ResourceService.getResourceUrl();
+        $scope.component.top.maxSize = ResourceService.getMaxTotalSize();
+        $scope.component.top.files = ResourceService.getAllCustomResources();
+        $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
+
+
+        
+        
+        /**
+         * 删除资源按钮的弹窗
+         */
+        $scope.openPanel = function(index){
+            $scope.resIndex = index;
+            //利用uibModal制作模态窗口
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'deletePanelModal.html',
+                controller: 'deleteResCtrl',
+                size: 'sm',
+                resolve: {
+                    selectedResIndex:function(){
+                        return $scope.resIndex;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function(index){
+
+                deleteFile(index);
+            })
+
+        }
+    }
+
+
+
+    function deleteFile(index){
+        var requiredResourceNames=ProjectService.getRequiredResourceNames();
+
+        for (var i=0;i<requiredResourceNames.length;i++){
+            if ($scope.component.top.files[index].src==requiredResourceNames[i]){
+                toastr.warning('该资源已经被使用');
+                return;
+            }
+        }
+        var resourceId = $scope.component.top.files[index].id;
+        ResourceService.deleteFileById(resourceId, function () {
+            //$scope.component.top.files = ResourceService.getAllImages();
+            $scope.$emit('ResourceUpdate');
+            
+        }.bind(this));
+        
+
+    }
+
+
+
+}])
+
+    .controller('deleteResCtrl', ['$scope','$uibModalInstance','selectedResIndex',function ($scope, $uibModalInstance, selectedResIndex) {
+        $scope.confirm = function () {
+            $uibModalInstance.close(selectedResIndex);
+        };
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        }
+    }]);
+

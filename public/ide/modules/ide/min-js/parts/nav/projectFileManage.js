@@ -1,1 +1,37 @@
-ideServices.service("ProjectFileManage",["CanvasService","ProjectService","OperateQueService","$http",function(e,o,t,c){this.OpenProject=function(e){e&&e()},this.getAllProjectFile=function(e,o){c({method:"GET",url:baseUrl+"/project",params:{token:window.localStorage.getItem("token")}}).success(function(o){console.log(o),e&&e(o)}).error(function(e){console.log(e),o&&o(e)})},this.getRecentProjectFile=function(e,o){console.log("打开最近"),c({method:"GET",url:baseUrl+"/project/recent",params:{token:window.localStorage.getItem("token")}}).success(function(o){console.log(o),e&&e(o)}).error(function(e){console.log(e),o&&o(e)})}}]);
+
+ideServices.
+service('ProjectFileManage', ['CanvasService','ProjectService','OperateQueService','$http',function (CanvasService,ProjectService,OperateQueService,$http) {
+	this.OpenProject= function (_successCallback) {
+
+		_successCallback&&_successCallback();
+	}
+	
+	this.getAllProjectFile=function (_successCallback, _errCallback) {
+		$http({
+			method:'GET',
+            url:baseUrl+'/project',
+            params:{token:window.localStorage.getItem('token')}
+		}).success(function (result) {
+            console.log(result);
+            _successCallback&&_successCallback(result);
+        }).error(function (err) {
+            console.log(err);
+            _errCallback&&_errCallback(err);
+        })
+	}
+    
+    this.getRecentProjectFile=function (_successCallback, _errCallback) {
+        console.log('打开最近');
+        $http({
+            method:'GET',
+            url:baseUrl+'/project/recent',
+            params:{token:window.localStorage.getItem('token')}
+        }).success(function (result) {
+            console.log(result);
+            _successCallback&&_successCallback(result);
+        }).error(function (err) {
+            console.log(err);
+            _errCallback&&_errCallback(err);
+        })
+    }
+}]);

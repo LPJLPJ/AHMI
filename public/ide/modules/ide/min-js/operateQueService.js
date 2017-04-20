@@ -1,1 +1,92 @@
-ideServices.service("OperateQueService",["$timeout","ProjectService",function(e,t){var n=[],r=[],o={undoEnable:!1,redoEnable:!1};this.getOperateQueStatus=function(){return o={undoEnable:0!=n.length,redoEnable:0!=r.length}},this.pushNewOperate=function(e){n.length>=20&&n.shift(),n.push(e),r=[]},this.undo=function(o,u){if(!this.getOperateQueStatus().undoEnable)return console.warn("无效的撤销,请检查..."),void(u&&u());var a=n[n.length-1];e(function(){t.LoadCurrentOperate(a.undoOperate,function(){r.push(n.pop()),o&&o()},u)})},this.redo=function(o,u){this.getOperateQueStatus().redoEnable||(console.warn("无效的重做,请检查..."),u());var a=r[r.length-1];e(function(){t.LoadCurrentOperate(a.redoOperate,function(){n.push(r.pop()),o&&o()},u)})}}]);
+/**
+ * Created by shenaolin on 16/3/10.
+ */
+ideServices
+    .service('OperateQueService', ['$timeout','ProjectService',function ($timeout,ProjectService) {
+        var historyQue=[];
+        var futureQue=[];
+
+        var MAX_QUE_LEN=20;
+
+        var operateQueStatus={
+            undoEnable:false,
+            redoEnable:false
+        };
+
+        /**
+         * 获得当前操作历史的状态
+         * @returns {{undoEnable: boolean, redoEnable: boolean}}
+         */
+        this.getOperateQueStatus= function () {
+            operateQueStatus={
+                undoEnable:(historyQue.length!=0),
+                redoEnable:(futureQue.length!=0),
+
+            };
+            return  operateQueStatus;
+
+        };
+        /**
+         * 向操作历史中插入一个函数
+         * @param _operates
+         * @returns {{operateQueStatus: {undoEnable, redoEnable}}} 当前操作历史的状态
+         */
+
+        this.pushNewOperate= function (_operates) {
+            if (historyQue.length>=MAX_QUE_LEN){
+                historyQue.shift();
+            }
+            historyQue.push(_operates);
+            futureQue=[];
+
+        }
+
+        /**
+         * 从历史操作中撤销
+         */
+        this.undo= function (_successCallback,_errCallback) {
+            if (!this.getOperateQueStatus().undoEnable){
+                console.warn('无效的撤销,请检查...');
+                _errCallback&&_errCallback();
+                return;
+            }
+
+            var topOperates=historyQue[historyQue.length-1];
+
+            $timeout(function () {
+                ProjectService.LoadCurrentOperate(topOperates.undoOperate, function () {
+                    futureQue.push(historyQue.pop());
+                    _successCallback&&_successCallback();
+
+                },_errCallback);
+            })
+
+
+        };
+
+        /**
+         * 重做前一个被撤销的操作
+         * @returns {{func: *, operateQueStatus: {undoEnable, redoEnable}}}
+         */
+        this.redo= function (_successCallback,_errCallback) {
+            if (!this.getOperateQueStatus().redoEnable){
+                console.warn('无效的重做,请检查...');
+                _errCallback();
+
+            }
+            var topOperates=futureQue[futureQue.length-1];
+
+            $timeout(function () {
+                ProjectService.LoadCurrentOperate(topOperates.redoOperate, function () {
+                    historyQue.push(futureQue.pop());
+
+                    _successCallback&&_successCallback();
+                },_errCallback);
+            })
+
+
+        }
+
+
+
+    }])

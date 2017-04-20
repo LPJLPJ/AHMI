@@ -1,1 +1,108 @@
-ide.controller("ProjectFileCtrl",["$scope","$timeout","$uibModal","$log",function(e,t,n,o){function i(){e.items=["http://i13.tietuku.cn/c2f97e2245d519e0.jpg","http://i13.tietuku.cn/05910ed1cab0abfe.jpg","http://i13.tietuku.cn/ac9b0472df29b450.jpg"],e.projects=[],e.dataGetted=!1,e.num=1}function c(){e.animationsEnabled=!0,e.open=function(t){n.open({animation:e.animationsEnabled,templateUrl:"projectFile.html",controller:"ProjectFileInstanceCtrl",resolve:{items:function(){return e.items},isRecent:function(){return t}}}).result.then(function(t){e.selected=t},function(){o.info("Modal dismissed at: "+new Date)})}}e.$on("GlobalProjectReceived",function(){i(),c(),e.$emit("LoadUp")})}]).controller("ProjectFileInstanceCtrl",["$scope","ProjectService","ProjectFileManage","$uibModalInstance","items","isRecent","$timeout",function(e,t,n,o,i,c,l){console.log("打开项目"),e.items=i,console.log(c),e.selected={item:null},e.isStartDownloaded=!1,e.downloadProgress={value:100,max:300},e.downloading={item:null},e.changeState=function(t){e.selected.item=t,e.isStartDownloaded=!1,e.downloading.item=null},(c?n.getRecentProjectFile:n.getAllProjectFile)(function(t){l(function(){e.items=c?t.recentProjects:t.projects,e.itemsGetted=!0})},function(t){e.itemsGetted=!0,toastr.warning("获取数据失败")}),e.ok=function(){t.getProjectTo(e);var n=PID;window.localStorage.setItem("projectCache"+n,JSON.stringify(e.project)),console.log("项目已自动缓存"),console.log(e.selected.item),ideScope.$broadcast("ReOpenProject",e.selected.item.pid),o.dismiss("cancel")},e.cancel=function(){o.dismiss("cancel")}}]);
+
+ide.controller('ProjectFileCtrl', ['$scope','$timeout',
+    '$uibModal','$log',function ($scope,$timeout,
+                                            $uibModal,$log) {
+
+
+	$scope.$on('GlobalProjectReceived', function () {
+
+		initUserInterface();
+
+		initProject();
+		$scope.$emit('LoadUp');
+
+	});
+
+	function initUserInterface(){
+		$scope.items=['http://i13.tietuku.cn/c2f97e2245d519e0.jpg',
+			'http://i13.tietuku.cn/05910ed1cab0abfe.jpg',
+			'http://i13.tietuku.cn/ac9b0472df29b450.jpg'];
+		$scope.projects = [];
+		$scope.dataGetted = false;
+		$scope.num = 1;
+	}
+	function initProject() {
+		$scope.animationsEnabled = true;
+		$scope.open = function (isRecent) {
+			var modalInstance = $uibModal.open({
+				animation: $scope.animationsEnabled,
+				templateUrl: 'projectFile.html',
+				controller: 'ProjectFileInstanceCtrl',
+				resolve: {
+					items: function () {
+						return $scope.items;
+					},
+                    isRecent:function () {
+                        return isRecent;
+                    }
+				}
+			});
+		modalInstance.result.then(function (selectedItem) {
+				$scope.selected = selectedItem;
+			}, function () {
+				$log.info('Modal dismissed at: ' + new Date());
+			});
+		};
+	}
+}])
+	.controller('ProjectFileInstanceCtrl',  ['$scope', 'ProjectService','ProjectFileManage','$uibModalInstance', 'items','isRecent', '$timeout',function ($scope, ProjectService,ProjectFileManage,$uibModalInstance, items,isRecent, $timeout) {
+
+		console.log('打开项目');
+		$scope.items = items;
+        console.log(isRecent);
+		$scope.selected = {
+			item: null
+		};
+		$scope.isStartDownloaded = false;
+		$scope.downloadProgress = {
+			value: 100,
+			max : 300
+		};
+		$scope.downloading = {
+			item: null
+		};
+		$scope.changeState =function(item){
+			$scope.selected.item = item;
+			$scope.isStartDownloaded = false;
+			$scope.downloading.item=null;
+		};
+
+
+        var request=isRecent?ProjectFileManage.getRecentProjectFile:ProjectFileManage.getAllProjectFile;
+        request(function (result) {
+            $timeout(function () {
+                $scope.items=isRecent?result.recentProjects:result.projects;
+                $scope.itemsGetted = true;
+            })
+        },function (err) {
+            $scope.itemsGetted = true;
+            toastr.warning('获取数据失败')
+
+        })
+
+		$scope.ok = function () {
+
+			//$uibModalInstance.close($scope.selected.item);
+			// console.log($scope.downloading.item);
+			// console.log($scope.isStartDownloaded);
+			// $scope.downloading.item = $scope.selected.item;
+			// $scope.isStartDownloaded = true;
+            ProjectService.getProjectTo($scope);
+            var pid=PID;
+            window.localStorage.setItem('projectCache'+pid,JSON.stringify($scope.project));
+            console.log('项目已自动缓存');
+            console.log($scope.selected.item);
+            ideScope.$broadcast('ReOpenProject',$scope.selected.item.pid);
+
+
+            $uibModalInstance.dismiss('cancel');
+
+
+        };
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	}])
+;
+

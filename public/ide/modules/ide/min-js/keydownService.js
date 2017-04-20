@@ -1,1 +1,92 @@
-ideServices.service("KeydownService",[function(){function e(){var e="Unknown OS";return-1!=navigator.appVersion.indexOf("Win")&&(e="Windows"),-1!=navigator.appVersion.indexOf("Mac")&&(e="MacOS"),-1!=navigator.appVersion.indexOf("X11")&&(e="UNIX"),-1!=navigator.appVersion.indexOf("Linux")&&(e="Linux"),e}for(var t=["Ctrl-C","Cmd-C","Ctrl-V","Cmd-V","Ctrl-Delete","Cmd-Delete","Ctrl-BackSpace","Cmd-BackSpace","Ctrl-Z","Ctrl-Up","Ctrl-Down","Ctrl-Left","Ctrl-Right","Shift-Up","Shift-Down","Shift-Left","Shift-Right"],r=["shiftKey","ctrlKey","altKey","metaKey","keyCode"],n="",i={shiftKey:"Shift",ctrlKey:"Ctrl",altKey:"Alt",metaKey:"Cmd",8:"BackSpace",9:"Tab",12:"Clear",13:"Enter",20:"Caps Lock",27:"Esc",37:"Left",38:"Up",39:"Right",40:"Down",46:"Delete",187:"+",189:"-"},a=65;a<91;a++)i[a]=String.fromCharCode(a);this.currentKeydown=function(e){for(var t="",a=0;a<r.length-1;a++)e[r[a]]&&(t+=i[r[a]]+"-");return e.keyCode in i&&(t+=i[e.keyCode]),n=t,t},this.isValidKeyPair=function(e){for(var r=0;r<t.length;r++)if(e==t[r])return!0;return!1},this.isCtrlPressed=function(){var t=e();return"Windows"==t?"Ctrl-"==n:"MacOS"==t?"Cmd-"==n:"Ctrl-"==n},this.getActionKeys=function(){return t},this.keyUp=function(){n=""}}]);
+/**
+ * Created by ChangeCheng on 16/4/5.
+ */
+ideServices.service('KeydownService',[function () {
+    var actionKeys = ['Ctrl-C','Cmd-C','Ctrl-V','Cmd-V',
+        'Ctrl-Delete','Cmd-Delete','Ctrl-BackSpace','Cmd-BackSpace','Ctrl-Z','Ctrl-Up','Ctrl-Down','Ctrl-Left','Ctrl-Right','Shift-Up','Shift-Down','Shift-Left','Shift-Right'];
+    var keyAttrs = ['shiftKey','ctrlKey','altKey','metaKey','keyCode'];
+    var currentPressingKey = '';
+    var keyAbbrs = {
+      'shiftKey':'Shift',
+        'ctrlKey':'Ctrl',
+        'altKey':'Alt',
+        'metaKey':'Cmd',
+        '8':'BackSpace',
+        '9':'Tab',
+        '12':'Clear',
+        '13':'Enter',
+        '20':'Caps Lock',
+        '27':'Esc',
+        '37':'Left',
+        '38':'Up',
+        '39':'Right',
+        '40':'Down',
+        '46':'Delete',
+        '187':'+', //+=
+        '189':'-' //-_
+    };
+    //A-Z
+    for (var i=65;i<91;i++){
+        keyAbbrs[i] = String.fromCharCode(i);
+    }
+
+
+    this.currentKeydown = function(e){
+        // console.log(e)
+        var keyStr = '';
+        //handle key prefix
+        for (var i=0;i<keyAttrs.length-1;i++){
+            if (e[keyAttrs[i]]){
+                //key exists
+                keyStr+=keyAbbrs[keyAttrs[i]] +'-';
+            }
+        }
+        //handle keycode
+        if (e.keyCode in keyAbbrs){
+            //hit
+            keyStr += keyAbbrs[e.keyCode];
+        }
+
+        currentPressingKey = keyStr;
+        return keyStr;
+
+    }
+
+    this.isValidKeyPair = function(keypair){
+        for (var i=0;i<actionKeys.length;i++){
+            if (keypair == actionKeys[i]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    this.isCtrlPressed = function () {
+        var OSName = getPlatform();
+        if (OSName == 'Windows' ){
+            return currentPressingKey == 'Ctrl-';
+        }else if (OSName == 'MacOS'){
+            return currentPressingKey == 'Cmd-';
+        }else{
+            return currentPressingKey == 'Ctrl-';
+        }
+
+    };
+
+    this.getActionKeys= function () {
+        return actionKeys;
+    }
+
+    function getPlatform(){
+        var OSName="Unknown OS";
+        if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+        if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+        if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+        if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+        return OSName;
+    }
+
+    this.keyUp = function () {
+        currentPressingKey = '';
+    }
+}]);

@@ -439,25 +439,52 @@
 
 
     //progress
-    function Progress(x,y,w,h,cursor,slices){
+    function Progress(x,y,w,h,info,slices){
         var layerBackground = new Layer(0,0,w,y);
         var layerProcess = new Layer(0,0,w,y);
         var layerCursor = new Layer(0,0,w,y);
         var colorElems;
 
+        var mode = Number(info.progressModeId);
+        var cursor = Number(info.cursor);
+        var layersCnt = slices.length;
+
+        this.otherAttrs={};
         //background
         colorElems = parseColor(slices[0].color);
         layerBackground.subLayers.color = new ColorSubLayer(colorElems);
         layerBackground.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
 
-        //progress
-        colorElems = parseColor(slices[1].color);
-        layerProcess.subLayers.color = new ColorSubLayer(colorElems);
-        layerProcess.subLayers.image = new TextureSubLayer(slices[1].imgSrc);
-
+        if(mode==0){
+            //progress
+            colorElems = parseColor(slices[1].color);
+            layerProcess.subLayers.color = new ColorSubLayer(colorElems);
+            layerProcess.subLayers.image = new TextureSubLayer(slices[1].imgSrc);
+        }else if(mode==1){
+            //color
+            colorElems = parseColor(slices[1].color);
+            layerProcess.subLayers.color = new ColorSubLayer(colorElems);
+            this.otherAttrs.initColor = new ColorSubLayer(colorElems);
+            colorElems = parseColor(slices[2].color);
+            this.otherAttrs.endColor = new ColorSubLayer(colorElems);
+        }else if(mode==3){
+            colorElems = parseColor(slices[1].color);
+            layerProcess.subLayers.color = new ColorSubLayer(colorElems);
+            this.otherAttrs.thresholdModeId = Number(info.thresholdModeId);
+            this.otherAttrs.threshold1 = Number(info.threshold1);
+            colorElems = parseColor(slices[1].color);
+            this.otherAttrs.color1 = new ColorSubLayer(colorElems);
+            colorElems = parseColor(slices[2].color);
+            this.otherAttrs.color2 = new ColorSubLayer(colorElems);
+            if(this.otherAttrs.thresholdModeId==2){
+                this.otherAttrs.threshold2 = Number(info.threshold2);
+                colorElems = parseColor(slices[3].color);
+                this.otherAttrs.color3 = new ColorSubLayer(colorElems);
+            }
+        }
         //cursor
-        if(cursor=='1'){
-            layerCursor.subLayers.image = new TextureSubLayer(slices[2].imgSrc);
+        if(cursor==1){
+            layerCursor.subLayers.image = new TextureSubLayer(slices[layersCnt].imgSrc);
         }
 
         var layers = [layerBackground,layerProcess,layerCursor];

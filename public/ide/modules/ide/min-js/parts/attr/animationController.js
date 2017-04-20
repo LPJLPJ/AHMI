@@ -1,1 +1,107 @@
-ide.controller("animationCtl",["$scope","ProjectService","Type","$uibModal","AnimationService","UserTypeService",function(n,t,e,i,o,a){function l(){s(),c(),n.status={collapsed:!1},n.collapse=function(t){n.status.collapsed=!n.status.collapsed}}function c(){var n=a.getAnimationAuthor();document.getElementById("addAnimationBtn").disabled=n}function s(){if(!t.getCurrentSelectObject())return void console.warn("空");var e=t.getCurrentSelectObject().level,i=_.cloneDeep(e.animations);switch(o.setAnimations(i),n.animations=o.getAllAnimations(),t.getCurrentSelectObject().level.type){case"MyPage":case"MySubLayer":case void 0:n.showAnimationPanel=!1;break;default:n.showAnimationPanel=!0}}function m(){n.$on("AttributeChanged",function(){s()}),n.deleteAnimation=function(t){o.deleteAnimationByIndex(t,function(){n.animations=o.getAllAnimations()}.bind(this))},n.openPanel=function(t){n.selectIdx=t;var e;-1==t?e=o.getNewAnimation():t>=0&&t<n.animations.length&&(e=_.cloneDeep(n.animations[t])),i.open({animation:!0,templateUrl:"animationPanelModal.html",controller:"AnimationInstanceCtrl",size:"middle",resolve:{animation:function(){return e}}}).result.then(function(t){-1==n.selectIdx?o.appendAnimation(t,function(){n.animations=o.getAllAnimations()}.bind(this)):n.selectIdx>=0&&n.selectIdx<n.animations.length&&o.updateAnimationByIndex(t,n.selectIdx,function(){n.animations=o.getAllAnimations()}.bind(this))})}}n.$on("GlobalProjectReceived",function(){l(),m()})}]).controller("AnimationInstanceCtrl",["$scope","$uibModalInstance","animation",function(n,t,e){n.animation=e,n.confirm=function(){t.close(n.animation)},n.cancel=function(){t.dismiss()}}]);
+/**
+ * Created by lixiang on 2016/10/19.
+ */
+ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','AnimationService','UserTypeService',function($scope,ProjectService,Type,$uibModal,AnimationService,UserTypeService){
+    $scope.$on('GlobalProjectReceived',function(){
+        initUserInterface();
+        initProject();
+    });
+
+    function initUserInterface(){
+        readAnimationInfo();
+        setAnimationAuthor();
+        $scope.status={
+            collapsed:false,
+        };
+        $scope.collapse=function(event){
+            $scope.status.collapsed=!$scope.status.collapsed;
+        }
+    }
+
+    function setAnimationAuthor(){
+        var animationsDisabled=UserTypeService.getAnimationAuthor();
+        var animationBtn=document.getElementById('addAnimationBtn');
+        animationBtn.disabled=animationsDisabled;
+    }
+    function readAnimationInfo(){
+        if(!ProjectService.getCurrentSelectObject()){
+            console.warn('空');
+            return;
+        }
+        var curLevel = ProjectService.getCurrentSelectObject().level;
+        var _animation = _.cloneDeep(curLevel.animations);
+        AnimationService.setAnimations(_animation);
+
+        $scope.animations=AnimationService.getAllAnimations();
+
+        var currentObject = ProjectService.getCurrentSelectObject().level;
+        switch (currentObject.type){
+            case "MyPage" :
+            case "MySubLayer":
+            case undefined:
+                $scope.showAnimationPanel=false;
+                break;
+            default:
+                $scope.showAnimationPanel=true;
+                break;
+        }
+    }
+
+    function initProject(){
+        $scope.$on('AttributeChanged',function(){
+            readAnimationInfo();
+        });
+
+        $scope.deleteAnimation=function(index){
+            AnimationService.deleteAnimationByIndex(index,function(){
+                $scope.animations=AnimationService.getAllAnimations();
+            }.bind(this));
+        };
+
+        $scope.openPanel=function(index){
+            $scope.selectIdx=index;
+            var targetAnimation;
+            if(index==-1){
+                targetAnimation = AnimationService.getNewAnimation();
+            }else if(index>=0&&index<$scope.animations.length){
+                targetAnimation=_.cloneDeep($scope.animations[index]);
+            }
+
+            var modalInstance = $uibModal.open({
+                animation:true,
+                templateUrl:'animationPanelModal.html',
+                controller:'AnimationInstanceCtrl',
+                size:'middle',
+                resolve:{
+                    animation:function(){
+                        return targetAnimation;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function(newAnimation){
+                if($scope.selectIdx==-1){
+                    AnimationService.appendAnimation(newAnimation,function(){
+                        $scope.animations=AnimationService.getAllAnimations();
+                    }.bind(this));
+                }else if($scope.selectIdx>=0&&$scope.selectIdx<$scope.animations.length){
+                    AnimationService.updateAnimationByIndex(newAnimation,$scope.selectIdx,function(){
+                        $scope.animations=AnimationService.getAllAnimations();
+                    }.bind(this));
+                }
+            });
+        }
+    }
+
+
+}])
+
+    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','animation',function($scope,$uibModalInstance,animation){
+        $scope.animation=animation;
+        $scope.confirm = function () {
+            $uibModalInstance.close($scope.animation);
+        };
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss();
+        }
+}]);

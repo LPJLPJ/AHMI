@@ -33,7 +33,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 commands[model] = modelCommands;
             }
         }
-        console.log('registered commands',commands)
+        //console.log('registered commands',commands)
         // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
         // testModels.map(function (model) {
         //     //Button
@@ -241,11 +241,12 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.actions = targetWidget.actions
                 break;
                 case 'MyProgress':
+                    console.log('rawWidget',rawWidget);
                     var  slices = [];
                     targetWidget.texList.map(function(tex){
                         slices.push(tex.slices[0]);
                     });
-                    generalWidget = new  WidgetModel.models['Progress'](x,y,w,h,targetWidget.info.cursor,slices);
+                    generalWidget = new  WidgetModel.models['Progress'](x,y,w,h,targetWidget.info,slices);
                     generalWidget= generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.mode= Number(rawWidget.info.progressModeId);

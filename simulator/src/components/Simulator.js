@@ -568,25 +568,25 @@ module.exports =   React.createClass({
                 break;
             //algorithm:
             case 'add':
-                widget.scope[curInst[1].value] = widget.scope[curInst[1].value] + this.evalParam(widget,curInst[2])
+                widget.scope[curInst[1].value] = parseInt(widget.scope[curInst[1].value] + this.evalParam(widget,curInst[2]))
                 break;
             case 'minus':
-                widget.scope[curInst[1].value] = widget.scope[curInst[1].value] - this.evalParam(widget,curInst[2])
+                widget.scope[curInst[1].value] = parseInt(widget.scope[curInst[1].value] - this.evalParam(widget,curInst[2]))
                 break;
             case 'multiply':
-                widget.scope[curInst[1].value] = widget.scope[curInst[1].value] * this.evalParam(widget,curInst[2])
+                widget.scope[curInst[1].value] = parseInt(widget.scope[curInst[1].value] * this.evalParam(widget,curInst[2]))
                 break;
             case 'divide':
-                widget.scope[curInst[1].value] = widget.scope[curInst[1].value] / this.evalParam(widget,curInst[2])
+                widget.scope[curInst[1].value] = parseInt(widget.scope[curInst[1].value] / this.evalParam(widget,curInst[2]))
                 break;
             case 'mod':
-                widget.scope[curInst[1].value] = widget.scope[curInst[1].value] % this.evalParam(widget,curInst[2])
+                widget.scope[curInst[1].value] = parseInt(widget.scope[curInst[1].value] % this.evalParam(widget,curInst[2]))
                 break;
             case 'setTag':
-                WidgetExecutor.setTag(widget.tag,this.evalParam(widget,curInst[1]))
+                WidgetExecutor.setTag(widget.tag,parseInt(this.evalParam(widget,curInst[1])))
                 break;
             case 'getTag':
-                this.setByParam(widget,{type:'ID',value:curInst[1].value},{type:'Int',value:WidgetExecutor.getTag(widget.tag)})
+                this.setByParam(widget,{type:'ID',value:curInst[1].value},{type:'Int',value:parseInt(WidgetExecutor.getTag(widget.tag))})
                 break;
             //mouse
             case 'getMouse':
