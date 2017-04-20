@@ -423,6 +423,14 @@
             layers.push(bgLayer)
             layers.push(pointerLayer)
             layers.push(lightLayer)
+        }else if (mode==2) {
+            slices = [texList[0].slices[0]]
+            lightLayer = new Layer(0,0,w,h)
+            lightLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+            lightLayer.subLayers.color = new ColorSubLayer(parseColor(slices[0].color))
+            lightLayer.subLayers.roi = new ROISubLayer(1)
+            layers.push(lightLayer)
+            
         }
         Widget.call(this,x,y,w,h,layers)
         

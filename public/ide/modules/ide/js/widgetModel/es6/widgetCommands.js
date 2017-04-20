@@ -194,7 +194,12 @@
             var(talpha,0)
             var(tbeta,0)
             set(tMode,'this.mode')
-            set('this.layers.1.rotateAngle',tvalueRatio)
+            if (tMode==1) {
+                set('this.layers.1.rotateAngle',tvalueRatio)
+            }
+            if (tMode==0) {
+                set('this.layers.1.rotateAngle',tvalueRatio)
+            }
             add(tvalueRatio,45)
             if (tMode==1) {
                 set(tp1x,'this.layers.1.x')
@@ -209,6 +214,22 @@
                     set('this.layers.2.subLayers.roi.beta',tStartAngle)
                 }
 
+            }else{
+                if (tMode==2) {
+                    set(tp1x,'this.layers.0.width')
+                    set(tp1y,'this.layers.0.height')
+                    divide(tp1x,2)
+                    divide(tp1y,2)
+                    set('this.layers.0.subLayers.roi.p1x',tp1x)
+                    set('this.layers.0.subLayers.roi.p1y',tp1y)
+                    if (tclockwise==1) {
+                        set('this.layers.0.subLayers.roi.alpha',tStartAngle)
+                        set('this.layers.0.subLayers.roi.beta',tvalueRatio)
+                    }else{
+                        set('this.layers.0.subLayers.roi.alpha',tvalueRatio)
+                        set('this.layers.0.subLayers.roi.beta',tStartAngle)
+                    }
+                }
             }
             
             checkalarm(0)
