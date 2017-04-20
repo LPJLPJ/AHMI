@@ -3,7 +3,11 @@
         <div class="comment-text">
             <span class="username">
                 <%=comments[j].authorName%>
-                <span class="text-muted pull-right"><%=comments[j].createTime%></span>
+                <span class="text-muted pull-right">
+                <a class="xs" commentId="<%=comments[j]._id%>" authorId="<%=comments[j].authorId%>" href="#" onclick="sad(this)">
+                        <i class="iconfont icon">&#xe607</i>
+                </a>
+                <%=comments[j].createTime%></span>
             </span>
             <p><%=comments[j].content%></p>
         </div>

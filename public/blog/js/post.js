@@ -17,17 +17,19 @@
     }
     function loadFromServer() {
         var currentId = parseQuery().id;
+                
         if (currentId){
             $.ajax({
                 type:'GET',
+                //async: false,
                 url:"/blog/getblogdata",
                 data:{
                     blogId:currentId
                 },
                 success:function (msg) {
                     var msgObj = JSON.parse(msg);
-                    console.log('msgObj',msgObj);
                     renderBlog(msgObj);
+                    console.log(msgObj.authorId);
                     renderComments(msgObj.comments);
                 },
                 error:function (xhr) {
@@ -36,7 +38,6 @@
             })
         }
     }
-
     /**
      * 渲染博客内容
      * @param blog
@@ -47,7 +48,24 @@
         $keywords.html(blog.keywords)
         contentArea.html(blog.content)
     }
+    /**
+    *
+    *
+    */
+    function powerJudge(){
+        $.ajax({
+                type:'GET',
+                //async: false,
+                url:"/blog/dandy",
+                success:function (response) {
+                    console.log(response);
 
+                },
+                error:function (xhr) {
+
+                }
+            })
+    }
     /**
      * 渲染评论内容
      * @param comments
@@ -84,6 +102,7 @@
             data:{content:comment},
             success:function(data){
                 console.log('data',data);
+                window.location.reload();
 
             },
             error:function(err){
@@ -92,8 +111,8 @@
 
         })
     });
-
-
-
+    //powerJudge()
     loadFromServer()
+
 }())
+

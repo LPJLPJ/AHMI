@@ -147,14 +147,14 @@ body{
 }
 
 .xs{
+    left: 7px;
+    color:#97a0b3;
     position: relative;
-    left: -40px;
-    top: -34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.5;
-    border-radius:3px;
-    background:#E2F4F3;
+    padding: 1px 1px;
+    font-size: 10px;
+    line-height: 0.5;
+    border-radius: 3px;
+    background: #E2F4F3;
     float: right;
 }
 
@@ -164,4 +164,14 @@ body{
 
 form>textarea{
     border-radius: 4px
+}
+
+a:link{
+text-decoration:none;
+}
+a:visited{
+text-decoration:none;
+}
+a:hover{
+text-decoration:none;
 }
