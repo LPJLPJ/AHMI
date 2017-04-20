@@ -23,6 +23,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var models = WidgetModel.models;
         var testModels = _.cloneDeep(WidgetCommands);
 
+        console.log('models',models);
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
@@ -33,7 +34,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 commands[model] = modelCommands;
             }
         }
-        //console.log('registered commands',commands)
+        console.log('registered commands',commands)
         // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
         // testModels.map(function (model) {
         //     //Button
@@ -171,7 +172,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetWidget = _.cloneDeep(rawWidget);
         transActions(targetWidget);
         // console.log(_.cloneDeep(targetWidget))
-        //console.log('targetWidget.type',targetWidget.type);
         if (targetWidget.type == 'general'){
             //default Button
             var info = targetWidget.info;
@@ -210,8 +210,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 case 'MyButtonGroup':
                     //console.log(targetWidget)
                     var slices = [];
-                    targetWidget.texList.map(function (tex) {
-                        slices.push(tex.slices[0]);
+                   targetWidget.texList.map(function (tex) {
+                        slices.push(tex.slices[0])
                         slices.push(tex.slices[1])
                     })
                     generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
@@ -257,6 +257,21 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.generalType = 'Progress';
                     generalWidget.subType = 'general';
                     break;
+                case 'MyRotateImg':
+                console.log('RotateImg')
+                    generalWidget =  new WidgetModel.models['RotateImg'](x,y,w,h,targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'RotateImg';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'minValue,maxValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+                    //otherAttrs
+                    generalWidget.actions = targetWidget.actions
+                break;
                 default:
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget

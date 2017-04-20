@@ -167,7 +167,8 @@
         new Attr('mWDGLeaveLowAlarmAction'),
         new Attr('mWDGEnterHighAlarmAction'),
         new Attr('mWDGLeaveHighAlarmAction'),
-        new Attr('mWDGMouseReleaseAction')
+        new Attr('mWDGMouseReleaseAction'),
+        new Attr('mWDGOldValueInit')
     ]
 
     var cppWidgetAttrsTable = {}
@@ -205,7 +206,8 @@
         generalType:'mWDGType',
         otherAttrs:'otherAttrs',
         innerX:'mWDGMouseInnerX',
-        innerY:'mWDGMouseInnerY'
+        innerY:'mWDGMouseInnerY',
+        oldValueInit:'mWDGOldValueInit'
     }
 
 
@@ -533,7 +535,7 @@
                                             inst = ['OPGETWIDOFFSET',TempID(param1.value),1]
                                         break;
                                         default:
-                                            console.log('command',command,curExp)
+                                            // console.log('command',command,curExp)
                                             inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
                                     }
                     

@@ -37,6 +37,7 @@
         this.tag = 'defaultTag'
         this.type = 'general'
         this.mode = 0
+        this.otherAttrs = []
         if (!layers||!layers.length){
             this.layers= [new Layer(w,h)]
         }else{
@@ -129,18 +130,18 @@
 
     function Button(x,y,w,h,text,fontStyle,slices) {
         var layerUp = new Layer(0,0,w,h);
-        var colorElems;
+        var colorElems
         layerUp.subLayers.font = new FontSubLayer(text,fontStyle);
         layerUp.subLayers.image =new TextureSubLayer(slices[0].imgSrc);
-        colorElems = parseColor(slices[0].color);
+        colorElems = parseColor(slices[0].color)
         layerUp.subLayers.color = new ColorSubLayer(colorElems);
         var layerDown = new Layer(0,0,w,h);
         layerDown.subLayers.font = new FontSubLayer(text,fontStyle);
         layerDown.subLayers.image =new TextureSubLayer(slices[1].imgSrc);
-        colorElems = parseColor(slices[1].color);
+        colorElems = parseColor(slices[1].color)
         layerDown.subLayers.color = new ColorSubLayer(colorElems);
-        var layers = [layerDown,layerUp];
-        this.subType = 'Button';
+        var layers = [layerUp,layerDown]
+        this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)
     }
 
@@ -235,7 +236,7 @@
         // var layers = [layerUp,layerDown]
         var sWidth = 0;
         var sHeight = 0;
-        var colorElems;
+        var colorElems
         var layers = [];
         if (align==0) {
                 //hori
@@ -243,16 +244,16 @@
             sHeight = h;
 
             for (var i=0;i<num;i++){
-                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight);
-                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc);
+                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
+                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
                 colorElems = parseColor(slices[2*i].color);
-                upLayer.subLayers.color = new ColorSubLayer(colorElems);
-                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true);
-                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
+                upLayer.subLayers.color = new ColorSubLayer(colorElems)
+                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
                 colorElems = parseColor(slices[2*i+1].color);
-                downLayer.subLayers.color = new ColorSubLayer(colorElems);
+                downLayer.subLayers.color = new ColorSubLayer(colorElems)
+                layers.push(upLayer)
                 layers.push(downLayer)
-                layers.push(upLayer);
             }
             
         }else{
@@ -267,7 +268,7 @@
             // }
 
         }
-        this.subType = 'ButtonGroup';
+        this.subType = 'ButtonGroup'
         Widget.call(this,x,y,w,h,layers)
     }
 
@@ -437,6 +438,23 @@
 
     Dashboard.prototype = Object.create(Widget.prototype);
     Dashboard.prototype.constructor = Dashboard;
+
+
+    function RotateImg(x,y,w,h,slice) {
+
+        var bgLayer
+        var layers = []
+        bgLayer = new Layer(0,0,w,h)
+        bgLayer.subLayers.image = new TextureSubLayer(slice.imgSrc);
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor(slice.color))
+        layers.push(bgLayer)
+        Widget.call(this,x,y,w,h,layers)
+
+    }
+
+    RotateImg.prototype = Object.create(Widget.prototype);
+    RotateImg.prototype.constructor = RotateImg;
+
 
 
 
@@ -843,6 +861,7 @@
     WidgetModel.models.Button = Button;
     WidgetModel.models.ButtonGroup = ButtonGroup;
     WidgetModel.models.Dashboard = Dashboard;
+    WidgetModel.models.RotateImg = RotateImg;
     WidgetModel.models.Progress = Progress;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
