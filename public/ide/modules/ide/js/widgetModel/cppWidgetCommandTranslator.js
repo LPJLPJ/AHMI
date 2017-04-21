@@ -634,17 +634,17 @@
                                     switch(curExp.value){
                                         case 'x':
                                             if (curExp.aVals[1]=='IMM') {
-                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],LayerAttrID(curExp.value),0,0,param2.value]
+                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],0,0,param2.value]
                                             }else{
-                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),0,1,param2.value]
+                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),0,1,param2.value]
                                             }
                                             
                                         break;
                                         case 'y':
                                             if (curExp.aVals[1]=='IMM') {
-                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],LayerAttrID(curExp.value),1,0,param2.value]
+                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],1,0,param2.value]
                                             }else{
-                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,1,param2.value]
+                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),1,1,param2.value]
                                             }
                                         break;
                                         default:
@@ -711,17 +711,17 @@
                                     switch(curExp.value){
                                         case 'x':
                                             if (curExp.aVals[1]=='IMM') {
-                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],LayerAttrID(curExp.value),0,TempID(param2.value),0]
+                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],0,TempID(param2.value),0]
                                             }else{
-                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),0,TempID(param2.value),1]
+                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),0,TempID(param2.value),1]
                                             }
                                             
                                         break;
                                         case 'y':
                                             if (curExp.aVals[1]=='IMM') {
-                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],LayerAttrID(curExp.value),1,TempID(param2.value),0]
+                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],1,TempID(param2.value),0]
                                             }else{
-                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,TempID(param2.value),1]
+                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),1,TempID(param2.value),1]
                                             }
                                         break;
                                         default:
