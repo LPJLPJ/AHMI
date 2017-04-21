@@ -266,6 +266,10 @@
         `
     }
 
+    WidgetCommands['TextArea']={
+        onInitialize:``
+    }
+
 
 
 

@@ -455,6 +455,23 @@
     RotateImg.prototype = Object.create(Widget.prototype);
     RotateImg.prototype.constructor = RotateImg;
 
+    //TextArea
+    function TextArea(x,y,w,h,text,fontStyle,slice) {
+        
+        var bgLayer
+        var layers = []
+        bgLayer = new Layer(0,0,w,h)
+        bgLayer.subLayers.font = new FontSubLayer(text,fontStyle)
+        bgLayer.subLayers.image = new TextureSubLayer(slice.imgSrc);
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor(slice.color))
+        layers.push(bgLayer)
+        Widget.call(this,x,y,w,h,layers)
+        
+    }
+
+    TextArea.prototype = Object.create(Widget.prototype);
+    TextArea.prototype.constructor = TextArea;
+
 
 
 
@@ -792,6 +809,7 @@
     WidgetModel.models.ButtonGroup = ButtonGroup;
     WidgetModel.models.Dashboard = Dashboard;
     WidgetModel.models.RotateImg = RotateImg;
+    WidgetModel.models.TextArea = TextArea;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

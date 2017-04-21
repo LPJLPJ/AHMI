@@ -431,7 +431,10 @@ module.exports =   React.createClass({
     interpretGeneralCommand:function (widget,f) {
         console.log(widget,f)
         var command = this.generalCommands[widget.generalType][f]
-        this.processGeneralWidgetCommand(widget,command,0)
+        if (command) {
+            this.processGeneralWidgetCommand(widget,command,0)
+        }
+        
 
     },
     evalParam:function (widget,param) {
@@ -2088,10 +2091,10 @@ module.exports =   React.createClass({
         tempctx.textAlign = font.textAlign||'center';
         tempctx.textBaseline = font.textBaseline||'middle';
         //font style
-        var fontStr = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+        var fontStr = (font['font-style']||font['fontStyle']||'')+' '+(font['font-variant']||font['fontVariant']||'')+' '+(font['font-weight']||font['fontWeight']||'')+' '+(font['font-size']||font['fontSize']||24)+'px'+' '+(font['font-family']||font['fontFamily']||'arial');
         tempctx.font = fontStr;
-        // console.log('tempctx.font',fontStr);
-        tempctx.fillStyle = font['font-color'];
+        // console.log('tempctx.font',fontStr,font);
+        tempctx.fillStyle = font['font-color']||font['fontColor'];
         if(byteMode){
             // var widthOfDateTimeStr=maxFontWidth*text.length;
             // var initXPos = (width-widthOfDateTimeStr)/2;

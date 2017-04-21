@@ -241,7 +241,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.actions = targetWidget.actions
                 break;
                 case 'MyRotateImg':
-                console.log('RotateImg')
                     generalWidget =  new WidgetModel.models['RotateImg'](x,y,w,h,targetWidget.texList[0].slices[0])
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'RotateImg';
@@ -255,6 +254,25 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     //otherAttrs
                     generalWidget.actions = targetWidget.actions
                 break;
+                case 'MyTextArea':
+                    // "fontFamily": "宋体",
+                    // "fontSize": 15,
+                    // "fontColor": "rgba(0,0,0,1)",
+                    // "fontBold": "100",
+                    // "fontItalic": "",
+                    // "fontUnderline": null,
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+                    var fontStyle={}
+                    styleElems.split(',').forEach(function (elem) {
+                        fontStyle[elem] = info[elem]
+                    })
+                    generalWidget =  new WidgetModel.models['TextArea'](x,y,w,h,info.text,fontStyle,targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'TextArea';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                break;
+                    
                 default:
 
                     
