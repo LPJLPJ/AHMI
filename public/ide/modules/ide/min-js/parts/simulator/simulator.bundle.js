@@ -53175,6 +53175,9 @@ module.exports = React.createClass({
                 case 'MyInputKeyboard':
                     this.drawInputKeyboard(curX, curY, widget, options, cb);
                     break;
+                case 'MyAnimation':
+                    this.drawAnimation(curX, curY, widget, options, cb);
+                    break;
                 case 'general':
                     this.drawGeneralWidget(curX, curX, widget, options, cb);
                     break;
@@ -53265,6 +53268,9 @@ module.exports = React.createClass({
             case 'MyInputKeyboard':
                 this.paintInputKeyboard(curX, curY, widget, options, cb);
                 break;
+            case 'MyAnimation':
+                this.paintAnimation(curX, curY, widget, options, cb);
+                break;
             case 'general':
                 this.paintGeneralWidget(curX, curY, widget, options, cb);
                 break;
@@ -53351,6 +53357,22 @@ module.exports = React.createClass({
         widget.curSlideIdx = slideIdx;
     },
     paintSlide: function (curX, curY, widget, options, cb) {
+        var slideSlices = widget.texList[0].slices;
+        var slideIdx = widget.curSlideIdx;
+        if (slideIdx >= 0 && slideIdx < slideSlices.length) {
+            var curSlice = slideSlices[slideIdx];
+            var width = widget.info.width;
+            var height = widget.info.height;
+            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+        }
+        cb && cb();
+    },
+    drawAnimation: function (curX, curY, widget, options, cb) {
+        var tag = this.findTagByName(widget.tag);
+        var slideIdx = tag && tag.value || 0;
+        widget.curSlideIdx = slideIdx;
+    },
+    paintAnimation: function (curX, curY, widget, options, cb) {
         var slideSlices = widget.texList[0].slices;
         var slideIdx = widget.curSlideIdx;
         if (slideIdx >= 0 && slideIdx < slideSlices.length) {
@@ -53749,7 +53771,6 @@ module.exports = React.createClass({
         if (widget.texList) {
             var hori = widget.info.arrange == 'horizontal';
             if (!widget.slideSize) {
-
                 var defaultSize = hori ? widget.info.h : widget.info.w;
                 widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc, defaultSize, defaultSize);
             }
@@ -53779,11 +53800,12 @@ module.exports = React.createClass({
                         break;
                 }
             }
-
-            cb && cb();
         }
+        cb && cb();
     },
-    paintScriptTrigger: function (curX, curY, widget, options, cb) {},
+    paintScriptTrigger: function (curX, curY, widget, options, cb) {
+        cb && cb();
+    },
     drawScriptTrigger: function (curX, curY, widget, options, cb) {
         //get current value
         var curScriptTriggerTag = this.findTagByName(widget.tag);
@@ -55672,7 +55694,6 @@ module.exports = React.createClass({
             default:
                 widget.mouseState = mouseState;
                 needRedraw = true;
-                break;
         }
         if (needRedraw) {
             this.drawAfterMouseAction(mouseState);

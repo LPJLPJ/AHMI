@@ -594,7 +594,7 @@
                 newWidget=TemplateProvider.getDefaultVideo();
             } else if(_index == 13){
                 newWidget = TemplateProvider.getDefaultAnimation();
-            }else if (_index == 13){
+            }else if (_index == 14){
                 newWidget = TemplateProvider.getDefaultGeneral()
             }
             else {
