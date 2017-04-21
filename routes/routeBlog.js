@@ -424,7 +424,7 @@ BlogRoute.getBlogData = function (req, res) {
                                 var info = {};
                                 info.authorId = _comment.authorId;
                                 info.content = _comment.content;
-                                info.createTime = _comment.createTime;
+                                info.createTime = _comment.createTime.toLocaleString();
                                 info.authorName = _comment.authorName;
                                 info._id = _comment._id;
                                 return info;

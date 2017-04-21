@@ -10,10 +10,9 @@
                         },
                         success:function(data){
                             console.log('data',data);
-                            window.location.reload();
+                            //window.location.reload();
                         },
                         error:function(err){
-                            console.log('dsadas');
                             console.log('err',err);
                         }
                     })
@@ -29,6 +28,5 @@
                 if(pair[1]!=undefined&&pair[1]!=null)
                 results = pair[1]
             }
-            console.log(results);
             return results
         }

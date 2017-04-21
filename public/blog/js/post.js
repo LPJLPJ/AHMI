@@ -28,8 +28,10 @@
                 },
                 success:function (msg) {
                     var msgObj = JSON.parse(msg);
+                    var userId = msgObj.authorId;
                     renderBlog(msgObj);
-                    console.log(msgObj);
+                    msgObj.comments.userId = msgObj.userInfo.id;
+                    msgObj.comments.type = msgObj.userInfo.type;
                     renderComments(msgObj.comments);
                 },
                 error:function (xhr) {
@@ -47,24 +49,6 @@
         $title.html(blog.title)
         $keywords.html(blog.keywords)
         contentArea.html(blog.content)
-    }
-    /**
-    *
-    *
-    */
-    function powerJudge(){
-        $.ajax({
-                type:'GET',
-                //async: false,
-                url:"/blog/dandy",
-                success:function (response) {
-                    console.log(response);
-
-                },
-                error:function (xhr) {
-
-                }
-            })
     }
     /**
      * 渲染评论内容
