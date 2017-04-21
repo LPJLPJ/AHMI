@@ -140,7 +140,7 @@
         layerDown.subLayers.image =new TextureSubLayer(slices[1].imgSrc);
         colorElems = parseColor(slices[1].color)
         layerDown.subLayers.color = new ColorSubLayer(colorElems);
-        var layers = [layerUp,layerDown]
+        var layers = [layerDown,layerUp];
         this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)
     }
@@ -252,8 +252,8 @@
                 downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
                 colorElems = parseColor(slices[2*i+1].color);
                 downLayer.subLayers.color = new ColorSubLayer(colorElems)
-                layers.push(upLayer)
                 layers.push(downLayer)
+                layers.push(upLayer)
             }
             
         }else{
@@ -534,6 +534,18 @@
     Progress.prototype.commands.onTagChange = [
         ['temp','a',new Param(Int,0)]
     ];
+
+    function Switch(x,y,w,h,info,slices){
+        var layer = new Layer(0,0,w,h);
+        var colorElems = parseColor(slices[0].color);
+        layer.subLayers.color = new ColorSubLayer(colorElems);
+        layer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+        var layers = [layer];
+        this.subType = 'Switch';
+        Widget.call(this,x,y,w,h,layers);
+    }
+    Switch.prototype = Object.create(Widget.prototype);
+    Switch.prototype.constructor = Switch;
 
 
     var WidgetCommandParser = {};
@@ -866,6 +878,7 @@
     WidgetModel.models.RotateImg = RotateImg;
     WidgetModel.models.TextArea = TextArea;
     WidgetModel.models.Progress = Progress;
+    WidgetModel.models.Switch = Switch;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

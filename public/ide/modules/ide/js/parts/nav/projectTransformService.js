@@ -196,6 +196,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             var y = info.top;
             var w = info.width;
             var h = info.height;
+            console.log('type',targetWidget.type);
             switch(targetWidget.type){
                 case 'MyButton':
 
@@ -340,19 +341,29 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     var fontStyle={}
                     styleElems.split(',').forEach(function (elem) {
                         fontStyle[elem] = info[elem]
-                    })
+                    });
                     generalWidget =  new WidgetModel.models['TextArea'](x,y,w,h,info.text,fontStyle,targetWidget.texList[0].slices[0])
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'TextArea';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                 break;
+                case 'MySwitch':
+                    var  slices = [];
+                    targetWidget.texList.map(function(tex){
+                        slices.push(tex.slices[0]);
+                    });
+                    generalWidget = new  WidgetModel.models['Switch'](x,y,w,h,targetWidget.info,slices);
+                    generalWidget= generalWidget.toObject();
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.generalType = 'Switch';
+                    generalWidget.subType = 'general';
+                    generalWidget.otherAttrs[0] = Number(targetWidget.info.bindBit);
+                break;
                     
                 default:
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget
-
-
             }
             
             

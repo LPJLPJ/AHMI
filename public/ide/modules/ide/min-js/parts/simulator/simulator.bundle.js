@@ -53575,6 +53575,13 @@ module.exports = React.createClass({
             case 'getTag':
                 this.setByParam(widget, { type: 'ID', value: curInst[1].value }, { type: 'Int', value: parseInt(WidgetExecutor.getTag(widget.tag)) });
                 break;
+            case 'not':
+                if (widget.scope[curInst[0].value] == 0) {
+                    widget.scope[curInst[0].value] = 1;
+                } else {
+                    widget.scope[curInst[0].value] = 0;
+                }
+                break;
             //mouse
             case 'getMouse':
                 var mouseV = this.evalParam(widget, curInst[2]);
