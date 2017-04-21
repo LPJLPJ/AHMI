@@ -307,8 +307,8 @@ module.exports =   React.createClass({
             var baseX = curX+ layer.x;
             var baseY =  curY+layer.y;
             if (!!layer.rotateAngle) {
-                transX = baseX
-                transY = baseY
+                transX = baseX+(layer.rotateCenterX||0)
+                transY = baseY+(layer.rotateCenterY||0)
                 offCtx.save()
                 offCtx.translate(transX,transY)
                  console.log('rotateAngle',layer.rotateAngle)

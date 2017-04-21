@@ -238,6 +238,34 @@
         `
     };
 
+    WidgetCommands['RotateImg'] = {
+        onInitialize:`
+        `,
+        onTagChange:`
+            var(tTagValue,0)
+            getTag(tTagValue)
+            var(tMinAngle,0)
+            var(tMaxAngle,0)
+            var(tWidth,0)
+            set(tWidth,'this.layers.0.width')
+            divide(tWidth,2)
+            var(tHeight,0)
+            set(tHeight,'this.layers.0.height')
+            divide(tHeight,2)
+            set(tMinAngle,'this.minValue')
+            set(tMaxAngle,'this.maxValue')
+            if (tTagValue>tMaxAngle) {
+                set(tTagValue,tMaxAngle)
+            }
+            if(tTagValue<tMinAngle){
+                set(tTagValue,tMinAngle)
+            }
+            set('this.layers.0.rotateCenterX',tWidth)
+            set('this.layers.0.rotateCenterY',tHeight)
+            set('this.layers.0.rotateAngle',tTagValue)
+        `
+    }
+
     WidgetCommands['Progress'] = {
         onInitialize:`
             var(mod,'this.mode')
@@ -391,6 +419,7 @@
 
         `
     };
+
 
 
 
