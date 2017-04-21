@@ -424,6 +424,16 @@
         onInitialize:``
     }
 
+    WidgetCommands['ScriptTrigger']={
+        onInitialize:``,
+        onTagChange:`
+            var(tTagValue,0)
+            getTag(tTagValue)
+            checkalarm()
+            set('this.oldValue',tTagValue)
+        `
+    }
+
 
 
     return WidgetCommands;

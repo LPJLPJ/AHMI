@@ -473,6 +473,19 @@
     TextArea.prototype.constructor = TextArea;
 
 
+    //
+    function ScriptTrigger(x,y,w,h) {
+
+        var layers = []
+        
+        Widget.call(this,x,y,w,h,layers)
+
+    }
+
+    ScriptTrigger.prototype = Object.create(Widget.prototype);
+    ScriptTrigger.prototype.constructor = ScriptTrigger;
+
+
 
 
 
@@ -866,6 +879,7 @@
     WidgetModel.models.RotateImg = RotateImg;
     WidgetModel.models.TextArea = TextArea;
     WidgetModel.models.Progress = Progress;
+    WidgetModel.models.ScriptTrigger = ScriptTrigger
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

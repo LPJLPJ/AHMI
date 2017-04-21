@@ -347,6 +347,20 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                 break;
+                case 'MyScriptTrigger':
+                    generalWidget =  new WidgetModel.models['ScriptTrigger'](x,y,w,h)
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'ScriptTrigger';
+                    
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+                    
+                break;
                     
                 default:
                     targetWidget.subType = rawWidget.type;
