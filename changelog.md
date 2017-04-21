@@ -81,3 +81,18 @@ update:
 fix:
     1. fix a bug that versionTag didn't display in page
     2. fix a bug that delete a project that mongodb cause server crash
+    
+v1.9.0
+add:
+    1. support drag and drop local pro folder to add it to web server 
+update:
+fix:
+    1.fix a bug that cause upload a folder who is a download local project fail
+    2.fix a bug that only can upload max 100 files
+    3.fix a bug in generate
+
+v1.9.1_test
+add:
+   1. add local IDE user type update fun
+fix:
+    1.fix a bug that change a project's attr will empty this project in local version

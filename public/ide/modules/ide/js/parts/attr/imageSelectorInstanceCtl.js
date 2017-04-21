@@ -66,6 +66,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         case Type.MySlideBlock:
             initConfigure(false,1,widgetInfo.tex);
             break;
+        case Type.MyAnimation:
+            initConfigure(true,1,widgetInfo.tex);
+            break;
         default:
             initConfigure(true,1,widgetInfo.tex);
             break;
@@ -76,7 +79,11 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     };
 
     $scope.removeSlice = function (index) {
-        $scope.tex.slices.splice(index,1);
+        if($scope.tex.slices.length==1){
+            toastr.warning('至少有一张纹理');
+        }else{
+            $scope.tex.slices.splice(index,1);
+        }
     };
 
     $scope.save = function () {

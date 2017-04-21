@@ -50,27 +50,30 @@
             })
         });
     });</script>
+
 </head>
 <body>
 
 <div class="navbar navbar-inverse navbar-fixed-top " id="menu">
-    <div class="container">
+    <div class="container container-zyj1">
         <div class="navbar-header">
             <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>-->
-            <a class="navbar-brand" href="/"><img class="logo-custom" src="../../public/login/assets/img/速显微.png"
-                                                  alt=""/></a>
+            <a class="navbar-brand"  href="/"><img class="logo-custom" data-scroll-reveal="enter from the bottom after 0.1s" src="../../public/login/assets/img/速显微.png"
+                                                  alt=""></a>
         </div>
-        <ul class="nav nav-pills navbar-right move-me">
-            <li><a href="#home"><h4>首页</h4></a></li>
-            <li><a href="#features-sec"><h4>关于IDE</h4></a></li>
+        <ul class="nav nav-pills navbar-right move-me move-bar">
+            <li data-scroll-reveal="enter from the bottom after 0.1s"><a href="#menu"><h4  class="nav-bar">首页</h4></a></li>
+            <li data-scroll-reveal="enter from the bottom after 0.2s"><a href="#features-sec"><h4 class="nav-bar">关于IDE</h4></a></li>
             <!--<li><a href="#faculty-sec"><h4>员工信息</h4></a></li>-->
-            <li><a href="#course-sec"><h4>产品介绍</h4></a></li>
-            <li><a href="/private/space"><h4>IDE</h4></a></li>
-            <li><a href="#contact-sec"><h4>联系我们</h4></a></li>
+            <li data-scroll-reveal="enter from the bottom after 0.3s"><a href="#course-sec"><h4 class="nav-bar">产品介绍</h4></a></li>
+            <li data-scroll-reveal="enter from the bottom after 0.4s"><a href="#course-cases"><h4 class="nav-bar">IDE开发案例</h4></a></li>
+            <li data-scroll-reveal="enter from the bottom after 0.5s"><a href="/private/space"><h4 class="nav-bar">IDE</h4></a></li>
+            <li data-scroll-reveal="enter from the bottom after 0.6s"><a href="#contact-sec"><h4 class="nav-bar">联系我们</h4></a></li>
+            <li data-scroll-reveal="enter from the bottom after 0.7s"><a href="https://ide.graphichina.com/blog/"><h4 class="nav-bar">Blog</h4></a></li>
         </ul>
     </div>
 </div>
@@ -79,11 +82,10 @@
     <div id="output">
         <div class="overlay" id="container-zyj">
             <div class="container slide-container">
-                <div class="row text-center ">
+                <div class="row text-center">
                     <div class="col-lg-12  col-md-12 col-sm-12">
-
                         <div class="flexslider set-flexi" id="main-section">
-                            <ul class="slides move-me">
+                            <ul class="slides move-me" data-scroll-reveal="enter from the bottom after 0.7s">
                                 <!-- Slider 01 -->
                                 <li>
                                     <h3>极富特色的人机交互界面开发工具</h3>
@@ -120,17 +122,16 @@
 
             </div>
         </div>
-
     </div>
+    <div class="move-me"><div class="back1"><div class="back"><a href="#menu" title="回到顶部"><img src="../../public/images/回到顶部.png"></a>
+    </div></div></div>
 </div>
 
 <!--HOME SECTION END-->
 <div class="tag-line">
     <div class="container">
         <div class="row  text-center">
-
             <div class="col-lg-12  col-md-12 col-sm-12">
-
                 <h2 data-scroll-reveal="enter from the bottom after 0.1s"><i class="fa fa-circle-o-notch"></i> 欢迎来到AHMI
                     IDE！
                     <i class="fa fa-circle-o-notch"></i></h2>
@@ -145,15 +146,15 @@
         <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
             <h1 data-scroll-reveal="enter from the bottom after 0.2s" class="header-line">关于IDE </h1>
             <p data-scroll-reveal="enter from the bottom after 0.3s">
-                我们提供快捷高效的二次开发工具链，可在网络端实现无代码二次开发工程。入门简单，且开发效果好。为广大客户节省了大量的产品迭代开发时间，降低研发成本。用户不用花费大量时间和金钱成本去适应安卓等复杂操作系统的软件开发流程，只需要用简单的鼠标操作和坐标输入就能像做ppt一样做出优良的人机交互界面。
+                我们提供快捷高效的二次开发工具链，可在网络客户端或本地客户端实现无代码二次开发工程。入门简单，且开发效果好。为广大客户
+                节省了大量的产品迭代开发时间，降低研发成本。用户不用花费大量时间和金钱成本去适应安卓等复杂操作系统的软件开发流程，只需
+                要用简单的鼠标操作和坐标输入就能像做ppt一样做出优良的人机交互界面。
         </div>
 
     </div>
     <!--/.HEADER LINE END-->
 
     <div class="row">
-
-
         <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.4s">
             <div class="about-div">
                 <div class="col-md-12 col-lg-offset-3">
@@ -258,7 +259,7 @@
 </div>-->
 <!-- FACULTY SECTION END-->
 
-<!--轮播开始-->
+<!--轮播开始
 <div id="myCarousel" class="carousel slide slide-zyj">
     <ol class="carousel-indicators position-zyj" >
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -285,36 +286,34 @@
         <a href="#myCarousel" data-slide="next" class="carousel-control right1 "><span class="control-zyj">&rsaquo;</span></a>
     </div>
 </div>
-<!--轮播结束-->
+轮播结束
 
 
 
-<!--视频插入开始-->
+视频插入开始
 <div class="video-center">
-    <!--<embed src="/public/resources/1.mp4" allowFullScreen="true" quality="high"-->
-    <!--width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>-->
-    <!--<video src="/public/resources/1.mp4" controls loop autoplay height="600px" width="800px"></video>-->
+    <embed src="/public/resources/1.mp4" allowFullScreen="true" quality="high"
+    width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+    <video src="/public/resources/1.mp4" controls loop autoplay height="600px" width="800px"></video>
     <video src="/public/resources/1.mp4" controls loop autoplay  height="100%" width="100%"></video>
-    <!-- <embed src="//static.youku.com/v1.0.0678/v/swf/loader.swf?VideoIDS=XMTg3NTc4Mjk5Mg%3D%3D&winType
+     <embed src="//static.youku.com/v1.0.0678/v/swf/loader.swf?VideoIDS=XMTg3NTc4Mjk5Mg%3D%3D&winType
      =BDskin&embedid=MTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%3D&wd=&partnerid=0edbfd2e4fc91b72&vext=pid%
      253D0edbfd2e4fc91b72%2526emb%253DMTE0Ljk3LjI0MC4xMzACNDY4OTQ1NzQ4AgI%253D%2526bc%253D%2526cna%2
      53DIiFlEE3vEVACAXJiWyRODJ%2BW%2526vvlogext%253Dpc_i%25253D14741801227030QQ%252526pc_u%25253D424
      434612%252526rvpvid%25253D-%252526rycid%25253D-%252526yvft%25253D1482308433490%252526vsidc%2525
      3D1%252526seid%25253D1482302058992FwV%252526vstp%25253D94%252526svstp%25253D33%2526type%253D0%2
      526embsig%253D1_1482311343_e5be9c4e97cbf58a5b835a01867641c5" allowFullScreen="true" quality="high"
-            width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>-->
+            width="880" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
 </div>
 
-<!--视频插入结束-->
+视频插入结束-->
 <div id="course-sec" class="container set-pad">
     <div class="row text-center">
         <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
             <h1 data-scroll-reveal="enter from the bottom after 0.1s" class="header-line">产品介绍 </h1>
             <p data-scroll-reveal="enter from the bottom after 0.3s">
                 我们能够在围绕自主芯片核心的硬件平台上实现绚丽的图形显示效果，及快速的图形刷新速率,提供给客户无代码网络端工具链，实现低成本二次开发
-
                 使低成本人机界面摆脱廉价、古板、粗糙的印象。
-
             </p>
         </div>
 
@@ -337,7 +336,7 @@
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse1" class="panel-collapse collapse" style="height: 0px;">
+                    <div id="collapse1" class="panel-collapse collapse" style="height: 0;">
                         <div class="panel-body">
                             <p>
                                 始于我们带来的核心运算芯片GPU,这颗核心显示芯片优化精简了传统GPU架构，使其满足于更高效果、更低功耗、更稳定的物联网设备显示需求。
@@ -353,7 +352,7 @@
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse2" class="panel-collapse collapse" style="height: 0px;">
+                    <div id="collapse2" class="panel-collapse collapse" style="height: 0;">
                         <div class="panel-body">
                             <p>
                                 业界的CPU方案由于有操作系统的存在，会有不小的故障率。而我们实现的GPU方案系统中只有一个轻量级操作系统，零延迟启动，按键即显示。且硬件和RTL经过了可靠性设计，稳定性极佳。
@@ -369,7 +368,7 @@
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse3" class="panel-collapse collapse" style="height: 0px;">
+                    <div id="collapse3" class="panel-collapse collapse" style="height: 0;">
                         <div class="panel-body">
                             <p>
                                 网络端软件开发工具链提供图形化开发环境，降低对开发者编程背景的需求。提高客户二次开发效率，降低迭代成本。
@@ -391,6 +390,64 @@
     </div>
 </div>
 
+
+<div id="course-cases" class="container set-pad">
+    <div class="row text-center">
+        <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
+            <h1 data-scroll-reveal="enter from the bottom after 0.1s" class="header-line">IDE开发案例</h1>
+              <p data-scroll-reveal="enter from the bottom after 0.3s">经过简单的学习后，开发者可以根据自己的想法创意去自由制作汽车仪表盘界面、工控仪表盘界面、智能家居人机交互界面。</p>
+
+        </div>
+        <!--轮播开始-->
+        <div id="myCarousel" class="carousel slide slide-zyj" data-scroll-reveal="enter from the bottom after 0.4s">
+            <ol class="carousel-indicators position-zyj" >
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+                <li data-target="#myCarousel" data-slide-to="3"></li>
+                <li data-target="#myCarousel" data-slide-to="4"></li>
+                <li data-target="#myCarousel" data-slide-to="5"></li>
+            </ol>
+            <div class="container container-zyj">
+                <div class="carousel-inner row position1-zyj">
+                    <div class="item active">
+                        <img src="../../public/images/slide/01.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="1.png"/>
+                    </div>
+                    <div class="item">
+                        <img src="../../public/images/slide/02.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="2.png"/>
+                    </div>
+                    <div class="item">
+                        <img src="../../public/images/slide/03.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="3.png"/>
+                    </div>
+                    <div class="item">
+                        <img src="../../public/images/slide/04.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="4.png"/>
+                    </div>
+                    <div class="item">
+                        <img src="../../public/images/slide/05.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="5.png"/>
+                    </div>
+                    <div class="item">
+                        <img src="../../public/images/slide/06.png" class="col-sx-12 col-md-12 col-lg-12 size-zyj" style="width:1200px;height:720px;" alt="6.png"/>
+                    </div>
+                </div >
+                <a href="#myCarousel" data-slide="prev" title="上一张" class="carousel-control left1"><span class="control-zyj">&lsaquo;</span></a>
+                <a href="#myCarousel" data-slide="next" title="下一张" class="carousel-control right1"><span class="control-zyj">&rsaquo;</span></a>
+            </div>
+        </div>
+        <!--轮播结束-->
+        <!--视频插入开始-->
+        <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-1 col-md-offset-1 col-sm-offset-1 video-p">
+            <p data-scroll-reveal="enter from the bottom after 0.3s">
+                加入定时器后的仿真效果视频
+            </p>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-8">
+            <div class=" video-center" data-scroll-reveal="enter from the bottom after 0.4s">
+                <video src="/public/resources/1.mp4" controls loop autoplay  height="100%" width="100%"></video>
+            </div></div>
+        <!--视频插入结束-->
+    </div>
+    <!--/.HEADER LINE END-->
+</div>
 <div class="container" id="contact-sec">
     <div class="row set-row-pad">
         <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1"
@@ -399,23 +456,18 @@
             <hr/>
             <h4>苏州公司地址：江苏省苏州市吴江区联杨路139号清华汽车园1号楼</h4>
             <h4>安徽公司地址：安徽省合肥市高新区创新产业园二期F1幢</h4>
-            <h4><strong>联系电话:</strong> 0512-63317830 </h4>
+            <h4><strong>联系电话:</strong>0512-63317830（苏州）  0551-64260997（合肥） </h4>
             <h4><strong>Email: </strong>tian.xiang@graphichina.com</h4>
         </div>
-
-
     </div>
-
-
 </div>
 <!-- CONTACT SECTION END-->
 <div id="footer">
     &copy 2016 <a href="http://www.graphichina.com" style="color: #fff"
                   target="_blank">www.graphichina.com </a>All Rights Reserved
+    <br/><a href="http://www.miibeian.gov.cn/" style="color: #fff">苏ICP备16003792号-1</a>
 </div>
 <!-- FOOTER SECTION END-->
-
-
 </body>
 <script src="../../public/general/js/versionTag.js"></script>
 </html>

@@ -306,22 +306,35 @@ body{
 
 #updater_wrapper .displayInfo{
     position: fixed;
-    top:48%;
-    left:25%;
+    top:50%;
+    left:50%;
+    margin-left: -200px;
+    margin-top:-10px;
 }
 
 #myprogressBackground{
     width:400px;
     height: 20px;
+    border:1px #ddd solid;
     background-color:#e0e0e0;
+    padding: 1px;
+    border-radius: 3px;
 }
 
 #myprogress{
     width: 35%;
     height: 100%;
     background-color:#00bfff;
+    border-radius: 3px;
 }
 
 #updateInfoText{
     color:#ffffff;
+}
+#filedrag{
+    border:1px solid rgba(255,255,255,0);
+}
+#filedrag.hover{
+    border:1px dashed #333;
+    cursor: default;
 }

@@ -264,7 +264,7 @@ module.exports =   React.createClass({
     registerWidgets:function () {
         this.gWidgets = {}
         //register getTag setTag
-        
+
         console.log(this.project)
         WidgetExecutor.setTag = function (tag,value) {
             // console.log('aaa',tag,value)
@@ -281,12 +281,12 @@ module.exports =   React.createClass({
     drawGeneralWidget:function (curX,curY,widget,options,cb) {
         if (!widget.initialzed){
             widget.initialzed = true;
-            this.interpretGeneralCommand(widget,'onInitialize');  
+            this.interpretGeneralCommand(widget,'onInitialize');
         }
         this.interpretGeneralCommand(widget,'onTagChange')
     },
     drawGeneralButton:function (curX,curY,widget,options,cb) {
-        
+
 
     },
     paintGeneralWidget:function (curX,curY,widget,options,cb) {
@@ -296,7 +296,7 @@ module.exports =   React.createClass({
         cb &&cb();
     },
     paintGeneralButton:function (curX,curY,widget,options,cb) {
-        
+
     },
     paintGeneralLayer:function (curX,curY,layer) {
         var offcanvas = this.refs.offcanvas;
@@ -314,18 +314,18 @@ module.exports =   React.createClass({
                 // console.log('rotateAngle',layer.rotateAngle)
                 offCtx.rotate((layer.rotateAngle)/180.0*Math.PI)
                 offCtx.translate(-transX,-transY)
-                
+
                 this.paintSubLayers(baseX,baseY,layer.width,layer.height,subLayers)
                 offCtx.restore()
             }else{
                 this.paintSubLayers(baseX,baseY,layer.width,layer.height,subLayers)
             }
-        
-            
 
-            
+
+
+
         }
-        
+
     },
     paintSubLayers:function (baseX,baseY,width,height,subLayers) {
         var offcanvas = this.refs.offcanvas;
@@ -378,20 +378,20 @@ module.exports =   React.createClass({
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
         if (subLayer) {
-            
+
             this.drawTextByTempCanvas(curX,curY,slWidth,slHeight,subLayer.text,subLayer.fontStyle);
         }
-        
+
 
     },
     paintTextureSL:function (curX,curY,slWidth,slHeight,subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
         if (subLayer) {
-            
+
             this.drawBg(curX,curY,slWidth,slHeight,subLayer.imgSrc)
         }
-        
+
     },
     paintColorSL:function (curX,curY,slWidth,slHeight,subLayer) {
         if (subLayer) {
@@ -399,8 +399,8 @@ module.exports =   React.createClass({
             var colorStr = 'rgba('+color.r+','+color.g+','+color.b+','+(color.a/255.0)+')'
             this.drawBg(curX,curY,slWidth,slHeight,null,colorStr)
         }
-        
-        
+
+
     },
     isIn: function (res, resList, key) {
         if (key) {
@@ -514,7 +514,7 @@ module.exports =   React.createClass({
                 // console.log('set ',_.cloneDeep(curInst))
                 this.setByParam(widget,curInst[1],curInst[2])
                 // console.log(widget)
-            
+
                 break;
             case 'get':
                 widget.scope[curInst[1]] = this.evalParam(widget,curInst[2])
@@ -526,7 +526,7 @@ module.exports =   React.createClass({
                 }else{
                     step = 1;
                 }
-                
+
                 break;
             case 'gte':
                 if (this.evalParam(widget,curInst[1])>=this.evalParam(widget,curInst[2])) {
@@ -534,7 +534,7 @@ module.exports =   React.createClass({
                 }else{
                     step = 1;
                 }
-                
+
                 break;
             case 'gt':
                 if (this.evalParam(widget,curInst[1])>this.evalParam(widget,curInst[2])) {
@@ -542,7 +542,7 @@ module.exports =   React.createClass({
                 }else{
                     step = 1;
                 }
-                
+
                 break;
             case 'lt':
                 if (this.evalParam(widget,curInst[1])<this.evalParam(widget,curInst[2])) {
@@ -550,7 +550,7 @@ module.exports =   React.createClass({
                 }else{
                     step = 1;
                 }
-                
+
                 break;
             case 'lte':
                 if (this.evalParam(widget,curInst[1])<=this.evalParam(widget,curInst[2])) {
@@ -558,7 +558,7 @@ module.exports =   React.createClass({
                 }else{
                     step = 1;
                 }
-                
+
                 break;
             case 'jump':
                 step = curInst[2];
@@ -610,12 +610,12 @@ module.exports =   React.createClass({
                 if (curValue<widget.minValue) {
                     curValue = widget.minValue
                 }
-                
+
                 var alarmValue = this.shouldHandleAlarmAction(curValue,widget,widget.lowAlarmValue,widget.highAlarmValue)
                 if (alarmValue) {
                     this.handleTargetAction(widget, alarmValue);
                 }
-                
+
                 break;
             case 'print':
                 console.log(curInst)
@@ -628,7 +628,7 @@ module.exports =   React.createClass({
 
         }
         this.processGeneralWidgetCommand(widget,cmds,index+step)
-        
+
     },
     componentDidMount: function () {
         //this.load();
@@ -1746,6 +1746,9 @@ module.exports =   React.createClass({
                 case 'MyInputKeyboard':
                     this.drawInputKeyboard(curX, curY, widget, options,cb);
                     break;
+                case 'MyAnimation':
+                    this.drawAnimation(curX, curY, widget, options,cb);
+                    break;
                 case 'general':
                     this.drawGeneralWidget(curX,curX,widget,options,cb);
                     break;
@@ -1840,6 +1843,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyInputKeyboard':
                 this.paintInputKeyboard(curX, curY, widget, options,cb);
+                break;
+            case 'MyAnimation':
+                this.paintAnimation(curX, curY, widget, options,cb);
                 break;
             case 'general':
                 this.paintGeneralWidget(curX,curY,widget,options,cb);
@@ -1943,7 +1949,22 @@ module.exports =   React.createClass({
             this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
         }
         cb && cb();
-
+    },
+    drawAnimation:function(curX, curY, widget, options,cb){
+        var tag = this.findTagByName(widget.tag);
+        var slideIdx = (tag && tag.value) || 0;
+        widget.curSlideIdx = slideIdx;
+    },
+    paintAnimation:function(curX, curY, widget, options,cb){
+        var slideSlices = widget.texList[0].slices;
+        var slideIdx = widget.curSlideIdx;
+        if (slideIdx >= 0 && slideIdx < slideSlices.length) {
+            var curSlice = slideSlices[slideIdx];
+            var width = widget.info.width;
+            var height = widget.info.height;
+            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+        }
+        cb && cb();
     },
     drawButton:function(curX, curY, widget, options,cb){
 
@@ -2354,7 +2375,6 @@ module.exports =   React.createClass({
         if (widget.texList) {
             var hori = widget.info.arrange == 'horizontal';
             if (!widget.slideSize){
-
                 var defaultSize = hori? widget.info.h:widget.info.w;
                 widget.slideSize = this.getImageSize(widget.texList[1].slices[0].imgSrc,defaultSize,defaultSize);
             }
@@ -2386,15 +2406,11 @@ module.exports =   React.createClass({
                 }
             }
 
-
-            cb && cb();
-
-
-
         }
+        cb && cb();
     },
     paintScriptTrigger:function (curX, curY, widget, options,cb) {
-
+        cb&&cb()
     },
     drawScriptTrigger:function(curX, curY, widget, options,cb){
         //get current value
@@ -4404,7 +4420,6 @@ module.exports =   React.createClass({
             default:
                 widget.mouseState = mouseState;
                 needRedraw = true;
-                break;
         }
         if (needRedraw) {
             this.drawAfterMouseAction(mouseState);
@@ -4462,7 +4477,7 @@ module.exports =   React.createClass({
                         needRedraw = true;
                         break;
                 }
-            
+
         }
         if (needRedraw) {
             this.drawAfterMouseAction(mouseState);
