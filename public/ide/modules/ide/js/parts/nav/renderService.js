@@ -313,6 +313,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         //track res
                         this.trackedRes.push(new ResTrack(img,slice.color,new TextInfo(info.text,style),outputFilename,info.width,info.height,slice))
                         //
+                        // console.log(_.cloneDeep(this.trackedRes))
                         widget.texList[0].slices[index].imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -399,7 +400,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                             cb && cb(err);
                         }
                     }else{
-                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height),slice)
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,slice))
+                        // console.log(_.cloneDeep(this.trackedRes))
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -473,6 +475,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         }
                     }else{
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -541,6 +544,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         cb && cb(err);
                     }else{
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
                         //write widget
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         //if last trigger cb
@@ -669,12 +673,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     cb && cb(err);
                 }else{
                     this.trackedRes.push(new ResTrack(bgSlice.imgSrc,bgSlice.color,new TextInfo(info.text,style),outputFilename,width,height,bgSlice))
+                    // console.log(_.cloneDeep(this.trackedRes))
                     bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                     var stopTime = new Date();
                     console.log('Output stream costs: ',(stopTime-startTime)/1000.0+'s');
                     cb && cb();
                 }
-            })
+            }.bind(this))
 
 
         }else{
@@ -714,6 +719,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             var curJudgeTrack = this.trackedRes[i];
             for (var j=0;j<i;j++){
                 //compare with former restracks
+                // console.log(this.trackedRes[j])
                 if (this.trackedRes[j].equal(curJudgeTrack)){
                     //same;
                     needRemoveFiles.push(curJudgeTrack.slice.imgSrc)

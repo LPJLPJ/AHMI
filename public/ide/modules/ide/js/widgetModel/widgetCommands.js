@@ -48,6 +48,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            var(tMinAngle,0)\n            var(tMaxAngle,0)\n            var(tWidth,0)\n            set(tWidth,\'this.layers.0.width\')\n            divide(tWidth,2)\n            var(tHeight,0)\n            set(tHeight,\'this.layers.0.height\')\n            divide(tHeight,2)\n            set(tMinAngle,\'this.minValue\')\n            set(tMaxAngle,\'this.maxValue\')\n            if (tTagValue>tMaxAngle) {\n                set(tTagValue,tMaxAngle)\n            }\n            if(tTagValue<tMinAngle){\n                set(tTagValue,tMinAngle)\n            }\n            set(\'this.layers.0.rotateCenterX\',tWidth)\n            set(\'this.layers.0.rotateCenterY\',tHeight)\n            set(\'this.layers.0.rotateAngle\',tTagValue)\n        '
     };
 
+    WidgetCommands['TextArea'] = {
+        onInitialize: ''
+    };
+
     return WidgetCommands;
 });
 

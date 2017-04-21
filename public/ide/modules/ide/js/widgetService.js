@@ -382,7 +382,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 self.backgroundColor=level.texList[0].slices[0].color;
                 self.backgroundImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if(self.progressModeId=='0'){
                     self.progressColor=level.texList[1].slices[0].color;
                     self.progressImageElement=ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
@@ -484,8 +483,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(this.progressModeId=='1'){
                     //变色进度条
                     var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
-
                     //console.log(progressColor);
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
+                    );
+                    if(this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
                     if(this.arrange=='horizontal'){
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -499,9 +507,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                         }
                     }
-                    if(this.backgroundImageElement){
-                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                    }
                 }else if(this.progressModeId=='2'){
                     //脚本进度条，啥也不画！
                 }else if(this.progressModeId=='3'){
@@ -512,6 +517,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         this.width,
                         this.height
                     );
+                    if(this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
                     if(this.arrange=='horizontal'){
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -569,9 +577,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                         }
-                    }
-                    if(this.backgroundImageElement){
-                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
                 }
 
@@ -3158,5 +3163,76 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
 
 
+    //myAnimation
+    fabric.MyAnimation = fabric.util.createClass(fabric.Object, {
+        type: Type.MyAnimation,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
 
-}])
+            var tex=level.texList[0];
+            this.currentColor=tex.slices[tex.currentSliceIdx].color;
+
+            this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+            if (this.currentImageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+            this.on('changeTex', function (arg) {
+
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.currentColor=tex.slices[tex.currentSliceIdx].color;
+                self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                ctx.fillStyle=this.currentColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height );
+                if (this.currentImageElement){
+                    ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+
+                }
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染Slide出错');
+            }
+        }
+    });
+    fabric.MyAnimation.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyAnimation(level, option));
+    }
+    fabric.MyAnimation.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                currentColor:this.currentColor,
+                currentImageElement:this.currentImageElement
+            });
+        }
+    })(fabric.MyAnimation.prototype.toObject);
+    fabric.MyAnimation.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyAnimation(level, object));
+    };
+    fabric.MyAnimation.async = true;
+
+
+}]);

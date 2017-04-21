@@ -420,6 +420,9 @@
         `
     };
 
+    WidgetCommands['TextArea']={
+        onInitialize:``
+    }
 
 
 

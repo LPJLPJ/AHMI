@@ -47,6 +47,16 @@
                         click: function(){
                             checkUpdate();
                         },
+                        key: 'j',
+                        modifiers: 'ctrl'
+                    },
+                    {
+                        label: '提升权限',
+                        icon: '',
+                        type: 'normal',
+                        click: function(){
+                            updatePriority();
+                        },
                         key: 'u',
                         modifiers: 'ctrl'
                     },
@@ -248,7 +258,13 @@
             }
         }
 
-
+        /**
+         * 提升权限，更新用户权限
+         * @return {[type]} [description]
+         */
+        function updatePriority(){
+            window.location.href="./updatePriority.html";
+        }
         /**
          * 模拟一个假线程，使进度条动起来
          * @return {[type]} [description]
