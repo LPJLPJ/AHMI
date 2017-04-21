@@ -382,7 +382,11 @@
                   }
                }
                var(cur,'this.otherAttrs.19')
-
+               print(cur,'cur')
+               if(cur==1){
+                  print(temp1,'temp1')
+                  set('this.layers.2.x',temp1)
+               }
             }
 
         `

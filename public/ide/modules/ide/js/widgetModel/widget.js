@@ -466,9 +466,9 @@
 
     //progress
     function Progress(x,y,w,h,info,slices){
-        var layerBackground = new Layer(0,0,w,y);
-        var layerProcess = new Layer(0,0,w,y);
-        var layerCursor = new Layer(0,0,w,y);
+        var layerBackground = new Layer(0,0,w,h);
+        var layerProcess = new Layer(0,0,w,h);
+        var layerCursor = new Layer(0,0,w,h);
         var colorElems;
 
         var mode = Number(info.progressModeId);
@@ -495,7 +495,7 @@
         }
         //cursor
         if(cursor==1){
-            layerCursor.subLayers.image = new TextureSubLayer(slices[layersCnt].imgSrc);
+            layerCursor.subLayers.image = new TextureSubLayer(slices[layersCnt-1].imgSrc);
         }
 
         var layers = [layerBackground,layerProcess,layerCursor];

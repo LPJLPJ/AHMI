@@ -290,7 +290,28 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                         }
                     }
                     generalWidget.otherAttrs[19] = Number(rawWidget.info.cursor);
-
+                    if(rawWidget.info.cursor=='1'){
+                        var imgSrc = slices[slices.length-1].imgSrc;
+                        if(imgSrc){
+                            var cursorImg = new Image();
+                            cursorImg.src = imgSrc;
+                            if(cursorImg.complete){
+                                generalWidget.layers[2].width = cursorImg.width;
+                                generalWidget.layers[2].height = cursorImg.height;
+                                var rawH = generalWidget.layers[0].height;
+                                var y = parseInt((rawH-cursorImg.height)/2);
+                                generalWidget.layers[2].y = y;
+                            }else{
+                                cursorImg.onload = function(){
+                                    generalWidget.layers[2].width  = cursorImg.width;
+                                    generalWidget.layers[2].height = cursorImg.height;
+                                    var rawH = generalWidget.layers[0].height;
+                                    var y = parseInt((rawH-cursorImg.height)/2);
+                                    generalWidget.layers[2].y = y;
+                                }
+                            }
+                        }
+                    }
 
 
                     break;
