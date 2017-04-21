@@ -1,17 +1,1 @@
-/**
- * Created by lixiang on 16/3/28.
- */
-ide.
-    controller('arrangeCtr',['$scope','ProjectService',function($scope,ProjectService){
-        $scope.changeZIndex=function(_op){
-            var option={
-                index:_op
-            };
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeZIndex(option,function () {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                    ProjectService.updateCurrentThumbInPage();
-
-                });
-        }
-    }]);
+ide.controller("arrangeCtr",["$scope","ProjectService",function(e,n){e.changeZIndex=function(r){var t={index:r},a=n.SaveCurrentOperate();n.ChangeAttributeZIndex(t,function(){e.$emit("ChangeCurrentPage",a),n.updateCurrentThumbInPage()})}}]);

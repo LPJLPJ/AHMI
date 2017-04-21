@@ -311,7 +311,7 @@ module.exports =   React.createClass({
                 transY = baseY
                 offCtx.save()
                 offCtx.translate(transX,transY)
-                // console.log('rotateAngle',layer.rotateAngle)
+                 console.log('rotateAngle',layer.rotateAngle)
                 offCtx.rotate((layer.rotateAngle)/180.0*Math.PI)
                 offCtx.translate(-transX,-transY)
                 
@@ -332,18 +332,25 @@ module.exports =   React.createClass({
         var offCtx = offcanvas.getContext('2d');
         var hasROI = false
         var roi
-        var p1x,p1y,alpha,beta
+        var p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,alpha,beta
 
         if (subLayers.roi) {
-            hasROI = true
-            roi = subLayers.roi
-            p1x = roi.p1x,
-            p1y = roi.p1y
-            alpha = roi.alpha
-            beta = roi.beta
+            hasROI = true;
+            roi = subLayers.roi;
+            p1x = roi.p1x;
+            p1y = roi.p1y;
+            p2x = roi.p2x;
+            p2y = roi.p2y;
+            p3x = roi.p3x;
+            p3y = roi.p3y;
+            p4x = roi.p4x;
+            p4y = roi.p4y;
+            alpha = roi.alpha;
+            beta = roi.beta;
         }
         if (hasROI) {
             offCtx.save()
+            //console.log('roi.mode',roi.mode)
             if (roi.mode == 1) {
                 //ray
                 var lt = Math.pow(p1x,2)+Math.pow(p1y,2)
@@ -360,6 +367,13 @@ module.exports =   React.createClass({
             }else{
                 //four points
                 console.log('unsupported')
+                offCtx.beginPath();
+                offCtx.moveTo(baseX+p1x,baseY+p1y);
+                offCtx.lineTo(baseX+p2x,baseY+p2y);
+                offCtx.lineTo(baseX+p3x,baseY+p3y);
+                offCtx.lineTo(baseX+p4x,baseY+p4y);
+                offCtx.closePath();
+                offCtx.clip();
             }
 
         }

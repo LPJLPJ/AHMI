@@ -241,7 +241,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.actions = targetWidget.actions
                 break;
                 case 'MyProgress':
-                    console.log('rawWidget',rawWidget);
                     var  slices = [];
                     targetWidget.texList.map(function(tex){
                         slices.push(tex.slices[0]);
@@ -250,12 +249,50 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget= generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.mode= Number(rawWidget.info.progressModeId);
-                    generalWidget.cursor = Number(rawWidget.info.cursor);
                     generalWidget.minValue = Number(rawWidget.info.minValue);
                     generalWidget.maxValue = Number(rawWidget.info.maxValue);
                     generalWidget.actions = targetWidget.actions;
                     generalWidget.generalType = 'Progress';
                     generalWidget.subType = 'general';
+                    //otherAttrs
+                    var colorElems
+                    if(generalWidget.mode==1){
+                        colorElems = parseColor(slices[1].color);
+                        generalWidget.otherAttrs[0] = colorElems.r;
+                        generalWidget.otherAttrs[1] = colorElems.g;
+                        generalWidget.otherAttrs[2] = colorElems.b;
+                        generalWidget.otherAttrs[3] = colorElems.a;
+                        colorElems = parseColor(slices[2].color);
+                        generalWidget.otherAttrs[4] = colorElems.r;
+                        generalWidget.otherAttrs[5] = colorElems.g;
+                        generalWidget.otherAttrs[6] = colorElems.b;
+                        generalWidget.otherAttrs[7] = colorElems.a;
+                    }else if(generalWidget.mode==3){
+                        generalWidget.otherAttrs[0] = targetWidget.info.thresholdModeId;
+                        generalWidget.otherAttrs[1] = targetWidget.info.threshold1;
+                        generalWidget.otherAttrs[2] = targetWidget.info.threshold2;
+                        colorElems = parseColor(slices[1].color);
+                        generalWidget.otherAttrs[3] = colorElems.r;
+                        generalWidget.otherAttrs[4] = colorElems.g;
+                        generalWidget.otherAttrs[5] = colorElems.b;
+                        generalWidget.otherAttrs[6] = colorElems.a;
+                        colorElems = parseColor(slices[2].color);
+                        generalWidget.otherAttrs[7] = colorElems.a;
+                        generalWidget.otherAttrs[8] = colorElems.g;
+                        generalWidget.otherAttrs[9] = colorElems.b;
+                        generalWidget.otherAttrs[10] = colorElems.a;
+                        if(targetWidget.info.thresholdModeId==2){
+                            colorElems = parseColor(slices[3].color);
+                            generalWidget.otherAttrs[11] = colorElems.a;
+                            generalWidget.otherAttrs[12] = colorElems.g;
+                            generalWidget.otherAttrs[13] = colorElems.b;
+                            generalWidget.otherAttrs[14] = colorElems.a;
+                        }
+                    }
+                    generalWidget.otherAttrs[19] = Number(rawWidget.info.cursor);
+
+
+
                     break;
                 case 'MyRotateImg':
                 console.log('RotateImg')
@@ -321,4 +358,38 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         }
     }
+
+    function parseColor(color) {
+        var colorElems = []
+        var result = {
+            r:0,
+            g:0,
+            b:0,
+            a:0
+        }
+        if (color.indexOf('rgba')!==-1) {
+            //rgba(r,g,b,a)
+            colorElems = color.split(/[\(|\)]/)[1].split(',').map(function (c) {
+                return Number(c)
+            })
+            result = {
+                r:colorElems[0],
+                g:colorElems[1],
+                b:colorElems[2],
+                a:colorElems[3]*255
+            }
+        }else if (color.indexOf('rgb')!==-1){
+            colorElems = color.split(/[\(|\)]/)[1].split(',')
+            result = {
+                r:colorElems[0],
+                g:colorElems[1],
+                b:colorElems[2],
+                a:255
+            }
+        }else{
+            throw new Error('parsing color error: '+color)
+        }
+        return result
+    }
+
 }]);

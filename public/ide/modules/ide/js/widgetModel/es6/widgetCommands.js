@@ -241,13 +241,13 @@
     WidgetCommands['Progress'] = {
         onInitialize:`
             var(mod,'this.mode')
-            var(cur,'this.cursor')
+            var(cur,'this.otherAttrs.19')
             set('this.layers.0.hidden',0)
             set('this.layers.1.hidden',0)
             if(cur==1){
                 set('this.layers.2.hidden',0)
+                set('this.layers.2.x',0)
             }
-            set('this.layers.1.width',0)
         `,
         onMouseUp:`
             var(a,1)
@@ -271,21 +271,30 @@
                   minus(temp1,min)
                   minus(temp2,min)
                   var(w,'this.layers.0.width')
+                  var(h,'this.layers.0.height')
                   if(m==0){
+                      print(m,'m')
                       multiply(temp1,w)
                       divide(temp1,temp2)
-                      set('this.layers.1.width',temp1)
+                      set('this.layers.1.subLayers.roi.p1x',0)
+                      set('this.layers.1.subLayers.roi.p1y',0)
+                      set('this.layers.1.subLayers.roi.p2x',temp1)
+                      set('this.layers.1.subLayers.roi.p2y',0)
+                      set('this.layers.1.subLayers.roi.p3x',temp1)
+                      set('this.layers.1.subLayers.roi.p3y',h)
+                      set('this.layers.1.subLayers.roi.p4x',0)
+                      set('this.layers.1.subLayers.roi.p4y',h)
                       set('this.layers.1.hidden',0)
                   }
                   if(m==1){
-                      var(r1,'this.otherAttrs.initColor.r')
-                      var(g1,'this.otherAttrs.initColor.g')
-                      var(b1,'this.otherAttrs.initColor.b')
-                      var(a1,'this.otherAttrs.initColor.a')
-                      var(r2,'this.otherAttrs.endColor.r')
-                      var(g2,'this.otherAttrs.endColor.g')
-                      var(b2,'this.otherAttrs.endColor.b')
-                      var(a2,'this.otherAttrs.endColor.a')
+                      var(r1,'this.otherAttrs.0')
+                      var(g1,'this.otherAttrs.1')
+                      var(b1,'this.otherAttrs.2')
+                      var(a1,'this.otherAttrs.3')
+                      var(r2,'this.otherAttrs.4')
+                      var(g2,'this.otherAttrs.5')
+                      var(b2,'this.otherAttrs.6')
+                      var(a2,'this.otherAttrs.7')
                       var(rt,r2)
                       var(gt,g2)
                       var(bt,b2)
@@ -316,17 +325,17 @@
                       set('this.layers.1.hidden',0)
                   }
                   if(m==3){
-                      var(thresM,'this.otherAttrs.thresholdModeId')
-                      var(r1,'this.otherAttrs.color1.r')
-                      var(g1,'this.otherAttrs.color1.g')
-                      var(b1,'this.otherAttrs.color1.b')
-                      var(a1,'this.otherAttrs.color1.a')
-                      var(r2,'this.otherAttrs.color2.r')
-                      var(g2,'this.otherAttrs.color2.g')
-                      var(b2,'this.otherAttrs.color2.b')
-                      var(a2,'this.otherAttrs.color2.a')
+                      var(thresM,'this.otherAttrs.0')
+                      var(r1,'this.otherAttrs.3')
+                      var(g1,'this.otherAttrs.4')
+                      var(b1,'this.otherAttrs.5')
+                      var(a1,'this.otherAttrs.6')
+                      var(r2,'this.otherAttrs.7')
+                      var(g2,'this.otherAttrs.8')
+                      var(b2,'this.otherAttrs.9')
+                      var(a2,'this.otherAttrs.10')
                       if(thresM==1){
-                         var(thres1,'this.otherAttrs.threshold1')
+                         var(thres1,'this.otherAttrs.1')
                          if(tag<thres1){
                             set('this.layers.1.subLayers.color.r',r1)
                             set('this.layers.1.subLayers.color.g',g1)
@@ -340,12 +349,12 @@
                          }
                       }
                       if(thresM==2){
-                         var(r3,'this.otherAttrs.color3.r')
-                         var(g3,'this.otherAttrs.color3.g')
-                         var(b3,'this.otherAttrs.color3.b')
-                         var(a3,'this.otherAttrs.color3.a')
-                         var(thres1,'this.otherAttrs.threshold1')
-                         var(thres2,'this.otherAttrs.threshold2')
+                         var(r3,'this.otherAttrs.11')
+                         var(g3,'this.otherAttrs.12')
+                         var(b3,'this.otherAttrs.13')
+                         var(a3,'this.otherAttrs.14')
+                         var(thres1,'this.otherAttrs.1')
+                         var(thres2,'this.otherAttrs.2')
                          if(tag<thres1){
                             set('this.layers.1.subLayers.color.r',r1)
                             set('this.layers.1.subLayers.color.g',g1)
@@ -372,6 +381,8 @@
                       set('this.layers.1.hidden',0)
                   }
                }
+               var(cur,'this.otherAttrs.19')
+
             }
 
         `
