@@ -486,6 +486,23 @@
     ScriptTrigger.prototype.constructor = ScriptTrigger;
 
 
+    function Video(x,y,w,h,slice) {
+
+        var bgLayer
+        var layers = []
+        bgLayer = new Layer(0,0,w,h)
+        bgLayer.subLayers.image = new TextureSubLayer(slice.imgSrc);
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor(slice.color))
+        layers.push(bgLayer)
+        
+        Widget.call(this,x,y,w,h,layers)
+
+    }
+
+    Video.prototype = Object.create(Widget.prototype);
+    Video.prototype.constructor = Video;
+
+
 
 
 
@@ -880,6 +897,7 @@
     WidgetModel.models.TextArea = TextArea;
     WidgetModel.models.Progress = Progress;
     WidgetModel.models.ScriptTrigger = ScriptTrigger
+    WidgetModel.models.Video = Video
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

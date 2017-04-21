@@ -54,8 +54,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     WidgetCommands['ScriptTrigger'] = {
         onInitialize: '',
-        onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            checkalarm()\n            set(\'this.oldValue\',tTagValue)\n        '
+        onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            checkalarm(0)\n            set(\'this.oldValue\',tTagValue)\n        '
     };
+
+    WidgetCommands['Video'] = {};
 
     return WidgetCommands;
 });

@@ -361,6 +361,19 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     })
                     
                 break;
+                case 'MyVideo':
+                    generalWidget =  new WidgetModel.models['Video'](x,y,w,h,targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Video';
+                    if (info.scource=='HDMI') {
+                        generalWidget.mode = 0
+                    }else{
+                        generalWidget.mode = 1
+                    }
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    
+                break;
                     
                 default:
                     targetWidget.subType = rawWidget.type;

@@ -429,9 +429,13 @@
         onTagChange:`
             var(tTagValue,0)
             getTag(tTagValue)
-            checkalarm()
+            checkalarm(0)
             set('this.oldValue',tTagValue)
         `
+    }
+
+    WidgetCommands['Video']={
+        
     }
 
 
