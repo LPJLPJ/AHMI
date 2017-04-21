@@ -52,18 +52,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onInitialize: ''
     };
 
-    WidgetCommands['ScriptTrigger'] = {
-        onInitialize: '',
-        onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            checkalarm(0)\n            set(\'this.oldValue\',tTagValue)\n        '
-    };
-
-    WidgetCommands['Video'] = {};
     WidgetCommands['Switch'] = {
         onInitialize: '\n            set(\'this.layers.0.hidden\',1)\n        ',
         onMouseUp: '\n        ',
         onMouseDown: '\n        ',
         onTagChange: '\n            var(tag,0)\n            var(bt,\'this.otherAttrs.0\')\n            getTag(tag)\n            var(tBt,0)\n            set(tBt,bt)\n            var(t,0)\n            set(t,tag)\n            while(tBt>0){\n                divide(t,2)\n                if(tBt==1){\n                    mod(t,2)\n                    if(t==1){\n                        print(t,\'t show\')\n                        set(\'this.layers.0.hidden\',0)\n                    }else{\n                        print(t,\'t hidden\')\n                        set(\'this.layers.0.hidden\',1)\n                    }\n                }\n                minus(tBt,1)\n            }\n            if(tBt==0){\n                if(t==1){\n                    set(\'this.layers.0.hidden\',0)\n                }else{\n                    set(\'this.layers.0.hidden\',1)\n                }\n            }\n        '
     };
+
+    WidgetCommands['ScriptTrigger'] = {
+        onInitialize: '',
+        onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            checkalarm(0)\n            set(\'this.oldValue\',tTagValue)\n        '
+    };
+
+    WidgetCommands['Video'] = {};
 
     return WidgetCommands;
 });
