@@ -196,7 +196,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             var y = info.top;
             var w = info.width;
             var h = info.height;
-            console.log('type',targetWidget.type);
             switch(targetWidget.type){
                 case 'MyButton':
 
@@ -360,7 +359,34 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.subType = 'general';
                     generalWidget.otherAttrs[0] = Number(targetWidget.info.bindBit);
                 break;
-                    
+                case 'MyScriptTrigger':
+                    generalWidget =  new WidgetModel.models['ScriptTrigger'](x,y,w,h)
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'ScriptTrigger';
+
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+
+                break;
+                case 'MyVideo':
+                    generalWidget =  new WidgetModel.models['Video'](x,y,w,h,targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Video';
+                    if (info.scource=='HDMI') {
+                        generalWidget.mode = 0
+                    }else{
+                        generalWidget.mode = 1
+                    }
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+
+                break;
+
                 default:
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget

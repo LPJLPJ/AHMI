@@ -464,6 +464,20 @@
         `
     }
 
+    WidgetCommands['ScriptTrigger']={
+        onInitialize:``,
+        onTagChange:`
+            var(tTagValue,0)
+            getTag(tTagValue)
+            checkalarm(0)
+            set('this.oldValue',tTagValue)
+        `
+    }
+
+    WidgetCommands['Video']={
+        
+    }
+
 
 
     return WidgetCommands;
