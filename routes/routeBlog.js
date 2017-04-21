@@ -2,6 +2,7 @@
  * Created by changecheng on 2017/2/9.
  */
 var BlogModel = require('../db/models/BlogModel');
+var UserModel = require('../db/models/UserModel');
 var CommentModel = require('../db/models/CommentModel');
 var path = require('path');
 var fs = require('fs');
@@ -429,7 +430,24 @@ BlogRoute.getBlogData = function (req, res) {
                                 return info;
                             });
                             result.comments = comments;
-                            res.end(JSON.stringify(result))
+                            var _user = req.session.user;
+                            if(_user&&_user.username&&_user.id){
+                                UserModel.findById(_user.id,function(err,data){
+                                    if(err){
+                                        console.log('err',err);
+                                        result.userInfo = null;
+                                    }else{
+                                        result.userInfo = {
+                                            id:data.id,
+                                            type:data.type
+                                        }
+                                    }
+                                    res.end(JSON.stringify(result));
+                                })
+                            }else{
+                                result.userInfo = null;
+                                res.end(JSON.stringify(result))
+                            }
                             //res.send(result);
                         }
                     });

@@ -29,7 +29,7 @@
                 success:function (msg) {
                     var msgObj = JSON.parse(msg);
                     renderBlog(msgObj);
-                    console.log(msgObj.authorId);
+                    console.log(msgObj);
                     renderComments(msgObj.comments);
                 },
                 error:function (xhr) {
