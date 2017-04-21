@@ -229,7 +229,9 @@
         new Attr('mHeight',4),
         new Attr('mValidSubLayer',4),
         new Attr('mHidden',4),
-        new Attr('tileBoxClass',4)
+        new Attr('tileBoxClass',4),
+        new Attr('mRotaCenterX',4),
+        new Attr('mRotaCenterY',4)
     ]
 
     var layerAttrTable = {
@@ -250,7 +252,9 @@
         width:'mWidth',
         height:'mHeight',
         hidden:'mHidden',
-        rotateAngle:'rotateAngle'
+        rotateAngle:'rotateAngle',
+        rotateCenterX:'mRotaCenterX',
+        rotateCenterY:'mRotaCenterY'
     }
 
     var cppSublayerAttrs = [
