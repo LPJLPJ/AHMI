@@ -460,12 +460,31 @@
             checkalarm(0)
             set('this.oldValue',tTagValue)
         `
-    }
+    };
 
     WidgetCommands['Video']={
         
-    }
+    };
 
+    WidgetCommands['Slide']={
+        onInitialize:`
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+        `,
+        onTagChange:`
+            var(len,'this.layers.length')
+            while(len>=0){
+                minus(len,1)
+                set('this.layers.len.hidden',1)
+            }
+            var(t,0)
+            getTag(t)
+            set('this.layers.t.hidden',0)
+
+        `
+    };
 
 
     return WidgetCommands;

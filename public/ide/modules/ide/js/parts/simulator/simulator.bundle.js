@@ -51224,7 +51224,7 @@ module.exports = React.createClass({
                 offCtx.clip();
             } else {
                 //four points
-                console.log('unsupported');
+                //console.log('unsupported')
                 offCtx.beginPath();
                 offCtx.moveTo(baseX + p1x, baseY + p1y);
                 offCtx.lineTo(baseX + p2x, baseY + p2y);

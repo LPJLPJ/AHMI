@@ -294,20 +294,22 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                         var imgSrc = slices[slices.length-1].imgSrc;
                         if(imgSrc){
                             var cursorImg = new Image();
+                            var rawH;
+                            var yTemp;
                             cursorImg.src = imgSrc;
                             if(cursorImg.complete){
                                 generalWidget.layers[2].width = cursorImg.width;
                                 generalWidget.layers[2].height = cursorImg.height;
-                                var rawH = generalWidget.layers[0].height;
-                                var y = parseInt((rawH-cursorImg.height)/2);
-                                generalWidget.layers[2].y = y;
+                                rawH = generalWidget.layers[0].height;
+                                yTemp = parseInt((rawH-cursorImg.height)/2);
+                                generalWidget.layers[2].y = yTemp;
                             }else{
                                 cursorImg.onload = function(){
                                     generalWidget.layers[2].width  = cursorImg.width;
                                     generalWidget.layers[2].height = cursorImg.height;
-                                    var rawH = generalWidget.layers[0].height;
-                                    var y = parseInt((rawH-cursorImg.height)/2);
-                                    generalWidget.layers[2].y = y;
+                                    rawH = generalWidget.layers[0].height;
+                                    yTemp = parseInt((rawH-cursorImg.height)/2);
+                                    generalWidget.layers[2].y = yTemp;
                                 }
                             }
                         }
@@ -384,7 +386,14 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     }
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
-
+                break;
+                case 'MySlide':
+                    generalWidget = new WidgetModel.models['Slide'](x,y,w,h,targetWidget.info,_.cloneDeep(targetWidget.texList[0].slices));
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Slide';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
                 break;
 
                 default:

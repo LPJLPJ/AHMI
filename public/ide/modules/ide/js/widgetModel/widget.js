@@ -552,19 +552,8 @@
 
     Progress.prototype = Object.create(Widget.prototype);
     Progress.prototype.constructor = Progress;
-    Progress.prototype.commands.onInitialize = [
-        ['temp','a',new Param(Int,0)]
-    ];
-    Progress.prototype.commands.onMouseDown = [
-        ['temp','a',new Param(Int,0)]
-    ];
-    Progress.prototype.commands.onMouseUp = [
-        ['temp','a',new Param(Int,0)]
-    ];
-    Progress.prototype.commands.onTagChange = [
-        ['temp','a',new Param(Int,0)]
-    ];
 
+    //switch
     function Switch(x,y,w,h,info,slices){
         var layer = new Layer(0,0,w,h);
         var colorElems = parseColor(slices[0].color);
@@ -578,8 +567,24 @@
     Switch.prototype.constructor = Switch;
 
 
+    //slide
+    function Slide(x,y,w,h,info,slices){
+        var layers = [];
+        var colorElems;
+        for(var i=0;i<slices.length;i++){
+            layers[i] = new Layer(0,0,w,h);
+            colorElems = parseColor(slices[i].color);
+            layers[i].subLayers.color = new ColorSubLayer(colorElems);
+            layers[i].subLayers.image = new TextureSubLayer(slices[i].imgSrc);
+        }
+        this.subType = 'Slide';
+        Widget.call(this,x,y,w,h,layers);
+    }
+    Slide.prototype = Object.create(Widget.prototype);
+    Slide.prototype.constructor = Slide;
+
     var WidgetCommandParser = {};
-    var scope = {}
+    var scope = {};
     WidgetCommandParser.transCommand = function (ctx,command) {
         var op = command[0];
         var result;
@@ -909,8 +914,9 @@
     WidgetModel.models.TextArea = TextArea;
     WidgetModel.models.Progress = Progress;
     WidgetModel.models.Switch = Switch;
-    WidgetModel.models.ScriptTrigger = ScriptTrigger
-    WidgetModel.models.Video = Video
+    WidgetModel.models.ScriptTrigger = ScriptTrigger;
+    WidgetModel.models.Video = Video;
+    WidgetModel.models.Slide = Slide;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 
