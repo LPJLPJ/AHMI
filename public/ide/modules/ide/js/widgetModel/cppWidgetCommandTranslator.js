@@ -1046,7 +1046,7 @@
                 }
                 break;
             case 'not':
-                if (command[2].type == 'ID'){
+                if (command[2]&&command[2].type == 'ID'){
                     //comapare two id
                     // inst = {
                     //     type:'OPNOTTE',

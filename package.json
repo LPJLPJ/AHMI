@@ -23,7 +23,7 @@
     "formidable": "^1.0.17",
     "fs-extra": "^0.30.0",
     "gulp": "^3.9.1",
-    "gulp-uglify": "^2.0.0",
+    "gulp-uglify": "^2.1.2",
     "lodash": "^4.11.2",
     "mkdir-p": "0.0.7",
     "mongoose": "^4.4.13",

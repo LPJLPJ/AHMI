@@ -440,26 +440,14 @@
             set(tBt,bt)
             var(t,0)
             set(t,tag)
-            while(tBt>0){
-                divide(t,2)
-                if(tBt==1){
+            while(tBt>=0){
+                if(tBt==0){
                     mod(t,2)
-                    if(t==1){
-                        print(t,'t show')
-                        set('this.layers.0.hidden',0)
-                    }else{
-                        print(t,'t hidden')
-                        set('this.layers.0.hidden',1)
-                    }
+                    not(t)
+                    set('this.layers.0.hidden',t)
                 }
+                divide(t,2)
                 minus(tBt,1)
-            }
-            if(tBt==0){
-                if(t==1){
-                    set('this.layers.0.hidden',0)
-                }else{
-                    set('this.layers.0.hidden',1)
-                }
             }
         `
     }
@@ -498,5 +486,19 @@
  * mod(a,2)
  * set('this.layers.1.hidden',1)
  */
+
+//if(tBt==0){
+//    if(t==1){
+//        set('this.layers.0.hidden',0)
+//    }else{
+//        set('this.layers.0.hidden',1)
+//    }
+//}
+//
+//if(t==1){
+//    set('this.layers.0.hidden',0)
+//}else{
+//    set('this.layers.0.hidden',1)
+//}
 
 
