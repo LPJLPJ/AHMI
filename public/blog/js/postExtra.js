@@ -1,8 +1,9 @@
         function sad(e) {
             var changeId =e.getAttribute("commentId");
             var currentId = parseQuery(window.location.href);
-                if(confirm('是否确认删除')){
-                    $.ajax({
+            $('#myModal').modal('show');
+            $('#modal-submit').on('click',function(){
+                $.ajax({
                         method:'DELETE',
                         url:'/blog/post/deleteComment',
                         data:{commentId:changeId,
@@ -10,13 +11,13 @@
                         },
                         success:function(data){
                             console.log('data',data);
-                            //window.location.reload();
+                            window.location.reload();
                         },
                         error:function(err){
                             console.log('err',err);
                         }
                     })
-                }
+            })
         }
 
         function parseQuery(url) {
