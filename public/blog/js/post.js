@@ -59,6 +59,27 @@
         insertBlogViews(tempCommentsHtml);
     }
 
+    window.deleteComments=function (e) {
+        var changeId =e.getAttribute("commentId");
+        var currentId = parseQuery(window.location.href);
+        $('#myModal').modal('show');
+        $('#modal-submit').on('click',function(){
+            $.ajax({
+                method:'DELETE',
+                url:'/blog/post/deleteComment',
+                data:{commentId:changeId,
+                    blogId:currentId
+                },
+                success:function(data){
+                    console.log('data',data);
+                    window.location.reload();
+                },
+                error:function(err){
+                    console.log('err',err);
+                }
+            })
+        })
+    }
     /**
      * 将模板插入视图
      * @param template
