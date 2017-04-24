@@ -2088,7 +2088,7 @@ module.exports =   React.createClass({
     },
     drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth) {
 
-        var text = text||'';
+        var text = String(text)||'';
         var font = font||{};
         // console.log(font);
         var offcanvas = this.refs.offcanvas;
