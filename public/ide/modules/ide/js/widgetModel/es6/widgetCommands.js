@@ -443,8 +443,11 @@
             while(tBt>=0){
                 if(tBt==0){
                     mod(t,2)
-                    not(t)
-                    set('this.layers.0.hidden',t)
+                    if(t==1){
+                        set('this.layers.0.hidden',0)
+                    }else{
+                        set('this.layers.0.hidden',1)
+                    }
                 }
                 divide(t,2)
                 minus(tBt,1)
@@ -505,19 +508,5 @@
  * mod(a,2)
  * set('this.layers.1.hidden',1)
  */
-
-//if(tBt==0){
-//    if(t==1){
-//        set('this.layers.0.hidden',0)
-//    }else{
-//        set('this.layers.0.hidden',1)
-//    }
-//}
-//
-//if(t==1){
-//    set('this.layers.0.hidden',0)
-//}else{
-//    set('this.layers.0.hidden',1)
-//}
 
 
