@@ -662,6 +662,9 @@
                 set('this.layers.tLayerIdx.subLayers.font.text',0)
             }
 
+            checkalarm(0)
+            set('this.oldValue',tTagValue)
+
 
         `
     };
