@@ -56,7 +56,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onInitialize: '\n            set(\'this.layers.0.hidden\',1)\n        ',
         onMouseUp: '\n        ',
         onMouseDown: '\n        ',
-        onTagChange: '\n            var(tag,0)\n            var(bt,\'this.otherAttrs.0\')\n            getTag(tag)\n            var(tBt,0)\n            set(tBt,bt)\n            var(t,0)\n            set(t,tag)\n            while(tBt>=0){\n                if(tBt==0){\n                    mod(t,2)\n                    not(t)\n                    set(\'this.layers.0.hidden\',t)\n                }\n                divide(t,2)\n                minus(tBt,1)\n            }\n        '
+        onTagChange: '\n            var(tag,0)\n            var(bt,\'this.otherAttrs.0\')\n            getTag(tag)\n            var(tBt,0)\n            set(tBt,bt)\n            var(t,0)\n            set(t,tag)\n            while(tBt>=0){\n                if(tBt==0){\n                    mod(t,2)\n                    if(t==1){\n                        set(\'this.layers.0.hidden\',0)\n                    }else{\n                        set(\'this.layers.0.hidden\',1)\n                    }\n                }\n                divide(t,2)\n                minus(tBt,1)\n            }\n        '
     };
 
     WidgetCommands['ScriptTrigger'] = {
@@ -96,17 +96,3 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * mod(a,2)
  * set('this.layers.1.hidden',1)
  */
-
-//if(tBt==0){
-//    if(t==1){
-//        set('this.layers.0.hidden',0)
-//    }else{
-//        set('this.layers.0.hidden',1)
-//    }
-//}
-//
-//if(t==1){
-//    set('this.layers.0.hidden',0)
-//}else{
-//    set('this.layers.0.hidden',1)
-//}

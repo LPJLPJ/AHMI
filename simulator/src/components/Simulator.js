@@ -630,11 +630,7 @@ module.exports =   React.createClass({
                 this.setByParam(widget,{type:'ID',value:curInst[1].value},{type:'Int',value:parseInt(WidgetExecutor.getTag(widget.tag))})
                 break;
             case 'not':
-                if(widget.scope[curInst[1].value]==0){
-                    widget.scope[curInst[1].value]=1;
-                }else{
-                    widget.scope[curInst[1].value]=0;
-                }
+                widget.scope[curInst[1].value] = ~parseInt(widget.scope[curInst[1].value])
             break;
             //mouse
             case 'getMouse':
@@ -2116,7 +2112,7 @@ module.exports =   React.createClass({
     },
     drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth) {
 
-        var text = text||'';
+        var text = String(text)||'';
         var font = font||{};
         // console.log(font);
         var offcanvas = this.refs.offcanvas;
