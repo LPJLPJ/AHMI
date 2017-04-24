@@ -486,6 +486,183 @@
         `
     };
 
+    WidgetCommands['Num']={
+        onInitialize:`
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+        `,
+        onTagChange:`
+            var(tTagValue,0)
+            getTag(tTagValue)
+            var(tMinValue,0)
+            set(tMinValue,'this.minValue')
+            var(tMaxValue,0)
+            set(tMaxValue,'this.maxValue')
+            var(tFacCount,0)
+            var(tNumOfDigits,0)
+            var(tDecimalCount,0)
+            var(tMaxWidth,0)
+            set(tMaxWidth,'this.otherAttrs.6')
+            set(tFacCount,'this.otherAttrs.3')
+            var(tHasDot,0)
+            if (tFacCount>0) {
+                set(tHasDot,1)
+            }
+            set(tNumOfDigits,'this.otherAttrs.4')
+            set(tDecimalCount,tNumOfDigits)
+            minus(tDecimalCount,tFacCount)
+            var(tAlign,0)
+            set(tAlign,'this.otherAttrs.7')
+            var(tFrontZero,0)
+            set(tFrontZero,'this.otherAttrs.1')
+            var(tSymbol,0)
+            set(tSymbol,'this.otherAttrs.2')
+            var(tTotalLayers,0)
+            set(tTotalLayers,'this.layers.length')
+            var(tHasNeg,0)
+            if (tTagValue<0) {
+                if (tSymbol==1) {
+                    set(tHasNeg,1)
+                }
+            }
+            var(tCurValue,0)
+            set(tCurValue,tTagValue)
+            if (tCurValue<0) {
+                multiply(tCurValue,-1)
+            }
+            var(tCurValue2,0)
+            set(tCurValue2,tCurValue)
+            var(tRealNum,0)
+            set(tRealNum,1)
+            while(tCurValue>0){
+                divide(tCurValue,10)
+                add(tRealNum,1)
+            }
+            var(tFrontNum,0)
+            var(tDecimalNum,0)
+            var(tOverflowNum,0)
+            if (tRealNum<=tFacCount) {
+                set(tDecimalNum,0)
+                if (tFrontZero==1) {
+                    set(tFrontNum,tDecimalCount)
+                }else{
+                    set(tFrontNum,1)
+                }
+            }else{
+                if (tRealNum>tNumOfDigits) {
+                    set(tDecimalNum,tDecimalCount)
+                    set(tOverflowNum,tRealNum)
+                    minus(tOverflowNum,tNumOfDigits)
+                }else{
+                    set(tDecimalNum,tRealNum)
+                    minus(tDecimalNum,tFacCount)
+                    if (tFrontZero==1) {
+                        set(tFrontNum,tDecimalCount)
+                        minus(tFrontNum,tDecimalNum)
+                    }else{
+                        set(tFrontNum,0)
+                    }
+                }
+            }
+            var(tCurTotalNum,0)
+            add(tCurTotalNum,tHasNeg)
+            add(tCurTotalNum,tFrontNum)
+            add(tCurTotalNum,tDecimalNum)
+            add(tCurTotalNum,tHasDot)
+            add(tCurTotalNum,tFacCount)
+            var(tLeftPadding,0)
+            set(tLeftPadding,tTotalLayers)
+            minus(tLeftPadding,tCurTotalNum)
+            var(tLeftPaddingPixel,0)
+            if (tLeftPadding>0) {
+                if (tAlign==1) {
+                    set(tLeftPaddingPixel,tLeftPadding)
+                    multiply(tLeftPaddingPixel,tMaxWidth)
+                    divide(tLeftPaddingPixel,2)
+                }else{
+                    if (tAlign==2) {
+                        set(tLeftPaddingPixel,tLeftPadding)
+                        multiply(tLeftPaddingPixel,tMaxWidth)
+                    }
+                }
+            }
+            var(tCurX,0)
+            var(tLayerIdx,0)
+            var(tDotWidth,0)
+            set(tDotWidth,tMaxWidth)
+            divide(tDotWidth,2)
+            if (tDotWidth==0) {
+                set(tDotWidth,1)
+            }
+            set(tCurX,tLeftPaddingPixel)
+            if (tHasNeg==1) {
+                set('this.layers.tLayerIdx.x',tCurX)
+                set('this.layers.tLayerIdx.width',tMaxWidth)
+                set('this.layers.tLayerIdx.subLayers.font.text',45)
+                add(tLayerIdx,1)
+                add(tCurX,tMaxWidth)
+            }
+            while(tFrontNum>0){
+                set('this.layers.tLayerIdx.x',tCurX)
+                set('this.layers.tLayerIdx.width',tMaxWidth)
+                set('this.layers.tLayerIdx.subLayers.font.text',48)
+                add(tLayerIdx,1)
+                add(tCurX,tMaxWidth)
+                minus(tFrontNum,1)
+            }
+            var(tDivider,0)
+            set(tDivider,1)
+            set(tRealNum,tDecimalNum)
+            add(tRealNum,tFacCount)
+            while(tRealNum>0){
+                multiply(tDivider,10)
+                minus(tRealNum,1)
+            }
+            mod(tCurValue2,tDivider)
+            var(tCurValue3,0)
+            while(tDecimalNum>0){
+                set('this.layers.tLayerIdx.x',tCurX)
+                set('this.layers.tLayerIdx.width',tMaxWidth)
+                set(tCurValue3,tCurValue2)
+                divide(tDivider,10)
+                mod(tCurValue2,tDivider)
+                divide(tCurValue3,tDivider)
+                add(tCurValue3,48)
+                set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
+                add(tLayerIdx,1)
+                add(tCurX,tMaxWidth)
+                minus(tDecimalNum,1)
+            }
+            if (tHasDot==1) {
+                set('this.layers.tLayerIdx.x',tCurX)
+                set('this.layers.tLayerIdx.width',tDotWidth)
+                set('this.layers.tLayerIdx.subLayers.font.text',46)
+                add(tLayerIdx,1)
+                add(tCurX,tDotWidth)
+                while(tFacCount>0){
+                    set('this.layers.tLayerIdx.x',tCurX)
+                    set('this.layers.tLayerIdx.width',tMaxWidth)
+                    set(tCurValue3,tCurValue2)
+                    divide(tDivider,10)
+                    mod(tCurValue2,tDivider)
+                    divide(tCurValue3,tDivider)
+                    add(tCurValue3,48)
+                    set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
+                    add(tLayerIdx,1)
+                    add(tCurX,tMaxWidth)
+                    minus(tFacCount,1)
+                }
+            }
+            while(tLayerIdx<tTotalLayers){
+                set('this.layers.tLayerIdx.subLayers.font.text',0)
+            }
+
+
+        `
+    };
+
 
     return WidgetCommands;
 

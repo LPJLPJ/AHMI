@@ -311,7 +311,6 @@ module.exports =   React.createClass({
                 transY = baseY+(layer.rotateCenterY||0)
                 offCtx.save()
                 offCtx.translate(transX,transY)
-                 console.log('rotateAngle',layer.rotateAngle)
                 offCtx.rotate((layer.rotateAngle)/180.0*Math.PI)
                 offCtx.translate(-transX,-transY)
 
@@ -463,6 +462,8 @@ module.exports =   React.createClass({
             case 'EXP':
                 var variables = value.split('.')
                 var result;
+                var isCharCode = false;
+                
                 for (var i=0;i<variables.length;i++){
                     var curV = variables[i];
                     if (curV == 'this') {
@@ -470,11 +471,28 @@ module.exports =   React.createClass({
                     }else{
                         curV = this.evalVariable(widget,curV)
                         // console.log('curV',curV);
+    
                         result = result[curV]
+                        
                         // console.log('result',result)
                     }
                 }
                 return result||0;
+        }
+    },
+    charFromCode:function (code) {
+        if (code>=48&&code<=57) {
+            return ''+(code-48)
+        }
+        switch(code){
+            case 0:
+                return ''
+            break
+            case 46:
+                return '.'
+            break;
+            default:
+                return code
         }
     },
     evalVariable:function (widget,v) {
@@ -497,8 +515,14 @@ module.exports =   React.createClass({
                 }else {
                     var upperRef = this.evalParam(widget,{type:'EXP',value:refs.slice(0,rLen-1).join('.')})
                     var nextV = this.evalVariable(widget,refs[rLen-1])
-                    // console.log('nextV ',nextV)
-                    upperRef[nextV] = this.evalParam(widget,value)
+                    if (nextV=='text' && (upperRef.constructor.name=='FontSubLayer')) {
+                        var charCode = this.evalParam(widget,value)
+                        upperRef[nextV] = this.charFromCode(charCode)
+                    }else{
+                        // console.log('nextV ',nextV)
+                        upperRef[nextV] = this.evalParam(widget,value)
+                    }
+                    
                 }
                 break;
             default:

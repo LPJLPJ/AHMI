@@ -503,6 +503,89 @@
     Video.prototype.constructor = Video;
 
 
+    //num
+    // "minValue": 0,
+    // "maxValue": 100,
+    // "lowAlarmValue": 0,
+    // "highAlarmValue": 100,
+    // "noInit": "NO",
+    // "numModeId": "0",
+    // "frontZeroMode": "0",
+    // "symbolMode": "0",
+    // "decimalCount": 2,
+    // "numOfDigits": 3,
+    // "overFlowStyle": "0",
+    // "align": "center",
+    // "arrange": "horizontal",
+    // "numValue": 4,
+    // "fontFamily": "宋体",
+    // "fontSize": 30,
+    // "fontColor": "rgba(255,255,255,1)",
+    // "fontBold": "100",
+    // "fontItalic": "",
+    // "maxFontWidth": 21,
+
+    function Num(x,y,w,h,valueObj,fontStyle) {
+
+        // var bgLayer
+        // var layers = []
+        // bgLayer = new Layer(0,0,w,h)
+        // bgLayer.subLayers.image = new TextureSubLayer(slice.imgSrc);
+        // bgLayer.subLayers.color = new ColorSubLayer(parseColor(slice.color))
+        // layers.push(bgLayer)
+        var layers = []
+        var symbol,symbolLayer
+        if (valueObj.symbolMode==0) {
+            symbol = false
+        }else{
+            symbol = true;
+        }
+        var mW = valueObj.maxFontWidth
+        if (!mW) {
+            return
+        }
+        var decimalCount = valueObj.decimalCount
+        var numOfDigits = valueObj.numOfDigits
+        var curX = 0;
+        if (symbol) {
+            symbolLayer = new Layer(0,0,mW,h);
+            symbolLayer.subLayers.font = new FontSubLayer('+',fontStyle)
+            layers.push(symbolLayer)
+            curX +=mW;
+        }
+        var curDigitLayer
+        for (var i=0;i<(numOfDigits-decimalCount);i++){
+            //add decimal digits
+            curDigitLayer = new Layer(curX,0,mW,h)
+            curDigitLayer.subLayers.font= new FontSubLayer('0',fontStyle)
+            layers.push(curDigitLayer)
+            curX = curX+mW
+
+        }
+        if (decimalCount>0) {
+            var curDotLayer = new Layer(curX,0,0.5*mW,h)
+            curDotLayer.subLayers.font = new FontSubLayer('.',fontStyle)
+            layers.push(curDotLayer)
+            curX = curX +0.5*mW
+            for(var i=0;i<decimalCount;i++){
+                curDigitLayer = new Layer(curX,0,mW,h)
+                curDigitLayer.subLayers.font = new FontSubLayer('0',fontStyle)
+                layers.push(curDigitLayer)
+                curX+=mW
+            }
+        }
+
+
+        Widget.call(this,x,y,w,h,layers)
+
+    }
+
+    Num.prototype = Object.create(Widget.prototype);
+    Num.prototype.constructor = Num;
+
+
+
+
 
 
 
@@ -917,6 +1000,7 @@
     WidgetModel.models.ScriptTrigger = ScriptTrigger;
     WidgetModel.models.Video = Video;
     WidgetModel.models.Slide = Slide;
+    WidgetModel.models.Num = Num;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

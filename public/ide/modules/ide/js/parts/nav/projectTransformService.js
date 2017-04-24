@@ -395,6 +395,46 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                 break;
+                case 'MyNum':
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+                    var fontStyle={}
+                    styleElems.split(',').forEach(function (elem) {
+                        fontStyle[elem] = info[elem]
+                    });
+                    generalWidget = new WidgetModel.models['Num'](x,y,w,h,info,fontStyle);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+                    generalWidget.mode = Number(info.numModeId)
+                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO')
+                    generalWidget.otherAttrs[1] = Number(info['frontZeroMode'])
+                    generalWidget.otherAttrs[2] = Number(info['symbolMode'])
+                    generalWidget.otherAttrs[3] = info['decimalCount']
+                    generalWidget.otherAttrs[4] = info['numOfDigits']
+                    generalWidget.otherAttrs[5] = Number(info['overFlowStyle'])
+                    generalWidget.otherAttrs[6] = Number(info['maxFontWidth'])
+                    switch(info['align']){
+                        case 'left':
+                            generalWidget.otherAttrs[7] = 0 
+                        break;
+                        case 'center':
+                            generalWidget.otherAttrs[7] = 1
+                        break;
+                        case 'right':
+                            generalWidget.otherAttrs[7] = 2
+                        break;
+                        default:
+                            generalWidget.otherAttrs[7] = 1
+                    }
+                    
+                    generalWidget.generalType = 'Num';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    console.log(generalWidget)
+                break;
 
                 default:
                     targetWidget.subType = rawWidget.type;
