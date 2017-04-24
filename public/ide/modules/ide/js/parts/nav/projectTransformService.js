@@ -444,11 +444,14 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'DateTime';
-                    generalWidget.tag = _.cloneDeep(rawWidget.tag)||'datetime';
-                    console.log('MydateTime.tag',generalWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     generalWidget.mode = targetWidget.info.dateTimeModeId;
+                    if(generalWidget.mode=='0'||generalWidget.mode=='1'){
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量时分秒';
+                    }else{
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量年月日';
+                    }
                 break;
 
                 default:
