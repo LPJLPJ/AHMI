@@ -666,6 +666,36 @@
     Slide.prototype = Object.create(Widget.prototype);
     Slide.prototype.constructor = Slide;
 
+    //DateTime
+    function DateTime(x,y,w,h,info,fontStyle){
+        var dateTimeModeId = Number(info.dateTimeModeId);
+        var maxFontWidth = info.maxFontWidth;
+        var dx = 0;
+        var layers = [];
+        if(dateTimeModeId==0){
+            console.log('时分秒');
+        }else if(dateTimeModeId==1){
+            console.log('时分');
+            for(var i=0;i<5;i++){
+                layers[i] = new Layer(dx,0,w,h);
+                if(i==2){
+                    layers[i].subLayers.font = new FontSubLayer(':',fontStyle);
+                }else{
+                    layers[i].subLayers.font = new FontSubLayer('0',fontStyle);
+                }
+                dx = dx+maxFontWidth;
+            }
+        }else if(dateTimeModeId==2){
+            console.log('斜杠日期');
+        }else if(dateTimeModeId==3){
+            console.log('减号日期');
+        }
+        this.subType = 'Slide';
+        Widget.call(this,x,y,w,h,layers);
+    };
+    DateTime.prototype = Object.create(Widget.prototype);
+    DateTime.prototype.constructor = DateTime;
+
     var WidgetCommandParser = {};
     var scope = {};
     WidgetCommandParser.transCommand = function (ctx,command) {
@@ -1001,6 +1031,7 @@
     WidgetModel.models.Video = Video;
     WidgetModel.models.Slide = Slide;
     WidgetModel.models.Num = Num;
+    WidgetModel.models.DateTime = DateTime;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

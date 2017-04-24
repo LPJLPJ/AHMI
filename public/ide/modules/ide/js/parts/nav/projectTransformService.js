@@ -435,6 +435,21 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.actions = targetWidget.actions;
                     console.log(generalWidget)
                 break;
+                case 'MyDateTime':
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+                    var fontStyle={}
+                    styleElems.split(',').forEach(function (elem) {
+                        fontStyle[elem] = info[elem]
+                    });
+                    generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'DateTime';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag)||'datetime';
+                    console.log('MydateTime.tag',generalWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    generalWidget.mode = targetWidget.info.dateTimeModeId;
+                break;
 
                 default:
                     targetWidget.subType = rawWidget.type;

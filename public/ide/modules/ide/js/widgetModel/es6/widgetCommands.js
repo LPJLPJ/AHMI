@@ -666,6 +666,60 @@
         `
     };
 
+    WidgetCommands['DateTime'] = {
+        onInitialize:`
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+        `,
+        onTagChange:`
+            var(m,'this.mode')
+            var(tag,0)
+            getTag(tag)
+            var(tTag,0)
+            if(tag==0){
+                print(tag,'tag is 0')
+            }else{
+                print(tag,'tag is not 0')
+                set(tTag,tag)
+                if(m==0){
+                    print(m,'mode is 0')
+                }else{
+                    if(m==1){
+                        print(m,'mode is 1')
+                        var(len,'this.layers.length')
+                        print(len,'len')
+                        minus(len,1)
+                        while(len>=0){
+                            if(len==2){
+                                print(len,'should be a :')
+                                minus(len,1)
+                            }else{
+                                mod(tTag,16)
+                                set('this.layers.len.subLayers.font.text',tTag)
+                                print(tTag,'tTag')
+                                divide(tag,16)
+                                set(tTag,tag)
+                                minus(len,1)
+                            }
+                        }
+                    }else{
+                        if(m==2){
+                            print(m,'mode is 2')
+                        }else{
+                            if(m==3){
+                                print(m,'mode is 3')
+                            }else{
+                                print(m,'mode is unknown')
+                            }
+                        }
+                    }
+                }
+            }
+
+        `
+    };
 
     return WidgetCommands;
 
