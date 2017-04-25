@@ -584,6 +584,34 @@
     Num.prototype.constructor = Num;
 
 
+    function SlideBlock(x,y,w,h,arrange,blockInfo,slices) {
+        var layers=[]
+        var bgLayer,blockLayer
+        bgLayer = new Layer(0,0,w,h)
+        bgLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor(slices[0].color))
+        layers.push(bgLayer)
+        var blockW = blockInfo.w
+        var blockH = blockInfo.h
+        if (blockW&&blockH) {
+            if (arrange == 'horizontal') {
+                blockLayer = new Layer(0,-(blockH-h)/2,blockW,blockH)
+            }else{
+                blockLayer = new Layer(-(blockW-w)/2,0,blockW,blockH)
+            }
+            blockLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
+            blockLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
+            layers.push(blockLayer)
+        }
+
+        Widget.call(this,x,y,w,h,layers)
+
+    }
+
+    SlideBlock.prototype = Object.create(Widget.prototype);
+    SlideBlock.prototype.constructor = SlideBlock;
+
+
 
 
 
@@ -1001,6 +1029,7 @@
     WidgetModel.models.Video = Video;
     WidgetModel.models.Slide = Slide;
     WidgetModel.models.Num = Num;
+    WidgetModel.models.SlideBlock = SlideBlock;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

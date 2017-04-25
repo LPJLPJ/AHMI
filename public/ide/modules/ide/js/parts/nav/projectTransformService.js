@@ -395,6 +395,18 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                 break;
+                case 'MySlideBlock':
+                    generalWidget = new WidgetModel.models['SlideBlock'](x,y,w,h,info.arrange,{w:20,h:10},[targetWidget.texList[0].slices[0],targetWidget.texList[1].slices[0]]);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'SlideBlock';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                break;
                 case 'MyNum':
                     var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
                     var fontStyle={}
