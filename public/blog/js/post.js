@@ -30,9 +30,11 @@
                     var msgObj = JSON.parse(msg);
                     var userId = msgObj.authorId;
                     renderBlog(msgObj);
-                    msgObj.comments.userId = msgObj.userInfo.id;
-                    msgObj.comments.type = msgObj.userInfo.type;
-                    renderComments(msgObj.comments);
+                    if(msgObj.userInfo) {
+                        msgObj.comments.userId = msgObj.userInfo.id;
+                        msgObj.comments.type = msgObj.userInfo.type;
+                        renderComments(msgObj.comments);
+                    }
                 },
                 error:function (xhr) {
 
@@ -107,6 +109,11 @@
             data:{content:comment},
             success:function(data){
                 console.log('data',data);
+                if(data = 'not login') {
+                    toastr.warning('请先登录');
+                    setTimeout("javascript:location.href='/user/login'", 1000);
+                }
+                else
                 window.location.reload();
 
             },
