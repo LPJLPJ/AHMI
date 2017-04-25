@@ -1,4 +1,4 @@
-ideServices.service('ProjectTransformService',['Type',function(Type){
+ideServices.service('ProjectTransformService',['Type','ResourceService',function(Type,ResourceService){
 
     this.transDataFile = transDataFile;
 
@@ -293,26 +293,34 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     if(rawWidget.info.cursor=='1'){
                         var imgSrc = slices[slices.length-1].imgSrc;
                         if(imgSrc){
-                            var cursorImg = new Image();
-                            var rawH;
-                            var yTemp;
-                            cursorImg.src = imgSrc;
-                            if(cursorImg.complete){
-                                generalWidget.layers[2].width = cursorImg.width;
-                                generalWidget.layers[2].height = cursorImg.height;
-                                rawH = generalWidget.layers[0].height;
-                                yTemp = parseInt((rawH-cursorImg.height)/2);
-                                generalWidget.layers[2].y = yTemp;
-                            }else{
-                                cursorImg.onload = function(){
-                                    generalWidget.layers[2].width  = cursorImg.width;
-                                    generalWidget.layers[2].height = cursorImg.height;
-                                    rawH = generalWidget.layers[0].height;
-                                    yTemp = parseInt((rawH-cursorImg.height)/2);
-                                    generalWidget.layers[2].y = yTemp;
-                                }
-                            }
+                            var cursorImg = ResourceService.getResourceFromCache(imgSrc)
+                            generalWidget.layers[2].width = cursorImg.width;
+                            generalWidget.layers[2].height = cursorImg.height;
+                            rawH = generalWidget.layers[0].height;
+                            yTemp = parseInt((rawH-cursorImg.height)/2);
+                            generalWidget.layers[2].y = yTemp;
                         }
+                        //if(imgSrc){
+                        //    var cursorImg = new Image();
+                        //    var rawH;
+                        //    var yTemp;
+                        //    cursorImg.src = imgSrc;
+                        //    if(cursorImg.complete){
+                        //        generalWidget.layers[2].width = cursorImg.width;
+                        //        generalWidget.layers[2].height = cursorImg.height;
+                        //        rawH = generalWidget.layers[0].height;
+                        //        yTemp = parseInt((rawH-cursorImg.height)/2);
+                        //        generalWidget.layers[2].y = yTemp;
+                        //    }else{
+                        //        cursorImg.onload = function(){
+                        //            generalWidget.layers[2].width  = cursorImg.width;
+                        //            generalWidget.layers[2].height = cursorImg.height;
+                        //            rawH = generalWidget.layers[0].height;
+                        //            yTemp = parseInt((rawH-cursorImg.height)/2);
+                        //            generalWidget.layers[2].y = yTemp;
+                        //        }
+                        //    }
+                        //}
                     }
 
 
