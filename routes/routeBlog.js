@@ -638,8 +638,7 @@ BlogRoute.postComment = function(req,res){
         })
         //req.send(data);
     }else{
-        //res.send('not login');
-        res.redirect('/user/login')
+        res.send('not login')
     }
 
 };
