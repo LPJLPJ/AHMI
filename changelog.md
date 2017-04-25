@@ -96,7 +96,8 @@ add:
    1. add local IDE user type update fun
    2. add blog comment  fun
 update:
-   1. hide video widget and progress script mode
+   1. hide progress script mode
+   2. update login form logic
 fix:
    1.fix a bug that change a project's attr will empty this project in local version
    2.fix a bug that rotate widget
