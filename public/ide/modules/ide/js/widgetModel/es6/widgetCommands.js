@@ -416,6 +416,8 @@
                   set('this.layers.2.x',temp1)
                }
             }
+            checkalarm(0)
+            set('this.oldValue',tag)
 
         `
     };

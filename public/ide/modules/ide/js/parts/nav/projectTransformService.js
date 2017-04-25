@@ -249,8 +249,10 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget= generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.mode= Number(rawWidget.info.progressModeId);
-                    generalWidget.minValue = Number(rawWidget.info.minValue);
-                    generalWidget.maxValue = Number(rawWidget.info.maxValue);
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    });
                     generalWidget.actions = targetWidget.actions;
                     generalWidget.generalType = 'Progress';
                     generalWidget.subType = 'general';
@@ -293,34 +295,13 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     if(rawWidget.info.cursor=='1'){
                         var imgSrc = slices[slices.length-1].imgSrc;
                         if(imgSrc){
-                            var cursorImg = ResourceService.getResourceFromCache(imgSrc)
+                            var cursorImg = ResourceService.getResourceFromCache(imgSrc);
                             generalWidget.layers[2].width = cursorImg.width;
                             generalWidget.layers[2].height = cursorImg.height;
                             rawH = generalWidget.layers[0].height;
                             yTemp = parseInt((rawH-cursorImg.height)/2);
                             generalWidget.layers[2].y = yTemp;
                         }
-                        //if(imgSrc){
-                        //    var cursorImg = new Image();
-                        //    var rawH;
-                        //    var yTemp;
-                        //    cursorImg.src = imgSrc;
-                        //    if(cursorImg.complete){
-                        //        generalWidget.layers[2].width = cursorImg.width;
-                        //        generalWidget.layers[2].height = cursorImg.height;
-                        //        rawH = generalWidget.layers[0].height;
-                        //        yTemp = parseInt((rawH-cursorImg.height)/2);
-                        //        generalWidget.layers[2].y = yTemp;
-                        //    }else{
-                        //        cursorImg.onload = function(){
-                        //            generalWidget.layers[2].width  = cursorImg.width;
-                        //            generalWidget.layers[2].height = cursorImg.height;
-                        //            rawH = generalWidget.layers[0].height;
-                        //            yTemp = parseInt((rawH-cursorImg.height)/2);
-                        //            generalWidget.layers[2].y = yTemp;
-                        //        }
-                        //    }
-                        //}
                     }
 
 
@@ -380,7 +361,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     var attrs = 'lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
-                    })
+                    });
 
                 break;
                 case 'MyVideo':
