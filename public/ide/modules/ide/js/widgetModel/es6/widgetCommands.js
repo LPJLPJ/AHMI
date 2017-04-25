@@ -523,6 +523,8 @@
                             set('this.otherAttrs.4',1)
                             set('this.otherAttrs.0',tInnerX)
                             set('this.otherAttrs.1',tInnerY)
+                            set('this.otherAttrs.5',tBx)
+                            set('this.otherAttrs.6',tBy)
                         }
                     }
                 }
@@ -545,15 +547,18 @@
             var(tMinValue,0)
             var(tMaxValue,0)
             var(tValueDist,0)
+            var(tOriginX,0)
+            var(tOriginY,0)
             if (tHit==1) {
+                set(tOriginX,'this.otherAttrs.5')
+                set(tOriginY,'this.otherAttrs.6')
                 
-                print(tArrange,'tArrange')
                 if (tArrange==0) {
                     set(tLastX,'this.otherAttrs.0')
-                    set('this.otherAttrs.0',tInnerX)
+                    
                     set(tDist,tInnerX)
                     minus(tDist,tLastX)
-                    set(tBx,'this.layers.1.x')
+                    set(tBx,tOriginX)
                     add(tBx,tDist)
                     set(tBw,'this.layers.1.width')
                     set(tMaxLength,'this.info.width')
@@ -561,10 +566,10 @@
                     
                 }else{
                     set(tLastX,'this.otherAttrs.1')
-                    set('this.otherAttrs.0',tInnerY)
+                    
                     set(tDist,tInnerY)
                     minus(tDist,tLastX)
-                    set(tBx,'this.layers.1.y')
+                    set(tBx,tOriginY)
                     add(tBx,tDist)
                     set(tBw,'this.layers.1.height')
                     set(tMaxLength,'this.info.height')
