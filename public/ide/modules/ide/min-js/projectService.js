@@ -1364,22 +1364,32 @@ ideServices
                         }
                     }
                 }else{
-                    var widget=_self.getCurrentWidget();
-                    if (widget){
-                        var fabWidget=_self.getFabricObject(widget.id,true);
-                        if (fabWidget){
-                            _self.SyncLevelFromFab(widget,fabWidget);
-                            var currentSubLayer = getCurrentSubLayer();
-                            currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
+                    var selectObj = getCurrentSelectObject();
+                    if(selectObj.type=='group'&&selectObj.mode==1){
+                        var fabGroup = selectObj.target;
+                        var baseLeft=selectObj.level.info.left+fabGroup.width/2;
+                        var baseTop=selectObj.level.info.top+fabGroup.height/2;
+                        fabGroup.forEachObject(function(item){
+                            var widget = getLevelById(item.id,'widget');
+                            widget.info.left = Math.round(baseLeft+item.left);
+                            widget.info.top = Math.round(baseTop+item.top);
+                        });
+                    }else{
+                        var widget=_self.getCurrentWidget();
+                        if (widget){
+                            var fabWidget=_self.getFabricObject(widget.id,true);
+                            if (fabWidget){
+                                _self.SyncLevelFromFab(widget,fabWidget);
+                            }
                         }
                     }
+                    var currentSubLayer = getCurrentSubLayer();
+                    currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
                 }
 
                 _self.UpdateCurrentThumb();
 
                 _successCallback && _successCallback();
-
-
 
             };
 

@@ -99,3 +99,5 @@ update:
    1. hide video widget and progress script mode
 fix:
    1.fix a bug that change a project's attr will empty this project in local version
+   2.fix a bug that rotate widget
+   3.fix a bug that use key to move widget group
