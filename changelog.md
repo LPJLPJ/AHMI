@@ -98,6 +98,7 @@ add:
 update:
    1. hide progress script mode
    2. update login form logic
+   3. Open blog portal
 fix:
    1.fix a bug that change a project's attr will empty this project in local version
    2.fix a bug that rotate widget
