@@ -416,6 +416,8 @@
                   set('this.layers.2.x',temp1)
                }
             }
+            checkalarm(0)
+            set('this.oldValue',tag)
 
         `
     };
@@ -669,6 +671,65 @@
         `
     };
 
+    WidgetCommands['DateTime'] = {
+        onInitialize:`
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+        `,
+        onTagChange:`
+            var(m,'this.mode')
+            var(tag,0)
+            getTag(tag)
+            var(tTag,0)
+            if(tag==0){
+                print(tag,'tag is 0')
+            }else{
+                set(tTag,tag)
+                var(len,'this.layers.length')
+                minus(len,1)
+                var(flag1,10)
+                var(flag2,10)
+                if(m==0){
+                    set(flag1,2)
+                    set(flag2,5)
+                }else{
+                    if(m==1){
+                        set(flag1,2)
+                    }else{
+                        if(m==2){
+                            set(flag1,4)
+                            set(flag2,7)
+                        }else{
+                            if(m==3){
+                                set(flag1,4)
+                                set(flag2,7)
+                            }else{
+                                print(m,'mode is unknown')
+                            }
+                        }
+                    }
+                }
+                while(len>=0){
+                    if(len==flag1){
+                        minus(len,1)
+                    }else{
+                        if(len==flag2){
+                            minus(len,1)
+                        }else{
+                            mod(tTag,16)
+                            add(tTag,48)
+                            set('this.layers.len.subLayers.font.text',tTag)
+                            divide(tag,16)
+                            set(tTag,tag)
+                            minus(len,1)
+                        }
+                    }
+                }
+            }
+        `
+    };
 
     return WidgetCommands;
 

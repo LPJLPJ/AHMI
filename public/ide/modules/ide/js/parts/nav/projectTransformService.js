@@ -1,4 +1,4 @@
-ideServices.service('ProjectTransformService',['Type',function(Type){
+ideServices.service('ProjectTransformService',['Type','ResourceService',function(Type,ResourceService){
 
     this.transDataFile = transDataFile;
 
@@ -249,8 +249,10 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget= generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.mode= Number(rawWidget.info.progressModeId);
-                    generalWidget.minValue = Number(rawWidget.info.minValue);
-                    generalWidget.maxValue = Number(rawWidget.info.maxValue);
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    });
                     generalWidget.actions = targetWidget.actions;
                     generalWidget.generalType = 'Progress';
                     generalWidget.subType = 'general';
@@ -293,25 +295,12 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     if(rawWidget.info.cursor=='1'){
                         var imgSrc = slices[slices.length-1].imgSrc;
                         if(imgSrc){
-                            var cursorImg = new Image();
-                            var rawH;
-                            var yTemp;
-                            cursorImg.src = imgSrc;
-                            if(cursorImg.complete){
-                                generalWidget.layers[2].width = cursorImg.width;
-                                generalWidget.layers[2].height = cursorImg.height;
-                                rawH = generalWidget.layers[0].height;
-                                yTemp = parseInt((rawH-cursorImg.height)/2);
-                                generalWidget.layers[2].y = yTemp;
-                            }else{
-                                cursorImg.onload = function(){
-                                    generalWidget.layers[2].width  = cursorImg.width;
-                                    generalWidget.layers[2].height = cursorImg.height;
-                                    rawH = generalWidget.layers[0].height;
-                                    yTemp = parseInt((rawH-cursorImg.height)/2);
-                                    generalWidget.layers[2].y = yTemp;
-                                }
-                            }
+                            var cursorImg = ResourceService.getResourceFromCache(imgSrc);
+                            generalWidget.layers[2].width = cursorImg.width;
+                            generalWidget.layers[2].height = cursorImg.height;
+                            rawH = generalWidget.layers[0].height;
+                            yTemp = parseInt((rawH-cursorImg.height)/2);
+                            generalWidget.layers[2].y = yTemp;
                         }
                     }
 
@@ -372,7 +361,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     var attrs = 'lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
-                    })
+                    });
 
                 break;
                 case 'MyVideo':
@@ -446,6 +435,24 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     console.log(generalWidget)
+                break;
+                case 'MyDateTime':
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+                    var fontStyle={}
+                    styleElems.split(',').forEach(function (elem) {
+                        fontStyle[elem] = info[elem]
+                    });
+                    generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'DateTime';
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    generalWidget.mode = targetWidget.info.dateTimeModeId;
+                    if(generalWidget.mode=='0'||generalWidget.mode=='1'){
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量时分秒';
+                    }else{
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量年月日';
+                    }
                 break;
 
                 default:
