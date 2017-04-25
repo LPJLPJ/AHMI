@@ -1534,7 +1534,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.on('changeInitValue',function(arg){
                 var _callback=arg.callback;
                 self.initValue=arg.initValue;
-                self.setAngle(self.initValue);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1545,6 +1544,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render: function (ctx) {
             try{
+                ctx.rotate((Math.PI/180)*this.initValue);
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),

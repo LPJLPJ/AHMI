@@ -94,5 +94,8 @@ fix:
 v1.9.1_test
 add:
    1. add local IDE user type update fun
+   2. add blog comment  fun
+update:
+   1. hide video widget and progress script mode
 fix:
-    1.fix a bug that change a project's attr will empty this project in local version
+   1.fix a bug that change a project's attr will empty this project in local version
