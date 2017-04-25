@@ -491,6 +491,152 @@
         `
     };
 
+    WidgetCommands['SlideBlock']={
+        onInitialize:`
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+            var(tBx,0)
+            var(tBy,0)
+            var(tBw,0)
+            var(tBh,0)
+            var(tInnerX,0)
+            var(tInnerY,0)
+            var(tBrx,0)
+            var(tBry,0)
+            set(tBx,'this.layers.1.x')
+            set(tBy,'this.layers.1.y')
+            set(tBw,'this.layers.1.width')
+            set(tBh,'this.layers.1.height')
+            set(tBrx,tBx)
+            add(tBrx,tBw)
+            set(tBry,tBy)
+            add(tBry,tBh)
+            set(tInnerX,'this.innerX')
+            set(tInnerY,'this.innerY')
+            set('this.otherAttrs.4',0)
+            if (tInnerX>=tBx) {
+                if(tInnerX<tBrx){
+                    if (tInnerY>=tBy) {
+                        if (tInnerY<tBry) {
+                            set('this.otherAttrs.4',1)
+                            set('this.otherAttrs.0',tInnerX)
+                            set('this.otherAttrs.1',tInnerY)
+                        }
+                    }
+                }
+            }
+        `,
+        onMouseMove:`
+            var(tArrange,0)
+            set(tArrange,'this.arrange')
+            var(tInnerX,0)
+            var(tInnerY,0)
+            set(tInnerX,'this.innerX')
+            set(tInnerY,'this.innerY')
+            var(tHit,0)
+            set(tHit,'this.otherAttrs.4')
+            var(tDist,0)
+            var(tLastX,0)
+            var(tBx,0)
+            var(tMaxLength,0)
+            var(tBw,0)
+            var(tMinValue,0)
+            var(tMaxValue,0)
+            var(tValueDist,0)
+            if (tHit==1) {
+                
+                print(tArrange,'tArrange')
+                if (tArrange==0) {
+                    set(tLastX,'this.otherAttrs.0')
+                    set('this.otherAttrs.0',tInnerX)
+                    set(tDist,tInnerX)
+                    minus(tDist,tLastX)
+                    set(tBx,'this.layers.1.x')
+                    add(tBx,tDist)
+                    set(tBw,'this.layers.1.width')
+                    set(tMaxLength,'this.info.width')
+                    minus(tMaxLength,tBw)
+                    
+                }else{
+                    set(tLastX,'this.otherAttrs.1')
+                    set('this.otherAttrs.0',tInnerY)
+                    set(tDist,tInnerY)
+                    minus(tDist,tLastX)
+                    set(tBx,'this.layers.1.y')
+                    add(tBx,tDist)
+                    set(tBw,'this.layers.1.height')
+                    set(tMaxLength,'this.info.height')
+                    minus(tMaxLength,tBw)
+                }
+
+                if (tBx<0) {
+                    set(tBx,0)
+                }
+                if (tBx>tMaxLength) {
+                    set(tBx,tMaxLength)
+                }
+                set(tMinValue,'this.minValue')
+                set(tMaxValue,'this.maxValue')
+                set(tValueDist,tMaxValue)
+                minus(tValueDist,tMinValue)
+                multiply(tBx,tValueDist)
+                divide(tBx,tMaxLength)
+                add(tBx,tMinValue)
+                setTag(tBx)
+
+            }
+        `,
+        onTagChange:`
+            var(tMinValue,0)
+            var(tMaxValue,0)
+            var(tValueDist,0)
+            var(tTagValue,0)
+            getTag(tTagValue)
+            var(tCurValue,0)
+            var(tMaxLength,0)
+            var(tBw,0)
+            set(tCurValue,tTagValue)
+            set(tMinValue,'this.minValue')
+            set(tMaxValue,'this.maxValue')
+            if (tCurValue>tMaxValue) {
+                set(tCurValue,tMaxValue)
+            }
+            if (tCurValue<tMinValue) {
+                set(tCurValue,tMinValue)
+            }
+            var(tArrange,0)
+            set(tArrange,'this.arrange')
+            if (tArrange==0) {
+                set(tMaxLength,'this.info.width')
+                set(tBw,'this.layers.1.width')
+            }else{
+                set(tMaxLength,'this.info.height')
+                set(tBw,'this.layers.1.height')
+            }
+            
+            minus(tMaxLength,tBw)
+            var(tValueDist,0)
+            var(tValueRatio,0)
+            set(tValueDist,tMaxValue)
+            minus(tValueDist,tMinValue)
+            set(tValueRatio,tCurValue)
+            minus(tValueRatio,tMinValue)
+            multiply(tValueRatio,tMaxLength)
+            divide(tValueRatio,tValueDist)
+            if (tArrange==0) {
+                set('this.layers.1.x',tValueRatio)
+            }else{
+                set('this.layers.1.y',tValueRatio)
+            }
+            checkalarm(0)
+            set('this.oldValue',tCurValue)
+
+
+        `
+    };
+
     WidgetCommands['Num']={
         onInitialize:`
         `,

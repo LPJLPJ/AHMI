@@ -18,7 +18,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         }
     }
     function registerGeneralCommands() {
-        var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange']
+        var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange','onMouseMove']
         var commands = {}
         var models = WidgetModel.models;
         var testModels = _.cloneDeep(WidgetCommands);
@@ -385,7 +385,17 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.actions = targetWidget.actions;
                 break;
                 case 'MySlideBlock':
-                    generalWidget = new WidgetModel.models['SlideBlock'](x,y,w,h,info.arrange,{w:20,h:10},[targetWidget.texList[0].slices[0],targetWidget.texList[1].slices[0]]);
+                    var imgSrc = targetWidget.texList[1].slices[0].imgSrc;
+                    var blockInfo = {w:0,h:0}
+                    if(imgSrc){
+                        var blockImg = ResourceService.getResourceFromCache(imgSrc);
+                        if(blockImg){
+                            blockInfo.w = blockImg.width;
+                            blockInfo.h = blockImg.height;
+                        }
+                        
+                    }
+                    generalWidget = new WidgetModel.models['SlideBlock'](x,y,w,h,info.arrange,blockInfo,[targetWidget.texList[0].slices[0],targetWidget.texList[1].slices[0]]);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'SlideBlock';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
@@ -393,6 +403,13 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     })
+                    generalWidget.arrange = (info.arrange=='horizontal')?0:1
+                    console.log(generalWidget,targetWidget)
+                    generalWidget.otherAttrs[0] = 0 //lastX
+                    generalWidget.otherAttrs[1] = 0 //lastY
+                    generalWidget.otherAttrs[2] = blockInfo.w
+                    generalWidget.otherAttrs[3] = blockInfo.h
+                    generalWidget.otherAttrs[4] = 0 //hit block
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                 break;

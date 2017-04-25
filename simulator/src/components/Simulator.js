@@ -442,7 +442,7 @@ module.exports =   React.createClass({
         }
     },
     interpretGeneralCommand:function (widget,f) {
-        console.log(widget,f)
+        // console.log(widget,f)
         var command = this.generalCommands[widget.generalType][f]
         if (command) {
             this.processGeneralWidgetCommand(widget,command,0)
@@ -4395,6 +4395,8 @@ module.exports =   React.createClass({
         var top = widget.info.top;
         var relativeX = mouseState.position.x-widget.parentX-left;
         var relativeY = mouseState.position.y-widget.parentY-top;
+        widget.innerX = relativeX
+        widget.innerY = relativeY
         var needRedraw = false;
         switch (subType){
             case 'MySlideBlock':
@@ -4403,6 +4405,11 @@ module.exports =   React.createClass({
                 needRedraw = true;
                 this.setTagByName(widget.tag,widget.curValue||0);
                 break;
+            case 'general':
+                this.interpretGeneralCommand(widget,'onMouseMove');
+                needRedraw = true;
+                break;
+
         }
 
         if (needRedraw) {

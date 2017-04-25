@@ -192,6 +192,7 @@
             width:'mWDGWidgetWidth',
             height:'mWDGWidgetHeight'
         },
+        arrange:'mWDGArrange',
         mode:'mWDGMode',
         oldValue:'mWDGOldValue',
         minValue:'mWDGMinValue',
