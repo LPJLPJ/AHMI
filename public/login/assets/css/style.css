@@ -329,12 +329,12 @@ h1::after {
 }
 .control-zyj{
     position: absolute !important;
-    top:46% !important;
+    top:49% !important;
     left:20% !important;
     right:0 !important;
 }
 .size-zyj{
-    height:auto !important;
+    height:auto!important;
     vertical-align:middle;
 }
 #myCarousel .container a span{

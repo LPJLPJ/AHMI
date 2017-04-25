@@ -28,8 +28,10 @@
                 },
                 success:function (msg) {
                     var msgObj = JSON.parse(msg);
+                    var userId = msgObj.authorId;
                     renderBlog(msgObj);
-                    console.log(msgObj);
+                    msgObj.comments.userId = msgObj.userInfo.id;
+                    msgObj.comments.type = msgObj.userInfo.type;
                     renderComments(msgObj.comments);
                 },
                 error:function (xhr) {
@@ -49,24 +51,6 @@
         contentArea.html(blog.content)
     }
     /**
-    *
-    *
-    */
-    function powerJudge(){
-        $.ajax({
-                type:'GET',
-                //async: false,
-                url:"/blog/dandy",
-                success:function (response) {
-                    console.log(response);
-
-                },
-                error:function (xhr) {
-
-                }
-            })
-    }
-    /**
      * 渲染评论内容
      * @param comments
      */
@@ -75,6 +59,27 @@
         insertBlogViews(tempCommentsHtml);
     }
 
+    window.deleteComments=function (e) {
+        var changeId =e.getAttribute("commentId");
+        var currentId = parseQuery(window.location.href);
+        $('#myModal').modal('show');
+        $('#modal-submit').on('click',function(){
+            $.ajax({
+                method:'DELETE',
+                url:'/blog/post/deleteComment',
+                data:{commentId:changeId,
+                    blogId:currentId
+                },
+                success:function(data){
+                    console.log('data',data);
+                    window.location.reload();
+                },
+                error:function(err){
+                    console.log('err',err);
+                }
+            })
+        })
+    }
     /**
      * 将模板插入视图
      * @param template
