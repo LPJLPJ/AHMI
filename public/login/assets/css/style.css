@@ -418,6 +418,7 @@ h1::after {
     top:160px;
 }
 .title{
-    position: relative;
-    left:-48px;
+    float:left;
+    width:100%;
+    text-align: center;
 }
