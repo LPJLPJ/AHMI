@@ -211,7 +211,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 method:'GET',
                 url:'/public/templates/defaultTemplate/defaultTemplate.json'
             }).success(function (tdata) {
-                console.log('get json success',tdata);
+                //console.log('get json success',tdata);
                 setTemplate(tdata,function(){
                     loadFromContent(data,id);
                 }.bind(this));
@@ -265,6 +265,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             //console.log('globalProject',globalProject);
 
             var resourceList = globalProject.resourceList;
+            console.log('resourceList',resourceList);
             var count = resourceList.length;
             var globalResources = ResourceService.getGlobalResources();
             window.globalResources = globalResources;
@@ -770,6 +771,34 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     function setTemplate(date,cb){
         var template = _.cloneDeep(date);
 
+        //translate src
+        var resourceUrl = ResourceService.getResourceUrl()+'template/';
+        var tempSrc = ''
+        for(var key in template){
+            if(template[key] instanceof Array){
+                //resourcelist
+                template[key].forEach(function(item){
+                    tempSrc = item.src&&item.src.split('/');
+                    tempSrc = tempSrc[tempSrc.length-1];
+                    tempSrc = resourceUrl + tempSrc;
+                    item.src = tempSrc;
+                })
+            }else{
+                //widget
+                if(template[key].texList){
+                    template[key].texList.forEach(function(tex){
+                        if(tex.slices){
+                            tex.slices.forEach(function(slice){
+                                tempSrc = slice.imgSrc&&slice.imgSrc.split('/');
+                                tempSrc = tempSrc[tempSrc.length-1];
+                                tempSrc = resourceUrl+tempSrc;
+                                slice.imgSrc = tempSrc;
+                            })
+                        }
+                    })
+                }
+            }
+        }
         //add template resource to resource list
         ResourceService.setTemplateFiles(template.templateResourcesList);
         //add template attribute to widget
@@ -781,7 +810,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         var totalNum = templateList.length;
         var coutDown = function (e, resourceObj) {
             if (e.type === 'error') {
-                // console.log(e)
                 toastr.warning('图片加载失败: ' + resourceObj.name);
                 resourceObj.complete = false;
             } else {
