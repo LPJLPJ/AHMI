@@ -159,7 +159,7 @@ Route_admin.releaseUpdate = function(req,res){
     //views文件夹过滤函数
     var filterFunForViews = function(src){
         var blogPattern = /views[\\\/]blog/;
-        var downloadPattern = /public[\\\/]download/;
+        var downloadPattern = /views[\\\/]download/;
         return !(blogPattern.test(src)||downloadPattern.test(src));
     };
     //打包更新包
