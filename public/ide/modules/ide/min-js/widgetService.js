@@ -382,7 +382,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 self.backgroundColor=level.texList[0].slices[0].color;
                 self.backgroundImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-                self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 if(self.progressModeId=='0'){
                     self.progressColor=level.texList[1].slices[0].color;
                     self.progressImageElement=ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
@@ -484,8 +483,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(this.progressModeId=='1'){
                     //变色进度条
                     var progressColor = changeColor(this.initColor,this.endColor,this.progressValue);
-
                     //console.log(progressColor);
+                    ctx.fillStyle=this.backgroundColor;
+                    ctx.fillRect(
+                        -this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height
+                    );
+                    if(this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
                     if(this.arrange=='horizontal'){
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -499,9 +507,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                         }
                     }
-                    if(this.backgroundImageElement){
-                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-                    }
                 }else if(this.progressModeId=='2'){
                     //脚本进度条，啥也不画！
                 }else if(this.progressModeId=='3'){
@@ -512,6 +517,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         this.width,
                         this.height
                     );
+                    if(this.backgroundImageElement){
+                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    }
                     if(this.arrange=='horizontal'){
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -569,9 +577,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
                         }
-                    }
-                    if(this.backgroundImageElement){
-                        ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                     }
                 }
 
@@ -1529,7 +1534,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.on('changeInitValue',function(arg){
                 var _callback=arg.callback;
                 self.initValue=arg.initValue;
-                self.setAngle(self.initValue);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1540,6 +1544,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render: function (ctx) {
             try{
+                ctx.rotate((Math.PI/180)*this.initValue);
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),

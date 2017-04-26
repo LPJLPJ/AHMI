@@ -20,7 +20,7 @@
     }
     function init(){
         //var filedrag = document.getElementById('filedrag');
-        var filedrag = document.getElementsByTagName('body')[0];
+        var filedrag = document.getElementById('filedrag');
         filedrag.addEventListener('dragover', FileDragHover, false);
         filedrag.addEventListener('dragleave',FileDragHover,false);
         filedrag.addEventListener('drop',FileDrop,false);
@@ -38,18 +38,17 @@
             project = null;
             hideWrapper();
         });
-
     }
 
     function FileDragHover(e){
         e.stopPropagation();
         e.preventDefault();
-        //console.log(e.type);
-        //e.target.className = (e.type=='dragover'?'hover':'');
+        filedrag.className = (e.type=='dragover'?'hover':'');
     }
 
     function FileDrop(e){
         e.preventDefault();
+        filedrag.className = '';
         if(local){
 
         }else{
@@ -76,7 +75,7 @@
                             //hideWrapper();
                             $('#uploadModal').modal({backdrop:'static',keyboard:false});
 
-                        },1000);
+                        },500);
                     };
                     readJSONFile(item,scb,fcb);
                 }

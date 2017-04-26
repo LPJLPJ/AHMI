@@ -24,6 +24,7 @@ $(function(){
 	};
 
 	var submit = document.getElementById('submit');
+	submit.disabled = false;
 
     var username = $('#username');
     var password = $('#password');
@@ -44,7 +45,6 @@ $(function(){
         formVerify.password = true;
     }
 
-    checkSubmit();
 
 	$('#captcha-img').attr('src','/captcha');
 
@@ -56,81 +56,34 @@ $(function(){
 	.on('focus',function(){
 		formVerify.username = false;
 		$('#username-verify').html('');
-		submit.disabled = true
+		//submit.disabled = true
 	})
-	.on('keyup',function(){
-		var value = $(this).val();
-		if (value.length>0) {
-			//ok
-			formVerify.username = true;
-            $('#username-verify').html('');
-			checkSubmit()
-		}else{
-			formVerify.username = false;
-			$('#username-verify').html(ErrMessages.username.empty)
-		}
-	});
 
 	$('#password')
 	.on('focus',function(){
 		formVerify.password = false;
 		$('#password-verify').html('');
-		submit.disabled = true
-
-	})
-	.on('keyup',function(){
-		var value = $(this).val();
-		if (value.length>0) {
-			//ok
-			formVerify.password = true;
-            $('#password-verify').html('');
-			checkSubmit()
-		}else{
-			formVerify.password = false;
-			$('#password-verify').html(ErrMessages.password.empty)
-		}
 	});
 
 	$('#captcha-input')
 	.on('focus',function(){
 		formVerify.captcha = false;
 		$('#captcha-verify').html('');
-		submit.disabled = true
+		//submit.disabled = true
 	})
-	.on('keyup',function(){
-		var value = $(this).val();
-		if (value.length>0) {
-			//ok
-			formVerify.captcha = true;
-            $('#captcha-verify').html('');
-			checkSubmit()
-		}else{
-			formVerify.captcha = false;
-			$('#captcha-verify').html(ErrMessages.captcha.empty)
-		}
-	});
 
 	$('#change-captcha').on('click',function(){
-        // $.ajax({
-		// 	type:'GET',
-		// 	url:'/captcha',
-         //    success:function(data, status, xhr){
-         //        console.log(data)
-         //        $('#captcha-img').attr('src',data)
-         //    },
-         //    error: function (err, status, xhr) {
-         //        $('#captcha-img').attr('src','')
-         //    }
-		// })
         $('#captcha-img').attr('src','/captcha?'+Date.now());
-
 	});
 
-    $('#submit').on('hover',function () {
-        checkSubmit()
-    })
+    //$('#submit').on('hover',function () {
+    //    checkSubmit()
+    //})
 
 	$('#submit').on('click',function(){
+		if(!checkSubmit()){
+			return
+		};
 		var userInfo = {
 			username:$('#username').val(),
 			password:$.md5($('#password').val()),
@@ -207,28 +160,38 @@ $(function(){
                         default:
                             captchaVerify.html(ErrMessages.general.wrong)
                             break;
-
                     }
-
                 }
             })
         }
     });
 
 	function checkSubmit(){
-		var submit = document.getElementById('submit');
-		var checkResult = true;
-		for (var key in formVerify){
-			checkResult = formVerify[key] && checkResult
+		var username = $('#username').val()&&$('#username').val().trim();
+		var password = $('#password').val()&&$('#password').val().trim();
+		var captcha = $('#captcha-input').val()&&$('#captcha-input').val().trim();
+		var result = true;
+		if((!username)||(username.length==0)){
+			$('#username-verify').html(ErrMessages.username.empty);
+			result = false;
 		}
-		if (checkResult) {
-			submit.disabled = false
-		}else{
-			submit.disabled = true
+		if((!password)||(password.length==0)){
+			$('#password-verify').html(ErrMessages.password.empty);
+			result = false;
 		}
-		
+		if((!captcha)||(captcha.length==0)){
+			$('#captcha-verify').html(ErrMessages.captcha.empty);
+			result = false;
+		}
+		return result
 	}
 
-
+	//回车登录
+	document.onkeydown = function(event){
+		var e = event || window.event || arguments.callee.caller.arguments[0];
+		if(e.keyCode==13){
+			$('#submit').click();
+		}
+	}
 
 });

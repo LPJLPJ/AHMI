@@ -163,7 +163,7 @@
                     </script>
 
                 </a>
-                <a ng-click="component.tool.saveProjectAs()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe611;</span><span class="caption">另存为</span></a>
+                <a ng-click="component.tool.saveProjectAs()" ng-show="!local" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe611;</span><span class="caption">另存为</span></a>
                 <script type="text/ng-template" id="saveAsModal.html">
                     <div class="modal-header">
                         <h3 class="modal-title">另存为</h3>
@@ -199,9 +199,9 @@
                 <!--<a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#projectFileModal">-->
                 <!--<span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>-->
                 <!--</a>-->
-                <a ng-click="component.tool.openCANPanel()" class="my-cmd-item" ng-class=""><span
-                        class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>
-                </a>
+                <!--<a ng-click="component.tool.openCANPanel()" class="my-cmd-item" ng-class=""><span-->
+                        <!--class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>-->
+                <!--</a>-->
                 <a ng-click="component.tool.openPanel()" class="my-cmd-item" ng-class=""><span
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
                 </a>
@@ -2077,47 +2077,6 @@
                             </select>
                         </div>
 
-                    </div>
-                    <div ng-show="component.object.type=='MySlide'">
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">名称</span>
-                            <input class="my-attr-number-input form-control form-control"
-                                   type="text"
-                                   ng-model="component.object.level.name"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterName($event)">
-                        </div>
-                        <div class="my-attr-item">
-                            <span class="my-attr-title">坐标X</span>
-                            <input class="my-attr-number-input form-control form-control short-input"
-                                   ng-model="component.object.level.info.left"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterX($event)"
-                                   type="number">
-                        </div><div class="my-attr-item">
-                        <span class="my-attr-title">坐标Y</span>
-                        <input class="my-attr-number-input form-control short-input  "
-                               ng-model="component.object.level.info.top"
-                               ng-blur="component.restore()"
-                               ng-keypress="component.enterY($event)"
-                               type="number">
-                        </div>
-
-                        <div class="my-attr-item">
-                            <span class="my-attr-title">宽度</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.width"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterWidth($event)"
-                                   type="number">
-                        </div><div class="my-attr-item">
-                        <span class="my-attr-title ">高度</span>
-                        <input class="my-attr-number-input form-control short-input  "
-                               ng-model="component.object.level.info.height"
-                               ng-blur="component.restore()"
-                               ng-keypress="component.enterHeight($event)"
-                               type="number">
-                        </div>
                     </div>
                     <div ng-show="component.object.type=='MyAnimation'">
                         <div class="my-attr-item lg">

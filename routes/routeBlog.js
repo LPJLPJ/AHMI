@@ -1,14 +1,16 @@
 /**
  * Created by changecheng on 2017/2/9.
  */
-var BlogModel = require('../db/models/BlogModel')
-var path = require('path')
-var fs = require('fs')
-var errHandler = require('../utils/errHandler')
-var formidable = require('formidable')
-var _ = require('lodash')
-var BlogRoute = {}
-var baseUrl = path.join(__dirname,'../public/blog/media')
+var BlogModel = require('../db/models/BlogModel');
+var UserModel = require('../db/models/UserModel');
+var CommentModel = require('../db/models/CommentModel');
+var path = require('path');
+var fs = require('fs');
+var errHandler = require('../utils/errHandler');
+var formidable = require('formidable');
+var _ = require('lodash');
+var BlogRoute = {};
+var baseUrl = path.join(__dirname,'../public/blog/media');
 BlogRoute.getIndex = function (req, res) {
 
     var page = req.query.page || 1;
@@ -405,6 +407,7 @@ BlogRoute.getBlogData = function (req, res) {
                 errHandler(res,500,'blog not found')
             }else{
                 if (_blog.publish){
+
                     var result = {}
                     result.title = _blog.title;
                     result.authorId =_blog.authorId;
@@ -412,7 +415,42 @@ BlogRoute.getBlogData = function (req, res) {
                     result.keywords = _blog.keywords;
                     result.category = _blog.category;
                     result.content = _blog.content;
-                    res.end(JSON.stringify(result))
+                    // find and add comments
+                    CommentModel.findByBlog(blogId,function(err,_comments){
+                        if(err){
+                            errHandler(res,500,'err in find comments')
+                        }else{
+                            var comments = _comments.map(function(_comment){
+                                var info = {};
+                                info.authorId = _comment.authorId;
+                                info.content = _comment.content;
+                                info.createTime = _comment.createTime.toLocaleString();
+                                info.authorName = _comment.authorName;
+                                info._id = _comment._id;
+                                return info;
+                            });
+                            result.comments = comments;
+                            var _user = req.session.user;
+                            if(_user&&_user.username&&_user.id){
+                                UserModel.findById(_user.id,function(err,data){
+                                    if(err){
+                                        console.log('err',err);
+                                        result.userInfo = null;
+                                    }else{
+                                        result.userInfo = {
+                                            id:data.id,
+                                            type:data.type
+                                        }
+                                    }
+                                    res.end(JSON.stringify(result));
+                                })
+                            }else{
+                                result.userInfo = null;
+                                res.end(JSON.stringify(result))
+                            }
+                            //res.send(result);
+                        }
+                    });
                 }else{
                     errHandler(res,500,'not published')
                 }
@@ -578,4 +616,48 @@ function uploadSingleFile(req, res,cb){
     }
 }
 
-module.exports = BlogRoute
+//Comments
+BlogRoute.postComment = function(req,res){
+    var blogId  = req.query.id;
+    var _user = req.session.user;
+    var raw = req.body;
+    if(_user&&_user.username&&_user.id){
+        var data = {};
+        data.authorId = _user.id;
+        data.authorName = _user.username;
+        data.blogId = blogId;
+        data.content = raw.content;
+        var newComment = new CommentModel(data);
+        newComment.save(function(err){
+            if(err){
+                errHandler(res,500,'save comment err');
+            }else{
+                var newCommentInfo = _.cloneDeep(newComment);
+                res.send(newCommentInfo);
+            }
+        })
+        //req.send(data);
+    }else{
+        res.send('not login')
+    }
+
+};
+
+BlogRoute.deleteComment = function(req,res){
+    var blogId = req.query.id;
+    var _user = req.session.user;
+    var commentId = req.body.commentId;
+    if(_user&&_user.username&&_user.id){
+        CommentModel.deleteById(commentId,function(err){
+            if(err){
+                errHandler(res,500,'err in delete comment');
+            }else{
+                res.send('ok');
+            }
+        })
+    }else{
+        res.send('not login')
+    }
+}
+
+module.exports = BlogRoute;

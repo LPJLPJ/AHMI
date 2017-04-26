@@ -79,8 +79,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 progressModes:[
                     {id:'0',name:'普通进度条'},
                     {id:'1',name:'变色进度条'},
-                    {id:'3',name:'多色进度条'},
-                    {id:'2',name:'脚本进度条'}
+                    {id:'3',name:'多色进度条'}
                 ],
                 thresholdModeId:'1',
                 thresholdModes:[

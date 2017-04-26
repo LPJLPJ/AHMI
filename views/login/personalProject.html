@@ -185,62 +185,63 @@
 
             </ul>
         </div>
-        <div class="main">
-            <div class="top">
-                <span calss="pro">CAN配置项目</span>
-            </div>
-            <div class="all">
-                <!-- Modal -->
-                <div class="modal fade" id="myCANModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="myModalLabel">基础选项</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="job">
-                                    <span class="modal-label col-lg-2">名称</span><input id="CAN-basicinfo-title" type="text" autocomplete="off" placeholder="项目名称" class="modal_input col-lg-10" />
-                                </div>
-                                <div class="job">
-                                    <span class="modal-label col-lg-2">作者</span><input id="CAN-basicinfo-author" type="text" placeholder="" class="modal_input col-lg-10" />
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button id="CAN-modal-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
-                                <button id="CAN-modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!--<div class="main">-->
+            <!--<div class="top">-->
+                <!--<span calss="pro">CAN配置项目</span>-->
+            <!--</div>-->
+            <!--<div class="all">-->
+                <!--&lt;!&ndash; Modal &ndash;&gt;-->
+                <!--<div class="modal fade" id="myCANModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">-->
+                    <!--<div class="modal-dialog" role="document">-->
+                        <!--<div class="modal-content">-->
+                            <!--<div class="modal-header">-->
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                <!--<h4 class="modal-title" id="myModalLabel">基础选项</h4>-->
+                            <!--</div>-->
+                            <!--<div class="modal-body">-->
+                                <!--<div class="job">-->
+                                    <!--<span class="modal-label col-lg-2">名称</span><input id="CAN-basicinfo-title" type="text" autocomplete="off" placeholder="项目名称" class="modal_input col-lg-10" />-->
+                                <!--</div>-->
+                                <!--<div class="job">-->
+                                    <!--<span class="modal-label col-lg-2">作者</span><input id="CAN-basicinfo-author" type="text" placeholder="" class="modal_input col-lg-10" />-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="modal-footer">-->
+                                <!--<button id="CAN-modal-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>-->
+                                <!--<button id="CAN-modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <ul class="projectlist" id="CANProjectlist">
-                    <li id="addCANproject" class="addproject">
-                        <a href="#">
-                            <div class="img1 btn btn-primary btn-lg"  data-toggle="modal" data-target="#myCANModal">
-                                <i class="iconfont">&#xe606;</i>
-                            </div>
-                        </a>
-                        <p class="text">创建项目</p>
-                    </li>
-                    <!-- webProFlag -->
-                    <%for(var i=0;i<CANProjects.length;i++){%>
-                    <li data-project='<%= JSON.stringify(CANProjects[i].CANProjectInfo) %>'  class="CANProjectPanel">
-                        <div class="img">
-                            <i class="CANProjectdelete iconfont">&#xe607;</i>
-                            <a href="#"><img src="../../public/login/assets/img/pro_2.png"/></a>
-                        </div>
+                <!--<ul class="projectlist" id="CANProjectlist">-->
+                    <!--<li id="addCANproject" class="addproject">-->
+                        <!--<a href="#">-->
+                            <!--<div class="img1 btn btn-primary btn-lg"  data-toggle="modal" data-target="#myCANModal">-->
+                                <!--<i class="iconfont">&#xe606;</i>-->
+                            <!--</div>-->
+                        <!--</a>-->
+                        <!--<p class="text">创建项目</p>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash; webProFlag &ndash;&gt;-->
+                    <!--<%for(var i=0;i<CANProjects.length;i++){%>-->
+                    <!--<li data-project='<%= JSON.stringify(CANProjects[i].CANProjectInfo) %>'  class="CANProjectPanel">-->
+                        <!--<div class="img">-->
+                            <!--<i class="CANProjectdelete iconfont">&#xe607;</i>-->
+                            <!--<a href="#"><img src="../../public/login/assets/img/pro_2.png"/></a>-->
+                        <!--</div>-->
 
-                        <p class="text projectinfo" data-toggle="modal" data-target="#myCANModal">
-                            <span><%= CANProjects[i].CANProjectInfo.name %></span>
-                            <span hidden class="day"><%= CANProjects[i].CANProjectInfo.lastModifiedTime %></span>
-                        </p>
-                    </li>
-                    <%}%>
-                    <!-- webProFlag_end -->
-                </ul>
-            </div>
-        </div>
+                        <!--<p class="text projectinfo" data-toggle="modal" data-target="#myCANModal">-->
+                            <!--<span><%= CANProjects[i].CANProjectInfo.name %></span>-->
+                            <!--<span hidden class="day"><%= CANProjects[i].CANProjectInfo.lastModifiedTime %></span>-->
+                        <!--</p>-->
+                    <!--</li>-->
+                    <!--<%}%>-->
+                    <!--&lt;!&ndash; webProFlag_end &ndash;&gt;-->
+                <!--</ul>-->
+            <!--</div>-->
+        <!--</div>-->
+    </div>
     <div id="updater_wrapper">
         <div class="displayInfo">
             <p id="updateInfoText"></p>

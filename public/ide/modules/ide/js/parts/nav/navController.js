@@ -590,9 +590,9 @@
                 newWidget=TemplateProvider.getDefaultScriptTrigger();
             } else if (_index == 9) {
                 newWidget=TemplateProvider.getDefaultSlideBlock();
-            } else if(_index == 12){
-                newWidget=TemplateProvider.getDefaultVideo();
-            } else if(_index == 13){
+            }else if(_index==12){
+                newWidget = TemplateProvider.getDefaultVideo();
+            }else if(_index == 13){
                 newWidget = TemplateProvider.getDefaultAnimation();
             }
             else {

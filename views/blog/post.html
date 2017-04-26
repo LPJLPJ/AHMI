@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <title>Post</title>
     <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
+    <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.css">
     <!--<link rel="stylesheet" type="text/css" href="../../public/blog/css/post.css">-->
 
     <script src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
@@ -16,20 +18,66 @@
     <link rel="stylesheet" type="text/css" href="../../public/blog/libs/summernote/summernote.css">
     <script type="text/javascript" src="../../public/blog/libs/summernote.js"></script>
     <script type="text/javascript" src="../../public/blog/libs/summernote/lang/summernote-zh-CN.js"></script>
+    <script type="text/javascript" src="../../public/ide/lib/toastr/toastr.min.js"></script>
 </head>
 <body>
 <header>
     <% include header.html %>
 </header>
+    <!-- 模态框删除 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        是否删除
+                    </h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="modal-submit" class="btn btn-primary">
+                        确认
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 <div class="main-container">
-    <div class="blog-wrapper">
-        <div class="blog-info">
+    <div class="box box-widget">
+        <div class="box-header">
             <div class="blog-panel">
                 <div class="blog-panel-title"></div>
                 <div class="blog-panel-keywords"></div>
             </div>
         </div>
-        <div class="note-editable panel-body main-content"></div>
+        <div class="box-body" id="blogContent">
+            <div class="note-editable panel-body main-content"></div>
+        </div>
+        <!--<div class="box-footer">-->
+            <!--<div class="comment-text">-->
+                <!--<span class="username">-->
+                    <!--qqwedcrrrr-->
+                    <!--<span class="text-muted pull-right">8:03 PM Today</span>-->
+                <!--</span>-->
+                <!--<p>这个blog真好玩</p>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="box-body" id="submitComment">
+            <form method="post" id="commentForm">
+                <!--<span>-->
+                <!--<input class="form-control input" placeholder="请输入评论" type="text">-->
+                <!--<button class="btn btn-default xs" type="button">发送</button>-->
+                <!--</span>-->
+                <textarea name="comment" class="form-control" rows="3"  placeholder="Leave a Replay"></textarea>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-default btn-sm">提交评论</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <footer>
@@ -38,6 +86,7 @@
 
 </div>
 
+<script src="../../public/blog/libs/ejs_production.js"></script>
 <script src="../../public/blog/js/post.js"></script>
 </body>
 </html>
