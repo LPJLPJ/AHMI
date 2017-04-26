@@ -410,8 +410,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.otherAttrs[2] = blockInfo.w
                     generalWidget.otherAttrs[3] = blockInfo.h
                     generalWidget.otherAttrs[4] = 0 //hit block
-                    generalWidget.otherAttrs[5] = 0 //hti x
-                    generalWidget.otherAttrs[6] = 0 //hit y
+                    generalWidget.otherAttrs[5] = 0 // last block x
+                    generalWidget.otherAttrs[6] = 0 //last block y
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                 break;
