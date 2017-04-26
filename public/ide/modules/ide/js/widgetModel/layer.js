@@ -30,6 +30,8 @@
         this.rotateAngle = 0;
         this.hidden = hidden||false;
         this.validSubLayer = validSubLayer||7;//0111
+        this.rotateCenterX = 0
+        this.rotateCenterY = 0
     }
 
     function SubLayer() {
