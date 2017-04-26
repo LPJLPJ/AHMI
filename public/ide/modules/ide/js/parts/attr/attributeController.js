@@ -2401,10 +2401,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option = {
             scale:selectVideoScale
         }
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.changeVideoScale(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.changeVideoScale(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
 }]);
