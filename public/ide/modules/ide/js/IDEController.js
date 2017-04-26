@@ -95,6 +95,14 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
                 window.local = true;
                 $scope.local = true;
+                window.ondragover = function(e){
+                    e.preventDefault();
+                    return false;
+                }
+                window.ondrop = function(e){
+                    e.preventDefault();
+                    return false
+                }
                 __dirname = global.__dirname;
                 path = require('path');
                 fs = require('fs');
@@ -111,7 +119,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         }else{
             readProjectData();
         }
-        // readLocalProjectData();
+
     }
 
     function readUserType(){
