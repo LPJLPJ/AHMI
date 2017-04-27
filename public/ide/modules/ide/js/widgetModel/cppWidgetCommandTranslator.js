@@ -34,8 +34,9 @@
         'OPGETLAY',
         'OPGETLAYTE',
         'OPSETSUBLAY',//set sublayer attribute;
-        'OPSETSUBLAYTE',
         'OPSETSUBLAYT',
+        'OPSETSUBLAYTE',
+        
         'OPSETSUBLAYTET',
         'OPGETSUBLAY',
         'OPGETSUBLAYTE',
@@ -59,25 +60,23 @@
         'OPJUMP',		//jump Imm codes;
 
         'OPADDIM',		//a = a + Imm;
-        'OPMINUSIM',	//a = a - Imm;   
-        'OPMULIM',		//a = a * Imm;     
-        'OPDIVIM',		//a = a / Imm;
-        'OPMODIM',
-
         'OPADDTE',
+        'OPMINUSIM',	//a = a - Imm;   
         'OPMINUSTE',
-        'OPMULTE',
+        'OPMULIM',		//a = a * Imm;  
+        'OPMULTE',   
+        'OPDIVIM',		//a = a / Imm;
         'OPDIVTE',
+        'OPMODIM',
         'OPMODTE',
 
-        'OPANDIM',		//a = a & Imm;     
-        'OPORIM',		//a = a | Imm;    
+        'OPANDIM',		//a = a & Imm;    
+        'OPANDTE', 
+        'OPORIM',		//a = a | Imm;   
+        'OPORTE', 
         'OPXORIM',		//a = a ^ Imm;
-        'OPNOTIM',		//a = !a;
-
-        'OPANDTE',
-        'OPORTE',
         'OPXORTE',
+        'OPNOTIM',		//a = !a;
         'OPNOTTE',
 
         'OPSETWIDIM',
