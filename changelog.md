@@ -91,7 +91,7 @@ fix:
     2.fix a bug that only can upload max 100 files
     3.fix a bug in generate
 
-v1.9.1_test
+v1.9.1
 add:
    1. add local IDE user type update fun
    2. add blog comment  fun
