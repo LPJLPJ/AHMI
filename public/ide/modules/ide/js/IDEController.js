@@ -205,26 +205,29 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     function LoadWithTemplate(data, id){
         var templateId = data.template;
         //add templateId to template
-        TemplateProvider.setTemplateId(templateId);
+        //TemplateProvider.setTemplateId(templateId);
         if (templateId && templateId!==''){
             $http({
-                method:'GET',
-                url:'/public/templates/defaultTemplate/defaultTemplate.json'
-            }).success(function (tdata) {
-                //console.log('get json success',tdata);
+                method:'POST',
+                url:'/template/findFile',
+                data:{
+                    dataStructure:templateId
+                }
+            }).success(function (tdata,status,xhr) {
+                // if(tdata == 'no TemplateJson'){
+                //     loadwithJsonFile();
+                // }
+                // else{
                 setTemplate(tdata,function(){
                     loadFromContent(data,id);
                 }.bind(this));
-            }).error(function (msg) {
-                //toastr.warning('读取错误');
-                //loadFromBlank({},id);
+               // }
+            }).error(function (err,status,xhr) {
                 console.log('get json failed');
             })
         }else{
-            loadFromContent(data,id);
+             loadFromContent(data,id);
         }
-
-
     }
 
     function loadFromContent(data,id) {
@@ -768,48 +771,85 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         NavModalCANConfigService.setCANId(globalProject.CANId);
     }
 
+    // function setTemplate(date,cb){
+    //     var template = _.cloneDeep(date);
+
+    //     //translate src
+    //     var resourceUrl = ResourceService.getResourceUrl()+'template/';
+    //     var tempSrc = ''
+    //     for(var key in template){
+    //         if(template[key] instanceof Array){
+    //             //resourcelist
+    //             template[key].forEach(function(item){
+    //                 tempSrc = item.src&&item.src.split('/');
+    //                 tempSrc = tempSrc[tempSrc.length-1];
+    //                 tempSrc = resourceUrl + tempSrc;
+    //                 item.src = tempSrc;
+    //             })
+    //         }else{
+    //             //widget
+    //             if(template[key].texList){
+    //                 template[key].texList.forEach(function(tex){
+    //                     if(tex.slices){
+    //                         tex.slices.forEach(function(slice){
+    //                             tempSrc = slice.imgSrc&&slice.imgSrc.split('/');
+    //                             tempSrc = tempSrc[tempSrc.length-1];
+    //                             tempSrc = resourceUrl+tempSrc;
+    //                             slice.imgSrc = tempSrc;
+    //                         })
+    //                     }
+    //                 })
+    //             }
+    //         }
+    //     }
+    //     //add template resource to resource list
+    //     ResourceService.setTemplateFiles(template.templateResourcesList);
+    //     //add template attribute to widget
+    //     TemplateProvider.setDefaultWidget(template);
+
+
+
+    //     var templateList = template.templateResourcesList||[];
+    //     var totalNum = templateList.length;
+    //     var coutDown = function (e, resourceObj) {
+    //         if (e.type === 'error') {
+    //             toastr.warning('图片加载失败: ' + resourceObj.name);
+    //             resourceObj.complete = false;
+    //         } else {
+    //             resourceObj.complete = true;
+    //         }
+    //         totalNum--;
+    //         if(totalNum<=0){
+    //             //cb
+    //             cb && cb();
+    //         }
+    //     };
+    //     //for(var i=0;i<templateList.length;i++){
+    //     //    var curRes = templateList[i];
+    //     //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+    //     //}
+    //     if(totalNum>0){
+    //         templateList.map(function(curRes,index){
+    //             ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+    //         });
+    //     }else{
+    //         cb && cb();
+    //     }
+
+
+    // }
     function setTemplate(date,cb){
         var template = _.cloneDeep(date);
-
-        //translate src
-        var resourceUrl = ResourceService.getResourceUrl()+'template/';
-        var tempSrc = ''
-        for(var key in template){
-            if(template[key] instanceof Array){
-                //resourcelist
-                template[key].forEach(function(item){
-                    tempSrc = item.src&&item.src.split('/');
-                    tempSrc = tempSrc[tempSrc.length-1];
-                    tempSrc = resourceUrl + tempSrc;
-                    item.src = tempSrc;
-                })
-            }else{
-                //widget
-                if(template[key].texList){
-                    template[key].texList.forEach(function(tex){
-                        if(tex.slices){
-                            tex.slices.forEach(function(slice){
-                                tempSrc = slice.imgSrc&&slice.imgSrc.split('/');
-                                tempSrc = tempSrc[tempSrc.length-1];
-                                tempSrc = resourceUrl+tempSrc;
-                                slice.imgSrc = tempSrc;
-                            })
-                        }
-                    })
-                }
-            }
-        }
         //add template resource to resource list
         ResourceService.setTemplateFiles(template.templateResourcesList);
         //add template attribute to widget
-        TemplateProvider.setDefaultWidget(template);
-
-
+        TemplateProvider.setTemplateWidget(template);
 
         var templateList = template.templateResourcesList||[];
         var totalNum = templateList.length;
         var coutDown = function (e, resourceObj) {
             if (e.type === 'error') {
+                // console.log(e)
                 toastr.warning('图片加载失败: ' + resourceObj.name);
                 resourceObj.complete = false;
             } else {
@@ -832,8 +872,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         }else{
             cb && cb();
         }
-
-
     }
 
 

@@ -3,6 +3,7 @@
  */
 var ProjectModel = require('../db/models/ProjectModel')
 var UserModel = require('../db/models/UserModel')
+var TemplateModel = require('../db/models/TemplateModel')
 var projectRoute = {}
 var _ = require('lodash')
 var fs = require('fs')
@@ -73,7 +74,6 @@ projectRoute.getProjectContent = function (req, res) {
 
 projectRoute.createProject = function (req, res) {
     var data = _.cloneDeep(req.body)
-
     if (req.session.user){
         //user exists
         data.userId = req.session.user.id
@@ -87,8 +87,48 @@ projectRoute.createProject = function (req, res) {
             //create project directory
             var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources')
             fs.stat(targetDir, function (err, stats) {
-                if (stats&&stats.isDirectory&&stats.isDirectory()){
-
+                if(data.template){
+                    if (stats&&stats.isDirectory&&stats.isDirectory()){
+                        TemplateModel.findById(data.template,function(err,Template){
+                                if(err){
+                                    console.log('err in find template')
+                                }
+                                else{
+                                    crTemplates(Template.fileId,path.join(targetDir,'template'),function(err){
+                                        var newProjectInfo = _.cloneDeep(newProject)
+                                        delete newProjectInfo.content;
+                                        res.end(JSON.stringify(newProjectInfo))
+                                    });
+                                }
+                        });
+                        //copy template
+                    }else{
+                        //create new directory
+                        //console.log('create new directory',targetDir);
+                        mkdir(targetDir, function (err) {
+                            if (err){
+                                console.log('mk error')
+                                errHandler(res, 500,'mkdir error')
+                            }else{
+                                console.log('ok')
+                                //copy template
+                                TemplateModel.findById(data.template,function(err,Template){
+                                    if(err)
+                                        console.log('err in find template')
+                                    else{
+                                        crTemplates(Template.fileId,path.join(targetDir,'template'),function(err){
+                                            var newProjectInfo = _.cloneDeep(newProject)
+                                            delete newProjectInfo.content;
+                                            res.end(JSON.stringify(newProjectInfo))
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                    }
+                }
+                else{
+                    if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //copy template
                     cpTemplates('defaultTemplate',path.join(targetDir,'template',function (err) {
                         //exists
@@ -101,7 +141,7 @@ projectRoute.createProject = function (req, res) {
 
                 }else{
                     //create new directory
-                    //console.log('create new directory',targetDir);
+                    console.log('create new directory',targetDir);
                     mkdir(targetDir, function (err) {
                         if (err){
                             console.log('mk error')
@@ -118,9 +158,8 @@ projectRoute.createProject = function (req, res) {
 
                     })
                 }
+                }
             })
-
-
         })
     }else{
         res.status(500).end('not login')
@@ -668,6 +707,238 @@ projectRoute.saveDataAndCompress = function (req, res) {
         errHandler(res,500,'projectId error');
     }
 };
+projectRoute.NewTemplate = function(req,res){
+    var temPicName
+    var widgetUrl
+    var replaceUrl
+    var tWidgetName
+    var tWidgetUrl
+    var data = {};
+    var k =-1;//num of template pictures
+    var projectId = req.params.id;
+    var SourceUrl = path.join(__dirname,'../project/',String(projectId),'resources');
+    var dataStructure = req.body.dataStructure;
+    var widgets = dataStructure.TemplateWidgets;
+    var templates = {
+        MyDashboard:{},
+        MyProgress:{},
+        MySwitch:{},
+        MyRotateImg:{},
+        MyButton:{},
+        templateResourcesList:[]
+    }; 
+    var guid =Math.round((Math.random()+1)*(Math.random()+3)*10000000);
+    var NewUrl = path.join(__dirname,'../public/templates/',String(guid));
+    var targetUrl = path.join(__dirname,'../public/templates/');
+        //user exists
+    data.userId = req.session.user.id;
+    data.name = dataStructure.name;
+    data.fileId = guid;
+        fs.stat(targetUrl,function(err,stats){
+            if(stats&&stats.isDirectory&&stats.isDirectory()){
+                    fs.mkdir(NewUrl,0777);
+                     console.log('ok1',NewUrl)
+            }
+            else{
+                    fs.mkdir(targetUrl,function(err){
+                        if(err){
+                            console.log('Template mkidir error')
+                            errHandler(res,500,'Template mkidir error')
+                        }
+                        else{
+                            console.log('ok',NewUrl)
+                            fs.mkdir(NewUrl,0777)
+                        }     
+                    })
+            }
+                for(var i = 0;i<widgets.length;i++){   
+                    switch (widgets[i].type)
+                        {
+                        case "MyDashboard":
+                                if(templates.MyDashboard.info ==undefined||templates.MyDashboard.info ==null) {
+                                    templates.MyDashboard.info = widgets[i].info;
+                                    templates.MyDashboard.texList = widgets[i].texList;
+                                    for(var a = 0;a<templates.MyDashboard.texList.length;a++)
+                                        for(var j = 0;j<templates.MyDashboard.texList[a].slices.length;j++){
+                                            widgetUrl = templates.MyDashboard.texList[a].slices[j].imgSrc;
+                                            replaceUrl = path.join(NewUrl,PicName(widgetUrl));
+                                            temPicName = PicName(widgetUrl);
+                                            widgetUrl = path.join(SourceUrl,PicName(widgetUrl));
+                                            isSameFile(widgetUrl,replaceUrl);
+                                            tWidgetUrl = fictitiousUrl(replaceUrl);
+                                            templates.MyDashboard.texList[a].slices[j].imgSrc = tWidgetUrl;
+                                            tWidgetName = templates.MyDashboard.texList[a].slices[j].name;
+                                            k+=1;
+                                            templates.templateResourcesList[k]=crResource(templates.templateResourcesList[k],temPicName,tWidgetUrl,tWidgetName);
+                                        }
+                                }
+                                continue;
+                        case "MyProgress":
+                                if(templates.MyProgress.info ==undefined||templates.MyProgress.info ==null) {
+                                    templates.MyProgress.info = widgets[i].info;
+                                    templates.MyProgress.texList = widgets[i].texList;
+                                    for(var a = 0;a<templates.MyProgress.texList.length;a++)
+                                        for(var j = 0;j<templates.MyProgress.texList[a].slices.length;j++){
+                                            widgetUrl = templates.MyProgress.texList[a].slices[j].imgSrc;
+                                            replaceUrl = path.join(NewUrl,PicName(widgetUrl));
+                                            temPicName = PicName(widgetUrl);
+                                            widgetUrl = path.join(SourceUrl,PicName(widgetUrl));
+                                            isSameFile(widgetUrl,replaceUrl); 
+                                            tWidgetUrl = fictitiousUrl(replaceUrl);   
+                                            templates.MyProgress.texList[a].slices[j].imgSrc = tWidgetUrl;
+                                            tWidgetName = templates.MyProgress.texList[a].slices[j].name;
+                                            k+=1;
+                                            templates.templateResourcesList[k]=crResource(templates.templateResourcesList[k],temPicName,tWidgetUrl,tWidgetName);
+                                        }
+                                }
+                                continue;
+                        case "MySwitch":
+                                if(templates.MySwitch.info ==undefined||templates.MySwitch.info ==null) {
+                                    templates.MySwitch.info = widgets[i].info;
+                                    templates.MySwitch.texList = widgets[i].texList;
+                                    for(var a = 0;a<templates.MySwitch.texList.length;a++)
+                                        for(var j = 0;j<templates.MySwitch.texList[a].slices.length;j++){
+                                            widgetUrl = templates.MySwitch.texList[a].slices[j].imgSrc;
+                                            replaceUrl = path.join(NewUrl,PicName(widgetUrl));
+                                            temPicName = PicName(widgetUrl);
+                                            widgetUrl = path.join(SourceUrl,PicName(widgetUrl));
+                                            isSameFile(widgetUrl,replaceUrl);
+                                            tWidgetUrl = fictitiousUrl(replaceUrl);
+                                            templates.MySwitch.texList[a].slices[j].imgSrc = tWidgetUrl;
+                                            tWidgetName = templates.MySwitch.texList[a].slices[j].name;
+                                            k+=1;
+                                            templates.templateResourcesList[k]=crResource(templates.templateResourcesList[k],temPicName,tWidgetUrl,tWidgetName);
+                                        }
+                                }
+                                continue;
+                         case "MyRotateImg":
+                                if(templates.MyRotateImg.info ==undefined||templates.MyRotateImg.info ==null) {
+                                    templates.MyRotateImg.info = widgets[i].info;
+                                    templates.MyRotateImg.texList = widgets[i].texList;
+                                    for(var a = 0;a<templates.MyRotateImg.texList.length;a++)
+                                        for(var j = 0;j<templates.MyRotateImg.texList[a].slices.length;j++){
+                                            widgetUrl = templates.MyRotateImg.texList[a].slices[j].imgSrc;
+                                            replaceUrl = path.join(NewUrl,PicName(widgetUrl));
+                                            temPicName = PicName(widgetUrl);
+                                            widgetUrl = path.join(SourceUrl,PicName(widgetUrl));
+                                            isSameFile(widgetUrl,replaceUrl);
+                                            tWidgetUrl = fictitiousUrl(replaceUrl);
+                                            templates.MyRotateImg.texList[a].slices[j].imgSrc = tWidgetUrl;
+                                            tWidgetName = templates.MyRotateImg.texList[a].slices[j].name;
+                                            k+=1;
+                                            templates.templateResourcesList[k]=crResource(templates.templateResourcesList[k],temPicName,tWidgetUrl,tWidgetName);
+                                        }
+                                }
+                                continue;
+                        case "MyButton":
+                                if(templates.MyButton.info ==undefined||templates.MyButton.info ==null) {
+                                    templates.MyButton.info = widgets[i].info;
+                                    templates.MyButton.texList = widgets[i].texList;
+                                    for(var a = 0;a<templates.MyButton.texList.length;a++)
+                                        for(var j = 0;j<templates.MyButton.texList[a].slices.length;j++){
+                                            widgetUrl = templates.MyButton.texList[a].slices[j].imgSrc;
+                                            replaceUrl = path.join(NewUrl,PicName(widgetUrl));
+                                            temPicName = PicName(widgetUrl);
+                                            widgetUrl = path.join(SourceUrl,PicName(widgetUrl));
+                                            isSameFile(widgetUrl,replaceUrl);
+                                            tWidgetUrl = fictitiousUrl(replaceUrl);
+                                            templates.MyButton.texList[a].slices[j].imgSrc = tWidgetUrl;
+                                            tWidgetName = templates.MyButton.texList[a].slices[j].name;
+                                            k+=1;
+                                            templates.templateResourcesList[k]=crResource(templates.templateResourcesList[k],temPicName,tWidgetUrl,tWidgetName);
+                                        }
+                                }
+                                continue;
+                        case undefined:
+                                console.log('no widget');
+                                res.end('nofind');
+                                break;           
+                        }
+                    }  
+                data.templateJson = JSON.stringify(templates);
+                fs.writeFile(NewUrl+'\\'+'NewTemplate.json',data.templateJson,function(saveErr){
+                    var newTemplate = new TemplateModel(data)
+                    newTemplate.save(function (err) {
+                        if (err){
+                            errHandler(res, 500, 'templates save error',err)
+                        }else{
+                            console.log('template has been saved');
+                            res.end('ok')
+                        }
+                    })
+                });
+        });
+    // console.log(data);
+}
+
+projectRoute.getTemplateName = function(req,res){
+    var userId = req.session.user.id;
+    TemplateModel.findByUser(userId,function(err,Template){
+        if(err){
+            alert('err')
+        }
+        else{
+            Template.reverse();
+            var proccessTemplate = _.cloneDeep(Template).map(function(Template){
+                var info = {};
+                info._id = Template._id;
+                info.name = Template.name;
+                return info;
+                
+            });
+            res.end(JSON.stringify(proccessTemplate))
+           
+        }
+    });
+}
+
+projectRoute.findeTemplateFile = function(req,res){
+    var templateId = req.body.dataStructure;
+    if(!templateId){
+        errHandler(res,500,'invalid templateId')
+    }else{
+        TemplateModel.findById(templateId,function(err,Template){
+            if(err)
+                errHandler(res,500,'err in find tempalte')
+            else{
+                if(Template){
+                    var TemplateJson = Template.templateJson;
+                    res.end(TemplateJson)
+                }
+                else
+                    res.end('no TemplateJson');
+            }
+        })
+    }
+}
+
+projectRoute.deleteTemplate = function(req,res){
+    var templateId = req.body.templateId;
+    if(!templateId){
+        errHandler(res,500,'invalid templateId')
+    }else{
+        TemplateModel.findById(templateId,function(err,Template){
+            if(err)
+                console.log('err in find file')
+            else{
+                deleteTemplateFile(Template.fileId,function(err){
+                    if(err){
+                        errHandler(res,500,'err in delete file')
+                    }
+                    else{
+                        TemplateModel.deleteById(templateId,function(err){
+                            if(err)
+                                errHandler(res,500,'delete error')
+                            else
+
+                                res.end('ok')
+                        })
+                    }
+                })
+            }
+        })
+    }
+}
 
 function isFont(font) {
     var names = font.src.split('.');
@@ -698,7 +969,75 @@ function cpTemplates(templateName,dstDir,cb) {
     })
 }
 
+function PicName(bascUrl){
+    try{
+        var fs = require('fs');
+        var Names = bascUrl.split('/');
+    }catch(e){
+        var Names = bascUrl.split('\\');
+    }
+    var name = Names[Names.length-1];
+    return name;
+}
 
+function crTemplates(fileId,dstDir,cb){
+    var srcDir = path.join(__dirname,'../public/templates/',fileId);
+    fse.copy(srcDir,dstDir,function(err){
+        console.log(err);
+        if(err){
+            cb&cb(err);
+        }
+        else{
+            cb&&cb();
+        }
+    })
+}
+function crResource(resource,id,url,name){
+    resource = {
+        id:id,
+        src:url,
+        name:name,
+        content: null,
+        complete: true,
+        type:"image/png"
+    }
+    return resource
+}
+function isSameFile(sourceUrl,destUrl){
+    fs.stat(destUrl,function(err){
+        if(err){
+            fse.copy(sourceUrl,destUrl,function(err){
+                if(err) console.log(err);
+            });
+        }
+    })
+}
+function fictitiousUrl(url){
+    var str = String(path.join(__dirname,'../'));
+    url = url.replace(/\\/g,'/');
+    url = url.slice(str.length-1);
+    return url
+}
+
+function deleteTemplateFile(fileName,cb){
+    if(!fileName){
+        console.log('fileName err');
+    }
+    else{
+        var fileUrl = path.join(__dirname,'../public/templates/',fileName);
+        fs.stat(fileUrl,function(err,stats){
+            if(err)
+                console.log('no file to deleted')
+            else{
+                fse.remove(fileUrl,function(err){
+                    if(err)
+                        console.log('remove err');
+                    cb();
+                })
+            }
+        })
+    }
+}
 
 
 

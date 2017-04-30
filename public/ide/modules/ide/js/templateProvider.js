@@ -206,6 +206,27 @@ ideServices
             }
         };
 
+        this.setTemplateWidget=function(widget){
+            if(widget.MyButton.info&&widget.MyButton){
+                defaultButton=widget.MyButton;
+            }
+            if(widget.MySwitch.info&&widget.MySwitch){
+                defaultSwitch=widget.MySwitch;
+            }
+            if(widget.MyProgress.info&&widget.MyProgress){
+                defaultProgress=widget.MyProgress;
+            }
+            if(widget.MyDashboard.info&&widget.MyDashboard){
+                defaultDashboard=widget.MyDashboard;
+            }
+            if(widget.MyRotateImg.info&&widget.MyRotateImg){
+                defaultRotateImage=widget.MyRotateImg;
+            }
+            // if(widget.MySlideBlock.info&&widget.MySlideBlock){
+            //     defaultSlideBlock=widget.MySlideBlock
+            // }
+        }
+        
         this.saveProjectFromGlobal= function (_project) {
             project=_project;
             

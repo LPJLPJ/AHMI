@@ -205,6 +205,16 @@ router.route('/project/create')
 router.route('/project/delete')
     .post(projectInfo.deleteProject);
 
+//templates
+router.route('/project/:id/NewTemplate')
+    .post(projectInfo.NewTemplate);
+router.route('/template/find')
+    .get(projectInfo.getTemplateName);
+router.route('/template/findFile')
+    .post(projectInfo.findeTemplateFile);
+router.route('/template/deleteTemplate')
+    .post(projectInfo.deleteTemplate);
+
 //CAN project
 router.route('/CANProject/create')
     .post(CANProjectInfo.createCANProject);

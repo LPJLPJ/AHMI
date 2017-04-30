@@ -246,6 +246,18 @@
                         <button class="btn btn-warning" type="button" ng-click="cancel()">否</button>
                     </div>
                 </script>
+                <script type="text/ng-template" id="NewTemplate.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">请输入模板名称</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                            <input ng-model ="newtemplateName">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
             </div>
             <div class="my-tool-content-item" ng-show="component.nav.currentNav==1">
                 <a ng-click="component.tool.undo()" class="my-cmd-item"
@@ -294,6 +306,9 @@
                         class="caption">粘贴</span></a>
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe623;</span><span-->
                 <!--class="caption">格式</span></a>-->
+                <a ng-click="component.tool.importTemplate()" class="my-cmd-item" ng-class=""><span
+                        class="iconfont icon">&#xe616;</span><span class="caption">导入模板</span>
+                </a>
                 <a class="my-cmd-item" ng-controller="arrangeCtr"
                    ng-class="{false:'inactive'}[component.tool.sublayerStatuslayerStatus]">
                     <div class="" uib-dropdown>

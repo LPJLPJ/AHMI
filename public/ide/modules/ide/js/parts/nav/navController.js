@@ -80,6 +80,7 @@
                     addLayer:addLayer,
                     addSubLayer:addSubLayer,
                     deleteObject:deleteObject,
+                    importTemplate:importTemplate,
                     addWidget:addWidget,
                     openProject:openProject,
                     generateDataFile:generateDataFile,
@@ -781,6 +782,59 @@
                 }
             }
         }
+        function importTemplate(format){
+            var currentPage = ProjectService.getCurrentPage();
+            if(currentPage.layers[0] ==undefined){
+                toastr.info('请先添加控件');
+            }
+            else{
+                var Template = {
+                name:null,
+                TemplateWidgets: currentPage.layers[0].subLayers[0].widgets
+            }
+            var modalInstance = $uibModal.open({
+                        animation:$scope.animationsEnabled,
+                        templateUrl:'NewTemplate.html',
+                        controller:'newTemplateConfig',
+                        size:'md',
+                        resolve:{
+                            data:function(){
+                                return Template;
+                            }
+                        }
+                    });
+                modalInstance.result.then(function(result){
+                    if(!result){
+                            toastr.error('导入失败');
+                        }
+                    else
+                    {
+                    Template.name = result;
+                    $http({
+                    method:'POST',
+                    url:'/Project/'+$scope.project.projectId+'/NewTemplate',
+                    data:{
+                        dataStructure:Template
+                    }
+                })
+                    .success(function (data,status,xhr) {
+                        if (data == 'ok'){
+                            toastr.info('导入成功');
+                        }
+                        else if(data =='noFind'){
+                            toastr.info('没有控件');
+                        }
+                        else 
+                            toastr.info('导入失败');
+                    })
+                    .error(function (err,status,xhr) {
+                        console.log(err);
+                        toastr.info('导入失败')
+                    })            
+                    } 
+                })
+            }
+        }
 
         function generateData(format){
             var temp = {};
@@ -1211,3 +1265,34 @@ ide.controller('NavModalSaveAsCtrl',['$scope','$uibModalInstance',function($scop
         $uibModalInstance.dismiss('cancel');
     }
 }]);
+
+/**
+ * 模板模态框控制器
+ * @return {[type]}
+ */
+ ide.controller('newTemplateConfig',['$scope','$uibModalInstance','data','newTemplateConfigService',function($scope,$uibModalInstance,data,newTemplateConfigService){
+    $scope.newTemplate = data;
+    $scope.newtemplateName = newTemplateConfigService.getTemplateName();
+    $scope.ok = function(){
+        // if(($scope.newtemplateName ==null)&&(newTemplateConfigService.getTemplateName()==null)){
+        //     $uibModalInstance.dismiss('cancel');
+        // }
+        // else{
+            newTemplateConfigService.setTemplateName($scope.newtemplateName);
+            $uibModalInstance.close($scope.newtemplateName);
+       // }
+    }
+    $scope.cancel = function(){
+        $uibModalInstance.dismiss('cancel');
+    };
+ }]);
+
+ ide.service('newTemplateConfigService',[function(){
+    var newTemplateName;
+    this.setTemplateName = function(name){
+        newTemplateName = name;
+    }
+    this.getTemplateName = function(name){
+        return newTemplateName || ''
+    };
+ }]);

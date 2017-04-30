@@ -209,6 +209,79 @@ $(function(){
         }
     }
 
+     $(document).ready(function chooseTemplate(){
+        var obj =document.getElementById('basicinfo-template');
+        if(local){
+        }
+        else{
+            $.ajax({
+                type:'GET',
+                url:'/template/find',
+                success:function(data){
+                    var template =JSON.parse(data);
+                    var name = [];
+                    var id = [];
+                    var fileId = [];
+                    for(var i = 0 ;i<template.length;i++)
+                    {
+                        name[i] = template[i].name;
+                        id[i] = template[i]._id;
+                        obj.add(new Option(name[i],id[i]));
+                    }
+                }
+            });
+        }
+    })
+    
+    $('#deleteTemp').on('click',function(e){
+        $('#myTemplateModal').modal('show');
+        var obj =document.getElementById('templateName');
+        if(local){
+        }
+        else{
+            $.ajax({
+                type:'GET',
+                url:'/template/find',
+                success:function(data){
+                    var template =JSON.parse(data);
+                    var name = [];
+                    var id = [];
+                    var fileId = [];
+                    for(var i = 0 ;i<template.length;i++)
+                    {
+                        name[i] = template[i].name;
+                        id[i] = template[i]._id;
+                        obj.add(new Option(name[i],id[i]));
+                    }
+                }
+            });
+        }
+    })
+    $('#template-modal-ok').on('click',function(e){
+        var template = $('#templateName');
+        var templateId = template[0].value;
+        if(!templateId){
+            toastr.warning('模板id错误')
+            console.log('err in find delete template')
+        }
+        else{
+            $.ajax({
+                type:'POST',
+                url:'/template/deleteTemplate',
+                data:{
+                    templateId:templateId
+                },
+                success:function(data){
+                    if(data =='ok')
+                        toastr.info('删除成功');
+                },
+                error:function(xhr){
+                    console.log(xhr);
+                    toastr.warning('删除失败');
+                }
+            })
+        }
+    })
 
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
