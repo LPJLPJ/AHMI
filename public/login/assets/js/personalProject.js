@@ -208,32 +208,9 @@ $(function(){
             }
         }
     }
-
-     $(document).ready(function chooseTemplate(){
-        var obj =document.getElementById('basicinfo-template');
-        if(local){
-        }
-        else{
-            $.ajax({
-                type:'GET',
-                url:'/template/find',
-                success:function(data){
-                    var template =JSON.parse(data);
-                    var name = [];
-                    var id = [];
-                    var fileId = [];
-                    for(var i = 0 ;i<template.length;i++)
-                    {
-                        name[i] = template[i].name;
-                        id[i] = template[i]._id;
-                        obj.add(new Option(name[i],id[i]));
-                    }
-                }
-            });
-        }
-    })
     
     $('#deleteTemp').on('click',function(e){
+        $("#templateName").html("");
         $('#myTemplateModal').modal('show');
         var obj =document.getElementById('templateName');
         if(local){
@@ -258,6 +235,7 @@ $(function(){
         }
     })
     $('#template-modal-ok').on('click',function(e){
+        var obj =document.getElementById('templateName')
         var template = $('#templateName');
         var templateId = template[0].value;
         if(!templateId){
@@ -359,6 +337,30 @@ $(function(){
         return result;
     }
 
+    function chooseTemplate(){
+        $("#basicinfo-template").html("");
+        var obj =document.getElementById('basicinfo-template');
+        if(local){
+        }
+        else{
+            $.ajax({
+                type:'GET',
+                url:'/template/find',
+                success:function(data){
+                    var template =JSON.parse(data);
+                    var name = [];
+                    var id = [];
+                    var fileId = [];
+                    for(var i = 0 ;i<template.length;i++)
+                    {
+                        name[i] = template[i].name;
+                        id[i] = template[i]._id;
+                        obj.add(new Option(name[i],id[i]));
+                    }
+                }
+            });
+        }
+    }
 
 
     $('#projectlist').on('mouseenter','.projectpanel',function (e) {
@@ -383,6 +385,7 @@ $(function(){
     $('#addproject').on('click', function (e) {
         $('#basicinfo-title').val('');
         $('#basicinfo-author').val('');
+        chooseTemplate()
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         $('#basicinfo-resolution').val('800*480');
