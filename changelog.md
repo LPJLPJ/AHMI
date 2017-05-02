@@ -99,10 +99,11 @@ update:
    1. hide progress script mode
    2. update login form logic
    3. Open blog portal
-   3. hide CAN
+   4. hide CAN
+   5. hide rotate button in nav and forbidden to change timer tag name
+   6. hide animation when it is widget
 fix:
    1.fix a bug that change a project's attr will empty this project in local version
    2.fix a bug that rotate widget
    3.fix a bug that use key to move widget group
    4.fix src problem when use template mode
-   5.hide rotate button in nav and forbidden to change timer tag name

@@ -36,13 +36,11 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
         var currentObject = ProjectService.getCurrentSelectObject().level;
         switch (currentObject.type){
-            case "MyPage" :
-            case "MySubLayer":
-            case undefined:
-                $scope.showAnimationPanel=false;
+            case 'MyLayer':
+                $scope.showAnimationPanel=true;
                 break;
             default:
-                $scope.showAnimationPanel=true;
+                $scope.showAnimationPanel=false;
                 break;
         }
     }
