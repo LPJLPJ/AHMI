@@ -993,6 +993,7 @@ function crTemplates(fileId,dstDir,cb){
     })
 }
 function crResource(resource,id,url,name){
+
     resource = {
         id:id,
         src:url,
@@ -1000,6 +1001,9 @@ function crResource(resource,id,url,name){
         content: null,
         complete: true,
         type:"image/png"
+    }
+    if(resource.id==""){
+        resource.id = 'gaoliang';
     }
     return resource
 }
