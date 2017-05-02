@@ -105,3 +105,4 @@ fix:
    2.fix a bug that rotate widget
    3.fix a bug that use key to move widget group
    4.fix src problem when use template mode
+   5.hide rotate button in nav and forbidden to change timer tag name
