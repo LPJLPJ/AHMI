@@ -38,7 +38,6 @@
             project = null;
             hideWrapper();
         });
-
     }
 
     function FileDragHover(e){

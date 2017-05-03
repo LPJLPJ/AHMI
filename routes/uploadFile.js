@@ -234,4 +234,22 @@ module.exports.getProjectFile = function (req, res) {
     }else{
         errHandler(res,500,'invalid resource url')
     }
-}
+};
+
+module.exports.getProjectTemplateFile = function (req, res) {
+    var projectId = req.params.id
+    var fileId = req.params.rid;
+    if (projectId!=''&&fileId!=''){
+        //valid
+        // console.log(projectId,fileId)
+        res.sendFile(path.join(__dirname,'../project/',String(projectId),'resources','template',String(fileId)), function (err) {
+            if (err){
+                console.log(err);
+                errHandler(res,500,'get project file error');
+            }
+
+        })
+    }else{
+        errHandler(res,500,'invalid resource url')
+    }
+};

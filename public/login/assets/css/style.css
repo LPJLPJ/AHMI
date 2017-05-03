@@ -53,8 +53,9 @@ body {
 }
 
 .navbar-inverse .navbar-nav > li > a, .navbar-inverse .navbar-nav > li > a:hover {
-    color: #FFF;
-    padding: 22px 10px;
+    color: #aaabac;
+    font-size: 20px;
+    padding: 10px 10px;
 }
 
 
@@ -320,26 +321,22 @@ h1::after {
 }
 .position-zyj{
     position: absolute;
-    top:80% !important;
+    top:80%;
 }
 .slide-zyj{
-    height:auto !important;
+    height:auto;
     max-width: 1170px;
     margin: 0 auto;
 }
-.control-zyj{
-    position: absolute !important;
-    top:49% !important;
-    left:20% !important;
-    right:0 !important;
-}
 .size-zyj{
-    height:auto!important;
+    height:auto;
     vertical-align:middle;
 }
 #myCarousel .container a span{
-    position:relative;
-    top:330px;
+    position: absolute;
+    top:49%;
+    left:20%;
+    right:0;
 }
 .position1-zyj{
     position: relative;
@@ -419,4 +416,9 @@ h1::after {
 .video-p{
     position: relative;
     top:160px;
+}
+.title{
+    float:left;
+    width:100%;
+    text-align: center;
 }
