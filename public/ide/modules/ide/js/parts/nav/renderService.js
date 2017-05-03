@@ -699,6 +699,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             case 'MySlide':
                 this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
+            case 'MyAnimation':
+                this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
             case 'MyOscilloscope':
                 this.renderOscilloscope(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
