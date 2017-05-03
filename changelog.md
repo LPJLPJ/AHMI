@@ -107,3 +107,9 @@ fix:
    2.fix a bug that rotate widget
    3.fix a bug that use key to move widget group
    4.fix src problem when use template mode
+   
+2017.5.3 
+fix:
+    1. blank command bug
+add:
+    1. MyAnimation rendering
