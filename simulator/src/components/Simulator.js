@@ -764,7 +764,7 @@ module.exports =   React.createClass({
                         curValue -= timer['SysTmr_' + num + '_Step'];
                         this.setTagByTag(targetTag,curValue)
 
-                        if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
+                        if (targetTag.value < timer['SysTmr_' + num + '_Stop']||targetTag.value > timer['SysTmr_' + num + '_Start']) {
                             //clear timer
                             if (loop){
                                 this.setTagByTag(targetTag, startValue)
@@ -785,7 +785,7 @@ module.exports =   React.createClass({
                         curValue = Number(targetTag.value)||0;
                         curValue += timer['SysTmr_' + num + '_Step'];
                         this.setTagByTag(targetTag,curValue)
-                        if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
+                        if (targetTag.value > timer['SysTmr_' + num + '_Stop']||targetTag.value < timer['SysTmr_' + num + '_Start']) {
                             //clear timer
                             if (loop){
                                 this.setTagByTag(targetTag, startValue)
