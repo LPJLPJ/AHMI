@@ -561,6 +561,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			if ($scope.component.object.level.name==initObject.level.name){
 				return;
 			}
+            toastr.info('修改成功');
 			var option={
 				name:$scope.component.object.level.name
 			};
