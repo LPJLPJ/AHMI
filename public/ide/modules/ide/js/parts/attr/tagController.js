@@ -60,7 +60,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 openPanel(-1);
             }
 
-
+            reBindTag();
         }
 
         function openPanel (index,_type) {

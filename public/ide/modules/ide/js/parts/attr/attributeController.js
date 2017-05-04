@@ -515,6 +515,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 restore();
                 return;
             }
+            if(!_.isInteger($scope.component.object.level.transition.duration)){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
             if($scope.component.object.level.transition.duration==initObject.level.transition.duration){
                 return;
             }
