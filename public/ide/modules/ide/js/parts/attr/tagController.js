@@ -407,6 +407,10 @@ ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','tag','type',func
             toastr.warning('序号超出范围');
             $scope.tag.indexOfRegister=0;
         }
+        if(!_.isInteger($scope.tag.indexOfRegister)){
+            toastr.error('序号只能是整数');
+            $scope.tag.indexOfRegister=0;
+        }
     }
 
 

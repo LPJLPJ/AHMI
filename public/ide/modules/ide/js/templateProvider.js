@@ -685,6 +685,8 @@ ideServices
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
                 disableHighlight:false,
+                fontBold:"100",
+                fontItalic:"",
                 maxFontWidth:maxFontWidth   //最大字体宽度
             };
             return {
