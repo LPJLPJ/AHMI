@@ -94,7 +94,8 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         $uibModalInstance.dismiss('cancel');
     };
 
-    $scope.disableColorInput = function(slice){
+    $scope.disableColorInput = function(slice,e){
+        console.log(slice,e)
         if(slice.imgSrc){
             slice.color='rgba(0,0,0,0)';
         }else{
