@@ -144,6 +144,7 @@
                 $scope.component.out.toolShow=toolShow;
             });
             $scope.$on('PageChangedSwitched', function (event,operate,callback) {
+                console.log('i am delete a page')
                 renderAllCanvases(operate,callback);
             });
             $scope.$on('NewPageAdded', function (event, operate, callback) {

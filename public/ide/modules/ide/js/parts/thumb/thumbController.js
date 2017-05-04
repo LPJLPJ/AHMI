@@ -101,6 +101,7 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
     function deletePageByIndex(_index){
         var oldOperate=ProjectService.SaveCurrentOperate();
 
+        console.log('i am delete a page in thumbCtrl',oldOperate);
         $timeout(function () {
             ProjectService.DeletePageByIndex(_index, function () {
                 $scope.$emit('SwitchCurrentPage', oldOperate, function () {
