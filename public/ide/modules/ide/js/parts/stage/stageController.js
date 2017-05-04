@@ -492,11 +492,11 @@
 
 
             ProjectService.OnLayerDoubleClicked(_target.id,function () {
-                // $timeout(function () {
-                //     layerDoubleClicking=false;
-                //
-                // },100);
-                layerDoubleClicking=false;
+                $timeout(function () {
+                    layerDoubleClicking=false;
+                
+                },0);
+                // layerDoubleClicking=false;
                 //更新缩略图
                 $scope.$emit('ChangeCurrentPage');
 
@@ -562,9 +562,8 @@
             }
         }
         function releaseLayer(event){
-
             if (layerDoubleClicking){
-                console.log('双击中');
+                console.log('双击layer中');
                 return;
             }
             var isDbClick=false;    //这次点击是否是双击
