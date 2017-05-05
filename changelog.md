@@ -118,5 +118,6 @@ add:
     2. tag's register limit
     3. anmiation's duration time limit
     4. project's name limit when saveas
+    5. limit duration time to 5000
 
 
