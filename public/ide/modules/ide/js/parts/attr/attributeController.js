@@ -515,6 +515,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 restore();
                 return;
             }
+            if(!_.isInteger($scope.component.object.level.transition.duration)){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
             if($scope.component.object.level.transition.duration==initObject.level.transition.duration){
                 return;
             }
@@ -556,6 +561,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			if ($scope.component.object.level.name==initObject.level.name){
 				return;
 			}
+            toastr.info('修改成功');
 			var option={
 				name:$scope.component.object.level.name
 			};

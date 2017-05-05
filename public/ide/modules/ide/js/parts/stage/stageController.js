@@ -236,7 +236,6 @@
 
             if (oldOperate){
                 var nowOperate=ProjectService.SaveCurrentOperate();
-
                 var operates={
                     undoOperate:oldOperate,
                     redoOperate:nowOperate
@@ -273,6 +272,7 @@
 
             var pageIndex=-1;
 
+            //console.log('pages',$scope.project.pages);
             _.forEach($scope.project.pages,function(page,index){
                 if (page.id==ProjectService.getCurrentPage().id){
                     pageIndex=index;

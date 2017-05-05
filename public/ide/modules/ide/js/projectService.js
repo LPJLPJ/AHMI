@@ -1855,7 +1855,14 @@ ideServices
             };
 
             this.LoadCurrentOperate = function (_operate, _successCallback,_errCallback) {
-                project=_operate;
+                for(var key in _operate){
+                    if(_operate.hasOwnProperty(key)){
+                        if(project.hasOwnProperty(key)){
+                            project[key] = _.cloneDeep(_operate[key]);
+                        }
+                    }
+                }
+                //project=_operate;
 
                 _cleanPageHashKey();
                 var pageNode=CanvasService.getPageNode();

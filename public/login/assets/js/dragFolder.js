@@ -15,7 +15,7 @@
     var formData = new FormData();
     var project;
     if(window.File&&window.FileList&&window.FileReader){
-        console.log('support File API congratulations!');
+        console.log('support File API congratulations!!');
         init();
     }
     function init(){

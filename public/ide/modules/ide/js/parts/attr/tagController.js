@@ -60,7 +60,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 openPanel(-1);
             }
 
-
+            reBindTag();
         }
 
         function openPanel (index,_type) {
@@ -405,6 +405,10 @@ ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','tag','type',func
     $scope.checkTagIndex = function(){
         if($scope.tag.indexOfRegister>65535||$scope.tag.indexOfRegister<0){
             toastr.warning('序号超出范围');
+            $scope.tag.indexOfRegister=0;
+        }
+        if(!_.isInteger($scope.tag.indexOfRegister)){
+            toastr.error('序号只能是整数');
             $scope.tag.indexOfRegister=0;
         }
     }
