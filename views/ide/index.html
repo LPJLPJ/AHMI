@@ -2380,7 +2380,7 @@
 
                             <div class="modal-title form-group modelPart">
                                 <span>持续时间</span>
-                                <input class="width150px form-control time-input" type="number" ng-model="animation.duration">ms
+                                <input class="width150px form-control time-input" type="number" ng-model="animation.duration" ng-blur="checkDuration()">ms
                             </div>
                         </div>
                         <div class="modal-footer">
