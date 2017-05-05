@@ -51880,6 +51880,8 @@
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;
+	    var framesPS = frames;
+	    frames = frames * duration / 1000;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -51902,7 +51904,7 @@
 	            this.clearAnimationKey(animationKey);
 	            finishCb && finishCb();
 	        }
-	    }.bind(this), duration / frames);
+	    }.bind(this), duration / framesPS);
 	    animationKeys.push(animationKey);
 	};
 
@@ -51910,6 +51912,9 @@
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;
+	    var framesPS = frames;
+	    frames = frames * duration / 1000;
+	    console.log('p', frames, duration);
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -51934,7 +51939,7 @@
 	            this.clearAnimationKey(animationKey);
 	            finishCb && finishCb();
 	        }
-	    }.bind(this), 1000 / frames);
+	    }.bind(this), 1000 / framesPS);
 	    animationKeys.push(animationKey);
 	    return animationKey;
 	};
@@ -51943,6 +51948,8 @@
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;
+	    var framesPS = frames;
+	    frames = frames * duration / 1000;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -51964,7 +51971,7 @@
 	            this.clearAnimationKey(animationKey);
 	            finishCb && finishCb();
 	        }
-	    }.bind(this), 1000 / frames);
+	    }.bind(this), 1000 / framesPS);
 	    animationKeys.push(animationKey);
 	    return animationKey;
 	};
@@ -51973,6 +51980,8 @@
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;
+	    var framesPS = frames;
+	    frames = frames * duration / 1000;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52004,7 +52013,7 @@
 	            this.clearAnimationKey(animationKey);
 	            finishCb && finishCb();
 	        }
-	    }.bind(this), 1000 / frames);
+	    }.bind(this), 1000 / framesPS);
 	    animationKeys.push(animationKey);
 	    return animationKey;
 	};
@@ -52013,6 +52022,8 @@
 	    var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
 	    var lastValue = 0;
 	    var curValue = 0;
+	    var framesPS = frames;
+	    frames = frames * duration / 1000;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52035,7 +52046,7 @@
 	            this.clearAnimationKey(animationKey);
 	            finishCb && finishCb();
 	        }
-	    }.bind(this), 1000 / frames);
+	    }.bind(this), 1000 / framesPS);
 	    animationKeys.push(animationKey);
 	};
 

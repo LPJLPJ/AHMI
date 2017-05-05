@@ -510,7 +510,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     }
     function changeTransitionDur(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.transition.duration>2000||$scope.component.object.level.transition.duration<0){
+            if($scope.component.object.level.transition.duration>5000||$scope.component.object.level.transition.duration<0){
                 toastr.warning('超出限制');
                 restore();
                 return;
