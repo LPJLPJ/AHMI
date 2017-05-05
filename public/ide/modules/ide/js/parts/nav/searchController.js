@@ -38,6 +38,6 @@ ide.controller('SearchCtl',['$scope','ProjectService', function ($scope,ProjectS
 
     };
     $scope.handleBlur = function (e) {
-        $scope.searchKey = '';
+        // $scope.searchKey = '';
     }
 }]);

@@ -177,7 +177,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
     .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance', 'action','triggers','tags','timerTags','OperationService', function ($scope, $uibModalInstance, action,triggers,tags,timerTags,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
 
-        var blankCmd = ['', {tag: '', value: ''}, {tag: '', value: ''}];
+        var blankCmd = [{name:'',symbol:''}, {tag: '', value: ''}, {tag: '', value: ''}];
         $scope.ops = OperationService.getOperations();
 
         $scope.tags=_.map(tags.filter(function(item){

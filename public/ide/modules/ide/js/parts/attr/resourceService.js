@@ -256,6 +256,16 @@ ideServices
             this.cacheFile(file, globalResources, scb, fcb);
         };
 
+        this.deleteFileCache = function (id) {
+            for(var i=0;i<globalResources.length;i++){
+                if (id==globalResources[i].id) {
+                    globalResources.splice(i,1)
+                    return true;
+                }
+            }
+            return false;
+        }
+
         this.appendFileUnique = function (file, noDuplication, cb) {
             if (noDuplication(file,files)) {
                 files.push(file);
@@ -270,8 +280,10 @@ ideServices
             var success = false;
             if ((index >= 0) && (index <= files.length - 1)) {
                 //console.log(index);
+                this.deleteFileCache(files[index].id)
                 files.splice(index, 1);
                 //console.log(files.length);
+
                 success = true;
             } else {
                 success = false;
@@ -296,6 +308,7 @@ ideServices
             var success = false;
             for(var index=0;index<files.length;index++){
                 if(files[index].id==id){
+                    this.deleteFileCache(files[index].id)
                     files.splice(index,1);
                     success = true;
                     break;
