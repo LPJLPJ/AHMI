@@ -261,8 +261,6 @@
         }
         function onSelectionLayerCleared(e){
 
-            //重新获取scope.project
-            ProjectService.getProjectTo($scope);
             //如果按住Ctrl,则不能响应清空选择的Layer
             if(KeydownService.isCtrlPressed()){
                 return;
