@@ -113,10 +113,13 @@ fix:
     1. blank command bug
     2. page's tag is null when open a project
     3. undo's bug when delete a page
+    4. change num widget's numModeId to enableAnimation
+    5. copy page in sublayer mode will cause cannot find subLayers
 add:
     1. MyAnimation rendering
     2. tag's register limit
     3. anmiation's duration time limit
     4. project's name limit when saveas
+    5. limit duration time to 5000
 
 

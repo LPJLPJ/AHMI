@@ -2525,6 +2525,7 @@ module.exports =   React.createClass({
         var highAlarmValue = widget.info.highAlarmValue;
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -2542,7 +2543,7 @@ module.exports =   React.createClass({
 
                 curValue = this.limitValueBetween(curValue, minValue, maxValue);
                 widget.curValue = Number(curValue)
-                if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
                     shouldHandleAlarmAction = true;
                 } else {
@@ -2591,6 +2592,7 @@ module.exports =   React.createClass({
         // console.log(curValue);
 
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         var frontZeroMode = widget.info.frontZeroMode;
         var symbolMode = widget.info.symbolMode;
         var decimalCount = widget.info.decimalCount || 0;
@@ -2633,7 +2635,7 @@ module.exports =   React.createClass({
 
             var changeDirection = curValue - widget.oldValue
 
-                if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
@@ -3267,13 +3269,13 @@ module.exports =   React.createClass({
                 wise = true;
             }
         //var radius = this.calculateRadius(dashboardModeId,width,height);
-        var radius = Math.max(width,height)/2;
+        var radius = (dashboardModeId=='1'?Math.sqrt(width*width+height*height)/2:Math.max(width,height)/2);
         if (Math.abs(curArc - minArc) > 360) {
             //no need to clip
             this.drawBg(curX, curY, width, height, image, null)
         } else {
             var offcanvas = this.refs.offcanvas;
-            var offctx = this.offctx
+            var offctx = this.offctx;
             offctx.save();
             offctx.beginPath();
             if(dashboardModeId=='1'){
