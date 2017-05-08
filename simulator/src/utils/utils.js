@@ -34,10 +34,17 @@ function LinkedWidget(type, target, value, left, top) {
     this.top = top || 0;
 }
 
+function Seq(childs,left,top) {
+    this.childs = childs
+    this.left = left
+    this.top = top;
+}
+
 function linkWidgets(widgetList) {
     var i;
     var curWidget;
     var linkedWidgetList = [];
+    var sequence = [];
     for (i = 0; i < widgetList.length; i++) {
         curWidget = widgetList[i];
         if (curWidget.info.disableHighlight==true){

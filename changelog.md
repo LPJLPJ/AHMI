@@ -115,6 +115,7 @@ fix:
     3. undo's bug when delete a page
     4. change num widget's numModeId to enableAnimation
     5. copy page in sublayer mode will cause cannot find subLayers
+    6. alarms in simulator
 add:
     1. MyAnimation rendering
     2. tag's register limit
