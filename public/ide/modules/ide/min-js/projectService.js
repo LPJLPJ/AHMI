@@ -1430,6 +1430,7 @@ ideServices
                 var pageCopy= _.cloneDeep(_page);
                 pageCopy.id=Math.random().toString(36).substr(2);   //重置id
                 pageCopy.mode=0;    //显示page模式
+                pageCopy.current = false;
                 var proJson=pageCopy.proJsonStr;    //改proJson
                 _.forEach(proJson.objects, function (_fabLayer) {
                     _.forEach(pageCopy.layers, function (_layer) {
@@ -1493,7 +1494,7 @@ ideServices
 
                     shearPagePlate = {
                         type: Type.MyPage,
-                        objects: [project.pages[_index]]
+                        objects: [_.cloneDeep(project.pages[_index])]
                     };
 
                     _successCallback&&_successCallback();
