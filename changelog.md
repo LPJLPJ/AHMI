@@ -110,7 +110,7 @@ fix:
    
 2017.5.3 
 fix:
-    1. blank command bug
+    1. blank command bug 
     2. page's tag is null when open a project
     3. undo's bug when delete a page
     4. change num widget's numModeId to enableAnimation
