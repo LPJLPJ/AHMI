@@ -22063,6 +22063,7 @@
 	        var highAlarmValue = widget.info.highAlarmValue;
 	        var curValue = this.getValueByTagName(widget.tag);
 	        var numModeId = widget.info.numModeId;
+	        var enableAnimation = widget.info.enableAnimation;
 	        // console.log(curValue)
 	        if (curValue === null || curValue === 'undefined') {
 	            curValue = widget.info.numValue;
@@ -22079,7 +22080,7 @@
 
 	                curValue = this.limitValueBetween(curValue, minValue, maxValue);
 	                widget.curValue = Number(curValue);
-	                if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
+	                if (!enableAnimation || enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue) {
 
 	                    shouldHandleAlarmAction = true;
 	                } else {
@@ -22122,6 +22123,7 @@
 	        // console.log(curValue);
 
 	        var numModeId = widget.info.numModeId;
+	        var enableAnimation = widget.info.enableAnimation;
 	        var frontZeroMode = widget.info.frontZeroMode;
 	        var symbolMode = widget.info.symbolMode;
 	        var decimalCount = widget.info.decimalCount || 0;
@@ -22163,7 +22165,7 @@
 
 	            var changeDirection = curValue - widget.oldValue;
 
-	            if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
+	            if (!enableAnimation || enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue) {
 
 	                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 
@@ -22751,7 +22753,7 @@
 	            wise = true;
 	        }
 	        //var radius = this.calculateRadius(dashboardModeId,width,height);
-	        var radius = Math.max(width, height) / 2;
+	        var radius = dashboardModeId == '1' ? Math.sqrt(width * width + height * height) / 2 : Math.max(width, height) / 2;
 	        if (Math.abs(curArc - minArc) > 360) {
 	            //no need to clip
 	            this.drawBg(curX, curY, width, height, image, null);
