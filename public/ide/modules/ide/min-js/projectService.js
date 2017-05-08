@@ -2922,7 +2922,7 @@ ideServices
             };
 
             /**
-             * 是否启用高亮，适用于仪表盘和进度条
+             * 是否启用动画，适用于仪表盘和进度条和数字
              * @param _option
              * @param _successCallback
              * @constructor
@@ -2934,7 +2934,7 @@ ideServices
                 }else {
                     selectObj.level.info.enableAnimation=true;
                 }
-            }
+            };
 
             this.ChangeAttributeBackgroundImage= function (_option,_successCallback) {
                 var currentOperate=SaveCurrentOperate();

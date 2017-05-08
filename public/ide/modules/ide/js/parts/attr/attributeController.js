@@ -129,7 +129,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterArrange:enterArrange
             },
             num:{
-                numModeId:'0',//代表切换模式。0:普通模式 1:动画模式
+                numModeId:'0',//目前无用
+                enableAnimationModeId:'0',
                 numModes:[
                     {id:'0',name:'普通模式'},
                     {id:'1',name:'动画模式'}
@@ -461,6 +462,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                     }
                     $scope.component.transitionName=$scope.component.object.level.transition.name;
+                    if($scope.component.object.level.info.enableAnimation===undefined){
+                        selectObject.level.info.enableAnimation=false;
+                        $scope.component.num.enableAnimationModeId='1'
+                    }else if($scope.component.object.level.info.enableAnimation==false){
+                        $scope.component.num.enableAnimationModeId='1'
+                    }else if($scope.component.object.level.info.enableAnimation==true){
+                        $scope.component.num.enableAnimationModeId='0'
+                    }
                     break;
                 case Type.MyOscilloscope:
                     break;
@@ -790,6 +799,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectEnableAnimationMode=$scope.component.dashboard.enableAnimationModeId;
         }else if(selectObj.type==Type.MyProgress){
             selectEnableAnimationMode=$scope.component.progress.enableAnimationModeId;
+        }else if(selectObj.type==Type.MyNum){
+            selectEnableAnimationMode=$scope.component.num.enableAnimationModeId;
         }
         var option = {
             enableAnimationModeId:selectEnableAnimationMode

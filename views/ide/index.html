@@ -1357,15 +1357,15 @@
                                    ng-keypress="component.enterName($event)">
                         </div>
 
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title ">切换动画</span>
-                            <select class="form-control my-attr-number-input form-control dengPage-input"
-                                    ng-options="transition.name as transition.show for transition in component.transitionMode"
-                                    ng-model="component.transition.Name"
-                                    ng-change="component.changeTransitionName()"
-                                    ng-disabled="animationsDisabled">
-                            </select>
-                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title dengPage-title ">切换动画</span>-->
+                            <!--<select class="form-control my-attr-number-input form-control dengPage-input"-->
+                                    <!--ng-options="transition.name as transition.show for transition in component.transitionMode"-->
+                                    <!--ng-model="component.transition.Name"-->
+                                    <!--ng-change="component.changeTransitionName()"-->
+                                    <!--ng-disabled="animationsDisabled">-->
+                            <!--</select>-->
+                        <!--</div>-->
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
@@ -1455,12 +1455,22 @@
                                    type="number">
                         </div>
 
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">切换模式</span>-->
+                            <!--<select class="my-attr-number-input form-control"-->
+                                    <!--ng-model="component.num.numModeId"-->
+                                    <!--ng-change="component.num.enterNumMode()">-->
+                                <!--<option ng-repeat="mode in component.num.numModes" value="{{mode.id}}">{{mode.name}}-->
+                                <!--</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title">切换模式</span>
+                            <span class="my-attr-title">开启动画</span>
                             <select class="my-attr-number-input form-control"
-                                    ng-model="component.num.numModeId"
-                                    ng-change="component.num.enterNumMode()">
-                                <option ng-repeat="mode in component.num.numModes" value="{{mode.id}}">{{mode.name}}
+                                    ng-model="component.num.enableAnimationModeId"
+                                    ng-change="component.enterEnableAnimationMode($event)">
+                                <option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">
+                                    {{mode.name}}
                                 </option>
                             </select>
                         </div>

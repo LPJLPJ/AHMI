@@ -2524,6 +2524,7 @@ module.exports =   React.createClass({
         var highAlarmValue = widget.info.highAlarmValue;
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -2541,7 +2542,7 @@ module.exports =   React.createClass({
 
                 curValue = this.limitValueBetween(curValue, minValue, maxValue);
                 widget.curValue = Number(curValue)
-                if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
                     shouldHandleAlarmAction = true;
                 } else {
@@ -2590,6 +2591,7 @@ module.exports =   React.createClass({
         // console.log(curValue);
 
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         var frontZeroMode = widget.info.frontZeroMode;
         var symbolMode = widget.info.symbolMode;
         var decimalCount = widget.info.decimalCount || 0;
@@ -2632,7 +2634,7 @@ module.exports =   React.createClass({
 
             var changeDirection = curValue - widget.oldValue
 
-                if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
