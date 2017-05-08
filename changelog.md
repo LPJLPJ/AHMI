@@ -113,6 +113,7 @@ fix:
     1. blank command bug
     2. page's tag is null when open a project
     3. undo's bug when delete a page
+    4. change num widget's numModeId to enableAnimation
 add:
     1. MyAnimation rendering
     2. tag's register limit
