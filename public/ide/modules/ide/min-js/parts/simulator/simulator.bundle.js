@@ -23402,8 +23402,8 @@
 	    },
 	    getRelativeRect: function (e) {
 	        var clientRect = e.target.getBoundingClientRect();
-	        var x = Math.round(e.pageX - clientRect.left);
-	        var y = Math.round(e.pageY - clientRect.top);
+	        var x = Math.round(e.clientX - clientRect.left);
+	        var y = Math.round(e.clientY - clientRect.top);
 
 	        return {
 	            x: x,
