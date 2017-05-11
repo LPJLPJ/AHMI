@@ -18,7 +18,17 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         }
     }
     function registerGeneralCommands() {
-        var generalWidgetFunctions = ['onInitialize','onMouseUp','onMouseDown','onTagChange','onMouseMove']
+        // mWDGOnInitializeFunc
+        // mWDGOnDestroyFunc
+        // mWDGOnTagChangeFunc
+        // mWDGOnMouseUpFunc
+        // mWDGOnMouseDownFunc
+        // mWDGOnMouseMoveFunc
+        // mWDGOnKeyBoardLeft
+        // mWDGOnKeyBoardRight
+        // mWDGOnKeyBoardOK
+        // mWDGOnAnimationFrame
+        var generalWidgetFunctions = ['onInitialize','onDestroy','onMouseUp','onMouseDown','onTagChange','onMouseMove','onKeyBoardLeft','onKeyBoardRight','onKeyBoardOK','onAnimationFrame']
         var commands = {}
         var models = WidgetModel.models;
         var testModels = _.cloneDeep(WidgetCommands);
@@ -159,6 +169,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     function transWidget(rawWidget,widgetIdx,subLayerIdx){
         var targetWidget = {};
         var generalWidget = {};
+        var fsp = 30
+        var defaultDuration = 1000;
         //targetWidget.id = subLayerIdx+'.'+widgetIdx;
         //targetWidget.type = 'widget';
         //targetWidget.subType = rawWidget.type;
@@ -235,6 +247,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     })
+                    //animation
+                    console.log('enableAnimation',info.enableAnimation)
                     //otherAttrs
                     generalWidget.otherAttrs[0] = info['offsetValue']||0
                     generalWidget.otherAttrs[1] = Number(info['clockwise'])

@@ -191,6 +191,10 @@
             width:'mWDGWidgetWidth',
             height:'mWDGWidgetHeight'
         },
+        startAnimationTag:'mWDGStartTag',
+        stopAnimationTag:'mWDGStopTag',
+        curAnimationTag:'mWDGAnTag',
+        totalFrame:'mWDGTotalFrame',
         arrange:'mWDGArrange',
         mode:'mWDGMode',
         oldValue:'mWDGOldValue',

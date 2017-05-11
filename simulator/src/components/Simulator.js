@@ -661,6 +661,9 @@ module.exports =   React.createClass({
                 }
 
                 break;
+            case 'startanimation':
+                this.interpretGeneralCommand(widget,'onAnimationFrame')
+            break;
             case 'print':
                 console.log(curInst)
                 console.log('print value: ',this.evalParam(widget,curInst[1]),curInst[2]||'')
