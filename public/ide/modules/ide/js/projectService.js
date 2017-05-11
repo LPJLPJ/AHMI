@@ -1380,22 +1380,32 @@ ideServices
                         }
                     }
                 }else{
-                    var widget=_self.getCurrentWidget();
-                    if (widget){
-                        var fabWidget=_self.getFabricObject(widget.id,true);
-                        if (fabWidget){
-                            _self.SyncLevelFromFab(widget,fabWidget);
-                            var currentSubLayer = getCurrentSubLayer();
-                            currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
+                    var selectObj = getCurrentSelectObject();
+                    if(selectObj.type=='group'&&selectObj.mode==1){
+                        var fabGroup = selectObj.target;
+                        var baseLeft=selectObj.level.info.left+fabGroup.width/2;
+                        var baseTop=selectObj.level.info.top+fabGroup.height/2;
+                        fabGroup.forEachObject(function(item){
+                            var widget = getLevelById(item.id,'widget');
+                            widget.info.left = Math.round(baseLeft+item.left);
+                            widget.info.top = Math.round(baseTop+item.top);
+                        });
+                    }else{
+                        var widget=_self.getCurrentWidget();
+                        if (widget){
+                            var fabWidget=_self.getFabricObject(widget.id,true);
+                            if (fabWidget){
+                                _self.SyncLevelFromFab(widget,fabWidget);
+                            }
                         }
                     }
+                    var currentSubLayer = getCurrentSubLayer();
+                    currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
                 }
 
                 _self.UpdateCurrentThumb();
 
                 _successCallback && _successCallback();
-
-
 
             };
 
@@ -1436,6 +1446,7 @@ ideServices
                 var pageCopy= _.cloneDeep(_page);
                 pageCopy.id=Math.random().toString(36).substr(2);   //重置id
                 pageCopy.mode=0;    //显示page模式
+                pageCopy.current = false;
                 var proJson=pageCopy.proJsonStr;    //改proJson
                 _.forEach(proJson.objects, function (_fabLayer) {
                     _.forEach(pageCopy.layers, function (_layer) {
@@ -1499,7 +1510,7 @@ ideServices
 
                     shearPagePlate = {
                         type: Type.MyPage,
-                        objects: [project.pages[_index]]
+                        objects: [_.cloneDeep(project.pages[_index])]
                     };
 
                     _successCallback&&_successCallback();
@@ -1861,7 +1872,14 @@ ideServices
             };
 
             this.LoadCurrentOperate = function (_operate, _successCallback,_errCallback) {
-                project=_operate;
+                for(var key in _operate){
+                    if(_operate.hasOwnProperty(key)){
+                        if(project.hasOwnProperty(key)){
+                            project[key] = _.cloneDeep(_operate[key]);
+                        }
+                    }
+                }
+                //project=_operate;
 
                 _cleanPageHashKey();
                 var pageNode=CanvasService.getPageNode();
@@ -2921,7 +2939,7 @@ ideServices
             };
 
             /**
-             * 是否启用高亮，适用于仪表盘和进度条
+             * 是否启用动画，适用于仪表盘和进度条和数字
              * @param _option
              * @param _successCallback
              * @constructor
@@ -2933,7 +2951,7 @@ ideServices
                 }else {
                     selectObj.level.info.enableAnimation=true;
                 }
-            }
+            };
 
             this.ChangeAttributeBackgroundImage= function (_option,_successCallback) {
                 var currentOperate=SaveCurrentOperate();

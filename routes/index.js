@@ -242,6 +242,9 @@ router.route('/project/:id/delete')
 router.route('/project/:id/resources/:rid')
     .get(uploadFile.getProjectFile);
 
+router.route('/project/:id/resources/template/:rid')
+    .get(uploadFile.getProjectTemplateFile);
+
 router.route('/project/:id/deleteresource/:rid')
     .delete(uploadFile.deleteResource);
 

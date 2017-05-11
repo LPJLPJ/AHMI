@@ -192,7 +192,7 @@ $(function(){
             curPageIdx = selectIndex;
 
             //step 4
-            var getUsersUrl
+            var getUsersUrl;
             if(searchState&&searchStr!=""){
                 getUsersUrl = generateGetUsersUrl((selectIndex-1)*pageSize,pageSize,searchStr);
             }else{
@@ -273,7 +273,6 @@ $(function(){
         if(!searchInput){
             return;
         }
-
         searchInput.off('keyup');
         searchInput.on('keyup',function(e){
             if(e.keyCode==13){

@@ -205,9 +205,9 @@
                 <!--<a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal" data-target="#projectFileModal">-->
                 <!--<span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>-->
                 <!--</a>-->
-                <a ng-click="component.tool.openCANPanel()" class="my-cmd-item" ng-class=""><span
-                        class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>
-                </a>
+                <!--<a ng-click="component.tool.openCANPanel()" class="my-cmd-item" ng-class=""><span-->
+                        <!--class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>-->
+                <!--</a>-->
                 <a ng-click="component.tool.openPanel()" class="my-cmd-item" ng-class=""><span
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
                 </a>
@@ -350,8 +350,8 @@
                    ng-class="{false:'inactive'}[component.tool.pasteStatus]"><span class="iconfont icon">&#xe622;</span><span
                         class="caption">粘贴</span></a>
 
-                <a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe623;</span><span
-                        class="caption">格式</span></a>
+                <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe623;</span><span-->
+                        <!--class="caption">格式</span></a>-->
                 <a ng-click="component.tool.selectAll()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe626;</span><span
                         class="caption">全选</span></a>
                 <a ng-controller="SearchCtl" ng-click="" class="my-cmd-item" ng-class="">
@@ -409,8 +409,8 @@
                         class="caption"></span></a>
                 <a ng-click="component.tool.showBottom()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe619;</span><span
                         class="caption"></span></a>
-                <a ng-click="component.tool.rotateCanvasLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>
-                <a ng-click="component.tool.rotateCanvasRight()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>
+                <!--<a ng-click="component.tool.rotateCanvasLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>-->
+                <!--<a ng-click="component.tool.rotateCanvasRight()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>-->
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
                     <div class="input-group" style="top: 13px;">
@@ -430,11 +430,6 @@
                         class="caption">文档</span></a>
                 <a ng-click="" class="my-cmd-item" ng-class="" href="/download/index.html" target="download_window" ng-show="!window.local"><span class="iconfont icon">&#xe652;</span><span
                         class="caption">下载</span></a>
-                <!--<a ng-click="" class="my-cmd-item" ng-class=""-->
-                   <!--href="../../views/login/index.html" target="_blank"><span-->
-                        <!--class="iconfont icon">&#xe63f;</span><span class="caption">联系我们</span></a>-->
-                <!--<a ng-click="" class="my-cmd-item" ng-class="" href="../../views/login/index.html"-->
-                   <!--target="_blank"><span class="iconfont icon">&#xe63e;</span><span class="caption">关于</span></a>-->
             </div>
         </div>
     </div>
@@ -1416,15 +1411,15 @@
                                    ng-keypress="component.enterName($event)">
                         </div>
 
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title ">切换动画</span>
-                            <select class="form-control my-attr-number-input form-control dengPage-input"
-                                    ng-options="transition.name as transition.show for transition in component.transitionMode"
-                                    ng-model="component.transition.Name"
-                                    ng-change="component.changeTransitionName()"
-                                    ng-disabled="animationsDisabled">
-                            </select>
-                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title dengPage-title ">切换动画</span>-->
+                            <!--<select class="form-control my-attr-number-input form-control dengPage-input"-->
+                                    <!--ng-options="transition.name as transition.show for transition in component.transitionMode"-->
+                                    <!--ng-model="component.transition.Name"-->
+                                    <!--ng-change="component.changeTransitionName()"-->
+                                    <!--ng-disabled="animationsDisabled">-->
+                            <!--</select>-->
+                        <!--</div>-->
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
@@ -1514,12 +1509,22 @@
                                    type="number">
                         </div>
 
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">切换模式</span>-->
+                            <!--<select class="my-attr-number-input form-control"-->
+                                    <!--ng-model="component.num.numModeId"-->
+                                    <!--ng-change="component.num.enterNumMode()">-->
+                                <!--<option ng-repeat="mode in component.num.numModes" value="{{mode.id}}">{{mode.name}}-->
+                                <!--</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title">切换模式</span>
+                            <span class="my-attr-title">开启动画</span>
                             <select class="my-attr-number-input form-control"
-                                    ng-model="component.num.numModeId"
-                                    ng-change="component.num.enterNumMode()">
-                                <option ng-repeat="mode in component.num.numModes" value="{{mode.id}}">{{mode.name}}
+                                    ng-model="component.num.enableAnimationModeId"
+                                    ng-change="component.enterEnableAnimationMode($event)">
+                                <option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">
+                                    {{mode.name}}
                                 </option>
                             </select>
                         </div>
@@ -1553,15 +1558,15 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">方向</span>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">方向</span>-->
 
-                            <select class="my-attr-number-input form-control" ng-model="component.num.arrangeModel"
-                                    ng-change="component.num.enterArrange($event)">
-                                <option value="horizontal">水平</option>
-                                <option value="vertical">竖直</option>
-                            </select>
-                        </div>
+                            <!--<select class="my-attr-number-input form-control" ng-model="component.num.arrangeModel"-->
+                                    <!--ng-change="component.num.enterArrange($event)">-->
+                                <!--<option value="horizontal">水平</option>-->
+                                <!--<option value="vertical">竖直</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">数字值</span>
                             <input class="my-attr-number-input form-control"
@@ -1888,15 +1893,15 @@
                                ng-keypress="component.enterHeight($event)"
                                type="number">
                     </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">方向</span>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">方向</span>-->
 
-                            <select class="my-attr-number-input form-control" ng-model="component.dateTime.arrangeModel"
-                                    ng-change="component.dateTime.enterArrange($event)">
-                                <option value="horizontal">水平</option>
-                                <option value="vertical">竖直</option>
-                            </select>
-                        </div>
+                            <!--<select class="my-attr-number-input form-control" ng-model="component.dateTime.arrangeModel"-->
+                                    <!--ng-change="component.dateTime.enterArrange($event)">-->
+                                <!--<option value="horizontal">水平</option>-->
+                                <!--<option value="vertical">竖直</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                         <!--<div class="my-attr-item lg">-->
                             <!--<span class="my-attr-title">初始值</span>-->
                             <!--<input type="number"-->
@@ -2222,7 +2227,7 @@
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
-                                               ng-model="slice.color" ng-disabled="slice.name=='光标纹理'||slice.name=='开关图片'"/></td>
+                                               ng-model="slice.color" ng-disabled="slice.name=='光标纹理'"/></td>
                                     <td>
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
@@ -2439,7 +2444,7 @@
 
                             <div class="modal-title form-group modelPart">
                                 <span>持续时间</span>
-                                <input class="width150px form-control time-input" type="number" ng-model="animation.duration">ms
+                                <input class="width150px form-control time-input" type="number" ng-model="animation.duration" ng-blur="checkDuration()">ms
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -2559,7 +2564,7 @@
                             <form class="deng-tagModel">
                                 <fieldset>
                                     <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
-                                    <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type=='system'"/>
+                                    <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'"/>
                                 </fieldset>
 
                                 <fieldset>

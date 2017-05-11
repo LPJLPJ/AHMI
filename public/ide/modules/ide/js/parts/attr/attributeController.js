@@ -79,8 +79,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 progressModes:[
                     {id:'0',name:'普通进度条'},
                     {id:'1',name:'变色进度条'},
-                    {id:'3',name:'多色进度条'},
-                    {id:'2',name:'脚本进度条'}
+                    {id:'3',name:'多色进度条'}
                 ],
                 thresholdModeId:'1',
                 thresholdModes:[
@@ -130,7 +129,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterArrange:enterArrange
             },
             num:{
-                numModeId:'0',//代表切换模式。0:普通模式 1:动画模式
+                numModeId:'0',//目前无用
+                enableAnimationModeId:'0',
                 numModes:[
                     {id:'0',name:'普通模式'},
                     {id:'1',name:'动画模式'}
@@ -463,6 +463,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                     }
                     $scope.component.transitionName=$scope.component.object.level.transition.name;
+                    if($scope.component.object.level.info.enableAnimation===undefined){
+                        selectObject.level.info.enableAnimation=false;
+                        $scope.component.num.enableAnimationModeId='1'
+                    }else if($scope.component.object.level.info.enableAnimation==false){
+                        $scope.component.num.enableAnimationModeId='1'
+                    }else if($scope.component.object.level.info.enableAnimation==true){
+                        $scope.component.num.enableAnimationModeId='0'
+                    }
                     break;
                 case Type.MyOscilloscope:
                     break;
@@ -512,8 +520,13 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     }
     function changeTransitionDur(e){
         if(e.keyCode==13){
-            if($scope.component.object.level.transition.duration>2000||$scope.component.object.level.transition.duration<0){
+            if($scope.component.object.level.transition.duration>5000||$scope.component.object.level.transition.duration<0){
                 toastr.warning('超出限制');
+                restore();
+                return;
+            }
+            if(!_.isInteger($scope.component.object.level.transition.duration)){
+                toastr.warning('输入不合法');
                 restore();
                 return;
             }
@@ -558,6 +571,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			if ($scope.component.object.level.name==initObject.level.name){
 				return;
 			}
+            toastr.info('修改成功');
 			var option={
 				name:$scope.component.object.level.name
 			};
@@ -786,6 +800,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectEnableAnimationMode=$scope.component.dashboard.enableAnimationModeId;
         }else if(selectObj.type==Type.MyProgress){
             selectEnableAnimationMode=$scope.component.progress.enableAnimationModeId;
+        }else if(selectObj.type==Type.MyNum){
+            selectEnableAnimationMode=$scope.component.num.enableAnimationModeId;
         }
         var option = {
             enableAnimationModeId:selectEnableAnimationMode
@@ -2403,10 +2419,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option = {
             scale:selectVideoScale
         }
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.changeVideoScale(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        ProjectService.changeVideoScale(option, function (oldOperate) {
+            $scope.$emit('ChangeCurrentPage',oldOperate);
+        })
     }
 
 }]);

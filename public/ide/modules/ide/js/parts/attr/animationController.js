@@ -36,13 +36,11 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
         var currentObject = ProjectService.getCurrentSelectObject().level;
         switch (currentObject.type){
-            case "MyPage" :
-            case "MySubLayer":
-            case undefined:
-                $scope.showAnimationPanel=false;
+            case 'MyLayer':
+                $scope.showAnimationPanel=true;
                 break;
             default:
-                $scope.showAnimationPanel=true;
+                $scope.showAnimationPanel=false;
                 break;
         }
     }
@@ -98,6 +96,15 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
     .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','animation',function($scope,$uibModalInstance,animation){
         $scope.animation=animation;
+        $scope.checkDuration = function (e) {
+            if($scope.animation.duration<0){
+                toastr.error('持续时间必须大于0s');
+                $scope.animation.duration=0;
+            }else if($scope.animation.duration>5000){
+                toastr.error('持续时间不能大于5s');
+                $scope.animation.duration=5000;
+            }
+        };
         $scope.confirm = function () {
             $uibModalInstance.close($scope.animation);
         };

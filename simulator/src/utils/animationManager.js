@@ -31,6 +31,8 @@ AnimationManager.moving = function (srcX,srcY,dstX,dstY,duration,frames,easing,i
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue =0;
+    var framesPS = frames
+    frames = frames * duration/1000;
     var count = frames;
     var deltaX=0;
     var deltaY=0;
@@ -53,7 +55,7 @@ AnimationManager.moving = function (srcX,srcY,dstX,dstY,duration,frames,easing,i
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),duration/frames);
+    }.bind(this),duration/framesPS);
     animationKeys.push(animationKey);
 
 }
@@ -63,6 +65,9 @@ AnimationManager.step = function (srcX,srcY,dstX,dstY,duration,frames,easing,int
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue =0;
+    var framesPS = frames;
+    frames = frames * duration/1000;
+    console.log('p',frames,duration)
     var count = frames;
     var deltaX=0;
     var deltaY=0;
@@ -87,7 +92,7 @@ AnimationManager.step = function (srcX,srcY,dstX,dstY,duration,frames,easing,int
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),1000/frames);
+    }.bind(this),1000/framesPS);
     animationKeys.push(animationKey);
     return animationKey
 
@@ -98,6 +103,8 @@ AnimationManager.stepValue = function (srcX,dstX,duration,frames,easing,interval
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue =0;
+    var framesPS = frames;
+    frames = frames * duration/1000;
     var count = frames;
     var deltaX=0;
     var deltaY=0;
@@ -119,7 +126,7 @@ AnimationManager.stepValue = function (srcX,dstX,duration,frames,easing,interval
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),1000/frames);
+    }.bind(this),1000/framesPS);
     animationKeys.push(animationKey);
     return animationKey
 
@@ -129,6 +136,8 @@ AnimationManager.stepObj = function (srcObj,dstObj,duration,frames,easing,interv
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue =0;
+    var framesPS = frames;
+    frames = frames * duration/1000;
     var count = frames;
     var deltaX=0;
     var deltaY=0;
@@ -162,7 +171,7 @@ AnimationManager.stepObj = function (srcObj,dstObj,duration,frames,easing,interv
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),1000/frames);
+    }.bind(this),1000/framesPS);
     animationKeys.push(animationKey);
     return animationKey
 
@@ -173,6 +182,8 @@ AnimationManager.scaling = function (srcX,srcY,dstX,dstY,duration,frames,easing,
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue =0;
+    var framesPS = frames;
+    frames = frames * duration/1000;
     var count = frames;
     var deltaX=0;
     var deltaY=0;
@@ -195,7 +206,7 @@ AnimationManager.scaling = function (srcX,srcY,dstX,dstY,duration,frames,easing,
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this),1000/frames);
+    }.bind(this),1000/framesPS);
     animationKeys.push(animationKey);
 
 }

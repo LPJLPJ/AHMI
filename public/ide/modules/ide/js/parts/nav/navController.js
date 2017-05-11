@@ -590,9 +590,9 @@
                 newWidget=TemplateProvider.getDefaultScriptTrigger();
             } else if (_index == 9) {
                 newWidget=TemplateProvider.getDefaultSlideBlock();
-            } else if(_index == 12){
-                newWidget=TemplateProvider.getDefaultVideo();
-            } else if(_index == 13){
+            }else if(_index==12){
+                newWidget = TemplateProvider.getDefaultVideo();
+            }else if(_index == 13){
                 newWidget = TemplateProvider.getDefaultAnimation();
             }else if (_index == 14){
                 newWidget = TemplateProvider.getDefaultGeneral()
@@ -1203,13 +1203,35 @@ ide.controller('NavModalSaveAsCtrl',['$scope','$uibModalInstance',function($scop
     $scope.saveAsAuthor = "";
 
     $scope.ok = function(){
-        var data = {
-            saveAsName:$scope.saveAsName,
-            saveAsAuthor:$scope.saveAsAuthor
-        };
-        $uibModalInstance.close(data);
-    }
+        if (!checkName($scope.saveAsName,$scope.saveAsAuthor)){
+            //invalid name
+            $uibModalInstance.dismiss('cancel');
+            toastr.error('名称只能是汉字、英文和数字');
+        }else{
+            var data = {
+                saveAsName:$scope.saveAsName,
+                saveAsAuthor:$scope.saveAsAuthor
+            };
+            $uibModalInstance.close(data);
+        }
+    };
     $scope.cancel = function(){
         $uibModalInstance.dismiss('cancel');
+    }
+
+    function checkName() {
+        // name.match(/["'\/\\\(\){},\.\+\-\*\?]/)
+        try {
+            for (var i=0;i<arguments.length;i++){
+                var name = arguments[i];
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)){
+                    return false;
+                }
+            }
+            return true;
+
+        }catch (e){
+            return false;
+        }
     }
 }]);

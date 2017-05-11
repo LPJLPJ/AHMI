@@ -154,12 +154,13 @@ Route_admin.releaseUpdate = function(req,res){
         var blogPattern = /public[\\\/]blog/;
         var downloadPattern = /public[\\\/]download/;
         var srcJSPattern = /public[\\\/]ide[\\\/]modules[\\\/]ide[\\\/]js/;
-        return !(blogPattern.test(src)||srcJSPattern.test(src)||srcJSPattern.test(downloadPattern));
+        return !(blogPattern.test(src)||srcJSPattern.test(src)||downloadPattern.test(src));
     }
     //views文件夹过滤函数
     var filterFunForViews = function(src){
         var blogPattern = /views[\\\/]blog/;
-        return !blogPattern.test(src);
+        var downloadPattern = /views[\\\/]download/;
+        return !(blogPattern.test(src)||downloadPattern.test(src));
     };
     //打包更新包
     var zipDistFiles = function(){

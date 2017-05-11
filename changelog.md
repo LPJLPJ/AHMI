@@ -91,8 +91,36 @@ fix:
     2.fix a bug that only can upload max 100 files
     3.fix a bug in generate
 
-v1.9.1_test
+v1.9.1
 add:
    1. add local IDE user type update fun
+   2. add blog comment  fun
+update:
+   1. hide progress script mode
+   2. update login form logic
+   3. Open blog portal
+   4. hide CAN
+   5. hide rotate button in nav and forbidden to change timer tag name
+   6. hide animation when it is widget
 fix:
-    1.fix a bug that change a project's attr will empty this project in local version
+   1.fix a bug that change a project's attr will empty this project in local version
+   2.fix a bug that rotate widget
+   3.fix a bug that use key to move widget group
+   4.fix src problem when use template mode
+   
+2017.5.3 
+fix:
+    1. blank command bug
+    2. page's tag is null when open a project
+    3. undo's bug when delete a page
+    4. change num widget's numModeId to enableAnimation
+    5. copy page in sublayer mode will cause cannot find subLayers
+    6. alarms in simulator
+add:
+    1. MyAnimation rendering
+    2. tag's register limit
+    3. anmiation's duration time limit
+    4. project's name limit when saveas
+    5. limit duration time to 5000
+
+

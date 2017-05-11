@@ -600,7 +600,7 @@ ideServices
                 noInit:'NO',
                 //initValue:'1',
 
-                numModeId:'0',//显示模式标志，0:普通模式 1:动画模式
+                numModeId:'0',//原本用户切换动画，目前被enableAnmiation取代
                 frontZeroMode:'0',//前导0模式标志，0：无前导0模式，1：有前导0模式
                 symbolMode:'0',//符号模式标志，0：无符号位，1：有符号位
                 decimalCount:0,//保留的小数位数
@@ -617,7 +617,8 @@ ideServices
                 fontColor:'rgba(255,255,255,1)',
                 fontBold:"100",
                 fontItalic:"",
-                maxFontWidth:maxFontWidth   //最大字体宽度
+                maxFontWidth:maxFontWidth,   //最大字体宽度
+                enableAnimation:false //显示模式标志，false:无动画 true:有动画
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -737,6 +738,8 @@ ideServices
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
                 disableHighlight:false,
+                fontBold:"100",
+                fontItalic:"",
                 maxFontWidth:maxFontWidth   //最大字体宽度
             };
             return {

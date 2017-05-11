@@ -1166,7 +1166,7 @@ module.exports =   React.createClass({
                         curValue -= timer['SysTmr_' + num + '_Step'];
                         this.setTagByTag(targetTag,curValue)
 
-                        if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
+                        if (targetTag.value < timer['SysTmr_' + num + '_Stop']||targetTag.value > timer['SysTmr_' + num + '_Start']) {
                             //clear timer
                             if (loop){
                                 this.setTagByTag(targetTag, startValue)
@@ -1187,7 +1187,7 @@ module.exports =   React.createClass({
                         curValue = Number(targetTag.value)||0;
                         curValue += timer['SysTmr_' + num + '_Step'];
                         this.setTagByTag(targetTag,curValue)
-                        if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
+                        if (targetTag.value > timer['SysTmr_' + num + '_Stop']||targetTag.value < timer['SysTmr_' + num + '_Start']) {
                             //clear timer
                             if (loop){
                                 this.setTagByTag(targetTag, startValue)
@@ -2244,7 +2244,7 @@ module.exports =   React.createClass({
                 }
 
                 widget.oldValue = curProgress
-                if (alarmValue){
+                if (alarmValue.length){
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -2264,7 +2264,7 @@ module.exports =   React.createClass({
 
             }else{
                 widget.oldValue = curProgress
-                if (alarmValue){
+                if (alarmValue.length){
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -2466,6 +2466,7 @@ module.exports =   React.createClass({
         var curScriptTrigger = (curScriptTriggerTag && curScriptTriggerTag.value) || 0;
         cb && cb();
         //handle action
+        // console.log(this.shouldHandleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue))
         this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
         widget.oldValue = curScriptTrigger;
     },
@@ -2932,6 +2933,7 @@ module.exports =   React.createClass({
         var highAlarmValue = widget.info.highAlarmValue;
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -2949,7 +2951,7 @@ module.exports =   React.createClass({
 
                 curValue = this.limitValueBetween(curValue, minValue, maxValue);
                 widget.curValue = Number(curValue)
-                if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
                     shouldHandleAlarmAction = true;
                 } else {
@@ -2998,6 +3000,7 @@ module.exports =   React.createClass({
         // console.log(curValue);
 
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         var frontZeroMode = widget.info.frontZeroMode;
         var symbolMode = widget.info.symbolMode;
         var decimalCount = widget.info.decimalCount || 0;
@@ -3040,7 +3043,7 @@ module.exports =   React.createClass({
 
             var changeDirection = curValue - widget.oldValue
 
-                if (numModeId == '0' || (numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
 
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
@@ -3286,7 +3289,7 @@ module.exports =   React.createClass({
                 }
 
                 widget.oldValue = curDashboardTagValue
-                if (alarmValue){
+                if (alarmValue.length){
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -3306,7 +3309,7 @@ module.exports =   React.createClass({
 
             }else{
                 widget.oldValue = curDashboardTagValue
-                if (alarmValue){
+                if (alarmValue.length){
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -3674,13 +3677,13 @@ module.exports =   React.createClass({
                 wise = true;
             }
         //var radius = this.calculateRadius(dashboardModeId,width,height);
-        var radius = Math.max(width,height)/2;
+        var radius = (dashboardModeId=='1'?Math.sqrt(width*width+height*height)/2:Math.max(width,height)/2);
         if (Math.abs(curArc - minArc) > 360) {
             //no need to clip
             this.drawBg(curX, curY, width, height, image, null)
         } else {
             var offcanvas = this.refs.offcanvas;
-            var offctx = this.offctx
+            var offctx = this.offctx;
             offctx.save();
             offctx.beginPath();
             if(dashboardModeId=='1'){
@@ -3705,42 +3708,53 @@ module.exports =   React.createClass({
     },
     handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
         //handle action
-        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
-            //enter high alarm
-            widget.oldValue = curValue;
-
-            this.handleTargetAction(widget, 'EnterHighAlarm');
-        } else if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
-            //leave high alarm
-            widget.oldValue = curValue;
-            this.handleTargetAction(widget, 'LeaveHighAlarm');
-        } else if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
-            //leave low alarm
-            widget.oldValue = curValue
-            this.handleTargetAction(widget, 'LeaveLowAlarm');
-
-        } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
-            widget.oldValue = curValue
+        
+        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+            
             this.handleTargetAction(widget, 'EnterLowAlarm');
         }
+
+        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+            //leave low alarm
+            
+            this.handleTargetAction(widget, 'LeaveLowAlarm');
+
+        } 
+        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+            //enter high alarm
+            
+
+            this.handleTargetAction(widget, 'EnterHighAlarm');
+        } 
+        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+            //leave high alarm
+            this.handleTargetAction(widget, 'LeaveHighAlarm');
+        }
+        widget.oldValue = curValue
     },
     shouldHandleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
         //handle action
+        var alarms = []
+        
+        
+        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+            alarms.push('EnterLowAlarm')
+        }
+        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+            //leave low alarm
+            
+            alarms.push('LeaveLowAlarm')
+
+        }
         if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
             //enter high alarm
-            return 'EnterHighAlarm'
-        } else if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+            alarms.push('EnterHighAlarm')
+        } 
+        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
             //leave high alarm
-            return 'LeaveHighAlarm'
-        } else if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
-            //leave low alarm
-            return 'LeaveLowAlarm'
-
-        } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
-            return 'EnterLowAlarm'
-        }else{
-            return null
-        }
+            alarms.push('LeaveHighAlarm')
+        } 
+        return alarms
     },
     drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice,transXratio,transYratio,type,minCoverAngle,maxCoverAngle) {
         var transXratio = transXratio || 0;
@@ -4353,8 +4367,8 @@ module.exports =   React.createClass({
     },
     getRelativeRect:function (e) {
         var clientRect = e.target.getBoundingClientRect()
-        var x = Math.round(e.pageX - clientRect.left);
-        var y = Math.round(e.pageY - clientRect.top);
+        var x = Math.round(e.clientX - clientRect.left);
+        var y = Math.round(e.clientY - clientRect.top);
 
         return {
             x:x,
@@ -4564,16 +4578,23 @@ module.exports =   React.createClass({
         return certainAction;
     },
     handleTargetAction: function (target, type) {
-        if (target.actions && target.actions.length) {
-            for (var i = 0; i < target.actions.length; i++) {
-                if (target.actions[i].trigger == type) {
-                    var curCmds = target.actions[i].commands;
-                    //console.log(curCmds)
-                    this.processCmds(curCmds);
+        if (typeof type == 'string') {
+            if (target.actions && target.actions.length) {
+                for (var i = 0; i < target.actions.length; i++) {
+                    if (target.actions[i].trigger == type) {
+                        var curCmds = target.actions[i].commands;
+                        //console.log(curCmds)
+                        this.processCmds(curCmds);
 
+                    }
                 }
             }
+        }else if (type instanceof Array) {
+            for (var j=0;j<type.length;j++){
+                this.handleTargetAction(target,type[j])
+            }
         }
+        
     },
     findTagByName: function (tag) {
         var tagList = this.state.tagList;
