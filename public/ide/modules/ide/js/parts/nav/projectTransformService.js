@@ -169,7 +169,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     function transWidget(rawWidget,widgetIdx,subLayerIdx){
         var targetWidget = {};
         var generalWidget = {};
-        var fsp = 30
+        var fps = 30
         var defaultDuration = 1000;
         //targetWidget.id = subLayerIdx+'.'+widgetIdx;
         //targetWidget.type = 'widget';
@@ -249,6 +249,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     })
                     //animation
                     console.log('enableAnimation',info.enableAnimation)
+                    if (info.enableAnimation) {
+                        generalWidget['totalFrame'] = defaultDuration/1000 * fps;
+                    }
                     //otherAttrs
                     generalWidget.otherAttrs[0] = info['offsetValue']||0
                     generalWidget.otherAttrs[1] = Number(info['clockwise'])
@@ -267,6 +270,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     });
+                    //animation
+                    console.log('progress',info.enableAnimation)
+                    if (info.enableAnimation) {
+                        generalWidget['totalFrame'] = defaultDuration/1000 * fps;
+                    }
                     generalWidget.actions = targetWidget.actions;
                     generalWidget.generalType = 'Progress';
                     generalWidget.subType = 'general';

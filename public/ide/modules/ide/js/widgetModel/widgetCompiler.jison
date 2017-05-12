@@ -5,6 +5,7 @@
 %%
 
 \s+                   /* skip whitespace */
+\/\/.*                  /* comment */
 \"[^"]*\"             return 'STRING'
 \'[^']*\'             return 'STRING'
 "PI"                  return 'PI'

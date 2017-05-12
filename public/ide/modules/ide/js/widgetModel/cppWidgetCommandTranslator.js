@@ -195,6 +195,7 @@
         stopAnimationTag:'mWDGStopTag',
         curAnimationTag:'mWDGAnTag',
         totalFrame:'mWDGTotalFrame',
+        nowFrame:'mWDGNowFrame',
         arrange:'mWDGArrange',
         mode:'mWDGMode',
         oldValue:'mWDGOldValue',

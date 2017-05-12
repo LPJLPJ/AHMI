@@ -28,7 +28,6 @@
             if(b==0){
                 set('this.layers.0.hidden',0)
                 set('this.layers.1.hidden',1)
-                setTag(0)
             }else{
                 var(c,0)
                 getTag(c)
@@ -44,7 +43,6 @@
             if(b==0){
                 set('this.layers.0.hidden',1)
                 set('this.layers.1.hidden',0)
-                setTag(12)
             }
         `,
         onTagChange:`
@@ -161,80 +159,205 @@
             if (ttagValue<tminValue) {
                 set(ttagValue,tminValue)
             }
-            set(ttempDist,tmaxValue)
-            minus(ttempDist,tminValue)
-            var(ttagDist,0)
-            set(ttagDist,ttagValue)
-            minus(ttagValue,tminValue)
-            var(tvalueRatio,0)
-            set(tvalueRatio,ttagDist)
-            multiply(tvalueRatio,tangleDist)
-            divide(tvalueRatio,ttempDist)
-            add(tvalueRatio,tminAngle)
-            var(tclockwise,0)
-            var(tStartAngle,0)
-            set(tclockwise,'this.otherAttrs.1')
-            if (tclockwise==1) {
-                add(tvalueRatio,45)
-                add(tvalueRatio,toffsetValue)
-                add(tStartAngle,toffsetValue)
-                add(tStartAngle,90)
+            var(tTotalFrame,0)
+            set(tTotalFrame,'this.totalFrame')
+            if (tTotalFrame>0) {
+              var(tOldValue,0)
+              set(tOldValue,'this.oldValue')
+              set('this.startAnimationTag',tOldValue)
+              set('this.stopAnimationTag',ttagValue)
+              
             }else{
-                var(uValueRatio,0)
-                minus(uValueRatio,tvalueRatio)
-                minus(uValueRatio,toffsetValue)
-                set(tvalueRatio,uValueRatio)
-                minus(tStartAngle,toffsetValue)
-                add(tStartAngle,90)
-                add(tvalueRatio,45)
-            }
-            var(tp1x,0)
-            var(tp1y,0)
-            var(tMode,0)
-            var(talpha,0)
-            var(tbeta,0)
-            set(tMode,'this.mode')
-            if (tMode==1) {
-                set('this.layers.1.rotateAngle',tvalueRatio)
-            }
-            if (tMode==0) {
-                set('this.layers.1.rotateAngle',tvalueRatio)
-            }
-            add(tvalueRatio,45)
-            if (tMode==1) {
-                set(tp1x,'this.layers.1.x')
-                set(tp1y,'this.layers.1.y')
-                set('this.layers.2.subLayers.roi.p1x',tp1x)
-                set('this.layers.2.subLayers.roi.p1y',tp1y)
-                if (tclockwise==1) {
-                    set('this.layers.2.subLayers.roi.alpha',tStartAngle)
-                    set('this.layers.2.subLayers.roi.beta',tvalueRatio)
-                }else{
-                    set('this.layers.2.subLayers.roi.alpha',tvalueRatio)
-                    set('this.layers.2.subLayers.roi.beta',tStartAngle)
-                }
+              set(ttempDist,tmaxValue)
+              minus(ttempDist,tminValue)
+              var(ttagDist,0)
+              set(ttagDist,ttagValue)
+              minus(ttagValue,tminValue)
+              var(tvalueRatio,0)
+              set(tvalueRatio,ttagDist)
+              multiply(tvalueRatio,tangleDist)
+              divide(tvalueRatio,ttempDist)
+              add(tvalueRatio,tminAngle)
+              var(tclockwise,0)
+              var(tStartAngle,0)
+              set(tclockwise,'this.otherAttrs.1')
+              if (tclockwise==1) {
+                  add(tvalueRatio,45)
+                  add(tvalueRatio,toffsetValue)
+                  add(tStartAngle,toffsetValue)
+                  add(tStartAngle,90)
+              }else{
+                  var(uValueRatio,0)
+                  minus(uValueRatio,tvalueRatio)
+                  minus(uValueRatio,toffsetValue)
+                  set(tvalueRatio,uValueRatio)
+                  minus(tStartAngle,toffsetValue)
+                  add(tStartAngle,90)
+                  add(tvalueRatio,45)
+              }
+              var(tp1x,0)
+              var(tp1y,0)
+              var(tMode,0)
+              var(talpha,0)
+              var(tbeta,0)
+              set(tMode,'this.mode')
+              if (tMode==1) {
+                  set('this.layers.1.rotateAngle',tvalueRatio)
+              }
+              if (tMode==0) {
+                  set('this.layers.1.rotateAngle',tvalueRatio)
+              }
+              add(tvalueRatio,45)
+              if (tMode==1) {
+                  set(tp1x,'this.layers.1.x')
+                  set(tp1y,'this.layers.1.y')
+                  set('this.layers.2.subLayers.roi.p1x',tp1x)
+                  set('this.layers.2.subLayers.roi.p1y',tp1y)
+                  if (tclockwise==1) {
+                      set('this.layers.2.subLayers.roi.alpha',tStartAngle)
+                      set('this.layers.2.subLayers.roi.beta',tvalueRatio)
+                  }else{
+                      set('this.layers.2.subLayers.roi.alpha',tvalueRatio)
+                      set('this.layers.2.subLayers.roi.beta',tStartAngle)
+                  }
 
-            }else{
-                if (tMode==2) {
-                    set(tp1x,'this.layers.0.width')
-                    set(tp1y,'this.layers.0.height')
-                    divide(tp1x,2)
-                    divide(tp1y,2)
-                    set('this.layers.0.subLayers.roi.p1x',tp1x)
-                    set('this.layers.0.subLayers.roi.p1y',tp1y)
-                    if (tclockwise==1) {
-                        set('this.layers.0.subLayers.roi.alpha',tStartAngle)
-                        set('this.layers.0.subLayers.roi.beta',tvalueRatio)
-                    }else{
-                        set('this.layers.0.subLayers.roi.alpha',tvalueRatio)
-                        set('this.layers.0.subLayers.roi.beta',tStartAngle)
-                    }
-                }
+              }else{
+                  if (tMode==2) {
+                      set(tp1x,'this.layers.0.width')
+                      set(tp1y,'this.layers.0.height')
+                      divide(tp1x,2)
+                      divide(tp1y,2)
+                      set('this.layers.0.subLayers.roi.p1x',tp1x)
+                      set('this.layers.0.subLayers.roi.p1y',tp1y)
+                      if (tclockwise==1) {
+                          set('this.layers.0.subLayers.roi.alpha',tStartAngle)
+                          set('this.layers.0.subLayers.roi.beta',tvalueRatio)
+                      }else{
+                          set('this.layers.0.subLayers.roi.alpha',tvalueRatio)
+                          set('this.layers.0.subLayers.roi.beta',tStartAngle)
+                      }
+                  }
+              }
             }
-            
             checkalarm(0)
+            
             set('this.oldValue',ttagValue)
+            if (tTotalFrame>0) {
+              startanimation(0)
+            }
 
+        `,
+        onAnimationFrame:`
+          var(tStartTag,0)
+          var(tStopTag,0)
+          set(tStartTag,'this.startAnimationTag')
+          set(tStopTag,'this.stopAnimationTag')
+          var(tTotalFrame,0)
+          set(tTotalFrame,'this.totalFrame')
+          var(tCurFrame,0)
+          set(tCurFrame,'this.nowFrame')
+          var(tCurTag,0)
+          var(tDist,0)
+          set(tDist,tStopTag)
+          minus(tDist,tStartTag)
+          multiply(tDist,tCurFrame)
+          divide(tDist,tTotalFrame)
+          add(tDist,tStartTag)
+          set(tCurTag,tDist)
+          set('this.curAnimationTag',tCurTag) //set AnTag 
+          var(toffsetValue,0)
+          var(tminValue,0)
+          var(tmaxValue,0)
+          var(tminAngle,0)
+          var(tmaxAngle,0)
+          var(ttagValue,0)
+          var(tangleDist,0)   
+          set(tminValue,'this.minValue')
+          set(tmaxValue,'this.maxValue')
+          set(tminAngle,'this.minAngle')
+          set(tmaxAngle,'this.maxAngle')
+          set(tangleDist,tmaxAngle)
+          minus(tangleDist,tminAngle)
+          var(ttempDist,0)
+          set(toffsetValue,'this.otherAttrs.0')
+          set(ttagValue,tCurTag)
+          if (ttagValue>tmaxValue) {
+              set(ttagValue,tmaxValue)
+          }
+          if (ttagValue<tminValue) {
+              set(ttagValue,tminValue)
+          }
+          set(ttempDist,tmaxValue)
+          minus(ttempDist,tminValue)
+          var(ttagDist,0)
+          set(ttagDist,ttagValue)
+          minus(ttagValue,tminValue)
+          var(tvalueRatio,0)
+          set(tvalueRatio,ttagDist)
+          multiply(tvalueRatio,tangleDist)
+          divide(tvalueRatio,ttempDist)
+          add(tvalueRatio,tminAngle)
+          var(tclockwise,0)
+          var(tStartAngle,0)
+          set(tclockwise,'this.otherAttrs.1')
+          if (tclockwise==1) {
+              add(tvalueRatio,45)
+              add(tvalueRatio,toffsetValue)
+              add(tStartAngle,toffsetValue)
+              add(tStartAngle,90)
+          }else{
+              var(uValueRatio,0)
+              minus(uValueRatio,tvalueRatio)
+              minus(uValueRatio,toffsetValue)
+              set(tvalueRatio,uValueRatio)
+              minus(tStartAngle,toffsetValue)
+              add(tStartAngle,90)
+              add(tvalueRatio,45)
+          }
+          var(tp1x,0)
+          var(tp1y,0)
+          var(tMode,0)
+          var(talpha,0)
+          var(tbeta,0)
+          set(tMode,'this.mode')
+          if (tMode==1) {
+              set('this.layers.1.rotateAngle',tvalueRatio)
+          }
+          if (tMode==0) {
+              set('this.layers.1.rotateAngle',tvalueRatio)
+          }
+          add(tvalueRatio,45)
+          if (tMode==1) {
+              set(tp1x,'this.layers.1.x')
+              set(tp1y,'this.layers.1.y')
+              set('this.layers.2.subLayers.roi.p1x',tp1x)
+              set('this.layers.2.subLayers.roi.p1y',tp1y)
+              if (tclockwise==1) {
+                  set('this.layers.2.subLayers.roi.alpha',tStartAngle)
+                  set('this.layers.2.subLayers.roi.beta',tvalueRatio)
+              }else{
+                  set('this.layers.2.subLayers.roi.alpha',tvalueRatio)
+                  set('this.layers.2.subLayers.roi.beta',tStartAngle)
+              }
+
+          }else{
+              if (tMode==2) {
+                  set(tp1x,'this.layers.0.width')
+                  set(tp1y,'this.layers.0.height')
+                  divide(tp1x,2)
+                  divide(tp1y,2)
+                  set('this.layers.0.subLayers.roi.p1x',tp1x)
+                  set('this.layers.0.subLayers.roi.p1y',tp1y)
+                  if (tclockwise==1) {
+                      set('this.layers.0.subLayers.roi.alpha',tStartAngle)
+                      set('this.layers.0.subLayers.roi.beta',tvalueRatio)
+                  }else{
+                      set('this.layers.0.subLayers.roi.alpha',tvalueRatio)
+                      set('this.layers.0.subLayers.roi.beta',tStartAngle)
+                  }
+              }
+          }
+          
         `
     };
 
@@ -284,17 +407,25 @@
             var(a,1)
         `,
         onTagChange:`
+            var(tTotalFrame,0)
+            set(tTotalFrame,'this.totalFrame')
             var(m,'this.mode')
-            var(tag,0)
-            getTag(tag)
+            var(tTag,0)
+            getTag(tTag)
             var(min,'this.minValue')
             var(max,'this.maxValue')
-            if(tag>=min){
-               if(tag<=max){
+            if (tTotalFrame>0) {
+              var(tOldValue,0)
+              set(tOldValue,'this.oldValue')
+              set('this.startAnimationTag',tOldValue)
+              set('this.stopAnimationTag',tTag)
+            }else{
+              if(tTag>=min){
+               if(tTag<=max){
                   var(v,0)
                   var(temp1,0)
                   var(temp2,0)
-                  set(temp1,tag)
+                  set(temp1,tTag)
                   set(temp2,max)
                   minus(temp1,min)
                   minus(temp2,min)
@@ -364,7 +495,7 @@
                       var(a2,'this.otherAttrs.10')
                       if(thresM==1){
                          var(thres1,'this.otherAttrs.1')
-                         if(tag<thres1){
+                         if(tTag<thres1){
                             set('this.layers.1.subLayers.color.r',r1)
                             set('this.layers.1.subLayers.color.g',g1)
                             set('this.layers.1.subLayers.color.b',b1)
@@ -383,13 +514,13 @@
                          var(a3,'this.otherAttrs.14')
                          var(thres1,'this.otherAttrs.1')
                          var(thres2,'this.otherAttrs.2')
-                         if(tag<thres1){
+                         if(tTag<thres1){
                             set('this.layers.1.subLayers.color.r',r1)
                             set('this.layers.1.subLayers.color.g',g1)
                             set('this.layers.1.subLayers.color.b',b1)
                             set('this.layers.1.subLayers.color.a',a1)
                          }else{
-                            if(tag<thres2){
+                            if(tTag<thres2){
                                 set('this.layers.1.subLayers.color.r',r2)
                                 set('this.layers.1.subLayers.color.g',g2)
                                 set('this.layers.1.subLayers.color.b',b2)
@@ -415,10 +546,167 @@
                   print(temp1,'temp1')
                   set('this.layers.2.x',temp1)
                }
+              }
             }
+            
             checkalarm(0)
-            set('this.oldValue',tag)
+            set('this.oldValue',tTag)
+            if (tTotalFrame>0) {
+              startanimation(0)
+            }
 
+        `,
+        onAnimationFrame:`
+          var(m,'this.mode')
+          var(tTag,0)
+
+          var(tStartTag,0)
+          var(tStopTag,0)
+          set(tStartTag,'this.startAnimationTag')
+          set(tStopTag,'this.stopAnimationTag')
+          var(tTotalFrame,0)
+          set(tTotalFrame,'this.totalFrame')
+          var(tCurFrame,0)
+          set(tCurFrame,'this.nowFrame')
+          var(tCurTag,0)
+          var(tDist,0)
+          set(tDist,tStopTag)
+          minus(tDist,tStartTag)
+          multiply(tDist,tCurFrame)
+          divide(tDist,tTotalFrame)
+          add(tDist,tStartTag)
+          set(tTag,tDist)
+          set('this.curAnimationTag',tTag)
+          var(min,'this.minValue')
+          var(max,'this.maxValue')
+          if(tTag>=min){
+             if(tTag<=max){
+                var(v,0)
+                var(temp1,0)
+                var(temp2,0)
+                set(temp1,tTag)
+                set(temp2,max)
+                minus(temp1,min)
+                minus(temp2,min)
+                var(w,'this.layers.0.width')
+                var(h,'this.layers.0.height')
+                if(m==0){
+                    print(m,'m')
+                    multiply(temp1,w)
+                    divide(temp1,temp2)
+                    set('this.layers.1.subLayers.roi.p1x',0)
+                    set('this.layers.1.subLayers.roi.p1y',0)
+                    set('this.layers.1.subLayers.roi.p2x',temp1)
+                    set('this.layers.1.subLayers.roi.p2y',0)
+                    set('this.layers.1.subLayers.roi.p3x',temp1)
+                    set('this.layers.1.subLayers.roi.p3y',h)
+                    set('this.layers.1.subLayers.roi.p4x',0)
+                    set('this.layers.1.subLayers.roi.p4y',h)
+                    set('this.layers.1.hidden',0)
+                }
+                if(m==1){
+                    var(r1,'this.otherAttrs.0')
+                    var(g1,'this.otherAttrs.1')
+                    var(b1,'this.otherAttrs.2')
+                    var(a1,'this.otherAttrs.3')
+                    var(r2,'this.otherAttrs.4')
+                    var(g2,'this.otherAttrs.5')
+                    var(b2,'this.otherAttrs.6')
+                    var(a2,'this.otherAttrs.7')
+                    var(rt,r2)
+                    var(gt,g2)
+                    var(bt,b2)
+                    var(at,a2)
+                    minus(rt,r1)
+                    minus(gt,g1)
+                    minus(bt,b1)
+                    minus(at,a1)
+                    multiply(rt,temp1)
+                    multiply(gt,temp1)
+                    multiply(bt,temp1)
+                    multiply(at,temp1)
+                    divide(rt,temp2)
+                    divide(gt,temp2)
+                    divide(bt,temp2)
+                    divide(at,temp2)
+                    add(rt,r1)
+                    add(gt,g1)
+                    add(bt,b1)
+                    add(at,a1)
+                    set('this.layers.1.subLayers.color.r',rt)
+                    set('this.layers.1.subLayers.color.g',gt)
+                    set('this.layers.1.subLayers.color.b',bt)
+                    set('this.layers.1.subLayers.color.a',at)
+                    multiply(temp1,w)
+                    divide(temp1,temp2)
+                    set('this.layers.1.width',temp1)
+                    set('this.layers.1.hidden',0)
+                }
+                if(m==3){
+                    var(thresM,'this.otherAttrs.0')
+                    var(r1,'this.otherAttrs.3')
+                    var(g1,'this.otherAttrs.4')
+                    var(b1,'this.otherAttrs.5')
+                    var(a1,'this.otherAttrs.6')
+                    var(r2,'this.otherAttrs.7')
+                    var(g2,'this.otherAttrs.8')
+                    var(b2,'this.otherAttrs.9')
+                    var(a2,'this.otherAttrs.10')
+                    if(thresM==1){
+                       var(thres1,'this.otherAttrs.1')
+                       if(tTag<thres1){
+                          set('this.layers.1.subLayers.color.r',r1)
+                          set('this.layers.1.subLayers.color.g',g1)
+                          set('this.layers.1.subLayers.color.b',b1)
+                          set('this.layers.1.subLayers.color.a',a1)
+                       }else{
+                          set('this.layers.1.subLayers.color.r',r2)
+                          set('this.layers.1.subLayers.color.g',g2)
+                          set('this.layers.1.subLayers.color.b',b2)
+                          set('this.layers.1.subLayers.color.a',a2)
+                       }
+                    }
+                    if(thresM==2){
+                       var(r3,'this.otherAttrs.11')
+                       var(g3,'this.otherAttrs.12')
+                       var(b3,'this.otherAttrs.13')
+                       var(a3,'this.otherAttrs.14')
+                       var(thres1,'this.otherAttrs.1')
+                       var(thres2,'this.otherAttrs.2')
+                       if(tTag<thres1){
+                          set('this.layers.1.subLayers.color.r',r1)
+                          set('this.layers.1.subLayers.color.g',g1)
+                          set('this.layers.1.subLayers.color.b',b1)
+                          set('this.layers.1.subLayers.color.a',a1)
+                       }else{
+                          if(tTag<thres2){
+                              set('this.layers.1.subLayers.color.r',r2)
+                              set('this.layers.1.subLayers.color.g',g2)
+                              set('this.layers.1.subLayers.color.b',b2)
+                              set('this.layers.1.subLayers.color.a',a2)
+                          }else{
+                              set('this.layers.1.subLayers.color.r',r3)
+                              set('this.layers.1.subLayers.color.g',g3)
+                              set('this.layers.1.subLayers.color.b',b3)
+                              set('this.layers.1.subLayers.color.a',a3)
+                          }
+                       }
+
+                    }
+                    multiply(temp1,w)
+                    divide(temp1,temp2)
+                    set('this.layers.1.width',temp1)
+                    set('this.layers.1.hidden',0)
+                }
+             }
+             var(cur,'this.otherAttrs.19')
+             print(cur,'cur')
+             if(cur==1){
+                print(temp1,'temp1')
+                set('this.layers.2.x',temp1)
+             }
+            }
+          
         `
     };
 

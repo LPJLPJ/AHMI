@@ -646,7 +646,6 @@ module.exports =   React.createClass({
                 break;
             case 'checkalarm':
                 //checkalarm
-                console.log('alarm',curInst)
                 var curValue = this.getValueByTagName(widget.tag)
                 if (curValue > widget.maxValue) {
                     curValue = widget.maxValue
@@ -662,10 +661,25 @@ module.exports =   React.createClass({
 
                 break;
             case 'startanimation':
-                this.interpretGeneralCommand(widget,'onAnimationFrame')
+                var nowFrame = 1;
+                var totalFrame = widget.totalFrame||0;
+                if (widget.curAnimationId) {
+                    widget.startAnimationTag = widget.curAnimationTag
+                    clearInterval(widget.curAnimationId)
+                }
+                widget.curAnimationId = setInterval(function () {
+                    if (nowFrame>totalFrame) {
+                        clearInterval(widget.curAnimationId)
+                        widget.curAnimationId = 0;
+                        return;
+                    }
+                    widget.nowFrame = nowFrame||0
+                    this.interpretGeneralCommand(widget,'onAnimationFrame')
+                    nowFrame++;
+                }.bind(this),1000/30)
+                
             break;
             case 'print':
-                console.log(curInst)
                 console.log('print value: ',this.evalParam(widget,curInst[1]),curInst[2]||'')
                 break;
 

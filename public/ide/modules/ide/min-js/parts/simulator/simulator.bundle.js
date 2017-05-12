@@ -52242,7 +52242,6 @@ module.exports = React.createClass({
                 break;
             case 'checkalarm':
                 //checkalarm
-                console.log('alarm', curInst);
                 var curValue = this.getValueByTagName(widget.tag);
                 if (curValue > widget.maxValue) {
                     curValue = widget.maxValue;
@@ -52258,10 +52257,25 @@ module.exports = React.createClass({
 
                 break;
             case 'startanimation':
-                this.interpretGeneralCommand(widget, 'onAnimationFrame');
+                var nowFrame = 1;
+                var totalFrame = widget.totalFrame || 0;
+                if (widget.curAnimationId) {
+                    widget.startAnimationTag = widget.curAnimationTag;
+                    clearInterval(widget.curAnimationId);
+                }
+                widget.curAnimationId = setInterval(function () {
+                    if (nowFrame > totalFrame) {
+                        clearInterval(widget.curAnimationId);
+                        widget.curAnimationId = 0;
+                        return;
+                    }
+                    widget.nowFrame = nowFrame || 0;
+                    this.interpretGeneralCommand(widget, 'onAnimationFrame');
+                    nowFrame++;
+                }.bind(this), 1000 / 30);
+
                 break;
             case 'print':
-                console.log(curInst);
                 console.log('print value: ', this.evalParam(widget, curInst[1]), curInst[2] || '');
                 break;
 
@@ -52690,7 +52704,7 @@ module.exports = React.createClass({
                         curValue -= timer['SysTmr_' + num + '_Step'];
                         this.setTagByTag(targetTag, curValue);
 
-                        if (targetTag.value < timer['SysTmr_' + num + '_Stop']) {
+                        if (targetTag.value < timer['SysTmr_' + num + '_Stop'] || targetTag.value > timer['SysTmr_' + num + '_Start']) {
                             //clear timer
                             if (loop) {
                                 this.setTagByTag(targetTag, startValue);
@@ -52709,7 +52723,7 @@ module.exports = React.createClass({
                         curValue = Number(targetTag.value) || 0;
                         curValue += timer['SysTmr_' + num + '_Step'];
                         this.setTagByTag(targetTag, curValue);
-                        if (targetTag.value > timer['SysTmr_' + num + '_Stop']) {
+                        if (targetTag.value > timer['SysTmr_' + num + '_Stop'] || targetTag.value < timer['SysTmr_' + num + '_Start']) {
                             //clear timer
                             if (loop) {
                                 this.setTagByTag(targetTag, startValue);
@@ -53652,7 +53666,7 @@ module.exports = React.createClass({
                 }
 
                 widget.oldValue = curProgress;
-                if (alarmValue) {
+                if (alarmValue.length) {
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -53668,7 +53682,7 @@ module.exports = React.createClass({
                 widget.currentValue = oldValue;
             } else {
                 widget.oldValue = curProgress;
-                if (alarmValue) {
+                if (alarmValue.length) {
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -53859,6 +53873,7 @@ module.exports = React.createClass({
         var curScriptTrigger = curScriptTriggerTag && curScriptTriggerTag.value || 0;
         cb && cb();
         //handle action
+        // console.log(this.shouldHandleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue))
         this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
         widget.oldValue = curScriptTrigger;
     },
@@ -54298,6 +54313,7 @@ module.exports = React.createClass({
         var highAlarmValue = widget.info.highAlarmValue;
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -54314,7 +54330,7 @@ module.exports = React.createClass({
 
                 curValue = this.limitValueBetween(curValue, minValue, maxValue);
                 widget.curValue = Number(curValue);
-                if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
+                if (!enableAnimation || enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue) {
 
                     shouldHandleAlarmAction = true;
                 } else {
@@ -54357,6 +54373,7 @@ module.exports = React.createClass({
         // console.log(curValue);
 
         var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
         var frontZeroMode = widget.info.frontZeroMode;
         var symbolMode = widget.info.symbolMode;
         var decimalCount = widget.info.decimalCount || 0;
@@ -54398,7 +54415,7 @@ module.exports = React.createClass({
 
             var changeDirection = curValue - widget.oldValue;
 
-            if (numModeId == '0' || numModeId == '1' && widget.oldValue != undefined && widget.oldValue == curValue) {
+            if (!enableAnimation || enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue) {
 
                 tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 
@@ -54626,7 +54643,7 @@ module.exports = React.createClass({
                 }
 
                 widget.oldValue = curDashboardTagValue;
-                if (alarmValue) {
+                if (alarmValue.length) {
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -54643,7 +54660,7 @@ module.exports = React.createClass({
                 // this.paintDashboard(curX,curY,widget,options,cb)
             } else {
                 widget.oldValue = curDashboardTagValue;
-                if (alarmValue) {
+                if (alarmValue.length) {
                     //hanlde alarm
                     this.handleTargetAction(widget, alarmValue);
                 }
@@ -54986,7 +55003,7 @@ module.exports = React.createClass({
             wise = true;
         }
         //var radius = this.calculateRadius(dashboardModeId,width,height);
-        var radius = Math.max(width, height) / 2;
+        var radius = dashboardModeId == '1' ? Math.sqrt(width * width + height * height) / 2 : Math.max(width, height) / 2;
         if (Math.abs(curArc - minArc) > 360) {
             //no need to clip
             this.drawBg(curX, curY, width, height, image, null);
@@ -55016,40 +55033,50 @@ module.exports = React.createClass({
     },
     handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
         //handle action
-        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
-            //enter high alarm
-            widget.oldValue = curValue;
 
-            this.handleTargetAction(widget, 'EnterHighAlarm');
-        } else if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
-            //leave high alarm
-            widget.oldValue = curValue;
-            this.handleTargetAction(widget, 'LeaveHighAlarm');
-        } else if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
-            //leave low alarm
-            widget.oldValue = curValue;
-            this.handleTargetAction(widget, 'LeaveLowAlarm');
-        } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
-            widget.oldValue = curValue;
+        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+
             this.handleTargetAction(widget, 'EnterLowAlarm');
         }
+
+        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+            //leave low alarm
+
+            this.handleTargetAction(widget, 'LeaveLowAlarm');
+        }
+        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+            //enter high alarm
+
+
+            this.handleTargetAction(widget, 'EnterHighAlarm');
+        }
+        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+            //leave high alarm
+            this.handleTargetAction(widget, 'LeaveHighAlarm');
+        }
+        widget.oldValue = curValue;
     },
     shouldHandleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
         //handle action
+        var alarms = [];
+
+        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+            alarms.push('EnterLowAlarm');
+        }
+        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+            //leave low alarm
+
+            alarms.push('LeaveLowAlarm');
+        }
         if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
             //enter high alarm
-            return 'EnterHighAlarm';
-        } else if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
-            //leave high alarm
-            return 'LeaveHighAlarm';
-        } else if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
-            //leave low alarm
-            return 'LeaveLowAlarm';
-        } else if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
-            return 'EnterLowAlarm';
-        } else {
-            return null;
+            alarms.push('EnterHighAlarm');
         }
+        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+            //leave high alarm
+            alarms.push('LeaveHighAlarm');
+        }
+        return alarms;
     },
     drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
         var transXratio = transXratio || 0;
@@ -55630,8 +55657,8 @@ module.exports = React.createClass({
     },
     getRelativeRect: function (e) {
         var clientRect = e.target.getBoundingClientRect();
-        var x = Math.round(e.pageX - clientRect.left);
-        var y = Math.round(e.pageY - clientRect.top);
+        var x = Math.round(e.clientX - clientRect.left);
+        var y = Math.round(e.clientY - clientRect.top);
 
         return {
             x: x,
@@ -55834,13 +55861,19 @@ module.exports = React.createClass({
         return certainAction;
     },
     handleTargetAction: function (target, type) {
-        if (target.actions && target.actions.length) {
-            for (var i = 0; i < target.actions.length; i++) {
-                if (target.actions[i].trigger == type) {
-                    var curCmds = target.actions[i].commands;
-                    //console.log(curCmds)
-                    this.processCmds(curCmds);
+        if (typeof type == 'string') {
+            if (target.actions && target.actions.length) {
+                for (var i = 0; i < target.actions.length; i++) {
+                    if (target.actions[i].trigger == type) {
+                        var curCmds = target.actions[i].commands;
+                        //console.log(curCmds)
+                        this.processCmds(curCmds);
+                    }
                 }
+            }
+        } else if (type instanceof Array) {
+            for (var j = 0; j < type.length; j++) {
+                this.handleTargetAction(target, type[j]);
             }
         }
     },
@@ -56968,6 +57001,8 @@ AnimationManager.moving = function (srcX, srcY, dstX, dstY, duration, frames, ea
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue = 0;
+    var framesPS = frames;
+    frames = frames * duration / 1000;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -56990,7 +57025,7 @@ AnimationManager.moving = function (srcX, srcY, dstX, dstY, duration, frames, ea
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this), duration / frames);
+    }.bind(this), duration / framesPS);
     animationKeys.push(animationKey);
 };
 
@@ -56998,6 +57033,9 @@ AnimationManager.step = function (srcX, srcY, dstX, dstY, duration, frames, easi
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue = 0;
+    var framesPS = frames;
+    frames = frames * duration / 1000;
+    console.log('p', frames, duration);
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -57022,7 +57060,7 @@ AnimationManager.step = function (srcX, srcY, dstX, dstY, duration, frames, easi
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this), 1000 / frames);
+    }.bind(this), 1000 / framesPS);
     animationKeys.push(animationKey);
     return animationKey;
 };
@@ -57031,6 +57069,8 @@ AnimationManager.stepValue = function (srcX, dstX, duration, frames, easing, int
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue = 0;
+    var framesPS = frames;
+    frames = frames * duration / 1000;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -57052,7 +57092,7 @@ AnimationManager.stepValue = function (srcX, dstX, duration, frames, easing, int
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this), 1000 / frames);
+    }.bind(this), 1000 / framesPS);
     animationKeys.push(animationKey);
     return animationKey;
 };
@@ -57061,6 +57101,8 @@ AnimationManager.stepObj = function (srcObj, dstObj, duration, frames, easing, i
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue = 0;
+    var framesPS = frames;
+    frames = frames * duration / 1000;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -57092,7 +57134,7 @@ AnimationManager.stepObj = function (srcObj, dstObj, duration, frames, easing, i
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this), 1000 / frames);
+    }.bind(this), 1000 / framesPS);
     animationKeys.push(animationKey);
     return animationKey;
 };
@@ -57101,6 +57143,8 @@ AnimationManager.scaling = function (srcX, srcY, dstX, dstY, duration, frames, e
     var easingFunc = EasingFunctions[easing] || EasingFunctions.linear;
     var lastValue = 0;
     var curValue = 0;
+    var framesPS = frames;
+    frames = frames * duration / 1000;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -57123,7 +57167,7 @@ AnimationManager.scaling = function (srcX, srcY, dstX, dstY, duration, frames, e
             this.clearAnimationKey(animationKey);
             finishCb && finishCb();
         }
-    }.bind(this), 1000 / frames);
+    }.bind(this), 1000 / framesPS);
     animationKeys.push(animationKey);
 };
 
@@ -57168,10 +57212,17 @@ function LinkedWidget(type, target, value, left, top) {
     this.top = top || 0;
 }
 
+function Seq(childs, left, top) {
+    this.childs = childs;
+    this.left = left;
+    this.top = top;
+}
+
 function linkWidgets(widgetList) {
     var i;
     var curWidget;
     var linkedWidgetList = [];
+    var sequence = [];
     for (i = 0; i < widgetList.length; i++) {
         curWidget = widgetList[i];
         if (curWidget.info.disableHighlight == true) {
