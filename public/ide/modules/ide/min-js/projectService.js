@@ -1492,9 +1492,10 @@ ideServices
             this.CopyPageByIndex = function (_index, _successCallback) {
                 _self.OnPageSelected(_index, function () {
 
+                    var tempPage = _.cloneDeep(project.pages[_index]);
                     shearPagePlate = {
                         type: Type.MyPage,
-                        objects: [_.cloneDeep(project.pages[_index])]
+                        objects: [tempPage]
                     };
 
                     _successCallback&&_successCallback();
@@ -1690,12 +1691,36 @@ ideServices
                     console.warn('当前剪切板中不是页面');
                     return;
                 }
-
                 var pastePage = _getCopyPage(shearPagePlate.objects[0]);
-                console.log('pastePage',pastePage)
 
+                //修改page中的所有layer sublayer  widget的id
                 pastePage.id = Math.random().toString(36).substr(2);
                 pastePage.$$hashKey = undefined;
+                var layers = pastePage.layers;
+                for(var i=0;i<layers.length;i++){
+                    var proJsonObj = pastePage.proJsonStr.objects;
+                    proJsonObj.forEach(function(item){
+                        if(item.id==layers[i].id){
+                            item.id = Math.random().toString(36).substr(2);
+                            layers[i].id = item.id;
+                        }
+                    });
+                    var subLayers = layers[i].subLayers;
+                    for(var j=0;j<subLayers.length;j++){
+                        subLayers[j].id = Math.random().toString(36).substr(2);
+                        proJsonObj = subLayers[j].proJsonStr.objects||[];
+                        var widgets = subLayers[j].widgets;
+                        for(var k=0;k<widgets.length;k++){
+                            proJsonObj.forEach(function(item){
+                               if(item.id==widgets[k].id){
+                                   item.id = Math.random().toString(36).substr(2);
+                                   widgets[k].id = item.id
+                               }
+                            });
+                        }
+                    }
+                }
+                //console.log('new pastePage',pastePage);
                 this.AddNewPage(pastePage, function () {
                     _successCallback && _successCallback();
                 });

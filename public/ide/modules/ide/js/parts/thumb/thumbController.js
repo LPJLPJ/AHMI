@@ -111,7 +111,7 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
     }
 
     function copyPageByIndex(_index){
-        console.log('复制的是'+_index);
+        //console.log('复制的是'+_index);
         $timeout(function () {
             ProjectService.CopyPageByIndex(_index, function () {
                 updateShearPlate();
