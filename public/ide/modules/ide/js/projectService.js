@@ -4069,7 +4069,6 @@ ideServices
             this.ChangeAttributeZIndex= function (_option, _successCallback) {
                 var currentOperate=SaveCurrentOperate();
                 var object=getCurrentSelectObject();
-
                 if (object.type==Type.MyLayer){
                     var pageNode = CanvasService.getPageNode();
                     var fabLayer = null;
@@ -4105,8 +4104,7 @@ ideServices
                     currentPage.layers.sort(function(item1,item2){
                         return item1.zIndex-item2.zIndex;
                     });
-                }
-                else if (Type.isWidget(object.type)){
+                }else if (Type.isWidget(object.type)){
                     var subLayerNode = CanvasService.getSubLayerNode();
                     var fabWidget = null;
                     var currentSubLayer=getCurrentSubLayer();
@@ -4139,6 +4137,30 @@ ideServices
                     currentSubLayer.widgets.sort(function(item1,item2){
                         return  item1.zIndex-item2.zIndex;
                     });
+                }else if(object.type==Type.MySubLayer){
+                    var currentLayer = getCurrentLayer();
+                    var subLayers = currentLayer.subLayers;
+                    var currentSubLayer = getCurrentSubLayer();
+                    var temp;
+                    for(var i=0;i<subLayers.length;i++){
+                        if(subLayers[i].id==currentSubLayer.id){
+                            if(_option.index==0){
+                                if(i>0){
+                                    temp = subLayers[i-1];
+                                    subLayers[i-1] = currentSubLayer;
+                                    subLayers[i] = temp;
+                                }
+                            }else if(_option.index==1){
+                                if(i<subLayers.length-1){
+                                    temp = subLayers[i+1];
+                                    subLayers[i+1] = currentSubLayer;
+                                    subLayers[i] = temp;
+                                }
+                            }
+                            currentLayer.showSubLayer = subLayers[0];
+                            break;
+                        }
+                    }
                 }
 
                 _successCallback&&_successCallback(currentOperate);
