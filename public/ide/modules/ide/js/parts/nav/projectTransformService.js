@@ -208,14 +208,16 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             var y = info.top;
             var w = info.width;
             var h = info.height;
+            var highLight = false;
             switch(targetWidget.type){
                 case 'MyButton':
-
-                    generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
+                    highLight = !targetWidget.info.disableHighlight;
+                    generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices,highLight)
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'Button';
                     generalWidget.mode = Number(rawWidget.buttonModeId);
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
+
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions
                 break;

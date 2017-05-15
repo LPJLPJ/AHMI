@@ -128,7 +128,7 @@
         return result
     }
 
-    function Button(x,y,w,h,text,fontStyle,slices) {
+    function Button(x,y,w,h,text,fontStyle,slices,highLight) {
         var layerUp = new Layer(0,0,w,h);
         var colorElems
         layerUp.subLayers.font = new FontSubLayer(text,fontStyle);
@@ -141,6 +141,15 @@
         colorElems = parseColor(slices[1].color)
         layerDown.subLayers.color = new ColorSubLayer(colorElems);
         var layers = [layerDown,layerUp];
+        var layerHighlight;
+        if (highLight) {
+            layerHighlight = new Layer(0,0,w,h);
+            layerHighlight.subLayers.image =new TextureSubLayer(slices[2].imgSrc);
+            colorElems = parseColor(slices[2].color)
+            layerHighlight.subLayers.color = new ColorSubLayer(colorElems);
+            layerHighlight.hidden = true;
+            layers.push(layerHighlight)
+        }
         this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)
     }
