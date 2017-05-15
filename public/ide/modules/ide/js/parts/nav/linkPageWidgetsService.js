@@ -6,12 +6,13 @@ ideServices.service('LinkPageWidgetsService', [function () {
     var ctx;
     this.linkPageAllWidgets = linkPageAllWidgets;
 
-    function linkPageWidgets(page) {
-        page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
-    }
-
     function linkPageAllWidgets(page) {
         page.linkedAllWidgets = linkWidgets(getPageAllInteractiveWidgets(page));
+    }
+
+
+    function linkPageWidgets(page) {
+        page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
     }
 
 
@@ -38,12 +39,22 @@ ideServices.service('LinkPageWidgetsService', [function () {
         this.top = top || 0;
     }
 
+    function Seq(childs,left,top) {
+        this.childs = childs
+        this.left = left
+        this.top = top;
+    }
+
     function linkWidgets(widgetList) {
         var i;
         var curWidget;
         var linkedWidgetList = [];
+        var sequence = [];
         for (i = 0; i < widgetList.length; i++) {
             curWidget = widgetList[i];
+            if (curWidget.info.disableHighlight==true){
+                continue
+            }
             switch (curWidget.subType) {
                 case 'MyButtonGroup':
                     var interval = curWidget.info.interval;
@@ -108,6 +119,11 @@ ideServices.service('LinkPageWidgetsService', [function () {
                         linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
                     }
                     break;
+                case 'MyInputKeyboard':
+                    var keys = curWidget.info.keys;
+                    keys.forEach(function (key, index) {
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
+                    })
                 default:
                     // linkedWidget.type = curWidget.subType;
                     // linkedWidget.target = curWidget;
@@ -118,9 +134,14 @@ ideServices.service('LinkPageWidgetsService', [function () {
 
             }
         }
+
+        linkedWidgetList.sort(function (a, b) {
+            return (a.left - b.left);
+        });
         linkedWidgetList.sort(function (a, b) {
             return (a.top - b.top);
         });
+
         return linkedWidgetList;
     }
 
@@ -182,6 +203,7 @@ ideServices.service('LinkPageWidgetsService', [function () {
             case 'MyButton':
             case 'MyButtonGroup':
             case 'MyDateTime':
+            case 'MyInputKeyboard':
                 is = true;
                 break;
             default:
