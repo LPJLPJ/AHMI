@@ -1713,7 +1713,6 @@ ideServices
                         for(var k=0;k<widgets.length;k++){
                             proJsonObj.objects.forEach(function(item){
                                if(item.id==widgets[k].id){
-                                   console.log('find widget');
                                    item.id = Math.random().toString(36).substr(2);
                                    widgets[k].id = item.id
                                }
