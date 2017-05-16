@@ -1708,19 +1708,21 @@ ideServices
                     var subLayers = layers[i].subLayers;
                     for(var j=0;j<subLayers.length;j++){
                         subLayers[j].id = Math.random().toString(36).substr(2);
-                        proJsonObj = subLayers[j].proJsonStr.objects||[];
+                        proJsonObj = JSON.parse(subLayers[j].proJsonStr);
                         var widgets = subLayers[j].widgets;
                         for(var k=0;k<widgets.length;k++){
-                            proJsonObj.forEach(function(item){
+                            proJsonObj.objects.forEach(function(item){
                                if(item.id==widgets[k].id){
+                                   console.log('find widget');
                                    item.id = Math.random().toString(36).substr(2);
                                    widgets[k].id = item.id
                                }
                             });
                         }
+                        subLayers[j].proJsonStr = JSON.stringify(proJsonObj);
                     }
                 }
-                //console.log('new pastePage',pastePage);
+                console.log('new pastePage',pastePage);
                 this.AddNewPage(pastePage, function () {
                     _successCallback && _successCallback();
                 });
