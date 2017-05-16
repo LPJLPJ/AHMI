@@ -123,6 +123,7 @@ function linkWidgets(widgetList) {
                 keys.forEach(function (key, index) {
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
                 })
+                break;
             default:
                 // linkedWidget.type = curWidget.subType;
                 // linkedWidget.target = curWidget;

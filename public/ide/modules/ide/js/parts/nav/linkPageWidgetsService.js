@@ -123,7 +123,8 @@ ideServices.service('LinkPageWidgetsService', [function () {
                     var keys = curWidget.info.keys;
                     keys.forEach(function (key, index) {
                         linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
-                    })
+                    });
+                    break;
                 default:
                     // linkedWidget.type = curWidget.subType;
                     // linkedWidget.target = curWidget;
