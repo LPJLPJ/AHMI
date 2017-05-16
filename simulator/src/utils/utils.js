@@ -6,6 +6,10 @@ var _ = require('lodash');
 var ctx;
 Utils.linkPageWidgets = linkPageWidgets;
 
+function linkPageAllWidgets(page) {
+    page.linkedAllWidgets = linkWidgets(getPageAllInteractiveWidgets(page));
+}
+
 function linkPageWidgets(page) {
     page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
 }
