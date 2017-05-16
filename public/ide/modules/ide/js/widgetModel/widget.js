@@ -53,6 +53,9 @@
                 width:this.info.width,
                 height:this.info.height
             },
+            enableHighLight:this.enableHighLight||false,
+            highLightNum:0,
+            maxHighLightNum:this.maxHighLightNum||0,
             mode:this.mode,
             tag:this.tag,
             layers:this.layers,
@@ -149,6 +152,8 @@
             layerHighlight.subLayers.color = new ColorSubLayer(colorElems);
             layerHighlight.hidden = true;
             layers.push(layerHighlight)
+            this.enableHighLight  = true;
+            this.maxHighLightNum = 1;
         }
         this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)

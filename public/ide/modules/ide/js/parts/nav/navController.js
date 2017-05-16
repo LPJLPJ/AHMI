@@ -799,8 +799,21 @@
             for (var i = 0; i < temp.project.pageList.length; i++) {
                 LinkPageWidgetsService.linkPageAllWidgets(temp.project.pageList[i]);
             }
+            
             window.projectData = temp.project;
 
+        }
+
+        // function addLinkWidgetInfoForPage(page) {
+        //     if (page && page.linkedAllWidgets&&page.linkedAllWidgets.length) {
+        //         var len = page.linkedAllWidgets.length
+        //     }
+        // }
+
+        function addLinkWidgetInfo(widget,pre,next,totalNum) {
+            widget.preWidget = pre;
+            widget.nextWidget = next;
+            widget.totalNum = totalNum;
         }
 
 

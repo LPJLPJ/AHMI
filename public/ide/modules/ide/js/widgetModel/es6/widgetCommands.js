@@ -58,6 +58,34 @@
                     set('this.layers.1.hidden',0)
                 }
             }
+        `,
+        onKeyBoardLeft:`
+          var(tMaxHighLightNum,0)
+          set(tMaxHighLightNum,'this.maxHighLightNum')
+          if (tMaxHighLightNum>0) {
+            var(tHighLightNum,0)
+            set(tHighLightNum,'this.highLightNum')
+            if (tHighLightNum==1) {
+              //hashighlight
+              set('this.layers.2.hidden',0)
+            }else{
+              set('this.layers.2.hidden',1)
+            }
+          }
+        `,
+        onKeyBoardRight:`
+          var(tMaxHighLightNum,0)
+          set(tMaxHighLightNum,'this.maxHighLightNum')
+          if (tMaxHighLightNum>0) {
+            var(tHighLightNum,0)
+            set(tHighLightNum,'this.highLightNum')
+            if (tHighLightNum==1) {
+              //hashighlight
+              set('this.layers.2.hidden',0)
+            }else{
+              set('this.layers.2.hidden',1)
+            }
+          }
         `
     };
     WidgetCommands['ButtonGroup'] = {

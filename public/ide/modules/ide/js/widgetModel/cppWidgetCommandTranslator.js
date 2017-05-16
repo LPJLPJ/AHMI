@@ -167,7 +167,9 @@
         new Attr('mWDGEnterHighAlarmAction'),
         new Attr('mWDGLeaveHighAlarmAction'),
         new Attr('mWDGMouseReleaseAction'),
-        new Attr('mWDGOldValueInit')
+        new Attr('mWDGOldValueInit'),
+        new Attr('maxHighLightNum'),
+        new Attr('highLightNum')
     ]
 
     var cppWidgetAttrsTable = {}
@@ -212,7 +214,9 @@
         otherAttrs:'otherAttrs',
         innerX:'mWDGMouseInnerX',
         innerY:'mWDGMouseInnerY',
-        oldValueInit:'mWDGOldValueInit'
+        oldValueInit:'mWDGOldValueInit',
+        maxHighLightNum:'maxHighLightNum',
+        highLightNum:'highLightNum'
     }
 
 

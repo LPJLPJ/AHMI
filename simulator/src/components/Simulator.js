@@ -898,6 +898,35 @@ module.exports =   React.createClass({
     compareZIndex: function (canvasA, canvasB) {
         return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
     },
+    addLinkWidgetInfo:function (widget,pre,next,totalNum) {
+        widget.preWidget = pre;
+        widget.nextWidget = next;
+        widget.totalNum = totalNum;
+    },
+    addLinkWidgetInfoForPage:function (page) {
+        if (page && page.linkedAllWidgets) {
+            var len = page.linkedAllWidgets.length;
+            if (len) {
+                var widgets = page.linkedAllWidgets;
+                var pre;
+                var next;
+                for(var i=0;i<len;i++){
+                    if (i<1) {
+                        pre = null;
+                    }else{
+                        pre = widgets[i-1].target
+                    }
+
+                    if (i>=len-1) {
+                        next = null
+                    }else{
+                        next = widgets[i+1].target
+                    }
+                    this.addLinkWidgetInfo(widgets[i].target,pre,next,len)
+                }
+            }
+        }
+    },
     drawPage:function (page,options) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
@@ -911,6 +940,14 @@ module.exports =   React.createClass({
         var maxD = -100;
         var hWidth = canvas.width/2
         var hHeight = canvas.height/2;
+        //check linkedAllWidgets and add linkedInfo for widgets;widget api
+        // if (!page.addedLinkInfo) {
+
+        //     this.addLinkWidgetInfoForPage(page)
+        //     console.log('page',page)
+        //     page.addedLinkInfo = true;
+        // }
+        console.log('page',page)
         if (!page.state || page.state == LoadState.notLoad) {
             page.state = LoadState.willLoad
             //generate load trigger
@@ -4333,7 +4370,6 @@ module.exports =   React.createClass({
         }
     },
     handleMoveNext: function (direction) {
-        lg('move',direction)
         var page = this.state.project.pageList[this.state.curPageIdx];
         var curDirection;
         if (direction === 'left') {
@@ -4341,7 +4377,9 @@ module.exports =   React.createClass({
         } else {
             curDirection = 'right';
         }
+        console.log(curDirection)
         // console.log(page);
+        /*old logic
         if (this.simState.inModifingState){
             //handle modifing highlighted widget
             if (page && page.linkedWidgets){
@@ -4376,8 +4414,85 @@ module.exports =   React.createClass({
 
             }
         }
+        */
+        //prepare highLightNum
+        var lastWidget
+        var curWidget
+        if (this.simState.inModifingState){
+            //handle modifing highlighted widget
+            if (page && page.linkedAllWidgets){
+                curWidget = page.linkedAllWidgets[page.curHighlightIdx].target;
+                if (curDirection=='right') {
+                    this.interpretGeneralCommand(curWidget,'onKeyBoardRight')
+                }else{
+                    this.interpretGeneralCommand(curWidget,'onKeyBoardLeft')
+                }
+            }
+        }else{
+            if (page && page.linkedAllWidgets && page.linkedAllWidgets.length) {
+                if (page.curHighlightIdx === undefined) {
+                    page.curHighlightIdx = 0;
+                    curWidget = page.linkedAllWidgets[page.curHighlightIdx].target
+                    curWidget.highLightNum = 1;
+                    // this.interpretGeneralCommand(curWidget,'onKeyboard')
+                    if (curDirection=='right') {
+                        this.interpretGeneralCommand(curWidget,'onKeyBoardRight')
+                    }else{
+                        this.interpretGeneralCommand(curWidget,'onKeyBoardLeft')
+                    }
+                } else {
+                    lastWidget = page.linkedAllWidgets[page.curHighlightIdx].target
+                    
+                    if (curDirection === 'right') {
+
+                        
+                        if (page.curHighlightIdx+1 >= page.linkedAllWidgets.length) {
+                            
+                        }else{
+                            page.curHighlightIdx+=1
+                            curWidget = page.linkedAllWidgets[page.curHighlightIdx].target
+                            if (curWidget == lastWidget) {
+                                curWidget.highLightNum+=1
+                                this.interpretGeneralCommand(curWidget,'onKeyBoardRight')
+                            }else{
+                                lastWidget.highLightNum = 0
+                                curWidget.highLightNum = 1
+                                this.interpretGeneralCommand(lastWidget,'onKeyBoardRight')
+                                this.interpretGeneralCommand(curWidget,'onKeyBoardRight')
+                            }
+                        }
+                        
+                    } else {
+                        if (page.curHighlightIdx-1 <0) {
+                            
+                        }else{
+                            page.curHighlightIdx-=1
+                            curWidget = page.linkedAllWidgets[page.curHighlightIdx].target
+                            if (curWidget == lastWidget) {
+                                curWidget.highLightNum-=1
+                                this.interpretGeneralCommand(curWidget,'onKeyBoardLeft')
+                            }else{
+                                lastWidget.highLightNum=0
+                                curWidget.highLightNum = curWidget.maxHighLightNum
+                                this.interpretGeneralCommand(lastWidget,'onKeyBoardLeft')
+                                this.interpretGeneralCommand(curWidget,'onKeyBoardLeft')
+                            }
+                        }
+                        
+                    }
 
 
+                }
+                
+
+
+            }
+        }
+
+
+
+    },
+    handleWidgetKeyboardMove:function (linkedAllWidgets,i,next,minus) {
     },
     getRelativeRect:function (e) {
         var clientRect = e.target.getBoundingClientRect()

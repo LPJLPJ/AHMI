@@ -124,6 +124,12 @@ ideServices.service('LinkPageWidgetsService', [function () {
                     keys.forEach(function (key, index) {
                         linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
                     })
+                    break;
+                case 'general':
+                    for(var j=0;j<curWidget.maxHighLightNum;j++){
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,j,curWidget.info.absoluteLeft,curWidget.info.absoluteTop))
+                    }
+                break;
                 default:
                     // linkedWidget.type = curWidget.subType;
                     // linkedWidget.target = curWidget;
@@ -206,6 +212,13 @@ ideServices.service('LinkPageWidgetsService', [function () {
             case 'MyInputKeyboard':
                 is = true;
                 break;
+            case 'general':
+                if (widget.enableHighLight) {
+                    is = true
+                }else{
+                    is = false
+                }
+            break;
             default:
                 is = false;
         }
