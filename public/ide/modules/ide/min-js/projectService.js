@@ -4055,16 +4055,6 @@ ideServices
                 //_successCallback&&_successCallback();
             }
 
-            /**
-             *
-             * @param _option
-             * @param _successCallback
-             * @constructor
-             */
-
-            function sortObjects(objArray){
-
-            }
 
             this.ChangeAttributeZIndex= function (_option, _successCallback) {
                 var currentOperate=SaveCurrentOperate();
@@ -4162,7 +4152,7 @@ ideServices
                         }
                     }
                 }else{
-                    //默认返回
+                    //无匹配返回
                     return
                 }
 
