@@ -179,9 +179,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyLayer.prototype.loadAll= function (layerId,cb) {
 
         var backgroundImg = new Image();
-
-        var layer=ProjectService.getLevelById(layerId);
-
+        var layer=ProjectService.getLevelById(layerId)
         var layerWidth=layer.info.width/this.initScale.X;
         var layerHeight=layer.info.height/this.initScale.Y;
 
@@ -292,7 +290,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.arrange=level.info.arrange;
             this.cursor=level.info.cursor;
             this.thresholdModeId=level.info.thresholdModeId||'1';
-            this.threshold1=level.info.threshold1||null;
+            this.threshold1=level.info.tlhreshold1||null;
             this.threshold2=level.info.threshold2||null;
 
             this.backgroundColor=level.texList[0].slices[0].color;

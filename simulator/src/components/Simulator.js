@@ -1963,7 +1963,7 @@ module.exports =   React.createClass({
                         case 'vertical':
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, null, drawColor);
                             if (cursor){
-                                var cursorSlice = widget.texList[2].slices[0];
+                                var cursorSlice = widget.texList[widget.texList.length-1].slices[0];
                                 this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
                              }
                             break;
@@ -1971,7 +1971,7 @@ module.exports =   React.createClass({
                         default:
                             this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, null, drawColor);
                             if (cursor){
-                                var cursorSlice = widget.texList[2].slices[0];
+                                var cursorSlice = widget.texList[widget.texList.length-1].slices[0];
                                 this.drawCursor(width*curScale+curX,curY,width,height,true,width*(1-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
@@ -3954,8 +3954,8 @@ module.exports =   React.createClass({
     },
     getRelativeRect:function (e) {
         var clientRect = e.target.getBoundingClientRect()
-        var x = Math.round(e.pageX - clientRect.left);
-        var y = Math.round(e.pageY - clientRect.top);
+        var x = Math.round(e.clientX - clientRect.left);
+        var y = Math.round(e.clientY - clientRect.top);
 
         return {
             x:x,

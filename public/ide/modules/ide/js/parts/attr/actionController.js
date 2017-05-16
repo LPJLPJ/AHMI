@@ -57,7 +57,6 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         switch (currentSelectedObject.type) {
             case Type.MyButton:
             case Type.MyNumber:
-            case Type.MySlide:
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyButtonGroup:
@@ -66,11 +65,12 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             case Type.MyPage:
             case Type.MyNum:
             case Type.MyImage:
-            case Type.MySwitch:
             case Type.MyScriptTrigger:
             case Type.MySlideBlock:
                 $scope.showActionPanel = true;
                 break;
+            case Type.MySlide:
+            case Type.MySwitch:
             default:
                 $scope.showActionPanel = false;
 

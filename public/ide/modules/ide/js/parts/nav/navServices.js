@@ -24,18 +24,23 @@ ideServices.
     this.getSubLayerStatus=function(){
         var selectObj=ProjectService.getCurrentSelectObject();
         return selectObj.type==Type.MyLayer;
-    }
+    };
     this.getWidgetStatus= function () {
         return !ProjectService.isEditingPage();
-    }
+    };
+
+    this.getPageStatus = function(){
+        var selectObj = ProjectService.getCurrentSelectObject();
+        return selectObj.type==Type.MyPage;
+    };
 
     this.getCopyStatus= function () {
         return (ProjectService.getCurrentSelectObject().type!=Type.MyPage&&ProjectService.getCurrentSelectObject().type!=Type.MySubLayer)
-    }
+    };
 
     this.getPasteStatus= function () {
         return ProjectService.shearPlateEnable();
-    }
+    };
 
     this.DoCopy= function (_callback) {
         if (!_self.getCopyStatus()){
@@ -79,7 +84,7 @@ ideServices.
             _callback&&_callback();
 
         });
-    }
+    };
 
 
     var deleting=false;     //删除中标志位,防止连续删除
@@ -164,7 +169,7 @@ ideServices.
         OperateQueService.undo(function () {
             undoing=false;
             _callback&&_callback();
-        })
+        });
         $timeout(function () {
             undoing=false;
         },800);
@@ -193,4 +198,4 @@ ideServices.
 
 
 
-    }])
+    }]);
