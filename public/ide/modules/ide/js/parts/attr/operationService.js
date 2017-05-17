@@ -21,7 +21,7 @@ ideServices.service('OperationService',[function () {
         ['DIV','/'],
         ['MOD','%'],
         ['GOTO','->'],
-        ['RET','<-'],
+        // ['RET','<-'],
         ['IF','if'],
         ['WHILE','while'],
         ['ELSE','else'],
