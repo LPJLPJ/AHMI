@@ -126,7 +126,7 @@ add:
 
 2017.5.15
 fix:
-    1. copy page bug 
+    1. copy page bug
     2. mulitiColor progress's cursor not display in simulator
     3. remove Slide and Switch widget's action
     4. change some anmiation logic
