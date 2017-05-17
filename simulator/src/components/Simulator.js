@@ -1160,7 +1160,7 @@ module.exports =   React.createClass({
             // subCanvas.info.w = w;
             // subCanvas.info.h = h;
             //generate load trigger
-            this.handleTargetAction(subCanvas, 'Load')
+            
             //transition animation
             var moveX = w;
             var moveY = 0;
@@ -1187,7 +1187,8 @@ module.exports =   React.createClass({
                         }.bind(this),function () {
                             // offctx.restore()
                             subCanvas.translate = null;
-                        })
+                            this.handleTargetAction(subCanvas, 'Load')
+                        }.bind(this))
                         break;
                     case 'MOVE_RL':
                         AnimationManager.step(w,0,0,0,duration,frames,easing,function (deltas) {
@@ -1204,7 +1205,8 @@ module.exports =   React.createClass({
                         }.bind(this),function () {
                             // offctx.restore()
                             subCanvas.translate = null;
-                        })
+                            this.handleTargetAction(subCanvas, 'Load')
+                        }.bind(this))
                         break;
                     case 'SCALE':
                         var beforeTranslateMatrix = [
@@ -1240,12 +1242,14 @@ module.exports =   React.createClass({
                             this.draw(null,options);
                         }.bind(this),function () {
                             subCanvas.transform = null
-                        })
+                            this.handleTargetAction(subCanvas, 'Load')
+                        }.bind(this))
 
 
 
                         break;
                     default:
+                        this.handleTargetAction(subCanvas, 'Load')
                         this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
 
                 }
