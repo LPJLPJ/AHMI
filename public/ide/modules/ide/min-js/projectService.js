@@ -1492,9 +1492,10 @@ ideServices
             this.CopyPageByIndex = function (_index, _successCallback) {
                 _self.OnPageSelected(_index, function () {
 
+                    var tempPage = _.cloneDeep(project.pages[_index]);
                     shearPagePlate = {
                         type: Type.MyPage,
-                        objects: [_.cloneDeep(project.pages[_index])]
+                        objects: [tempPage]
                     };
 
                     _successCallback&&_successCallback();
@@ -1690,12 +1691,38 @@ ideServices
                     console.warn('当前剪切板中不是页面');
                     return;
                 }
-
                 var pastePage = _getCopyPage(shearPagePlate.objects[0]);
-                console.log('pastePage',pastePage)
 
+                //修改page中的所有layer sublayer  widget的id
                 pastePage.id = Math.random().toString(36).substr(2);
                 pastePage.$$hashKey = undefined;
+                var layers = pastePage.layers;
+                for(var i=0;i<layers.length;i++){
+                    var proJsonObj = pastePage.proJsonStr.objects;
+                    proJsonObj.forEach(function(item){
+                        if(item.id==layers[i].id){
+                            item.id = Math.random().toString(36).substr(2);
+                            layers[i].id = item.id;
+                        }
+                    });
+                    var subLayers = layers[i].subLayers;
+                    for(var j=0;j<subLayers.length;j++){
+                        subLayers[j].id = Math.random().toString(36).substr(2);
+                        proJsonObj = JSON.parse(subLayers[j].proJsonStr);
+                        var widgets = subLayers[j].widgets;
+                        for(var k=0;k<widgets.length;k++){
+                            proJsonObj.objects.forEach(function(item){
+                               if(item.id==widgets[k].id){
+                                   console.log('find widget');
+                                   item.id = Math.random().toString(36).substr(2);
+                                   widgets[k].id = item.id
+                               }
+                            });
+                        }
+                        subLayers[j].proJsonStr = JSON.stringify(proJsonObj);
+                    }
+                }
+                console.log('new pastePage',pastePage);
                 this.AddNewPage(pastePage, function () {
                     _successCallback && _successCallback();
                 });
@@ -4030,21 +4057,10 @@ ideServices
                 //_successCallback&&_successCallback();
             }
 
-            /**
-             *
-             * @param _option
-             * @param _successCallback
-             * @constructor
-             */
-
-            function sortObjects(objArray){
-
-            }
 
             this.ChangeAttributeZIndex= function (_option, _successCallback) {
                 var currentOperate=SaveCurrentOperate();
                 var object=getCurrentSelectObject();
-
                 if (object.type==Type.MyLayer){
                     var pageNode = CanvasService.getPageNode();
                     var fabLayer = null;
@@ -4080,8 +4096,7 @@ ideServices
                     currentPage.layers.sort(function(item1,item2){
                         return item1.zIndex-item2.zIndex;
                     });
-                }
-                else if (Type.isWidget(object.type)){
+                }else if (Type.isWidget(object.type)){
                     var subLayerNode = CanvasService.getSubLayerNode();
                     var fabWidget = null;
                     var currentSubLayer=getCurrentSubLayer();
@@ -4114,6 +4129,33 @@ ideServices
                     currentSubLayer.widgets.sort(function(item1,item2){
                         return  item1.zIndex-item2.zIndex;
                     });
+                }else if(object.type==Type.MySubLayer){
+                    var currentLayer = getCurrentLayer();
+                    var subLayers = currentLayer.subLayers;
+                    var currentSubLayer = getCurrentSubLayer();
+                    var temp;
+                    for(var i=0;i<subLayers.length;i++){
+                        if(subLayers[i].id==currentSubLayer.id){
+                            if(_option.index==0){
+                                if(i>0){
+                                    temp = subLayers[i-1];
+                                    subLayers[i-1] = currentSubLayer;
+                                    subLayers[i] = temp;
+                                }
+                            }else if(_option.index==1){
+                                if(i<subLayers.length-1){
+                                    temp = subLayers[i+1];
+                                    subLayers[i+1] = currentSubLayer;
+                                    subLayers[i] = temp;
+                                }
+                            }
+                            currentLayer.showSubLayer = subLayers[0];
+                            break;
+                        }
+                    }
+                }else{
+                    //无匹配返回
+                    return
                 }
 
                 _successCallback&&_successCallback(currentOperate);

@@ -308,7 +308,7 @@
                     curScope.project.version = window.ideVersion;
                     curScope.project.CANId = NavModalCANConfigService.getCANId();
                     var currentProject = curScope.project;
-                    console.log('currentProject',currentProject);
+                    //console.log('currentProject',currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
                     scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
                         _.forEach(currentProject.pages,function (_page) {
@@ -504,6 +504,8 @@
                 $scope.component.tool.pasteStatus=NavService.getPasteStatus();
 
                 $scope.component.tool.sublayerStatus=NavService.getSubLayerStatus();
+
+                $scope.component.tool.pageStatus = NavService.getPageStatus();
             })
         }
 
@@ -698,8 +700,6 @@
 
         function generateDataFile(format){
             if(format=='local'){
-                
-                //console.log('keke',format);
                 var curScope = {};
                 ProjectService.getProjectCopyTo(curScope);
                 curScope.project.resourceList = ResourceService.getAllResource();
@@ -721,7 +721,6 @@
                         //data:{currentProject:currentProject}
                     })
                     .success(function(data,status,xhr){
-                        //console.log(data);
                         window.spinner&&window.spinner.hide();
                         if(data=='ok'){
                             toastr.info('生成本地版成功');
