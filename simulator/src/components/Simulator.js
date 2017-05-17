@@ -536,9 +536,9 @@ module.exports =   React.createClass({
         }else if (index>totalLength-1) {
             return;
         }
-        if (index == 0){
-            console.log('start')
-        }
+        // if (index == 0){
+        //     console.log('start')
+        // }
         var step = 1;
         var curInst = cmds[index]
         // console.log(curInst)
@@ -679,8 +679,11 @@ module.exports =   React.createClass({
                 }.bind(this),1000/30)
                 
             break;
+            case 'executeaction':
+                console.log('trigger action: ',curInst[1])
+            break;
             case 'print':
-                console.log('print value: ',this.evalParam(widget,curInst[1]),curInst[2]||'')
+                console.log('print value: ',this.evalParam(widget,curInst[1]),this.evalParam(widget,curInst[2]||''))
                 break;
 
             default:
@@ -947,7 +950,6 @@ module.exports =   React.createClass({
         //     console.log('page',page)
         //     page.addedLinkInfo = true;
         // }
-        console.log('page',page)
         if (!page.state || page.state == LoadState.notLoad) {
             page.state = LoadState.willLoad
             //generate load trigger
@@ -4269,42 +4271,48 @@ module.exports =   React.createClass({
     },
     handleOk: function (type) {
         var page = this.state.project.pageList[this.state.curPageIdx];
-        if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
-            //has highlight
-            var curLinkWidget = page.linkedWidgets[page.curHighlightIdx];
-            switch (curLinkWidget.type) {
-                case 'MyButtonGroup':
-                    curLinkWidget.target.curButtonIdx = curLinkWidget.value + 1;
-                    break;
-                case 'MyDateTime':
+        // if (page && page.linkedWidgets && page.curHighlightIdx != undefined) {
+        //     //has highlight
+        //     var curLinkWidget = page.linkedWidgets[page.curHighlightIdx];
+        //     switch (curLinkWidget.type) {
+        //         case 'MyButtonGroup':
+        //             curLinkWidget.target.curButtonIdx = curLinkWidget.value + 1;
+        //             break;
+        //         case 'MyDateTime':
 
-                    if (type === 'release'){
+        //             if (type === 'release'){
 
-                        if (this.simState.inModifingState){
-                            this.simState.inModifingState = false;
-                        }else{
-                            this.simState.inModifingState = true;
-                        }
-                    }
-                    break;
+        //                 if (this.simState.inModifingState){
+        //                     this.simState.inModifingState = false;
+        //                 }else{
+        //                     this.simState.inModifingState = true;
+        //                 }
+        //             }
+        //             break;
+        //     }
+
+        //     this.mouseState.position.x = 0;
+        //     this.mouseState.position.y = 0;
+        //     if (type === 'press') {
+        //         this.mouseState.state = 'press';
+        //         this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
+        //         this.handleTargetAction(curLinkWidget.target, 'Press');
+        //     } else if (type === 'release') {
+        //         this.mouseState.state = 'release';
+        //         this.handleElementRelease(curLinkWidget.target, _.cloneDeep(this.mouseState));
+        //         this.handleTargetAction(curLinkWidget.target, 'Release');
+        //     }
+        // }
+
+        if (page && page.linkedAllWidgets && page.linkedAllWidgets.length && page.curHighlightIdx != undefined) {
+            var curLinkWidget = page.linkedAllWidgets[page.curHighlightIdx].target
+            if (type=='press') {
+                // this.interpretGeneralCommand(curLinkWidget,'onMouseDown')
+            }else{
+                this.interpretGeneralCommand(curLinkWidget,'onKeyBoardOK')
+                // this.interpretGeneralCommand(curLinkWidget,'onMouseUp')
             }
-
-            this.mouseState.position.x = 0;
-            this.mouseState.position.y = 0;
-            if (type === 'press') {
-                this.mouseState.state = 'press';
-                this.handleWidgetPress(curLinkWidget.target, _.cloneDeep(this.mouseState));
-                this.handleTargetAction(curLinkWidget.target, 'Press');
-            } else if (type === 'release') {
-                this.mouseState.state = 'release';
-                this.handleElementRelease(curLinkWidget.target, _.cloneDeep(this.mouseState));
-                this.handleTargetAction(curLinkWidget.target, 'Release');
-            }
-
-
-
-
-
+            
         }
     },
     handleModifyHighlightingWidget:function (widget,direction) {
@@ -4609,7 +4617,6 @@ module.exports =   React.createClass({
                 break;
             // case 'MyInputKeyboard':
             case 'general':
-            console.log('press general')
                 this.interpretGeneralCommand(widget,'onMouseDown');
                 needRedraw = true;
                 break;

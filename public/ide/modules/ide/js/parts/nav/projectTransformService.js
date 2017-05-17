@@ -223,12 +223,26 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                 break;
                 case 'MyButtonGroup':
                     //console.log(targetWidget)
+                    highLight = !targetWidget.info.disableHighlight;
                     var slices = [];
-                   targetWidget.texList.map(function (tex) {
-                        slices.push(tex.slices[0])
-                        slices.push(tex.slices[1])
-                    })
-                    generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices)
+                    var curTex;
+                    if (highLight) {
+                       var highLightTex = targetWidget.texList[targetWidget.texList.length-1].slices[0];
+                       for(var i=0;i<targetWidget.info.count;i++){
+                            curTex = targetWidget.texList[i]
+                            slices.push(curTex.slices[0])
+                            slices.push(curTex.slices[1])
+                            slices.push(highLightTex)
+                        }
+                    }else{
+                        for(var i=0;i<targetWidget.info.count;i++){
+                            curTex = targetWidget.texList[i]
+                            slices.push(curTex.slices[0])
+                            slices.push(curTex.slices[1])
+                        }
+                    }
+                    
+                    generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices,highLight)
                     generalWidget = generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
 

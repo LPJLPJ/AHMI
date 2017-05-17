@@ -86,6 +86,9 @@
               set('this.layers.2.hidden',1)
             }
           }
+        `,
+        onKeyBoardOK:`
+          executeaction(5)
         `
     };
     WidgetCommands['ButtonGroup'] = {
@@ -97,7 +100,15 @@
             var(b,0)
             var(c,0)
             set(c,'this.layers.length')
-            minus(c,2)
+            var(tMaxHighLightNum,0)
+            set(tMaxHighLightNum,'this.maxHighLightNum')
+            var(tSingleButtonLayers,0)
+            if (tMaxHighLightNum>0) {
+              set(tSingleButtonLayers,3)
+            }else{
+              set(tSingleButtonLayers,2)
+            }
+            minus(c,tSingleButtonLayers)
             set(a,'this.innerX')
             set(b,'this.innerY')
             var(lx,0)
@@ -119,14 +130,14 @@
                     if(rx>a){
                         if(b>=ly){
                             if(ry>b){
-                                divide(c,2)
+                                divide(c,tSingleButtonLayers)
                                 setTag(c)
                                 set(c,0)
                             }
                         }
                     }
                 }
-                minus(c,2)
+                minus(c,tSingleButtonLayers)
             }
         `,
         onMouseUp:`
@@ -137,26 +148,105 @@
             var(a,0)
             var(b,0)
             var(c,0)
+            var(tMaxHighLightNum,0)
+            set(tMaxHighLightNum,'this.maxHighLightNum')
+            var(tSingleButtonLayers,0)
+            if (tMaxHighLightNum>0) {
+              set(tSingleButtonLayers,3)
+            }else{
+              set(tSingleButtonLayers,2)
+            }
             set(a,'this.layers.length')
             set(c,a)
-            divide(c,2)
+            divide(c,tSingleButtonLayers)
             while(a>0){
-                minus(a,1)
-                set('this.layers.a.hidden',0)
-                minus(a,1)
-                set('this.layers.a.hidden',1)
+                if (tMaxHighLightNum>0) {
+                  minus(a,1)
+                  minus(a,1)
+                  set('this.layers.a.hidden',0)
+                  minus(a,1)
+                  set('this.layers.a.hidden',1)
+                }else{
+                  minus(a,1)
+                  set('this.layers.a.hidden',0)
+                  minus(a,1)
+                  set('this.layers.a.hidden',1)
+                }
+                
             }
             getTag(a)
             if(a>=0){
                 if(c>a){
-                    multiply(a,2)
+                    multiply(a,tSingleButtonLayers)
                     set('this.layers.a.hidden',0)
                     add(a,1)
                     set('this.layers.a.hidden',1)
                 }
             }
 
-        `
+        `,
+        onKeyBoardLeft:`
+          var(tMaxHighLightNum,0)
+          set(tMaxHighLightNum,'this.maxHighLightNum')
+          if (tMaxHighLightNum>0) {
+            var(tHighLightNum,0)
+            set(tHighLightNum,'this.highLightNum')
+
+            if (tHighLightNum>0) {
+              minus(tHighLightNum,1)
+              multiply(tHighLightNum,3)
+              add(tHighLightNum,2)
+
+              var(tTotalLayers,0)
+              set(tTotalLayers,'this.layers.length')
+              if (tHighLightNum<tTotalLayers) {
+                //valid
+                //reset 
+                var(tCurLayer,0)
+                while(tMaxHighLightNum>0){
+                  minus(tMaxHighLightNum,1)
+                  set(tCurLayer,tMaxHighLightNum)
+                  multiply(tCurLayer,3)
+                  add(tCurLayer,2)
+                  set('this.layers.tCurLayer.hidden',1)
+                }
+                //set target highlight 
+                set('this.layers.tHighLightNum.hidden',0)
+              }
+            }
+          }
+        `,
+        onKeyBoardRight:`
+          var(tMaxHighLightNum,0)
+          set(tMaxHighLightNum,'this.maxHighLightNum')
+          if (tMaxHighLightNum>0) {
+            var(tHighLightNum,0)
+            set(tHighLightNum,'this.highLightNum')
+
+            if (tHighLightNum>0) {
+              minus(tHighLightNum,1)
+              multiply(tHighLightNum,3)
+              add(tHighLightNum,2)
+
+              var(tTotalLayers,0)
+              set(tTotalLayers,'this.layers.length')
+              if (tHighLightNum<tTotalLayers) {
+                //valid
+                //reset 
+                var(tCurLayer,0)
+                while(tMaxHighLightNum>0){
+                  minus(tMaxHighLightNum,1)
+                  set(tCurLayer,tMaxHighLightNum)
+                  multiply(tCurLayer,3)
+                  add(tCurLayer,2)
+                  set('this.layers.tCurLayer.hidden',1)
+                }
+                //set target highlight 
+                set('this.layers.tHighLightNum.hidden',0)
+              }
+            }
+          }
+        `,
     };
 
     WidgetCommands['Dashboard'] = {
@@ -460,7 +550,6 @@
                   var(w,'this.layers.0.width')
                   var(h,'this.layers.0.height')
                   if(m==0){
-                      print(m,'m')
                       multiply(temp1,w)
                       divide(temp1,temp2)
                       set('this.layers.1.subLayers.roi.p1x',0)
@@ -569,9 +658,7 @@
                   }
                }
                var(cur,'this.otherAttrs.19')
-               print(cur,'cur')
                if(cur==1){
-                  print(temp1,'temp1')
                   set('this.layers.2.x',temp1)
                }
               }
@@ -619,7 +706,6 @@
                 var(w,'this.layers.0.width')
                 var(h,'this.layers.0.height')
                 if(m==0){
-                    print(m,'m')
                     multiply(temp1,w)
                     divide(temp1,temp2)
                     set('this.layers.1.subLayers.roi.p1x',0)
@@ -728,9 +814,8 @@
                 }
              }
              var(cur,'this.otherAttrs.19')
-             print(cur,'cur')
              if(cur==1){
-                print(temp1,'temp1')
+               
                 set('this.layers.2.x',temp1)
              }
             }

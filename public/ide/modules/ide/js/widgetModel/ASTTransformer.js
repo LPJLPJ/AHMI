@@ -127,6 +127,9 @@
 					case 'checkalarm':
 						insts.push(['checkalarm'])
 					break;
+					case 'executeaction':
+						insts.push(['executeaction',Param(judgeType(parameters[0]),parameters[0].value)])
+					break;
 					case 'startanimation':
 						insts.push(['startanimation'])
 					break;

@@ -89,7 +89,8 @@
         'OPSETLAYOFFSETTE',
         'OPGETLAYOFFSET',
         'OPCHKVALALARM',
-        'OPNOP'
+        'OPNOP',
+        'OPEXECUTEACTION'
 
     ]
     var cppOPTable = {}
@@ -393,7 +394,8 @@
         OPSETLAYOFFSETTE:new Instruction('OPSETLAYOFFSETTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
         OPGETLAYOFFSET:new Instruction('OPGETLAYOFFSET',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
         OPCHKVALALARM:new Instruction('OPCHKVALALARM',new InstOperand(7,true)),
-        OPNOP:new Instruction('OPNOP',new InstOperand(7,true))
+        OPNOP:new Instruction('OPNOP',new InstOperand(7,true)),
+        OPEXECUTEACTION:new Instruction('OPEXECUTEACTION',new InstOperand(7,true))
 
     }
     for (var i=0;i<opCodes.length;i++){
@@ -1075,7 +1077,11 @@
             case 'checkalarm':
                 inst = ['OPCHKVALALARM']
             break;
+            case 'executeaction':
+                inst = ['OPEXECUTEACTION',command[1].value]
+            break;
             default:
+                console.log('warning: ',op)
                 inst = ['OPNOP']
 
         }
@@ -1098,7 +1104,7 @@
         var op = cmd[0]
         var cmdProto = cppWidgetInsts[op];
         if (!cmdProto) {
-            console.log(cmd)
+            console.log('unsupported op',op)
         }
         var bytes = 0;
         var reserve = false;
