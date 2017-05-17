@@ -20254,7 +20254,6 @@
 	                options = {};
 	            }
 	            options.reLinkWidgets = true;
-	            this.handleTargetAction(page, 'Load');
 
 	            switch (method) {
 	                case 'MOVE_LR':
@@ -20270,7 +20269,8 @@
 	                    }.bind(this), function () {
 	                        page.translate = null;
 	                        options.pageAnimate = false;
-	                    });
+	                        this.handleTargetAction(page, 'Load');
+	                    }.bind(this));
 	                    break;
 	                case 'MOVE_RL':
 	                    AnimationManager.step(offcanvas.width, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20285,7 +20285,8 @@
 	                    }.bind(this), function () {
 	                        page.translate = null;
 	                        options.pageAnimate = false;
-	                    });
+	                        this.handleTargetAction(page, 'Load');
+	                    }.bind(this));
 	                    break;
 	                case 'MOVE_TB':
 	                    AnimationManager.step(-offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20300,7 +20301,8 @@
 	                    }.bind(this), function () {
 	                        page.translate = null;
 	                        options.pageAnimate = false;
-	                    });
+	                        this.handleTargetAction(page, 'Load');
+	                    }.bind(this));
 	                    break;
 	                case 'MOVE_BT':
 	                    AnimationManager.step(offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20315,7 +20317,8 @@
 	                    }.bind(this), function () {
 	                        page.translate = null;
 	                        options.pageAnimate = false;
-	                    });
+	                        this.handleTargetAction(page, 'Load');
+	                    }.bind(this));
 	                    break;
 	                case 'SCALE':
 	                    var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
@@ -20333,10 +20336,12 @@
 	                    }.bind(this), function () {
 	                        page.transform = null;
 	                        options.pageAnimate = false;
-	                    });
+	                        this.handleTargetAction(page, 'Load');
+	                    }.bind(this));
 
 	                    break;
 	                default:
+	                    this.handleTargetAction(page, 'Load');
 	                    this.draw(null, options);
 	            }
 	        } else {
