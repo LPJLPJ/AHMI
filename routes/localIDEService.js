@@ -60,6 +60,10 @@ localIDEService.uploadProject = function (req,res) {
     }
 };
 
+localIDEService.uploadProjectZip = function(req,res){
+
+};
+
 localIDEService.returnUserType = function(req,res){
     var username = req.body.username;
     var password = req.body.password;

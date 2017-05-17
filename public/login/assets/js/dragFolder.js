@@ -49,35 +49,48 @@
     function FileDrop(e){
         e.preventDefault();
         filedrag.className = '';
+        var items,
+            item;
         if(local){
 
         }else{
             showWrapper();
             changeUpdateState('正在预处理工程...',100);
             if(!isDropFileIsFolder(e)){
-                hideWrapper();
-                toastr.error('不合法的工程');
-                return
-            }
-            var items = e.dataTransfer.items;
-            for(var i=0;i<items.length;i++){
-                //webkitGetAsEntry is the key point
-                var item = items[i].webkitGetAsEntry();
-                if(item){
-                    var fcb = function(){
-                        hideWrapper();
-                        toastr.error('不合法的工程');
-                        legal = false;
-                    };
-                    var scb = function(item){
-                        traverseFileTree(item);
-                        setTimeout(function(){
-                            //hideWrapper();
-                            $('#uploadModal').modal({backdrop:'static',keyboard:false});
+                if(isDropFileIsZip(e)){
+                    console.log('生成的压缩包');
+                    items = e.dataTransfer.items;
+                    item = items[0].webkitGetAsEntry();
+                    item.file(function(file){
+                        formData.append('file.zip',file);
+                        sendProjectZip();
+                    });
+                }else{
+                    hideWrapper();
+                    toastr.error('不合法的工程');
+                }
+            }else{
+                items = e.dataTransfer.items;
+                for(var i=0;i<items.length;i++){
+                    //webkitGetAsEntry is the key point
+                    item = items[i].webkitGetAsEntry();
+                    if(item){
+                        var fcb = function(){
+                            hideWrapper();
+                            toastr.error('不合法的工程');
+                            legal = false;
+                        };
+                        var scb = function(item){
+                            traverseFileTree(item);
+                            setTimeout(function(){
+                                //hideWrapper();
+                                $('#uploadModal').modal({backdrop:'static',keyboard:false});
 
-                        },500);
-                    };
-                    readJSONFile(item,scb,fcb);
+                            },500);
+                        };
+                        console.log('item',item);
+                        readJSONFile(item,scb,fcb);
+                    }
                 }
             }
         }
@@ -174,7 +187,48 @@
     }
 
     /**
-     * 判断拖拽事件的目标是否为文件夹并对json进行预处理
+     * 发送压缩包至服务器
+     * @param cb
+     */
+    function sendProjectZip(cb){
+        changeUpdateState('正在上传(压缩包)',0);
+        $.ajax({
+            type:"POST",
+            url:'/upload/project/zip',
+            processData:false,
+            contentType:false,
+            data:formData,
+            success:function(data){
+                console.log(data);
+                formData = new FormData();
+                project = null;
+                changeUpdateState('上传成功,正在解析。',100);
+                //cb&&cb();
+            },
+            error:function(err){
+                console.log(err);
+                changeUpdateState('上传失败。',100);
+                cb&&cb();
+            },
+            xhr:function(){
+                var xhr = $.ajaxSettings.xhr();
+                var bar = $('#myprogress');
+                //var percent = $('#percent');
+                if(xhr.upload){
+                    xhr.upload.addEventListener('progress',function(e){
+                        var percentVal = Math.floor(e.loaded/e.total*100) + '%';
+                        //console.log('percentVal',percentVal);
+                        bar.width(percentVal);
+                        //percent.html(percentVal);
+                    },false);
+                }
+                return xhr;
+            }
+        })
+    }
+
+    /**
+     * 判断拖拽事件的目标是否为文件夹
      * @param  {obj}  e 事件
      * @return {Boolean}   [description]
      */
@@ -189,6 +243,25 @@
         var item = items[0].webkitGetAsEntry();
         if(item.isDirectory){
             return true;
+        }
+        return false;
+    }
+
+    function isDropFileIsZip(e){
+        if(!e.dataTransfer){
+            return false;
+        }
+        if(!e.dataTransfer.items){
+            return false;
+        }
+        var items = e.dataTransfer.items;
+        var item = items[0].webkitGetAsEntry();
+        var namePattern = /^file(\s?\(\d+\)?)\.zip$/g;
+        if(item.isFile){
+            if(item.name){
+                console.log('item',item);
+                return namePattern.test(item.name);
+            }
         }
         return false;
     }

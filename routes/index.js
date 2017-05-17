@@ -50,6 +50,8 @@ router.route('/releases/updapp/win/updFiles.zip')
 //upload local project
 router.route('/upload/project')
     .post(localIDEService.uploadProject);
+router.route('/upload/project/zip')
+    .post(localIDEService.uploadProjectZip);
 //return user type
 router.route('/user/checkUserType')
     .post(localIDEService.returnUserType);
