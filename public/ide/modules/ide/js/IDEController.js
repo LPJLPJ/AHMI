@@ -241,7 +241,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         //})
 
 
-
         if (data.content){
 
             //var globalProject = GlobalService.getBlankProject()
