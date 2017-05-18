@@ -4503,9 +4503,18 @@ module.exports =   React.createClass({
     handleWidgetKeyboardMove:function (linkedAllWidgets,i,next,minus) {
     },
     getRelativeRect:function (e) {
+        var originalW = e.target.width;
+        var originalH = e.target.height;
+
         var clientRect = e.target.getBoundingClientRect()
+        var ratioW = originalW/clientRect.width;
+        var ratioH = originalH/clientRect.height;
         var x = Math.round(e.clientX - clientRect.left);
         var y = Math.round(e.clientY - clientRect.top);
+        if (ratioW && ratioH) {
+            x = x*ratioW
+            y = y*ratioH
+        }
 
         return {
             x:x,
