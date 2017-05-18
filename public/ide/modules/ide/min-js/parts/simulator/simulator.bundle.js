@@ -56529,11 +56529,58 @@ module.exports = React.createClass({
         registers[key].value = value;
         this.setState({ registers: registers });
     },
+    handleViewScale: function (e) {
+        var curScale = Number(e.target.value);
+        if (curScale) {
+            //change scale
+            var canvas = this.refs.canvas;
+            var offcanvas = this.refs.offcanvas;
+            canvas.style.transform = 'scale(' + curScale + ')';
+            offcanvas.style.transform = 'scale(' + curScale + ')';
+        }
+    },
     render: function () {
         // console.log('registers',this.state.registers);
         return React.createElement(
             'div',
             { className: 'simulator' },
+            React.createElement(
+                'div',
+                { className: 'simulator-tools-wrapper' },
+                React.createElement(
+                    'div',
+                    { className: 'simulator-tools tools-scale' },
+                    React.createElement(
+                        'select',
+                        { className: 'btn btn-default', onChange: this.handleViewScale },
+                        React.createElement(
+                            'option',
+                            { value: '0.5' },
+                            '50%'
+                        ),
+                        React.createElement(
+                            'option',
+                            { value: '0.75' },
+                            '75%'
+                        ),
+                        React.createElement(
+                            'option',
+                            { value: '1' },
+                            '100%'
+                        ),
+                        React.createElement(
+                            'option',
+                            { value: '1.5' },
+                            '150%'
+                        ),
+                        React.createElement(
+                            'option',
+                            { value: '2' },
+                            '200%'
+                        )
+                    )
+                )
+            ),
             React.createElement(
                 'div',
                 { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseMove: this.handleMove, onMouseUp: this.handleRelease },

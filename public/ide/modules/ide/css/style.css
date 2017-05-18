@@ -578,6 +578,16 @@ body{
     overflow: auto;
 }
 
+.simulator-tools-wrapper{
+    padding: 0.3em;
+    text-align: left;
+}
+
+.simulator-tools{
+    
+
+}
+
 
 /*modal*/
 

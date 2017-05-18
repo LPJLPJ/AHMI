@@ -5279,10 +5279,31 @@ module.exports =   React.createClass({
         registers[key].value = value;
         this.setState({registers: registers});
     },
+    handleViewScale:function (e) {
+        var curScale = Number(e.target.value)
+        if (curScale) {
+            //change scale
+            var canvas = this.refs.canvas
+            var offcanvas = this.refs.offcanvas
+            canvas.style.transform = 'scale('+curScale+')'
+            offcanvas.style.transform = 'scale('+curScale+')'
+        }
+    },
     render: function () {
         // console.log('registers',this.state.registers);
         return (
             < div className='simulator'>
+                <div className='simulator-tools-wrapper'>
+                    <div className='simulator-tools tools-scale'>
+                        <select className='btn btn-default' onChange={this.handleViewScale}>
+                            <option value='0.5'>50%</option>
+                            <option value='0.75'>75%</option>
+                            <option value='1'>100%</option>
+                            <option value='1.5'>150%</option>
+                            <option value='2'>200%</option>
+                        </select>
+                    </div>
+                </div>
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>
                     <canvas ref='canvas' className='simulator-canvas' />
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
