@@ -742,13 +742,17 @@
 
     //DateTime
     function DateTime(x,y,w,h,info,fontStyle){
-        var dateTimeModeId = Number(info.dateTimeModeId);
-        var maxFontWidth = info.maxFontWidth;
-        var dx = 0;
-        var layers = [];
+        var dateTimeModeId = Number(info.dateTimeModeId),
+            maxFontWidth = info.maxFontWidth,
+            highLight = info.highLight,
+            dx = 0,
+            layers = [],
+            layersNum = 0;
+
         if(dateTimeModeId==0){
             //console.log('时分秒');
-            for(var i=0;i<8;i++){
+            layersNum = 8;
+            for(var i=0;i<layersNum;i++){
                 layers[i] = new Layer(dx,0,w,h);
                 if(i==2||i==5){
                     layers[i].subLayers.font = new FontSubLayer(':',fontStyle);
@@ -759,7 +763,8 @@
             }
         }else if(dateTimeModeId==1){
             //console.log('时分');
-            for(var i=0;i<5;i++){
+            layersNum = 5;
+            for(var i=0;i<layersNum;i++){
                 layers[i] = new Layer(dx,0,w,h);
                 if(i==2){
                     layers[i].subLayers.font = new FontSubLayer(':',fontStyle);
@@ -770,7 +775,8 @@
             }
         }else if(dateTimeModeId==2){
             //console.log('斜杠日期');
-            for(var i=0;i<10;i++){
+            layersNum = 10;
+            for(var i=0;i<layersNum;i++){
                 layers[i] = new Layer(dx,0,w,h);
                 if(i==4||i==7){
                     layers[i].subLayers.font = new FontSubLayer('/',fontStyle);
@@ -781,7 +787,8 @@
             }
         }else if(dateTimeModeId==3){
             //console.log('减号日期');
-            for(var i=0;i<10;i++){
+            layersNum = 10;
+            for(var i=0;i<layersNum;i++){
                 layers[i] = new Layer(dx,0,w,h);
                 if(i==4||i==7){
                     layers[i].subLayers.font = new FontSubLayer('-',fontStyle);
@@ -791,7 +798,7 @@
                 dx =  dx+maxFontWidth;
             }
         }
-        this.subType = 'Slide';
+        this.subType = 'Datetime';
         Widget.call(this,x,y,w,h,layers);
     };
     DateTime.prototype = Object.create(Widget.prototype);

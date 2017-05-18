@@ -494,8 +494,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     console.log(generalWidget)
                 break;
                 case 'MyDateTime':
-                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
-                    var fontStyle={}
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline",
+                        fontStyle={},
+                        highLight = !targetWidget.info.disableHighlight,
+                        maxFontWidth = targetWidget.info.maxFontWidth;
+
                     styleElems.split(',').forEach(function (elem) {
                         fontStyle[elem] = info[elem]
                     });
