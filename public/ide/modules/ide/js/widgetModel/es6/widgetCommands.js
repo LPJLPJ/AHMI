@@ -247,6 +247,25 @@
             }
           }
         `,
+        onKeyBoardOK:`
+          var(tHighLightNum,0)
+          set(tHighLightNum,'this.highLightNum')
+          if (tHighLightNum>0) {
+            minus(tHighLightNum,1)
+            var(tTotalLayers,0)
+            set(tTotalLayers,'this.layers.length')
+
+            divide(tTotalLayers,3)
+            if (tHighLightNum<tTotalLayers) {
+              //valid
+              //reset 
+              //set target tag
+              setTag(tHighLightNum)
+              
+            }
+          }
+
+        `
     };
 
     WidgetCommands['Dashboard'] = {
