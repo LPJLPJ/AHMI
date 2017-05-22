@@ -1244,6 +1244,15 @@
 
     WidgetCommands['DateTime'] = {
         onInitialize:`
+            var(offset,0)
+            var(len,0)
+            set(offset,'this.otherAttrs.0')
+            print(offset,'offset')
+            set(len,'this.layers.length')
+            while(offset<len){
+                set('this.layers.offset.hidden',1)
+                add(offset,1)
+            }
         `,
         onMouseUp:`
         `,
@@ -1299,6 +1308,15 @@
                     }
                 }
             }
+        `,
+        onKeyBoardLeft:`
+            
+        `,
+        onKeyBoardRight:`
+        
+        `,
+        onKeyBoardOK:`
+        
         `
     };
 

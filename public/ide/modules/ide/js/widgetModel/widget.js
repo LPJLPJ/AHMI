@@ -741,63 +741,182 @@
     Slide.prototype.constructor = Slide;
 
     //DateTime
-    function DateTime(x,y,w,h,info,fontStyle){
+    function DateTime(x,y,w,h,info,fontStyle,slices){
         var dateTimeModeId = Number(info.dateTimeModeId),
             maxFontWidth = info.maxFontWidth,
-            highLight = info.highLight,
+            sWidth = maxFontWidth,
+            sHeight = h,
+            highLight = !info.disableHighlight,
             dx = 0,
+            fontLayer = null,
+            highLightLayer = null,
+            fontLayersNum = 0,
+            highLightLayerNum = 0,
             layers = [],
-            layersNum = 0;
+            colorElems = '',
+            i = 0;
 
-        if(dateTimeModeId==0){
-            //console.log('时分秒');
-            layersNum = 8;
-            for(var i=0;i<layersNum;i++){
-                layers[i] = new Layer(dx,0,w,h);
-                if(i==2||i==5){
-                    layers[i].subLayers.font = new FontSubLayer(':',fontStyle);
-                }else{
-                    layers[i].subLayers.font = new FontSubLayer('0',fontStyle);
+        switch (dateTimeModeId){
+            case 0:
+                //console.log('时分秒');
+                fontLayersNum = 8;
+                for(i=0;i<fontLayersNum;i++){
+                    dx = i*maxFontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==2||i==5){
+                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+                    }else{
+                        fontLayer.subLayers.font = new FontSubLayer('0',fontStyle);
+                    }
+                    layers.push(fontLayer);
+                    // dx = dx+maxFontWidth;
                 }
-                dx = dx+maxFontWidth;
-            }
-        }else if(dateTimeModeId==1){
-            //console.log('时分');
-            layersNum = 5;
-            for(var i=0;i<layersNum;i++){
-                layers[i] = new Layer(dx,0,w,h);
-                if(i==2){
-                    layers[i].subLayers.font = new FontSubLayer(':',fontStyle);
-                }else{
-                    layers[i].subLayers.font = new FontSubLayer('0',fontStyle);
+                if(highLight){
+                    highLightLayerNum = 3;
+                    sWidth = 2*maxFontWidth;
+                    dx = 0;
+                    for(i=0;i<highLightLayerNum;i++){
+                        highLightLayer = new Layer(dx,0,sWidth,sHeight);
+                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
+                        colorElems = parseColor(slices.color);
+                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                        layers.push(highLightLayer);
+                        dx += 3*maxFontWidth;
+                    }
+                    this.enableHighLight = true;
+                    this.maxHighLightNum = highLightLayerNum;
                 }
-                dx = dx+maxFontWidth;
-            }
-        }else if(dateTimeModeId==2){
-            //console.log('斜杠日期');
-            layersNum = 10;
-            for(var i=0;i<layersNum;i++){
-                layers[i] = new Layer(dx,0,w,h);
-                if(i==4||i==7){
-                    layers[i].subLayers.font = new FontSubLayer('/',fontStyle);
-                }else{
-                    layers[i].subLayers.font = new FontSubLayer('0',fontStyle);
+                break;
+            case 1:
+                //console.log('时分');
+                fontLayersNum = 5;
+                for(i=0;i<fontLayersNum;i++){
+                    dx = i*maxFontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==2){
+                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+                    }else{
+                        fontLayer.subLayers.font = new FontSubLayer('0',fontStyle);
+                    }
+                    layers.push(fontLayer);
                 }
-                dx =  dx+maxFontWidth;
-            }
-        }else if(dateTimeModeId==3){
-            //console.log('减号日期');
-            layersNum = 10;
-            for(var i=0;i<layersNum;i++){
-                layers[i] = new Layer(dx,0,w,h);
-                if(i==4||i==7){
-                    layers[i].subLayers.font = new FontSubLayer('-',fontStyle);
-                }else{
-                    layers[i].subLayers.font = new FontSubLayer('0',fontStyle);
+                if(highLight){
+                    highLightLayerNum = 2;
+                    sWidth = 2*maxFontWidth;
+                    dx = 0;
+                    for(i=0;i<highLightLayerNum;i++){
+                        highLightLayer = new Layer(dx,0,sWidth,sHeight);
+                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
+                        colorElems = parseColor(slices.color);
+                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                        layers.push(highLightLayer);
+                        dx += 3*maxFontWidth;
+                    }
+                    this.enableHighLight = true;
+                    this.maxHighLightNum = highLightLayerNum;
                 }
-                dx =  dx+maxFontWidth;
-            }
+                break;
+            case 2:
+                //console.log('斜杠日期');
+                fontLayersNum = 10;
+                for(i=0;i<fontLayersNum;i++){
+                    dx = i*maxFontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==4||i==7){
+                        fontLayer.subLayers.font = new FontSubLayer('/',fontStyle);
+                    }else{
+                        fontLayer.subLayers.font = new FontSubLayer('0',fontStyle);
+                    }
+                    layers.push(fontLayer);
+                }
+                if(highLight){
+                    highLightLayerNum = 3;
+                    sWidth = 4*maxFontWidth;
+                    dx = 0;
+                    for(i=0;i<highLightLayerNum;i++){
+                        highLightLayer = new Layer(dx,0,sWidth,sHeight);
+                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
+                        colorElems = parseColor(slices.color);
+                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                        layers.push(highLightLayer);
+                        if(i===0){
+                            dx += 5*maxFontWidth;
+                            sWidth = 2*maxFontWidth;
+                        }else{
+                            dx += 3*maxFontWidth;
+                        }
+                    }
+                    this.enableHighLight = true;
+                    this.maxHighLightNum = highLightLayerNum;
+                }
+                break;
+            case 3:
+                //console.log('减号日期');
+                fontLayersNum = 10;
+                for(i=0;i<fontLayersNum;i++){
+                    dx = i*maxFontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==4||i==7){
+                        fontLayer.subLayers.font = new FontSubLayer('-',fontStyle);
+                    }else{
+                        fontLayer.subLayers.font = new FontSubLayer('0',fontStyle);
+                    }
+                    layers.push(fontLayer);
+                    // dx =  dx+maxFontWidth;
+                }
+                if(highLight){
+                    highLightLayerNum = 3;
+                    sWidth = 4*maxFontWidth;
+                    dx = 0;
+                    for(i=0;i<highLightLayerNum;i++){
+                        highLightLayer = new Layer(dx,0,sWidth,sHeight);
+                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
+                        colorElems = parseColor(slices.color);
+                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                        layers.push(highLightLayer);
+                        if(i===0){
+                            dx += 5*maxFontWidth;
+                            sWidth = 2*maxFontWidth;
+                        }else{
+                            dx += 3*maxFontWidth;
+                        }
+                    }
+                    this.enableHighLight = true;
+                    this.maxHighLightNum = highLightLayerNum;
+                }
+                break;
+            default:
+                //console.log('时分秒');
+                fontLayersNum = 8;
+                for(i=0;i<fontLayersNum;i++){
+                    dx = i*maxFontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==2||i==5){
+                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+                    }else{
+                        fontLayer.subLayers.font = new FontSubLayer('0',fontStyle);
+                    }
+                    layers.push(fontLayer);
+                    // dx = dx+maxFontWidth;
+                }
+                if(highLight){
+                    highLightLayerNum = 3;
+                    sWidth = 2*maxFontWidth;
+                    dx = 0;
+                    for(i=0;i<highLightLayerNum;i++){
+                        highLightLayer = new Layer(dx,0,sWidth,sHeight);
+                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
+                        colorElems = parseColor(slices.color);
+                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                        layers.push(highLightLayer);
+                        dx += 3*maxFontWidth;
+                    }
+                    this.enableHighLight = true;
+                    this.maxHighLightNum = highLightLayerNum;
+                }
+                break;
         }
+
         this.subType = 'Datetime';
         Widget.call(this,x,y,w,h,layers);
     };

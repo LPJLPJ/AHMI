@@ -495,14 +495,13 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                 break;
                 case 'MyDateTime':
                     var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline",
-                        fontStyle={},
-                        highLight = !targetWidget.info.disableHighlight,
-                        maxFontWidth = targetWidget.info.maxFontWidth;
+                        fontStyle = {},
+                        baseLayerNum = 0;
 
                     styleElems.split(',').forEach(function (elem) {
                         fontStyle[elem] = info[elem]
                     });
-                    generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle);
+                    generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle,targetWidget.texList[0].slices[0]);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'DateTime';
                     generalWidget.subType = 'general';
@@ -513,6 +512,23 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     }else{
                         generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量年月日';
                     }
+                    console.log(typeof Number(targetWidget.info.dateTimeModeId),Number(targetWidget.info.dateTimeModeId));
+                    switch (Number(targetWidget.info.dateTimeModeId)){
+                        case 0:
+                            baseLayerNum = 8;
+                            break;
+                        case 1:
+                            baseLayerNum = 5;
+                            break;
+                        case 2:
+                        case 3:
+                            baseLayerNum = 10;
+                            break;
+                        default:
+                            baseLayerNum = 8;
+                            break;
+                    }
+                    generalWidget.otherAttrs[0] = baseLayerNum;
                 break;
 
                 default:
