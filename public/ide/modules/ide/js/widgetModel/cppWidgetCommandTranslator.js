@@ -90,7 +90,8 @@
         'OPGETLAYOFFSET',
         'OPCHKVALALARM',
         'OPNOP',
-        'OPEXECUTEACTION'
+        'OPEXECUTEACTION',
+        'OPSETGLOBALVAR'
 
     ]
     var cppOPTable = {}
@@ -395,7 +396,8 @@
         OPGETLAYOFFSET:new Instruction('OPGETLAYOFFSET',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
         OPCHKVALALARM:new Instruction('OPCHKVALALARM',new InstOperand(7,true)),
         OPNOP:new Instruction('OPNOP',new InstOperand(7,true)),
-        OPEXECUTEACTION:new Instruction('OPEXECUTEACTION',new InstOperand(7,true))
+        OPEXECUTEACTION:new Instruction('OPEXECUTEACTION',new InstOperand(7,true)),
+        OPSETGLOBALVAR:new Instruction('OPSETGLOBALVAR',new InstOperand(1),new InstOperand(4),new InstOperand(3,true))
 
     }
     for (var i=0;i<opCodes.length;i++){
@@ -1077,6 +1079,9 @@
             case 'checkalarm':
                 inst = ['OPCHKVALALARM']
             break;
+            case 'setglobalvar':
+                inst = ['OPSETGLOBALVAR',command[1].value,command[2].value];
+                break;
             case 'executeaction':
                 inst = ['OPEXECUTEACTION',command[1].value]
             break;

@@ -660,6 +660,10 @@ module.exports =   React.createClass({
                 }
 
                 break;
+            case 'setglobalvar':
+                var globalVars = ['inModifing'];
+                this[globalVars[parseInt(this.evalParam(widget,curInst[1]))]]=parseInt(this.evalParam(widget,curInst[2]))
+                break;
             case 'startanimation':
                 var nowFrame = 1;
                 var totalFrame = widget.totalFrame||0;
@@ -4426,7 +4430,7 @@ module.exports =   React.createClass({
         //prepare highLightNum
         var lastWidget
         var curWidget
-        if (this.simState.inModifingState){
+        if (this.inModifing){
             //handle modifing highlighted widget
             if (page && page.linkedAllWidgets){
                 curWidget = page.linkedAllWidgets[page.curHighlightIdx].target;

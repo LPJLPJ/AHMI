@@ -127,6 +127,9 @@
 					case 'checkalarm':
 						insts.push(['checkalarm'])
 					break;
+					case 'setglobalvar':
+						insts.push(['setglobalvar',Param(judgeType(parameters[0]),parameters[0].value),Param(judgeType(parameters[1]),parameters[1].value)]);
+						break;
 					case 'executeaction':
 						insts.push(['executeaction',Param(judgeType(parameters[0]),parameters[0].value)])
 					break;

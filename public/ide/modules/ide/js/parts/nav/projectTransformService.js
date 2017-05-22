@@ -512,7 +512,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     }else{
                         generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量年月日';
                     }
-                    console.log(typeof Number(targetWidget.info.dateTimeModeId),Number(targetWidget.info.dateTimeModeId));
                     switch (Number(targetWidget.info.dateTimeModeId)){
                         case 0:
                             baseLayerNum = 8;
@@ -528,7 +527,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                             baseLayerNum = 8;
                             break;
                     }
-                    generalWidget.otherAttrs[0] = baseLayerNum;
+                    generalWidget.otherAttrs[0] = baseLayerNum;//除去高亮，font layer的数量
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
                 break;
 
                 default:

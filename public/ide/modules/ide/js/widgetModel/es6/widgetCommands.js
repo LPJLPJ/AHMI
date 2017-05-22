@@ -213,6 +213,11 @@
                 //set target highlight 
                 set('this.layers.tHighLightNum.hidden',0)
               }
+            }else{
+                if(tHighLightNum==0){
+                    add(tHighLightNum,2)
+                    set('this.layers.tHighLightNum.hidden',1)
+                }
             }
           }
         `,
@@ -222,7 +227,6 @@
           if (tMaxHighLightNum>0) {
             var(tHighLightNum,0)
             set(tHighLightNum,'this.highLightNum')
-
             if (tHighLightNum>0) {
               minus(tHighLightNum,1)
               multiply(tHighLightNum,3)
@@ -244,6 +248,13 @@
                 //set target highlight 
                 set('this.layers.tHighLightNum.hidden',0)
               }
+            }else{
+                if(tHighLightNum==0){
+                    var(lastHighLight,0)
+                    set(lastHighLight,'this.layers.length')
+                    minus(lastHighLight,1)
+                    set('this.layers.lastHighLight.hidden',1)
+                }
             }
           }
         `,
@@ -1247,7 +1258,6 @@
             var(offset,0)
             var(len,0)
             set(offset,'this.otherAttrs.0')
-            print(offset,'offset')
             set(len,'this.layers.length')
             while(offset<len){
                 set('this.layers.offset.hidden',1)
@@ -1262,12 +1272,13 @@
             var(m,'this.mode')
             var(tag,0)
             getTag(tag)
+            print(tag,'change tag')
             var(tTag,0)
             if(tag==0){
                 print(tag,'tag is 0')
             }else{
                 set(tTag,tag)
-                var(len,'this.layers.length')
+                var(len,'this.otherAttrs.0')
                 minus(len,1)
                 var(flag1,10)
                 var(flag2,10)
@@ -1310,13 +1321,131 @@
             }
         `,
         onKeyBoardLeft:`
-            
+            var(tMaxHighLightNum,0)
+            var(okFlag,0)
+            set(tMaxHighLightNum,'this.maxHighLightNum')
+            set(okFlag,'this.otherAttrs.1')
+            if(tMaxHighLightNum>0){
+                if(okFlag==0){
+                    var(totalLayerNum,'this.layers.length')
+                    var(offset,0)
+                    var(tHighLightNum,0)
+                    //clear
+                    set(offset,'this.otherAttrs.0')
+                    while(offset<totalLayerNum){
+                        set('this.layers.offset.hidden',1)
+                        add(offset,1)
+                    }
+                    //set target highlight
+                    set(offset,'this.otherAttrs.0')
+                    set(tHighLightNum,'this.highLightNum')
+                    add(offset,tHighLightNum)
+                    minus(offset,1)
+                    set('this.layers.offset.hidden',0)   
+                }else{
+                    print(okFlag,'ok mode')
+                    var(tHighLightNum,0)
+                    var(tTag,0)
+                    var(tMode,0)
+                    var(xr,0)
+                    var(minusNum,1)
+                    set(tHighLightNum,'this.highLightNum')
+                    getTag(tTag)
+                    set(tMode,'this.mode')
+                    if(tMode==1){
+                        if(tHighLightNum==1){
+                            set(xr,2)
+                        }else{
+                            set(xr,0)
+                        }
+                    }else{
+                        if(tHighLightNum==1){
+                            set(xr,4)
+                        }else{
+                            if(tHighLightNum==2){
+                                set(xr,2)
+                            }else{
+                                set(xr,0)
+                            }
+                        }
+                    }
+                    while(xr>0){
+                        multiply(minusNum,16)
+                        minus(xr,1)
+                    }
+                    minus(tTag,minusNum)
+                    setTag(tTag)
+                }              
+            }
         `,
         onKeyBoardRight:`
-        
+            var(tMaxHighLightNum,0)
+            var(okFlag,0)
+            set(tMaxHighLightNum,'this.maxHighLightNum')
+            set(okFlag,'this.otherAttrs.1')
+            if(tMaxHighLightNum>0){
+                if(okFlag==0){
+                    var(totalLayerNum,'this.layers.length')
+                    var(offset,0)
+                    var(tHighLightNum,0)
+                    //clear
+                    set(offset,'this.otherAttrs.0')
+                    while(offset<totalLayerNum){
+                        set('this.layers.offset.hidden',1)
+                        add(offset,1)
+                    }
+                    //set target highlight
+                    set(offset,'this.otherAttrs.0')
+                    set(tHighLightNum,'this.highLightNum')
+                    add(offset,tHighLightNum)
+                    minus(offset,1)
+                    set('this.layers.offset.hidden',0)
+                }else{
+                    print(okFlag,'ok mode')
+                    var(tHighLightNum,0)
+                    var(tTag,0)
+                    var(tMode,0)
+                    var(xr,0)
+                    var(addNum,1)
+                    set(tHighLightNum,'this.highLightNum')
+                    getTag(tTag)
+                    set(tMode,'this.mode')
+                    if(tMode==1){
+                        if(tHighLightNum==1){
+                            set(xr,2)
+                        }else{
+                            set(xr,0)
+                        }
+                    }else{
+                        if(tHighLightNum==1){
+                            set(xr,4)
+                        }else{
+                            if(tHighLightNum==2){
+                                set(xr,2)
+                            }else{
+                                set(xr,0)
+                            }
+                        }
+                    }
+                    while(xr>0){
+                        multiply(addNum,16)
+                        minus(xr,1)
+                    }
+                    add(tTag,addNum)
+                    print(tTag,'addnum tag')
+                    setTag(tTag)
+                }                
+            }
         `,
         onKeyBoardOK:`
-        
+            var(okFlag,'this.otherAttrs.1')
+            if(okFlag==0){
+                setglobalvar(0,1)
+                set('this.otherAttrs.1',1)
+            }else{
+                setglobalvar(0,0)
+                set('this.otherAttrs.1',0)
+            }
         `
     };
 
