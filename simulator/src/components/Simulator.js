@@ -2807,7 +2807,7 @@ module.exports =   React.createClass({
         if (parseInt(decimalCount) > 0) {
             var baseCount = Math.pow(10,decimalCount);
             tempNumValue = (Math.abs(curValue)/baseCount).toString();
-            var tempNumValuePair = tempNumValue.split('.')
+            var tempNumValuePair = tempNumValue.split('.');
             if (tempNumValuePair.length > 1) {
                 //has original fraction
                 var tempValue = tempNumValuePair[1];

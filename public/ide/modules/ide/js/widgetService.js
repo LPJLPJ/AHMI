@@ -2155,10 +2155,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             var ctrlOptions={
                 bl:false,
                 br:false,
-                mb:true,
-                ml:true,
-                mr:true,
-                mt:true,
+                mb:false,
+                ml:false,
+                mr:false,
+                mt:false,
                 tl:false,
                 tr:false
             };
