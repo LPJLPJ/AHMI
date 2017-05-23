@@ -2649,7 +2649,7 @@ module.exports =   React.createClass({
 
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-
+                    console.log(tempNumValue,'tempNumValue');
 
                     //drawbackground
                     var bgTex = {
@@ -2810,7 +2810,11 @@ module.exports =   React.createClass({
             var tempNumValuePair = tempNumValue.split('.')
             if (tempNumValuePair.length > 1) {
                 //has original fraction
-                tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempNumValuePair[1], decimalCount, 0, false)
+                var tempValue = tempNumValuePair[1];
+                for(var i=0;i<decimalCount-tempNumValuePair[1].length;i++){
+                    tempValue=tempValue+'0';
+                }
+                tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempValue, decimalCount, 0, true)
             } else {
                 //only int
                 tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits('', decimalCount, 0, false)
