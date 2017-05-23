@@ -1369,11 +1369,28 @@
                             }
                         }
                     }
+                    var(ttTag,0)
+                    var(txr,0)
+                    set(ttTag,tTag)
+                    set(txr,xr)
                     while(xr>0){
-                        multiply(minusNum,16)
+                        divide(ttTag,16)
                         minus(xr,1)
                     }
-                    minus(tTag,minusNum)
+                    mod(ttTag,16)
+                    var(rawttTag,0)
+                    set(rawttTag,ttTag)
+                    minus(ttTag,1)
+                    if(ttTag<0){
+                        set(ttTag,-7)
+                    }
+                    while(txr>0){
+                        multiply(ttTag,16)
+                        multiply(rawttTag,16)
+                        minus(txr,1)
+                    }
+                    minus(ttTag,rawttTag)
+                    add(tTag,ttTag)
                     setTag(tTag)
                 }              
             }
@@ -1401,6 +1418,7 @@
                     minus(offset,1)
                     set('this.layers.offset.hidden',0)
                 }else{
+                    //change num
                     print(okFlag,'ok mode')
                     var(tHighLightNum,0)
                     var(tTag,0)
@@ -1427,12 +1445,28 @@
                             }
                         }
                     }
+                    var(ttTag,0)
+                    var(txr,0)
+                    set(ttTag,tTag)
+                    set(txr,xr)
                     while(xr>0){
-                        multiply(addNum,16)
+                        divide(ttTag,16)
                         minus(xr,1)
                     }
-                    add(tTag,addNum)
-                    print(tTag,'addnum tag')
+                    mod(ttTag,16)
+                    var(rawttTag,0)
+                    set(rawttTag,ttTag)
+                    add(ttTag,1)
+                    if(ttTag>=10){
+                        set(ttTag,16)
+                    }
+                    while(txr>0){
+                        multiply(ttTag,16)
+                        multiply(rawttTag,16)
+                        minus(txr,1)
+                    }
+                    minus(ttTag,rawttTag)
+                    add(tTag,ttTag)
                     setTag(tTag)
                 }                
             }
@@ -1468,4 +1502,10 @@
  * set('this.layers.1.hidden',1)
  */
 
-
+// mod(ttTag,16)
+// print(ttTag,'ttTag')
+// //while(xr>0){
+// //    multiply(addNum,16)
+// //    minus(xr,1)
+// //}
+// add(tTag,addNum)

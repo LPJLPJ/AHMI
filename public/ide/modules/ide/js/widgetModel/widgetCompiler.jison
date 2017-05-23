@@ -8,6 +8,7 @@
 \/\/.*                  /* comment */
 \"[^"]*\"             return 'STRING'
 \'[^']*\'             return 'STRING'
+("-")?[0-9]+("."[0-9]+)?\b  return 'NUMBER'
 "PI"                  return 'PI'
 "E"                   return 'E'
 "temp"                return 'TEMP'
@@ -37,7 +38,7 @@
 "<"                   return '<'
 "=="                  return '=='
 "="                   return '='
-[0-9]+("."[0-9]+)?\b  return 'NUMBER'
+
 [a-zA-Z]+([a-zA-Z0-9_]+)?\b return 'WORD'
 <<EOF>>               return 'EOF'
 .                     return 'INVALID'
