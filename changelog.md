@@ -132,5 +132,6 @@ fix:
     4. change some anmiation logic
     5. num has decimal in simulator bug
     6. remove textarea widget's scale ctrl
+    7. widget in default template imgSrc bug
 add:
     1. add change subLayer zIndex fun
