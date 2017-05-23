@@ -584,7 +584,7 @@ body{
 }
 
 .simulator-tools{
-    
+    display: inline-block;
 
 }
 

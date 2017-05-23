@@ -7,6 +7,7 @@ var LoadState = require('./LoadState');
 var InputKeyboard = require('./inputKeyboard');
 var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
+var Debugger = require('./Debugger');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager')
 var math = require('mathjs');
@@ -55,7 +56,8 @@ var defaultSimulator = {
     timerList: [],
     innerTimerList:[],
     currentPressedTargets: [],
-    totalResourceNum: 0
+    totalResourceNum: 0,
+    fps:0
 }
 module.exports =   React.createClass({
     getInitialState: function () {
@@ -443,10 +445,8 @@ module.exports =   React.createClass({
     },
     interpretGeneralCommand:function (widget,f) {
         // console.log(widget,f)
-        var command = this.generalCommands[widget.generalType][f]
-        if (command) {
-            this.processGeneralWidgetCommand(widget,command,0)
-        }
+        
+        this.processGeneralWidgetCommand(widget,f,0)
         
 
     },
@@ -529,12 +529,19 @@ module.exports =   React.createClass({
                 console.error('set error')
         }
     },
-    processGeneralWidgetCommand:function (widget,cmds,index) {
-        var totalLength = cmds.length;
+    processGeneralWidgetCommand:function (widget,f,index) {
+        
+        var cmds = this.generalCommands[widget.generalType][f]
+        
+        var totalLength = (cmds && cmds.length)||-1;
         if (index<0) {
             return;
         }else if (index>totalLength-1) {
             return;
+        }
+        if (Debugger.shouldPause(this.generalCommands,widget.generalType,f,index)) {
+            // console.log(widget.generalType,'debugging',index)
+            Debugger.pause(null,widget.scope,cmds,index)
         }
         // if (index == 0){
         //     console.log('start')
@@ -691,7 +698,8 @@ module.exports =   React.createClass({
                 break;
 
         }
-        this.processGeneralWidgetCommand(widget,cmds,index+step)
+        // Debugger.pause(this.processGeneralWidgetCommand.bind(this,widget,cmds,index+step),widget.scope,cmds)
+        this.processGeneralWidgetCommand(widget,f,index+step)
 
     },
     componentDidMount: function () {
@@ -702,7 +710,6 @@ module.exports =   React.createClass({
         this.simState = {};
         this.initProject();
         this.paintKey = requestAnimationFrame(this.paint);
-        console.log(this.paintKey)
 
     },
     componentWillReceiveProps: function (newProps) {
@@ -787,6 +794,21 @@ module.exports =   React.createClass({
     },
     paint:function () {
         // console.log('painting')
+        //timer for fps
+        var shouldTestFPS;
+        if (this.shouldTestFPS==undefined) {
+            this.shouldTestFPS = true;
+        }
+        if (this.shouldTestFPS) {
+            shouldTestFPS = true;
+        }
+
+        if (shouldTestFPS) {
+            var startT = new Date()
+        }
+        
+
+        
         var offcanvas = this.refs.offcanvas;
 
         var offctx = offcanvas.getContext('2d');
@@ -803,8 +825,17 @@ module.exports =   React.createClass({
             ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
             ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
         }
-
-
+        if (shouldTestFPS) {
+            var stopT = new Date();
+            var fps = (1000/(stopT-startT)).toFixed(1)
+            this.setState({fps:fps})
+            //disable
+            this.shouldTestFPS = false;
+            setTimeout(function () {
+                this.shouldTestFPS = true;
+            }.bind(this),500)
+        }
+        
         this.paintKey = requestAnimationFrame(this.paint)
     },
     drawSingleProject: function (_project, options) {
@@ -5289,6 +5320,11 @@ module.exports =   React.createClass({
             offcanvas.style.transform = 'scale('+curScale+')'
         }
     },
+    handleStep:function () {
+        if (Debugger.getMode()=='debugging') {
+            Debugger.nextStep()
+        }
+    },
     render: function () {
         // console.log('registers',this.state.registers);
         return (
@@ -5302,6 +5338,13 @@ module.exports =   React.createClass({
                             <option value='1.5'>150%</option>
                             <option value='2'>200%</option>
                         </select>
+                        
+                    </div>
+                    <div className='simulator-tools tools-fps'>
+                        <span className='btn btn-default'>{this.state.fps}</span>
+                    </div>
+                    <div className='simulator-tools tools-step'>
+                        <div className='btn btn-default' onClick={this.handleStep}>-&gt;</div>
                     </div>
                 </div>
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>

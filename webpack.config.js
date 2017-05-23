@@ -12,7 +12,7 @@ module.exports = {
         //login:"./src/js/login.js",
         //personal:"./src/js/personal.js",
         // test:"./src/js/test.js",
-        simulator: "./simulator/src/js/simulator.js",
+        simulator: ["./simulator/src/js/simulator.js"],
         // simulator:"../public/ide/modules/ide/js/parts/simulator"
     },
     output: {
@@ -33,7 +33,7 @@ module.exports = {
                 loader: 'babel-loader',
                 query: {
                     compact: false,
-                    presets: ['react']
+                    presets: ['react','es2015']
                 }
             }
 
