@@ -1490,7 +1490,7 @@ ideServices
              * @constructor
              */
             this.CopyPageByIndex = function (_index, _successCallback) {
-                _self.OnPageSelected(_index, function () {
+                _self.changeCurrentPageIndex(_index, function () {
 
                     var tempPage = _.cloneDeep(project.pages[_index]);
                     shearPagePlate = {
@@ -1499,7 +1499,7 @@ ideServices
                     };
 
                     _successCallback&&_successCallback();
-                },true);
+                },false);
 
 
             };
@@ -1708,7 +1708,7 @@ ideServices
                     var subLayers = layers[i].subLayers;
                     for(var j=0;j<subLayers.length;j++){
                         subLayers[j].id = Math.random().toString(36).substr(2);
-                        proJsonObj = JSON.parse(subLayers[j].proJsonStr);
+                        proJsonObj = (typeof subLayers[j].proJsonStr==='string')?JSON.parse(subLayers[j].proJsonStr):subLayers[j].proJsonStr;
                         var widgets = subLayers[j].widgets;
                         for(var k=0;k<widgets.length;k++){
                             proJsonObj.objects.forEach(function(item){
@@ -1721,7 +1721,7 @@ ideServices
                         subLayers[j].proJsonStr = JSON.stringify(proJsonObj);
                     }
                 }
-                console.log('new pastePage',pastePage);
+                // console.log('new pastePage',pastePage);
                 this.AddNewPage(pastePage, function () {
                     _successCallback && _successCallback();
                 });
