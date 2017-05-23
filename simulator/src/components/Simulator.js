@@ -4500,6 +4500,7 @@ module.exports =   React.createClass({
 
             }
         }
+        this.draw()
 
 
 

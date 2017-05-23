@@ -57143,6 +57143,7 @@ module.exports = React.createClass({
                 }
             }
         }
+        this.draw();
     },
     handleWidgetKeyboardMove: function (linkedAllWidgets, i, next, minus) {},
     getRelativeRect: function (e) {
