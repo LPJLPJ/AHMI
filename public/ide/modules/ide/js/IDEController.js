@@ -778,6 +778,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             if(template[key] instanceof Array){
                 //resourcelist
                 template[key].forEach(function(item){
+
                     tempSrc = item.src&&item.src.split('/');
                     tempSrc = tempSrc[tempSrc.length-1];
                     tempSrc = resourceUrl + tempSrc;
@@ -789,10 +790,12 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     template[key].texList.forEach(function(tex){
                         if(tex.slices){
                             tex.slices.forEach(function(slice){
-                                tempSrc = slice.imgSrc&&slice.imgSrc.split('/');
-                                tempSrc = tempSrc[tempSrc.length-1];
-                                tempSrc = resourceUrl+tempSrc;
-                                slice.imgSrc = tempSrc;
+                                if(slice.imgSrc!==''){
+                                    tempSrc = slice.imgSrc&&slice.imgSrc.split('/');
+                                    tempSrc = tempSrc[tempSrc.length-1];
+                                    tempSrc = resourceUrl+tempSrc;
+                                    slice.imgSrc = tempSrc;
+                                }
                             })
                         }
                     })
