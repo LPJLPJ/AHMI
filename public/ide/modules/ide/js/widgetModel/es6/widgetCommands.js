@@ -1466,7 +1466,6 @@
                         minus(txr,1)
                     }
                     minus(ttTag,rawttTag)
-                    print(ttTag,'ttTag')
                     add(tTag,ttTag)
                     //check value in limit
                     setTag(tTag)
