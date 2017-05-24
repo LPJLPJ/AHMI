@@ -494,12 +494,14 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     console.log(generalWidget)
                 break;
                 case 'MyDateTime':
-                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
-                    var fontStyle={}
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline",
+                        fontStyle = {},
+                        baseLayerNum = 0;
+
                     styleElems.split(',').forEach(function (elem) {
                         fontStyle[elem] = info[elem]
                     });
-                    generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle);
+                    generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle,targetWidget.texList[0].slices[0]);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'DateTime';
                     generalWidget.subType = 'general';
@@ -510,6 +512,23 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     }else{
                         generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量年月日';
                     }
+                    switch (Number(targetWidget.info.dateTimeModeId)){
+                        case 0:
+                            baseLayerNum = 8;
+                            break;
+                        case 1:
+                            baseLayerNum = 5;
+                            break;
+                        case 2:
+                        case 3:
+                            baseLayerNum = 10;
+                            break;
+                        default:
+                            baseLayerNum = 8;
+                            break;
+                    }
+                    generalWidget.otherAttrs[0] = baseLayerNum;//除去高亮，font layer的数量
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
                 break;
 
                 default:

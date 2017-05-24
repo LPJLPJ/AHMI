@@ -444,6 +444,7 @@ module.exports =   React.createClass({
     initProject: function () {
 
         if (this.state.project && this.state.project.size) {
+            this.inModifing = 0;
             this.initCanvas(this.state.project, this.draw.bind(this, null, {reLinkWidgets: true}));
         } else {
             this.draw.bind(this, null, {reLinkWidgets: true})
@@ -672,6 +673,10 @@ module.exports =   React.createClass({
                     this.handleTargetAction(widget, alarmValue);
                 }
 
+                break;
+            case 'setglobalvar':
+                var globalVars = ['inModifing'];
+                this[globalVars[parseInt(this.evalParam(widget,curInst[1]))]]=parseInt(this.evalParam(widget,curInst[2]))
                 break;
             case 'startanimation':
                 var nowFrame = 1;
@@ -4463,7 +4468,7 @@ module.exports =   React.createClass({
         //prepare highLightNum
         var lastWidget
         var curWidget
-        if (this.simState.inModifingState){
+        if (this.inModifing){
             //handle modifing highlighted widget
             if (page && page.linkedAllWidgets){
                 curWidget = page.linkedAllWidgets[page.curHighlightIdx].target;
@@ -4533,6 +4538,7 @@ module.exports =   React.createClass({
 
             }
         }
+        this.draw()
 
 
 

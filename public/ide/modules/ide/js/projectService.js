@@ -1719,7 +1719,6 @@ ideServices
 
             };
 
-            //var holdOperate={};
             /**
              * 主要操作
              * 拿起一个可操作对象
