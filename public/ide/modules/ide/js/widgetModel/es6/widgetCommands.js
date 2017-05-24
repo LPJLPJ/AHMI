@@ -1272,7 +1272,6 @@
             var(m,'this.mode')
             var(tag,0)
             getTag(tag)
-            print(tag,'change tag')
             var(tTag,0)
             if(tag==0){
                 print(tag,'tag is 0')
@@ -1418,8 +1417,7 @@
                     minus(offset,1)
                     set('this.layers.offset.hidden',0)
                 }else{
-                    //change num
-                    print(okFlag,'ok mode')
+                    //change num in ok mode
                     var(tHighLightNum,0)
                     var(tTag,0)
                     var(tMode,0)
@@ -1447,8 +1445,10 @@
                     }
                     var(ttTag,0)
                     var(txr,0)
+                    var(ttxr,0)
                     set(ttTag,tTag)
                     set(txr,xr)
+                    set(ttxr,xr)
                     while(xr>0){
                         divide(ttTag,16)
                         minus(xr,1)
@@ -1466,7 +1466,9 @@
                         minus(txr,1)
                     }
                     minus(ttTag,rawttTag)
+                    print(ttTag,'ttTag')
                     add(tTag,ttTag)
+                    //check value in limit
                     setTag(tTag)
                 }                
             }

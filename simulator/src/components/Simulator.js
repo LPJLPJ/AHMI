@@ -438,6 +438,7 @@ module.exports =   React.createClass({
     initProject: function () {
 
         if (this.state.project && this.state.project.size) {
+            this.inModifing = 0;
             this.initCanvas(this.state.project, this.draw.bind(this, null, {reLinkWidgets: true}));
         } else {
             this.draw.bind(this, null, {reLinkWidgets: true})
