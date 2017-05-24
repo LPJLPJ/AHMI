@@ -39,6 +39,7 @@ var defaultState = {
     timerList: [],
     currentPressedTargets: [],
     registers: {}
+    
 
 };
 
@@ -57,7 +58,12 @@ var defaultSimulator = {
     innerTimerList:[],
     currentPressedTargets: [],
     totalResourceNum: 0,
-    fps:0
+    fps:0,
+    debugInfo:{
+        widgetType:null,
+        trigger:null,
+        line:null
+    }
 }
 module.exports =   React.createClass({
     getInitialState: function () {
@@ -5325,8 +5331,74 @@ module.exports =   React.createClass({
             Debugger.nextStep()
         }
     },
+    handleDebugChooseWidget:function (e) {
+        var debugInfo = this.state.debugInfo
+        debugInfo.widgetType = e.target.value;
+        this.setState({debugInfo:debugInfo})
+    },
+    handleDebugChooseTrigger:function (e) {
+        var debugInfo = this.state.debugInfo
+        debugInfo.trigger = e.target.value;
+        this.setState({debugInfo:debugInfo})
+    },
+    handleDebugChooseLine:function (e) {
+        var debugInfo = this.state.debugInfo
+        debugInfo.line = Number(e.target.value);
+        this.setState({debugInfo:debugInfo},function () {
+            Debugger.setBreakPoint(debugInfo)
+        })
+    },
+    cmdToString:function (cmd,prefix) {
+        var result= ''
+        for (var i=0;i<cmd.length;i++){
+            var curElem = cmd[i]
+            if (curElem) {
+                if (typeof curElem == 'object') {
+                    result = result +' '+curElem.value||''
+                }else{
+                    result = result +' '+curElem
+                }
+            }else{
+                result = result + ' '
+            }
+        }
+        if (prefix) {
+            result = prefix+result
+        }
+        return result;
+    },
     render: function () {
         // console.log('registers',this.state.registers);
+        var generalCommandsDOM =[]
+        var triggerDOM = []
+        var commandsDOM = []
+        for(var widget in this.generalCommands){
+            if (this.generalCommands.hasOwnProperty(widget)) {
+                generalCommandsDOM.push(<option key={widget} value={widget}>{widget}</option>)
+            }
+        }
+        if (this.state.debugInfo.widgetType) {
+            var widgetCommands = this.generalCommands[this.state.debugInfo.widgetType]
+            for(var trigger in widgetCommands){
+                if (widgetCommands.hasOwnProperty(trigger)) {
+                    triggerDOM.push(<option key={trigger} value={trigger}>{trigger}</option>)
+                }
+            }
+
+            //commands
+            if (this.state.debugInfo.trigger) {
+                var curCmds = widgetCommands[this.state.debugInfo.trigger]||[]
+                commandsDOM = curCmds.map(function (cmd,i) {
+                    return (<option key={i} value={i}>{this.cmdToString(cmd,i+': ')}</option>)
+                }.bind(this))
+                commandsDOM.unshift(<option key={-1} value={null}>--</option>)
+            }
+        }
+
+
+
+
+
         return (
             < div className='simulator'>
                 <div className='simulator-tools-wrapper'>
@@ -5345,6 +5417,17 @@ module.exports =   React.createClass({
                     </div>
                     <div className='simulator-tools tools-step'>
                         <div className='btn btn-default' onClick={this.handleStep}>-&gt;</div>
+                    </div>
+                    <div className='simulator-tools tools-bp'>
+                        <select className='btn btn-default select' onChange={this.handleDebugChooseWidget}>
+                            {generalCommandsDOM}
+                        </select>
+                        <select className='btn btn-default' onChange={this.handleDebugChooseTrigger}>
+                            {triggerDOM}
+                        </select>
+                        <select className='btn btn-default' onChange={this.handleDebugChooseLine}>
+                            {commandsDOM}
+                        </select>
                     </div>
                 </div>
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>

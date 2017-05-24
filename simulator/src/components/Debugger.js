@@ -6,13 +6,19 @@ function BreakPoint(widgetType,f,line) {
 	this.function = f;
 	this.line = line
 }
-Debugger.breakpoints = [new BreakPoint('Dashboard','onTagChange',4)]
+Debugger.breakpoints = []
 Debugger.curBreakPoint = -1;
 Debugger.getMode = function () {
 	return mode;
 }
 Debugger.setMode = function (_mode) {
 	mode = _mode;
+}
+Debugger.setBreakPoint = function (debugInfo) {
+	if (debugInfo!==null) {
+		Debugger.breakpoints = [new BreakPoint(debugInfo.widgetType,debugInfo.trigger,debugInfo.line)]
+	}
+	
 }
 
 Debugger.setNextStepHanle = function (nextStepHandle) {
@@ -34,9 +40,6 @@ Debugger.shouldPause = function(generalCommands,widgetType,f,index){
 
 	var cmds = (generalCommands[widgetType] && generalCommands[widgetType][f]) ||[]
 	var maxLine = cmds.length;
-	if (widgetType=='Dashboard') {
-		console.log(f,index,maxLine)
-	}
 	for (var i=0;i<Debugger.breakpoints.length;i++){
 		var curBP = Debugger.breakpoints[i]
 		if (curBP.widgetType == widgetType && curBP.function == f) {
@@ -53,6 +56,7 @@ Debugger.shouldPause = function(generalCommands,widgetType,f,index){
 
 Debugger.pause = function (nextStepHandle,watchingObj,cmds,current) {
 	mode = 'debugging';
+	var currentCmd = cmds[current]
  	debugger;
  	nextStepHandle&&nextStepHandle()
 }

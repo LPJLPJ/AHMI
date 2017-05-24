@@ -51685,13 +51685,18 @@ function BreakPoint(widgetType, f, line) {
 	this.function = f;
 	this.line = line;
 }
-Debugger.breakpoints = [new BreakPoint('Dashboard', 'onTagChange', 4)];
+Debugger.breakpoints = [];
 Debugger.curBreakPoint = -1;
 Debugger.getMode = function () {
 	return mode;
 };
 Debugger.setMode = function (_mode) {
 	mode = _mode;
+};
+Debugger.setBreakPoint = function (debugInfo) {
+	if (debugInfo !== null) {
+		Debugger.breakpoints = [new BreakPoint(debugInfo.widgetType, debugInfo.trigger, debugInfo.line)];
+	}
 };
 
 Debugger.setNextStepHanle = function (nextStepHandle) {
@@ -51709,9 +51714,6 @@ Debugger.shouldPause = function (generalCommands, widgetType, f, index) {
 
 	var cmds = generalCommands[widgetType] && generalCommands[widgetType][f] || [];
 	var maxLine = cmds.length;
-	if (widgetType == 'Dashboard') {
-		console.log(f, index, maxLine);
-	}
 	for (var i = 0; i < Debugger.breakpoints.length; i++) {
 		var curBP = Debugger.breakpoints[i];
 		if (curBP.widgetType == widgetType && curBP.function == f) {
@@ -51727,6 +51729,7 @@ Debugger.shouldPause = function (generalCommands, widgetType, f, index) {
 
 Debugger.pause = function (nextStepHandle, watchingObj, cmds, current) {
 	mode = 'debugging';
+	var currentCmd = cmds[current];
 	debugger;
 	nextStepHandle && nextStepHandle();
 };
@@ -51832,6 +51835,8 @@ module.exports = React.createClass({
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var React = __webpack_require__(90);
 var $ = __webpack_require__(266);
 var _ = __webpack_require__(93);
@@ -51887,7 +51892,12 @@ var defaultSimulator = {
     innerTimerList: [],
     currentPressedTargets: [],
     totalResourceNum: 0,
-    fps: 0
+    fps: 0,
+    debugInfo: {
+        widgetType: null,
+        trigger: null,
+        line: null
+    }
 };
 module.exports = React.createClass({
     displayName: 'exports',
@@ -56777,8 +56787,86 @@ module.exports = React.createClass({
             Debugger.nextStep();
         }
     },
+    handleDebugChooseWidget: function handleDebugChooseWidget(e) {
+        var debugInfo = this.state.debugInfo;
+        debugInfo.widgetType = e.target.value;
+        this.setState({ debugInfo: debugInfo });
+    },
+    handleDebugChooseTrigger: function handleDebugChooseTrigger(e) {
+        var debugInfo = this.state.debugInfo;
+        debugInfo.trigger = e.target.value;
+        this.setState({ debugInfo: debugInfo });
+    },
+    handleDebugChooseLine: function handleDebugChooseLine(e) {
+        var debugInfo = this.state.debugInfo;
+        debugInfo.line = Number(e.target.value);
+        this.setState({ debugInfo: debugInfo }, function () {
+            Debugger.setBreakPoint(debugInfo);
+        });
+    },
+    cmdToString: function cmdToString(cmd, prefix) {
+        var result = '';
+        for (var i = 0; i < cmd.length; i++) {
+            var curElem = cmd[i];
+            if (curElem) {
+                if ((typeof curElem === 'undefined' ? 'undefined' : _typeof(curElem)) == 'object') {
+                    result = result + ' ' + curElem.value || '';
+                } else {
+                    result = result + ' ' + curElem;
+                }
+            } else {
+                result = result + ' ';
+            }
+        }
+        if (prefix) {
+            result = prefix + result;
+        }
+        return result;
+    },
     render: function render() {
         // console.log('registers',this.state.registers);
+        var generalCommandsDOM = [];
+        var triggerDOM = [];
+        var commandsDOM = [];
+        for (var widget in this.generalCommands) {
+            if (this.generalCommands.hasOwnProperty(widget)) {
+                generalCommandsDOM.push(React.createElement(
+                    'option',
+                    { key: widget, value: widget },
+                    widget
+                ));
+            }
+        }
+        if (this.state.debugInfo.widgetType) {
+            var widgetCommands = this.generalCommands[this.state.debugInfo.widgetType];
+            for (var trigger in widgetCommands) {
+                if (widgetCommands.hasOwnProperty(trigger)) {
+                    triggerDOM.push(React.createElement(
+                        'option',
+                        { key: trigger, value: trigger },
+                        trigger
+                    ));
+                }
+            }
+
+            //commands
+            if (this.state.debugInfo.trigger) {
+                var curCmds = widgetCommands[this.state.debugInfo.trigger] || [];
+                commandsDOM = curCmds.map(function (cmd, i) {
+                    return React.createElement(
+                        'option',
+                        { key: i, value: i },
+                        this.cmdToString(cmd, i + ': ')
+                    );
+                }.bind(this));
+                commandsDOM.unshift(React.createElement(
+                    'option',
+                    { key: -1, value: null },
+                    '--'
+                ));
+            }
+        }
+
         return React.createElement(
             'div',
             { className: 'simulator' },
@@ -56834,6 +56922,25 @@ module.exports = React.createClass({
                         'div',
                         { className: 'btn btn-default', onClick: this.handleStep },
                         '->'
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'simulator-tools tools-bp' },
+                    React.createElement(
+                        'select',
+                        { className: 'btn btn-default select', onChange: this.handleDebugChooseWidget },
+                        generalCommandsDOM
+                    ),
+                    React.createElement(
+                        'select',
+                        { className: 'btn btn-default', onChange: this.handleDebugChooseTrigger },
+                        triggerDOM
+                    ),
+                    React.createElement(
+                        'select',
+                        { className: 'btn btn-default', onChange: this.handleDebugChooseLine },
+                        commandsDOM
                     )
                 )
             ),
