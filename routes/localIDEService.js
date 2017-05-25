@@ -68,7 +68,7 @@ localIDEService.uploadProject = function (req,res) {
  */
 localIDEService.uploadProjectZip = function(req,res){
     if(req.session.user){
-        var tempFilesPath = path.join(__dirname,'../tempFiles'),
+        var tempFilesPath = path.join(__dirname,'../tempfiles'),
             form = new formidable.IncomingForm(),
             reDir = '',
             fileName ='',
@@ -108,15 +108,36 @@ localIDEService.uploadProjectZip = function(req,res){
                     checkUnZipFolder(unZipFolderPath,function(err,project){
                         if(err){
                             console.log('err in checkUnZip',err);
-                            errHandler(res,500,'not standard project');
+                            //删除临时文件
+                            removeTargetFile([unZipFolderPath,reDir],function(err){
+                                if(err){
+                                    console.log('err in remove tempfile',err)
+                                }
+                                errHandler(res,500,'not standard project');
+                            });
                         }else{
                             //创建工程
-                            createProject(unZipFolderPath,project,req,function(err){
+                            createProject(unZipFolderPath,project,req,function(err,id,path){
                                 if(err){
+                                    ProjectModel.deleteById(id,function(err){
+                                        if(err){
+                                            console.log('create pro err delete pro',err);
+                                        }else{
+                                            removeTargetFile([path],function(err){
+                                                console.log('create pro err delete folder',err);
+                                            })
+                                        }
+                                    });
                                     errHandler(res,500,err);
                                 }else{
                                     res.send('ok');
                                 }
+                                //删除临时文件
+                                removeTargetFile([unZipFolderPath,reDir],function(err){
+                                    if(err){
+                                        console.log('err in remove tempfile',err);
+                                    }
+                                });
                             });
                         }
                     });
@@ -398,7 +419,7 @@ function createProject(resourcePath,project,req,cb){
     newProject.save(function(err){
         if(err){
             console.log('err in save new project',err);
-            cb&&cb(err);
+            cb&&cb(err,newProject._id,newProjectFolderPath);
         }else{
             fs.stat(newProjectFolderPath,function(err,stats){
                 if (stats&&stats.isDirectory&&stats.isDirectory()) {
@@ -407,19 +428,19 @@ function createProject(resourcePath,project,req,cb){
                         if(err){
                             console.log('err in copy resource to new project');
                         }
-                        cb&&cb(err);
+                        cb&&cb(err,newProject._id,newProjectFolderPath);
                     })
                 }else{
                     mkdir(newProjectFolderPath,function(err){
                         if(err){
                             console.log('err in mkdir',err);
-                            cb&&cb(err);
+                            cb&&cb(err,newProject._id,newProjectFolderPath);
                         }else{
                             fse.copy(resourcePath,newProjectFolderPath,function(err){
                                 if(err){
                                     console.log('err in copy resource to new project');
                                 }
-                                cb&&cb(err);
+                                cb&&cb(err,newProject._id,newProjectFolderPath);
                             })
                         }
                     })
@@ -427,6 +448,31 @@ function createProject(resourcePath,project,req,cb){
             })
         }
     });
+}
+/**
+ * 删除指定的文件或文件夹
+ * @param targetUrl 地址数组
+ * @param cb
+ */
+function removeTargetFile(targetUrlArr,cb){
+    var myError;
+    var removeFun = function(){
+        if(targetUrlArr.length==0){
+            cb&&cb(myError);
+            return;
+        }
+        var url = targetUrlArr.shift();
+        if(url){
+            fse.remove(url,function(err){
+                if(err){
+                    myError=err;
+                }else{
+                    removeFun(targetUrlArr)
+                }
+            })
+        }
+    };
+    removeFun();
 }
 
 module.exports = localIDEService;

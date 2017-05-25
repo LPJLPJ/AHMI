@@ -29,7 +29,12 @@
         confirmReleaseBtnNode.off('click');
         confirmReleaseBtnNode.on('click',function(e){
             $('#uploadModal').modal('hide');
-            sendFiles(hideWrapper);
+            var titleText = $('#uploadModal .modal-title').text();
+            if(titleText==='上传本地工程'){
+                sendFiles(hideWrapper);
+            }else if(titleText==='上传压缩包'){
+                sendProjectZip();
+            }
         });
         var cancelReleaseBtnNode = $('#cancelReleaseBtn');
         cancelReleaseBtnNode.off('click');
@@ -63,7 +68,12 @@
                     item = items[0].webkitGetAsEntry();
                     item.file(function(file){
                         formData.append('file.zip',file);
-                        sendProjectZip();
+                        setTimeout(function(){
+                            $('#uploadModal .modal-title').text('上传压缩包');
+                            $('#uploadModal .modal-body p').text('此为生成的压缩文件，尝试从此文件恢复工程不保证所恢复工程完整性，确定上传？')
+                            $('#uploadModal').modal({backdrop:'static',keyboard:false});
+                        },500);
+                        // sendProjectZip();
                     });
                 }else{
                     hideWrapper();
@@ -84,8 +94,9 @@
                             traverseFileTree(item);
                             setTimeout(function(){
                                 //hideWrapper();
+                                $('#uploadModal .modal-title').text('上传本地工程');
+                                $('#uploadModal .modal-body p').text('合法的本地工程，确定上传？');
                                 $('#uploadModal').modal({backdrop:'static',keyboard:false});
-
                             },500);
                         };
                         console.log('item',item);
@@ -203,6 +214,9 @@
                 formData = new FormData();
                 project = null;
                 changeUpdateState('上传成功,正在解析。',100);
+                setTimeout(function(){
+                    location.reload();
+                },1000);
                 //cb&&cb();
             },
             error:function(err){
