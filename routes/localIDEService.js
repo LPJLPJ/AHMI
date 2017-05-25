@@ -61,6 +61,11 @@ localIDEService.uploadProject = function (req,res) {
     }
 };
 
+/**
+ * 上传IDE生成的压缩包
+ * @param req
+ * @param res
+ */
 localIDEService.uploadProjectZip = function(req,res){
     if(req.session.user){
         var tempFilesPath = path.join(__dirname,'../tempFiles'),
@@ -282,12 +287,22 @@ function parseFormData(req,res,newProject){
  * @param host
  */
 function fixProjectContent(content,id,host){
-    var contentObj = JSON.parse(content);
-    //var pattern1 = /[\\]/g;
-    var pattern2 = /..\/..\/localproject\/[a-z\d]+\//g;
-    var str = '/project/'+id+'/';
+    var contentObj = JSON.parse(content),
+        pattern1 = null,
+        pattern2 = null,
+        str = '',
+        transformSrc;
 
-    var transformSrc = function(key,value) {
+    if(host){
+        //修改本地版中的src
+        str = '/project/'+id+'/';
+        pattern2 = /..\/..\/localproject\/[a-z\d]+\//g;
+    }else{
+        //修改IDE生成的压缩包中的json的src，仅仅修改project id
+        str = '/project/'+id+'/';
+        pattern2 = /\/project\/[a-z\d]+\//g;
+    }
+    transformSrc = function(key,value) {
         if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage') {
             if((typeof value==='string')&&(value!='')){
                 if(value.indexOf('chrome-extension')==-1){
@@ -370,7 +385,6 @@ function checkUnZipFolder(resourcePath,cb){
  */
 function createProject(resourcePath,project,req,cb){
     var newProjectFolderPath = '';
-    var host = String(process.env.CUR_HOST).split('//')[1]||req.hostname;
 
     var newProject = new ProjectModel();
     newProjectFolderPath = path.join(__dirname,'../project/',String(newProject._id),'resources');
@@ -379,7 +393,7 @@ function createProject(resourcePath,project,req,cb){
     newProject.name =  project.name;
     newProject.author = project.author;
     newProject.resolution = String(project.size.width)+'*'+String(project.size.height);
-    newProject.content = fixProjectContent(JSON.stringify(project),newProject._id,host);
+    newProject.content = fixProjectContent(JSON.stringify(project),newProject._id);
 
     newProject.save(function(err){
         if(err){

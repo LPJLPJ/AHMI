@@ -203,6 +203,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
 
     function LoadWithTemplate(data, id){
+        console.log('project data.content receive',JSON.parse(data.content));
         var templateId = data.template;
         //add templateId to template
         TemplateProvider.setTemplateId(templateId);
@@ -213,7 +214,14 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }).success(function (tdata) {
                 //console.log('get json success',tdata);
                 setTemplate(tdata,function(){
-                    loadFromContent(data,id);
+                    if(data.thumbnail===undefined&&data.supportTouch===undefined){
+                        //load from a zip
+                        preProcessData(data,function(newData){
+                            loadFromContent(newData,id);
+                        });
+                    }else{
+                        loadFromContent(data,id);
+                    }
                 }.bind(this));
             }).error(function (msg) {
                 //toastr.warning('读取错误');
@@ -221,25 +229,21 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 console.log('get json failed');
             })
         }else{
-            loadFromContent(data,id);
+            // loadFromContent(data,id);
+            if(data.thumbnail===undefined&&data.supportTouch===undefined){
+                //load from a zip
+                preProcessData(data,function(newData){
+                    loadFromContent(newData,id);
+                });
+            }else{
+                loadFromContent(data,id);
+            }
         }
 
 
     }
 
     function loadFromContent(data,id) {
-        //$http({
-        //    method:'GET',
-        //    url:'/public/templates/defaultTemplate/defaultTemplate.json'
-        //}).success(function (data) {
-        //    console.log('get json success',data);
-        //    setTemplate(data);
-        //}).error(function (msg) {
-        //    //toastr.warning('读取错误');
-        //    //loadFromBlank({},id);
-        //    console.log('get json failed');
-        //})
-
 
         if (data.content){
 
@@ -835,5 +839,336 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     }
 
+    /**
+     * 预处理并恢复从zip包上传并创建的工程
+     * @param rawData
+     */
 
+    function preProcessData(rawData,cb){
+        var newData = _.cloneDeep(rawData),
+            i = 0,//循环变量
+            index,//第一个timer tag的下标
+            tempContentObj = JSON.parse(rawData.content),
+            attrArr = [],//属性名数组
+            pageNode = new fabric.Canvas('c'),
+            subLayerNode = new fabric.Canvas('c1',{renderOnAddRemove: false });
+
+        //fix basic data structure
+        newData.thumbnail = '';
+        newData.template = '';
+        newData.supportTouch = 'false';
+
+        tempContentObj.currentSize = _.cloneDeep(tempContentObj.size);
+        tempContentObj.customTags = _.cloneDeep(tempContentObj.tagList);
+        tempContentObj.projectId = window.location.pathname&&window.location.pathname.split('/')[2];
+        tempContentObj.initSize = _.cloneDeep(tempContentObj.size);
+        tempContentObj.pages = _.cloneDeep(tempContentObj.pageList);
+        for(i=0;i<tempContentObj.tagList.length;i++){
+            if(tempContentObj.tagList[i].type===undefined){
+                index = i;
+                break;
+            }
+        }
+        tempContentObj.timerTags = index>0?tempContentObj.customTags.splice(index,tempContentObj.customTags.length-index):[];
+
+        attrArr = ['size','tagList','basicUrl','format','name','author','pageList'];
+        deleteObjAttr(tempContentObj,attrArr);
+
+        //then fix page layer sublayer and widget
+        i=0;
+        var pageLength = tempContentObj.pages.length;
+        var page;
+        var index;
+        var ergodicPages = function(){
+            page = null;
+            page = tempContentObj.pages[i];
+            index = i;
+            pageNode.setWidth(tempContentObj.initSize.width);
+            pageNode.setHeight(tempContentObj.initSize.height);
+            pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
+            // pageNode.clear();
+            if(page.canvasList!==undefined){
+                page.selected = index===0?true:false
+                page.layers = page.canvasList;
+                attrArr = ['canvasList','linkedAllWidgets'];
+                deleteObjAttr(page,attrArr);
+                page.layers.forEach(function(layer,index){
+                    layer.subLayers = layer.subCanvasList;
+                    layer.subLayers.forEach(function (subLayer,index) {
+                        subLayer.widgets = subLayer.widgetList;
+                        attrArr = ['widgetList'];
+                        deleteObjAttr(subLayer,attrArr);
+                        subLayerNode.setWidth(layer.w);
+                        subLayerNode.setHeight(layer.h);
+                        subLayerNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                        // subLayerNode.clear();
+                        subLayer.current = false;
+                        subLayer.expand = true;
+                        subLayer.selected = false;
+                        subLayer.url = '';
+                        subLayer.widgets.forEach(function (widget,index) {
+                            widget.type = widget.subType;
+                            deleteObjAttr(widget,['subType']);
+                            widget.current = false;
+                            widget.currentFabwidget = null;
+                            widget.expand = true;
+                            widget.selected = false;
+                            addWidgetInCurrentSubLayer(widget,subLayerNode);
+                        });
+                        subLayer.proJsonStr  = subLayerNode.toJSON();
+                        subLayerNode.clear();
+                    });
+                    layer.info = {};
+                    layer.info.width = layer.w;
+                    layer.info.height = layer.h;
+                    layer.info.top = layer.y;
+                    layer.info.left = layer.x;
+                    layer.zIndex = index;
+                    layer.current = false;
+                    layer.expand = true;
+                    layer.selected = false;
+                    layer.showSubLayer = layer.subLayers[0];
+                    layer.url = '';
+                    attrArr = ['w','h','y','x','subCanvasList'];
+                    deleteObjAttr(layer,attrArr);
+                    addWidgetInCurrentSubLayer(layer,pageNode)
+                });
+                if(page.backgroundImage&&page.backgroundImage!==''){
+                    pageNode.setBackgroundImage(page.backgroundImage,function () {
+                        pageNode.setBackgroundColor(page.backgroundColor,function () {
+                            page.proJsonStr = pageNode.toJSON();
+                            pageNode.clear();
+                            i++;
+                            if(i<pageLength){
+                                ergodicPages();
+                            }else{
+                                console.log('after process',tempContentObj);
+                                newData.content = JSON.stringify(tempContentObj);
+                                cb&&cb(newData)
+                            }
+                        });
+                    },{
+                        width:pageNode.getWidth(),
+                        height:pageNode.getHeight()
+                    });
+                }else{
+                    pageNode.setBackgroundImage(null,function(){
+                        pageNode.setBackgroundColor(page.backgroundColor,function () {
+                            page.proJsonStr = pageNode.toJSON();
+                            pageNode.clear();
+                            i++;
+                            if(i<pageLength){
+                                ergodicPages();
+                            }else{
+                                console.log('after process',tempContentObj);
+                                newData.content = JSON.stringify(tempContentObj);
+                                cb&&cb(newData)
+                            }
+                        });
+                    });
+                    // page.proJsonStr = pageNode.toJSON();
+                }
+            }
+        }
+        ergodicPages();
+        // tempContentObj.pages.forEach(function(page,index){
+        //     if(page.canvasList!==undefined){
+        //         page.layers = page.canvasList;
+        //         attrArr = ['canvasList','linkedAllWidgets'];
+        //         deleteObjAttr(page,attrArr);
+        //         pageNode.clear();
+        //         page.layers.forEach(function(layer,index){
+        //             layer.subLayers = layer.subCanvasList;
+        //             layer.subLayers.forEach(function (subLayer,index) {
+        //                 subLayer.widgets = subLayer.widgetList;
+        //                 attrArr = ['widgetList'];
+        //                 deleteObjAttr(subLayer,attrArr);
+        //                 subLayerNode.clear();
+        //                 subLayer.widgets.forEach(function (widget,index) {
+        //                     widget.type = widget.subType;
+        //                     deleteObjAttr(widget,['subType']);
+        //                     widget.current = false;
+        //                     widget.currentFabwidget = null;
+        //                     widget.expand = true;
+        //                     widget.selected = false;
+        //                     addWidgetInCurrentSubLayer(widget,subLayerNode);
+        //                 });
+        //                 subLayer.proJsonStr  = subLayerNode.toJSON();
+        //             });
+        //             layer.info = {};
+        //             layer.info.width = layer.w;
+        //             layer.info.height = layer.h;
+        //             layer.info.top = layer.y;
+        //             layer.info.left = layer.x;
+        //             layer.zIndex = index;
+        //             layer.current = false;
+        //             layer.expand = true;
+        //             layer.selected = false;
+        //             layer.showSubLayer = layer.subLayers[0];
+        //             attrArr = ['w','h','y','x','subCanvasList'];
+        //             deleteObjAttr(layer,attrArr);
+        //             addWidgetInCurrentSubLayer(layer,pageNode)
+        //         });
+        //         if(page.backgroundImage&&page.backgroundImage!==''){
+        //             pageNode.setBackgroundImage(page.backgroundImage,function () {
+        //                 pageNode.setBackgroundColor(page.backgroundColor,function () {
+        //                     page.proJsonStr = pageNode.toJSON();
+        //                 });
+        //             });
+        //         }else{
+        //             pageNode.setBackgroundColor(page.backgroundColor,function () {
+        //                 page.proJsonStr = pageNode.toJSON();
+        //             });
+        //             // page.proJsonStr = pageNode.toJSON();
+        //         }
+        //         page.selected = index===0?true:false
+        //     }
+        // });
+
+        // console.log('after process',tempContentObj);
+
+        // newData.content = JSON.stringify(tempContentObj);
+        //return newData
+    }
+
+
+    /**
+     * 删除一个对象中的指定的属性
+     * @param obj 对象
+     * @param attrArr 属性名称组成的数组
+     */
+    function deleteObjAttr(obj,attrArr){
+        if(attrArr instanceof Array){
+            attrArr.forEach(function(key,index){
+                delete obj[key];
+            })
+        }
+        return obj
+    }
+
+    /**
+     * 将widget加入sublayer
+     * @param dataStructure
+     * @param node
+     * @param _successCallback
+     */
+    function addWidgetInCurrentSubLayer(dataStructure,node,_successCallback) {
+        var initiator = {
+            width: dataStructure.info.width,
+            height: dataStructure.info.height,
+            top: dataStructure.info.top,
+            left: dataStructure.info.left,
+            id: dataStructure.id,
+            lockScalingFlip:true,
+            hasRotatingPoint:false,
+            shadow:{
+                color:'rgba(0,0,0,0.4)',blur:2
+            }
+        };
+        var addFabWidget = function(fabWidget){
+            node.add(fabWidget);
+        };
+
+        switch (dataStructure.type){
+            case 'MySlide':
+                break;
+            case 'MyProgress':
+                break;
+            case 'MyDashboard':
+                break;
+            case 'MyButton':
+                break;
+            case 'MyButtonGroup':
+                break;
+            case 'MyNumber':
+                break;
+            case 'MyTextArea':
+                break;
+            case 'MyKnob':
+                break;
+            case 'MyOscilloscope':
+                break;
+            case 'MySwitch ':
+                break;
+        }
+
+
+        if (dataStructure.type=='MySlide'){
+            fabric.MySlide.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            }, initiator);
+        }
+        else if (dataStructure.type=='MyProgress'){
+            fabric.MyProgress.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            },initiator);
+        }
+        else if(dataStructure.type=='MyDashboard'){
+            fabric.MyDashboard.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            },initiator);
+        }
+        else if (dataStructure.type=='MyButton'){
+            fabric.MyButton.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            },initiator);
+        }
+        else  if (dataStructure.type=='MyButtonGroup'){
+            fabric.MyButtonGroup.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            },initiator);
+        }
+        else if(dataStructure.type=='MyNumber'){
+            fabric.MyNumber.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            }, initiator);
+        } else if(dataStructure.type=='MyTextArea'){
+            fabric.MyTextArea.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            }, initiator);
+        } else if(dataStructure.type == 'MyNum'){
+            fabric.MyNum.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MyKnob'){
+            fabric.MyKnob.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MyOscilloscope'){
+            fabric.MyOscilloscope.fromLevel(dataStructure, function (fabWidget) {
+                node.add(fabWidget);
+            },initiator)
+        }else if(dataStructure.type=='MySwitch'){
+            fabric.MySwitch.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MyRotateImg'){
+            fabric.MyRotateImg.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MyDateTime'){
+            fabric.MyDateTime.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MyScriptTrigger'){
+            fabric.MyScriptTrigger.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MySlideBlock'){
+            fabric.MySlideBlock.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MyVideo'){
+            fabric.MyVideo.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type=='MyAnimation'){
+            fabric.MyAnimation.fromLevel(dataStructure,function(fabWidget){
+                node.add(fabWidget);
+            },initiator);
+        }else if(dataStructure.type == 'MyLayer'){
+            var newLayer = new fabric.MyLayer(dataStructure,initiator);
+            node.add(newLayer);
+        }
+    };
 }]);

@@ -179,7 +179,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyLayer.prototype.loadAll= function (layerId,cb) {
 
         var backgroundImg = new Image();
-        var layer=ProjectService.getLevelById(layerId)
+        var layer=null;
+        if(typeof layerId ==='string'){
+            layer=ProjectService.getLevelById(layerId);
+        }else{
+            layer = layerId;
+        }
         var layerWidth=layer.info.width/this.initScale.X;
         var layerHeight=layer.info.height/this.initScale.Y;
 
