@@ -303,7 +303,7 @@ function fixProjectContent(content,id,host){
         pattern2 = /\/project\/[a-z\d]+\//g;
     }
     transformSrc = function(key,value) {
-        if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage') {
+        if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage'||key=='originSrc') {
             if((typeof value==='string')&&(value!='')){
                 if(value.indexOf('chrome-extension')==-1){
                     value = value.replace(/\\/g,'/');

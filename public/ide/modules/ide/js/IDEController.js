@@ -913,6 +913,18 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                             widget.currentFabwidget = null;
                             widget.expand = true;
                             widget.selected = false;
+                            if(widget.texList&&(widget.texList instanceof Array)){
+                                widget.texList.forEach(function (tex,index) {
+                                    if(tex.slices&&(tex.slices instanceof Array)){
+                                        tex.slices.forEach(function (slice,index) {
+                                            if(slice.hasOwnProperty('originSrc')){
+                                                slice.imgSrc = slice.originSrc;
+                                                delete slice.originSrc;
+                                            }
+                                        })
+                                    }
+                                })
+                            }
                             addWidgetInCurrentSubLayer(widget,subLayerNode);
                         });
                         subLayer.proJsonStr  = subLayerNode.toJSON();
@@ -942,7 +954,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                             if(i<pageLength){
                                 ergodicPages();
                             }else{
-                                console.log('after process',tempContentObj);
+                                console.log('after preprocess',tempContentObj);
                                 newData.content = JSON.stringify(tempContentObj);
                                 cb&&cb(newData)
                             }
@@ -960,7 +972,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                             if(i<pageLength){
                                 ergodicPages();
                             }else{
-                                console.log('after process',tempContentObj);
+                                console.log('after preprocess',tempContentObj);
                                 newData.content = JSON.stringify(tempContentObj);
                                 cb&&cb(newData)
                             }

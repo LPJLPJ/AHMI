@@ -314,6 +314,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         this.trackedRes.push(new ResTrack(img,slice.color,new TextInfo(info.text,style),outputFilename,info.width,info.height,slice))
                         //
                         // console.log(_.cloneDeep(this.trackedRes))
+                        widget.texList[0].slices[index].originSrc = widget.texList[0].slices[index].imgSrc;
                         widget.texList[0].slices[index].imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -402,6 +403,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     }else{
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,slice))
                         // console.log(_.cloneDeep(this.trackedRes))
+                        curSlice.originSrc = curSlice.imgSrc;
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -476,6 +478,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     }else{
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
+                        curSlice.originSrc = curSlice.imgSrc;
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         totalSlices-=1;
                         if (totalSlices<=0){
@@ -546,6 +549,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
                         //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         //if last trigger cb
                         totalSlices -= 1;
@@ -613,6 +617,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
                         //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                         //if last trigger cb
                         totalSlices -= 1;
@@ -672,6 +677,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 if (err){
                     cb && cb(err);
                 }else{
+                    bgSlice.originSrc = bgSlice.imgSrc;
                     bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                     cb && cb();
                 }
@@ -741,6 +747,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }else{
                     this.trackedRes.push(new ResTrack(bgSlice.imgSrc,bgSlice.color,new TextInfo(info.text,style),outputFilename,width,height,bgSlice))
                     // console.log(_.cloneDeep(this.trackedRes))
+                    bgSlice.originSrc = bgSlice.imgSrc;
                     bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                     var stopTime = new Date();
                     console.log('Output stream costs: ',(stopTime-startTime)/1000.0+'s');
