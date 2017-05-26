@@ -56779,8 +56779,8 @@ module.exports = React.createClass({
             //change scale
             var canvas = this.refs.canvas;
             var offcanvas = this.refs.offcanvas;
-            canvas.style.transform = 'scale(' + curScale + ')';
-            offcanvas.style.transform = 'scale(' + curScale + ')';
+            canvas.style.width = curScale * canvas.width + 'px';
+            offcanvas.style.width = curScale * canvas.width + 'px';
         }
     },
     handleStep: function handleStep() {

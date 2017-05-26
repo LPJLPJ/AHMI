@@ -575,7 +575,7 @@ body{
 }
 
 .canvas-wrapper {
-    overflow: auto;
+    overflow: scroll;
 }
 
 .simulator-tools-wrapper{

@@ -31,7 +31,6 @@ console.log = (function (console) {
     }
 })(console);
 
-
 var logs=[];
 ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService','NavModalCANConfigService',
     function ($scope,$timeout,$http,$interval,
