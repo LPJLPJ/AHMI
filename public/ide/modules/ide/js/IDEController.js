@@ -203,7 +203,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
 
     function LoadWithTemplate(data, id){
-        console.log('project data.content receive',JSON.parse(data.content));
+        console.log('project data.content receive',data);
         var templateId = data.template;
         //add templateId to template
         TemplateProvider.setTemplateId(templateId);
@@ -956,8 +956,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                             if(i<pageLength){
                                 ergodicPages();
                             }else{
-                                console.log('after preprocess',tempContentObj);
                                 newData.content = JSON.stringify(tempContentObj);
+                                console.log('after preprocess',newData);
                                 cb&&cb(newData)
                             }
                         });
@@ -974,8 +974,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                             if(i<pageLength){
                                 ergodicPages();
                             }else{
-                                console.log('after preprocess',tempContentObj);
                                 newData.content = JSON.stringify(tempContentObj);
+                                console.log('after preprocess',newData);
                                 cb&&cb(newData)
                             }
                         });

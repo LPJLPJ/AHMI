@@ -119,10 +119,12 @@ localIDEService.uploadProjectZip = function(req,res){
                             //创建工程
                             createProject(unZipFolderPath,project,req,function(err,id,path){
                                 if(err){
+                                    //出错删除工程
                                     ProjectModel.deleteById(id,function(err){
                                         if(err){
                                             console.log('create pro err delete pro',err);
                                         }else{
+                                            //删除临时文件
                                             removeTargetFile([path],function(err){
                                                 console.log('create pro err delete folder',err);
                                             })
@@ -414,6 +416,7 @@ function createProject(resourcePath,project,req,cb){
     newProject.name =  project.name;
     newProject.author = project.author;
     newProject.resolution = String(project.size.width)+'*'+String(project.size.height);
+    newProject.supportTouch = 'false';
     newProject.content = fixProjectContent(JSON.stringify(project),newProject._id);
 
     newProject.save(function(err){
