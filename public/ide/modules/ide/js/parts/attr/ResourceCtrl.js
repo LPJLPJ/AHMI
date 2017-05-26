@@ -25,18 +25,15 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
     function initProject(){
         $scope.component={
-
-            top: {
+            top:{
                 uploadingArray:[],
-
                 files:[],
-
                 deleteFile:deleteFile,
+                toggleOperation:toggleOperation,
                 basicUrl:'',
-                resources:[]
-
+                resources:[],
+                showDel:true
             }
-
         };
 
         $scope.component.top.resources = ResourceService.getAllResource();
@@ -92,10 +89,19 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             $scope.$emit('ResourceUpdate');
             
         }.bind(this));
-        
 
     }
 
+    /**
+     * 更改资源操作的状态
+     */
+    function toggleOperation(){
+        $scope.component.top.showDel = !$scope.component.top.showDel;
+        console.log('keke',$("input[type='checkbox'].multi-choice"));
+        if($("input[type='checkbox'].multi-choice")){
+            $("input[type='checkbox'].multi-choice").attr('checked',false);
+        }
+    }
 
 
 }])

@@ -2414,6 +2414,9 @@
                             </filereadform>
                             上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                         </a>
+                        <button class="my-upload pull-right" ng-click="component.top.toggleOperation()" ng-show="component.top.showDel">批量操作</button>
+                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation()">取消</button>
+                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation()">删除</button>
                     </form>
 
 
@@ -2444,7 +2447,7 @@
                     </uib-progressbar>
                     <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
                     <!-- table -->
-                    <table class="table my-img-table table-bordered">
+                    <table class="table my-img-table table-bordered" id="resourceList">
                         <thead>
                         <tr>
                             <td class="col-xs-1">预览</td>
@@ -2462,7 +2465,10 @@
                                 <span>{{file.size/1024 | number:2}}K</span>
                             </td>
                             <td><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
-                                <span class="iconfont img-option" ng-click="openPanel($index)" style="font-size: 30px">&#xe646;</span>
+                                <span class="iconfont img-option" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
+                                <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
+                                    <input type="checkbox" class="multi-choice" value="option1" >
+                                </label>
                             </td>
                         </tr>
                         </tbody>
