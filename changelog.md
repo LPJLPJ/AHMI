@@ -135,3 +135,4 @@ fix:
     7. widget in default template imgSrc bug
 add:
     1. add change subLayer zIndex fun
+    2. now can delete multi-files at once
