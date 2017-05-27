@@ -120,7 +120,7 @@
         if(item.isFile){
             item.file(function(file){
                 console.log('file.name',file.name);
-                if(!!(file.name.match(/(jpeg|png|ttf|jpg)/))){
+                if(!!(file.name.match(/(jpeg|png|ttf|jpg|bmp)/))){
                     if(file.name==='thumbnail.jpg'){
                         var fileReader = new FileReader();
                         fileReader.onload = function(e){
@@ -270,7 +270,7 @@
         }
         var items = e.dataTransfer.items;
         var item = items[0].webkitGetAsEntry();
-        var namePattern = /^file(\s?\(\d+\)?)\.zip$/g;
+        var namePattern = /^file(\s?\(\d+\))?\.zip$/g;
         if(item.isFile){
             if(item.name){
                 console.log('item',item);

@@ -203,7 +203,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
 
     function LoadWithTemplate(data, id){
-        console.log('project data.content receive',data);
+        // console.log('project data.content receive',data);
         var templateId = data.template;
         //add templateId to template
         TemplateProvider.setTemplateId(templateId);
@@ -246,7 +246,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     }
 
     function loadFromContent(data,id) {
-
+        // console.log('loadFromContent data',JSON.parse(data.content));
         if (data.content){
 
             //var globalProject = GlobalService.getBlankProject()
@@ -254,6 +254,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
             });
+            globalProject.name = data.name;
+            globalProject.author = data.author;
             globalProject.initSize = {
                 width : resolution[0],
                 height :resolution[1]
@@ -270,7 +272,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             //console.log('globalProject',globalProject);
 
             var resourceList = globalProject.resourceList;
-            console.log('resourceList',resourceList);
+            // console.log('resourceList',resourceList);
             var count = resourceList.length;
             var globalResources = ResourceService.getGlobalResources();
             window.globalResources = globalResources;
@@ -298,7 +300,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             if (count>0){
                 for (var i=0;i<resourceList.length;i++){
                     var curRes = resourceList[i];
-                    console.log('caching ',i)
+                    // console.log('caching ',i)
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 }
             }else{
@@ -894,6 +896,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 page.layers = page.canvasList;
                 attrArr = ['canvasList','linkedAllWidgets'];
                 deleteObjAttr(page,attrArr);
+                if(page.actions){
+                    page.actions.forEach(function (action) {
+                        if(action.commands){
+                            var newCommands;
+                            newCommands = action.commands.map(function(command){
+                                    return command.cmd;
+                            });
+                            action.commands = newCommands;
+                        }
+                    })
+                }
                 page.layers.forEach(function(layer,index){
                     layer.subLayers = layer.subCanvasList;
                     layer.subLayers.forEach(function (subLayer,index) {
@@ -908,6 +921,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                         subLayer.expand = true;
                         subLayer.selected = false;
                         subLayer.url = '';
+                        if(subLayer.actions){
+                            subLayer.actions.forEach(function (action) {
+                                if(action.commands){
+                                    var newCommands;
+                                    newCommands = action.commands.map(function(command){
+                                        return command.cmd;
+                                    });
+                                    action.commands = newCommands;
+                                }
+                            })
+                        }
                         subLayer.widgets.forEach(function (widget,index) {
                             widget.type = widget.subType;
                             deleteObjAttr(widget,['subType']);
@@ -915,6 +939,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                             widget.currentFabwidget = null;
                             widget.expand = true;
                             widget.selected = false;
+                            if(widget.actions){
+                                widget.actions.forEach(function (action) {
+                                    if(action.commands){
+                                        var newCommands;
+                                        newCommands = action.commands.map(function(command){
+                                            return command.cmd;
+                                        });
+                                        action.commands = newCommands;
+                                    }
+                                })
+                            }
                             if(widget.texList&&(widget.texList instanceof Array)){
                                 widget.texList.forEach(function (tex,index) {
                                     if(tex.slices&&(tex.slices instanceof Array)){
@@ -957,7 +992,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                                 ergodicPages();
                             }else{
                                 newData.content = JSON.stringify(tempContentObj);
-                                console.log('after preprocess',newData);
+                                // console.log('after preprocess',newData);
                                 cb&&cb(newData)
                             }
                         });
@@ -975,7 +1010,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                                 ergodicPages();
                             }else{
                                 newData.content = JSON.stringify(tempContentObj);
-                                console.log('after preprocess',newData);
+                                // console.log('after preprocess',newData);
                                 cb&&cb(newData)
                             }
                         });
