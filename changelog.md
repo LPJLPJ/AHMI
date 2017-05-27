@@ -110,7 +110,7 @@ fix:
    
 2017.5.3 
 fix:
-    1. blank command bug 
+    1. blank command bug
     2. page's tag is null when open a project
     3. undo's bug when delete a page
     4. change num widget's numModeId to enableAnimation
@@ -133,5 +133,8 @@ fix:
     5. num has decimal in simulator bug
     6. remove textarea widget's scale ctrl
     7. widget in default template imgSrc bug
+update:
+    1. add view port to display info in simulator
 add:
-    1. add change subLayer zIndex fun 
+    1. add change subLayer zIndex fun
+    2. now can delete multi-files at once

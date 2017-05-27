@@ -67,9 +67,9 @@ body{
     width: 100%;
 
     transition: height 0.2s;
-    -moz-transition: height 0.2s;	/* Firefox 4 */
-    -webkit-transition: height 0.2s;	/* Safari 和 Chrome */
-    -o-transition: height 0.2s;	/* Opera */
+    -moz-transition: height 0.2s;   /* Firefox 4 */
+    -webkit-transition: height 0.2s;    /* Safari 和 Chrome */
+    -o-transition: height 0.2s; /* Opera */
 
 }
 .my-tool-content.my-tool-show{
@@ -117,9 +117,9 @@ body{
     border-bottom: 1px solid #E9EBED ;
 
     transition: height 0.2s;
-    -moz-transition: height 0.2s;	/* Firefox 4 */
-    -webkit-transition: height 0.2s;	/* Safari 和 Chrome */
-    -o-transition: height 0.2s;	/* Opera */
+    -moz-transition: height 0.2s;   /* Firefox 4 */
+    -webkit-transition: height 0.2s;    /* Safari 和 Chrome */
+    -o-transition: height 0.2s; /* Opera */
 
 }
 
@@ -136,9 +136,9 @@ body{
     background-color: #fff;
     border-right: 1px solid #E9EBED;
     transition: width 0.2s;
-    -moz-transition: width 0.2s;	/* Firefox 4 */
-    -webkit-transition: width 0.2s;	/* Safari 和 Chrome */
-    -o-transition: width 0.2s;	/* Opera */
+    -moz-transition: width 0.2s;    /* Firefox 4 */
+    -webkit-transition: width 0.2s; /* Safari 和 Chrome */
+    -o-transition: width 0.2s;  /* Opera */
 }
 .container-fluid.my-left-hide .my-pages{
     width: 0;
@@ -236,9 +236,9 @@ body{
     background-color: #eff1f5;
     position: relative;
     transition: width 0.2s;
-    -moz-transition: width 0.2s;	/* Firefox 4 */
-    -webkit-transition: width 0.2s;	/* Safari 和 Chrome */
-    -o-transition: width 0.2s;	/* Opera */
+    -moz-transition: width 0.2s;    /* Firefox 4 */
+    -webkit-transition: width 0.2s; /* Safari 和 Chrome */
+    -o-transition: width 0.2s;  /* Opera */
 }
 .container-fluid.my-left-hide.my-right-hide .my-stage-container{
     width: calc(99% - 2px)
@@ -371,9 +371,9 @@ body{
     padding: 5px;
     float:right;
     transition: width 0.2s;
-    -moz-transition: width 0.2s;	/* Firefox 4 */
-    -webkit-transition: width 0.2s;	/* Safari 和 Chrome */
-    -o-transition: width 0.2s;	/* Opera */
+    -moz-transition: width 0.2s;    /* Firefox 4 */
+    -webkit-transition: width 0.2s; /* Safari 和 Chrome */
+    -o-transition: width 0.2s;  /* Opera */
 }
 .container-fluid.my-right-hide .my-attribute{
     width: 0;
@@ -392,9 +392,9 @@ body{
     border: 1px solid #E9EBED;
     border-radius: 3px;
     transition: height 0.2s;
-    -moz-transition: height 0.2s;	/* Firefox 4 */
-    -webkit-transition: height 0.2s;	/* Safari 和 Chrome */
-    -o-transition: height 0.2s;	/* Opera */
+    -moz-transition: height 0.2s;   /* Firefox 4 */
+    -webkit-transition: height 0.2s;    /* Safari 和 Chrome */
+    -o-transition: height 0.2s; /* Opera */
 
 }
 .my-top-panel .my-panel-item{
@@ -474,9 +474,9 @@ body{
     border-radius: 3px;
 
     transition: height 0.2s;
-    -moz-transition: height 0.2s;	/* Firefox 4 */
-    -webkit-transition: height 0.2s;	/* Safari 和 Chrome */
-    -o-transition: height 0.2s;	/* Opera */
+    -moz-transition: height 0.2s;   /* Firefox 4 */
+    -webkit-transition: height 0.2s;    /* Safari 和 Chrome */
+    -o-transition: height 0.2s; /* Opera */
 
 }
 .my-panel-title{
@@ -575,7 +575,17 @@ body{
 }
 
 .canvas-wrapper {
-    overflow: auto;
+    overflow: scroll;
+}
+
+.simulator-tools-wrapper{
+    padding: 0.3em;
+    text-align: left;
+}
+
+.simulator-tools{
+    display: inline-block;
+
 }
 
 
@@ -617,3 +627,8 @@ body{
 /*icon hover turn big*/
 .icon:hover{transform:scale(1.2);}
 .dropdown-menu-item-widget:hover{transform:scale(1.2);}
+
+.tag-table-wrapper{
+    max-height: 400px;
+    overflow: scroll;
+}

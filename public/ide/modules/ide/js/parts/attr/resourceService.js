@@ -109,7 +109,7 @@ ideServices
         }
 
         this.syncFiles = function (_files) {
-            console.log('_files',_files)
+            // console.log('_files',_files)
             files = _files||[]
         }
 

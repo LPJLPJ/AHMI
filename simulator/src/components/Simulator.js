@@ -51,7 +51,8 @@ var defaultSimulator = {
     timerList: [],
     innerTimerList:[],
     currentPressedTargets: [],
-    totalResourceNum: 0
+    totalResourceNum: 0,
+    fps:0
 }
 module.exports =   React.createClass({
     getInitialState: function () {
@@ -368,6 +369,18 @@ module.exports =   React.createClass({
     },
     paint:function () {
         // console.log('painting')
+        //timer for fps
+        var shouldTestFPS;
+        if (this.shouldTestFPS==undefined) {
+            this.shouldTestFPS = true;
+        }
+        if (this.shouldTestFPS) {
+            shouldTestFPS = true;
+        }
+
+        if (shouldTestFPS) {
+            var startT = new Date()
+        }
         var offcanvas = this.refs.offcanvas;
 
         var offctx = offcanvas.getContext('2d');
@@ -383,6 +396,17 @@ module.exports =   React.createClass({
             }
             ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
             ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+        }
+
+        if (shouldTestFPS) {
+            var stopT = new Date();
+            var fps = (1000/(stopT-startT)).toFixed(1)
+            this.setState({fps:fps})
+            //disable
+            this.shouldTestFPS = false;
+            setTimeout(function () {
+                this.shouldTestFPS = true;
+            }.bind(this),500)
         }
 
 
@@ -1035,7 +1059,7 @@ module.exports =   React.createClass({
         var willExecuteAnimation = false;
         if (options&&options.animation){
             //has animation execute
-            console.log('execute animation')
+            // console.log('execute animation')
             if (canvasData.tag === options.animation.tag){
                 // willExecuteAnimation = true;
                 //execute animation which number is number
@@ -2649,7 +2673,6 @@ module.exports =   React.createClass({
 
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                    console.log(tempNumValue,'tempNumValue');
 
                     //drawbackground
                     var bgTex = {
@@ -3967,9 +3990,18 @@ module.exports =   React.createClass({
 
     },
     getRelativeRect:function (e) {
+        var originalW = e.target.width;
+        var originalH = e.target.height;
+
         var clientRect = e.target.getBoundingClientRect()
+        var ratioW = originalW/clientRect.width;
+        var ratioH = originalH/clientRect.height;
         var x = Math.round(e.clientX - clientRect.left);
         var y = Math.round(e.clientY - clientRect.top);
+        if (ratioW && ratioH) {
+            x = x*ratioW
+            y = y*ratioH
+        }
 
         return {
             x:x,
@@ -4719,10 +4751,51 @@ module.exports =   React.createClass({
         registers[key].value = value;
         this.setState({registers: registers});
     },
+    handleViewScale:function (e) {
+        var curScale = Number(e.target.value)
+        if (curScale) {
+            //change scale
+            var canvas = this.refs.canvas
+            var offcanvas = this.refs.offcanvas
+            canvas.style.width = (curScale * canvas.width) +'px'
+            offcanvas.style.width = (curScale * canvas.width) +'px'
+        }
+    },
     render: function () {
         // console.log('registers',this.state.registers);
         return (
             < div className='simulator'>
+                <div className='simulator-tools-wrapper'>
+                    <div className='simulator-tools tools-scale'>
+                        <select className='btn btn-default' onChange={this.handleViewScale} defaultValue='1'>
+                            <option value='0.5'>50%</option>
+                            <option value='0.75'>75%</option>
+                            <option value='1'>100%</option>
+                            <option value='1.5'>150%</option>
+                            <option value='2'>200%</option>
+                        </select>
+                        
+                    </div>
+                    <div className='simulator-tools tools-fps'>
+                        <span className='btn btn-default'>{this.state.fps}</span>
+                    </div>
+                    {/*
+                    <div className='simulator-tools tools-step'>
+                        <div className='btn btn-default' onClick={this.handleStep}>-&gt;</div>
+                    </div>
+                    <div className='simulator-tools tools-bp'>
+                        <select className='btn btn-default select' onChange={this.handleDebugChooseWidget}>
+                            {generalCommandsDOM}
+                        </select>
+                        <select className='btn btn-default' onChange={this.handleDebugChooseTrigger}>
+                            {triggerDOM}
+                        </select>
+                        <select className='btn btn-default' onChange={this.handleDebugChooseLine}>
+                            {commandsDOM}
+                        </select>
+                    </div>
+                    */}
+                </div>
                 < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease}>
                     <canvas ref='canvas' className='simulator-canvas' />
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
