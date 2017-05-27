@@ -31,7 +31,7 @@
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
     <script src="../../public/ide/lib/angular-modal/modal.min.js"></script>
     <script src="../../public/ide/lib/jquery-ui.js"></script>
-    <script src="../../public/ide/lib/sortable.js"></script>
+    <!--<script src="../../public/ide/lib/sortable.js"></script>-->
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
@@ -113,7 +113,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/texCtl.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>
-    <script src="../../public/ide/modules/ide/min-js/parts/attr/SortableController.js"></script>
+    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/SortableController.js"></script>-->
 
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
     <!--directive-->
@@ -301,7 +301,7 @@
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe623;</span><span-->
                 <!--class="caption">格式</span></a>-->
                 <a class="my-cmd-item" ng-controller="arrangeCtr"
-                   ng-class="{false:'inactive'}[component.tool.sublayerStatuslayerStatus]">
+                   ng-class="{false:'inactive'}[!component.tool.pageStatus]">
                     <div class="" uib-dropdown>
                         <div class="dropdown" uib-dropdown-toggle>
                             <span class="iconfont icon">&#xe61f;</span>
@@ -793,15 +793,15 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">方向</span>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">方向</span>-->
 
-                            <select class="my-attr-number-input form-control" ng-model="component.button.arrangeModel"
-                                    ng-change="component.button.enterArrange($event)">
-                                <option value="horizontal">水平</option>
-                                <option value="vertical">竖直</option>
-                            </select>
-                        </div>
+                            <!--<select class="my-attr-number-input form-control" ng-model="component.button.arrangeModel"-->
+                                    <!--ng-change="component.button.enterArrange($event)">-->
+                                <!--<option value="horizontal">水平</option>-->
+                                <!--<option value="vertical">竖直</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
                             <select class="form-control my-attr-number-input form-control"
@@ -1618,15 +1618,15 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">方向</span>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">方向</span>-->
 
-                            <select class="my-attr-number-input form-control" ng-model="component.textArea.arrangeModel"
-                                    ng-change="component.textArea.enterArrange($event)">
-                                <option value="horizontal">水平</option>
-                                <option value="vertical">竖直</option>
-                            </select>
-                        </div>
+                            <!--<select class="my-attr-number-input form-control" ng-model="component.textArea.arrangeModel"-->
+                                    <!--ng-change="component.textArea.enterArrange($event)">-->
+                                <!--<option value="horizontal">水平</option>-->
+                                <!--<option value="vertical">竖直</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">文本</span>
                             <input type="text"
@@ -2468,6 +2468,9 @@
                             </filereadform>
                             上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                         </a>
+                        <button class="my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
+                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>
+                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>
                     </form>
 
 
@@ -2498,7 +2501,7 @@
                     </uib-progressbar>
                     <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
                     <!-- table -->
-                    <table class="table my-img-table table-bordered">
+                    <table class="table my-img-table table-bordered" id="resourceList">
                         <thead>
                         <tr>
                             <td class="col-xs-1">预览</td>
@@ -2506,8 +2509,8 @@
                             <td class="col-xs-1">操作</td>
                         </tr>
                         </thead>
-                        <div ng-controller="sortCtrl">
-                        <tbody ui-sortable="sortableOptions">
+                        <!--<div ng-controller="sortCtrl">-->
+                        <tbody>
                         <tr class="img-info" ng-repeat="file in component.top.files track by $index">
                             <td><img width="40px" height="40px" ng-src="{{file.src}}"/></td>
                             <td>
@@ -2516,11 +2519,14 @@
                                 <span>{{file.size/1024 | number:2}}K</span>
                             </td>
                             <td><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
-                                <span class="iconfont img-option" ng-click="openPanel($index)" style="font-size: 30px">&#xe646;</span>
+                                <span class="iconfont img-option" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
+                                <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
+                                    <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" >
+                                </label>
                             </td>
                         </tr>
                         </tbody>
-                        </div>
+                        <!--</div>-->
                     </table>
 
                     <script type="text/ng-template" id="deletePanelModal.html">

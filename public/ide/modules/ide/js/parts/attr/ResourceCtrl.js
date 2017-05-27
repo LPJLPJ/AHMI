@@ -25,18 +25,16 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
     function initProject(){
         $scope.component={
-
-            top: {
+            top:{
                 uploadingArray:[],
-
                 files:[],
-
                 deleteFile:deleteFile,
+                toggleOperation:toggleOperation,
                 basicUrl:'',
-                resources:[]
-
+                resources:[],
+                showDel:true,
+                selectIndexArr:[]
             }
-
         };
 
         $scope.component.top.resources = ResourceService.getAllResource();
@@ -52,9 +50,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         /**
          * 删除资源按钮的弹窗
          */
-        $scope.openPanel = function(index){
+        $scope.openPanel = function(index,cb){
             $scope.resIndex = index;
-            //利用uibModal制作模态窗口
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'deletePanelModal.html',
@@ -66,36 +63,86 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                     }
                 }
             });
-
-            modalInstance.result.then(function(index){
-
-                deleteFile(index);
+            modalInstance.result.then(function(resIndex){
+                var resIndexArr = [];
+                if(_.isNumber(resIndex)){
+                    //删除单个文件
+                    resIndexArr.push(resIndex);
+                    deleteFile(resIndexArr);
+                }else if(_.isArray(resIndex)){
+                    //批量删除
+                    for(var key in resIndex){
+                        if(resIndex[key]){
+                            resIndexArr.push(Number(key));
+                        }
+                    }
+                    deleteFile(resIndexArr);
+                    cb&&cb();
+                }
             })
-
         }
     }
 
 
-
-    function deleteFile(index){
-        var requiredResourceNames=ProjectService.getRequiredResourceNames();
-
-        for (var i=0;i<requiredResourceNames.length;i++){
-            if ($scope.component.top.files[index].src==requiredResourceNames[i]){
-                toastr.warning('该资源已经被使用');
-                return;
+    /**
+     * 删除文件
+     * @param index
+     */
+    function deleteFile(indexArr){
+        var requiredResourceNames=ProjectService.getRequiredResourceNames(),
+            files = _.cloneDeep($scope.component.top.files),
+            resourceId = [],
+            j,
+            fileIsNotUsed = true;
+        for(j=0;j<indexArr.length;j++){
+            var fileIndex = indexArr[j];
+            fileIsNotUsed = requiredResourceNames.every(function(itemSrc){
+                return itemSrc!==files[fileIndex].src
+            });
+            if(fileIsNotUsed){
+                resourceId = files[fileIndex].id;
+                ResourceService.deleteFileById(resourceId, function () {
+                    //$scope.component.top.files = ResourceService.getAllImages();
+                    $scope.$emit('ResourceUpdate');
+                }.bind(this));
+            }else{
+                toastr.warning('资源-'+files[fileIndex].name+'已经被使用');
             }
         }
-        var resourceId = $scope.component.top.files[index].id;
-        ResourceService.deleteFileById(resourceId, function () {
-            //$scope.component.top.files = ResourceService.getAllImages();
-            $scope.$emit('ResourceUpdate');
-            
-        }.bind(this));
-        
-
     }
 
+    /**
+     * 批量操作函数
+     * @param keyword 操作关键字
+     */
+    function toggleOperation(keyword){
+        var i = 0,
+            haveSelectRes = false,
+            selectIndexArr = _.cloneDeep($scope.component.top.selectIndexArr);
+        switch (keyword){
+            case 'operate':
+                $scope.component.top.showDel = !$scope.component.top.showDel;
+                break;
+            case 'cancel':
+                $scope.component.top.selectIndexArr = [];
+                $scope.component.top.showDel = !$scope.component.top.showDel;
+                break;
+            case 'delete':
+                haveSelectRes = !selectIndexArr.every(function (item) {
+                    return !item;
+                });
+                if(haveSelectRes){
+                    //have select res
+                    $scope.openPanel(selectIndexArr,function () {
+                        $scope.component.top.selectIndexArr = [];
+                    });
+                }else{
+                    //do not select
+                    toastr.warning('未选择文件！');
+                }
+                break;
+        }
+    }
 
 
 }])

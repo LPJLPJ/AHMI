@@ -999,7 +999,7 @@ module.exports =   React.createClass({
                 options = {};
             }
             options.reLinkWidgets = true;
-            this.handleTargetAction(page, 'Load');
+            
 
             switch (method){
                 case 'MOVE_LR':
@@ -1017,7 +1017,8 @@ module.exports =   React.createClass({
                     }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
-                    })
+                        this.handleTargetAction(page, 'Load');
+                    }.bind(this))
                     break;
                 case 'MOVE_RL':
                     AnimationManager.step(offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
@@ -1034,7 +1035,8 @@ module.exports =   React.createClass({
                     }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
-                    })
+                        this.handleTargetAction(page, 'Load');
+                    }.bind(this))
                     break;
                 case 'MOVE_TB':
                     AnimationManager.step(-offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
@@ -1051,7 +1053,8 @@ module.exports =   React.createClass({
                     }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
-                    })
+                        this.handleTargetAction(page, 'Load');
+                    }.bind(this))
                     break;
                 case 'MOVE_BT':
                     AnimationManager.step(offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
@@ -1068,7 +1071,8 @@ module.exports =   React.createClass({
                     }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false;
-                    })
+                        this.handleTargetAction(page, 'Load');
+                    }.bind(this))
                     break;
                 case 'SCALE':
                     var beforeTranslateMatrix = [
@@ -1106,12 +1110,14 @@ module.exports =   React.createClass({
                     }.bind(this),function () {
                         page.transform = null
                         options.pageAnimate = false;
-                    })
+                        this.handleTargetAction(page, 'Load');
+                    }.bind(this))
 
 
 
                     break;
                 default:
+                    this.handleTargetAction(page, 'Load');
                     this.draw(null,options);
             }
 
@@ -1651,7 +1657,7 @@ module.exports =   React.createClass({
             // subCanvas.info.w = w;
             // subCanvas.info.h = h;
             //generate load trigger
-            this.handleTargetAction(subCanvas, 'Load')
+            
             //transition animation
             var moveX = w;
             var moveY = 0;
@@ -1678,7 +1684,8 @@ module.exports =   React.createClass({
                         }.bind(this),function () {
                             // offctx.restore()
                             subCanvas.translate = null;
-                        })
+                            this.handleTargetAction(subCanvas, 'Load')
+                        }.bind(this))
                         break;
                     case 'MOVE_RL':
                         AnimationManager.step(w,0,0,0,duration,frames,easing,function (deltas) {
@@ -1695,7 +1702,8 @@ module.exports =   React.createClass({
                         }.bind(this),function () {
                             // offctx.restore()
                             subCanvas.translate = null;
-                        })
+                            this.handleTargetAction(subCanvas, 'Load')
+                        }.bind(this))
                         break;
                     case 'SCALE':
                         var beforeTranslateMatrix = [
@@ -1731,12 +1739,14 @@ module.exports =   React.createClass({
                             this.draw(null,options);
                         }.bind(this),function () {
                             subCanvas.transform = null
-                        })
+                            this.handleTargetAction(subCanvas, 'Load')
+                        }.bind(this))
 
 
 
                         break;
                     default:
+                        this.handleTargetAction(subCanvas, 'Load')
                         this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
 
                 }
@@ -2466,7 +2476,7 @@ module.exports =   React.createClass({
                         case 'vertical':
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, null, drawColor);
                             if (cursor){
-                                var cursorSlice = widget.texList[2].slices[0];
+                                var cursorSlice = widget.texList[widget.texList.length-1].slices[0];
                                 this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
                              }
                             break;
@@ -2474,7 +2484,7 @@ module.exports =   React.createClass({
                         default:
                             this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, null, drawColor);
                             if (cursor){
-                                var cursorSlice = widget.texList[2].slices[0];
+                                var cursorSlice = widget.texList[widget.texList.length-1].slices[0];
                                 this.drawCursor(width*curScale+curX,curY,width,height,true,width*(1-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
@@ -3142,7 +3152,7 @@ module.exports =   React.createClass({
 
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-
+                    console.log(tempNumValue,'tempNumValue');
 
                     //drawbackground
                     var bgTex = {
@@ -3300,10 +3310,14 @@ module.exports =   React.createClass({
         if (parseInt(decimalCount) > 0) {
             var baseCount = Math.pow(10,decimalCount);
             tempNumValue = (Math.abs(curValue)/baseCount).toString();
-            var tempNumValuePair = tempNumValue.split('.')
+            var tempNumValuePair = tempNumValue.split('.');
             if (tempNumValuePair.length > 1) {
                 //has original fraction
-                tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempNumValuePair[1], decimalCount, 0, false)
+                var tempValue = tempNumValuePair[1];
+                for(var i=0;i<decimalCount-tempNumValuePair[1].length;i++){
+                    tempValue=tempValue+'0';
+                }
+                tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits(tempValue, decimalCount, 0, true)
             } else {
                 //only int
                 tempNumValue = tempNumValuePair[0] + '.' + this.changeNumDigits('', decimalCount, 0, false)
