@@ -627,3 +627,8 @@ body{
 /*icon hover turn big*/
 .icon:hover{transform:scale(1.2);}
 .dropdown-menu-item-widget:hover{transform:scale(1.2);}
+
+.tag-table-wrapper{
+    max-height: 400px;
+    overflow: scroll;
+}
