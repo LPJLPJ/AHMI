@@ -96,7 +96,7 @@
         if(item.isFile){
             item.file(function(file){
                 console.log('file.name',file.name);
-                if(!!(file.name.match(/(jpeg|png|ttf|jpg)/))){
+                if(!!(file.name.match(/(jpeg|png|ttf|jpg|bmp)/))){
                     if(file.name==='thumbnail.jpg'){
                         var fileReader = new FileReader();
                         fileReader.onload = function(e){
