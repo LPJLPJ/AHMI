@@ -138,3 +138,4 @@ update:
 add:
     1. add change subLayer zIndex fun
     2. now can delete multi-files at once
+    3. can upload a zip which id generated in IDE

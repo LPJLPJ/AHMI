@@ -288,7 +288,7 @@ function parseFormData(req,res,newProject){
     });
     form.on('error',function(err){
         console.log('err',err);
-        errHandle(err);
+        errHandler(res,500,'upload file err');
     });
     form.on('aborted',function(){
         console.log('aborted');
