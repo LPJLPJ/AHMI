@@ -1211,7 +1211,7 @@ ideServices
                         _successCallback&&_successCallback();
                     });
                 }else if(currentLayer.subLayers.length>1){
-                    var showSubLayer=currentLayer.subLayers[0];
+                    var showSubLayer= currentLayer.subLayers[1];
                     currentLayer.showSubLayer=showSubLayer;
                     _self.SyncSubLayerImage(currentLayer,showSubLayer, function () {
                         _self.OnLayerSelected(currentLayer, function () {
