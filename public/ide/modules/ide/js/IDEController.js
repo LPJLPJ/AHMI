@@ -1113,6 +1113,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 break;
             case 'MyNum':
                 node.add(new fabric.MyNum(dataStructure,initiator));
+                break;
             default :
                 console.log('not match widget in preprocess!');
                 break;
