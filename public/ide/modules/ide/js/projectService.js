@@ -274,14 +274,15 @@ ideServices
                 var currentPage=_currentPage;
                 if (!currentPage){
                     currentPage = _self.getCurrentPage();
-
                 }
                 var currentLayer=null;
-                _.forEach(currentPage.layers, function (_layer) {
-                    if (_layer.current){
-                        currentLayer=_layer;
-                    }
-                });
+                if(currentPage){
+                    _.forEach(currentPage.layers, function (_layer) {
+                        if (_layer.current){
+                            currentLayer=_layer;
+                        }
+                    });
+                }
                 return currentLayer;
             };
 
@@ -4673,7 +4674,6 @@ ideServices
                 })
 
             }
-
 
 
 
