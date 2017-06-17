@@ -1111,6 +1111,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             case 'MyLayer':
                 node.add(new fabric.MyLayer(dataStructure,initiator));
                 break;
+            case 'MyNum':
+                node.add(new fabric.MyNum(dataStructure,initiator));
             default :
                 console.log('not match!');
                 break;
