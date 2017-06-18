@@ -231,12 +231,14 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             })
         }else{
             // loadFromContent(data,id);
-            var tempData = JSON.parse(data.content);
-            if(tempData.format!==undefined){
-                //load from a zip
-                preProcessData(data,function(newData){
-                    loadFromContent(newData,id);
-                });
+            if(!!data.content){
+                var tempData = JSON.parse(data.content);
+                if(tempData.format!==undefined){
+                    //load from a zip
+                    preProcessData(data,function(newData){
+                        loadFromContent(newData,id);
+                    });
+                }
             }else{
                 loadFromContent(data,id);
             }
