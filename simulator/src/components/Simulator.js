@@ -1059,7 +1059,7 @@ module.exports =   React.createClass({
         var willExecuteAnimation = false;
         if (options&&options.animation){
             //has animation execute
-            console.log('execute animation')
+            // console.log('execute animation')
             if (canvasData.tag === options.animation.tag){
                 // willExecuteAnimation = true;
                 //execute animation which number is number

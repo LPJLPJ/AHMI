@@ -29,7 +29,12 @@
         confirmReleaseBtnNode.off('click');
         confirmReleaseBtnNode.on('click',function(e){
             $('#uploadModal').modal('hide');
-            sendFiles(hideWrapper);
+            var titleText = $('#uploadModal .modal-title').text();
+            if(titleText==='上传本地工程'){
+                sendFiles(hideWrapper);
+            }else if(titleText==='上传压缩包'){
+                sendProjectZip();
+            }
         });
         var cancelReleaseBtnNode = $('#cancelReleaseBtn');
         cancelReleaseBtnNode.off('click');
@@ -49,35 +54,54 @@
     function FileDrop(e){
         e.preventDefault();
         filedrag.className = '';
+        var items,
+            item;
         if(local){
 
         }else{
             showWrapper();
             changeUpdateState('正在预处理工程...',100);
             if(!isDropFileIsFolder(e)){
-                hideWrapper();
-                toastr.error('不合法的工程');
-                return
-            }
-            var items = e.dataTransfer.items;
-            for(var i=0;i<items.length;i++){
-                //webkitGetAsEntry is the key point
-                var item = items[i].webkitGetAsEntry();
-                if(item){
-                    var fcb = function(){
-                        hideWrapper();
-                        toastr.error('不合法的工程');
-                        legal = false;
-                    };
-                    var scb = function(item){
-                        traverseFileTree(item);
+                if(isDropFileIsZip(e)){
+                    console.log('生成的压缩包');
+                    items = e.dataTransfer.items;
+                    item = items[0].webkitGetAsEntry();
+                    item.file(function(file){
+                        formData.append('file.zip',file);
                         setTimeout(function(){
-                            //hideWrapper();
+                            $('#uploadModal .modal-title').text('上传压缩包');
+                            $('#uploadModal .modal-body p').text('此为生成的压缩文件，尝试从此文件恢复工程不保证所恢复工程完整性，确定上传？')
                             $('#uploadModal').modal({backdrop:'static',keyboard:false});
-
                         },500);
-                    };
-                    readJSONFile(item,scb,fcb);
+                        // sendProjectZip();
+                    });
+                }else{
+                    hideWrapper();
+                    toastr.error('不合法的工程');
+                }
+            }else{
+                items = e.dataTransfer.items;
+                for(var i=0;i<items.length;i++){
+                    //webkitGetAsEntry is the key point
+                    item = items[i].webkitGetAsEntry();
+                    if(item){
+                        var fcb = function(){
+                            hideWrapper();
+                            toastr.error('不合法的工程');
+                            legal = false;
+                        };
+                        var scb = function(item){
+                            traverseFileTree(item);
+                            setTimeout(function(){
+                                //hideWrapper();
+                                $('#uploadModal .modal-title').text('上传本地工程');
+                                $('#uploadModal .modal-body p').text('合法的本地工程，确定上传？');
+                                $('#uploadModal').modal({backdrop:'static',keyboard:false});
+                            },500);
+                        };
+                        console.log('item',item);
+                        readJSONFile(item,scb,fcb);
+                    }
                 }
             }
         }
@@ -96,7 +120,7 @@
         if(item.isFile){
             item.file(function(file){
                 console.log('file.name',file.name);
-                if(!!(file.name.match(/(jpeg|png|ttf|jpg)/))){
+                if(!!(file.name.match(/(jpeg|png|ttf|jpg|bmp)/))){
                     if(file.name==='thumbnail.jpg'){
                         var fileReader = new FileReader();
                         fileReader.onload = function(e){
@@ -174,7 +198,51 @@
     }
 
     /**
-     * 判断拖拽事件的目标是否为文件夹并对json进行预处理
+     * 发送压缩包至服务器
+     * @param cb
+     */
+    function sendProjectZip(cb){
+        changeUpdateState('正在上传(压缩包)',0);
+        $.ajax({
+            type:"POST",
+            url:'/upload/project/zip',
+            processData:false,
+            contentType:false,
+            data:formData,
+            success:function(data){
+                console.log(data);
+                formData = new FormData();
+                project = null;
+                changeUpdateState('上传成功,正在解析。',100);
+                setTimeout(function(){
+                    location.reload();
+                },1000);
+                //cb&&cb();
+            },
+            error:function(err){
+                console.log(err);
+                changeUpdateState('上传失败。',100);
+                cb&&cb();
+            },
+            xhr:function(){
+                var xhr = $.ajaxSettings.xhr();
+                var bar = $('#myprogress');
+                //var percent = $('#percent');
+                if(xhr.upload){
+                    xhr.upload.addEventListener('progress',function(e){
+                        var percentVal = Math.floor(e.loaded/e.total*100) + '%';
+                        //console.log('percentVal',percentVal);
+                        bar.width(percentVal);
+                        //percent.html(percentVal);
+                    },false);
+                }
+                return xhr;
+            }
+        })
+    }
+
+    /**
+     * 判断拖拽事件的目标是否为文件夹
      * @param  {obj}  e 事件
      * @return {Boolean}   [description]
      */
@@ -189,6 +257,25 @@
         var item = items[0].webkitGetAsEntry();
         if(item.isDirectory){
             return true;
+        }
+        return false;
+    }
+
+    function isDropFileIsZip(e){
+        if(!e.dataTransfer){
+            return false;
+        }
+        if(!e.dataTransfer.items){
+            return false;
+        }
+        var items = e.dataTransfer.items;
+        var item = items[0].webkitGetAsEntry();
+        var namePattern = /^file(\s?\(\d+\))?\.zip$/g;
+        if(item.isFile){
+            if(item.name){
+                console.log('item',item);
+                return namePattern.test(item.name);
+            }
         }
         return false;
     }

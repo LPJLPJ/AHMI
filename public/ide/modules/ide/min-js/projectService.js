@@ -274,14 +274,15 @@ ideServices
                 var currentPage=_currentPage;
                 if (!currentPage){
                     currentPage = _self.getCurrentPage();
-
                 }
                 var currentLayer=null;
-                _.forEach(currentPage.layers, function (_layer) {
-                    if (_layer.current){
-                        currentLayer=_layer;
-                    }
-                });
+                if(currentPage){
+                    _.forEach(currentPage.layers, function (_layer) {
+                        if (_layer.current){
+                            currentLayer=_layer;
+                        }
+                    });
+                }
                 return currentLayer;
             };
 
@@ -1210,7 +1211,7 @@ ideServices
                         _successCallback&&_successCallback();
                     });
                 }else if(currentLayer.subLayers.length>1){
-                    var showSubLayer=currentLayer.subLayers[0];
+                    var showSubLayer= currentLayer.subLayers[1];
                     currentLayer.showSubLayer=showSubLayer;
                     _self.SyncSubLayerImage(currentLayer,showSubLayer, function () {
                         _self.OnLayerSelected(currentLayer, function () {
@@ -4673,7 +4674,6 @@ ideServices
                 })
 
             }
-
 
 
 

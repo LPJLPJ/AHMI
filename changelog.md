@@ -133,6 +133,9 @@ fix:
     5. num has decimal in simulator bug
     6. remove textarea widget's scale ctrl
     7. widget in default template imgSrc bug
+update:
+    1. add view port to display info in simulator
 add:
     1. add change subLayer zIndex fun
     2. now can delete multi-files at once
+    3. can upload a zip which id generated in IDE
