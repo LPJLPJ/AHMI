@@ -2570,22 +2570,26 @@ module.exports =   React.createClass({
         if (curValue != undefined && curValue != null) {
 
 
-            //handle action before
             if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
                 widget.curValue = null
             }else{
 
-                curValue = this.limitValueBetween(curValue, minValue, maxValue);
-                widget.curValue = Number(curValue)
-                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                curValue = Number(this.limitValueBetween(curValue, minValue, maxValue))||0;
+                widget.curValue = curValue
 
-                    shouldHandleAlarmAction = true;
-                } else {
-                    //animate number
+            }
+            if (widget.curValue!==widget.oldValue){
+                //update
+                widget.animateOldValue = widget.oldValue
 
+                this.handleAlarmAction(curValue, widget, lowAlarmValue, highAlarmValue)
+                widget.oldValue = curValue
+
+
+                if(enableAnimation){
                     var totalFrameNum = 10
 
-                    if (widget.animateTimerId == undefined || widget.animateTimerId == 0) {
+                    if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1
@@ -2596,25 +2600,21 @@ module.exports =   React.createClass({
                                 clearInterval(widget.animateTimerId)
                                 widget.animateTimerId = 0
                                 widget.curFrameNum = 0
-                                widget.oldValue = curValue
+
                             }
                             this.draw()
                         }.bind(this), 30)
                     }
-
-
                 }
+
             }
 
 
 
+
         }
 
-        if (shouldHandleAlarmAction){
-            //handle action
-            this.handleAlarmAction(Number(curValue), widget, lowAlarmValue, highAlarmValue)
-            widget.oldValue = Number(curValue)
-        }
+
 
     },
     paintNum: function (curX, curY, widget, options,cb) {
@@ -2667,9 +2667,9 @@ module.exports =   React.createClass({
         var tempNumValue='';
         if (curValue != undefined && curValue != null) {
 
-            var changeDirection = curValue - widget.oldValue
+            var changeDirection = curValue - widget.animateOldValue
 
-                if (!enableAnimation|| (enableAnimation && widget.oldValue != undefined && widget.oldValue == curValue)) {
+                if (!enableAnimation|| (enableAnimation && widget.animateTimerId==0)) {
 
 
                     tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
@@ -2698,10 +2698,10 @@ module.exports =   React.createClass({
                     var newTempNumValue = ''
                     if (arrange==='horizontal'){
                         if (changeDirection<0){
-                            newTempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                             tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }else{
-                            tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                             newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }
 
@@ -2720,10 +2720,10 @@ module.exports =   React.createClass({
 
                     }else{
                         if (changeDirection<0){
-                            newTempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                             tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }else{
-                            tempNumValue = this.generateStyleString(widget.oldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                            tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                             newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }
                         this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)

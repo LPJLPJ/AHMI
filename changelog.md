@@ -138,3 +138,15 @@ update:
 add:
     1. add change subLayer zIndex fun
     2. now can delete multi-files at once
+    3. can upload a zip which is generated in IDE to rebuild a project
+
+1.9.2_test
+fix:
+    1. delete the first subcanvas in canvas bug
+    2. num widget in animation model cannot trigger high/low alarm
+update:
+    1. only show timer when opertion is setTimer***
+    2. remove button's tag
+    3. in  action value can only input integer
+update:
+    1. optimization upload a zip

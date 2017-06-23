@@ -245,7 +245,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
             }
             //console.log(currentSelectedObject);
             switch (currentSelectedObject.type) {
-                case Type.MyButton:
+                //case Type.MyButton:
                 case Type.MyNumber:
                 case Type.MySlide:
                 case Type.MyProgress:

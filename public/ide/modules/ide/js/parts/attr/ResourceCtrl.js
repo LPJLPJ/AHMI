@@ -86,7 +86,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
     /**
      * 删除文件
-     * @param index
+     * @param indexArr
      */
     function deleteFile(indexArr){
         var requiredResourceNames=ProjectService.getRequiredResourceNames(),

@@ -197,6 +197,25 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             $scope.chosenCmd = _.cloneDeep(blankCmd);
         }
 
+        $scope.showCustomTags = false;
+        $scope.changeTagShowState = function(){
+            var operation = $scope.chosenCmd[0].symbol;
+            if(operation.indexOf('setTimer')!==-1){
+                $scope.showCustomTags = false;
+            }else{
+                $scope.showCustomTags = true;
+            }
+        };
+
+        //检查输入值是否为整数
+        $scope.checkValueIsInt = function () {
+            var value = $scope.chosenCmd[2].value;
+            if(!!value&&!_.isInteger(value)){
+                toastr.warning('值只能为整数');
+                $scope.chosenCmd[2].value = parseInt(value);
+            }
+        };
+
         //选择指令
         $scope.chooseCmd = function (index) {
             $scope.currentChosenIdx = index;
