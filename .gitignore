@@ -4,6 +4,7 @@ localproject/
 nwjs-sdk-v0.15.4-osx-x64/
 project/
 resources/
+temp/
 release/
 log/
 .idea/

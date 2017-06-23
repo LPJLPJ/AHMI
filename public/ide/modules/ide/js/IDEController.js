@@ -238,6 +238,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     preProcessData(data,function(newData){
                         loadFromContent(newData,id);
                     });
+                }else{
+                    loadFromContent(data,id);
                 }
             }else{
                 loadFromContent(data,id);

@@ -2253,7 +2253,7 @@
                                         <div class="form-group modelPart">
                                             <span>操作</span>
                                             <select class="form-control" ng-model="chosenCmd[0]"
-                                                    ng-options="op as op.symbol for op in ops"></select>
+                                                    ng-options="op as op.symbol for op in ops" ng-change="changeTagShowState()"></select>
                                         </div>
                                     </td>
 
@@ -2262,7 +2262,7 @@
                                             <span>变量</span>
                                             <select class="form-control" ng-model="chosenCmd[1].tag">
                                                 <option value="">--</option>
-                                                <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
+                                                <option ng-if="showCustomTags" ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
                                                 <option ng-repeat="timerTag in timerTags" value="{{timerTag}}">
                                                     {{timerTag}}
                                                 </option>
@@ -2282,8 +2282,8 @@
                                                     {{timerTag}}
                                                 </option>
                                             </select>
-                                            <input class="form-control modelPart" type="text"
-                                                   ng-model="chosenCmd[2].value"/>
+                                            <input class="form-control modelPart" type="number"
+                                                   ng-model="chosenCmd[2].value" ng-keyup="checkValueIsInt()"/>
                                         </div>
                                     </td>
                                 </tr>
