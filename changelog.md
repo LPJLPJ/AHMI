@@ -140,7 +140,7 @@ add:
     2. now can delete multi-files at once
     3. can upload a zip which is generated in IDE to rebuild a project
 
-1.9.2_test
+1.9.2
 fix:
     1. delete the first subcanvas in canvas bug
     2. num widget in animation model cannot trigger high/low alarm
