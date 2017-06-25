@@ -150,3 +150,8 @@ update:
     3. in  action value can only input integer
 update:
     1. optimization upload a zip
+
+
+1.9.3
+fix:
+    1. fix a bug that newly created project with templates can not be opend
