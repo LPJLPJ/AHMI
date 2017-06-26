@@ -212,9 +212,14 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 method:'GET',
                 url:'/public/templates/defaultTemplate/defaultTemplate.json'
             }).success(function (tdata) {
-                //console.log('get json success',tdata);
+                // console.log('get json success',tdata);
                 setTemplate(tdata,function(){
-                    var tempData = JSON.parse(data.content);
+                    var tempData
+                    if (typeof data == 'string'){
+                        tempData = JSON.parse(data)
+                    }else {
+                        tempData = data
+                    }
                     if(tempData.format!==undefined){
                         //load from a zip
                         preProcessData(data,function(newData){
