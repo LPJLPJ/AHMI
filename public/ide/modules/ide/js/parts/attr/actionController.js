@@ -197,7 +197,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             $scope.chosenCmd = _.cloneDeep(blankCmd);
         }
 
-        $scope.showCustomTags = false;
+        $scope.showCustomTags = true;
         $scope.changeTagShowState = function(){
             var operation = $scope.chosenCmd[0].symbol;
             if(operation.indexOf('setTimer')!==-1){
@@ -218,8 +218,15 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 
         //选择指令
         $scope.chooseCmd = function (index) {
+            var operation = $scope.action.commands[index][0].symbol||'';
+            if(operation.indexOf('setTimer')!==-1){
+                $scope.showCustomTags = false;
+            }else{
+                $scope.showCustomTags = true;
+            }
             $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
+
             //console.log('chosenCmd',$scope.chosenCmd);
         };
 

@@ -4394,8 +4394,8 @@ module.exports =   React.createClass({
             case 'MUL':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = Number(targetTag.value) * Number(this.getParamValue(param2));
-                    this.setTagByTag(targetTag, nextValue)
+                    var nextValue = parseInt(Number(targetTag.value) * Number(this.getParamValue(param2)));
+                    this.setTagByTag(targetTag, nextValue);
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
@@ -4404,8 +4404,8 @@ module.exports =   React.createClass({
             case 'DIV':
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = Number(targetTag.value) / Number(this.getParamValue(param2));
-                    this.setTagByTag(targetTag, nextValue)
+                    var nextValue = parseInt(Number(targetTag.value) / Number(this.getParamValue(param2)));
+                    this.setTagByTag(targetTag, nextValue);
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
@@ -4415,7 +4415,7 @@ module.exports =   React.createClass({
                 var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
                     var nextValue = Number(targetTag.value) % Number(this.getParamValue(param2));
-                    this.setTagByTag(targetTag, nextValue)
+                    this.setTagByTag(targetTag, nextValue);
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
