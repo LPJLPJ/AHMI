@@ -362,13 +362,11 @@ h1::after {
 }
 .word-filter{
 background-color: rgba(162, 201, 235, 0.16);
-
     position: absolute;
     top: 23%;
     left:25.5%;
     width:390px;
     height: 280px;
-
     -webkit-filter: blur(4px);
     filter: blur(3px);
     border-radius: 12px;
