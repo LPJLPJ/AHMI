@@ -586,23 +586,24 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	function enterX(e){
 		if (e.keyCode==13){
 			//判断输入是否合法
-			if (!_.isInteger(parseInt($scope.component.object.level.info.left))){
+            var xCoor = Number($scope.component.object.level.info.left);
+			if (!_.isInteger(xCoor)){
 				toastr.warning('输入不合法');
 				restore();
 				return;
 			}
-            //if($scope.component.object.level.info.left<0||$scope.component.object.level.info.left>$scope.maxWidth){
-            //    toastr.warning('超出画布范围');
-            //    restore();
-            //    return;
-            //}
+            if(xCoor<-2000||xCoor>2000){
+               toastr.warning('超出画布范围');
+               restore();
+               return;
+            }
 			//判断是否有变化
-			if ($scope.component.object.level.info.left==initObject.level.info.left){
+			if (xCoor==initObject.level.info.left){
 				toastr.warning('未改变值'+$scope.component.object.level.info.left);
 				return;
 			}
 			var option={
-				left:$scope.component.object.level.info.left
+				left:xCoor
 			};
 
 			ProjectService.ChangeAttributePosition(option, function (oldOperate) {
@@ -616,22 +617,23 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	function enterY(e){
 		if (e.keyCode==13){
 			//判断输入是否合法
-			if (!_.isInteger(parseInt($scope.component.object.level.info.top))){
+            var yCoor = Number($scope.component.object.level.info.top);
+			if (!_.isInteger(yCoor)){
 				toastr.warning('输入不合法');
 				restore();
 				return;
 			}
-            //if($scope.component.object.level.info.top<0||$scope.component.object.level.info.top>$scope.maxHeight){
-            //    toastr.warning('超出范围');
-            //    restore();
-            //    return;
-            //}
+            if(yCoor<-2000||yCoor>2000){
+               toastr.warning('超出范围');
+               restore();
+               return;
+            }
 			//判断是否有变化
-			if ($scope.component.object.level.info.top==initObject.level.info.top){
+			if (yCoor==initObject.level.info.top){
 				return;
 			}
 			var option={
-				top:$scope.component.object.level.info.top
+				top:yCoor
 			};
 
 			ProjectService.ChangeAttributePosition(option, function (oldOperate) {
@@ -644,24 +646,24 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	function enterWidth(e){
 		if (e.keyCode==13){
 			//判断输入是否合法
-			var integer=Number($scope.component.object.level.info.width);
-			if (!_.isInteger(integer)){
+            var width = Number($scope.component.object.level.info.width);
+			if (!_.isInteger(width)){
 				toastr.warning('输入不合法');
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.width<1){
+            if(width<1||width>2000){
                 toastr.warning('超出范围');
                 restore();
                 return;
             }
 			//判断是否有变化
-			if ($scope.component.object.level.info.width==initObject.level.info.width){
+			if (width==initObject.level.info.width){
 				console.log('没有变化');
 				return;
 			}
 			var option={
-				width:$scope.component.object.level.info.width
+				width:width
 			};
 
 			ProjectService.ChangeAttributeSize(option, function (oldOperate) {
@@ -673,24 +675,24 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	function enterHeight(e){
 		if (e.keyCode==13){
 			//判断输入是否合法
-			var integer=parseInt($scope.component.object.level.info.height);
-			if (!_.isInteger(integer)||integer<1){
+            var height = Number($scope.component.object.level.info.height);
+			if (!_.isInteger(height)){
 				toastr.warning('输入不合法');
 				restore();
 				return;
 			}
-            if($scope.component.object.level.info.height<1){
+            if(height<1||height>2000){
                 toastr.warning('超出范围');
                 restore();
                 return;
             }
 			//判断是否有变化
-			if ($scope.component.object.level.info.height==initObject.level.info.height){
+			if (height==initObject.level.info.height){
 				console.log('没有变化');
 				return;
 			}
 			var option={
-				height:$scope.component.object.level.info.height
+				height:height
 			};
 
 			ProjectService.ChangeAttributeSize(option, function (oldOperate) {
