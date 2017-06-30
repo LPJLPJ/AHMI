@@ -4,7 +4,7 @@
 
 
 ideServices.service('OperationService',[function () {
-    var Operations = {};
+    var Operations = [];
 
     //operation class
     function Operation(name, symbol, icon){
@@ -53,7 +53,7 @@ ideServices.service('OperationService',[function () {
 
     for (var i=0;i<opsRaw.length;i++ ){
         var curOp = new Operation(opsRaw[i][0],opsRaw[i][1]);
-        Operations[opsRaw[i][0]] = curOp;
+        Operations.push(curOp);
     }
 
     this.getOperations = function () {

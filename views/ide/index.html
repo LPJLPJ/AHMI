@@ -2253,7 +2253,7 @@
                                         <div class="form-group modelPart">
                                             <span>操作</span>
                                             <select class="form-control" ng-model="chosenCmd[0]"
-                                                    ng-options="op as op.symbol for op in ops" ng-change="changeTagShowState()"></select>
+                                                    ng-options="op as op.symbol for op in ops track by op.symbol" ng-change="changeTagShowState()"></select>
                                         </div>
                                     </td>
 
