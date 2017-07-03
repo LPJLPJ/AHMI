@@ -3482,6 +3482,46 @@ ideServices
                 selectObj.level.info.bindBit=_option.bindBit;
                 _successCallback&&_successCallback();
             };
+            this.ChangeAttributeSwitchText=function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+
+                if(_option.hasOwnProperty('text')){
+                    selectObj.level.info.text=_option.text;
+                    arg.text=_option.text;
+                }
+                if(_option.fontFamily){
+                    selectObj.level.info.fontFamily=_option.fontFamily;
+                    arg.fontFamily=_option.fontFamily;
+                }
+                if(_option.fontSize){
+                    selectObj.level.info.fontSize=_option.fontSize;
+                    arg.fontSize=_option.fontSize;
+                }
+                if(_option.fontColor){
+                    selectObj.level.info.fontColor=_option.fontColor;
+                    arg.fontColor=_option.fontColor;
+                }
+                if(_option.fontBold){
+                    selectObj.level.info.fontBold=_option.fontBold;
+                    arg.fontBold=_option.fontBold;
+                }
+                if(_option.hasOwnProperty('fontItalic')){
+                    selectObj.level.info.fontItalic=_option.fontItalic;
+                    arg.fontItalic=_option.fontItalic;
+                }
+                if(_option.fontName){
+                    selectObj.level.info.fontName=_option.fontName;
+                }
+
+                selectObj.target.fire('changeSwitchText',arg);
+            };
             //改变控件初始值
             this.ChangeAttributeInitValue = function(_option,_successCallback){
                 var initValue=_option.initValue;

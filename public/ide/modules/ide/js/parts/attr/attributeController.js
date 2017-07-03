@@ -64,7 +64,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 changeButtonFontFamily:changeButtonFontFamily,
                 setButtonFontBold:setButtonFontBold,
                 setButtonFontItalic:setButtonFontItalic,
-                changeButtonFontSize:changeButtonFontSize,
                 enterArrange:enterArrange
             },
             buttonGroup:{
@@ -118,7 +117,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             textArea:{
                 enterText:enterText,
                 changeFontFamily:changeFontFamily,
-                changeFontSize:changeFontSize,
                 setBoldFont:setBoldFont,
                 setUnderlineFont:setUnderlineFont,
                 setItalicFont:setItalicFont,
@@ -153,7 +151,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 changeNumFamily:changeNumFamily,
                 setBoldNum:setBoldNum,
                 setItalicNum:setItalicNum,
-                changeNumSize:changeNumSize,
                 changeNumOfDigits:changeNumOfDigits,
                 changeDecimalCount:changeDecimalCount,
                 enterNumMode:enterNumMode,
@@ -186,7 +183,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
             //开关
             switchWidget:{
-                enterBindBit:enterBindBit
+                enterBindBit:enterBindBit,
+                enterSwitchText:enterSwitchText,
+                changeButtonFontFamily:changeButtonFontFamily,
+                setButtonFontBold:setButtonFontBold,
+                setButtonFontItalic:setButtonFontItalic,
             },
             //旋转
             rotateImg:{
@@ -206,7 +207,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 highlightModeId:'0',
                 enterDateTimeMode:enterDateTimeMode,
                 changeDateTimeFontFamily:changeDateTimeFontFamily,
-                changeDateTimeFontSize:changeDateTimeFontSize,
                 enterArrange:enterArrange
             },
             //滑块
@@ -247,6 +247,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             ],
             enterName:enterName,
 			enterColor:enterColor,
+            enterFontSize:enterFontSize,
 			enterX:enterX,
 			enterY:enterY,
 			enterWidth:enterWidth,
@@ -308,13 +309,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             id:'blank.png',
             src:'/public/images/blank.png',
             name:'空白'
-        }
+        };
         $timeout(function () {
             $scope.component.images=ResourceService.getAllImages();
             $scope.component.images.unshift(blankImage);
         })
-
-
 	}
 
     /**
@@ -330,7 +329,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 case Type.MyLayer:
                     //调整Layer的ShowSubLayer
                     $scope.component.layer.selectModel=$scope.component.object.level.showSubLayer.id;
-                    if((typeof $scope.component.object.level.transition)!='object'){
+                    if((typeof $scope.component.object.level.transition)!=='object'){
                         ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
                         $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                     }
@@ -338,12 +337,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MyPage:
                     //调整Page的背景图
-                    if ($scope.component.object.level.backgroundImage==''){
+                    if ($scope.component.object.level.backgroundImage===''){
                         $scope.component.page.selectImage='blank.png';
                     }else {
                         $scope.component.page.selectImage=$scope.component.object.level.backgroundImage;
                     }
-                    if((typeof $scope.component.object.level.transition)!='object'){
+                    if((typeof $scope.component.object.level.transition)!=='object'){
                         ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
                         $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                     }
@@ -351,7 +350,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MySubLayer:
                     //调整SubLayer的背景图
-                    if ($scope.component.object.level.backgroundImage==''){
+                    if ($scope.component.object.level.backgroundImage===''){
                         $scope.component.subLayer.selectImage='blank.png';
                     }else {
                         $scope.component.subLayer.selectImage=$scope.component.object.level.backgroundImage;
@@ -383,9 +382,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     if($scope.component.object.level.info.enableAnimation===undefined){
                         selectObject.level.info.enableAnimation=false;
                         $scope.component.progress.enableAnimationModeId='1'
-                    }else if($scope.component.object.level.info.enableAnimation==false){
+                    }else if($scope.component.object.level.info.enableAnimation===false){
                         $scope.component.progress.enableAnimationModeId='1'
-                    }else if($scope.component.object.level.info.enableAnimation==true){
+                    }else if($scope.component.object.level.info.enableAnimation===true){
                         $scope.component.progress.enableAnimationModeId='0'
                     }
                     break;
@@ -401,9 +400,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     if($scope.component.object.level.info.enableAnimation===undefined){
                         selectObject.level.info.enableAnimation=false;
                         $scope.component.dashboard.enableAnimationModeId='1'
-                    }else if($scope.component.object.level.info.enableAnimation==false){
+                    }else if($scope.component.object.level.info.enableAnimation===false){
                         $scope.component.dashboard.enableAnimationModeId='1'
-                    }else if($scope.component.object.level.info.enableAnimation==true){
+                    }else if($scope.component.object.level.info.enableAnimation===true){
                         $scope.component.dashboard.enableAnimationModeId='0'
                     }
                     break;
@@ -411,12 +410,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.textArea.arrangeModel=$scope.component.object.level.info.arrange;
                     break;
                 case Type.MyKnob:
-                    if ($scope.component.object.level.backgroundImg==''){
+                    if ($scope.component.object.level.backgroundImg===''){
                         $scope.component.knob.backgroundImage='blank.png';
                     }else {
                         $scope.component.knob.backgroundImage=$scope.component.object.level.backgroundImg;
                     }
-                    if ($scope.component.object.level.knobImg==''){
+                    if ($scope.component.object.level.knobImg===''){
 
                         $scope.component.dashboard.knobImg='blank.png';
                     }else {
@@ -428,23 +427,23 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
                     $scope.component.button.arrangeModel=$scope.component.object.level.info.arrange;
-                    if($scope.component.object.level.info.disableHighlight==undefined){
+                    if($scope.component.object.level.info.disableHighlight===undefined){
                         selectObject.level.info.disableHighlight=false;
                         $scope.component.button.highlightModeId='0';
-                    }else if($scope.component.object.level.info.disableHighlight==false){
+                    }else if($scope.component.object.level.info.disableHighlight===false){
                         $scope.component.button.highlightModeId='0';
-                    }else if($scope.component.object.level.info.disableHighlight==true){
+                    }else if($scope.component.object.level.info.disableHighlight===true){
                         $scope.component.button.highlightModeId='1';
                     }
                     break;
                 case Type.MyButtonGroup:
                     $scope.component.buttonGroup.arrangeModel=$scope.component.object.level.info.arrange;
-                    if($scope.component.object.level.info.disableHighlight==undefined){
+                    if($scope.component.object.level.info.disableHighlight===undefined){
                         selectObject.level.info.disableHighlight=false;
                         $scope.component.buttonGroup.highlightModeId='0';
-                    }else if($scope.component.object.level.info.disableHighlight==false){
+                    }else if($scope.component.object.level.info.disableHighlight===false){
                         $scope.component.buttonGroup.highlightModeId='0';
-                    }else if($scope.component.object.level.info.disableHighlight==true){
+                    }else if($scope.component.object.level.info.disableHighlight===true){
                         $scope.component.buttonGroup.highlightModeId='1';
                     }
                     break;
@@ -715,22 +714,17 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 return;
             }
         }
-
 		if (op.name=='component.object.level.backgroundColor'){
-
 			if (initObject.level.backgroundColor==op.value){
 				return;
 			}
             oldOperate=ProjectService.SaveCurrentOperate();
-
 			option={
 				color:op.value
 			};
 			ProjectService.ChangeAttributeBackgroundColor(option, function () {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
-
 			})
-
 		}
         if(op.name=='component.object.level.info.fontColor'){
             if(initObject.level.info.fontColor==op.value) {
@@ -739,27 +733,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             option = {
                 fontColor:op.value
             };
-
-            oldOperate=ProjectService.SaveCurrentOperate();
-
-            var selectObj=ProjectService.getCurrentSelectObject();
-            if(selectObj.type==Type.MyTextArea){
-                ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                })
-            }else if(selectObj.type==Type.MyButton){
-                ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                })
-            }else if(selectObj.type==Type.MyDateTime){
-                ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                })
-            }else if(selectObj.type==Type.MyNum){
-                ProjectService.ChangeAttributeNumContent(option,function(oldOperate){
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                })
-            }
+            _changeTextAttr(option);
         }
         if(op.name=='component.object.level.info.lineColor'){
             if(initObject.level.info.lineColor==op.value){
@@ -774,6 +748,73 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             })
         }
 	}
+
+    /**
+     * 更改字体大小
+     * @param e
+     */
+	function enterFontSize(e){
+        if(e.keyCode==13){
+            var fontSize = $scope.component.object.level.info.fontSize;
+            if(!_.isInteger(Number(fontSize))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if(fontSize<0||fontSize>150){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if(fontSize==initObject.level.info.fontSize) {
+                return;
+            }
+            var option = {
+                fontSize:fontSize
+            };
+            _changeTextAttr(option);
+        }
+    }
+
+    /**
+     * 根据控件类型，更改控件字体属性
+     * @param option
+     * @private
+     */
+    function _changeTextAttr(option) {
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        var selectObj=ProjectService.getCurrentSelectObject();
+        switch(selectObj.type){
+            case Type.MyTextArea:
+                ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyButton:
+                ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyDateTime:
+                ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyNum:
+                ProjectService.ChangeAttributeNumContent(option,function(oldOperate){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MySwitch:
+                ProjectService.ChangeAttributeSwitchText(option,function(oldOperate){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            default:
+                console.error('not match in change font color!');
+                break;
+        }
+    }
 
     function enterHighlightMode(){
         var selectObj = ProjectService.getCurrentSelectObject();
@@ -938,26 +979,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
-    }
-    function changeButtonFontSize(e){
-        if(e.keyCode==13){
-            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>150){
-                toastr.warning('超出范围');
-                restore();
-                return;
-            }
-            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
-                return;
-            }
-            var option = {
-                fontSize:$scope.component.object.level.info.fontSize
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
     }
     function enterInterval(e){
         if (e.keyCode==13){
@@ -1732,32 +1753,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         })
 
     }
-    function changeFontSize(e){
-        if(e.keyCode==13){
-            if(!_.isInteger(Number($scope.component.object.level.info.fontSize))){
-                toastr.warning('输入不合法');
-                restore();
-                return;
-            }
-            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>150){
-                toastr.warning('超出范围');
-                restore();
-                return;
-            }
-            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
-                return;
-            }
-            var option = {
-                fontSize:$scope.component.object.level.info.fontSize
-            };
-
-            toastr.info('修改成功');
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
     function setBoldFont(){
         if($scope.component.object.level.info.fontBold=="100"){
             $scope.component.object.level.info.fontBold="bold";
@@ -1924,26 +1919,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         })
     }
 
-    function changeNumSize(e){
-        if(e.keyCode==13){
-            if($scope.component.object.level.info.fontSize<0||$scope.component.object.level.info.fontSize>350){
-                toastr.warning('超出最大值');
-                restore();
-                return;
-            }
-            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
-                return;
-            }
-
-            var option = {
-                fontSize:$scope.component.object.level.info.fontSize
-            };
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
     function changeNumOfDigits(e){
         if(e.keyCode==13){
             //console.log('enter numOfDigits');
@@ -2310,6 +2285,27 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
         }
+    };
+    function enterSwitchText(e){
+        if(e.keyCode==13){
+            if ($scope.component.object.level.info.text==initObject.level.info.text){
+                return;
+            }
+            var textLength = $scope.component.object.level.info.text.length||null;
+            if(textLength>20){
+                toastr.warning('字数最大20');
+                restore();
+                return;
+            }
+            var option = {
+                text:$scope.component.object.level.info.text
+            };
+
+            var oldOperate=ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeSwitchText(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
+        }
     }
 
     /**
@@ -2370,23 +2366,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
-    function changeDateTimeFontSize(e){
-        if(e.keyCode==13){
-            if($scope.component.object.level.info.fontSize==initObject.level.info.fontSize) {
-                return;
-            }
-            var option = {
-                fontSize:$scope.component.object.level.info.fontSize
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-
-    }
-
     function changeGroupAlign(){
         var option = {
             align :$scope.component.group.alignModeId

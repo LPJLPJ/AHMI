@@ -1401,6 +1401,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.hasRotatingPoint=false;
             this.backgroundColor=level.texList[0].slices[0].color;
             this.bindBit=level.info.bindBit;
+
+            this.text=level.info.text||'';
+            this.fontFamily=level.info.fontFamily||"宋体";
+            this.fontSize=level.info.fontSize||20;
+            this.fontColor=level.info.fontColor||'rgba(0,0,0,1)';
+            this.fontBold=level.info.fontBold||"100";
+            this.fontItalic=level.info.fontItalic||"";
+
             this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.imageElement) {
                 this.loaded = true;
@@ -1428,12 +1436,37 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+            this.on('changeSwitchText',function(arg){
+                if(arg.hasOwnProperty('text')){
+                    self.text=arg.text;
+                }
+                if(arg.fontFamily){
+                    self.fontFamily=arg.fontFamily;
+                }
+                if(arg.fontBold){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+                if(arg.fontSize){
+                    self.fontSize=arg.fontSize;
+                }
+                if(arg.fontColor){
+                    self.fontColor=arg.fontColor;
+                }
+                var _callback=arg.callback;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                ctx.save();
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -1444,6 +1477,30 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if (this.imageElement){
                     ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
+                ctx.restore();
+                if(this.text){
+                    ctx.save();
+                    ctx.fillStyle=this.fontColor;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    // console.log('button font',fontString)
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.text,0,0);
+                    ctx.restore();
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
             }
             catch(err){
                 console.log('错误描述',err);
