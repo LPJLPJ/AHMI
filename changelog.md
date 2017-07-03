@@ -156,3 +156,7 @@ update:
 fix:
     1. fix a bug that newly created project with templates can not be opend
     2. fix a bug about tag's display in action
+    3. simulator reg input -1 but display nan
+    4. actions' op can't display in a saved project
+update:
+    1. x,y,range from -2000 to 2000.width,height range from 1 to 2000
