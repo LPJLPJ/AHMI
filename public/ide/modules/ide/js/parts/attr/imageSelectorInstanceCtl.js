@@ -122,10 +122,8 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         }
     }
     function restore(){
-        //console.log('restore');
         $timeout(function () {
             $scope.tex.slices= _.cloneDeep($scope.tempSlices);
-            //console.log($scope.tex.slices);
         });
     }
 
