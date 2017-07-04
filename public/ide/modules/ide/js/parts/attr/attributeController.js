@@ -61,9 +61,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 highlightModeId:'0',
                 enterButtonMode:enterButtonMode,
                 enterButtonText:enterButtonText,
-                changeButtonFontFamily:changeButtonFontFamily,
-                setButtonFontBold:setButtonFontBold,
-                setButtonFontItalic:setButtonFontItalic,
                 enterArrange:enterArrange
             },
             buttonGroup:{
@@ -116,10 +113,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             },
             textArea:{
                 enterText:enterText,
-                changeFontFamily:changeFontFamily,
-                setBoldFont:setBoldFont,
-                setUnderlineFont:setUnderlineFont,
-                setItalicFont:setItalicFont,
                 selectCharacterSetByIndex:selectCharacterSetByIndex,
                 selectCharacterSetByName:selectCharacterSetByName,
                 addCharacterSet:addCharacterSet,
@@ -148,9 +141,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     {id:'0',name:'溢出不显示'},
                     {id:'1',name:'溢出显示'}
                 ],
-                changeNumFamily:changeNumFamily,
-                setBoldNum:setBoldNum,
-                setItalicNum:setItalicNum,
                 changeNumOfDigits:changeNumOfDigits,
                 changeDecimalCount:changeDecimalCount,
                 enterNumMode:enterNumMode,
@@ -185,9 +175,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             switchWidget:{
                 enterBindBit:enterBindBit,
                 enterSwitchText:enterSwitchText,
-                changeButtonFontFamily:changeButtonFontFamily,
-                setButtonFontBold:setButtonFontBold,
-                setButtonFontItalic:setButtonFontItalic,
             },
             //旋转
             rotateImg:{
@@ -206,7 +193,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 ],
                 highlightModeId:'0',
                 enterDateTimeMode:enterDateTimeMode,
-                changeDateTimeFontFamily:changeDateTimeFontFamily,
                 enterArrange:enterArrange
             },
             //滑块
@@ -248,6 +234,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             enterName:enterName,
 			enterColor:enterColor,
             enterFontSize:enterFontSize,
+            enterFontFamily:enterFontFamily,
+            enterFontBold:enterFontBold,
+            enterFontItalic:enterFontItalic,
 			enterX:enterX,
 			enterY:enterY,
 			enterWidth:enterWidth,
@@ -777,6 +766,55 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     }
 
     /**
+     * 更改字体
+     * @param e
+     */
+    function enterFontFamily(e){
+        var fontFamily = $scope.component.object.level.info.fontFamily;
+        if(fontFamily==initObject.level.info.fontFamily) {
+            return;
+        }
+        var option = {
+            fontFamily:fontFamily
+        };
+        _changeTextAttr(option);
+    }
+
+    /**
+     * 更改字体粗体
+     * @param e
+     */
+    function enterFontBold(e){
+        var fontBold = $scope.component.object.level.info.fontBold;
+        if(fontBold==="100"){
+            fontBold="bold";
+        }else if(fontBold==="bold"){
+            fontBold="100";
+        }
+        var option = {
+            fontBold:fontBold
+        };
+        _changeTextAttr(option);
+    }
+
+    /**
+     * 更改字体斜体
+     * @param e
+     */
+    function enterFontItalic(e){
+        var fontItalic = $scope.component.object.level.info.fontItalic;
+        if(fontItalic===""){
+            fontItalic="italic";
+        }else if(fontItalic==="italic"){
+            fontItalic="";
+        }
+        var option = {
+            fontItalic:fontItalic
+        };
+        _changeTextAttr(option);
+    }
+
+    /**
      * 根据控件类型，更改控件字体属性
      * @param option
      * @private
@@ -941,45 +979,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         }
     }
 
-    function changeButtonFontFamily(){
-        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
-            return;
-        }
-        var option = {
-            fontFamily:$scope.component.object.level.info.fontFamily
-        };
-
-        var oldOperate=ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
-    function setButtonFontBold(){
-        if($scope.component.object.level.info.fontBold=="100"){
-            $scope.component.object.level.info.fontBold="bold";
-        }else if($scope.component.object.level.info.fontBold=="bold"){
-            $scope.component.object.level.info.fontBold="100";
-        }
-        var option = {
-            fontBold:$scope.component.object.level.info.fontBold
-        };
-        ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
-    function setButtonFontItalic(){
-        if($scope.component.object.level.info.fontItalic==""){
-            $scope.component.object.level.info.fontItalic="italic";
-        }else if($scope.component.object.level.info.fontItalic=="italic"){
-            $scope.component.object.level.info.fontItalic="";
-        }
-        var option = {
-            fontItalic:$scope.component.object.level.info.fontItalic
-        };
-        ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
     function enterInterval(e){
         if (e.keyCode==13){
             //判断输入是否合法
@@ -1739,53 +1738,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         }
     }
 
-    function changeFontFamily(){
-        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
-            return;
-        }
-        var option = {
-            fontFamily:$scope.component.object.level.info.fontFamily
-        };
-
-        var oldOperate=ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-
-    }
-    function setBoldFont(){
-        if($scope.component.object.level.info.fontBold=="100"){
-            $scope.component.object.level.info.fontBold="bold";
-        }else if($scope.component.object.level.info.fontBold=="bold"){
-            $scope.component.object.level.info.fontBold="100";
-        }
-        var option = {
-            fontBold:$scope.component.object.level.info.fontBold
-        };
-        ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
-
-
-    function setUnderlineFont(){
-    }
-
-
-    function setItalicFont(){
-        if($scope.component.object.level.info.fontItalic==""){
-            $scope.component.object.level.info.fontItalic="italic";
-        }else if($scope.component.object.level.info.fontItalic=="italic"){
-            $scope.component.object.level.info.fontItalic="";
-        }
-        var option = {
-            fontItalic:$scope.component.object.level.info.fontItalic
-        };
-        ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
-
     function selectCharacterSetByIndex(index){
         var selectCharacterSet = characterSetService.selectCharacterByIndex(index);
         //console.log(selectCharacterSet);
@@ -1874,49 +1826,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     function deleteCharacterSetByIndex(event,index){
         characterSetService.deleteCharacterSetByIndex(index);
         event.stopPropagation();
-    }
-
-    //下面是数字框的方法
-    function changeNumFamily(){
-        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
-            return;
-        }
-        var option = {
-            fontFamily:$scope.component.object.level.info.fontFamily
-        };
-
-        var oldOperate=ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
-
-    function setBoldNum(){
-        if($scope.component.object.level.info.fontBold=="100"){
-            $scope.component.object.level.info.fontBold="bold";
-        }else if($scope.component.object.level.info.fontBold=="bold"){
-            $scope.component.object.level.info.fontBold="100";
-        }
-        var option = {
-            fontBold:$scope.component.object.level.info.fontBold
-        };
-        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
-
-    function setItalicNum(){
-        if($scope.component.object.level.info.fontItalic==""){
-            $scope.component.object.level.info.fontItalic="italic";
-        }else if($scope.component.object.level.info.fontItalic=="italic"){
-            $scope.component.object.level.info.fontItalic="";
-        }
-        var option = {
-            fontItalic:$scope.component.object.level.info.fontItalic
-        };
-        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
     }
 
     function changeNumOfDigits(e){
@@ -2353,19 +2262,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
-    function changeDateTimeFontFamily(e){
-        if($scope.component.object.level.info.fontFamily==initObject.level.info.fontFamily) {
-            return;
-        }
-        var option = {
-            fontFamily:$scope.component.object.level.info.fontFamily
-        };
 
-        var oldOperate=ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
-    }
     function changeGroupAlign(){
         var option = {
             align :$scope.component.group.alignModeId
