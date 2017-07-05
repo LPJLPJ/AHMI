@@ -321,7 +321,13 @@ ideServices
             var info = {
                 width:200, height: 150,
                 left: 0, top: 0,
-                originX: 'center', originY: 'center'
+                originX: 'center', originY: 'center',
+
+                fontFamily:"宋体",
+                fontSize:20,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:'',
             };
             return {
                 id: Math.random().toString(36).substr(2),

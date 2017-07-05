@@ -504,6 +504,20 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
     renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
         if (!!info){
+            //font
+            var text = '';
+            var style = {};
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            style.color = font['font-color'];
+            style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+            style.textAlign = 'center';
+            style.textBaseline = 'middle';
+
             //trans each slide
             var width = info.width;
             var height = info.height;
@@ -538,6 +552,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     }
                     renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
+
+                //render font --20170705
+                text = curSlice.text;
+                if(!!text){
+                    renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),text,style,true,null,this.customFonts);
+                }
+
                 //output
                 var imgName = widget.id.split('.').join('');
                 var outputFilename = imgName +'-'+ i+'.png';
@@ -765,6 +786,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
     renderer.prototype.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         switch (widget.subType){
             case 'MyButton':
+            case 'MySwitch':
                 this.renderButton(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             case 'MyButtonGroup':

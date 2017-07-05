@@ -1615,11 +1615,23 @@ module.exports =   React.createClass({
     paintSlide: function (curX, curY, widget, options,cb) {
         var slideSlices = widget.texList[0].slices;
         var slideIdx = widget.curSlideIdx;
+        var text = '';
+        var font = {};
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
+
         if (slideIdx >= 0 && slideIdx < slideSlices.length) {
             var curSlice = slideSlices[slideIdx];
             var width = widget.info.width;
             var height = widget.info.height;
             this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+            text = curSlice.text;
+            if(!!text){
+                this.drawTextByTempCanvas(curX,curY,width,height,text,font,'horizontal');
+            }
         }
         cb && cb();
     },
@@ -1706,6 +1718,13 @@ module.exports =   React.createClass({
         var width = widget.info.width;
         var height = widget.info.height;
 
+        var text = widget.info.text;
+        var font = {};
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
 
         //switch mode
         var switchState = widget.curSwitchState;
@@ -1714,8 +1733,10 @@ module.exports =   React.createClass({
         } else {
             // console.log(tex);
             this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+            if(!!text){
+                this.drawTextByTempCanvas(curX,curY,width,height,text,font,'horizontal');
+            }
         }
-
         cb && cb();
     },
     drawTextArea:function (curX,curY,widget,options,cb) {},
