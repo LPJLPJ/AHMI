@@ -53,7 +53,14 @@ ideServices
                     width:50, height: 50,
                     left: 0, top: 0,
                     originX: 'center', originY: 'center',
-                    bindBit:null
+                    bindBit:null,
+
+                    text:'',
+                    fontFamily:"宋体",
+                    fontSize:20,
+                    fontColor:'rgba(0,0,0,1)',
+                    fontBold:"100",
+                    fontItalic:'',
                     },
                 texList:[{
                         currentSliceIdx:0,
