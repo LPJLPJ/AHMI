@@ -1436,7 +1436,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
-            this.on('changeSwitchText',function(arg){
+            this.on('changeFontStyle',function(arg){
                 if(arg.hasOwnProperty('text')){
                     self.text=arg.text;
                 }
@@ -2099,10 +2099,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
-            this.on('changeButtonText',function(arg){
+            this.on('changeFontStyle',function(arg){
                 if(arg.hasOwnProperty('text')){
                     self.text=arg.text;
-
                 }
                 if(arg.fontFamily){
                     self.fontFamily=arg.fontFamily;
@@ -3079,6 +3078,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             var tex=level.texList[0];
             this.currentColor=tex.slices[tex.currentSliceIdx].color;
 
+            this.text=tex.slices[0].text||'';
+            this.fontFamily=level.info.fontFamily||"宋体";
+            this.fontSize=level.info.fontSize||20;
+            this.fontColor=level.info.fontColor||'rgba(0,0,0,1)';
+            this.fontBold=level.info.fontBold||"100";
+            this.fontItalic=level.info.fontItalic||"";
+
             this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
             if (this.currentImageElement) {
                 this.loaded = true;
@@ -3093,17 +3099,42 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var tex=level.texList[0];
                 self.currentColor=tex.slices[tex.currentSliceIdx].color;
                 self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                self.text = tex.slices[0].text;
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
-
+            this.on('changeFontStyle',function(arg){
+                if(arg.hasOwnProperty('text')){
+                    self.text=arg.text;
+                }
+                if(arg.fontFamily){
+                    self.fontFamily=arg.fontFamily;
+                }
+                if(arg.fontBold){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+                if(arg.fontSize){
+                    self.fontSize=arg.fontSize;
+                }
+                if(arg.fontColor){
+                    self.fontColor=arg.fontColor;
+                }
+                var _callback=arg.callback;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                ctx.save();
                 ctx.fillStyle=this.currentColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -3112,8 +3143,32 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     this.height );
                 if (this.currentImageElement){
                     ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
                 }
+                ctx.restore();
+
+                if(this.text){
+                    ctx.save();
+                    ctx.fillStyle=this.fontColor;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    // console.log('button font',fontString)
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.text,0,0);
+                    ctx.restore();
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
             }
             catch(err){
                 console.log('错误描述',err);

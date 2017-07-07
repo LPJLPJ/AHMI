@@ -60,7 +60,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     {id:'1',name:'开关模式'}],
                 highlightModeId:'0',
                 enterButtonMode:enterButtonMode,
-                enterButtonText:enterButtonText,
                 enterArrange:enterArrange
             },
             buttonGroup:{
@@ -173,8 +172,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
             //开关
             switchWidget:{
-                enterBindBit:enterBindBit,
-                enterSwitchText:enterSwitchText,
+                enterBindBit:enterBindBit
             },
             //旋转
             rotateImg:{
@@ -233,6 +231,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             ],
             enterName:enterName,
 			enterColor:enterColor,
+            enterFontText:enterFontText,
             enterFontSize:enterFontSize,
             enterFontFamily:enterFontFamily,
             enterFontBold:enterFontBold,
@@ -337,17 +336,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }
                     $scope.component.transitionName=$scope.component.object.level.transition.name;
                     break;
-                case Type.MySubLayer:
-                    //调整SubLayer的背景图
-                    if ($scope.component.object.level.backgroundImage===''){
-                        $scope.component.subLayer.selectImage='blank.png';
-                    }else {
-                        $scope.component.subLayer.selectImage=$scope.component.object.level.backgroundImage;
-                    }
-                    break;
-
                 case Type.MyGroup:
-
                     //让Group无法旋转和放大
                     var controlsVisibility=Preference.GROUP_CONTROL_VISIBLE;
                     selectObject.target.setControlsVisibility(controlsVisibility);
@@ -398,22 +387,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 case Type.MyTextArea:
                     $scope.component.textArea.arrangeModel=$scope.component.object.level.info.arrange;
                     break;
-                case Type.MyKnob:
-                    if ($scope.component.object.level.backgroundImg===''){
-                        $scope.component.knob.backgroundImage='blank.png';
-                    }else {
-                        $scope.component.knob.backgroundImage=$scope.component.object.level.backgroundImg;
-                    }
-                    if ($scope.component.object.level.knobImg===''){
-
-                        $scope.component.dashboard.knobImg='blank.png';
-                    }else {
-                        $scope.component.dashboard.knobImg=$scope.component.object.level.knobImg;
-                    }
-                    break;
-
                 case Type.MyButton:
-
                     $scope.component.button.buttonModeId=$scope.component.object.level.buttonModeId;
                     $scope.component.button.arrangeModel=$scope.component.object.level.info.arrange;
                     if($scope.component.object.level.info.disableHighlight===undefined){
@@ -436,9 +410,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.buttonGroup.highlightModeId='1';
                     }
                     break;
-
-                case Type.MyNumber:
-                    break;
                 case Type.MyNum:
                     $scope.component.num.numModeId=$scope.component.object.level.info.numModeId;
                     $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
@@ -459,8 +430,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.num.enableAnimationModeId='0'
                     }
                     break;
-                case Type.MyOscilloscope:
-                    break;
                 case Type.MyDateTime:
                     $scope.component.dateTime.arrangeModel=$scope.component.object.level.info.arrange;
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
@@ -479,7 +448,16 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MyVideo:
                     $scope.component.video.sourceId = $scope.component.object.level.info.source;
-                    //$scope.component.video.scaleId = $scope.component.object.level.info.scale;
+                    break;
+                case Type.MySlide:
+                    //兼容旧的图层控件
+                    if(selectObject.level.info.fontFamily===undefined){
+                        selectObject.level.info.fontFamily="宋体";
+                        selectObject.level.info.fontSize=20;
+                        selectObject.level.info.fontColor='rgba(0,0,0,1)';
+                        selectObject.level.info.fontBold="100";
+                        selectObject.level.info.fontItalic='';
+                    }
                     break;
             }
 
@@ -739,6 +717,30 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	}
 
     /**
+     * 更改文本内容
+     * @param e
+     */
+	function enterFontText(e){
+        if(e.keyCode==13){
+            var fontText = $scope.component.object.level.info.text;
+            if (fontText==initObject.level.info.text){
+                return;
+            }
+            var textLength = fontText.length;
+            if(textLength>20){
+                toastr.warning('字数最大20');
+                restore();
+                return;
+            }
+            var option = {
+                text:fontText
+            };
+
+            _changeTextAttr(option)
+        }
+    }
+
+    /**
      * 更改字体大小
      * @param e
      */
@@ -828,11 +830,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
-            case Type.MyButton:
-                ProjectService.ChangeAttributeButtonText(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                });
-                break;
             case Type.MyDateTime:
                 ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
@@ -844,7 +841,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 });
                 break;
             case Type.MySwitch:
-                ProjectService.ChangeAttributeSwitchText(option,function(oldOperate){
+            case Type.MySlide:
+            case Type.MyButton:
+                ProjectService.ChangeAttributeFontStyle(option,function(oldOperate){
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
@@ -946,9 +945,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         }else{
             return;
         }
-
-
-
         var option={
             image: _.cloneDeep(selectImage)
         };
@@ -956,28 +952,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
 	}
-
-    function enterButtonText(e){
-        if(e.keyCode==13){
-            if ($scope.component.object.level.info.text==initObject.level.info.text){
-                return;
-            }
-            var textLength = $scope.component.object.level.info.text.length||null;
-            if(textLength>20){
-                toastr.warning('字数最大20');
-                restore();
-                return;
-            }
-            var option = {
-                text:$scope.component.object.level.info.text
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeButtonText(option, function () {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
 
     function enterInterval(e){
         if (e.keyCode==13){
@@ -2195,27 +2169,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             })
         }
     };
-    function enterSwitchText(e){
-        if(e.keyCode==13){
-            if ($scope.component.object.level.info.text==initObject.level.info.text){
-                return;
-            }
-            var textLength = $scope.component.object.level.info.text.length||null;
-            if(textLength>20){
-                toastr.warning('字数最大20');
-                restore();
-                return;
-            }
-            var option = {
-                text:$scope.component.object.level.info.text
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeSwitchText(option, function () {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
 
     /**
      * 输入初始值
