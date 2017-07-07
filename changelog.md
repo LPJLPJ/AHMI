@@ -153,6 +153,8 @@ update:
 
 
 1.9.3
+add:
+    1. support switch and slide widget render text
 fix:
     1. fix a bug that newly created project with templates can not be opend
     2. fix a bug about tag's display in action
