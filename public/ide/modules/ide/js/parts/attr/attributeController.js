@@ -60,7 +60,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     {id:'1',name:'开关模式'}],
                 highlightModeId:'0',
                 enterButtonMode:enterButtonMode,
-                enterButtonText:enterButtonText,
                 enterArrange:enterArrange
             },
             buttonGroup:{
@@ -173,8 +172,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
             //开关
             switchWidget:{
-                enterBindBit:enterBindBit,
-                enterSwitchText:enterSwitchText,
+                enterBindBit:enterBindBit
             },
             //旋转
             rotateImg:{
@@ -233,6 +231,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             ],
             enterName:enterName,
 			enterColor:enterColor,
+            enterFontText:enterFontText,
             enterFontSize:enterFontSize,
             enterFontFamily:enterFontFamily,
             enterFontBold:enterFontBold,
@@ -718,6 +717,30 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	}
 
     /**
+     * 更改文本内容
+     * @param e
+     */
+	function enterFontText(e){
+        if(e.keyCode==13){
+            var fontText = $scope.component.object.level.info.text;
+            if (fontText==initObject.level.info.text){
+                return;
+            }
+            var textLength = fontText.length;
+            if(textLength>20){
+                toastr.warning('字数最大20');
+                restore();
+                return;
+            }
+            var option = {
+                text:fontText
+            };
+
+            _changeTextAttr(option)
+        }
+    }
+
+    /**
      * 更改字体大小
      * @param e
      */
@@ -922,9 +945,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         }else{
             return;
         }
-
-
-
         var option={
             image: _.cloneDeep(selectImage)
         };
@@ -932,28 +952,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
 	}
-
-    function enterButtonText(e){
-        if(e.keyCode==13){
-            if ($scope.component.object.level.info.text==initObject.level.info.text){
-                return;
-            }
-            var textLength = $scope.component.object.level.info.text.length||null;
-            if(textLength>20){
-                toastr.warning('字数最大20');
-                restore();
-                return;
-            }
-            var option = {
-                text:$scope.component.object.level.info.text
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeButtonText(option, function () {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
 
     function enterInterval(e){
         if (e.keyCode==13){
@@ -2171,27 +2169,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             })
         }
     };
-    function enterSwitchText(e){
-        if(e.keyCode==13){
-            if ($scope.component.object.level.info.text==initObject.level.info.text){
-                return;
-            }
-            var textLength = $scope.component.object.level.info.text.length||null;
-            if(textLength>20){
-                toastr.warning('字数最大20');
-                restore();
-                return;
-            }
-            var option = {
-                text:$scope.component.object.level.info.text
-            };
-
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeSwitchText(option, function () {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-        }
-    }
 
     /**
      * 输入初始值
