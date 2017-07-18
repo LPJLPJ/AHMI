@@ -519,12 +519,13 @@ module.exports =   React.createClass({
         var maxD = -100;
         var hWidth = canvas.width/2
         var hHeight = canvas.height/2;
+        if (!options) {
+            options = {};
+        }
         if (!page.state || page.state == LoadState.notLoad) {
             page.state = LoadState.willLoad
             //generate load trigger
-            if (!options) {
-                options = {};
-            }
+
             options.reLinkWidgets = true;
             
 
@@ -1194,7 +1195,7 @@ module.exports =   React.createClass({
             var easing = 'easeInOutCubic';
             var hWidth = w/2+x
             var hHeight = h/2+y
-            if (!options.pageAnimate){
+            if (!options||(options&&!options.pageAnimate)){
                 switch (method){
                     case 'MOVE_LR':
                         AnimationManager.step(-w,0,0,0,duration,frames,easing,function (deltas) {
