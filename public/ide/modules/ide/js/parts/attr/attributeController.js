@@ -1468,55 +1468,60 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function enterMaxValue(e){
         if (e.keyCode==13){
+            var maxValue = $scope.component.object.level.info.maxValue,
+                type = $scope.component.object.level.type;
+
             //判断输入是否合法
-            if (!_.isInteger(parseInt($scope.component.object.level.info.maxValue))){
+            if (!_.isInteger(parseInt(maxValue))){
                 toastr.warning('输入不合法');
                 restore();
                 return;
             }
-            if($scope.component.object.level.info.maxValue>(Math.pow(10,9)-1)){
+            if(maxValue>(Math.pow(10,9)-1)){
                 toastr.warning('超过最大临界值');
                 restore();
                 return;
             }
             //判断是否有变化
-            if ($scope.component.object.level.info.maxValue==initObject.level.info.maxValue){
+            if (maxValue===initObject.level.info.maxValue){
                 return;
             }
 
             //判断范围
-            if ($scope.component.object.level.info.maxValue<=$scope.component.object.level.info.minValue){
+            if (maxValue<=$scope.component.object.level.info.minValue){
                 toastr.warning('不能比最小值小');
-
                 restore();
                 return;
             }
-            if ($scope.component.object.level.type==Type.MyProgress){
-                if ($scope.component.object.level.info.maxValue<$scope.component.object.level.info.progressValue){
-
+            if (type===Type.MyProgress){
+                if (maxValue<$scope.component.object.level.info.progressValue){
                     toastr.warning('不能比当前值小');
-
                     restore();
                     return;
                 }
-            }else if($scope.component.object.level.type==Type.Mynum){
+            }else if(type===Type.MyNum){
                 //默认是数字框
-                if ($scope.component.object.level.info.maxValue<$scope.component.object.level.info.initValue){
-
+                if (maxValue<$scope.component.object.level.info.initValue){
                     toastr.warning('不能比当前值小');
-
+                    restore();
+                    return;
+                }
+                var numOfDigits = $scope.component.object.level.info.numOfDigits;
+                var limit = Math.pow(10,numOfDigits)-1;
+                if(maxValue>limit){
+                    toastr.warning('超出范围');
                     restore();
                     return;
                 }
 
-            }else if($scope.component.object.level.type==Type.MySlideBlock){
-                if ($scope.component.object.level.info.maxValue<$scope.component.object.level.info.initValue){
+            }else if(type===Type.MySlideBlock){
+                if (maxValue<$scope.component.object.level.info.initValue){
                     toastr.warning('不能比初始值小');
                     restore();
                     return;
                 }
-            }else if($scope.component.object.level.type==Type.MyRotateImg){
-                if($scope.component.object.level.info.maxValue>360){
+            }else if(type===Type.MyRotateImg){
+                if(maxValue>360){
                     toastr.warning('不能超过360');
                     restore();
                     return;
@@ -1524,7 +1529,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             }
 
             var option={
-                maxValue:$scope.component.object.level.info.maxValue
+                maxValue:maxValue
             };
             var oldOperate=ProjectService.SaveCurrentOperate();
 
@@ -1949,36 +1954,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 restore();
                 return;
             }
-            //判断输入的数字的小数位数是否超出
-            // var tempNumStr = $scope.component.object.level.info.numValue.toString();
-            // if(tempNumStr.indexOf('.')!=-1){
-            //     var tempDecimal = tempNumStr.split(".")[1];
-            //     //console.log('tempDecimal',tempDecimal);
-            //     if(tempDecimal.length>$scope.component.object.level.info.decimalCount){
-            //         toastr.warning('小数位数超出');
-            //         restore();
-            //         return;
-            //     }
-            // }
 
-            //判断输入的数字是否小于可以显示的最大值(4位数字，不大于10000)
-            var tempNumOfDigits = $scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.decimalCount;
-            var maxValue = Math.pow(10,tempNumOfDigits);
-            //console.log('maxValue',maxValue);
-            if(numValue<=maxValue){
+            var option={
+                numValue:numValue,
+            };
 
-                var option={
-                    numValue:numValue,
-                };
-
-                ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                })
-            }else{
-                toastr.warning('超出范围');
-                restore();
-            }
-
+            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            })
 
         }
     }
