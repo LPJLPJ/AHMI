@@ -2780,6 +2780,271 @@ module.exports =   React.createClass({
         cb && cb();
 
     },
+    drawTexNum: function (curX, curY, widget, options,cb){
+
+        var overFlowStyle = widget.info.overFlowStyle;
+        var minValue = widget.info.minValue;
+        var maxValue = widget.info.maxValue;
+        var lowAlarmValue = widget.info.lowAlarmValue;
+        var highAlarmValue = widget.info.highAlarmValue;
+        var curValue = this.getValueByTagName(widget.tag);
+        var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
+        // console.log(curValue)
+        if (curValue === null || curValue === 'undefined') {
+            curValue = widget.info.numValue;
+        }
+
+        widget.oldValue = widget.oldValue || 0;
+        var shouldHandleAlarmAction = false;
+        if (curValue != undefined && curValue != null) {
+
+
+            if(overFlowStyle=='0'&&(curValue>maxValue||curValue<minValue)){
+                widget.curValue = null
+            }else{
+
+                curValue = Number(this.limitValueBetween(curValue, minValue, maxValue))||0;
+                widget.curValue = curValue
+
+            }
+            if (widget.curValue!==widget.oldValue){
+                //update
+                widget.animateOldValue = widget.oldValue
+
+                this.handleAlarmAction(curValue, widget, lowAlarmValue, highAlarmValue)
+                widget.oldValue = curValue
+
+
+                if(enableAnimation){
+                    var totalFrameNum = 10
+
+                    if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        widget.animateTimerId = setInterval(function () {
+                            if (widget.curFrameNum != undefined) {
+                                widget.curFrameNum += 1
+                            } else {
+                                widget.curFrameNum = 1
+                            }
+                            if (widget.curFrameNum > totalFrameNum - 1) {
+                                clearInterval(widget.animateTimerId)
+                                widget.animateTimerId = 0
+                                widget.curFrameNum = 0
+
+                            }
+                            this.draw()
+                        }.bind(this), 30)
+                    }
+                }
+
+            }
+
+
+
+
+        }
+
+
+
+    },
+    paintTexNum: function (curX, curY, widget, options,cb) {
+        var offcanvas = this.refs.offcanvas;
+        var offctx = this.offctx
+        //get current value
+        var curValue = widget.curValue
+        // console.log(curValue)
+        // console.log(curValue);
+
+        var numModeId = widget.info.numModeId;
+        var enableAnimation = widget.info.enableAnimation;
+        var frontZeroMode = widget.info.frontZeroMode;
+        var symbolMode = widget.info.symbolMode;
+        var decimalCount = widget.info.decimalCount || 0;
+        var numOfDigits = widget.info.numOfDigits;
+        // var numFamily = widget.info.fontFamily;
+        // var numSize = widget.info.fontSize;
+        // var numColor = widget.info.fontColor;
+        // var numBold = widget.info.fontBold;
+        // var numItalic = widget.info.fontItalic;
+        //font size
+        var charW = widget.info.characterW;
+        var charH = widget.info.characterH;
+        var overFlowStyle = widget.info.overFlowStyle;
+        // var maxFontWidth = widget.info.maxFontWidth;
+        var align = widget.info.align;
+        //console.log('maxFontWidth',maxFontWidth,'align',align);
+        //size
+        var curWidth = widget.info.width;
+        var curHeight = widget.info.height;
+
+        //arrange
+        var arrange = widget.info.arrange === 'vertical'?'vertical':'horizontal';
+        // console.log(arrange)
+
+        var tempcanvas = this.refs.tempcanvas;
+
+        tempcanvas.width = curWidth;
+        tempcanvas.height = curHeight;
+        var tempCtx = tempcanvas.getContext('2d');
+        tempCtx.clearRect(0, 0, curWidth, curHeight);
+
+
+
+
+        var tempNumValue='';
+        if (curValue != undefined && curValue != null) {
+
+            var changeDirection = curValue - widget.animateOldValue
+
+            if (!enableAnimation|| (enableAnimation && widget.animateTimerId==0)) {
+
+
+                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+
+                this.paintStyledTexNum(widget,tempNumValue,curX,curY,curWidth,curHeight)
+
+
+
+            } else {
+                //animate number
+
+
+                //drawbackground
+
+                var totalFrameNum = 10
+                // //draw
+                var oldHeight=0;
+                var oleWidth=0;
+                var curFrameNum = changeDirection < 0 ? (totalFrameNum - widget.curFrameNum) : widget.curFrameNum
+                var newTempNumValue = ''
+                if (arrange==='horizontal'){
+                    if (changeDirection<0){
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    }else{
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    }
+
+
+
+                    oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight
+                    if (oldHeight>0){
+                        this.paintStyledTexNum(widget,tempNumValue,curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+                    }
+                    oldHeight = curFrameNum  / totalFrameNum * curHeight
+                    if (oldHeight>0){
+
+                        this.paintStyledTexNum(widget,newTempNumValue, curX, curY, curWidth, oldHeight)
+                    }
+
+                }else{
+                    if (changeDirection<0){
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    }else{
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                    }
+
+                    oldWidth = (totalFrameNum - curFrameNum)  / totalFrameNum * curWidth
+                    if (oleWidth>0){
+                        this.paintStyledTexNum(widget,tempNumValue,curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+                    }
+                    oldWidth = curFrameNum  / totalFrameNum * curWidth;
+                    if (oleWidth>0){
+                        this.paintStyledTexNum(widget,tempNumValue,curX, curY, oldWidth, curHeight)
+                    }
+
+                }
+
+
+                // var transY = curHeight * 1.0 / totalFrameNum * (widget.curFrameNum|| 0
+
+
+            }
+
+
+
+            // offctx.restore();
+
+
+        }
+
+        cb && cb();
+
+    },
+    paintStyledTexNum:function(widget,tempNumValue,dstX,dstY,dstW,dstH){
+        var offctx = this.offctx
+        var charW = widget.info.characterW;
+        var charH = widget.info.characterH;
+        var widgetW = widget.info.width;
+        var widgetH = widget.info.height;
+        var align = widget.info.align;
+        offctx.save()
+        offctx.beginPath()
+        offctx.rect(dstX,dstY,dstW,dstH);
+        offctx.clip();
+        var numLength = 0;
+        var numElems = tempNumValue.split('')
+        numElems.forEach(function(elem){
+            if (elem=='.'){
+                numLength+=0.5*charW
+            }else{
+                numLength+=charW
+            }
+        })
+        var leftOffset = 0
+        switch (align){
+            case 'center':
+                leftOffset = (widgetW-numLength)*0.5
+                break;
+            case 'right':
+                leftOffset = widgetW - numLength
+                break;
+            default:
+                //left
+        }
+        var curTexSlice = null;
+        var drawW = charW;
+        for(var i=0;i<numElems.length;i++){
+            var curElem = numElems[i]
+            switch (curElem){
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    curTexSlice = widget.texList[0].slices[curElem];
+                    break;
+                case '.':
+                    curTexSlice = widget.texList[0].slices[10];
+                    drawW = 0.5*charW;
+                    break;
+                case '+':
+                    curTexSlice = widget.texList[0].slices[11];
+                    break;
+                case '-':
+                    curTexSlice = widget.texList[0].slices[12];
+                    break;
+
+            }
+            if (curTexSlice){
+                this.drawBg(dstX+leftOffset,dstY,drawW,charH,curTexSlice.imgSrc,curTexSlice.color,offctx)
+            }
+            leftOffset+=drawW;
+
+
+        }
+
+        offctx.restore()
+
+    },
     drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas,_arrange, align, maxFontWidth, decimalCount) {
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
