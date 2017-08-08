@@ -1052,9 +1052,14 @@ ideServices
 
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MyTexNum){
+                    fabric.MyTexNum.fromLevel(_newWidget,function (fabWidget) {
+                        _self.currentFabLayerIdList = [fabWidget.id];
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }
-
-
 
             };
 
@@ -3380,8 +3385,6 @@ ideServices
                     selectObj.level.info.overFlowStyle=_option.overFlowStyle;
                 }
                 _successCallback&&_successCallback();
-                //console.log('displayModel',selectObj.level.info.numModeId);
-
             };
 
             //改变按钮模式

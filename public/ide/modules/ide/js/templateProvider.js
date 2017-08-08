@@ -602,6 +602,56 @@ ideServices
             }
         };
 
+        this.getDefaultTexNum = function () {
+            var info={
+                width:90, height: 30,
+                characterW:30,characterH:30,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                minValue:0,maxValue:100,
+                lowAlarmValue:0,highAlarmValue:100,
+                noInit:'NO',
+                frontZeroMode:'0',//前导0模式标志，0：无前导0模式，1：有前导0模式
+                symbolMode:'0',//符号模式标志，0：无符号位，1：有符号位
+                decimalCount:0,//保留的小数位数
+                numOfDigits:3,//数字的位数，最小1，最大未定
+                overFlowStyle:'0',//指数字大于最大值时是否继续显示,0不显示，1显示
+                align:'center',//数字对齐方式
+                numValue:1,
+                enableAnimation:false //显示模式标志，false:无动画 true:有动画
+            };
+            var slices = [];
+            for(var i=0,il=13;i<il;i++){
+                slices[i] = {};
+                slices[i].imgSrc = '';
+                slices[i].color = 'rgba(120,120,120,1)';
+                if(i<=10){
+                    slices[i].name = '数字'+i;
+                }else if(i===11){
+                    slices[i].name = '+';
+                }else if(i===12){
+                    slices[i].name = '-';
+                }else if(i===13){
+                    slices[i].name = '.';
+                }
+            }
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTexNum',
+                type: Type.MyTexNum,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    name:'数字值',
+                    currentSliceIdx:0,
+                    slices:slices
+                }],
+                transition:_.cloneDeep(defaultTransition)
+            }
+        };
+
         this.getDefaultOscilloscope = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 

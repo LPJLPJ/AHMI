@@ -1,1 +1,59 @@
-ideServices.service("Type",[function(){var t=(this.MyPage="MyPage",this.MyLayer="MyLayer",this.MyLayerGroup="group",this.MySubLayer="MySubLayer",this.MyWidgetGroup="group",this.MySlide="MySlide");this.MyButton="MyButton",this.MyButtonGroup="MyButtonGroup",this.MyNumber="MyNumber",this.MyProgress="MyProgress",this.MyDashboard="MyDashboard",this.MyGroup="group",this.MyLayerArray="MyLayerArray",this.MyWidgetArray="MyWidgetArray",this.MyKnob="MyKnob",this.MyTextArea="MyTextArea",this.MyNum="MyNum",this.MyOscilloscope="MyOscilloscope",this.MyImage="MyImage",this.MySwitch="MySwitch",this.MyRotateImg="MyRotateImg",this.MyDateTime="MyDateTime",this.MyScriptTrigger="MyScriptTrigger",this.MySlideBlock="MySlideBlock",this.MyVideo="MyVideo",this.MyAnimation="MyAnimation";this.getFabWidgetByName=function(i){switch(i){case t:return fabric.MySlide;default:return null}},this.isWidget=function(t){return t==this.MySlide||t==this.MyButton||t==this.MyProgress||t==this.MyNumber||t==this.MyButtonGroup||t==this.MyDashboard||t==this.MyKnob||t==this.MyTextArea||t==this.MyNum||t==this.MyOscilloscope||t==this.MyImage||t==this.MySwitch||t==this.MyRotateImg||t==this.MyDateTime||t==this.MyScriptTrigger||t==this.MySlideBlock||t==this.MyVideo||t==this.MyAnimation}}]);
+/**
+ * Created by shenaolin on 16/3/4.
+ */
+ideServices.
+    service('Type', [function () {
+        var MyPage = this.MyPage = 'MyPage';
+        var MyLayer = this.MyLayer = 'MyLayer';
+        var MyLayerGroup = this.MyLayerGroup = 'group';
+        var MySubLayer = this.MySubLayer = 'MySubLayer';
+        var MyWidgetGroup = this.MyWidgetGroup = 'group';
+        var MySlide = this.MySlide = 'MySlide';
+        var MyButton = this.MyButton = 'MyButton';
+        var MyButtonGroup = this.MyButtonGroup = "MyButtonGroup";
+        var MyNumber = this.MyNumber = 'MyNumber';
+        var MyProgress = this.MyProgress = 'MyProgress';
+        var MyDashboard = this.MyDashboard = 'MyDashboard';
+        var MyGroup = this.MyGroup = 'group';
+        var MyLayerArray = this.MyLayerArray = 'MyLayerArray';
+        var MyWidgetArray = this.MyWidgetArray = 'MyWidgetArray';
+
+        var MyKnob = this.MyKnob = 'MyKnob';
+        var MyTextArea = this.MyTextArea = 'MyTextArea';
+        var MyNum = this.MyNum = 'MyNum';
+        var MyOscilloscope=this.MyOscilloscope='MyOscilloscope';
+        var MyImage=this.MyImage='MyImage';
+        var MySwitch=this.MySwitch='MySwitch';
+        var MyRotateImg=this.MyRotateImg='MyRotateImg';
+        var MyDateTime=this.MyDateTime='MyDateTime';
+        var MyScriptTrigger=this.MyScriptTrigger='MyScriptTrigger';
+        var MySlideBlock=this.MySlideBlock="MySlideBlock";
+        var MyVideo=this.MyVideo="MyVideo";
+        var MyAnimation=this.MyAnimation="MyAnimation";
+        var MyTexNum=this.MyTexNum="MyTexNum";
+
+
+
+    this.getFabWidgetByName= function (_typeStr) {
+        switch (_typeStr){
+            case MySlide:return fabric.MySlide;
+            default:return null
+        }
+    };
+
+    this.isWidget= function (_typeStr) {
+        if (_typeStr==this.MySlide||_typeStr==this.MyButton||
+            _typeStr==this.MyProgress||_typeStr==this.MyNumber||_typeStr==this.MyButtonGroup||_typeStr == this.MyDashboard||
+            _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope||_typeStr==this.MyImage||
+            _typeStr==this.MySwitch||_typeStr==this.MyRotateImg||_typeStr==this.MyDateTime||_typeStr==this.MyScriptTrigger||_typeStr==this.MySlideBlock||
+            _typeStr==this.MyVideo||_typeStr==this.MyAnimation||_typeStr==this.MyTexNum){
+            return true;
+        }
+        return false
+    };
+
+
+
+
+
+}]);

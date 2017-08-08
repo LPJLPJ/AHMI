@@ -151,7 +151,38 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 changeNumAlign:changeNumAlign,
                 enterArrange:enterArrange
             },
+            texNum:{
+                numModeId:'0',//目前无用
+                enableAnimationModeId:'0',
+                numModes:[
+                    {id:'0',name:'普通模式'},
+                    {id:'1',name:'动画模式'}
+                ],
+                symbolMode:'0',
+                symbolModes:[
+                    {id:'0',name:'无符号模式'},
+                    {id:'1',name:'有符号模式'}
+                ],
+                frontZeroMode:'0',
+                frontZeroModes:[
+                    {id:'0',name:'无前导0模式'},
+                    {id:'1',name:'有前导0模式'}
+                ],
+                overFlowStyle:'0',
+                overFlowStyles:[
+                    {id:'0',name:'溢出不显示'},
+                    {id:'1',name:'溢出显示'}
+                ],
+                changeNumOfDigits:changeNumOfDigits,
+                changeDecimalCount:changeDecimalCount,
+                enterNumMode:enterNumMode,
+                enterSymbolMode:enterSymbolMode,
+                enterFrontZeroMode:enterFrontZeroMode,
+                enterOverFlowStyle:enterOverFlowStyle,
 
+                enterNumValue:enterNumValue,
+                changeNumAlign:changeNumAlign,
+            },
             //旋钮
             knob:{
                 backgroundImage:'blank.png',
@@ -425,6 +456,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         selectObject.level.info.enableAnimation=false;
                         $scope.component.num.enableAnimationModeId='1'
                     }else if($scope.component.object.level.info.enableAnimation==false){
+                        $scope.component.num.enableAnimationModeId='1'
+                    }else if($scope.component.object.level.info.enableAnimation==true){
+                        $scope.component.num.enableAnimationModeId='0'
+                    }
+                    break;
+                case Type.MyTexNum:
+                    $scope.component.texNum.numModeId=$scope.component.object.level.info.numModeId;
+                    $scope.component.texNum.symbolMode=$scope.component.object.level.info.symbolMode;
+                    $scope.component.texNum.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
+                    $scope.component.texNum.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
+                    $scope.component.texNum.arrangeModel=$scope.component.object.level.info.arrange;
+                    $scope.component.transitionName=$scope.component.object.level.transition.name;
+                    if($scope.component.object.level.info.enableAnimation==false){
                         $scope.component.num.enableAnimationModeId='1'
                     }else if($scope.component.object.level.info.enableAnimation==true){
                         $scope.component.num.enableAnimationModeId='0'
@@ -1809,7 +1853,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function changeNumOfDigits(e){
         if(e.keyCode==13){
-            //console.log('enter numOfDigits');
             if($scope.component.object.level.info.numOfDigits.toString().indexOf('.')>-1){
                 restore();
                 return;

@@ -2649,7 +2649,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             initXPos,            //渲染字符的起始位置
             widthOfNumStr;       //渲染的字符串的长度
 
-        widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
+        widthOfNumStr=(decimalCount===0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
         switch(align){
             case 'left':
                 initXPos=0;
@@ -2673,6 +2673,106 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }
     }
 
+    fabric.MyTexNum = fabric.util.createClass(fabric.Object,{
+        type: Type.MyTexNum,
+        initialize: function (level, options) {
+            var self = this;
+            var slices = level.texList[0].slices;
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.hasRotatingPoint = false;
+
+            this.numValue = level.info.numValue;
+            this.align = level.info.align;
+            this.arrange = level.info.arrange;
+            //下面位数字模式属性
+            this.numOfDigits = level.info.numOfDigits;
+            this.decimalCount = level.info.decimalCount;
+            this.symbolMode = level.info.symbolMode;
+            this.frontZeroMode = level.info.frontZeroMode;
+            this.maxFontWidth = level.info.maxFontWidth;
+            //初始化13的数字字符
+            this.numObj = [];
+            for(var i=0,il=13;i<il;i++){
+                this.numObj[i] = {};
+                this.numObj[i].color = slices[i].color;
+                this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+            }
+
+            this.on('changeTex', function (arg) {
+                var slices=arg.level.slices;
+                var _callback=arg.callback;
+
+                for(var i=0,il=13;i<il;i++){
+                    self.numObj[i] = {};
+                    self.numObj[i].color = slices[i].color;
+                    self.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+                }
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+            this.on('changeNumContent', function (arg) {
+                var _callback=arg.callback;
+                var level=arg.level;
+                if(arg.hasOwnProperty('numValue')){
+                    self.numValue=arg.numValue;
+                }
+                if(arg.numOfDigits){
+                    self.numOfDigits=arg.numOfDigits;
+                }
+                if(arg.hasOwnProperty('decimalCount')){
+                    self.decimalCount=arg.decimalCount;
+                }
+                if(arg.symbolMode){
+                    self.symbolMode=arg.symbolMode;
+                }
+                if(arg.frontZeroMode){
+                    self.frontZeroMode=arg.frontZeroMode;
+                }
+                if(arg.align){
+                    self.align=arg.align;
+                }
+
+                //console.log('width',width,'maxWidth',maxWidth);
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                console.log('render...');
+            }catch (err){
+                console.log('错误描述',err);
+                toastr.warning('渲染数字出错');
+            }
+        }
+    });
+    fabric.MyTexNum.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyTexNum(level, option));
+    };
+    fabric.MyTexNum.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MyTexNum(level,object));
+    };
+    fabric.MyTexNum.async = true;
 
     fabric.MyButtonGroup = fabric.util.createClass(fabric.Object, {
         type: Type.MyButtonGroup,

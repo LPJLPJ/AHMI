@@ -1,1 +1,63 @@
-ideServices.service("ViewService",[function(){function e(e){return parseFloat(e.slice(0,-1))/100}var a="100%",n="100%";this.setScale=function(e,s,i){"page"==s?(a=e,i&&i()):"canvas"==s||"subCanvas"==s?(n=e,i&&i()):console.log("invalid type or value")},this.getScaleFloat=function(s){return"page"==s?e(a):"canvas"==s||"subCanvas"==s?e(n):void console.log("invalid type")},this.getScale=function(e){return"page"==e?a:"canvas"==e||"subCanvas"==e?n:void console.log("invalid type")},this.resetScale=function(e,s){"all"==e?(a="100%",n="100%",s&&s()):"page"==e?(a="100%",s&&s()):"canvas"==e||"subCanvas"==e?(n="100%",s&&s()):console.log("invalid type for reset scale")}}]);
+/**
+ * Created by ChangeCheng on 16/4/5.
+ */
+
+ideServices.service('ViewService',[function () {
+    var defaultScale = '100%';
+    var pageScale = defaultScale;
+    var canvasScale = defaultScale;
+    this.setScale = function (value, type, cb) {
+        if (type == 'page'){
+            pageScale = value;
+            cb && cb();
+        }else if (type == 'canvas' || type == 'subCanvas'){
+            canvasScale = value;
+            cb && cb();
+        }else{
+            console.log('invalid type or value');
+        }
+
+    };
+
+    function transScaleToFloat(scale){
+        return parseFloat(scale.slice(0,-1))/100;
+    }
+    this.getScaleFloat = function(type){
+        if (type == 'page'){
+            return transScaleToFloat(pageScale);
+
+        }else if (type == 'canvas' || type == 'subCanvas'){
+            return transScaleToFloat(canvasScale);
+        }else{
+            console.log('invalid type');
+        }
+    }
+    this.getScale = function(type){
+        if (type == 'page'){
+            return pageScale;
+
+        }else if (type == 'canvas' || type == 'subCanvas'){
+            return canvasScale;
+        }else{
+            console.log('invalid type');
+        }
+    }
+
+    this.resetScale = function(type,cb){
+        if (type=='all'){
+            pageScale = defaultScale;
+            canvasScale = defaultScale;
+            cb && cb();
+        }else{
+            if (type == 'page'){
+                pageScale = defaultScale;
+                cb && cb();
+            }else if (type == 'canvas' || type == 'subCanvas'){
+                canvasScale = defaultScale;
+                cb && cb();
+            }else{
+                console.log('invalid type for reset scale');
+            }
+        }
+    }
+}]);
