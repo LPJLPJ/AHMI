@@ -388,6 +388,7 @@ module.exports =   React.createClass({
         var canvas = this.refs.canvas;
         var ctx = canvas.getContext('2d');
         if (this.currentDrawedProject ){
+            offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
             var project = _.cloneDeep(this.currentDrawedProject);
 
             var page = project.pageList[(project&&project.curPageIdx)||0];
