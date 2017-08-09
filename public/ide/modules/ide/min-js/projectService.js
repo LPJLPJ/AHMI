@@ -3387,6 +3387,70 @@ ideServices
                 _successCallback&&_successCallback();
             };
 
+            this.ChangeAttributeTexNumContent = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+                if(_option.characterW){
+                    selectObj.level.info.characterW=_option.characterW;
+                    arg.characterW=_option.characterW;
+                }
+                if(_option.characterH){
+                    selectObj.level.info.characterH=_option.characterH;
+                    arg.characterH=_option.characterH;
+                }
+                //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式
+                if(_option.numOfDigits){
+                    var tempNumOfDigits=_option.numOfDigits;
+                    selectObj.level.info.numOfDigits=tempNumOfDigits;
+                    arg.numOfDigits=tempNumOfDigits;
+                }
+                if(_option.decimalCount||(_option.decimalCount==0)){
+                    var tempDecimalCount=_option.decimalCount;
+                    selectObj.level.info.decimalCount=tempDecimalCount;
+                    arg.decimalCount=tempDecimalCount;
+                }
+                if(_option.symbolMode){
+                    var tempSymbolMode=_option.symbolMode;
+                    selectObj.level.info.symbolMode=tempSymbolMode;
+                    arg.symbolMode=tempSymbolMode;
+                }
+                if(_option.frontZeroMode){
+                    var tempFrontZeroMode=_option.frontZeroMode;
+                    selectObj.level.info.frontZeroMode=tempFrontZeroMode;
+                    arg.frontZeroMode=tempFrontZeroMode;
+                }
+
+                //下面是数字数值
+                if(_option.hasOwnProperty('numValue')){
+                    var tempNumValue = _option.numValue;
+                    selectObj.level.info.numValue=tempNumValue;
+                    arg.numValue=tempNumValue;
+                }
+                if(_option.align){
+                    var tempAlign = _option.align;
+                    selectObj.level.info.align=tempAlign;
+                    arg.align=tempAlign;
+                }
+                selectObj.target.fire('changeTexNumContent',arg);
+            };
+
+            this.ChangeAttributeOfTexNum=function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                if(_option.numModeId){
+                    selectObj.level.info.numModeId=_option.numModeId;
+                }
+                if(_option.overFlowStyle){
+                    selectObj.level.info.overFlowStyle=_option.overFlowStyle;
+                }
+                _successCallback&&_successCallback();
+            };
+
             //改变按钮模式
             this.ChangeAttributeButtonModeId= function (_option, _successCallback) {
                 var selectObj=_self.getCurrentSelectObject();

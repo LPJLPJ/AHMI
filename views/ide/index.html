@@ -1577,12 +1577,14 @@
                             <span class="my-attr-title">字符宽度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.characterW"
+                                   ng-keypress="component.texNum.enterCharacterW($event)"
                                    ng-blur="component.restore()"
                                    type="number">
                         </div><div class="my-attr-item">
                             <span class="my-attr-title">字符高度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.characterH"
+                                   ng-keypress="component.texNum.enterCharacterH($event)"
                                    ng-blur="component.restore()"
                                    type="number">
                         </div>
@@ -1645,9 +1647,9 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">符号</span>
                             <select class="my-attr-number-input form-control"
-                                    ng-model="component.num.symbolMode"
+                                    ng-model="component.texNum.symbolMode"
                                     ng-change="component.texNum.enterSymbolMode()">
-                                <option ng-repeat="mode in component.num.symbolModes" value="{{mode.id}}">
+                                <option ng-repeat="mode in component.texNum.symbolModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>
                             </select>
@@ -1655,9 +1657,9 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">前导0</span>
                             <select class="my-attr-number-input form-control"
-                                    ng-model="component.num.frontZeroMode"
+                                    ng-model="component.texNum.frontZeroMode"
                                     ng-change="component.texNum.enterFrontZeroMode()">
-                                <option ng-repeat="mode in component.num.frontZeroModes" value="{{mode.id}}">
+                                <option ng-repeat="mode in component.texNum.frontZeroModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>
                             </select>
@@ -1665,9 +1667,9 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">溢出模式</span>
                             <select class="my-attr-number-input form-control"
-                                    ng-model="component.num.overFlowStyle"
+                                    ng-model="component.texNum.overFlowStyle"
                                     ng-change="component.texNum.enterOverFlowStyle()">
-                                <option ng-repeat="style in component.num.overFlowStyles" value="{{style.id}}">
+                                <option ng-repeat="style in component.texNum.overFlowStyles" value="{{style.id}}">
                                     {{style.name}}
                                 </option>
                             </select>
@@ -2333,7 +2335,7 @@
                                     <td>{{$index+1}}</td>
                                     <td>
                                         <div class="form-group">
-                                            <input class="form-control" type="text" ng-model="slice.name"/>
+                                            <input class="form-control" type="text" ng-model="slice.name" ng-disabled="disableEditName"/>
                                         </div>
                                         <div class="form-group">
                                             <input type="text" class="form-control" ng-show="canAddNewSlice" ng-model="slice.text" placeholder="可输入文本...">

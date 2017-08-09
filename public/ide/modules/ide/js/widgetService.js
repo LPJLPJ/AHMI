@@ -2725,7 +2725,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
 
             });
-            this.on('changeNumContent', function (arg) {
+            this.on('changeTexNumContent', function (arg) {
+                console.log('change arg',arg);
                 var _callback=arg.callback;
                 var level=arg.level;
                 if(arg.hasOwnProperty('numValue')){
@@ -2758,7 +2759,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render:function(ctx){
             try{
-                console.log('render...');
+                // console.log('render...');
             }catch (err){
                 console.log('错误描述',err);
                 toastr.warning('渲染数字出错');

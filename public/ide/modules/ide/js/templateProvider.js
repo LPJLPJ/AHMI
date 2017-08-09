@@ -625,13 +625,13 @@ ideServices
                 slices[i] = {};
                 slices[i].imgSrc = '';
                 slices[i].color = 'rgba(120,120,120,1)';
-                if(i<=10){
+                if(i<=9){
                     slices[i].name = '数字'+i;
-                }else if(i===11){
+                }else if(i===10){
                     slices[i].name = '+';
-                }else if(i===12){
+                }else if(i===11){
                     slices[i].name = '-';
-                }else if(i===13){
+                }else if(i===12){
                     slices[i].name = '.';
                 }
             }
