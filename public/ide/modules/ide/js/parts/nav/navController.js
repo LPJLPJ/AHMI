@@ -299,7 +299,9 @@
 
                 function () {
                     var curScope = {};
+                    ProjectService.addSaveInfo();
                     ProjectService.getProjectCopyTo(curScope);
+                    console.log(curScope.project)
                     curScope.project.resourceList = ResourceService.getAllResource();
 
                     curScope.project.customTags = TagService.getAllCustomTags();
