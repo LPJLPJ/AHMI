@@ -628,11 +628,11 @@ ideServices
                 if(i<=9){
                     slices[i].name = '数字'+i;
                 }else if(i===10){
-                    slices[i].name = '+';
-                }else if(i===11){
-                    slices[i].name = '-';
-                }else if(i===12){
                     slices[i].name = '.';
+                }else if(i===11){
+                    slices[i].name = '+';
+                }else if(i===12){
+                    slices[i].name = '-';
                 }
             }
             return {

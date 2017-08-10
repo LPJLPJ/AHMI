@@ -2702,7 +2702,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.symbolMode = level.info.symbolMode;
             this.frontZeroMode = level.info.frontZeroMode;
             this.maxFontWidth = level.info.maxFontWidth;
-            //初始化13的数字字符
+            //初始化数字字符
             this.numObj = [];
             for(var i=0,il=13;i<il;i++){
                 this.numObj[i] = {};
