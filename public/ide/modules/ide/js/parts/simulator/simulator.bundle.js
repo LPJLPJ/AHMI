@@ -21008,6 +21008,9 @@
 	                case 'MyNum':
 	                    this.drawNum(curX, curY, widget, options, cb);
 	                    break;
+	                case 'MyTexNum':
+	                    this.drawTexNum(curX, curY, widget, options, cb);
+	                    break;
 	                case 'MyDateTime':
 	                    this.drawTime(curX, curY, widget, options, cb);
 	                    break;
@@ -21097,6 +21100,9 @@
 	                break;
 	            case 'MyNum':
 	                this.paintNum(curX, curY, widget, options, cb);
+	                break;
+	            case 'MyTexNum':
+	                this.paintTexNum(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyDateTime':
 	                this.paintTime(curX, curY, widget, options, cb);
@@ -22398,7 +22404,7 @@
 	            if (!enableAnimation || enableAnimation && widget.animateTimerId == 0) {
 
 	                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
-
+	                // console.log('tempNumValue',tempNumValue)
 	                this.paintStyledTexNum(widget, tempNumValue, curX, curY, curWidth, curHeight);
 	            } else {
 	                //animate number
@@ -22469,6 +22475,7 @@
 	        offctx.save();
 	        offctx.beginPath();
 	        offctx.rect(dstX, dstY, dstW, dstH);
+	        // offctx.stroke()
 	        offctx.clip();
 	        var numLength = 0;
 	        var numElems = tempNumValue.split('');
@@ -22492,8 +22499,10 @@
 	        }
 	        var curTexSlice = null;
 	        var drawW = charW;
+	        // console.log(numElems)
 	        for (var i = 0; i < numElems.length; i++) {
 	            var curElem = numElems[i];
+	            drawW = charW;
 	            switch (curElem) {
 	                case '0':
 	                case '1':

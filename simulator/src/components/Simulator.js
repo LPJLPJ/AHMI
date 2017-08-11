@@ -1409,6 +1409,9 @@ module.exports =   React.createClass({
                 case 'MyNum':
                     this.drawNum(curX, curY, widget, options,cb)
                     break;
+                case 'MyTexNum':
+                    this.drawTexNum(curX,curY,widget,options,cb)
+                    break;
                 case 'MyDateTime':
                     this.drawTime(curX,curY,widget,options,cb);
                     break;
@@ -1503,6 +1506,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyNum':
                 this.paintNum(curX, curY, widget, options,cb)
+                break;
+            case 'MyTexNum':
+                this.paintTexNum(curX,curY,widget,options,cb)
                 break;
             case 'MyDateTime':
                 this.paintTime(curX,curY,widget,options,cb);
@@ -2900,7 +2906,7 @@ module.exports =   React.createClass({
 
 
                 tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-
+                // console.log('tempNumValue',tempNumValue)
                 this.paintStyledTexNum(widget,tempNumValue,curX,curY,curWidth,curHeight)
 
 
@@ -2984,6 +2990,7 @@ module.exports =   React.createClass({
         offctx.save()
         offctx.beginPath()
         offctx.rect(dstX,dstY,dstW,dstH);
+        // offctx.stroke()
         offctx.clip();
         var numLength = 0;
         var numElems = tempNumValue.split('')
@@ -3007,8 +3014,10 @@ module.exports =   React.createClass({
         }
         var curTexSlice = null;
         var drawW = charW;
+        // console.log(numElems)
         for(var i=0;i<numElems.length;i++){
             var curElem = numElems[i]
+            drawW = charW;
             switch (curElem){
                 case '0':
                 case '1':
