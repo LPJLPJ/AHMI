@@ -472,9 +472,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.component.texNum.arrangeModel=$scope.component.object.level.info.arrange;
                     $scope.component.transitionName=$scope.component.object.level.transition.name;
                     if($scope.component.object.level.info.enableAnimation==false){
-                        $scope.component.num.enableAnimationModeId='1'
+                        $scope.component.texNum.enableAnimationModeId='1'
                     }else if($scope.component.object.level.info.enableAnimation==true){
-                        $scope.component.num.enableAnimationModeId='0'
+                        $scope.component.texNum.enableAnimationModeId='0'
                     }
                     break;
                 case Type.MyDateTime:
