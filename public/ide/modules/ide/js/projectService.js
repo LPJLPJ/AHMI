@@ -209,6 +209,11 @@ ideServices
                 }
             };
 
+            //add save timestamp and uuid
+            this.addSaveInfo = function () {
+                project.lastSaveTimeStamp = Date.now();
+                project.lastSaveUUID = window.uuidv1();
+            }
 
             /**
              * 将当前项目赋值到scope.project
