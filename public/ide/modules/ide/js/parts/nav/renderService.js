@@ -595,7 +595,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             //trans each slide
             var width = info.characterW;
             var height = info.characterH;
-            console.log('width',widget,'height',height);
 
             var slideTex = widget.texList[0];
             var totalSlices = slideTex.slices.length;
