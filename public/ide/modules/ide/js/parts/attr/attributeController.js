@@ -1906,7 +1906,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 return;
             }
             //判断小数的位数是否小于0，或者是否大于字符数减numValue位数
-            if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>$scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.numValue.toString().length)){
+            if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>=$scope.component.object.level.info.numOfDigits)){
                 restore();
                 toastr.warning('超出范围');
                 return;

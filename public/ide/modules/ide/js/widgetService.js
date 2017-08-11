@@ -2912,7 +2912,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         //设置第一个数字的起始位置
         xCoordinate = initXPos;
 
-        for(i=0;i<numStr.length;i++){
+        for(var i=0;i<numStr.length;i++){
             //根据数字字符绘制对应的数字图层
             switch (numStr[i]){
                 case '0':
