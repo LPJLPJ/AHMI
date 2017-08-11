@@ -22405,7 +22405,7 @@
 
 	                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                // console.log('tempNumValue',tempNumValue)
-	                this.paintStyledTexNum(widget, tempNumValue, curX, curY, curWidth, curHeight);
+	                this.paintStyledTexNum(widget, tempNumValue, curX, curY, curX, curY, curWidth, curHeight);
 	            } else {
 	                //animate number
 
@@ -22429,12 +22429,12 @@
 
 	                    oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight;
 	                    if (oldHeight > 0) {
-	                        this.paintStyledTexNum(widget, tempNumValue, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
+	                        this.paintStyledTexNum(widget, tempNumValue, curX, curY + curHeight - oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
 	                    }
 	                    oldHeight = curFrameNum / totalFrameNum * curHeight;
 	                    if (oldHeight > 0) {
 
-	                        this.paintStyledTexNum(widget, newTempNumValue, curX, curY, curWidth, oldHeight);
+	                        this.paintStyledTexNum(widget, newTempNumValue, curX, curY - curHeight + oldHeight, curX, curY, curWidth, oldHeight);
 	                    }
 	                } else {
 	                    if (changeDirection < 0) {
@@ -22447,11 +22447,11 @@
 
 	                    oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth;
 	                    if (oleWidth > 0) {
-	                        this.paintStyledTexNum(widget, tempNumValue, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
+	                        this.paintStyledTexNum(widget, tempNumValue, curX - curWidth + oldWidth, curY, curX, curY, curWidth, oldHeight);
 	                    }
 	                    oldWidth = curFrameNum / totalFrameNum * curWidth;
 	                    if (oleWidth > 0) {
-	                        this.paintStyledTexNum(widget, tempNumValue, curX, curY, oldWidth, curHeight);
+	                        this.paintStyledTexNum(widget, newTempNumValue, curX + curWidth - oldWidth, curY, curX + curWidth - oldWidth, curY, curWidth, oldHeight);
 	                    }
 	                }
 
@@ -22465,7 +22465,7 @@
 
 	        cb && cb();
 	    },
-	    paintStyledTexNum: function (widget, tempNumValue, dstX, dstY, dstW, dstH) {
+	    paintStyledTexNum: function (widget, tempNumValue, dstX, dstY, clipX, clipY, clipW, clipH) {
 	        var offctx = this.offctx;
 	        var charW = widget.info.characterW;
 	        var charH = widget.info.characterH;
@@ -22474,7 +22474,7 @@
 	        var align = widget.info.align;
 	        offctx.save();
 	        offctx.beginPath();
-	        offctx.rect(dstX, dstY, dstW, dstH);
+	        offctx.rect(clipX, clipY, clipW, clipH);
 	        // offctx.stroke()
 	        offctx.clip();
 	        var numLength = 0;
