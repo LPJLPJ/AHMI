@@ -170,3 +170,10 @@ add:
 fix:
     1. page animation will not show background during animation
 update:
+
+1.9.5
+add:
+    1. add texNum widget
+fix:
+    1. animation bug fix
+update:
