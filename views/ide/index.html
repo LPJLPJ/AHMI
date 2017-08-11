@@ -2897,6 +2897,18 @@
                                    class="form-control xiangPage-selected"/>
                         </div>
                     </div>
+                    <div ng-show="component.object.type=='MyTexNum'">
+                        <div class="y-attr-item lg">
+                            <span class="my-attr-title xiangPage-title">对齐方式</span>
+                            <select class="form-control xiangPage-selected"
+                                    ng-model="component.object.level.info.align"
+                                    ng-change="component.texNum.changeNumAlign()">
+                                <option value="center" ng-selected="true">居中</option>
+                                <option value="right">右对齐</option>
+                                <option value="left">左对齐</option>
+                            </select>
+                        </div>
+                    </div>
                     <div ng-show="component.object.type=='MyButton'||component.object.type==='MySwitch'||component.object.type==='MySlide'">
                         <div class="my-attr-item xiangPage-fontfamily" ng-controller="characterSetCtrl">
                             <span class="my-attr-title xiangPage-title">字体</span>
