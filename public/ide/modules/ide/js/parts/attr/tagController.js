@@ -265,6 +265,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 case Type.MySlideBlock:
                 case Type.MyVideo:
                 case Type.MyAnimation:
+                case Type.MyTexNum:
                     $scope.showTagPanel = true;
                     break;
                 default:
