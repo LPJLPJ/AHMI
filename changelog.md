@@ -163,3 +163,10 @@ fix:
     5. num widget max value
 update:
     1. x,y,range from -2000 to 2000.width,height range from 1 to 2000
+
+1.9.4
+add:
+    1. last save uuid and last save timestamp
+fix:
+    1. page animation will not show background during animation
+update:
