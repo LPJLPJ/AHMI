@@ -2733,7 +2733,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             //修改数字图层控件属性
             this.on('changeTexNumContent', function (arg) {
-                console.log('change arg',arg);
                 var _callback=arg.callback;
                 var level=arg.level;
                 if(arg.hasOwnProperty('numValue')){
