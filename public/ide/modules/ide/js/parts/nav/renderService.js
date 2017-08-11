@@ -589,6 +589,74 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
 
     };
 
+    renderer.prototype.renderTexNum = function(widget,srcRootDir,dstDir,imgUrlPrefix,cb){
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.characterW;
+            var height = info.characterH;
+            console.log('width',widget,'height',height);
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slideTex.slices[i];
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                // renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+
+                //output
+                var imgName = widget.id.split('.').join('');
+                var outputFilename = imgName +'-'+ i+'.png';
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice));
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        console.log('keke',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    };
 
     renderer.prototype.renderRotateImg = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
@@ -808,7 +876,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 this.renderDashboard(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             case 'MyRotateImg':
-                this.renderRotateImg(widget,srcRootDir,dstDir,imgUrlPrefix,cb)
+                this.renderRotateImg(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyTexNum':
+                this.renderTexNum(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
                 cb&&cb();
