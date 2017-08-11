@@ -2633,7 +2633,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyNum(level,object));
     };
     fabric.MyNum.async = true;
-
     /**
      * 逐字渲染数字控件
      * @param  {[type]} ctx           [Canvas对象]
@@ -2673,6 +2672,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }
     }
 
+    //TexNum
     fabric.MyTexNum = fabric.util.createClass(fabric.Object,{
         type: Type.MyTexNum,
         initialize: function (level, options) {
@@ -2696,12 +2696,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.numValue = level.info.numValue;
             this.align = level.info.align;
             this.arrange = level.info.arrange;
-            //下面位数字模式属性
+            //下面为数字图层的属性
             this.numOfDigits = level.info.numOfDigits;
             this.decimalCount = level.info.decimalCount;
             this.symbolMode = level.info.symbolMode;
             this.frontZeroMode = level.info.frontZeroMode;
             this.maxFontWidth = level.info.maxFontWidth;
+            this.characterW = level.info.characterW;
+            this.characterH = level.info.characterH;
+
+
             //初始化数字字符
             this.numObj = [];
             for(var i=0,il=13;i<il;i++){
@@ -2710,8 +2714,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
             }
 
+            //修改数字纹理
             this.on('changeTex', function (arg) {
-                var slices=arg.level.slices;
+                var slices=arg.level.texList[0].slices;
                 var _callback=arg.callback;
 
                 for(var i=0,il=13;i<il;i++){
@@ -2725,6 +2730,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
 
             });
+
+            //修改数字图层控件属性
             this.on('changeTexNumContent', function (arg) {
                 console.log('change arg',arg);
                 var _callback=arg.callback;
@@ -2747,6 +2754,28 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.align){
                     self.align=arg.align;
                 }
+                if(arg.hasOwnProperty('characterW')){
+                    self.characterW = level.info.characterW;
+                }
+                if(arg.hasOwnProperty('characterH')){
+                    self.characterH = level.info.characterH;
+                }
+
+                //console.log('keke',this.characterW,"Y",this.characterH);
+                //设置图层数字控件的宽高
+                if(self.numOfDigits&&self.characterW){
+                    //加入符号宽度
+                    var width = self.symbolMode=='0'?(self.numOfDigits*self.characterW):((self.numOfDigits+1)*self.characterW);
+                    //加入小数点宽度
+                    if(self.decimalCount!=0){
+                        width +=0.5*self.characterW;
+                    }
+                    //设置高度
+                    var height = self.characterH;
+
+                    self.set({width:width,height:height});
+                };
+
 
                 //console.log('width',width,'maxWidth',maxWidth);
                 var subLayerNode = CanvasService.getSubLayerNode();
@@ -2757,13 +2786,86 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
+
         _render:function(ctx){
             try{
-                // console.log('render...');
-            }catch (err){
+                //在数字框里展示数字预览效果
+                if(!isNaN(this.numValue)) {
+                    //设置正负
+                    var negative=false;
+                    if(this.numValue<0){
+                        negative=true;
+                    }
+                    //取绝对值
+                    var tempNumValue=Math.abs(this.numValue);
+                    //数值字符串化
+                    tempNumValue= tempNumValue.toString();
+
+                    var i=0;
+                    //配置小数位数
+                    if(this.decimalCount>0){
+                        //Math.pow(x,y)返回x的y次幂
+                        var baseCount = Math.pow(10,this.decimalCount);
+                        //数值字符串化
+                        tempNumValue = (Math.abs(this.numValue)/baseCount).toString();
+                        //.indexOf('.')返回'.'在字符串中首次出现的位置，-1表示没有出现
+                        if(tempNumValue.indexOf('.')!=-1){
+                            //console.log('输入有小数')
+                            //.split('.')[1]把字符串分割，tempNumValue.split('.')是返回的字符串数组，tempNumValue.split('.')[1]是小数部分
+                            var tempDecimalCount=tempNumValue.split('.')[1];
+                            //当小数部分的后几位为0时将0补足
+                            for(i=0;i<this.decimalCount-tempDecimalCount.length;i++){
+                                tempNumValue=tempNumValue+'0';
+                            }
+                        }else{
+                            //console.log('输入无小数')
+                            tempNumValue= tempNumValue+".";
+                            for(i=0;i<this.decimalCount;i++){
+                                tempNumValue=tempNumValue+'0';
+                            }
+                        }
+                    }
+                    //配置前导0模式
+                    if(this.frontZeroMode=='1'){
+                        //console.log('minus',this.numOfDigits-tempNumValue.length);
+                        var minus=this.numOfDigits-tempNumValue.length;
+                        //console.log('minus',minus);
+                        if(this.decimalCount){
+                            for(i=0;i<minus+1;i++){
+                                tempNumValue='0'+tempNumValue;
+                            }
+                        }else{
+                            for(i=0;i<minus;i++){
+                                tempNumValue='0'+tempNumValue;
+                            }
+                        }
+                    }
+                    //配置正负号
+                    if((this.symbolMode=='1')&&(negative)){
+                        tempNumValue='-'+tempNumValue;
+                    }
+
+                    //console.log('keke',this.characterW,"Y",this.characterH);
+                    drawTexNumByCharacter(ctx,tempNumValue,this.align,this.width,this.characterW,this.characterH,this.decimalCount,this.numObj);
+
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();//此时的坐标在控件的正中，因为设置了originX: 'center', originY: 'center'
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
                 console.log('错误描述',err);
                 toastr.warning('渲染数字出错');
             }
+
         }
     });
     fabric.MyTexNum.fromLevel = function(level,callback,option){
@@ -2774,6 +2876,130 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyTexNum(level,object));
     };
     fabric.MyTexNum.async = true;
+    /**
+     * 逐字渲染数字图层控件
+     * @param  {[type]} ctx           [Canvas对象]
+     * @param  {[type]} numStr        [数字字符串]
+     * @param  {[type]} align         [对齐方式]
+     * @param  {[type]} width         [数字图层控件总宽度]
+     * @param  {[type]} characterW    [单个数字图层宽度]
+     * @param  {[type]} height        [单个数字图层高度]
+     * @param  {[type]} decimalCount  [小数点位数]
+     * @param  {[type]} numObj        [数字图层纹理]
+     * @return {[type]}               [description]
+     */
+    function drawTexNumByCharacter(ctx,numStr,align,width,characterW,height,decimalCount,numObj){
+        var xCoordinate,         //每个字符的x坐标
+            initXPos,            //整个数字图层控件的起始位置
+            widthOfNumStr;       //整个数字图层控件的宽度
+
+        //计算整个数字图层控件的宽度
+        widthOfNumStr=(decimalCount===0?(characterW*numStr.length):(characterW*(numStr.length-0.5)));
+
+        //由对齐方式设置整个数字图层控件的起始位置
+        switch(align){
+            case 'left':
+                initXPos=characterW/2-width/2;
+                break;
+            case 'right':
+                initXPos=width/2+characterW/2-widthOfNumStr;
+                break;
+            case 'center':
+            default:
+                initXPos = (characterW-widthOfNumStr)/2;
+                break;
+        }
+        //设置第一个数字的起始位置
+        xCoordinate = initXPos;
+
+        for(i=0;i<numStr.length;i++){
+            //根据数字字符绘制对应的数字图层
+            switch (numStr[i]){
+                case '0':
+                    drawNum(0,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '1':
+                    drawNum(1,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '2':
+                    drawNum(2,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '3':
+                    drawNum(3,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '4':
+                    drawNum(4,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '5':
+                    drawNum(5,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '6':
+                    drawNum(6,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '7':
+                    drawNum(7,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '8':
+                    drawNum(8,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '9':
+                    drawNum(9,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '.':
+                    drawNum(10,characterW/2,height,numObj,xCoordinate-characterW/4,ctx);
+                    break;
+                case '+':
+                    drawNum(11,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '-':
+                    drawNum(12,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+
+            }
+            //设置下一个数字的起始位置
+            if(numStr[i]=='.'){
+                xCoordinate+=characterW/2;
+            }else{
+                xCoordinate+=characterW;
+            }
+        }
+        // /**
+        //  * 绘制单个数字图层
+        //  * @param  {[type]} num           [要渲染的数字图层对象在numObj中的位置]
+        //  * @param  {[type]} characterW         [要渲染的数字图层对象宽度]
+        //  * @param  {[type]} height        [要渲染的数字图层对象高度]
+        //  * @param  {[type]} numObj        [数字图层纹理]
+        //  * @param  {[type]} xCoordinate   [要渲染的数字图层对象起始位置x坐标]
+        //  * @param  {[type]} ctx           [Canvas对象]
+        //  * @return {[type]} null          [null]
+        //  */
+        function drawNum(num,characterW,height,numObj,xCoordinate,ctx){
+            try{
+                ctx.beginPath();
+                //设置背景色
+                ctx.fillStyle=numObj[num].color;
+                ctx.fillRect(
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                //ctx.fillStyle=this.numObj[num].img;
+                //插入图片
+                ctx.drawImage(
+                    numObj[num].img,
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                ctx.closePath();
+                ctx.stroke();
+            }catch(err){
+
+            }
+
+
+        }
+    }
 
     fabric.MyButtonGroup = fabric.util.createClass(fabric.Object, {
         type: Type.MyButtonGroup,
