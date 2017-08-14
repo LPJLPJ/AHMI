@@ -2078,6 +2078,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 toastr.warning('输入不合法');
                 return;
             }
+            if(characterW<1||characterW>2000){
+                toastr.warning('超出范围');
+                return;
+            }
             var option={
                 characterW:characterW,
             };
@@ -2091,6 +2095,10 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var characterH = $scope.component.object.level.info.characterH;
             if(!_.isInteger(characterH)||characterH<=0){
                 toastr.warning('输入不合法');
+                return;
+            }
+            if(characterH<1||characterH>2000){
+                toastr.warning('超出范围');
                 return;
             }
             var option={

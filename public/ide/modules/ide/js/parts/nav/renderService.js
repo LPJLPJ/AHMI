@@ -606,7 +606,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 ctx.clearRect(0,0,width,height);
                 ctx.save();
                 //render color
-                // renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
                 //render image;
                 var imgSrc = curSlice.imgSrc;
                 if (imgSrc!==''){
