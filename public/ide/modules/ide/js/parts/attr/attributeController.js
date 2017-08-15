@@ -549,7 +549,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 duration:$scope.component.object.level.transition.duration
             };
             toastr.info('修改成功');
-            var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeTransition(option,function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
@@ -649,7 +648,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 				top:yCoor
 			};
 
-			ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+            // console.log('oldOperate',oldOperate);
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
 
 			})
@@ -681,7 +681,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
 			ProjectService.ChangeAttributeSize(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
-
 			})
 		}
 	}
@@ -913,8 +912,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option = {
             highlightMode:selectHighlightMode
         };
-        var oldOperate = ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeHighLightMode(option,function(){
+        ProjectService.ChangeAttributeHighLightMode(option,function(oldOperate){
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
@@ -934,8 +932,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option = {
             enableAnimationModeId:selectEnableAnimationMode
         }
-        ProjectService.ChangeEnableAnimationMode(option,function(){
-            $scope.$emit('ChangeCurrentPage');
+        ProjectService.ChangeEnableAnimationMode(option,function(oldOperate){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
 
@@ -1880,7 +1878,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var option={
                 numOfDigits:$scope.component.object.level.info.numOfDigits
             };
-            var oldOperate=ProjectService.SaveCurrentOperate();
             switch(type){
                 case Type.MyNum:
                     ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
