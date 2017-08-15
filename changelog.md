@@ -176,4 +176,6 @@ add:
     1. add texNum widget
 fix:
     1. animation bug fix
+    2. fix redo/undo in some mode
+    3. fix css in select and widget dropdown
 update:
