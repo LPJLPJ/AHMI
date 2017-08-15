@@ -294,12 +294,13 @@
             if (useSpinner) {
                 showSpinner();
             }
+            ProjectService.addSaveInfo();
             var projectClone=ProjectService.SaveCurrentOperate();
             ProjectService.changeCurrentPageIndex(0,
 
                 function () {
                     var curScope = {};
-                    ProjectService.addSaveInfo();
+
                     ProjectService.getProjectCopyTo(curScope);
                     console.log(curScope.project)
                     curScope.project.resourceList = ResourceService.getAllResource();
