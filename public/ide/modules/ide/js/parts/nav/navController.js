@@ -735,6 +735,8 @@
                         }
                     })
                     .error(function(err,status,xhr){
+                        window.spinner&&window.spinner.hide();
+                        toastr.error('生成失败,请尝试先保存');
                         console.log(err);
                     })
                 //})
