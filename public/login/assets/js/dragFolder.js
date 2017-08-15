@@ -48,6 +48,7 @@
     function FileDragHover(e){
         e.stopPropagation();
         e.preventDefault();
+        console.log('haha',e.type);
         filedrag.className = (e.type=='dragover'?'hover':'');
     }
 

@@ -1409,6 +1409,9 @@ module.exports =   React.createClass({
                 case 'MyNum':
                     this.drawNum(curX, curY, widget, options,cb)
                     break;
+                case 'MyTexNum':
+                    this.drawTexNum(curX,curY,widget,options,cb)
+                    break;
                 case 'MyDateTime':
                     this.drawTime(curX,curY,widget,options,cb);
                     break;
@@ -1503,6 +1506,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyNum':
                 this.paintNum(curX, curY, widget, options,cb)
+                break;
+            case 'MyTexNum':
+                this.paintTexNum(curX,curY,widget,options,cb)
                 break;
             case 'MyDateTime':
                 this.paintTime(curX,curY,widget,options,cb);
@@ -2900,8 +2906,8 @@ module.exports =   React.createClass({
 
 
                 tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-
-                this.paintStyledTexNum(widget,tempNumValue,curX,curY,curWidth,curHeight)
+                // console.log('tempNumValue',tempNumValue)
+                this.paintStyledTexNum(widget,tempNumValue,curX,curY,curX,curY,curWidth,curHeight)
 
 
 
@@ -2930,12 +2936,12 @@ module.exports =   React.createClass({
 
                     oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight
                     if (oldHeight>0){
-                        this.paintStyledTexNum(widget,tempNumValue,curX, curY + curHeight - oldHeight, curWidth, oldHeight)
+                        this.paintStyledTexNum(widget,tempNumValue,curX, curY + curHeight - oldHeight,curX, curY + curHeight - oldHeight, curWidth, oldHeight)
                     }
                     oldHeight = curFrameNum  / totalFrameNum * curHeight
                     if (oldHeight>0){
 
-                        this.paintStyledTexNum(widget,newTempNumValue, curX, curY, curWidth, oldHeight)
+                        this.paintStyledTexNum(widget,newTempNumValue, curX, curY-curHeight+oldHeight,curX,curY, curWidth, oldHeight)
                     }
 
                 }else{
@@ -2949,11 +2955,11 @@ module.exports =   React.createClass({
 
                     oldWidth = (totalFrameNum - curFrameNum)  / totalFrameNum * curWidth
                     if (oleWidth>0){
-                        this.paintStyledTexNum(widget,tempNumValue,curX+curWidth-oldWidth, curY , oldWidth, curHeight)
+                        this.paintStyledTexNum(widget,tempNumValue,curX-curWidth+oldWidth, curY,curX, curY , curWidth, oldHeight)
                     }
                     oldWidth = curFrameNum  / totalFrameNum * curWidth;
                     if (oleWidth>0){
-                        this.paintStyledTexNum(widget,tempNumValue,curX, curY, oldWidth, curHeight)
+                        this.paintStyledTexNum(widget,newTempNumValue,curX+curWidth-oldWidth, curY,curX+curWidth-oldWidth, curY, curWidth, oldHeight)
                     }
 
                 }
@@ -2974,7 +2980,7 @@ module.exports =   React.createClass({
         cb && cb();
 
     },
-    paintStyledTexNum:function(widget,tempNumValue,dstX,dstY,dstW,dstH){
+    paintStyledTexNum:function(widget,tempNumValue,dstX,dstY,clipX,clipY,clipW,clipH){
         var offctx = this.offctx
         var charW = widget.info.characterW;
         var charH = widget.info.characterH;
@@ -2983,7 +2989,8 @@ module.exports =   React.createClass({
         var align = widget.info.align;
         offctx.save()
         offctx.beginPath()
-        offctx.rect(dstX,dstY,dstW,dstH);
+        offctx.rect(clipX,clipY,clipW,clipH);
+        // offctx.stroke()
         offctx.clip();
         var numLength = 0;
         var numElems = tempNumValue.split('')
@@ -3007,8 +3014,10 @@ module.exports =   React.createClass({
         }
         var curTexSlice = null;
         var drawW = charW;
+        // console.log(numElems)
         for(var i=0;i<numElems.length;i++){
             var curElem = numElems[i]
+            drawW = charW;
             switch (curElem){
                 case '0':
                 case '1':

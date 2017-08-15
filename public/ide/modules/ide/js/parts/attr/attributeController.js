@@ -151,7 +151,41 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 changeNumAlign:changeNumAlign,
                 enterArrange:enterArrange
             },
+            texNum:{
+                numModeId:'0',//目前无用
+                enableAnimationModeId:'0',
+                numModes:[
+                    {id:'0',name:'普通模式'},
+                    {id:'1',name:'动画模式'}
+                ],
+                symbolMode:'0',
+                symbolModes:[
+                    {id:'0',name:'无符号模式'},
+                    {id:'1',name:'有符号模式'}
+                ],
+                frontZeroMode:'0',
+                frontZeroModes:[
+                    {id:'0',name:'无前导0模式'},
+                    {id:'1',name:'有前导0模式'}
+                ],
+                overFlowStyle:'0',
+                overFlowStyles:[
+                    {id:'0',name:'溢出不显示'},
+                    {id:'1',name:'溢出显示'}
+                ],
+                changeNumOfDigits:changeNumOfDigits,
+                changeDecimalCount:changeDecimalCount,
+                enterNumMode:enterNumMode,
+                enterSymbolMode:enterSymbolMode,
+                enterFrontZeroMode:enterFrontZeroMode,
+                enterOverFlowStyle:enterOverFlowStyle,
 
+                enterNumValue:enterNumValue,
+                changeNumAlign:changeNumAlign,
+
+                enterCharacterW:enterCharacterW,
+                enterCharacterH:enterCharacterH
+            },
             //旋钮
             knob:{
                 backgroundImage:'blank.png',
@@ -430,6 +464,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.num.enableAnimationModeId='0'
                     }
                     break;
+                case Type.MyTexNum:
+                    $scope.component.texNum.numModeId=$scope.component.object.level.info.numModeId;
+                    $scope.component.texNum.symbolMode=$scope.component.object.level.info.symbolMode;
+                    $scope.component.texNum.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
+                    $scope.component.texNum.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
+                    $scope.component.texNum.arrangeModel=$scope.component.object.level.info.arrange;
+                    $scope.component.transitionName=$scope.component.object.level.transition.name;
+                    if($scope.component.object.level.info.enableAnimation==false){
+                        $scope.component.texNum.enableAnimationModeId='1'
+                    }else if($scope.component.object.level.info.enableAnimation==true){
+                        $scope.component.texNum.enableAnimationModeId='0'
+                    }
+                    break;
                 case Type.MyDateTime:
                     $scope.component.dateTime.arrangeModel=$scope.component.object.level.info.arrange;
                     $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
@@ -502,7 +549,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 duration:$scope.component.object.level.transition.duration
             };
             toastr.info('修改成功');
-            var oldOperate=ProjectService.SaveCurrentOperate();
             ProjectService.ChangeAttributeTransition(option,function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
@@ -602,7 +648,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 				top:yCoor
 			};
 
-			ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+            // console.log('oldOperate',oldOperate);
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
 
 			})
@@ -634,7 +681,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
 			ProjectService.ChangeAttributeSize(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
-
 			})
 		}
 	}
@@ -866,8 +912,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var option = {
             highlightMode:selectHighlightMode
         };
-        var oldOperate = ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeHighLightMode(option,function(){
+        ProjectService.ChangeAttributeHighLightMode(option,function(oldOperate){
             $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
@@ -881,12 +926,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectEnableAnimationMode=$scope.component.progress.enableAnimationModeId;
         }else if(selectObj.type==Type.MyNum){
             selectEnableAnimationMode=$scope.component.num.enableAnimationModeId;
+        }else if(selectObj.type===Type.MyTexNum){
+            selectEnableAnimationMode=$scope.component.texNum.enableAnimationModeId;
         }
         var option = {
             enableAnimationModeId:selectEnableAnimationMode
         }
-        ProjectService.ChangeEnableAnimationMode(option,function(){
-            $scope.$emit('ChangeCurrentPage');
+        ProjectService.ChangeEnableAnimationMode(option,function(oldOperate){
+            $scope.$emit('ChangeCurrentPage',oldOperate);
         })
     }
 
@@ -1432,7 +1479,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     restore();
                     return;
                 }
-            }else if($scope.component.object.level.type==Type.Mynum){
+            }else if($scope.component.object.level.type==Type.MyNum||$scope.component.object.level.type==Type.MyTexNum){
                 //默认是数字框
                 if ($scope.component.object.level.info.minValue>$scope.component.object.level.info.initValue){
                     toastr.warning('不能比当前值大');
@@ -1499,7 +1546,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     restore();
                     return;
                 }
-            }else if(type===Type.MyNum){
+            }else if(type===Type.MyNum||type==Type.MyTexNum){
                 //默认是数字框
                 if (maxValue<$scope.component.object.level.info.initValue){
                     toastr.warning('不能比当前值小');
@@ -1809,7 +1856,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function changeNumOfDigits(e){
         if(e.keyCode==13){
-            //console.log('enter numOfDigits');
+            var type = $scope.component.object.level.type;
             if($scope.component.object.level.info.numOfDigits.toString().indexOf('.')>-1){
                 restore();
                 return;
@@ -1831,14 +1878,23 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var option={
                 numOfDigits:$scope.component.object.level.info.numOfDigits
             };
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
+            switch(type){
+                case Type.MyNum:
+                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option,function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+            }
         }
     }
     function changeDecimalCount(e){
         if(e.keyCode==13){
+            var type = $scope.component.object.level.type;
             if($scope.component.object.level.info.decimalCount.toString().indexOf('.')>-1){
                 restore();
                 return;
@@ -1847,7 +1903,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 return;
             }
             //判断小数的位数是否小于0，或者是否大于字符数减numValue位数
-            if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>$scope.component.object.level.info.numOfDigits-$scope.component.object.level.info.numValue.toString().length)){
+            if($scope.component.object.level.info.decimalCount<0||($scope.component.object.level.info.decimalCount>=$scope.component.object.level.info.numOfDigits)){
                 restore();
                 toastr.warning('超出范围');
                 return;
@@ -1857,9 +1913,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 decimalCount:$scope.component.object.level.info.decimalCount,
             }
             var oldOperate=ProjectService.SaveCurrentOperate();
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
+
+            switch (type){
+                case Type.MyNum:
+                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+            }
         }
     }
     function enterNumMode(){
@@ -1883,65 +1949,72 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
     function enterSymbolMode(){
         var selectObj=ProjectService.getCurrentSelectObject();
-        var selectSymbolMode=null;
-        if (selectObj.type==Type.MyNum){
-            selectSymbolMode=$scope.component.num.symbolMode;
+        var type = selectObj.type;
 
-        }else {
-            return;
-        }
-        var option={
-            symbolMode:selectSymbolMode
-        };
+        var option={};
         var oldOperate=ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
+        switch (type){
+            case Type.MyNum:
+                option.symbolMode = $scope.component.num.symbolMode;
+                ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyTexNum:
+                option.symbolMode = $scope.component.texNum.symbolMode;
+                ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+        }
+
     }
     function enterFrontZeroMode(){
         var selectObj=ProjectService.getCurrentSelectObject();
-        var selectFrontZeroMode=null;
-        //console.log('当前值',$scope.component.num.frontZeroMode);
-        if (selectObj.type==Type.MyNum){
-            selectFrontZeroMode=$scope.component.num.frontZeroMode;
-
-        }else {
-            return;
-        }
-
-        var option={
-            frontZeroMode:selectFrontZeroMode
-        };
+        var option={};
 
         var oldOperate=ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
+        switch (selectObj.type){
+            case Type.MyNum:
+                option.frontZeroMode = $scope.component.num.frontZeroMode;
+                ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyTexNum:
+                option.frontZeroMode = $scope.component.texNum.frontZeroMode;
+                ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+        }
     }
 
     function enterOverFlowStyle(){
         var selectObj=ProjectService.getCurrentSelectObject();
-        var selectOverFlowStyle=null;
-        //console.log('当前值',$scope.component.num.frontZeroMode);
-        if (selectObj.type==Type.MyNum){
-            selectOverFlowStyle=$scope.component.num.overFlowStyle
-
-        }else {
-            return;
-        }
-
-        var option={
-            overFlowStyle:selectOverFlowStyle
-        };
+        var option={};
 
         var oldOperate=ProjectService.SaveCurrentOperate();
-        ProjectService.ChangeAttributeOfNum(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
+        switch (selectObj.type){
+            case Type.MyNum:
+                option.overFlowStyle = $scope.component.num.overFlowStyle;
+                ProjectService.ChangeAttributeOfNum(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyTexNum:
+                option.overFlowStyle = $scope.component.texNum.overFlowStyle;
+                ProjectService.ChangeAttributeOfTexNum(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+        }
+
     }
 
     function enterNumValue(e){
         if(e.keyCode==13){
+            var type = $scope.component.object.level.type;
             var numValue = $scope.component.object.level.info.numValue;
             var minValue = $scope.component.object.level.info.minValue;
             var maxValue = $scope.component.object.level.info.maxValue;
@@ -1958,25 +2031,80 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var option={
                 numValue:numValue,
             };
-
-            ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            })
-
+            switch (type){
+                case Type.MyNum:
+                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+            }
         }
     }
 
     function changeNumAlign(){
+        var type = $scope.component.object.level.type;
         if($scope.component.object.level.info.align==initObject.level.info.align){
             return;
         }
         var option={
             align:$scope.component.object.level.info.align
         };
-        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
+        switch (type){
+            case Type.MyNum:
+                ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyTexNum:
+                ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+        }
+    }
 
-        })
+    function enterCharacterW(e){
+        if(e.keyCode===13){
+            var characterW = $scope.component.object.level.info.characterW;
+            if(!_.isInteger(characterW)||characterW<=0){
+                toastr.warning('输入不合法');
+                return;
+            }
+            if(characterW<1||characterW>2000){
+                toastr.warning('超出范围');
+                return;
+            }
+            var option={
+                characterW:characterW,
+            };
+            ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
+        }
+    }
+    function enterCharacterH(e){
+        if(e.keyCode===13){
+            var characterH = $scope.component.object.level.info.characterH;
+            if(!_.isInteger(characterH)||characterH<=0){
+                toastr.warning('输入不合法');
+                return;
+            }
+            if(characterH<1||characterH>2000){
+                toastr.warning('超出范围');
+                return;
+            }
+            var option={
+                characterH:characterH,
+            };
+            ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
+        }
     }
 
 
