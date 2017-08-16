@@ -720,12 +720,18 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             i;
         colorValue = op.value.slice(5,op.value.length-1);
         colorValue = colorValue.split(",");
-        for(i=0;i<colorValue.length;i++){
-            if(parseInt(colorValue[i])>255|| !_.isInteger(Number(colorValue[i]))){
+        for(i=0;i<colorValue.length-1;i++){
+            if(colorValue[i]>255||colorValue[i]<0|| !_.isInteger(Number(colorValue[i]))){
                 toastr.warning('格式错误');
                 restore();
                 return;
             }
+        }
+        var a = colorValue[colorValue.length-1];
+        if(a<0||a>1){
+            toastr.warning('格式错误');
+            restore();
+            return;
         }
 		if (op.name=='component.object.level.backgroundColor'){
 			if (initObject.level.backgroundColor==op.value){
