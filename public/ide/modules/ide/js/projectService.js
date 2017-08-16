@@ -209,6 +209,11 @@ ideServices
                 }
             };
 
+            //add save timestamp and uuid
+            this.addSaveInfo = function () {
+                project.lastSaveTimeStamp = Date.now();
+                project.lastSaveUUID = window.uuidv1();
+            }
 
             /**
              * 将当前项目赋值到scope.project
@@ -1052,9 +1057,14 @@ ideServices
 
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MyTexNum){
+                    fabric.MyTexNum.fromLevel(_newWidget,function (fabWidget) {
+                        _self.currentFabLayerIdList = [fabWidget.id];
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }
-
-
 
             };
 
@@ -2956,12 +2966,14 @@ ideServices
              * @constructor
              */
             this.ChangeEnableAnimationMode = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
                 var selectObj = getCurrentSelectObject();
                 if(_option.enableAnimationModeId=='1'){
                     selectObj.level.info.enableAnimation=false;
                 }else {
                     selectObj.level.info.enableAnimation=true;
                 }
+                _successCallback&&_successCallback(currentOperate);
             };
 
             this.ChangeAttributeBackgroundImage= function (_option,_successCallback) {
@@ -3021,48 +3033,6 @@ ideServices
                     return;
                 }
                 selectObj.level.pressImg=_option.image;
-            };
-
-            this.ChangeAttributeButtonText=function(_option,_successCallback){
-                var selectObj=_self.getCurrentSelectObject();
-                var fabTextObj=getFabricObject(selectObj.level.id,true);
-                var arg={
-                    level:selectObj.level,
-                    callback:function () {
-                        var currentWidget=selectObj.level;
-                        OnWidgetSelected(currentWidget,_successCallback);
-                    }
-                };
-
-                if(_option.hasOwnProperty('text')){
-                    selectObj.level.info.text=_option.text;
-                    arg.text=_option.text;
-                }
-                if(_option.fontFamily){
-                    selectObj.level.info.fontFamily=_option.fontFamily;
-                    arg.fontFamily=_option.fontFamily;
-                }
-                if(_option.fontSize){
-                    selectObj.level.info.fontSize=_option.fontSize;
-                    arg.fontSize=_option.fontSize;
-                }
-                if(_option.fontColor){
-                    selectObj.level.info.fontColor=_option.fontColor;
-                    arg.fontColor=_option.fontColor;
-                }
-                if(_option.fontBold){
-                    selectObj.level.info.fontBold=_option.fontBold;
-                    arg.fontBold=_option.fontBold;
-                }
-                if(_option.hasOwnProperty('fontItalic')){
-                    selectObj.level.info.fontItalic=_option.fontItalic;
-                    arg.fontItalic=_option.fontItalic;
-                }
-                if(_option.fontName){
-                    selectObj.level.info.fontName=_option.fontName;
-                }
-
-                selectObj.target.fire('changeButtonText',arg);
             };
 
             this.ChangeAttributeProgressValue= function (_option, _successCallback) {
@@ -3294,7 +3264,6 @@ ideServices
 
             this.ChangeAttributeTextContent = function (_option,_successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
-                var fabTextObj=getFabricObject(selectObj.level.id,true);
                 var arg={
                     level:selectObj.level,
                     callback:function () {
@@ -3342,13 +3311,15 @@ ideServices
 
             //改变如下数字属性，需要重新渲染预览界面
             this.ChangeAttributeNumContent = function(_option,_successCallback){
+                var currentOperate=SaveCurrentOperate();
                 var selectObj=_self.getCurrentSelectObject();
-                var fabNumObj=getFabricObject(selectObj.level.id,true);
                 var arg={
                     level:selectObj.level,
                     callback:function(){
                         var currentWidget=selectObj.level;
-                        OnWidgetSelected(currentWidget,_successCallback);
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
                     }
                 };
 
@@ -3416,6 +3387,7 @@ ideServices
             };
             //如下属性改变，但是不用重新渲染界面，包括切换模式
             this.ChangeAttributeOfNum=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
                 var selectObj=_self.getCurrentSelectObject();
                 if(_option.numModeId){
                     selectObj.level.info.numModeId=_option.numModeId;
@@ -3423,9 +3395,75 @@ ideServices
                 if(_option.overFlowStyle){
                     selectObj.level.info.overFlowStyle=_option.overFlowStyle;
                 }
-                _successCallback&&_successCallback();
-                //console.log('displayModel',selectObj.level.info.numModeId);
+                _successCallback&&_successCallback(currentOperate);
+            };
 
+            this.ChangeAttributeTexNumContent = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.characterW){
+                    selectObj.level.info.characterW=_option.characterW;
+                    arg.characterW=_option.characterW;
+                }
+                if(_option.characterH){
+                    selectObj.level.info.characterH=_option.characterH;
+                    arg.characterH=_option.characterH;
+                }
+                //下面是数字模式属性，如小数位数，字符数，切换模式，有无符号模式，前导0模式
+                if(_option.numOfDigits){
+                    var tempNumOfDigits=_option.numOfDigits;
+                    selectObj.level.info.numOfDigits=tempNumOfDigits;
+                    arg.numOfDigits=tempNumOfDigits;
+                }
+                if(_option.decimalCount||(_option.decimalCount==0)){
+                    var tempDecimalCount=_option.decimalCount;
+                    selectObj.level.info.decimalCount=tempDecimalCount;
+                    arg.decimalCount=tempDecimalCount;
+                }
+                if(_option.symbolMode){
+                    var tempSymbolMode=_option.symbolMode;
+                    selectObj.level.info.symbolMode=tempSymbolMode;
+                    arg.symbolMode=tempSymbolMode;
+                }
+                if(_option.frontZeroMode){
+                    var tempFrontZeroMode=_option.frontZeroMode;
+                    selectObj.level.info.frontZeroMode=tempFrontZeroMode;
+                    arg.frontZeroMode=tempFrontZeroMode;
+                }
+
+                //下面是数字数值
+                if(_option.hasOwnProperty('numValue')){
+                    var tempNumValue = _option.numValue;
+                    selectObj.level.info.numValue=tempNumValue;
+                    arg.numValue=tempNumValue;
+                }
+                if(_option.align){
+                    var tempAlign = _option.align;
+                    selectObj.level.info.align=tempAlign;
+                    arg.align=tempAlign;
+                }
+                selectObj.target.fire('changeTexNumContent',arg);
+            };
+
+            this.ChangeAttributeOfTexNum=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                if(_option.numModeId){
+                    selectObj.level.info.numModeId=_option.numModeId;
+                }
+                if(_option.overFlowStyle){
+                    selectObj.level.info.overFlowStyle=_option.overFlowStyle;
+                }
+                _successCallback&&_successCallback(currentOperate);
             };
 
             //改变按钮模式
@@ -3481,6 +3519,48 @@ ideServices
                 var selectObj = _self.getCurrentSelectObject();
                 selectObj.level.info.bindBit=_option.bindBit;
                 _successCallback&&_successCallback();
+            };
+
+            //改变字体样式，适用于开关控件，图层控件
+            this.ChangeAttributeFontStyle=function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+
+                if(_option.hasOwnProperty('text')){
+                    selectObj.level.info.text=_option.text;
+                    arg.text=_option.text;
+                }
+                if(_option.fontFamily){
+                    selectObj.level.info.fontFamily=_option.fontFamily;
+                    arg.fontFamily=_option.fontFamily;
+                }
+                if(_option.fontSize){
+                    selectObj.level.info.fontSize=_option.fontSize;
+                    arg.fontSize=_option.fontSize;
+                }
+                if(_option.fontColor){
+                    selectObj.level.info.fontColor=_option.fontColor;
+                    arg.fontColor=_option.fontColor;
+                }
+                if(_option.fontBold){
+                    selectObj.level.info.fontBold=_option.fontBold;
+                    arg.fontBold=_option.fontBold;
+                }
+                if(_option.hasOwnProperty('fontItalic')){
+                    selectObj.level.info.fontItalic=_option.fontItalic;
+                    arg.fontItalic=_option.fontItalic;
+                }
+                if(_option.fontName){
+                    selectObj.level.info.fontName=_option.fontName;
+                }
+
+                selectObj.target.fire('changeFontStyle',arg);
             };
             //改变控件初始值
             this.ChangeAttributeInitValue = function(_option,_successCallback){
@@ -3879,6 +3959,7 @@ ideServices
                 _successCallback&&_successCallback();
             };
             this.ChangeAttributeTransition = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
                 var selectObj=_self.getCurrentSelectObject();
                 if(_option.hasOwnProperty('name')){
                     selectObj.level.transition.name=_option.name;
@@ -3886,7 +3967,7 @@ ideServices
                 }else if(_option.hasOwnProperty('duration')){
                     selectObj.level.transition.duration=_option.duration;
                 }
-                _successCallback&&_successCallback();
+                _successCallback&&_successCallback(currentOperate);
             };
 
             /**
@@ -3932,9 +4013,10 @@ ideServices
             };
 
             this.ChangeAttributeTag= function (_tagObj, _successCallback) {
+                var currentOperate = SaveCurrentOperate();
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.tag=_tagObj;
-                _successCallback&&_successCallback();
+                _successCallback&&_successCallback(currentOperate);
             };
             this.ChangeAttributeValue= function (_option, _successCallback) {
                 var currentOperate=SaveCurrentOperate();

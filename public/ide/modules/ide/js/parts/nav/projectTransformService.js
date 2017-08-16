@@ -23,6 +23,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
         targetProject.size = rawProject.currentSize;
+        //add last save info
+        targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
+        targetProject.lastSaveUUID = rawProject.lastSaveUUID;
         targetProject.pageList = [];
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));

@@ -569,12 +569,11 @@ projectRoute.generateLocalProject = function(req, res){
                         }
                     }
                     return value;
-                }
-                var contentObj = JSON.parse(project.content);
-                contentNewJSON = JSON.stringify(contentObj,transformSrc);
-                tempPro.content = contentNewJSON;
-
+                };
                 try{
+                    var contentObj = JSON.parse(project.content);
+                    contentNewJSON = JSON.stringify(contentObj,transformSrc);
+                    tempPro.content = contentNewJSON;
                     fs.writeFileSync(filePath,JSON.stringify(tempPro,null));
                     //generate localpro zip
                     var zipName = '/'+projectId+'.zip';

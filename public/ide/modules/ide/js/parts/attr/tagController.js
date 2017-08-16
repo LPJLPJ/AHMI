@@ -265,6 +265,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 case Type.MySlideBlock:
                 case Type.MyVideo:
                 case Type.MyAnimation:
+                case Type.MyTexNum:
                     $scope.showTagPanel = true;
                     break;
                 default:
@@ -350,7 +351,9 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
          *更新所选控件的tag
          */
         function selectedTagFun(){
-            ProjectService.ChangeAttributeTag($scope.component.selectedTag);
+            ProjectService.ChangeAttributeTag($scope.component.selectedTag,function(oldOperate){
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
         }
 
         function readTags(){

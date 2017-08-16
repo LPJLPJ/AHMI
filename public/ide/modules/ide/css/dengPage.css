@@ -58,7 +58,8 @@
 }
 .tex-container li div{
     width: 60%;
-    font-size: 14px;
+    font-size: 12px;
+    padding:0px 5px;
     display: inline-block;
 }
 .tex-container li span{

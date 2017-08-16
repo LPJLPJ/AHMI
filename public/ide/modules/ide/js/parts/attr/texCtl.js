@@ -28,14 +28,14 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
         $scope.editTex = function(index){
             $scope.selectedIdx = index;
             var transTex = null;
-            if  (index == -1){
+            if  (index === -1){
                 transTex = {
                     name:'default',
                     currentSliceIdx:0,
                     slices:[]
                 };
             }else{
-                if($scope.widgetType==Type.MyButton){
+                if($scope.widgetType===Type.MyButton){
                     if(!$scope.texList[index].slices[2]){
                         $scope.texList[index].slices[2]={
                             color:'rgba(244,244,244,0.3)',

@@ -153,10 +153,29 @@ update:
 
 
 1.9.3
+add:
+    1. support switch and slide widget render text
 fix:
     1. fix a bug that newly created project with templates can not be opend
     2. fix a bug about tag's display in action
     3. simulator reg input -1 but display nan
     4. actions' op can't display in a saved project
+    5. num widget max val ue
 update:
     1. x,y,range from -2000 to 2000.width,height range from 1 to 2000
+
+1.9.4
+add:
+    1. last save uuid and last save timestamp
+fix:
+    1. page animation will not show background during animation
+update:
+
+1.9.5
+add:
+    1. add texNum widget
+fix:
+    1. animation bug fix
+    2. fix redo/undo in some mode
+    3. fix css in select and widget dropdown
+update:

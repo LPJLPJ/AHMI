@@ -294,12 +294,15 @@
             if (useSpinner) {
                 showSpinner();
             }
+            ProjectService.addSaveInfo();
             var projectClone=ProjectService.SaveCurrentOperate();
             ProjectService.changeCurrentPageIndex(0,
 
                 function () {
                     var curScope = {};
+
                     ProjectService.getProjectCopyTo(curScope);
+                    console.log(curScope.project)
                     curScope.project.resourceList = ResourceService.getAllResource();
 
                     curScope.project.customTags = TagService.getAllCustomTags();
@@ -552,50 +555,52 @@
             }
             var oldOperate=ProjectService.SaveCurrentOperate();
             var newWidget=null;
-            if (_index==0){
+            if (_index===0){
                 newWidget = TemplateProvider.getDefaultSlide();
             }
-            else if (_index==2){
+            else if (_index===2){
 
                 newWidget=TemplateProvider.getDefaultProgress();
-            }else if(_index==3){
+            }else if(_index===3){
                 newWidget = TemplateProvider.getDefaultDashboard();
-            } else if (_index == 8) {
+            } else if (_index===8) {
 
                 newWidget=TemplateProvider.getDefaultButton();
             }
             //else if (_index==9){
             //    newWidget=TemplateProvider.getDefaultNumber();}
-            else if (_index == 10) {
+            else if (_index===10) {
                 newWidget=TemplateProvider.getDefaultButtonGroup();
             }
             // else if(_index==10){
             //     newWidget=TemplateProvider.getDefaultKnob();
             // }
-            else if (_index == 7) {
+            else if (_index===7) {
                 newWidget=TemplateProvider.getDefaultTextArea();
             }
-            else if (_index == 6) {
+            else if (_index===6) {
                 newWidget=TemplateProvider.getDefaultNum();
             }
             // else if(_index==4){
             //     newWidget=TemplateProvider.getDefaultOscilloscope();
             // }
-            else if (_index == 1) {
+            else if (_index===1) {
                 newWidget=TemplateProvider.getDefaultSwitch();
-            } else if (_index == 4) {
+            } else if (_index===4) {
                 newWidget=TemplateProvider.getDefaultRotateImg();
             }
-            else if (_index == 5) {
+            else if (_index===5) {
                 newWidget=TemplateProvider.getDefaultDateTime();
-            } else if (_index == 11) {
+            } else if (_index===11) {
                 newWidget=TemplateProvider.getDefaultScriptTrigger();
-            } else if (_index == 9) {
+            } else if (_index=== 9) {
                 newWidget=TemplateProvider.getDefaultSlideBlock();
-            }else if(_index==12){
+            }else if(_index===12){
                 newWidget = TemplateProvider.getDefaultVideo();
-            }else if(_index == 13){
+            }else if(_index=== 13){
                 newWidget = TemplateProvider.getDefaultAnimation();
+            }else if(_index===14){
+                newWidget = TemplateProvider.getDefaultTexNum();
             }
             else {
                 return;
@@ -730,6 +735,8 @@
                         }
                     })
                     .error(function(err,status,xhr){
+                        window.spinner&&window.spinner.hide();
+                        toastr.error('生成失败,请尝试先保存');
                         console.log(err);
                     })
                 //})
