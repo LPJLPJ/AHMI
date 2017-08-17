@@ -77,8 +77,13 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             break;
     }
 
+    // $scope.addSlice = function () {
+    //     $scope.tex.slices.push(TexService.getDefaultSlice());
+    // };
+    //last edtor: liuhuan 2017/8/17
+    //从当前行的下一行插入默认新行
     $scope.addSlice = function () {
-        $scope.tex.slices.push(TexService.getDefaultSlice());
+        $scope.tex.slices.splice($scope.curIndex,0,TexService.getDefaultSlice());
     };
 
     $scope.removeSlice = function (index) {
@@ -88,6 +93,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             $scope.tex.slices.splice(index,1);
         }
     };
+
 
     $scope.save = function () {
         $uibModalInstance.close($scope.tex);
@@ -105,6 +111,18 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             slice.color=_getRandomColor();
         }
     };
+
+    //last edtor: liuhuan 2017/8/17
+    //当前被点击行，修改背景色，修改curIndex位置
+    $scope.curIndex = 1;
+    $scope.selStyle=[{"background-color":" transparent"},{"background-color":" #F0F0F0"}];
+    $scope.rowSelected=function(index){
+        $scope.tex.slices[$scope.curIndex-1].selected=0;
+        $scope.curIndex=index;
+        $scope.tex.slices[$scope.curIndex-1].selected=1;
+        // console.log($scope.tex.slices[$scope.curIndex-1].selected);
+    };
+    //end
 
 
     function initConfigure(_canAddNewSlice,_sliceNum,_tex,_disableEditName){

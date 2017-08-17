@@ -224,11 +224,14 @@ ideServices.service('TexService',['Type',function(Type){
             return null;
         }
     };
+    //last edtor: liuhuan 2017/8/17
+    //selected:是否被选中
     this.getDefaultSlice = function () {
         return {
             name:'defaultSlice',
             imgSrc:'',
-            color:'rgba(255,255,255,1)'
+            color:'rgba(255,255,255,1)',
+            selected:0
         }
     }
 

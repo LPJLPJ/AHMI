@@ -577,3 +577,13 @@
     width:150px;
 
 }
+
+/*last edtor: liuhuan 2017/8/17*/
+.my-row-left{
+    text-align: left;
+
+}
+.my-but-right{
+    float: right;
+}
+.texRow:hover{ background-color:#f5f5f5;}
