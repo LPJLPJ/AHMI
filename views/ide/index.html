@@ -2320,7 +2320,7 @@
                         </div>
 
                         <div class="modal-body deng-bg-table">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered">
                                 <thead>
                                 <tr>
                                     <td class="col-xs-1">#</td>
@@ -2333,7 +2333,7 @@
                                 </thead>
 
                                 <tbody>
-                                <tr class="texRow"  ng-repeat="slice in tex.slices" ng-click="rowSelected($index+1)" ng-style="selStyle[slice.selected]">
+                                <tr class="texRow"  ng-repeat="slice in tex.slices" ng-click="selectItem($index)" ng-class="{'active':$index===curIndex}">
                                     <td>{{$index+1}}</td>
                                     <td>
                                         <div class="form-group">
