@@ -2601,8 +2601,8 @@
                             上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                         </a>
                         <button class="my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
-                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>
-                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>
+                        <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                        <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
                     </form>
 
 
@@ -2627,12 +2627,19 @@
                     </table>
                     <!-- list of resources -->
                     <!--total size-->
-                    <uib-progressbar class="progress-striped active" value="component.top.totalSize"
+                    <uib-progressbar class="progress-striped active my-progressbar" value="component.top.totalSize"
                                      max="component.top.maxSize" type="info">
-                        <span style="color:black;white-space: nowrap">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
+                        <span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
                     </uib-progressbar>
                     <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
+
+                    <div class="text-right">
+                        <span class="my-sel" ng-hide="component.top.showDel">全选 </span>
+                        <input type="checkbox" ng-hide="component.top.showDel" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
+                        <button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.oppSelect()">反选</button>
+                    </div>
                     <!-- table -->
+                    <div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">
                     <table class="table my-img-table table-bordered" id="resourceList">
                         <thead>
                         <tr>
@@ -2653,13 +2660,19 @@
                             <td><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
                                 <span class="iconfont img-option" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
                                 <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
-                                    <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" >
+                                    <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
                                 </label>
                             </td>
                         </tr>
                         </tbody>
                         <!--</div>-->
                     </table>
+                    </div>
+
+                    <div class="text-right">
+                        <button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>
+                        <button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>
+                    </div>
 
                     <script type="text/ng-template" id="deletePanelModal.html">
                         <div class="modal-header">
