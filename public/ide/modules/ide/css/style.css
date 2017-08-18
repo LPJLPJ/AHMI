@@ -459,6 +459,7 @@ body{
     cursor: pointer
 }
 
+
 .my-upload:hover {
     color: #444;
     background: #eee;
@@ -640,4 +641,30 @@ body{
 .my-widget-list{
     min-width: 200px;
     padding:10% 5% 15% 5%;
+}
+.my-sel{
+    padding: 4px 6px;
+    font-size: inherit;
+    font-color: #888;
+
+}
+
+.my-sigOpt{
+    width:inherit;
+    max-height: 265px;
+    overflow: auto;
+    border:1px solid #ddd;
+    margin-top:10px;
+    margin-bottom:10px
+}
+.my-mulOpt{
+     max-height:325px
+ }
+.text-right{
+    text-align:right
+}
+.my-progressbar{
+    color:black;
+    white-space: nowrap;
+    margin-bottom: 5px;
 }
