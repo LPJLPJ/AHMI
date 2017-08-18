@@ -2634,7 +2634,8 @@
                     <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
 
                     <div class="text-right">
-                        <span class="my-sel"style="font-size:inherit;color: #888;" ng-hide="component.top.showDel">全选 <input type="checkbox" ng-hide="component.top.showDel" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)"></span>
+                        <span class="my-sel" ng-hide="component.top.showDel">全选 </span>
+                        <input type="checkbox" ng-hide="component.top.showDel" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
                         <button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.oppSelect()">反选</button>
                     </div>
                     <!-- table -->

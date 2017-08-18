@@ -644,8 +644,8 @@ body{
 }
 .my-sel{
     padding: 4px 6px;
-    font-size: inherit;
-    font-color: #888;
+    font-size: inherit !important;
+    color: #888 !important;
 
 }
 
