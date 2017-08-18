@@ -2313,13 +2313,14 @@
                     <button type="button" class="btn btn-default dengPage-addAction" ng-show="showSizeButtion" ng-click="configWidgetSize()">
                         匹配此纹理
                     </button>
+                    <!--//last edtor: liuhuan 2017/8/17-->
                     <script type="text/ng-template" id="imageSelectorModal.html">
                         <div class="modal-header">
                             <h3 class="modal-title">选择图片</h3>
                         </div>
 
                         <div class="modal-body deng-bg-table">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered">
                                 <thead>
                                 <tr>
                                     <td class="col-xs-1">#</td>
@@ -2332,7 +2333,7 @@
                                 </thead>
 
                                 <tbody>
-                                <tr ng-repeat="slice in tex.slices">
+                                <tr class="texRow"  ng-repeat="slice in tex.slices" ng-click="selectItem($index)" ng-class="{'active':$index===curIndex}">
                                     <td>{{$index+1}}</td>
                                     <td>
                                         <div class="form-group">
@@ -2362,13 +2363,21 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">
-                                添加图片
-                            </button>
+                            <!--<button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">-->
+                                <!--添加图片-->
+                            <!--</button>-->
                         </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary" type="button" ng-click="save()">保存</button>
-                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+
+                        <div class="modal-footer my-row-left">
+                            <span>
+                                <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">
+                                    添加图片
+                                </button>
+                            </span>
+                            <span  class="my-but-right">
+                                <button class="btn btn-primary" type="button" ng-click="save()">保存</button>
+                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                            </span>
                         </div>
 
                     </script>
