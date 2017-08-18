@@ -506,6 +506,17 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         selectObject.level.info.fontItalic='';
                     }
                     break;
+                case Type.MySwitch:
+                    //兼容旧的开关控件
+                    if(selectObject.level.info.text===undefined){
+                        selectObject.level.info.text='';
+                        selectObject.level.info.fontFamily="宋体";
+                        selectObject.level.info.fontSize=20;
+                        selectObject.level.info.fontColor='rgba(0,0,0,1)';
+                        selectObject.level.info.fontBold="100";
+                        selectObject.level.info.fontItalic='';
+                    }
+                    break;
             }
 
         })
