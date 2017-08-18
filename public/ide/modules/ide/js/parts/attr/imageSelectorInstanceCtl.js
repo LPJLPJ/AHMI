@@ -77,8 +77,13 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             break;
     }
 
+    // $scope.addSlice = function () {
+    //     $scope.tex.slices.push(TexService.getDefaultSlice());
+    // };
+    //last edtor: liuhuan 2017/8/17
+    //从当前行的下一行插入默认新行
     $scope.addSlice = function () {
-        $scope.tex.slices.push(TexService.getDefaultSlice());
+        $scope.tex.slices.splice($scope.curIndex+1,0,TexService.getDefaultSlice());
     };
 
     $scope.removeSlice = function (index) {
@@ -88,6 +93,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             $scope.tex.slices.splice(index,1);
         }
     };
+
 
     $scope.save = function () {
         $uibModalInstance.close($scope.tex);
@@ -105,6 +111,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             slice.color=_getRandomColor();
         }
     };
+    
 
 
     function initConfigure(_canAddNewSlice,_sliceNum,_tex,_disableEditName){
@@ -112,6 +119,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         $scope.sliceNum = _sliceNum;
         $scope.tex = _tex;
         $scope.disableEditName = _disableEditName;
+
     }
 
     //edit by lixiang
@@ -136,6 +144,11 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         var g = _.random(64, 255);
         var b = _.random(64, 255);
         return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
+    }
+
+    $scope.curIndex = 0;
+    $scope.selectItem = function(index){
+        $scope.curIndex = index;
     }
 
 }]);

@@ -8,4 +8,5 @@ temp/
 release/
 log/
 .idea/
+.db/
 

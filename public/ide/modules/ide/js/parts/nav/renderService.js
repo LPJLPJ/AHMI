@@ -248,7 +248,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
         if (info ){
             //has text
 
-
             //font style
             var style = {};
             var font = {};
@@ -294,7 +293,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
                 //draw text
                 if (index<2){
-                    renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
+                    if(!!info.text){
+                        renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
+                    }
                 }
 
                 //generate file
@@ -640,7 +641,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         //write widget
                         curSlice.originSrc = curSlice.imgSrc;
                         curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
-                        console.log('keke',outputFilename);
                         //if last trigger cb
                         totalSlices -= 1;
                         if (totalSlices<=0){

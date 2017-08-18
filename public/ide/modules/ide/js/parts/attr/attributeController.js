@@ -506,6 +506,17 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         selectObject.level.info.fontItalic='';
                     }
                     break;
+                case Type.MySwitch:
+                    //兼容旧的开关控件
+                    if(selectObject.level.info.text===undefined){
+                        selectObject.level.info.text='';
+                        selectObject.level.info.fontFamily="宋体";
+                        selectObject.level.info.fontSize=20;
+                        selectObject.level.info.fontColor='rgba(0,0,0,1)';
+                        selectObject.level.info.fontBold="100";
+                        selectObject.level.info.fontItalic='';
+                    }
+                    break;
             }
 
         })
@@ -720,12 +731,18 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             i;
         colorValue = op.value.slice(5,op.value.length-1);
         colorValue = colorValue.split(",");
-        for(i=0;i<colorValue.length;i++){
-            if(parseInt(colorValue[i])>255|| !_.isInteger(Number(colorValue[i]))){
+        for(i=0;i<colorValue.length-1;i++){
+            if(colorValue[i]>255||colorValue[i]<0|| !_.isInteger(Number(colorValue[i]))){
                 toastr.warning('格式错误');
                 restore();
                 return;
             }
+        }
+        var a = colorValue[colorValue.length-1];
+        if(a<0||a>1){
+            toastr.warning('格式错误');
+            restore();
+            return;
         }
 		if (op.name=='component.object.level.backgroundColor'){
 			if (initObject.level.backgroundColor==op.value){

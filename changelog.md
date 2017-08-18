@@ -178,4 +178,6 @@ fix:
     1. animation bug fix
     2. fix redo/undo in some mode
     3. fix css in select and widget dropdown
+    4. fix old switch render bug
 update:
+    1. slide widget can insert slice in middle
