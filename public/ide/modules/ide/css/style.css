@@ -666,7 +666,7 @@ body{
 }
 .my-sel{
     padding: 4px 6px;
-    font-size: inherit !important;
+    /*font-size: inherit !important;*/
     color: #888 !important;
 
 }
@@ -682,8 +682,20 @@ body{
 .my-mulOpt{
      max-height:325px
  }
-.text-right{
-    text-align:right
+.my-button-bar{
+    text-align:left;
+    position: absolute;
+    background-color: rgb(247,247,247);
+    width: calc(20% - 48px);
+    z-index: 2;
+    margin-top: -10px;
+    padding: 5px;
+}
+.my-button-bar-height{
+    height: 35px;
+}
+.my-flout-right{
+    float: right;
 }
 .my-progressbar{
     color:black;
