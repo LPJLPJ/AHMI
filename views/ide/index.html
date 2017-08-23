@@ -2593,6 +2593,7 @@
 
                 <div ng-controller="ResourceCtrl">
 
+                    <div ng-show="component.top.showDel">
                     <form ref='uploadForm' encType='multipart/form-data'>
                         <a href="javascript:;" class="my-upload">
                             <filereadform>
@@ -2604,7 +2605,6 @@
                         <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
                         <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
                     </form>
-
 
                     <!--上传进度面板-->
                     <table class="table" ng-show="component.top.uploadingArray.length">
@@ -2632,14 +2632,28 @@
                         <span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
                     </uib-progressbar>
                     <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
+                    </div>
+                    <div ng-hide="component.top.showDel">
+                        <div class="my-button-bar" >
+                            <span class="my-sel" >全选 </span>
+                            <input type="checkbox" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
+                            <span><button class="my-upload" ng-click="component.top.oppSelect()">反选</button></span>
 
-                    <div class="text-right">
-                        <span class="my-sel" ng-hide="component.top.showDel">全选 </span>
-                        <input type="checkbox" ng-hide="component.top.showDel" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
-                        <button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.oppSelect()">反选</button>
+                            <span class="my-flout-right">
+                                <button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>
+                                <button class="my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>
+                            </span>
+                            <!--<span>&nbsp&nbsp&nbsp&nbsp</span>-->
+                            <!--<button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>-->
+                            <!--<button class="my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                        </div>
+                        <div class="my-button-bar-height">
+
+                        </div>
+
                     </div>
                     <!-- table -->
-                    <div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">
+                    <!--<div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">-->
                     <table class="table my-img-table table-bordered" id="resourceList">
                         <thead>
                         <tr>
@@ -2667,12 +2681,12 @@
                         </tbody>
                         <!--</div>-->
                     </table>
-                    </div>
+                    <!--</div>-->
 
-                    <div class="text-right">
-                        <button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>
-                        <button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>
-                    </div>
+                    <!--<div class="text-right">-->
+                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
+                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                    <!--</div>-->
 
                     <script type="text/ng-template" id="deletePanelModal.html">
                         <div class="modal-header">
