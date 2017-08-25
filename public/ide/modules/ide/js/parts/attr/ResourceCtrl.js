@@ -37,7 +37,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 selectAll:selectAll,
                 oppSelect:oppSelect,
                 allSelected:false,
-                unSelAll:unSelAll
+                unSelAll:unSelAll,
+                imageType:imageType
             }
         };
 
@@ -152,11 +153,13 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         }
     }
 
+    //全选
     function selectAll(selected){
         for(var i=0;i<$scope.component.top.files.length;i++){
             $scope.component.top.selectIndexArr[i]=selected;
         }
     }
+    //反选
     function oppSelect(){
         //点击反选后全选不选中
         $scope.component.top.unSelAll();
@@ -169,8 +172,20 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
         }
     }
+    //全选框重置
     function unSelAll(){
         $scope.component.top.allSelected=false;
+    }
+    //判断文件的图片类型
+    function imageType(file){
+        if(file.type.match(/image/)){
+            return 1;//文件是图片
+        }else if(file.src.match(/ttf/)||file.src.match(/woff/)){
+            return 2;//文件是字体文件
+        }else{
+            return 1;//预留
+        }
+
     }
 
 
