@@ -211,8 +211,23 @@ ideServices
         this.cacheFile = function (file, targetArray, scb, fcb) {
 
             var resourceObj = {};
+            var ttf=''
+
             resourceObj.id = file.id;
             resourceObj.type = file.type;
+            // if(file.type){
+            //     resourceObj.type = file.type;
+            // }else{
+            //     switch (this.getExt(file.id)){
+            //         case 'ttf':
+            //             resourceObj.type ="ttf";
+            //             console.log("rrrrrrrrrrrrrrrrrrr"+resourceObj.type);
+            //             console.log("wwwwwwwwwwwwwwwwwwww"+this.getExt(file.id));
+            //             break;
+            //
+            //         default:
+            //     }
+            // }
             resourceObj.name = file.name;
             resourceObj.src = file.src;
             if (file.type.match(/image/)) {
@@ -231,6 +246,7 @@ ideServices
             }else if (this.getExt(file.id)==='ttf'||this.getExt(file.id)==='woff'){
                 //ttf
                 //font
+
                 var ext = this.getExt(file.id);
                 var type;
                 console.log(ext)
@@ -241,6 +257,7 @@ ideServices
                 }
                 this.addWebFont(file,type);
                 resourceObj.type = 'font/'+type;
+                file.type=resourceObj.type;
                 globalResources.push(resourceObj);
                 console.log('added',globalResources)
                 scb && scb({type:'ok'},resourceObj);
@@ -406,12 +423,23 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
                 if (files && files.length){
                     files = files.filter(isValidFile);
+                    // while(files.length)
                     for (var i=0;i<files.length;i++){
                         //加入等待上传数组
                         var translatedFile = transFile(files[i]);
                         scope.component.top.uploadingArray.push(translatedFile);
+                        // console.log(files[i]);
+
+                        // console.log("UPA+++++++++++"+scope.component.top.uploadingArray[i]);
                         upload(files[i],translatedFile);
                     }
+                    // for (var j=0;j<scope.component.top.uploadingArray.length;j++){
+                    //     //加入等待上传数组
+                    //     console.log("scope.component.top.uploadingArray"+j)
+                    //     var translatedFile = scope.component.top.uploadingArray;
+                    //     upload(scope.component.top.uploadingArray[j],translatedFile);
+                    // }
+
                 }
             }
 
@@ -423,7 +451,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     case 'jpg':
                     case 'bmp':
                     case 'jpeg':
-                    case 'tiff':
+                    // case 'tiff':
                     case 'ttf':
                     case 'woff':
                         return true;
@@ -433,9 +461,14 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 }
             }
 
+            var d=0;
             function deleteUploadingItem(translatedFile) {
+
+                ++d;
+                console.log("d"+d);
                 var uploadingArray = scope.component.top.uploadingArray;
                 for (var i = 0; i < uploadingArray.length; i++) {
+                    // console.log("id++++++++"+uploadingArray[i].id+"1111111" + translatedFile.id);
                     if (uploadingArray[i].id == translatedFile.id) {
                         uploadingArray.splice(i, 1);
                         break;
@@ -540,6 +573,9 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
             }
 
+            var s=0;
+            var e=0;
+            var p=0;
             function uploadServer(file, translatedFile) {
 
                 //overload check
@@ -561,6 +597,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
                 var successHandler = function(e){
 
+                    ++s;
+                    console.log("s"+s);
                     console.log(e);
                     if (e.status == 200){
                         //success
@@ -590,7 +628,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 }
 
                 var errHandler = function (e) {
-
+                    ++e;
+                    console.log("e"+e);
                     console.error(e);
                     translatedFile.progress ='上传失败';
                     switch (e.data.errMsg){
@@ -612,7 +651,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                  * @param e
                  */
                 var progressHandler = function(e){
-
+                    ++p;
+                    console.log("p"+p);
                     translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100)+'%';
 
                 }
@@ -620,11 +660,12 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 ////console.log('/project/'+ResourceService.getResourceUrl().split('/')[1]+'/upload')
                 //
                 //console.log(file);
+
                 Upload.upload({
                     //url:baseUrl+'/resource',
                     //url:'/api/upload',
-                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/upload',
-                    data:{file:file,name:translatedFile.id}
+                    url: '/project/' + ResourceService.getResourceUrl().split('/')[2] + '/upload',
+                    data: {file: file, name: translatedFile.id}
                     //data:{file:file},
                     //params:{
                     //    token:window.localStorage.getItem('token'),
@@ -637,6 +678,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     errHandler,
                     progressHandler
                 )
+
 
 
 
