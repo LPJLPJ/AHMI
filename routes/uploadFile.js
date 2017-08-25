@@ -126,6 +126,7 @@ function uploadSingleFile(req, res){
     var baseUrl = path.join(__dirname,'../project/',projectId,'resources')
     var fields={}
     var files = {}
+    var curFile = null;
     var form = new formidable.IncomingForm()
     form.encoding = 'utf-8'
     form.multiples = true
@@ -135,12 +136,24 @@ function uploadSingleFile(req, res){
     })
     form.on('file',function(name, file){
         files[name] = file
-        fs.rename(file.path,path.join(form.uploadDir,fields.name));
+        curFile = file
+
     })
     form.on('end',function(){
-        res.end('success')
+        fs.rename(curFile.path,path.join(form.uploadDir,fields.name),function (err) {
+            if (err){
+                console.log(curFile.name,fields.name,err)
+            }else{
+                res.end('success')
+            }
+        });
+
+
     })
     form.on('error',function(err){
+        if (err){
+            console.log('form error',err)
+        }
         errHandler(res, 500, 'upload error' + err)
     })
     form.on('aborted',function(){
