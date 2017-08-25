@@ -678,5 +678,7 @@ body{
 .my-progressbar{
     color:black;
     white-space: nowrap;
-    margin-bottom: 5px;
+}
+.my-font-image{
+    font-size: 35px !important;
 }

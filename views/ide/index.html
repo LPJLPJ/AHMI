@@ -2627,9 +2627,9 @@
                     </table>
                     <!-- list of resources -->
                     <!--total size-->
-                    <uib-progressbar class="progress-striped active my-progressbar" value="component.top.totalSize"
-                                     max="component.top.maxSize" type="info">
-                        <span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
+                    <uib-progressbar type="info" class="progress-striped active" value="component.top.totalSize"
+                                     max="component.top.maxSize" >
+                        <span class="my-progressbar">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
                     </uib-progressbar>
                     <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
                     </div>
@@ -2654,7 +2654,7 @@
                     </div>
                     <!-- table -->
                     <!--<div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">-->
-                    <table class="table my-img-table table-bordered" id="resourceList">
+                    <table class="table my-img-table table-bordered" id="resourceList" ng-show="component.top.files.length">
                         <thead>
                         <tr>
                             <td class="col-xs-1">预览</td>
@@ -2665,11 +2665,16 @@
                         <!--<div ng-controller="sortCtrl">-->
                         <tbody>
                         <tr class="img-info" ng-repeat="file in component.top.files track by $index">
-                            <td><img width="40px" height="40px" ng-src="{{file.src}}"/></td>
+                            <td>
+                                <img width="40px" height="40px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}"/>
+                                <span width="40px" height="40px" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
+                            </td>
                             <td>
                                 <input class="img-name" type='text' style="width: 80px;border: 0;" ng-model="file.name">
-                                <span>{{file.type}}</span>
-                                <span>{{file.size/1024 | number:2}}K</span>
+                                <p>
+                                    <span>{{file.type||''}}</span>
+                                    <span>{{file.size/1024 | number:2}}K</span>
+                                </p>
                             </td>
                             <td><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
                                 <span class="iconfont img-option" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
