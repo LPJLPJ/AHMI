@@ -180,7 +180,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     function imageType(file){
         if(file.type.match(/image/)){
             return 1;//文件是图片
-        }else if(file.src.match(/ttf/)||file.src.match(/woff/)){
+        }else if(file.type.match(/font/)){
             return 2;//文件是字体文件
         }else{
             return 1;//预留
