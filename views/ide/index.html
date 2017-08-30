@@ -162,9 +162,8 @@
                             <p><a href ng-click="modal.closeMe()">Close Me</a></p>
                         </div>
                     </script>
-
                 </a>
-                <a ng-click="component.tool.saveProjectAs()" ng-show="!local" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe611;</span><span class="caption">另存为</span></a>
+                <a ng-click="component.tool.saveProjectAs()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe611;</span><span class="caption">另存为</span></a>
                 <script type="text/ng-template" id="saveAsModal.html">
                     <div class="modal-header">
                         <h3 class="modal-title">另存为</h3>
@@ -2593,6 +2592,7 @@
 
                 <div ng-controller="ResourceCtrl">
 
+                    <div ng-show="component.top.showDel">
                     <form ref='uploadForm' encType='multipart/form-data'>
                         <a href="javascript:;" class="my-upload">
                             <filereadform>
@@ -2601,10 +2601,9 @@
                             上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                         </a>
                         <button class="my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
-                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>
-                        <button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>
+                        <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                        <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
                     </form>
-
 
                     <!--上传进度面板-->
                     <table class="table" ng-show="component.top.uploadingArray.length">
@@ -2627,13 +2626,34 @@
                     </table>
                     <!-- list of resources -->
                     <!--total size-->
-                    <uib-progressbar class="progress-striped active" value="component.top.totalSize"
-                                     max="component.top.maxSize" type="info">
-                        <span style="color:black;white-space: nowrap">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
+                    <uib-progressbar type="info" class="progress-striped active" value="component.top.totalSize"
+                                     max="component.top.maxSize" >
+                        <span class="my-progressbar">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
                     </uib-progressbar>
                     <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
+                    </div>
+                    <div ng-hide="component.top.showDel">
+                        <div class="my-button-bar" >
+                            <span class="my-sel" >全选 </span>
+                            <input type="checkbox" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
+                            <span><button class="my-upload" ng-click="component.top.oppSelect()">反选</button></span>
+
+                            <span class="my-flout-right">
+                                <button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>
+                                <button class="my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>
+                            </span>
+                            <!--<span>&nbsp&nbsp&nbsp&nbsp</span>-->
+                            <!--<button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>-->
+                            <!--<button class="my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                        </div>
+                        <div class="my-button-bar-height">
+
+                        </div>
+
+                    </div>
                     <!-- table -->
-                    <table class="table my-img-table table-bordered" id="resourceList">
+                    <!--<div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">-->
+                    <table class="table my-img-table table-bordered" id="resourceList" ng-show="component.top.files.length">
                         <thead>
                         <tr>
                             <td class="col-xs-1">预览</td>
@@ -2644,22 +2664,33 @@
                         <!--<div ng-controller="sortCtrl">-->
                         <tbody>
                         <tr class="img-info" ng-repeat="file in component.top.files track by $index">
-                            <td><img width="40px" height="40px" ng-src="{{file.src}}"/></td>
+                            <td>
+                                <img width="40px" height="40px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}"/>
+                                <span width="40px" height="40px" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
+                            </td>
                             <td>
                                 <input class="img-name" type='text' style="width: 80px;border: 0;" ng-model="file.name">
-                                <span>{{file.type}}</span>
-                                <span>{{file.size/1024 | number:2}}K</span>
+                                <p>
+                                    <span>{{file.type||''}}</span>
+                                    <span>{{file.size/1024 | number:2}}K</span>
+                                </p>
                             </td>
                             <td><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
                                 <span class="iconfont img-option" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
                                 <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
-                                    <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" >
+                                    <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
                                 </label>
                             </td>
                         </tr>
                         </tbody>
                         <!--</div>-->
                     </table>
+                    <!--</div>-->
+
+                    <!--<div class="text-right">-->
+                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
+                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                    <!--</div>-->
 
                     <script type="text/ng-template" id="deletePanelModal.html">
                         <div class="modal-header">

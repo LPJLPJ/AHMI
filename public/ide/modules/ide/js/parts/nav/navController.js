@@ -1,28 +1,28 @@
 
 
-    ide.controller('NavCtrl', ['$scope', '$timeout',
-        'GlobalService',
-        'NavService',
-        'saveProjectModal',
-        'ProjectService',
-        'TemplateProvider',
-        'ProjectFileManage',
-        'Type',
-        'CanvasService',
-        '$uibModal',
-        'OperateQueService', 'TagService', 'ResourceService', 'TimerService', '$http', 'ProjectTransformService', 'RenderSerive', 'LinkPageWidgetsService','NavModalCANConfigService',function ($scope, $timeout,
-                                        GlobalService,
-                                        NavService,
-                                        saveProjectModal,
-                                        ProjectService,
-                                        TemplateProvider,
-                                        ProjectFileManage,
-                                        Type,
-                                        CanvasService,
-                                        $uibModal,
-                                        OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService,NavModalCANConfigService) {
+ide.controller('NavCtrl', ['$scope', '$timeout',
+    'GlobalService',
+    'NavService',
+    'saveProjectModal',
+    'ProjectService',
+    'TemplateProvider',
+    'ProjectFileManage',
+    'Type',
+    'CanvasService',
+    '$uibModal',
+    'OperateQueService', 'TagService', 'ResourceService', 'TimerService', '$http', 'ProjectTransformService', 'RenderSerive', 'LinkPageWidgetsService','NavModalCANConfigService',function ($scope, $timeout,
+                                                                                                                                                                                            GlobalService,
+                                                                                                                                                                                            NavService,
+                                                                                                                                                                                            saveProjectModal,
+                                                                                                                                                                                            ProjectService,
+                                                                                                                                                                                            TemplateProvider,
+                                                                                                                                                                                            ProjectFileManage,
+                                                                                                                                                                                            Type,
+                                                                                                                                                                                            CanvasService,
+                                                                                                                                                                                            $uibModal,
+                                                                                                                                                                                            OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService,NavModalCANConfigService) {
 
-        var path, fs, __dirname;
+        var path, fs, __dirname,fse;
         initLocalPref();
         initUserInterface();
         confirmForClosingWindow();
@@ -48,6 +48,7 @@
             if (window.local) {
                 path = require('path');
                 fs = require('fs');
+                fse = require('fs-extra');
                 __dirname = global.__dirname;
             }
         }
@@ -426,22 +427,64 @@
                         }
                     });
                     //console.log(thumb)
-            });
+                });
         }
 
         function saveProjectAs(){
             var projectId = ProjectService.getProjectId();
+            var modalInstance = $uibModal.open({
+                animation:$scope.animationsEnabled,
+                templateUrl:'saveAsModal.html',
+                controller:'NavModalSaveAsCtrl',
+                size:'md',
+                resolve:{
+                }
+            });
             if(window.local){
                 //for local
+                modalInstance.result.then(function(result){
+                    console.log(result);
+                    var projectUrl = ResourceService.getProjectUrl(),
+                        dataUrl = path.join(projectUrl, 'project.json'),
+                        newId = ''+Date.now()+Math.round((Math.random()+1)*1000),
+                        pattern = new RegExp(String(projectId),"g"),
+                        localProjectPath = path.join(__dirname,'localproject'),
+                        projectStr = readSingleFile(dataUrl,true),
+                        project;
+
+                    projectStr = projectStr.replace(pattern,newId);
+                    project = JSON.parse(projectStr);
+                    (!!result.saveAsName)?(project.name=result.saveAsName):(project.name=project.name+'副本');
+                    (!!result.saveAsAuthor)?(project.author=result.saveAsAuthor):'';
+                    project.createdTime = Date.now();
+                    project.lastModified = Date.now();
+
+
+                    var newProjectPath = path.join(localProjectPath,newId)
+
+                    fse.emptyDir(newProjectPath,function(err){
+                        if(err){
+                            console.log(err);
+                            toastr.error('另存为出错');
+                        }
+                        fse.copy(projectUrl,newProjectPath,function(err){
+                            if(err){
+                                console.error(err);
+                                toastr.error('另存为出错');
+                            }
+                            fse.writeFile(path.join(projectUrl,'project.json'),JSON.stringify(project),function(err){
+                                if(err){
+                                    console.log(err);
+                                    toastr.error('另存为出错');
+                                }
+                                toastr.info('另存为成功!');
+                                window.opener.location.reload();
+                            })
+                        })
+                    })
+
+                })
             }else{
-                var modalInstance = $uibModal.open({
-                    animation:$scope.animationsEnabled,
-                    templateUrl:'saveAsModal.html',
-                    controller:'NavModalSaveAsCtrl',
-                    size:'md',
-                    resolve:{
-                    }
-                });
                 modalInstance.result.then(function(result){
                     //console.log('result',result);
                     showSpinner();
@@ -716,15 +759,15 @@
                 curScope.project.CANId = NavModalCANConfigService.getCANId();
                 var currentProject = curScope.project;
                 //saveProject(function(){
-                    if (window.spinner){
-                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                        window.spinner.show();
-                    }
-                    $http({
-                        method:'POST',
-                        url:'/project/'+$scope.project.projectId+'/generateLocalProject'
-                        //data:{currentProject:currentProject}
-                    })
+                if (window.spinner){
+                    window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                    window.spinner.show();
+                }
+                $http({
+                    method:'POST',
+                    url:'/project/'+$scope.project.projectId+'/generateLocalProject'
+                    //data:{currentProject:currentProject}
+                })
                     .success(function(data,status,xhr){
                         window.spinner&&window.spinner.hide();
                         if(data=='ok'){
@@ -821,7 +864,7 @@
             $scope.component.simulator.show = false;
 
         }
-        
+
         function runSimulator() {
             // console.log(window.runSimulator);
         }
@@ -902,16 +945,16 @@
                 })
                 //console.log('CANProject',CANInfo);
                 var modalInstance = $uibModal.open({
-                        animation:$scope.animationsEnabled,
-                        templateUrl:'navCANModal.html',
-                        controller:'NavModalCANConfig',
-                        size:'md',
-                        resolve:{
-                            data:function(){
-                                return CANInfo;
-                            }
+                    animation:$scope.animationsEnabled,
+                    templateUrl:'navCANModal.html',
+                    controller:'NavModalCANConfig',
+                    size:'md',
+                    resolve:{
+                        data:function(){
+                            return CANInfo;
                         }
-                    });
+                    }
+                });
                 modalInstance.result.then(function(result){
                     if(result){
                         var targetPro = null;
@@ -935,36 +978,36 @@
                     method:'GET',
                     url:'/CANProject/names'
                 })
-                .success(function(data,status,xhr){
-                    //console.log('data',data);
-                    CANInfo = data;
-                    var modalInstance = $uibModal.open({
-                        animation:$scope.animationsEnabled,
-                        templateUrl:'navCANModal.html',
-                        controller:'NavModalCANConfig',
-                        size:'md',
-                        resolve:{
-                            data:function(){
-                                return CANInfo;
+                    .success(function(data,status,xhr){
+                        //console.log('data',data);
+                        CANInfo = data;
+                        var modalInstance = $uibModal.open({
+                            animation:$scope.animationsEnabled,
+                            templateUrl:'navCANModal.html',
+                            controller:'NavModalCANConfig',
+                            size:'md',
+                            resolve:{
+                                data:function(){
+                                    return CANInfo;
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    modalInstance.result.then(function(result){
-                        //console.log('result',result);
-                        if(result){
-                            importCANConfig(result);
-                        }else{
-                            deleteCANConfig();
-                        }
-                    },function(){
+                        modalInstance.result.then(function(result){
+                            //console.log('result',result);
+                            if(result){
+                                importCANConfig(result);
+                            }else{
+                                deleteCANConfig();
+                            }
+                        },function(){
+                        })
                     })
-                })
-                .error(function(err){
-                    console.log('err',err);
-                    toastr.warning('获取失败');
-                });
-            } 
+                    .error(function(err){
+                        console.log('err',err);
+                        toastr.warning('获取失败');
+                    });
+            }
         }
 
         /**
@@ -1063,15 +1106,15 @@
                         projectId:$scope.project.projectId
                     }
                 })
-                .success(function(data,status,xhr){
-                    if(data=='ok'){
-                        toastr.info('导入成功');
-                    }
-                })
-                .error(function(data,status,xhr){
-                    toastr.error('导入失败');
-                    console.log('导入失败',data);
-                });
+                    .success(function(data,status,xhr){
+                        if(data=='ok'){
+                            toastr.info('导入成功');
+                        }
+                    })
+                    .error(function(data,status,xhr){
+                        toastr.error('导入失败');
+                        console.log('导入失败',data);
+                    });
             }
         }
 
@@ -1082,7 +1125,7 @@
         function deleteCANConfig(){
             if(window.local){
                 var localProjectResourcesDir = path.join(__dirname,'localproject',$scope.project.projectId,'resources');
-                 try{
+                try{
                     var stats = fs.statSync(localProjectResourcesDir);
                     if(stats.isDirectory()){
                         var dataUrl = path.join(localProjectResourcesDir,'CANFile.json');
@@ -1093,7 +1136,7 @@
                                 toastr.info('取消CAN配置');
                             }
                         });
-                        
+
                     }else{
                         toastr.error('取消失败');
                     }
@@ -1106,14 +1149,14 @@
                     url:'/CANProject/'+$scope.project.projectId+'/deleteCANFile',
                     data:{}
                 })
-                .success(function(data,status,xhr){
-                    if(data=='ok'){
-                        toastr.info('取消CAN配置')
-                    }
-                })
-                .error(function(data,status,xhr){
-                    console.log('删除失败',data);
-                }) 
+                    .success(function(data,status,xhr){
+                        if(data=='ok'){
+                            toastr.info('取消CAN配置')
+                        }
+                    })
+                    .error(function(data,status,xhr){
+                        console.log('删除失败',data);
+                    })
             }
         }
     }]);
@@ -1189,7 +1232,7 @@ ide.controller('NavModalCANConfig',['$scope','$uibModalInstance','data','NavModa
 
 /**
  * CAN配置service
- * @param  {[type]} )          
+ * @param  {[type]} )
  * @return {[type]}
  */
 ide.service('NavModalCANConfigService',[function(){

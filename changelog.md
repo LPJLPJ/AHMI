@@ -181,3 +181,10 @@ fix:
     4. fix old switch render bug
 update:
     1. slide widget can insert slice in middle
+    2. add resource select all
+
+1.9.6
+add:
+    1.add local save as option
+fix:
+    1.resource upload bugs

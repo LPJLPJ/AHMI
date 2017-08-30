@@ -33,7 +33,12 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 basicUrl:'',
                 resources:[],
                 showDel:true,
-                selectIndexArr:[]
+                selectIndexArr:[],
+                selectAll:selectAll,
+                oppSelect:oppSelect,
+                allSelected:false,
+                unSelAll:unSelAll,
+                imageType:imageType
             }
         };
 
@@ -124,6 +129,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 $scope.component.top.showDel = !$scope.component.top.showDel;
                 break;
             case 'cancel':
+                //点击取消后全选不选中
+                $scope.component.top.unSelAll();
                 $scope.component.top.selectIndexArr = [];
                 $scope.component.top.showDel = !$scope.component.top.showDel;
                 break;
@@ -136,12 +143,49 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                     $scope.openPanel(selectIndexArr,function () {
                         $scope.component.top.selectIndexArr = [];
                     });
+                    //删除文件后全选不选中
+                    $scope.component.top.unSelAll();
                 }else{
                     //do not select
                     toastr.warning('未选择文件！');
                 }
                 break;
         }
+    }
+
+    //全选
+    function selectAll(selected){
+        for(var i=0;i<$scope.component.top.files.length;i++){
+            $scope.component.top.selectIndexArr[i]=selected;
+        }
+    }
+    //反选
+    function oppSelect(){
+        //点击反选后全选不选中
+        $scope.component.top.unSelAll();
+        for(var i=0;i<$scope.component.top.files.length;i++){
+            if($scope.component.top.selectIndexArr[i]==null){
+                $scope.component.top.selectIndexArr[i]=true;
+            }else{
+                $scope.component.top.selectIndexArr[i]=(!$scope.component.top.selectIndexArr[i]);
+            }
+
+        }
+    }
+    //全选框重置
+    function unSelAll(){
+        $scope.component.top.allSelected=false;
+    }
+    //判断文件的图片类型
+    function imageType(file){
+        if(file.type.match(/image/)){
+            return 1;//文件是图片
+        }else if(file.type.match(/font/)){
+            return 2;//文件是字体文件
+        }else{
+            return 1;//预留
+        }
+
     }
 
 
