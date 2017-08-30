@@ -293,7 +293,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
                 //draw text
                 if (index<2){
-                    if(!!info.text){
+                    if(info.text!==undefined&&!!info.text){
                         renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
                     }
                 }
