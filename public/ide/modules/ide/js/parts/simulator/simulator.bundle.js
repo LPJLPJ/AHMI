@@ -23082,23 +23082,23 @@
 	    handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
 	        //handle action
 
-	        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+	        if (curValue <= lowAlarm && widget.oldValue !== undefined && widget.oldValue > lowAlarm) {
 
 	            this.handleTargetAction(widget, 'EnterLowAlarm');
 	        }
 
-	        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+	        if (curValue > lowAlarm && widget.oldValue !== undefined && widget.oldValue <= lowAlarm) {
 	            //leave low alarm
 
 	            this.handleTargetAction(widget, 'LeaveLowAlarm');
 	        }
-	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+	        if (curValue >= highAlarm && widget.oldValue !== undefined && widget.oldValue < highAlarm) {
 	            //enter high alarm
 
 
 	            this.handleTargetAction(widget, 'EnterHighAlarm');
 	        }
-	        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+	        if (curValue < highAlarm && widget.oldValue !== undefined && widget.oldValue >= highAlarm) {
 	            //leave high alarm
 	            this.handleTargetAction(widget, 'LeaveHighAlarm');
 	        }
@@ -23108,19 +23108,19 @@
 	        //handle action
 	        var alarms = [];
 
-	        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+	        if (curValue <= lowAlarm && widget.oldValue !== undefined && widget.oldValue > lowAlarm) {
 	            alarms.push('EnterLowAlarm');
 	        }
-	        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+	        if (curValue > lowAlarm && widget.oldValue !== undefined && widget.oldValue <= lowAlarm) {
 	            //leave low alarm
 
 	            alarms.push('LeaveLowAlarm');
 	        }
-	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+	        if (curValue >= highAlarm && widget.oldValue !== undefined && widget.oldValue < highAlarm) {
 	            //enter high alarm
 	            alarms.push('EnterHighAlarm');
 	        }
-	        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+	        if (curValue < highAlarm && widget.oldValue !== undefined && widget.oldValue >= highAlarm) {
 	            //leave high alarm
 	            alarms.push('LeaveHighAlarm');
 	        }
