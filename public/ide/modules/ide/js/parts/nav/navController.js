@@ -443,7 +443,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             if(window.local){
                 //for local
                 modalInstance.result.then(function(result){
-                    console.log(result);
+                    showSpinner();
                     var projectUrl = ResourceService.getProjectUrl(),
                         dataUrl = path.join(projectUrl, 'project.json'),
                         newId = ''+Date.now()+Math.round((Math.random()+1)*1000),
@@ -477,6 +477,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     console.log(err);
                                     toastr.error('另存为出错');
                                 }
+                                hideSpinner();
                                 toastr.info('另存为成功!');
                                 window.opener.location.reload();
                             })
