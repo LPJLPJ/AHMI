@@ -45,6 +45,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     }
                 }
                 transTex = _.cloneDeep($scope.texList[index]);
+                objInfo = _.cloneDeep($scope.objInfo)
             }
             var modalInstance = $uibModal.open({
                 animation: $scope.animationsEnabled,
@@ -55,7 +56,9 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     widgetInfo:{
                         name:$scope.widgetName,
                         type:$scope.widgetType,
-                        tex: transTex
+                        tex: transTex,
+                        index:index,
+                        objInfo:objInfo
                     }
                 }
             });
@@ -131,6 +134,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
         $scope.widgetType = currentSelectedObject.type;
         if (currentSelectedObject.texList && currentSelectedObject.texList.length){
             $scope.texList = currentSelectedObject.texList;
+            $scope.objInfo = currentSelectedObject.info;
         }else{
             $scope.texList = TexService.getDefaultWidget($scope.widgetType);
             var oldOperate=ProjectService.SaveCurrentOperate();

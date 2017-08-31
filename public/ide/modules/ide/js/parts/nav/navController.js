@@ -431,7 +431,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         }
 
         function saveProjectAs(){
-            var projectId = ProjectService.getProjectId();
+            var projectId = ProjectService.getProjectId ();
             var modalInstance = $uibModal.open({
                 animation:$scope.animationsEnabled,
                 templateUrl:'saveAsModal.html',
