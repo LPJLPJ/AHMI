@@ -1772,7 +1772,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MySlideBlock.async = true;
 
 
-    //mydateTIme
+    //MyDateTime
     fabric.MyDateTime = fabric.util.createClass(fabric.Object, {
         type: Type.MyDateTime,
         initialize: function (level, options) {
@@ -2057,6 +2057,364 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             else
             ctx.fillText(dateTimeStr[i],xCoordinate,0);
             xCoordinate+=maxFontWidth;
+        }
+    }
+
+
+    //MyTexTime
+    fabric.MyTexTime = fabric.util.createClass(fabric.Object, {
+        type: Type.MyTexTime,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            var slices = level.texList[0].slices;
+            var ctrlOptions={
+                bl:false,
+                br:false,
+                mb:false,
+                ml:false,
+                mr:false,
+                mt:false,
+                tl:false,
+                tr:false
+            };
+            this.setControlsVisibility(ctrlOptions);//使时间控件不能拉伸
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            //this.backgroundColor=level.texList[0].slices[0].color;
+            this.dateTimeModeId=level.info.dateTimeModeId;
+            // this.fontFamily=level.info.fontFamily;
+            // this.fontSize=level.info.fontSize;
+            // this.fontColor=level.info.fontColor;
+            this.align=level.info.align;
+            this.initValue=level.info.initValue;
+            this.arrange=level.info.arrange;
+            this.characterW = level.info.characterW;
+            this.characterH = level.info.characterH;
+
+            //设置图层数字控件的宽高
+            if(self.characterW){
+                //根据模式设置宽度
+                if(self.dateTimeModeId=='0'){
+                    self.setWidth(8*self.characterW);
+                }else if(self.dateTimeModeId=='1'){
+                    self.setWidth(5*self.characterW);
+                }else
+                    self.setWidth(10*self.characterW);
+
+                //设置高度
+                self.setHeight(self.characterH);
+            };
+
+            //初始化数字字符
+            this.numObj = [];
+            for(var i=0,il=13;i<il;i++){
+                this.numObj[i] = {};
+                this.numObj[i].color = slices[i].color;
+                this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+            }
+
+            //修改数字纹理
+            this.on('changeTex', function (arg) {
+                var slices=arg.level.texList[0].slices;
+                var _callback=arg.callback;
+
+                for(var i=0,il=13;i<il;i++){
+                    self.numObj[i] = {};
+                    self.numObj[i].color = slices[i].color;
+                    self.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+                }
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+            //修改数字图层控件属性
+            this.on('changeTexTimeContent', function (arg) {
+                var _callback=arg.callback;
+                var level=arg.level;
+
+                if(arg.hasOwnProperty('characterW')){
+                    self.characterW = level.info.characterW;
+                }
+                if(arg.hasOwnProperty('characterH')){
+                    self.characterH = level.info.characterH;
+                }
+
+                //设置图层数字控件的宽高
+                if(self.characterW){
+                    //根据模式设置宽度
+                    if(self.dateTimeModeId=='0'){
+                        self.setWidth(8*self.characterW);
+                    }else if(self.dateTimeModeId=='1'){
+                        self.setWidth(5*self.characterW);
+                    }else
+                        self.setWidth(10*self.characterW);
+
+                    //设置高度
+                    self.setHeight(self.characterH);
+                };
+
+                //渲染
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            //修改时间显示方式
+            this.on('changeTexTimeModeId',function(arg){
+                var _callback=arg.callback;
+                self.dateTimeModeId=arg.dateTimeModeId;
+
+                if(self.dateTimeModeId=='0'){
+                    self.setWidth(8*self.characterW);
+                }else if(self.dateTimeModeId=='1'){
+                    self.setWidth(5*self.characterW);
+                }else
+                    self.setWidth(10*self.characterW);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+
+            //修改方向，已废弃
+            this.on('changeArrange',function(arg){
+                var _callback=arg.callback;
+                self.arrange=arg.arrange;
+                if(arg.arrange=='vertical'){
+                    self.setAngle(90);
+                    self.set({
+                        originY:'bottom'
+                    });
+                }else if(arg.arrange=='horizontal'){
+                    self.setAngle(0);
+                    self.set({
+                        originY:'top'
+                    });
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                //生成当前时间日期
+                var dateObj = new Date(),
+                    arrTime = [],
+                    arrDate = [];
+
+                var i=0;
+
+                //获取时间字符串
+                arrTime.push(dateObj.getHours());
+                arrTime.push(dateObj.getMinutes());
+                arrTime.push(dateObj.getSeconds());
+                for(i=0;i<arrTime.length;i++){
+                    if(arrTime[i]<10){
+                        arrTime[i]='0'+arrTime[i];
+                    }
+                }
+                //获取日期字符串
+                arrDate.push(dateObj.getFullYear());
+                arrDate.push(dateObj.getMonth()+1);
+                arrDate.push(dateObj.getDate());
+
+                for(i=0;i<arrDate.length;i++){
+                    if(arrDate[i]<10){
+                        arrDate[i]='0'+arrDate[i];
+                    }
+                }
+                var colonWidth = this.characterW/2;
+                var dateTimeStr="";
+
+                //根据模式生成对应格式的时间日期字符串
+                switch(this.dateTimeModeId){
+                    case '1':
+                        //时分
+                        dateTimeStr=arrTime.slice(0,2).join(":").toString();
+                        break;
+                    case '2':
+                        //斜杠日期
+                        dateTimeStr=arrDate.join("/").toString();
+                        break;
+                    case '3':
+                        dateTimeStr=arrDate.join("-").toString();
+                        break;
+                    case '0':
+                    default:
+                        //时分秒
+                        dateTimeStr=arrTime.join(":").toString();
+                        break;
+                }
+                var numStr="";
+                for(i=0;i<dateTimeStr.length;i++){
+                    numStr=numStr+dateTimeStr[i];
+                }
+                console.log("numStr:"+numStr);
+
+                // drawTexTime(this.dateTimeModeId,ctx,this.numObj,this.width,this.characterW,this.characterH);
+                drawTexTimeByCharacter(ctx,numStr,this.width,this.characterW,this.characterH,this.numObj);
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染图层时间出错');
+            };
+        }
+    });
+    fabric.MyTexTime.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyTexTime(level, option));
+    };
+    fabric.MyTexTime.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                imageElement:this.imageElement,
+                backgroundColor:this.backgroundColor
+            });
+        }
+    })(fabric.MyTexTime.prototype.toObject);
+    fabric.MyTexTime.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyTexTime(level, object));
+    };
+    fabric.MyTexTime.async = true;
+
+    /**
+     * drawTexNumByCharacter 逐个字符渲染时间控件
+     * @param  {[type]} ctx           [Canvas对象]
+     * @param  {[string]} numStr        [要渲染的字符串]
+     * @param  {[type]} width         [控件总宽度]
+     * @param  {[type]} characterW    [单个字符宽度]
+     * @param  {[type]} height        [控件高度]
+     * @param  {[type]} numObj        [纹理]
+     * @return {[type]}               [description]
+     */
+    function drawTexTimeByCharacter(ctx,numStr,width,characterW,height,numObj){
+        var xCoordinate,         //每个字符的x坐标
+            initXPos,            //整个控件的起始位置
+            widthOfNumStr;       //整个控件的宽度
+
+        //计算整个数字图层控件的宽度
+        widthOfNumStr=width;
+        initXPos = (characterW-widthOfNumStr)/2;
+        //由对齐方式设置整个控件的起始位置
+        // switch(align){
+        //     case 'left':
+        //         initXPos=characterW/2-width/2;
+        //         break;
+        //     case 'right':
+        //         initXPos=width/2+characterW/2-widthOfNumStr;
+        //         break;
+        //     case 'center':
+        //     default:
+        //         initXPos = (characterW-widthOfNumStr)/2;
+        //         break;
+        // }
+        //设置第一个数字的起始位置
+        xCoordinate = initXPos;
+
+        for(var i=0;i<numStr.length;i++){
+            //根据数字字符绘制对应的数字图层
+            switch (numStr[i]){
+                case '0':
+                    drawNum(0,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '1':
+                    drawNum(1,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '2':
+                    drawNum(2,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '3':
+                    drawNum(3,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '4':
+                    drawNum(4,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '5':
+                    drawNum(5,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '6':
+                    drawNum(6,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '7':
+                    drawNum(7,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '8':
+                    drawNum(8,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '9':
+                    drawNum(9,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case ':':
+                    drawNum(10,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '/':
+                    drawNum(11,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '-':
+                    drawNum(12,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+
+            }
+            //设置下一个数字的起始位置
+            xCoordinate+=characterW;
+
+        }
+        // /**
+        //  * 绘制单个数字图层
+        //  * @param  {[type]} num           [要渲染的数字图层对象在numObj中的位置]
+        //  * @param  {[type]} characterW         [要渲染的数字图层对象宽度]
+        //  * @param  {[type]} height        [要渲染的数字图层对象高度]
+        //  * @param  {[type]} numObj        [数字图层纹理]
+        //  * @param  {[type]} xCoordinate   [要渲染的数字图层对象起始位置x坐标]
+        //  * @param  {[type]} ctx           [Canvas对象]
+        //  * @return {[type]} null          [null]
+        //  */
+        function drawNum(num,characterW,height,numObj,xCoordinate,ctx){
+            try{
+                ctx.beginPath();
+                //设置背景色
+                ctx.fillStyle=numObj[num].color;
+                ctx.fillRect(
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                //ctx.fillStyle=this.numObj[num].img;
+                //插入图片
+                ctx.drawImage(
+                    numObj[num].img,
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                ctx.closePath();
+                ctx.stroke();
+            }catch(err){
+
+            }
+
+
         }
     }
 

@@ -650,6 +650,9 @@ body{
 /*icon hover turn big*/
 .icon:hover{transform:scale(1.2);}
 .dropdown-menu-item-widget:hover{transform:scale(1.2);}
+.dropdown-menu-item-widget{
+    margin-y:5px ;
+}
 
 .tag-table-wrapper{
     max-height: 400px;
@@ -661,7 +664,7 @@ body{
 }
 
 .my-widget-list{
-    min-width: 200px;
+    min-width: 240px;
     padding:10% 5% 15% 5%;
 }
 .my-sel{

@@ -9,14 +9,15 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"时间",icon:"&#xe64d;"},
         {name:"数字",icon:"&#xe631;"},
         {name:"文本",icon:"&#xe62f;"},
-        {name:"按钮",icon:"&#xe636;"},
+        {name:"按钮",icon:"&#xe658;"},
         // {name:"旋钮",icon:"&#xe628;"},
-        {name:"滑块",icon:"&#xe62e;"},
-        {name:"按钮组",icon:"&#xe637;"},
-        {name:"触发器",icon:"&#xe634;"},
-        {name:"影像",icon:"&#xe650;"},
+        {name:"滑块",icon:"&#xe77e;"},
+        {name:"按钮组",icon:"&#xe67c;"},
+        {name:"触发器",icon:"&#xe7d0;"},
+        {name:"影像",icon:"&#xe6ad;"},
         {name:"开机动画",icon:"&#xe633"},
-        {name:"图层数字",icon:"&#xe675"}
+        {name:"图层数字",icon:"&#xe675"},
+        {name:"图层时间",icon:"&#xe655"},
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;

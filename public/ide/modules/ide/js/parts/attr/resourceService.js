@@ -247,6 +247,7 @@ ideServices
                 //ttf
                 //font
 
+                console.log("this.getExt(file.id)==='ttf'||this.getExt(file.id)==='woff'success");
                 var ext = this.getExt(file.id);
                 var type;
                 console.log(ext)

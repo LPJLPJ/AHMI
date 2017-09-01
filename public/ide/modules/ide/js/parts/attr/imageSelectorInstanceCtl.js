@@ -72,6 +72,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         case Type.MyTexNum:
             initConfigure(false,1,widgetInfo.tex,true);
             break;
+        case Type.MyTexTime:
+            initConfigure(false,1,widgetInfo.tex,true);
+            break;
         default:
             initConfigure(true,1,widgetInfo.tex,false);
             break;
