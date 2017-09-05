@@ -186,5 +186,14 @@ update:
 1.9.6
 add:
     1.add local save as option
+    2.add select all function
+    3.add ttf symbol when upload ttf
 fix:
     1.resource upload bugs
+    2.gulp bug to cause undefined text in old switch tex after render
+    3.simulator bug high alarm 0 to 1
+
+1.9.7
+add:
+    1. alert err
+fix:

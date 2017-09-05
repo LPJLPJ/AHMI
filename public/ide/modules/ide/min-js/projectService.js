@@ -335,6 +335,7 @@ ideServices
 
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
+                    alertErr()
                     return;
 
                 }
@@ -604,6 +605,7 @@ ideServices
                 var currentSubLayer=currentLayer.subLayers[_subLayerIndex];
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
+                    alertErr()
                     return;
                 }
                 currentLayer.showSubLayer=currentSubLayer;
@@ -1211,6 +1213,7 @@ ideServices
                 });
                 if (currentSubLayerIndex<0){
                     console.warn('找不到SubLayer');
+                    alertErr()
                     return;
                 }
                 var shown=(currentLayer.showSubLayer.id==currentSubLayer.id);
@@ -1557,6 +1560,7 @@ ideServices
                             var layer=_.cloneDeep(_self.getLevelById(_fabLayer.id));
                             if (!layer){
                                 console.warn('layer不存在');
+                                alertErr()
                                 return;
                             }
                             layers.push(layer);
@@ -1595,6 +1599,7 @@ ideServices
                             _fabWidget.id=widget.id;
                             if (!widget){
                                 console.warn('layer不存在');
+                                alertErr()
                                 return;
                             }
                             widgets.push(widget);
@@ -1826,6 +1831,7 @@ ideServices
                     var currentPage=_self.getCurrentPage();
                     if (!currentPage){
                         console.warn('找不到Page');
+                        alertErr()
                         return;
                     }
                     currentPage.proJsonStr =
@@ -1966,6 +1972,7 @@ ideServices
             this.OnPageClicked= function (pageIndex, _successCallback,skipClean) {
                 if (pageIndex<0){
                     console.warn('找不到Page');
+                    alertErr()
                     return;
                 }
                 if (!skipClean){
@@ -2003,6 +2010,10 @@ ideServices
 
 
             };
+            function alertErr(message) {
+                message = message || '出现错误，请刷新页面以避免后续错误！'
+                toastr.error(message)
+            }
 
             /**
              * 次要操作
@@ -2024,6 +2035,7 @@ ideServices
                 }
                 if (!currentPage){
                     console.warn('找不到操作前的Page');
+                    alertErr();
                     return;
                 }
 
@@ -2098,6 +2110,7 @@ ideServices
                 var currentPage=_self.getCurrentPage();
                 if (!currentPage){
                     console.warn('找不到Page');
+                    alertErr()
                     return;
                 }
                 currentPage.selected=false;
@@ -2260,6 +2273,7 @@ ideServices
                 var currentPage=_self.getCurrentPage();
                 if (!currentPage){
                     console.warn('找不到Page');
+                    alertErr()
                     return;
                 }
                 //如果当前在编辑Page,需要选择Layer,如果在编辑SubLayer,需要重新loadFromJSON
@@ -2306,6 +2320,7 @@ ideServices
                 var currentPage=_self.getCurrentPage();
                 if (!currentPage){
                     console.warn('找不到Page');
+                    alertErr()
                     return;
                 }
 
@@ -2320,6 +2335,11 @@ ideServices
                     currentPage.currentFabLayer=_fabLayer?_fabLayer:getFabricObject(_layer.id);
                     var currentFabLayer=currentPage.currentFabLayer;
                     //console.log('currentFabLayer',currentFabLayer);
+                    if(!currentFabLayer){
+                        //error
+                        alertErr()
+                        return
+                    }
 
                     pageNode.setActive(currentFabLayer);
 
@@ -2336,7 +2356,11 @@ ideServices
                     _backToPage(currentPage, function () {
                         currentPage.currentFabLayer=getFabricObject(_layer.id);
                         var currentFabLayer= currentPage.currentFabLayer;
-
+                        if(!currentFabLayer){
+                            //error
+                            alertErr()
+                            return
+                        }
 
                         pageNode.deactivateAll();
                         pageNode.renderAll();
@@ -2418,6 +2442,7 @@ ideServices
 
                 if (!currentPage){
                     console.warn('找不到Page');
+                    alertErr()
                     return;
                 }
 
@@ -2429,13 +2454,18 @@ ideServices
                     var currentLayer=currentPage.layers[layerIndex];
 
                 }catch(e){
-                    console.log(e);
+                    alertErr()
+                }
+                if (!currentLayer){
+                    alertErr()
+                    return;
                 }
 
                 var currentSubLayer=currentLayer.subLayers[subLayerIndex];
 
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
+                    alertErr()
                     return;
                 }
 
@@ -2608,6 +2638,7 @@ ideServices
 
                 if (!currentPage){
                     console.warn('找不到Page');
+                    alertErr()
                     return;
                 }
                 currentPage.selected=false;
@@ -2681,10 +2712,12 @@ ideServices
 
                 if (!currentPage){
                     console.warn('找不到Page');
+                    alertErr()
                     return;
                 }
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
+                    alertErr()
                     return;
                 }
 
@@ -2890,6 +2923,7 @@ ideServices
                 var subLayerNode = CanvasService.getSubLayerNode();
                 if (!getCurrentLayer()) {
                     console.warn('当前Layer为空');
+                    alertErr()
                     return;
                 }
                 getCurrentLayer().url = subLayerNode.toDataURL({format:'png'});
@@ -3916,6 +3950,7 @@ ideServices
                     var currentGroup=object.level;
                     if (!fabGroup) {
                         console.warn('找不到fabWidget');
+                        alertErr()
                         return;
                     }
 
@@ -4155,6 +4190,7 @@ ideServices
                     });
                     if (!fabLayer) {
                         console.warn('找不到Layer');
+                        alertErr()
                         return;
                     }
                     if (_option.index==0){
@@ -4191,6 +4227,7 @@ ideServices
                     });
                     if (!fabWidget) {
                         console.warn('找不到Widget');
+                        alertErr()
                         return;
                     }
                     if (_option.index==0){
@@ -4259,6 +4296,7 @@ ideServices
                     });
                     if (!fabLayer) {
                         console.warn('找不到Layer');
+                        alertErr()
                         return;
                     }
                     var currentPage = _self.getCurrentPage();
@@ -4297,6 +4335,7 @@ ideServices
                     });
                     if (!fabWidget) {
                         console.warn('找不到Widget');
+                        alertErr()
                         return;
                     }
                     if (_option.width) {
@@ -4579,6 +4618,7 @@ ideServices
             var _leaveFromSubLayer = function (currentSubLayer, _successCallback) {
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
+                    alertErr()
                     return;
                 }
 

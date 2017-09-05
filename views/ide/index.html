@@ -2345,7 +2345,7 @@
                                     <!--image-->
                                     <td><select class="form-control" ng-model="slice.imgSrc"
                                                 ng-options="image.src as image.name for image in images "
-                                                ng-change="disableColorInput(slice)" ng-disabled="{{slice.name=='数字背景'||slice.name=='初始颜色'||slice.name=='结束颜色'}}">
+                                                ng-change="disableColorInput(slice)" ng-disabled="disableEditImg">
                                         <!--<option value="">-&#45;&#45;</option>-->
                                     </select></td>
                                     <!--color-->
