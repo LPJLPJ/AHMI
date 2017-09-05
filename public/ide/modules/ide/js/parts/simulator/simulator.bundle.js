@@ -20172,6 +20172,9 @@
 
 	        this.paintKey = requestAnimationFrame(this.paint);
 	    },
+	    dropCurrentDraw: function () {
+	        this.currentDrawedProject && (this.currentDrawingProject.shouldPaint = false);
+	    },
 	    drawSingleProject: function (_project, options) {
 	        var project;
 	        if (_project) {
@@ -20179,6 +20182,9 @@
 	        } else {
 	            project = this.state.project;
 	        }
+
+	        this.currentDrawingProject = project;
+	        this.currentDrawingProject.shouldPaint = true;
 
 	        var offcanvas = this.refs.offcanvas;
 
@@ -20235,8 +20241,11 @@
 	        } else {
 	                // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            }
-
-	        return project;
+	        if (this.currentDrawingProject && this.currentDrawingProject.shouldPaint) {
+	            return project;
+	        } else {
+	            return null;
+	        }
 	    },
 	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
@@ -20853,6 +20862,7 @@
 	                            subCanvas.translate = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
+	                        this.dropCurrentDraw();
 	                        break;
 	                    case 'MOVE_RL':
 	                        AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20871,6 +20881,7 @@
 	                            subCanvas.translate = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
+	                        this.dropCurrentDraw();
 	                        break;
 	                    case 'SCALE':
 	                        var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
@@ -20888,6 +20899,8 @@
 	                            subCanvas.transform = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
+
+	                        this.dropCurrentDraw();
 
 	                        break;
 	                    default:

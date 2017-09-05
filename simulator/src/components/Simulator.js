@@ -413,6 +413,9 @@ module.exports =   React.createClass({
 
         this.paintKey = requestAnimationFrame(this.paint)
     },
+    dropCurrentDraw:function () {
+        this.currentDrawedProject && (this.currentDrawingProject.shouldPaint = false);
+    },
     drawSingleProject: function (_project, options) {
         var project;
         if (_project) {
@@ -420,6 +423,9 @@ module.exports =   React.createClass({
         } else {
             project = this.state.project;
         }
+
+        this.currentDrawingProject = project;
+        this.currentDrawingProject.shouldPaint = true;
 
         var offcanvas = this.refs.offcanvas;
 
@@ -480,8 +486,12 @@ module.exports =   React.createClass({
         } else {
             // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
         }
+        if (this.currentDrawingProject && this.currentDrawingProject.shouldPaint){
+            return project
+        }else{
+            return null;
+        }
 
-        return project
 
 
     },
@@ -1219,6 +1229,7 @@ module.exports =   React.createClass({
                             subCanvas.translate = null;
                             this.handleTargetAction(subCanvas, 'Load')
                         }.bind(this))
+                        this.dropCurrentDraw()
                         break;
                     case 'MOVE_RL':
                         AnimationManager.step(w,0,0,0,duration,frames,easing,function (deltas) {
@@ -1237,6 +1248,7 @@ module.exports =   React.createClass({
                             subCanvas.translate = null;
                             this.handleTargetAction(subCanvas, 'Load')
                         }.bind(this))
+                        this.dropCurrentDraw()
                         break;
                     case 'SCALE':
                         var beforeTranslateMatrix = [
@@ -1274,6 +1286,8 @@ module.exports =   React.createClass({
                             subCanvas.transform = null
                             this.handleTargetAction(subCanvas, 'Load')
                         }.bind(this))
+
+                        this.dropCurrentDraw()
 
 
 
