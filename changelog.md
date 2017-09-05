@@ -192,3 +192,8 @@ fix:
     1.resource upload bugs
     2.gulp bug to cause undefined text in old switch tex after render
     3.simulator bug high alarm 0 to 1
+
+1.9.7
+add:
+    1. alert err
+fix:
