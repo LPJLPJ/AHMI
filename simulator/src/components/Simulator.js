@@ -1088,6 +1088,10 @@ module.exports =   React.createClass({
             var nextSubCanvasIdx = (canvasTag && canvasTag.value) || 0;
             nextSubCanvasIdx = nextSubCanvasIdx >= subCanvasList.length ? subCanvasList.length-1:nextSubCanvasIdx;
             var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+            var firstSubCanvas = false
+            if (!oldSubCanvas){
+                 firstSubCanvas = true;
+            }
             canvasData.curSubCanvasIdx = nextSubCanvasIdx;
             //handle UnLoad subcanvas
             // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
@@ -1122,7 +1126,7 @@ module.exports =   React.createClass({
                 // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
                 var transition = canvasData.transition;
 
-                this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition);
+                this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition,firstSubCanvas);
 
             } else {
                 this.handleTargetAction(oldSubCanvas, 'UnLoad');
@@ -1174,7 +1178,7 @@ module.exports =   React.createClass({
         ctx.closePath();
         ctx.clip();
     },
-    drawSubCanvas:function (subCanvas, x, y, w, h, options,transition) {
+    drawSubCanvas:function (subCanvas, x, y, w, h, options,transition,firstSubCanvas) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
@@ -1196,7 +1200,7 @@ module.exports =   React.createClass({
             var easing = 'easeInOutCubic';
             var hWidth = w/2+x
             var hHeight = h/2+y
-            if (!options||(options&&!options.pageAnimate)){
+            if (!firstSubCanvas&&(!options||(options&&!options.pageAnimate))){
                 switch (method){
                     case 'MOVE_LR':
                         AnimationManager.step(-w,0,0,0,duration,frames,easing,function (deltas) {
