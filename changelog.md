@@ -197,3 +197,10 @@ fix:
 add:
     1. alert err
 fix:
+
+1.9.8
+add:
+    1. dynamically change ide title to project name
+fix:
+update:
+    1. change index title and description
