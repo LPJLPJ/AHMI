@@ -54,7 +54,7 @@ ProjectSchema.statics = {
     findByUser: function (_userId,cb) {
         return this
             .find({userId:_userId})
-            .sort('lastModifiedTime')
+            .sort({'createTime':-1})
             .exec(cb)
     },
     deleteById: function (_projectId, cb) {

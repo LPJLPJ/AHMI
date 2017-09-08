@@ -2,6 +2,7 @@ var UserModel = require('../db/models/UserModel');
 var ProjectModel = require('../db/models/ProjectModel');
 var CANProjectModel = require('../db/models/CANProjectModel');
 var path = require('path');
+var moment = require('moment');
 var _ = require('lodash');
 module.exports = function (req, res) {
 	var _user = req.session.user
@@ -11,15 +12,15 @@ module.exports = function (req, res) {
                 console.log(err)
                 res.status(500).end()
             }
-            projects.reverse();
             var processedProjects = _.cloneDeep(projects).map(function (project) {
                 var info = {}
                 info._id = project._id;
                 info.userId = project.userId;
-                info.resolution = project.resolution
+                info.resolution = project.resolution;
                 info.name = project.name;
                 info.template = project.template;
-                info.lastModifiedTime = project.lastModifiedTime;
+                info.createTime = moment(project.createTime).format('YYYY-MM-DD HH:mm');
+                info.lastModifiedTime = moment(project.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                 info.supportTouch = project.supportTouch;
                 info.author = project.author;
                 var thumbnail = project.thumbnail;
