@@ -202,5 +202,10 @@ fix:
 add:
     1. dynamically change ide title to project name
 fix:
+
 update:
     1. change index title and description
+    2. a tag cannot rename when it bind to a widget or page or canvas
+    3. a local update to web will rewrite its createTime and lastModifiedTime,projects will sort by createTime
+    4. in personal projects space when pointer hover on a project ,will show its createTime and lastModifiedTime
+    5. local IDE will check update auto when it is setup
