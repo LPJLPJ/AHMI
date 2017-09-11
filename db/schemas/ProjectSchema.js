@@ -15,6 +15,7 @@ var ProjectSchema = new mongoose.Schema({
     maxSize:String,
     thumbnail:String,
     content:{type:String},
+    backups:[String],
     createTime:{type:Date,default:Date.now},
     lastModifiedTime:{type:Date,default:Date.now}
 })

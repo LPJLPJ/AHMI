@@ -366,8 +366,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     }
                                 })
                                     .success(function (t) {
+                                        var saveState = false
                                         if (t == 'ok') {
                                             toastr.info('保存成功');
+                                            saveState = true
                                         } else {
                                             toastr.warning('保存失败')
                                         }
@@ -376,6 +378,15 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                         }
                                         ProjectService.LoadCurrentOperate(projectClone, function () {
                                             $scope.$emit('UpdateProject');
+                                            //modify url
+                                            if (saveState){
+                                                var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                                if ("undefined" !== typeof history.pushState) {
+                                                    history.pushState(null, '',newUrl )
+                                                }else{
+                                                    window.location.assign(newUrl)
+                                                }
+                                            }
                                             _saveCb && _saveCb();
                                         });
                                     })

@@ -406,7 +406,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
         $http({
             method:'GET',
-            url:baseUrl+'/project/'+id+'/content'
+            url:baseUrl+'/project/'+id+'/content'+(window.location.search||'')
         }).success(function (data) {
             LoadWithTemplate(data,id);
 

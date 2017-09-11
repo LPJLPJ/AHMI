@@ -56,6 +56,7 @@ projectRoute.getProjectById = function (req, res) {
 
 projectRoute.getProjectContent = function (req, res) {
     var projectId = req.params.id
+    var v = req.query.v
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -63,6 +64,10 @@ projectRoute.getProjectContent = function (req, res) {
                 errHandler(res,500,'error')
             }
             //console.log(project)
+            if (v in project.backups){
+                project.content = project.backups[v]
+            }
+            project.backups = []
             res.end(JSON.stringify(project))
         })
     }else{
@@ -263,7 +268,13 @@ projectRoute.saveProject = function (req, res) {
                 }else{
                     var curProjectContent = req.body.project
                     if (curProjectContent){
+                        //backup last content
+                        var backups = project.backups||[]
+                        if (backups.length>=5){
+                            backups.shift()
+                        }
                         project.content = JSON.stringify(curProjectContent)
+                        backups.push(project.content)
                         project.save(function (err) {
                             if (err){
                                 console.log(err)
@@ -272,7 +283,15 @@ projectRoute.saveProject = function (req, res) {
 
                                 res.end('ok')
                                 //delete files
-                                var resourceList = curProjectContent.resourceList;
+                                // var resourceList = curProjectContent.resourceList;
+                                var resourceList = []
+                                project.backups.forEach(function (backup) {
+                                    var c = JSON.parse(backup)
+                                    if (c){
+                                        var curList = c.resourceList||[]
+                                        resourceList = resourceList.concat(curList)
+                                    }
+                                })
                                 var resourceNames = resourceList.map(function(res){
                                     return res.id;
                                 })
