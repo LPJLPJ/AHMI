@@ -4190,15 +4190,17 @@ ideServices
                     });
                     if (!fabLayer) {
                         console.warn('找不到Layer');
-                        alertErr()
+                        alertErr();
                         return;
                     }
-                    if (_option.index==0){
+                    if (_option.index===0){
                         fabLayer.bringForward();
-
-
-                    }else {
+                    }else if(_option.index===1){
                         fabLayer.sendBackwards();
+                    }else if(_option.index==='front'){
+                        fabLayer.bringToFront();
+                    }else if(_option.index==='back'){
+                        fabLayer.sendToBack();
                     }
                     currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
@@ -4230,10 +4232,14 @@ ideServices
                         alertErr()
                         return;
                     }
-                    if (_option.index==0){
+                    if (_option.index===0){
                         fabWidget.bringForward();
-                    }else {
+                    }else if(_option.index===1) {
                         fabWidget.sendBackwards();
+                    }else if(_option.index==='front'){
+                        fabWidget.bringToFront();
+                    }else if(_option.index==='back'){
+                        fabWidget.sendToBack();
                     }
                     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     var widgetObjs = subLayerNode.getObjects();
@@ -4267,6 +4273,12 @@ ideServices
                                     subLayers[i+1] = currentSubLayer;
                                     subLayers[i] = temp;
                                 }
+                            }else if(_option.index==='front'){
+                                subLayers.splice(i,1);
+                                subLayers.unshift(currentSubLayer);
+                            }else if(_option.index==='back'){
+                                subLayers.splice(i,1);
+                                subLayers.push(currentSubLayer);
                             }
                             currentLayer.showSubLayer = subLayers[0];
                             break;
