@@ -201,7 +201,7 @@ fix:
 1.9.8
 add:
     1. dynamically change ide title to project name
-    2. add move to front and move to back
+    2. add move to front and move to back in sort widgets and layers and sublayers
 fix:
     1. canvas and canvas group copy bug cause in $$hashkey
 update:
