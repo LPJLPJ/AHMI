@@ -255,9 +255,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     }
 
     function loadFromContent(data,id) {
-        // console.log('loadFromContent data',JSON.parse(data.content));
+        //change html title to name
+        var name = data&&data.name||''
+        document.title = '工程编辑-'+name
         if (data.content){
-
             //var globalProject = GlobalService.getBlankProject()
             var globalProject = JSON.parse(data.content);
             var resolution = data.resolution.split('*').map(function (r) {
@@ -313,7 +314,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 }
             }else{
-                console.log(globalProject);
+                // console.log(globalProject);
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -405,7 +406,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
         $http({
             method:'GET',
-            url:baseUrl+'/project/'+id+'/content'
+            url:baseUrl+'/project/'+id+'/content'+(window.location.search||'')
         }).success(function (data) {
             LoadWithTemplate(data,id);
 

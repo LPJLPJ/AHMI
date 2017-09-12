@@ -192,3 +192,21 @@ fix:
     1.resource upload bugs
     2.gulp bug to cause undefined text in old switch tex after render
     3.simulator bug high alarm 0 to 1
+
+1.9.7
+add:
+    1. alert err
+fix:
+
+1.9.8
+add:
+    1. dynamically change ide title to project name
+    2. add move to front and move to back
+fix:
+    1. canvas and canvas group copy bug cause in $$hashkey
+update:
+    1. change index title and description
+    2. a tag cannot rename when it bind to a widget or page or canvas
+    3. a local update to web will rewrite its createTime and lastModifiedTime,projects will sort by createTime
+    4. in personal projects space when pointer hover on a project ,will show its createTime and lastModifiedTime
+    5. local IDE will check update auto when it is setup

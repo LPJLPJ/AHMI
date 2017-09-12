@@ -97,6 +97,14 @@
                 null,
                 ['下移一层', function () {
                     changeZIndex(1);
+                }],
+                null,
+                ['移至顶层',function () {
+                    changeZIndex('front');
+                }],
+                null,
+                ['移至底层',function () {
+                    changeZIndex('back');
                 }]
 
             ];

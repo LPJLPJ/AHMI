@@ -85,7 +85,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     // $scope.addSlice = function () {
     //     $scope.tex.slices.push(TexService.getDefaultSlice());
     // };
-    
+
     //last edtor: liuhuan 2017/8/17
     //从当前行的下一行插入默认新行
     $scope.addSlice = function () {
