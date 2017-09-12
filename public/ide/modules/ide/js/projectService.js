@@ -1424,7 +1424,7 @@ ideServices
                     _subLayer.id=_genUUID();
                     var proJson1=_subLayer.proJsonStr;
                     if(typeof proJson1==='string'){
-                        proJson1 = JSON.parse(proJson1);
+                        proJ
                     }
                     _.forEach(proJson1.objects, function (_fabWidget) {
                         _.forEach(_subLayer.widgets, function (_widget) {
@@ -3033,7 +3033,12 @@ ideServices
                 switch (object.type){
                     case Type.MyPage:
                         var pageNode=CanvasService.getPageNode();
-                        pageNode.setBackgroundImage(_option.image, function () {
+                        var opts = (!!_option.image)?{
+                                width:pageNode.getWidth()/pageNode.getZoom(),
+                                height:pageNode.getHeight()/pageNode.getZoom()
+                            }:null;
+                        var img = _option.image?_option.image:null;
+                        pageNode.setBackgroundImage(img, function () {
                                 pageNode.renderAll();
                                 currentPage.backgroundImage=_option.image;
                                 currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
@@ -3043,11 +3048,8 @@ ideServices
                                 _self.OnPageSelected(currentPageIndex, function () {
                                     _successCallback&&_successCallback(currentOperate);
                                 });
-                            }
-                            ,{
-                                width:pageNode.getWidth()/pageNode.getZoom(),
-                                height:pageNode.getHeight()/pageNode.getZoom()
-                            }
+                            },
+                            opts
                         );
 
                         break;
