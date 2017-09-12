@@ -203,7 +203,7 @@ add:
     1. dynamically change ide title to project name
     2. add move to front and move to back
 fix:
-
+    1. canvas and canvas group copy bug cause in $$hashkey
 update:
     1. change index title and description
     2. a tag cannot rename when it bind to a widget or page or canvas
