@@ -7,7 +7,7 @@ var _ = require('lodash');
 module.exports = function (req, res) {
 	var _user = req.session.user
 	if (_user && _user.username && _user.id) {
-        ProjectModel.findByUser(_user.id, function (err, projects) {
+        ProjectModel.findProjectInfosByUser(_user.id, function (err, projects) {
             if (err){
                 console.log(err)
                 res.status(500).end()

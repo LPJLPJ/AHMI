@@ -65,10 +65,26 @@ projectRoute.getProjectContent = function (req, res) {
             }
             //console.log(project)
             if (v in project.backups){
-                project.content = project.backups[v]
+                project.content = project.backups[v].content||''
             }
             project.backups = []
             res.end(JSON.stringify(project))
+        })
+    }else{
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+}
+
+projectRoute.getBackupList = function (req, res) {
+    var projectId = req.params.id
+    if (projectId && projectId!=''){
+        ProjectModel.findBackupsById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+
+            res.end(JSON.stringify(project.backups))
         })
     }else{
         //console.log(projectId)
@@ -274,7 +290,7 @@ projectRoute.saveProject = function (req, res) {
                             backups.shift()
                         }
                         project.content = JSON.stringify(curProjectContent)
-                        backups.push(project.content)
+                        backups.push({time:new Date(),content:project.content})
                         project.save(function (err) {
                             if (err){
                                 console.log(err)
@@ -286,7 +302,7 @@ projectRoute.saveProject = function (req, res) {
                                 // var resourceList = curProjectContent.resourceList;
                                 var resourceList = []
                                 project.backups.forEach(function (backup) {
-                                    var c = JSON.parse(backup)
+                                    var c = JSON.parse(backup.content)
                                     if (c){
                                         var curList = c.resourceList||[]
                                         resourceList = resourceList.concat(curList)
