@@ -1415,20 +1415,22 @@ ideServices
              */
             function _getCopyLayer(_layer){
                 var copyLayer= _.cloneDeep(_layer);
-                copyLayer.id=Math.random().toString(36).substr(2);
+                copyLayer.id=_genUUID();
                 if(copyLayer&&copyLayer.info){
                     copyLayer.info.left+=10;
                     copyLayer.info.top+=10;
                 }
                 _.forEach(copyLayer.subLayers, function (_subLayer) {
-                    _subLayer.id=Math.random().toString(36).substr(2);
+                    _subLayer.id=_genUUID();
                     var proJson1=_subLayer.proJsonStr;
-
+                    if(typeof proJson1==='string'){
+                        proJson1 = JSON.parse(proJson1);
+                    }
                     _.forEach(proJson1.objects, function (_fabWidget) {
                         _.forEach(_subLayer.widgets, function (_widget) {
-
+                            _widget.$$hashKey=undefined;
                             if (_widget.id==_fabWidget.id){
-                                var newId=Math.random().toString(36).substr(2);
+                                var newId=_genUUID();
                                 _widget.id=newId;
                                 _fabWidget.id=newId;
                             }
@@ -1486,7 +1488,7 @@ ideServices
              */
             function _getCopyWidget(_widget){
                 var copyWidget= _.cloneDeep(_widget);
-                var newId=Math.random().toString(36).substr(2);
+                var newId=_genUUID();
                 copyWidget.id=newId;
                 if(copyWidget&&copyWidget.info){
                     copyWidget.info.left+=5;
@@ -1495,6 +1497,17 @@ ideServices
                 return copyWidget;
             }
 
+            /**
+             * 辅助
+             * 生成uuid
+             */
+            function _genUUID(){
+                var f = function(){
+                    return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+                };
+
+                return ''+f()+f();
+            }
 
             /**
              * 主要操作
@@ -1519,6 +1532,7 @@ ideServices
             };
 
             this.CopyLayer= function (_layer, _successCallback) {
+                console.log('_layer',_layer);
                 var fabLayer=_self.getFabricObject(_layer.id);
                 shearPlate = {
                     type: Type.MyLayer,
@@ -1531,11 +1545,11 @@ ideServices
 
             };
             this.CopyWidget= function (_widget, _successCallback) {
-                var copyWidget= _getCopyWidget(_widget);
+                // var copyWidget= _getCopyWidget(_widget);
                 var fabWidget=_self.getFabricObject(_widget.id,true);
                 shearPlate = {
                     type:_widget.type,
-                    objects: [copyWidget],
+                    objects: [_widget],
                     mode:0,
                     target:fabWidget
                 };
@@ -1560,7 +1574,7 @@ ideServices
                             var layer=_.cloneDeep(_self.getLevelById(_fabLayer.id));
                             if (!layer){
                                 console.warn('layer不存在');
-                                alertErr()
+                                alertErr();
                                 return;
                             }
                             layers.push(layer);
@@ -1659,6 +1673,7 @@ ideServices
                 function addLayers(_index,_callback){
 
                     var layer=_getCopyLayer(shearPlate.objects[_index]);
+                    console.log('layer',layer,_index,shearPlate.objects);
                     layer.$$hashKey=undefined;
                     _self.AddNewLayerInCurrentPage(layer, function (_fabLayer) {
                         //如果不是Group中最后一个Layer,继续添加下一个
@@ -1710,26 +1725,26 @@ ideServices
                 var pastePage = _getCopyPage(shearPagePlate.objects[0]);
 
                 //修改page中的所有layer sublayer  widget的id
-                pastePage.id = Math.random().toString(36).substr(2);
+                pastePage.id = _genUUID();
                 pastePage.$$hashKey = undefined;
                 var layers = pastePage.layers;
                 for(var i=0;i<layers.length;i++){
                     var proJsonObj = pastePage.proJsonStr.objects;
                     proJsonObj.forEach(function(item){
                         if(item.id==layers[i].id){
-                            item.id = Math.random().toString(36).substr(2);
+                            item.id = _genUUID();
                             layers[i].id = item.id;
                         }
                     });
                     var subLayers = layers[i].subLayers;
                     for(var j=0;j<subLayers.length;j++){
-                        subLayers[j].id = Math.random().toString(36).substr(2);
+                        subLayers[j].id = _genUUID();
                         proJsonObj = (typeof subLayers[j].proJsonStr==='string')?JSON.parse(subLayers[j].proJsonStr):subLayers[j].proJsonStr;
                         var widgets = subLayers[j].widgets;
                         for(var k=0;k<widgets.length;k++){
                             proJsonObj.objects.forEach(function(item){
                                if(item.id==widgets[k].id){
-                                   item.id = Math.random().toString(36).substr(2);
+                                   item.id = _genUUID();
                                    widgets[k].id = item.id
                                }
                             });
