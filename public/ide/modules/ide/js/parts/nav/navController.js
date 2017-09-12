@@ -337,11 +337,23 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
                                     // console.log(oldProjectData.thumbnail);
                                     oldProjectData.content = JSON.stringify(currentProject);
+                                    if (oldProjectData.backups && oldProjectData.backups instanceof Array){
+
+                                    }else{
+                                        oldProjectData.backups = []
+                                    }
+                                    if (oldProjectData.backups.length>=5){
+                                        oldProjectData.backups.shift()
+                                    }
+                                    oldProjectData.backups.push({time:new Date(),content:oldProjectData.content})
                                     fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
                                     //success
                                     toastr.info('保存成功');
                                     ProjectService.LoadCurrentOperate(projectClone, function () {
                                         $scope.$emit('UpdateProject');
+                                        //change url
+                                        var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                        history.pushState(null, '',newUrl )
                                         _saveCb && _saveCb();
                                     });
                                 } catch (e) {
