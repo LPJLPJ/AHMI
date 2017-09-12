@@ -484,6 +484,7 @@ background-color: rgba(162, 201, 235, 0.16);
     height: 250px;
     opacity: 0.05;
     width: 100%;
+    pointer-events: none;
 }
 #footer div.footer-2-content{
     z-index: 3;
