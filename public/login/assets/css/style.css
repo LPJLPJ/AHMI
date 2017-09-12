@@ -272,7 +272,7 @@ h1::after {
 #footer {
     /*padding:5px 20px;*/
     /*background-color: rgb(3, 57, 100);*/
-    background-color:#E9E9E9;
+
     text-align:center;
     color:#fff;
     font-size:15px;
@@ -288,7 +288,7 @@ h1::after {
 
 .slide-container{
     position: absolute;
-    top: 70%;
+    top: 55%;
     left:50%;
     transform: translate(-50%,-50%);
     width:1280px;
@@ -451,9 +451,7 @@ background-color: rgba(162, 201, 235, 0.16);
 /*=========================footer================================last edit:LH 20170911*/
 .first {
     font: bold 14px/36px "Microsoft YaHei","微软雅黑";
-    /*display: block;*/
-    /*color: #2c2a2b;*/
-    /*background: url(../images/bg/foot_map.jpg) no-repeat left bottom;*/
+
 }
 #footer{
     /*position:absolute;*/
@@ -461,11 +459,43 @@ background-color: rgba(162, 201, 235, 0.16);
     /*width: 100%;*/
     font-size: 12px;
     color:rgb(3, 57, 100);
+    /*background-color: rgb(3, 57, 100);*/
 
 }
+#footer div.footer-1{
+    width: 100%;
+    background-color:#E9E9E9;
+
+}
+#footer div.footer-2{
+    width: 100%;
+    /*background-color:white;*/
+    color: white;
+    height: 250px;
+    /*opacity: 20;*/
+    /*background-color:#000000;!* IE6和部分IE7内核的浏览器(如QQ浏览器)下颜色被覆盖 *!*/
+    /*background:rgba(100, 100, 100,1); !* IE6和部分IE7内核的浏览器(如QQ浏览器)会读懂，但解析为透明 *!*/
+
+}
+#footer div.footer-2-bg{
+    position:absolute;
+    background-color: white;
+    z-index: 2;
+    height: 250px;
+    opacity: 0.05;
+    width: 100%;
+}
+#footer div.footer-2-content{
+    z-index: 3;
+    opacity: 0.7;
+}
+
 #footer a{
-    /*color:white;*/
     color:rgb(3, 57, 100);
+    text-decoration: none;
+}
+#footer a.footer-2{
+    color:white;
     text-decoration: none;
 }
 #footer ul{
@@ -510,7 +540,29 @@ background-color: rgba(162, 201, 235, 0.16);
     width: 100%;
     background-color: rgb(3, 57, 100);
     text-align: center;
+    height: 50px;
+    padding: 10px;
+}
+#footer div.footer-2-bottom{
+    width: 100%;
+    background-color: rgb(0, 31, 52);
+    text-align: center;
+    height: 50px;
+    padding: 10px;
 }
 .white-font{
     color:white !important;
+}
+
+/*for right dispaly footer in the bottom when main content is not high enough*/
+html, body {
+    height: 100%;
+}
+.content {
+    min-height: 100%;
+    margin-bottom: -300px;
+    padding-bottom: 300px;
+}
+.short-footer {
+    height: 250px;
 }
