@@ -329,7 +329,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	function updateImageList(){
         var blankImage={
             id:'blank.png',
-            src:'/public/images/blank.png',
+            src:'',
             name:'空白'
         };
         $timeout(function () {
@@ -359,11 +359,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     break;
                 case Type.MyPage:
                     //调整Page的背景图
-                    if ($scope.component.object.level.backgroundImage===''){
-                        $scope.component.page.selectImage='blank.png';
-                    }else {
-                        $scope.component.page.selectImage=$scope.component.object.level.backgroundImage;
-                    }
+                    $scope.component.page.selectImage=$scope.component.object.level.backgroundImage;
                     if((typeof $scope.component.object.level.transition)!=='object'){
                         ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
                         $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
@@ -974,7 +970,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var selectImage='';
         if ($scope.component.object.type==Type.MyPage){
             selectImage=$scope.component.page.selectImage;
-            if(selectImage=='/public/images/blank.png'){
+            if(!selectImage){
                 $scope.component.object.level.backgroundColor='rgb(54,71,92)';
             }
             else{

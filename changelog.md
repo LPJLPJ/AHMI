@@ -201,9 +201,10 @@ fix:
 1.9.8
 add:
     1. dynamically change ide title to project name
-    2. add move to front and move to back
+    2. add move to front and move to back in sort widgets and layers and sublayers
 fix:
-
+    1. canvas and canvas group copy bug caused by $$hashkey
+    2. when page backgroundImage is empty use null rather than blank.png
 update:
     1. change index title and description
     2. a tag cannot rename when it bind to a widget or page or canvas
