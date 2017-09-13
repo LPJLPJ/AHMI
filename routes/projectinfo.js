@@ -150,12 +150,9 @@ projectRoute.createProject = function (req, res) {
                                 res.end(JSON.stringify(info))
                             });
                         }
-
                     })
                 }
             })
-
-
         })
     }else{
         res.status(500).end('not login')
