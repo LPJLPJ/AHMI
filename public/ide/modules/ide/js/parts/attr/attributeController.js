@@ -734,11 +734,13 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 return;
             }
         }
-        var a = colorValue[colorValue.length-1];
-        if(a<0||a>1){
-            toastr.warning('格式错误');
-            restore();
-            return;
+        if(colorValue.length===4){
+            var a = colorValue[colorValue.length-1];
+            if(a<0||a>1){
+                toastr.warning('格式错误');
+                restore();
+                return;
+            }
         }
 		if (op.name=='component.object.level.backgroundColor'){
 			if (initObject.level.backgroundColor==op.value){
