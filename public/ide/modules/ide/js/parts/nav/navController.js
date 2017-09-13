@@ -332,16 +332,55 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                 //save currentProject
                                 var projectUrl = ResourceService.getProjectUrl();
                                 var dataUrl = path.join(projectUrl, 'project.json');
+                                var resourceUrl = path.join(projectUrl,'resources');
+                                var resourceIds = currentProject.resourceList&&currentProject.resourceList.map(function(file){
+                                    return file.id;
+                                });
                                 try {
                                     var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
+                                    oldProjectData.lastModifiedTime = new Date().toLocaleString();
                                     oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
                                     // console.log(oldProjectData.thumbnail);
                                     oldProjectData.content = JSON.stringify(currentProject);
+                                    if (oldProjectData.backups && oldProjectData.backups instanceof Array){
+
+                                    }else{
+                                        oldProjectData.backups = []
+                                    }
+                                    if (oldProjectData.backups.length>=5){
+                                        oldProjectData.backups.shift()
+                                    }
+                                    oldProjectData.backups.push({time:new Date(),content:oldProjectData.content});
+
+                                    //delete file
+                                    fs.readdir(resourceUrl,function(err,files){
+                                        if(err){
+                                            console.log('err in read files',err);
+
+                                        }else if(files&&files.length){
+                                            var diffResources = _.difference(files,resourceIds);
+                                            diffResources.map(function (dFile) {
+                                                var dFilePath = path.join(resourceUrl,dFile);
+                                                // console.log(dFilePath)
+                                                fs.stat(dFilePath,function (err,stats) {
+                                                    // console.log(stats)
+                                                    if (stats && stats.isFile()){
+                                                        fs.unlink(dFilePath);
+                                                    }
+                                                })
+                                            });
+                                        }
+                                    });
+
+                                    //save json
                                     fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
                                     //success
                                     toastr.info('保存成功');
                                     ProjectService.LoadCurrentOperate(projectClone, function () {
                                         $scope.$emit('UpdateProject');
+                                        //change url
+                                        var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                        history.pushState(null, '',newUrl );
                                         _saveCb && _saveCb();
                                     });
                                 } catch (e) {
@@ -366,8 +405,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     }
                                 })
                                     .success(function (t) {
+                                        var saveState = false
                                         if (t == 'ok') {
                                             toastr.info('保存成功');
+                                            saveState = true
                                         } else {
                                             toastr.warning('保存失败')
                                         }
@@ -376,6 +417,15 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                         }
                                         ProjectService.LoadCurrentOperate(projectClone, function () {
                                             $scope.$emit('UpdateProject');
+                                            //modify url
+                                            if (saveState){
+                                                var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                                if ("undefined" !== typeof history.pushState) {
+                                                    history.pushState(null, '',newUrl )
+                                                }else{
+                                                    window.location.assign(newUrl)
+                                                }
+                                            }
                                             _saveCb && _saveCb();
                                         });
                                     })

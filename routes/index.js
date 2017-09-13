@@ -167,6 +167,9 @@ router.route('/project/*')
 router.route('/project/:id/basicinfo')
     .post(projectInfo.updateProject);
 
+router.route('/project/:id/backuplist')
+    .get(projectInfo.getBackupList)
+
 router.route('/project/:id/editor')
     .get(projectInfo.getProjectById);
 

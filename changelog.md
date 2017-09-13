@@ -197,3 +197,17 @@ fix:
 add:
     1. alert err
 fix:
+
+1.9.8
+add:
+    1. dynamically change ide title to project name
+    2. add move to front and move to back in sort widgets and layers and sublayers
+fix:
+    1. canvas and canvas group copy bug caused by $$hashkey
+    2. when page backgroundImage is empty use null rather than blank.png
+update:
+    1. change index title and description
+    2. a tag cannot rename when it bind to a widget or page or canvas
+    3. a local update to web will rewrite its createTime and lastModifiedTime,projects will sort by createTime
+    4. in personal projects space when pointer hover on a project ,will show its createTime and lastModifiedTime
+    5. local IDE will check update auto when it is setup

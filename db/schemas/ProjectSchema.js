@@ -15,6 +15,10 @@ var ProjectSchema = new mongoose.Schema({
     maxSize:String,
     thumbnail:String,
     content:{type:String},
+    backups:[{
+        time:Date,
+        content:String
+    }],
     createTime:{type:Date,default:Date.now},
     lastModifiedTime:{type:Date,default:Date.now}
 })
@@ -46,6 +50,11 @@ ProjectSchema.statics = {
             .findOne({_id:id})
             .exec(cb)
     },
+    findBackupsById:function (id,cb) {
+        return this
+            .findOne({_id:id},{"backups.time":1})
+            .exec(cb)
+    },
     findByName:function(_name,cb){
         return this
             .findOne({name:_name})
@@ -54,7 +63,13 @@ ProjectSchema.statics = {
     findByUser: function (_userId,cb) {
         return this
             .find({userId:_userId})
-            .sort('lastModifiedTime')
+            .sort({'createTime':-1})
+            .exec(cb)
+    },
+    findProjectInfosByUser: function (_userId,cb) {
+        return this
+            .find({userId:_userId},{content:0,backups:0})
+            .sort({'createTime':-1})
             .exec(cb)
     },
     deleteById: function (_projectId, cb) {

@@ -218,7 +218,7 @@ function parseFormData(req,res,newProject){
             //console.log('project',project,);
             delete project._id;
             delete project.createdTime;
-            delete project.lastModified;
+            project.lastModifiedTime = new Date();
             for (var key in project) {
                 if (key === 'content') {
                     var host = String(process.env.CUR_HOST).split('//')[1]||req.hostname;

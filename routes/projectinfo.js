@@ -18,6 +18,7 @@ var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
 var fse = require('fs-extra');
+var moment = require('moment');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -56,6 +57,7 @@ projectRoute.getProjectById = function (req, res) {
 
 projectRoute.getProjectContent = function (req, res) {
     var projectId = req.params.id
+    var v = req.query.v
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -63,7 +65,27 @@ projectRoute.getProjectContent = function (req, res) {
                 errHandler(res,500,'error')
             }
             //console.log(project)
+            if (v in project.backups){
+                project.content = project.backups[v].content||''
+            }
+            project.backups = []
             res.end(JSON.stringify(project))
+        })
+    }else{
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+}
+
+projectRoute.getBackupList = function (req, res) {
+    var projectId = req.params.id
+    if (projectId && projectId!=''){
+        ProjectModel.findBackupsById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+
+            res.end(JSON.stringify(project.backups))
         })
     }else{
         //console.log(projectId)
@@ -76,51 +98,59 @@ projectRoute.createProject = function (req, res) {
 
     if (req.session.user){
         //user exists
-        data.userId = req.session.user.id
-        var newProject = new ProjectModel(data)
+        data.userId = req.session.user.id;
+        var newProject = new ProjectModel(data);
         newProject.save(function (err) {
             if (err){
-                console.log('project save error',err)
+                console.log('project save error',err);
                 //res.status(500).end('save error')
                 errHandler(res,500,'save error');
             }
             //create project directory
-            var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources')
+            var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources');
             fs.stat(targetDir, function (err, stats) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
-
                     //copy template
                     cpTemplates('defaultTemplate',path.join(targetDir,'template',function (err) {
-                        //exists
-                        var newProjectInfo = _.cloneDeep(newProject)
-                        delete newProjectInfo.content;
-                        res.end(JSON.stringify(newProjectInfo))
+                        var info = {};
+                        info._id = newProject._id;
+                        info.userId = newProject.userId;
+                        info.resolution = newProject.resolution;
+                        info.name = newProject.name;
+                        info.template = newProject.template;
+                        info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
+                        info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
+                        info.supportTouch = newProject.supportTouch;
+                        info.author = newProject.author;
+                        res.end(JSON.stringify(info))
                     }));
-
-
-
                 }else{
                     //create new directory
                     //console.log('create new directory',targetDir);
                     mkdir(targetDir, function (err) {
                         if (err){
-                            console.log('mk error')
+                            console.log('mk error');
                             errHandler(res, 500,'mkdir error')
                         }else{
-                            console.log('ok')
+                            // console.log('ok')
                             //copy template
                             cpTemplates('defaultTemplate',path.join(targetDir,'template'),function (err) {
-                                var newProjectInfo = _.cloneDeep(newProject)
-                                delete newProjectInfo.content;
-                                res.end(JSON.stringify(newProjectInfo))
+                                var info = {};
+                                info._id = newProject._id;
+                                info.userId = newProject.userId;
+                                info.resolution = newProject.resolution;
+                                info.name = newProject.name;
+                                info.template = newProject.template;
+                                info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
+                                info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
+                                info.supportTouch = newProject.supportTouch;
+                                info.author = newProject.author;
+                                res.end(JSON.stringify(info))
                             });
                         }
-
                     })
                 }
             })
-
-
         })
     }else{
         res.status(500).end('not login')
@@ -263,7 +293,13 @@ projectRoute.saveProject = function (req, res) {
                 }else{
                     var curProjectContent = req.body.project
                     if (curProjectContent){
+                        //backup last content
+                        var backups = project.backups||[]
+                        if (backups.length>=5){
+                            backups.shift()
+                        }
                         project.content = JSON.stringify(curProjectContent)
+                        backups.push({time:new Date(),content:project.content})
                         project.save(function (err) {
                             if (err){
                                 console.log(err)
@@ -272,7 +308,15 @@ projectRoute.saveProject = function (req, res) {
 
                                 res.end('ok')
                                 //delete files
-                                var resourceList = curProjectContent.resourceList;
+                                // var resourceList = curProjectContent.resourceList;
+                                var resourceList = []
+                                project.backups.forEach(function (backup) {
+                                    var c = JSON.parse(backup.content)
+                                    if (c){
+                                        var curList = c.resourceList||[]
+                                        resourceList = resourceList.concat(curList)
+                                    }
+                                })
                                 var resourceNames = resourceList.map(function(res){
                                     return res.id;
                                 })

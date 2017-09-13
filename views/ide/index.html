@@ -301,9 +301,11 @@
                             <span class="iconfont icon">&#xe61f;</span>
                             <span class="caption">排列</span>
                         </div>
-                        <ul class="dropdown-menu" uib-dropdown-menu>
+                        <ul class="dropdown-menu my-dropdown-menu" uib-dropdown-menu>
                             <li ng-click="changeZIndex(0)">上移一层</li>
                             <li ng-click="changeZIndex(1)">下移一层</li>
+                            <li ng-click="changeZIndex('front')">移至顶层</li>
+                            <li ng-click="changeZIndex('back')">移至底层</li>
                         </ul>
                     </div>
                 </a>
@@ -2350,7 +2352,7 @@
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
-                                               ng-model="slice.color" ng-disabled="slice.name=='光标纹理'"/></td>
+                                               ng-model="slice.color" ng-disabled="disableEditColor"/></td>
                                     <td>
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
@@ -3071,7 +3073,6 @@
 
                                     </div>
                                 </div>
-
 
                             </div>
 

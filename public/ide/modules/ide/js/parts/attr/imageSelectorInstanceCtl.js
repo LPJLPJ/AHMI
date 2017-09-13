@@ -26,59 +26,63 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
 
     $scope.canAddNewSlice = false;
     $scope.disableEditImg = false;
+    $scope.disableEditColor = false;
     $scope.sliceNum = 0;
     switch (widgetInfo.type){
         case Type.MyButton:
-            initConfigure(false,2,widgetInfo.tex,false,false);
+            initConfigure(false,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyProgress:
             if((widgetInfo.objInfo.progressModeId==='1'||widgetInfo.objInfo.progressModeId==='3')&&(widgetInfo.index==1||widgetInfo.index==2||widgetInfo.index==3)){
-                initConfigure(false,1,widgetInfo.tex,false,true)
+                initConfigure(false,1,widgetInfo.tex,true,true,false);
             }else{
-                initConfigure(false,1,widgetInfo.tex,false,false);
+                initConfigure(false,1,widgetInfo.tex,true,false,false);
+            }
+            if(widgetInfo.tex.name==='光标纹理'){
+                initConfigure(false,1,widgetInfo.tex,true,false,true);
             }
             break;
         case Type.MySlide:
-            initConfigure(true,2,widgetInfo.tex,false,false);
+            initConfigure(true,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyNumber:
-            initConfigure(false,13,widgetInfo.tex,false,false);
+            initConfigure(false,13,widgetInfo.tex,false,false,false);
             break;
         case Type.MyDashboard:
-            initConfigure(false,2,widgetInfo.tex,false,false);
+            initConfigure(false,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyTextArea:
-            initConfigure(false,1,widgetInfo.tex,false,false);
+            initConfigure(false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MyNum:
-            initConfigure(false,1,widgetInfo.tex,false,false);
+            initConfigure(false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MyOscilloscope:
-            initConfigure(false,2,widgetInfo.tex,false,false);
+            initConfigure(false,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyKnob:
-            initConfigure(false,2,widgetInfo.tex,false,false);
+            initConfigure(false,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyImage:
-            initConfigure(false,1,widgetInfo.tex,false,false);
+            initConfigure(false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MySwitch:
-            initConfigure(false,1,widgetInfo.tex,false,false);
+            initConfigure(false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MyRotateImg:
-            initConfigure(false,1,widgetInfo.tex,false,false);
+            initConfigure(false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MySlideBlock:
-            initConfigure(false,1,widgetInfo.tex,false,false);
+            initConfigure(false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MyAnimation:
-            initConfigure(true,1,widgetInfo.tex,false,false);
+            initConfigure(true,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MyTexNum:
-            initConfigure(false,1,widgetInfo.tex,true,false);
+            initConfigure(false,1,widgetInfo.tex,true,false,false);
             break;
         default:
-            initConfigure(true,1,widgetInfo.tex,false,false);
+            initConfigure(true,1,widgetInfo.tex,false,false,false);
             break;
     }
 
@@ -117,15 +121,16 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             slice.color=_getRandomColor();
         }
     };
-    
 
 
-    function initConfigure(_canAddNewSlice,_sliceNum,_tex,_disableEditName,_disableEditImg){
+
+    function initConfigure(_canAddNewSlice,_sliceNum,_tex,_disableEditName,_disableEditImg,_disableEditColor){
         $scope.canAddNewSlice = _canAddNewSlice;
         $scope.sliceNum = _sliceNum;
         $scope.tex = _tex;
         $scope.disableEditName = _disableEditName;
         $scope.disableEditImg = _disableEditImg;
+        $scope.disableEditColor = _disableEditColor;
     }
 
     //edit by lixiang
