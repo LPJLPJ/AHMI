@@ -332,6 +332,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                 //save currentProject
                                 var projectUrl = ResourceService.getProjectUrl();
                                 var dataUrl = path.join(projectUrl, 'project.json');
+                                var resourceUrl = path.join(projectUrl,'resources');
+                                var resourceIds = currentProject.resourceList&&currentProject.resourceList.map(function(file){
+                                    return file.id;
+                                });
                                 try {
                                     var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
                                     oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
@@ -345,7 +349,29 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     if (oldProjectData.backups.length>=5){
                                         oldProjectData.backups.shift()
                                     }
-                                    oldProjectData.backups.push({time:new Date(),content:oldProjectData.content})
+                                    oldProjectData.backups.push({time:new Date(),content:oldProjectData.content});
+
+                                    //delete file
+                                    fs.readdir(resourceUrl,function(err,files){
+                                        if(err){
+                                            console.log('err in read files',err);
+
+                                        }else if(files&&files.length){
+                                            var diffResources = _.difference(files,resourceIds);
+                                            diffResources.map(function (dFile) {
+                                                var dFilePath = path.join(resourceUrl,dFile);
+                                                // console.log(dFilePath)
+                                                fs.stat(dFilePath,function (err,stats) {
+                                                    // console.log(stats)
+                                                    if (stats && stats.isFile()){
+                                                        fs.unlink(dFilePath);
+                                                    }
+                                                })
+                                            });
+                                        }
+                                    });
+
+                                    //save json
                                     fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
                                     //success
                                     toastr.info('保存成功');

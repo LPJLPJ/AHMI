@@ -98,16 +98,16 @@ projectRoute.createProject = function (req, res) {
 
     if (req.session.user){
         //user exists
-        data.userId = req.session.user.id
-        var newProject = new ProjectModel(data)
+        data.userId = req.session.user.id;
+        var newProject = new ProjectModel(data);
         newProject.save(function (err) {
             if (err){
-                console.log('project save error',err)
+                console.log('project save error',err);
                 //res.status(500).end('save error')
                 errHandler(res,500,'save error');
             }
             //create project directory
-            var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources')
+            var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources');
             fs.stat(targetDir, function (err, stats) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
                     //copy template
