@@ -110,7 +110,6 @@ projectRoute.createProject = function (req, res) {
             var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources')
             fs.stat(targetDir, function (err, stats) {
                 if (stats&&stats.isDirectory&&stats.isDirectory()){
-
                     //copy template
                     cpTemplates('defaultTemplate',path.join(targetDir,'template',function (err) {
                         var info = {};
@@ -125,7 +124,6 @@ projectRoute.createProject = function (req, res) {
                         info.author = newProject.author;
                         res.end(JSON.stringify(info))
                     }));
-
                 }else{
                     //create new directory
                     //console.log('create new directory',targetDir);
