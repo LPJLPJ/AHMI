@@ -143,10 +143,24 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     function readLocalProjectData() {
         var url = window.location.href;
-        var projectId = url.split('?')[1].split('=')[1];
-        if (projectId[projectId.length - 1] === '#') {
-            projectId = projectId.slice(0, -1);
+        // var projectId = url.split('?')[1].split('=')[1];
+        // if (projectId[projectId.length - 1] === '#') {
+        //     projectId = projectId.slice(0, -1);
+        // }
+        var query = window.location.search;
+        if (query&&query.length){
+            query = query.slice(1)
         }
+        var queryElems = query.split('&')||[];
+        var queryObj = {};
+        queryElems.forEach(function (q) {
+            var pair = q.split('=');
+            if (pair.length == 2){
+                queryObj[pair[0]] = pair[1]
+            }
+        });
+        var projectId = queryObj['project_id'];
+        var v = queryObj['v'];
         console.log(projectId);
         //load projectId project
         var projectBaseUrl = path.join(__dirname,'localproject',projectId);
@@ -159,9 +173,18 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         console.log(path.relative(realDirPath, resourceUrl));
         var data = readSingleFile(path.join(projectBaseUrl,'project.json'));
 
+
         $timeout(function () {
             if (data){
                 data = JSON.parse(data);
+                //process date content
+                data.backups = data.backups||[];
+                if (data.backups.length>0){
+                    if (v in data.backups){
+                        data.content = data.backups[v].content ||''
+                    }
+                }
+                data.backups = [];
                 loadFromContent(data,projectId);
             }else{
                 loadFromBlank({},projectId);
