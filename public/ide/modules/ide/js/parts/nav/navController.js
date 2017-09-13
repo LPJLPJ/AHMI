@@ -338,6 +338,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                 });
                                 try {
                                     var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
+                                    oldProjectData.lastModifiedTime = new Date().toLocaleString();
                                     oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
                                     // console.log(oldProjectData.thumbnail);
                                     oldProjectData.content = JSON.stringify(currentProject);
