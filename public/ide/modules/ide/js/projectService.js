@@ -454,7 +454,7 @@ ideServices
                 }
                 inChangingPage = true;
                 if (isInit){
-                    //console.log化页面');
+                    console.log('初始化页面');
                     if(oldPage){
                         if(oldPage.mode==1){
                             _.forEach(project.pages, function (__page,__pageIndex) {
@@ -465,7 +465,6 @@ ideServices
                             });
                             if (oldPageIndex!=_pageIndex){
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
-
                             }
                         }else{
                             intoNewPage();
@@ -474,12 +473,8 @@ ideServices
                         intoNewPage();
                     }
                 }else if (_pageIndex>=0){
-
-
                     if (oldPage){
-
                         _.forEach(project.pages, function (__page,__pageIndex) {
-
                             if (__page.id==oldPage.id){
                                 oldPageIndex=__pageIndex;
                             }
@@ -489,7 +484,6 @@ ideServices
                             console.log('页面间切换');
                             if (oldPage.mode==1){
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
-
                             }else{
                                 _self.OnPageSelected(_pageIndex,function(){
                                     _successCallback&&_successCallback(true);
@@ -498,22 +492,20 @@ ideServices
 
                         }else{
                             //console.log('相同页面点击');
-
                             _self.OnPageSelected(_pageIndex,function(){
                                 _successCallback&&_successCallback(true);
                             },isInit);
-
-
-
                         }
                     }else {
                         console.log('异常情况');
                         intoNewPage();
-
                     }
-
                 }
 
+                /**
+                 * 进入一个新page
+                 * private function
+                 */
                 function intoNewPage(){
                     var pageNode=CanvasService.getPageNode();
                     var currentPage=project.pages[_pageIndex];
@@ -528,48 +520,52 @@ ideServices
                     var pageCount=currentPage.layers.length;
 
                     pageNode.setBackgroundImage(null,function(){
-                        pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                            //pageNode.setWidth(project.currentSize.width);
-                            //pageNode.setHeight(project.currentSize.height);
-                            // console.log(currentPage.proJsonStr)
+                        //-
+                        // pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                        //     if (isInit){
+                        //         // console.log('init layer');
+                        //         updateLayerImage(0,function () {
+                        //             _self.ScaleCanvas('page');
+                        //             // console.log('currentPage',_.cloneDeep(currentPage))
+                        //             pageNode.deactivateAll();
+                        //             pageNode.renderAll();
+                        //             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                        //             _self.OnPageSelected(_pageIndex,_successCallback,true);
+                        //         })
+                        //     }else{
+                        //         console.log('不更新layer');
+                        //         _self.ScaleCanvas('page');
+                        //         pageNode.renderAll();
+                        //         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                        //         _self.OnPageSelected(_pageIndex,_successCallback);
+                        //     }
+                        // })
+
+                        //+
+                        _drawCanvasNode(currentPage,pageNode,function(){
                             if (isInit){
-                                // console.log('init layer');
                                 updateLayerImage(0,function () {
                                     _self.ScaleCanvas('page');
-                                    // console.log('currentPage',_.cloneDeep(currentPage))
-
-                                    // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
                                     pageNode.deactivateAll();
                                     pageNode.renderAll();
-                                    // console.log('page pro',JSON.stringify(pageNode.toJSON()));
-
                                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                                    // console.log('pageurl',''+currentPage.url,currentPage)
-                                    // setTestImg(''+currentPage.url)
-                                    // window.currentPage = currentPage
-                                    // _successCallback && _successCallback();
                                     _self.OnPageSelected(_pageIndex,_successCallback,true);
                                 })
-
-
-
-
                             }else{
                                 console.log('不更新layer');
                                 _self.ScaleCanvas('page');
-
-                                //pageNode.backgroundImage.src="";
                                 pageNode.renderAll();
-
-
                                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                                 _self.OnPageSelected(_pageIndex,_successCallback);
                             }
-
-
                         })
                     });
 
+                    /**
+                     * private function
+                     * @param _index
+                     * @param _successCallback
+                     */
                     function updateLayerImage(_index,_successCallback) {
                         // console.log('updating layer image')
                         if (_index==pageCount){
@@ -582,17 +578,8 @@ ideServices
                             })
                         }
                     }
-
-                    // function updateLayerImage(_index,_successCallback) {
-                    //     if (_index==pageCount){
-                    //         _successCallback&&_successCallback();
-                    //     }else{
-                    //
-                    //     }
-                    // }
-
                 }
-            }
+            };
 
             this.changeCurrentSubLayerIndex= function (_subLayerIndex,_successCallback) {
                 if (_subLayerIndex<0){
@@ -732,14 +719,12 @@ ideServices
                 _newLayer.info.width=fabLayer.getWidth();
                 _newLayer.info.height=fabLayer.getHeight();
 
-
                 currentPage.currentFabLayer=fabLayer;
                 pageNode.renderAll.bind(pageNode)();
 
                 _self.currentFabLayerIdList=[];
                 _self.currentFabLayerIdList.push(_newLayer.id);
                 _self.OnLayerSelected(_newLayer,_successCallback);
-
 
             };
 
@@ -1976,8 +1961,9 @@ ideServices
             };
 
 
-            /**
-             * 次要操作
+            /**edit in 2017/9/18 by lixiang
+             * 这个操作要遍历一遍数据结构，非常影响速度.
+             * 次要操作，重置所有的page、layer、subLayer的selected和current属性
              * Page空白被点击后的响应
              * @param pageIndex         序号
              * @param _successCallback  回调
@@ -1987,7 +1973,7 @@ ideServices
             this.OnPageClicked= function (pageIndex, _successCallback,skipClean) {
                 if (pageIndex<0){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 if (!skipClean){
@@ -2018,7 +2004,6 @@ ideServices
                                 })
                             })
                         })
-
                     }
                 );
                 _successCallback&&_successCallback();
@@ -2086,23 +2071,46 @@ ideServices
 
                     });
                 }else{
-                    pageNode.setBackgroundImage(null, function () {
-                        pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                            _self.OnPageClicked(pageIndex,null,skipClean);
+                    //-
+                    // pageNode.setBackgroundImage(null, function () {
+                    //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                    //         _self.OnPageClicked(pageIndex,null,skipClean);
+                    //
+                    //         pageNode.deactivateAll();
+                    //         pageNode.renderAll();
+                    //         currentPage.proJsonStr=pageNode.toJSON();
+                    //
+                    //
+                    //         currentPage.mode=0;
+                    //         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                    //
+                    //         _successCallback && _successCallback();
+                    //     });
+                    // });
 
+                    //+
+                    pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
+                        _drawCanvasNode(currentPage,pageNode,function(){
+
+                            //重新draw layer的背景图片,这些将展示在page上
+                            var layers = currentPage.layers||[];
+                            var count = 0;
+                            layers.map(function(layer,index){
+                                var layerFab = _self.getFabLayerByLayer(layer);
+                                if(layerFab){
+                                    layerFab.fire('OnRefresh',function(){
+                                        // console.log('重绘制',count++);
+                                    });
+                                }
+                            });
+                            _self.OnPageClicked(pageIndex,null,skipClean);
                             pageNode.deactivateAll();
                             pageNode.renderAll();
-                            currentPage.proJsonStr=pageNode.toJSON();
-
-
+                            // currentPage.proJsonStr=pageNode.toJSON();
                             currentPage.mode=0;
                             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-
                             _successCallback && _successCallback();
-
-
-                        });
-
+                        })
                     });
                 }
 
@@ -2402,9 +2410,17 @@ ideServices
 
 
             };
+
+            /**
+             * 效率低
+             * 遍历所有的layer、sublayer、widgets
+             * 重置所有的selected、current、currentSublayer属性
+             * @param layerIndex
+             * @param subLayerIndex
+             * @param _successCallback
+             */
             this.OnSubLayerClicked= function (layerIndex,subLayerIndex,_successCallback) {
                 _self.currentFabLayerIdList=[];
-
 
                 var currentPage=_self.getCurrentPage();
                 var currentLayer=currentPage.layers[layerIndex];
@@ -2430,37 +2446,28 @@ ideServices
                                 _subLayer.selected=true;
                                 currentSubLayer=_subLayer;
                                 currentSubLayer.currentFabWidget=null;
-
-
                             }else {
                                 _subLayer.current=false;
                                 _subLayer.selected=false;
                             }
                         }
-
                         _.forEach(_subLayer.widgets, function (_widget) {
                             _widget.current=false;
                             _widget.selected=false;
                         })
-
                     })
-
                 });
-
                 _successCallback&&_successCallback();
             };
+
             this.OnSubLayerSelected= function (layerIndex,subLayerIndex,_successCallback,forceReload) {
-
-
                 //除了当前的SubLayer,取消所有Page,Layer,SubLayer,Widget的current
                 var currentPage=_self.getCurrentPage();
-
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
-
                 //如果当前正在编辑subLayer,需要保存之前的subLayer再跳转
                 if (currentPage.mode==1){
                     _leaveFromSubLayer(_self.getCurrentSubLayer());
@@ -2472,30 +2479,23 @@ ideServices
                     alertErr()
                 }
                 if (!currentLayer){
-                    alertErr()
+                    alertErr();
                     return;
                 }
-
                 var currentSubLayer=currentLayer.subLayers[subLayerIndex];
-
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
-                    alertErr()
+                    alertErr();
                     return;
                 }
-
                 drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
-
                 var editInSameSubLayer=false;
                 if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
                     editInSameSubLayer=true;
                 }
-
                 OnSubLayerClicked(layerIndex,subLayerIndex);
-
                 //如果当前在编辑SubLayer,需要使所有Widget失焦,如果在编辑Page,需要重新loadFromJSON
                 var subLayerNode = CanvasService.getSubLayerNode();
-
                 var fabLayer=getFabricObject(currentLayer.id);
                 if (currentPage.mode==1&&editInSameSubLayer&&!forceReload){
 
@@ -2507,42 +2507,27 @@ ideServices
                     subLayerNode.renderAll();
 
                     currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
-
                     _successCallback && _successCallback();
-
-
                 }
                 else {
                     subLayerNode.clear();
                     subLayerNode.setBackgroundImage(null, function () {
                         subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
-
-
                             _self.ScaleCanvas('subCanvas',currentLayer);
-
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
                             currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
                             currentPage.mode=1;
-
-
-
                             renderingSubLayer=false;
-
                             _successCallback && _successCallback();
                         });
 
                     });
                     //console.log('');
-
                 }
             };
             var renderingSubLayer=false;
-            /**
-             *
-             */
+
 
             this.getFabLayerByLayer = function (layer) {
                 var fabLayer = null;
@@ -2553,9 +2538,7 @@ ideServices
                     }
                 });
                 return fabLayer;
-            }
-
-
+            };
 
             this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
 
@@ -2563,19 +2546,14 @@ ideServices
                 var subLayerNode=CanvasService.getSubLayerNode();
                 var currentSubLayer=subLayer;
                 var currentLayer=layer;
-
-
                 var layerFab = null;
 
                 if (currentLayer.showSubLayer.backgroundImage&&currentLayer.showSubLayer.backgroundImage!=''){
                     subLayerNode.clear();
-
-
                     subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
                         //subLayerNode.setWidth(currentLayer.info.width);
                         //subLayerNode.setHeight(currentLayer.info.height);
                         _self.ScaleCanvas('subCanvas',currentLayer);
-
                         subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
 
                             subLayerNode.deactivateAll();
@@ -2595,16 +2573,11 @@ ideServices
                             width:currentLayer.info.width,
                             height:currentLayer.info.height
                         })
-
-
                     })
                 }
                 else {
                     //subLayerNode.clear();
-
-
                     subLayerNode.setBackgroundImage(null, function () {
-
                         subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
                             subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
 
@@ -2626,34 +2599,24 @@ ideServices
                                 }else{
                                     _successCallback && _successCallback();
                                 }
-
                                 // renderingSubLayer = false;
                                 // _successCallback && _successCallback();
                             });
                         })
                     });
-
-
                 }
-
-
-
             };
 
 
 
             this.OnWidgetClicked= function (_target, _successCallback) {
                 //除了选中的layer,清除所有Layer,SubLayer,Widget的current
-
-
                 _self.currentFabLayerIdList=[];
-
                 var currentPage=_self.getCurrentPage();
                 currentPage.selected=false;
-
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 currentPage.selected=false;
@@ -2677,10 +2640,7 @@ ideServices
 
                                 _target.hasControls=true;
                                 SyncLevelFromFab(_widget,_target);
-
-
                             }else if (belongToGroup(_widget,_target)){
-
                                 _widget.selected=true;
                                 _widget.current=false;
                                 _subLayer.current=true;
@@ -2691,7 +2651,6 @@ ideServices
                                 var controlsVisibility=Preference.GROUP_CONTROL_VISIBLE;
                                 _target.setControlsVisibility(controlsVisibility);
                             } else {
-
                                 _widget.selected=false;
                                 _widget.current=false;
                             }
@@ -2727,7 +2686,7 @@ ideServices
 
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 if (!currentSubLayer){
@@ -4607,21 +4566,30 @@ ideServices
 
                 if (currentSubLayer){
                     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-
                 }
 
-                pageNode.setBackgroundImage(null, function () {
-                    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                        if (currentPage.mode==1){
-                            _leaveFromSubLayer(currentSubLayer,_successCallback);
-                        }else {
-                            _successCallback&&_successCallback();
-                        }
+                //-
+                // pageNode.setBackgroundImage(null, function () {
+                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                //         if (currentPage.mode==1){
+                //             _leaveFromSubLayer(currentSubLayer,_successCallback);
+                //         }else {
+                //             _successCallback&&_successCallback();
+                //         }
+                //
+                //
+                //     });
+                //     //console.log('pageNode',pageNode);
+                // });
 
-
-                    });
-                    //console.log('pageNode',pageNode);
-                });
+                //+
+                _drawCanvasNode(currentPage,pageNode,function(){
+                    if (currentPage.mode==1){
+                        _leaveFromSubLayer(currentSubLayer,_successCallback);
+                    }else {
+                        _successCallback&&_successCallback();
+                    }
+                })
             };
 
 
@@ -4647,7 +4615,7 @@ ideServices
             var _leaveFromSubLayer = function (currentSubLayer, _successCallback) {
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
-                    alertErr()
+                    alertErr();
                     return;
                 }
 
@@ -4667,23 +4635,15 @@ ideServices
                         totalNum -= 1;
                         if (totalNum <= 0) {
                             _successCallback && _successCallback();
-
                         }
                     }.bind(this);
                     _.forEach(pageNodeObjs, function (_fabLayer) {
                         _fabLayer.fire('OnRenderUrl', cb);
-
                     }.bind(this));
                 } else {
                     _successCallback && _successCallback();
                 }
-
-
-
-
-
-
-            }
+            };
 
             function belongToGroup(_obj,_target){
                 var result=false;
@@ -4752,7 +4712,7 @@ ideServices
 
 
             /**
-             *
+             * 进入sublayer后，背景为page的透视,在backgroundCanvas上画出page的透视。
              * @param width
              * @param height
              */
@@ -4764,10 +4724,8 @@ ideServices
 
                 var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
                 var pageBackgroundImgSrc = currentPage.backgroundImage||"";
-                //var pageFromJson = JSON.parse(currentPage.proJsonStr);
                 var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
                 var pageHeight = (project.currentSize&&project.currentSize.height)||480;
-                //console.log('got page width and height',pageWidth,pageHeight);
 
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
                 backgroundCanvas.width=_width;
@@ -4788,9 +4746,6 @@ ideServices
                     ctx.fill();
                     ctx.closePath();
                 }
-                //ctx.lineWidth = 1;
-                //ctx.strokeStyle = 'rgba(102,153,255,0.75)';
-                //ctx.stroke();
             }
 
             /**
@@ -4826,8 +4781,135 @@ ideServices
 
             }
 
+            /**
+             * edit in 2017/9/18 by lixiang
+             * 刷新一个Canvas节点，重新绘制展示的page或者layer,不重新渲染
+             * @param node canvas节点
+             * @param data 数据
+             * @param _cb
+             */
+            function _drawCanvasNode(data,node,_cb){
+                var type = data.type,
+                    layers,
+                    widgets;
+                //clear node
+                node.clear();
 
+                //add obj then render node
+                switch(type){
+                    case Type.MyPage:
+                        layers = data.layers;
+                        if(layers){
+                            layers.map(function(layer,index){
+                                _addFabricObjInCanvasNode(layer,node);
+                            });
+                            _cb&&_cb();
+                        }
+                        break;
+                    case Type.MyLayer:
+                        widgets = data.widgets;
+                        if(widgets){
+                            widgets.map(function(widget,index){
+                               _addFabricObjInCanvasNode(widget,node);
+                            });
+                            _cb&&_cb();
+                        }
+                        break;
+                    default:
+                        console.error('not match data type when refreash Canvas');
+                        break
+                }
+            }
 
+            /**
+             * eidt 2017/9/18 by lixiang
+             *
+             * 将fabric对象添加到Canvas
+             * 1、将layer添加到pageNode。2、将widget添加到subLayerNode。
+             * @param dataStructure 数据机构
+             * @param node canvas节点
+             * @param _successCallback 回调函数
+             * @private
+             */
+            function _addFabricObjInCanvasNode(dataStructure,node,_cb){
+                var initiator = {
+                    width: dataStructure.info.width,
+                    height: dataStructure.info.height,
+                    top: dataStructure.info.top,
+                    left: dataStructure.info.left,
+                    id: dataStructure.id,
+                    lockScalingFlip:true,
+                    hasRotatingPoint:false,
+                    shadow:{
+                        color:'rgba(0,0,0,0.4)',blur:2
+                    }
+                };
+                var addFabWidget = function(fabWidget){
+                    node.add(fabWidget);
+                };
+
+                switch (dataStructure.type){
+                    case 'MySlide':
+                        fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyProgress':
+                        fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyDashboard':
+                        fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyButton':
+                        fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyButtonGroup':
+                        fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyNumber':
+                        fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyTextArea':
+                        fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyKnob':
+                        fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyOscilloscope':
+                        fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MySwitch':
+                        fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyRotateImg':
+                        fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyDateTime':
+                        fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyScriptTrigger':
+                        fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyVideo':
+                        fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyAnimation':
+                        fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyLayer':
+                        fabric.MyLayer.fromLevel(dataStructure,addFabWidget,initiator);
+                        // node.add(new fabric.MyLayer(dataStructure,initiator));
+                        break;
+                    case 'MyNum':
+                        node.add(new fabric.MyNum(dataStructure,initiator));
+                        break;
+                    case 'MyTexNum':
+                        node.add(new fabric.MyTexNum(dataStructure,initiator));
+                        break;
+                    default :
+                        console.error('not match widget in preprocess!');
+                        break;
+                };
+                _cb&&_cb();
+            }
 
 
         }]);

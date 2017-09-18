@@ -78,11 +78,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     //MyLayer
     fabric.MyLayer = fabric.util.createClass(fabric.Object, {
         type: Type.MyLayer,
-
         initialize: function (layerId, options) {
-
             var self=this;
-
             //开始移动时Layer的Scale
             if (!this.initScale){
                 this.initScale={
@@ -90,25 +87,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     Y:1
                 }
             }
-
             this.callSuper('initialize', options);
             this.loadAll(layerId);
             this.layerId = layerId;
             this.lockRotation=true;
             this.hasRotatingPoint=false;
 
-
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
-
                 var layerNode=ProjectService.getFabricObject(self.id);
-
                 self.initPosition.left = self.getLeft();
                 self.initPosition.top = self.getTop();
                 self.initScale.X=layerNode.getScaleX().toFixed(2);
                 self.initScale.Y=layerNode.getScaleY().toFixed(2);
-
-
             });
 
             this.on('OnScaleRelease', function (objId) {
@@ -128,7 +119,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
-
             try{
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
@@ -136,29 +126,21 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     -(this.height / 2) ,
                     this.width ,
                     this.height );
-
                 var currentLayer=ProjectService.getCurrentLayer();
-
                 if (currentLayer&&ProjectService.scalingOperate.scaling&&ProjectService.scalingOperate.objId==this.id){
                     this.widgetImgs=[];
                     var layerNode= ProjectService.getFabricObject(currentLayer.id);
-
                     var angle=layerNode.getAngle()*Math.PI/180;
                     var sin=Math.sin(angle);
                     var cos=Math.cos(angle);
                     var deltaLeft=this.initPosition.left-this.getLeft();
                     var deltaTop=this.initPosition.top-this.getTop();
-
                     this.backgroundImg.width=this.width/layerNode.getScaleX()*this.initScale.X;
                     this.backgroundImg.height=this.height/layerNode.getScaleY()*this.initScale.Y;
-
                     this.backgroundImg.top=(-sin*deltaLeft+cos*deltaTop)/layerNode.getScaleY()-this.height/2;
                     this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
-
                 }
 
-                // var elem = this.backgroundImg.element;
-                // console.log('2',elem && elem.src)
                 if(this.backgroundImg.element){
                     // console.log('drawing background element',this.backgroundImg.element)
                     ctx.drawImage(this.backgroundImg.element,
@@ -188,15 +170,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         var layerWidth=layer.info.width/this.initScale.X;
         var layerHeight=layer.info.height/this.initScale.Y;
 
-
-
         this.initPosition={};
-
 
         if (layer.showSubLayer.url==''){
             backgroundImg = null;
         }else{
-
             backgroundImg.onload = (function () {
                 this.width = layerWidth;
                 this.height = layerHeight;
@@ -207,7 +185,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }).bind(this);
             backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
         }
-
         this.backgroundImg={
             element:backgroundImg,
             width:layerWidth,
@@ -215,11 +192,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             left:-layerWidth / 2,
             top:-layerHeight/2
         };
-
         this.backgroundColor=layer.showSubLayer.backgroundColor;
         this.initPosition.left = this.getLeft();
         this.initPosition.top = this.getTop();
-
     };
     fabric.MyLayer.prototype.refresh = function (self,cb) {
         this.renderUrlInPage(self,function () {
@@ -228,40 +203,28 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     }
     fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
         // console.log('rendering url in page')
-
         var currentLayer=ProjectService.getLevelById(self.id);
         var backgroundImg = new Image();
-
-
         backgroundImg.onload = function () {
             self.backgroundImg.element = backgroundImg;
-
             self.backgroundImg.width = self.width;
             self.backgroundImg.height = self.height;
             self.backgroundImg.left = -self.width / 2;
             self.backgroundImg.top = -self.height / 2;
-
-
             self.initPosition.left = self.getLeft();
             self.initPosition.top = self.getTop();
             var pageNode = CanvasService.getPageNode();
             pageNode.renderAll();
             cb && cb();
         }.bind(self);
-
         backgroundImg.onerror = function (err) {
             backgroundImg = null;
             cb && cb(err);
         }.bind(self);
-
         backgroundImg.src = currentLayer.showSubLayer.url;
-
-
     };
     fabric.MyLayer.prototype.toObject = (function (toObject) {
         return function () {
-
-
             return fabric.util.object.extend(toObject.call(this), {
                 //id: this.id,
                 loaded: this.loaded,
@@ -276,9 +239,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyLayer.fromObject = function (object, callback) {
         callback && callback(new fabric.MyLayer(object.id,object));
     };
+    fabric.MyLayer.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyLayer(level,option));
+    };
     fabric.MyLayer.async = true;
-
-
 
 
     //progress

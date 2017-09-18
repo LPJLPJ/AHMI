@@ -144,18 +144,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             c.style.cssText="transform:rotate(270deg);left:0;top:0";
             backgroundCanvas.style.cssText="transform:rotate(270deg);left:0;top:0";
             c1.style.cssText="transform:rotate(270deg);left:0;top:0";
-            //var cNode = CanvasService.getPageNode();
-            //var c1Node = CanvasService.getSubLayerNode();
-            //cNode.deactivateAll();
-            //c1Node.deactivateAll();
-            //var cArr=cNode.getObjects();
-            //var c1Arr=c1Node.getObjects();
-            //cArr.map(function(obj){
-            //    obj['selectable']=false;
-            //});
-            //c1Arr.map(function(obj){
-            //    obj['selectable']=false;
-            //});
         }
         function rotateCanvasRight(){
             var c = document.getElementById('c');
@@ -164,18 +152,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             c.style.cssText="transform:rotate(0deg);left:0;top:0";
             backgroundCanvas.style.cssText="transform:rotate(0deg);left:0;top:0";
             c1.style.cssText="transform:rotate(0deg);left:0;top:0";
-            //var cNode = CanvasService.getPageNode();
-            //var c1Node = CanvasService.getSubLayerNode();
-            //cNode.deactivateAll();
-            //c1Node.deactivateAll();
-            //var cArr=cNode.getObjects();
-            //var c1Arr=c1Node.getObjects();
-            //cArr.map(function(obj){
-            //    obj['selectable']=true;
-            //});
-            //c1Arr.map(function(obj){
-            //    obj['selectable']=true;
-            //});
         }
 
         //listen for nw.win.close
@@ -303,14 +279,17 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     var curScope = {};
 
                     ProjectService.getProjectCopyTo(curScope);
-                    console.log(curScope.project)
+                    // curScope.project = ProjectTransformService.transDateFileBase(curScope.project);//+
                     curScope.project.resourceList = ResourceService.getAllResource();
 
                     curScope.project.customTags = TagService.getAllCustomTags();
-                    curScope.project.timerTags = TagService.getAllTimerTags();
-                    curScope.project.timers = TagService.getTimerNum();
+                    curScope.project.timerTags = TagService.getAllTimerTags();//-
+                    curScope.project.timers = TagService.getTimerNum();//-
+                    // curScope.project.tagList = TagService.getAllTags();//+
+                    // curScope.project.timers = TagService.getTimerNum();//+
                     curScope.project.version = window.ideVersion;
                     curScope.project.CANId = NavModalCANConfigService.getCANId();
+
                     var currentProject = curScope.project;
                     //console.log('currentProject',currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
@@ -326,6 +305,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                             })
                         });
+                        console.log('transDateFileBase',curScope.project);
                         if (window.local) {
                             saveThumb(scaledThumb, function () {
                                 //save
@@ -404,42 +384,42 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                         project: currentProject
                                     }
                                 })
-                                    .success(function (t) {
-                                        var saveState = false
-                                        if (t == 'ok') {
-                                            toastr.info('保存成功');
-                                            saveState = true
-                                        } else {
-                                            toastr.warning('保存失败')
-                                        }
-                                        if (useSpinner) {
-                                            hideSpinner();
-                                        }
-                                        ProjectService.LoadCurrentOperate(projectClone, function () {
-                                            $scope.$emit('UpdateProject');
-                                            //modify url
-                                            if (saveState){
-                                                var newUrl = '/project/' + currentProject.projectId + '/editor'
-                                                if ("undefined" !== typeof history.pushState) {
-                                                    history.pushState(null, '',newUrl )
-                                                }else{
-                                                    window.location.assign(newUrl)
-                                                }
+                                .success(function (t) {
+                                    var saveState = false
+                                    if (t == 'ok') {
+                                        toastr.info('保存成功');
+                                        saveState = true
+                                    } else {
+                                        toastr.warning('保存失败')
+                                    }
+                                    if (useSpinner) {
+                                        hideSpinner();
+                                    }
+                                    ProjectService.LoadCurrentOperate(projectClone, function () {
+                                        $scope.$emit('UpdateProject');
+                                        //modify url
+                                        if (saveState){
+                                            var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                            if ("undefined" !== typeof history.pushState) {
+                                                history.pushState(null, '',newUrl )
+                                            }else{
+                                                window.location.assign(newUrl)
                                             }
-                                            _saveCb && _saveCb();
-                                        });
-                                    })
-                                    .error(function (err) {
-                                        console.log(err);
-                                        toastr.warning('保存失败');
-                                        if (useSpinner) {
-                                            hideSpinner();
                                         }
-                                        ProjectService.LoadCurrentOperate(projectClone, function () {
-                                            $scope.$emit('UpdateProject');
-                                        });
-
+                                        _saveCb && _saveCb();
                                     });
+                                })
+                                .error(function (err) {
+                                    console.log(err);
+                                    toastr.warning('保存失败');
+                                    if (useSpinner) {
+                                        hideSpinner();
+                                    }
+                                    ProjectService.LoadCurrentOperate(projectClone, function () {
+                                        $scope.$emit('UpdateProject');
+                                    });
+
+                                });
                             });
                         }
 
