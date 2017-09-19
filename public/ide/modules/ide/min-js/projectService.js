@@ -196,12 +196,10 @@ ideServices
                 });
                 var pageCount=project.pages.length;
                 openAllPage(0,_successCallback);
-                //
-
 
                 function openAllPage(_index, _successCallback) {
                     if (_index==pageCount){
-                        _self.changeCurrentPageIndex(0,_successCallback);
+                        _self.changeCurrentPageIndex(0,_successCallback,true);
                     }else{
                         _self.changeCurrentPageIndex(_index,function () {
                             openAllPage(_index+1,_successCallback);
@@ -478,23 +476,24 @@ ideServices
                         intoNewPage();
                     }
                 }else if (_pageIndex>=0){
+
                     if (oldPage){
                         _.forEach(project.pages, function (__page,__pageIndex) {
                             if (__page.id==oldPage.id){
                                 oldPageIndex=__pageIndex;
                             }
                         });
-                        //console.log(oldPageIndex+'/'+_pageIndex);
                         if (oldPageIndex!=_pageIndex){
-                            console.log('页面间切换');
+                            // console.log('页面间切换');
                             if (oldPage.mode==1){
+                                //从sublayer切换到page
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
                             }else{
+                                //从page切换到page
                                 _self.OnPageSelected(_pageIndex,function(){
                                     _successCallback&&_successCallback(true);
                                 });
                             }
-
                         }else{
                             //console.log('相同页面点击');
                             _self.OnPageSelected(_pageIndex,function(){
@@ -523,7 +522,10 @@ ideServices
                     OnPageClicked(_pageIndex);
 
                     var pageCount=currentPage.layers.length;
-
+                    var options = !!currentPage.backgroundImage?{
+                        width:project.currentSize.width,
+                        height:project.currentSize.height
+                    }:null;
                     pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
                         pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
                             //-
@@ -560,25 +562,25 @@ ideServices
                                 }else{
                                     console.log('不更新layer');
                                     var layers = currentPage.layers||[];
-                                    var count = 0;
                                     layers.map(function(layer,index){
                                         var layerFab = _self.getFabLayerByLayer(layer);
                                         if(layerFab){
                                             layerFab.fire('OnRefresh',function(){
-                                                // console.log('重绘制',count++);
+                                                if(index===layers.length-1){
+                                                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                                }
                                             });
                                         }
                                     });
                                     _self.ScaleCanvas('page');
                                     pageNode.renderAll();
-                                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                                     _successCallback&&_successCallback();
 
                                     console.log('cost time is:',Date.now()-timeStamp);
                                     // _self.OnPageSelected(_pageIndex,_successCallback);
                                 }
                             })
-                        });
+                        },options);
                     });
 
                     /**
@@ -2068,7 +2070,7 @@ ideServices
                     _self.OnPageClicked(pageIndex,null,skipClean);
                     pageNode.deactivateAll();
                     pageNode.renderAll();
-                    currentPage.proJsonStr=pageNode.toJSON();
+                    // currentPage.proJsonStr=pageNode.toJSON();
 
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
@@ -2105,31 +2107,36 @@ ideServices
                     // });
 
                     //+
+                    //切换到另一页，不需要更新这一页的缩率图
+                    var options = !!currentPage.backgroundImage?{
+                        width:project.currentSize.width,
+                        height:project.currentSize.height
+                    }:null;
                     pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
                         _drawCanvasNode(currentPage,pageNode,function(){
 
                             //重新draw layer的背景图片,这些将展示在page上
-                            var layers = currentPage.layers||[];
-                            var count = 0;
-                            layers.map(function(layer,index){
-                                var layerFab = _self.getFabLayerByLayer(layer);
-                                if(layerFab){
-                                    layerFab.fire('OnRefresh',function(){
-                                        // console.log('重绘制',count++);
-                                    });
-                                }
-                            });
+                            // var layers = currentPage.layers||[];
+                            // layers.map(function(layer,index){
+                            //     var layerFab = _self.getFabLayerByLayer(layer);
+                            //     if(layerFab){
+                            //         layerFab.fire('OnRefresh',function(){
+                            //             // if(index===layers.length-1){
+                            //             //     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                            //             // }
+                            //         });
+                            //     }
+                            // });
                             _self.OnPageClicked(pageIndex,null,skipClean);
                             pageNode.deactivateAll();
                             pageNode.renderAll();
                             // currentPage.proJsonStr=pageNode.toJSON();
                             currentPage.mode=0;
-                            currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                             _successCallback && _successCallback();
 
                             console.log('cost time is:',Date.now()-timeStamp);
                         })
-                    });
+                    },options);
                 }
 
             };
@@ -2357,7 +2364,7 @@ ideServices
                 var currentPage=_self.getCurrentPage();
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
 
@@ -2374,7 +2381,7 @@ ideServices
                     //console.log('currentFabLayer',currentFabLayer);
                     if(!currentFabLayer){
                         //error
-                        alertErr()
+                        alertErr();
                         return
                     }
 
@@ -2382,7 +2389,7 @@ ideServices
 
                     currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                     pageNode.renderAll();
-                    // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                     //console.log(currentPage.proJsonStr);
 
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -2390,13 +2397,14 @@ ideServices
                         _successCallback&&_successCallback(currentFabLayer)
                     });
                 }else {
+                    //从sublayer选择layer，需要先返回page
                     _backToPage(currentPage, function () {
                         currentPage.currentFabLayer=getFabricObject(_layer.id);
                         var currentFabLayer= currentPage.currentFabLayer;
                         if(!currentFabLayer){
                             //error
                             alertErr();
-                            return
+                            return;
                         }
 
                         pageNode.deactivateAll();
@@ -2414,15 +2422,8 @@ ideServices
                         _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
                             _successCallback&&_successCallback(currentFabLayer);
                         });
-
-
-
                     });
-
-
                 }
-
-
             };
 
             /**
@@ -2958,12 +2959,6 @@ ideServices
             this.UpdateCurrentThumb = function (_callback) {
                 var pageNode = CanvasService.getPageNode();
                 var currentPage=_self.getCurrentPage();
-                // $timeout(function () {
-                //
-                //     currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                //     _callback && _callback();
-                // })
-
                 currentPage.url = pageNode.toDataURL({format: 'jpeg', quality: '0.2'});
                 _callback && _callback();
             };
@@ -2972,7 +2967,7 @@ ideServices
                 var subLayerNode = CanvasService.getSubLayerNode();
                 if (!getCurrentLayer()) {
                     console.warn('当前Layer为空');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 getCurrentLayer().url = subLayerNode.toDataURL({format:'png'});
@@ -4666,7 +4661,7 @@ ideServices
             }
 
             /**
-             * 辅助函数
+             * 辅助函数，用来更新layer在page上的显示图片
              * 当离开当前SubLayer触发
              * @param _successCallback
              * @private
@@ -4687,21 +4682,25 @@ ideServices
                 currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
 
 
-                var pageNodeObjs = pageNode.getObjects();
-                var totalNum = pageNodeObjs.length;
-                if (totalNum > 0) {
-                    var cb = function () {
-                        totalNum -= 1;
-                        if (totalNum <= 0) {
-                            _successCallback && _successCallback();
-                        }
-                    }.bind(this);
-                    _.forEach(pageNodeObjs, function (_fabLayer) {
-                        _fabLayer.fire('OnRenderUrl', cb);
-                    }.bind(this));
-                } else {
-                    _successCallback && _successCallback();
-                }
+                _successCallback && _successCallback();//+
+
+                //不需要重新触发渲染了，重新绘制本身就会重新渲染
+                //-
+                // var pageNodeObjs = pageNode.getObjects();
+                // var totalNum = pageNodeObjs.length;
+                // if (totalNum > 0) {
+                //     var cb = function () {
+                //         totalNum -= 1;
+                //         if (totalNum <= 0) {
+                //             _successCallback && _successCallback();
+                //         }
+                //     }.bind(this);
+                //     _.forEach(pageNodeObjs, function (_fabLayer) {
+                //         _fabLayer.fire('OnRenderUrl', cb);
+                //     }.bind(this));
+                // } else {
+                //     _successCallback && _successCallback();
+                // }
             };
 
             function belongToGroup(_obj,_target){

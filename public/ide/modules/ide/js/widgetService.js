@@ -92,6 +92,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.layerId = layerId;
             this.lockRotation=true;
             this.hasRotatingPoint=false;
+            // this.backgroundImg =
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
@@ -180,7 +181,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.height = layerHeight;
                 this.loaded = true;
                 this.setCoords();
-                this.fire('image:loaded');
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
                 cb && cb()
             }).bind(this);
             backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
@@ -202,7 +204,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         })
     }
     fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
-        // console.log('rendering url in page')
+        // console.log('rendering url in page',self.id);
         var currentLayer=ProjectService.getLevelById(self.id);
         var backgroundImg = new Image();
         backgroundImg.onload = function () {
@@ -240,7 +242,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyLayer(object.id,object));
     };
     fabric.MyLayer.fromLevel = function(level,callback,option){
-        callback && callback(new fabric.MyLayer(level,option));
+        // console.log('level in',level);
+        callback && callback(new fabric.MyLayer(level.id,option));
     };
     fabric.MyLayer.async = true;
 

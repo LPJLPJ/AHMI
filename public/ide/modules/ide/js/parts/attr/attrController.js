@@ -10,9 +10,6 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
 
     });
 
-
-
-
     function initUserInterface(){
         $scope.component={
             out:{

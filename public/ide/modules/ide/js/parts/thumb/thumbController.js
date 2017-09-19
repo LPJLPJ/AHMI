@@ -188,8 +188,7 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
         }
         for (var i=0;i<$scope.project.pages.length;i++){
 
-            if ($scope.project.pages[i].id
-                ==page.id){
+            if ($scope.project.pages[i].id ==page.id){
                 ProjectService.changeCurrentPageIndex(i, function (keepInSamePage) {
                     var oldOperate=ProjectService.SaveCurrentOperate();
 
