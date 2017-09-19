@@ -50,6 +50,8 @@ ideServices
 
             var pageRendering = false;
 
+            var timeStamp = '';
+
             /**
              * 设置渲染状态
              * @param _rendering
@@ -441,6 +443,7 @@ ideServices
 
             var inChangingPage = false;
             this.changeCurrentPageIndex = function (_pageIndex, successCallback,isInit) {
+                timeStamp = Date.now();
                 var _successCallback = function () {
                     inChangingPage = false;
                     successCallback && successCallback()
@@ -563,6 +566,7 @@ ideServices
 
 
                                 currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                console.log('cost time',Date.now()-timeStamp);
                                 _self.OnPageSelected(_pageIndex,_successCallback);
                             }
 
@@ -2100,6 +2104,7 @@ ideServices
 
                             _successCallback && _successCallback();
 
+                            console.log('cost time',Date.now()-timeStamp);
 
                         });
 
