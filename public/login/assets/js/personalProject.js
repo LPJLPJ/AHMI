@@ -96,7 +96,7 @@ $(function(){
         //     $(elem).remove();
         // });
 
-        $('#addproject').siblings().each(function (index,elem) {
+        $('#addproject').siblings().eacheach(function (index,elem) {
             $(elem).remove();
         });
         $('#addCANproject').siblings().each(function(index,elem){
@@ -210,16 +210,41 @@ $(function(){
     }
 
 
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    // fs = require('fs');
+    // path = require('path');
+    $.contextMenu({
+        selector: '.projectpanel',
+        callback: function(key, options) {
+           if(key==="openFolder"){
+               // fs.readFileSync("c://2.txt",'utf-8');
+
+           }else if(key==="showInfo")
+           {
+               showProInfo($(this));
+           }
+
+        },
+        items: {
+            "openFolder": {name: "查看工程所在文件夹", icon: ""},
+            "sep1": "---------",
+            "showInfo": {name: "修改工程信息", icon: ""}
+        }
+    });
+
+
+
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
-        curPanel = $(this)
+        curPanel = $(this);
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         var project = $(this).attr('data-project');
         project = JSON.parse(project);
         curProject = project;
-        var curNodeName = e.target.nodeName
+        var curNodeName = e.target.nodeName;
         if (curNodeName == 'IMG'){
             //img
             //open in new window
@@ -244,8 +269,6 @@ $(function(){
             var customHeight = $('#customHeight');
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
-
-            //console.log('project',project)
             title.val(project.name);
             author.val(project.author);
             if(identifyCustomResolution(project.resolution)){
@@ -275,11 +298,51 @@ $(function(){
         }
     });
 
+    if(local){
+        $('.projectpanel').contextMenu(true);
+    } else {
+        $('.projectpanel').contextMenu(true);
+    }
+    function showProInfo(th){
+         curPanel = th;
+         curSelectedPanel = curPanel;
+         $('#basicinfo-template').attr('disabled',false);
+         $('#basicinfo-supportTouch').attr('disabled',false);
+         var project = th.attr('data-project');
+         project = JSON.parse(project);
+         curProject = project;
+         $('#modal-ok').html('确认');
+         var title = $('#basicinfo-title');
+         var author = $('#basicinfo-author');
+         var resolution = $('#basicinfo-resolution');
+         var customWidth = $('#customWidth');
+         var customHeight = $('#customHeight');
+         var template = $('#basicinfo-template');
+         var supportTouch = $('#basicinfo-supportTouch');
+         title.val(project.name);
+         author.val(project.author);
+         if(identifyCustomResolution(project.resolution)){
+             resolution.val(project.resolution);
+             $('#basicinfo-customResolution').hide();
+         }else{
+             resolution.val('custom');
+             $('#basicinfo-customResolution').show();
+             var arr=project.resolution.split('*');
+             customWidth.val(arr[0]);
+             customHeight.val(arr[1]);
+         }
+         template.val(project.template);
+         template.attr('disabled',true);
+         supportTouch.val(project.supportTouch);
+         supportTouch.attr('disabled',true);
+         $('#myModal').modal('show');
+    }
+
     function identifyCustomResolution(resolution){
         var result=false;
         $("#basicinfo-resolution option").each(function(){
             if($(this).val().trim()==resolution){
-                //console.log('haha',$(this).val().trim());
+                // console.log('haha',$(this).val().trim());
                 result=true;
             }
         });
@@ -488,6 +551,7 @@ $(function(){
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
         var thumbnailDOM = curPanel.find('img');
+        console.log("thumbnailDOM",thumbnailDOM);
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
         if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
             //changed
