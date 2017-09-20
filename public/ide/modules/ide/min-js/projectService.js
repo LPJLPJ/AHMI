@@ -441,7 +441,7 @@ ideServices
 
             var inChangingPage = false;
             this.changeCurrentPageIndex = function (_pageIndex, successCallback,isInit) {
-                timeStamp = Date.now();
+                // timeStamp = Date.now();
 
                 var _successCallback = function () {
                     inChangingPage = false;
@@ -456,7 +456,8 @@ ideServices
                 }
                 inChangingPage = true;
                 if (isInit){
-                    console.log('初始化页面');
+                    // 初始化
+                    // console.log('初始化页面');
                     if(oldPage){
                         if(oldPage.mode==1){
                             //oldstate is editing sublayer
@@ -484,7 +485,7 @@ ideServices
                             }
                         });
                         if (oldPageIndex!=_pageIndex){
-                            // console.log('页面间切换');
+                            // 页面切换
                             if (oldPage.mode==1){
                                 //从sublayer切换到page
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
@@ -495,7 +496,7 @@ ideServices
                                 });
                             }
                         }else{
-                            //console.log('相同页面点击');
+                            //进入同一个页面，从sublayer状态进入
                             _self.OnPageSelected(_pageIndex,function(){
                                 _successCallback&&_successCallback(true);
                             },isInit);
@@ -576,7 +577,7 @@ ideServices
                                     pageNode.renderAll();
                                     _successCallback&&_successCallback();
 
-                                    console.log('cost time is:',Date.now()-timeStamp);
+                                    // console.log('cost time is:',Date.now()-timeStamp);
                                     // _self.OnPageSelected(_pageIndex,_successCallback);
                                 }
                             })
@@ -1429,21 +1430,24 @@ ideServices
                 }
                 _.forEach(copyLayer.subLayers, function (_subLayer) {
                     _subLayer.id=_genUUID();
-                    var proJson1=_subLayer.proJsonStr;
-                    if(typeof proJson1==='string'){
-                        proJ
-                    }
-                    _.forEach(proJson1.objects, function (_fabWidget) {
-                        _.forEach(_subLayer.widgets, function (_widget) {
-                            _widget.$$hashKey=undefined;
-                            if (_widget.id==_fabWidget.id){
-                                var newId=_genUUID();
-                                _widget.id=newId;
-                                _fabWidget.id=newId;
-                            }
-                        })
-                    });
-                    _subLayer.proJsonStr=proJson1;
+                    // var proJson1=_subLayer.proJsonStr;
+                    // if(typeof proJson1==='string'){
+                    //     proJson1=JSON.parse(_subLayer.proJsonStr);
+                    // }
+                    // _.forEach(proJson1.objects, function (_fabWidget) {
+                    //     _.forEach(_subLayer.widgets, function (_widget) {
+                    //         _widget.$$hashKey=undefined;
+                    //         if (_widget.id==_fabWidget.id){
+                    //             var newId=_genUUID();
+                    //             _widget.id=newId;
+                    //             _fabWidget.id=newId;
+                    //         }
+                    //     })
+                    // });
+                    // _subLayer.proJsonStr=proJson1;
+                    _subLayer.widgets&&_subLayer.widgets.forEach(function(_widget,index){
+                        _widget.id = _genUUID();
+                    })
 
                 });
                 return copyLayer;
@@ -1454,36 +1458,49 @@ ideServices
                 pageCopy.id=Math.random().toString(36).substr(2);   //重置id
                 pageCopy.mode=0;    //显示page模式
                 pageCopy.current = false;
-                var proJson=pageCopy.proJsonStr;    //改proJson
-                _.forEach(proJson.objects, function (_fabLayer) {
-                    _.forEach(pageCopy.layers, function (_layer) {
-                        if (_layer.id==_fabLayer.id){
-                            var newId=Math.random().toString(36).substr(2);
-                            _layer.id=newId;
-                            _fabLayer.id=newId;
-                            // _fabLayer.layer= _.cloneDeep(_layer);
-                        }
-                    })
-                });
-                pageCopy.proJsonStr=proJson;
-                _.forEach(pageCopy.layers, function (_layer) {
-                    _.forEach(_layer.subLayers, function (_subLayer) {
-                        _subLayer.id=Math.random().toString(36).substr(2);
-                        var proJson1=_subLayer.proJsonStr;
-                        _.forEach(proJson1.objects, function (_fabWidget) {
-                            _.forEach(_subLayer.widgets, function (_widget) {
-                                if (_widget.id==_fabWidget.id){
-                                    var newId=Math.random().toString(36).substr(2);
-                                    _widget.id=newId;
-                                    _fabWidget.id=newId;
-                                }
-                            })
-                        });
-                        _subLayer.proJsonStr=proJson1;
-                    })
-                });
+                pageCopy.$$hashKey = undefined;
+                // var proJson=pageCopy.proJsonStr;    //改proJson
+                // _.forEach(proJson.objects, function (_fabLayer) {
+                //     _.forEach(pageCopy.layers, function (_layer) {
+                //         if (_layer.id==_fabLayer.id){
+                //             var newId=Math.random().toString(36).substr(2);
+                //             _layer.id=newId;
+                //             _fabLayer.id=newId;
+                //         }
+                //     })
+                // });
+                // pageCopy.proJsonStr=proJson;
+                // _.forEach(pageCopy.layers, function (_layer) {
+                //     _.forEach(_layer.subLayers, function (_subLayer) {
+                //         _subLayer.id=Math.random().toString(36).substr(2);
+                //         var proJson1=_subLayer.proJsonStr;
+                //         _.forEach(proJson1.objects, function (_fabWidget) {
+                //             _.forEach(_subLayer.widgets, function (_widget) {
+                //                 if (_widget.id==_fabWidget.id){
+                //                     var newId=Math.random().toString(36).substr(2);
+                //                     _widget.id=newId;
+                //                     _fabWidget.id=newId;
+                //                 }
+                //             })
+                //         });
+                //         _subLayer.proJsonStr=proJson1;
+                //     })
+                // });
 
-                // console.log('pagecopy',pageCopy)
+                var layers = pageCopy.layers;
+                var subLayers;
+                var widgets;
+                layers&&layers.forEach(function(_layer){
+                    _layer.id = _genUUID();
+                    subLayers = _layer.subLayers;
+                    subLayers&&subLayers.forEach(function(_subLayer){
+                        _subLayer.id=_genUUID();
+                        widgets = _subLayer.widgets;
+                        widgets&&widgets.forEach(function(_widget){
+                            _widget.id=_genUUID();
+                        })
+                    })
+                });
                 return pageCopy;
             }
 
@@ -1495,8 +1512,7 @@ ideServices
              */
             function _getCopyWidget(_widget){
                 var copyWidget= _.cloneDeep(_widget);
-                var newId=_genUUID();
-                copyWidget.id=newId;
+                copyWidget.id=_genUUID();
                 if(copyWidget&&copyWidget.info){
                     copyWidget.info.left+=5;
                     copyWidget.info.top+=5;
@@ -1512,7 +1528,6 @@ ideServices
                 var f = function(){
                     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
                 };
-
                 return ''+f()+f();
             }
 
@@ -1539,7 +1554,6 @@ ideServices
             };
 
             this.CopyLayer= function (_layer, _successCallback) {
-                console.log('_layer',_layer);
                 var fabLayer=_self.getFabricObject(_layer.id);
                 shearPlate = {
                     type: Type.MyLayer,
@@ -1731,39 +1745,9 @@ ideServices
                 }
                 var pastePage = _getCopyPage(shearPagePlate.objects[0]);
 
-                //修改page中的所有layer sublayer  widget的id
-                pastePage.id = _genUUID();
-                pastePage.$$hashKey = undefined;
-                var layers = pastePage.layers;
-                for(var i=0;i<layers.length;i++){
-                    var proJsonObj = pastePage.proJsonStr.objects;
-                    proJsonObj.forEach(function(item){
-                        if(item.id==layers[i].id){
-                            item.id = _genUUID();
-                            layers[i].id = item.id;
-                        }
-                    });
-                    var subLayers = layers[i].subLayers;
-                    for(var j=0;j<subLayers.length;j++){
-                        subLayers[j].id = _genUUID();
-                        proJsonObj = (typeof subLayers[j].proJsonStr==='string')?JSON.parse(subLayers[j].proJsonStr):subLayers[j].proJsonStr;
-                        var widgets = subLayers[j].widgets;
-                        for(var k=0;k<widgets.length;k++){
-                            proJsonObj.objects.forEach(function(item){
-                               if(item.id==widgets[k].id){
-                                   item.id = _genUUID();
-                                   widgets[k].id = item.id
-                               }
-                            });
-                        }
-                        // subLayers[j].proJsonStr = JSON.stringify(proJsonObj);
-                    }
-                }
-                // console.log('new pastePage',pastePage);
                 this.AddNewPage(pastePage, function () {
                     _successCallback && _successCallback();
                 });
-
 
             };
 
@@ -2081,7 +2065,7 @@ ideServices
                         pageNode.deactivateAll();
 
                         pageNode.renderAll();
-                        currentPage.proJsonStr=pageNode.toJSON();
+                        // currentPage.proJsonStr=pageNode.toJSON();
 
                         currentPage.mode=0;
                         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -2112,33 +2096,34 @@ ideServices
                         width:project.currentSize.width,
                         height:project.currentSize.height
                     }:null;
-                    pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
-                        _drawCanvasNode(currentPage,pageNode,function(){
+                    //+
+                    pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
+                        pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
+                            _drawCanvasNode(currentPage,pageNode,function(){
+                                //重新draw layer的背景图片,这些将展示在page上
+                                // var layers = currentPage.layers||[];
+                                // layers.map(function(layer,index){
+                                //     var layerFab = _self.getFabLayerByLayer(layer);
+                                //     if(layerFab){
+                                //         layerFab.fire('OnRefresh',function(){
+                                //             // if(index===layers.length-1){
+                                //             //     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                //             // }
+                                //         });
+                                //     }
+                                // });
+                                _self.OnPageClicked(pageIndex,null,skipClean);
+                                pageNode.deactivateAll();
+                                pageNode.renderAll();
+                                // currentPage.proJsonStr=pageNode.toJSON();
+                                currentPage.mode=0;
+                                _successCallback && _successCallback();
 
-                            //重新draw layer的背景图片,这些将展示在page上
-                            // var layers = currentPage.layers||[];
-                            // layers.map(function(layer,index){
-                            //     var layerFab = _self.getFabLayerByLayer(layer);
-                            //     if(layerFab){
-                            //         layerFab.fire('OnRefresh',function(){
-                            //             // if(index===layers.length-1){
-                            //             //     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                            //             // }
-                            //         });
-                            //     }
-                            // });
-                            _self.OnPageClicked(pageIndex,null,skipClean);
-                            pageNode.deactivateAll();
-                            pageNode.renderAll();
-                            // currentPage.proJsonStr=pageNode.toJSON();
-                            currentPage.mode=0;
-                            _successCallback && _successCallback();
-
-                            console.log('cost time is:',Date.now()-timeStamp);
-                        })
-                    },options);
+                                // console.log('cost time is:',Date.now()-timeStamp);
+                            })
+                        },options);
+                    });
                 }
-
             };
 
 

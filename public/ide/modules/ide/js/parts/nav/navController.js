@@ -305,7 +305,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                             })
                         });
-                        console.log('transDateFileBase',curScope.project);
                         if (window.local) {
                             saveThumb(scaledThumb, function () {
                                 //save
