@@ -1428,7 +1428,7 @@ ideServices
                     _subLayer.id=_genUUID();
                     var proJson1=_subLayer.proJsonStr;
                     if(typeof proJson1==='string'){
-                        proJ
+                        proJson1 = JSON.parse(proJson1);
                     }
                     _.forEach(proJson1.objects, function (_fabWidget) {
                         _.forEach(_subLayer.widgets, function (_widget) {
@@ -1441,7 +1441,6 @@ ideServices
                         })
                     });
                     _subLayer.proJsonStr=proJson1;
-
                 });
                 return copyLayer;
             }
@@ -4652,7 +4651,7 @@ ideServices
             var _leaveFromSubLayer = function (currentSubLayer, _successCallback) {
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
-                    alertErr()
+                    alertErr();
                     return;
                 }
 
