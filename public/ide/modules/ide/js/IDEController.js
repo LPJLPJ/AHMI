@@ -355,7 +355,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             //
             //readCache();
 
-            globalProject = GlobalService.getBlankProject()
+            globalProject = GlobalService.getBlankProject();
             globalProject.projectId = id;
             //change resolution
             //console.log(data);
