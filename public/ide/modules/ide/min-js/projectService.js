@@ -477,7 +477,7 @@ ideServices
                         intoNewPage();
                     }
                 }else if (_pageIndex>=0){
-
+                    //切换page
                     if (oldPage){
                         _.forEach(project.pages, function (__page,__pageIndex) {
                             if (__page.id==oldPage.id){
@@ -487,10 +487,10 @@ ideServices
                         if (oldPageIndex!=_pageIndex){
                             // 页面切换
                             if (oldPage.mode==1){
-                                //从sublayer切换到page
+                                //从sublayer切换到page,进入不同的页面
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
                             }else{
-                                //从page切换到page
+                                //从page a 进入 page b
                                 _self.OnPageSelected(_pageIndex,function(){
                                     _successCallback&&_successCallback(true);
                                 });
@@ -562,6 +562,7 @@ ideServices
                                     })
                                 }else{
                                     console.log('不更新layer');
+                                    console.log('cb in intoNewPage',currentPage.name);
                                     var layers = currentPage.layers||[];
                                     layers.map(function(layer,index){
                                         var layerFab = _self.getFabLayerByLayer(layer);
@@ -2051,6 +2052,7 @@ ideServices
                 var pageNode = CanvasService.getPageNode();
 
                 if (currentPage.mode==0&&editInSamePage&&!forceReload){
+                    //当前在page a状态，并且点击了page a
                     _self.OnPageClicked(pageIndex,null,skipClean);
                     pageNode.deactivateAll();
                     pageNode.renderAll();
@@ -2060,6 +2062,7 @@ ideServices
 
                     _successCallback && _successCallback();
                 }else if (currentPage.mode==1){
+                    //当前在sublayer状态
                     _backToPage(currentPage, function () {
                         _self.OnPageClicked(pageIndex,null,skipClean);
                         pageNode.deactivateAll();
@@ -2067,12 +2070,15 @@ ideServices
                         pageNode.renderAll();
                         // currentPage.proJsonStr=pageNode.toJSON();
 
+                        console.log('cb in _backToPage',currentPage.name);
                         currentPage.mode=0;
                         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+
                         _successCallback && _successCallback();
 
                     });
                 }else{
+                    //当前在page a状态，并且点击了page b
                     //-
                     // pageNode.setBackgroundImage(null, function () {
                     //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
@@ -4621,13 +4627,21 @@ ideServices
                 //     //console.log('pageNode',pageNode);
                 // });
 
-                //+
+                //+ 离开page之前，更新layer的backgroundImage
+                if(currentPage.mode===1){
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.deactivateAll();
+                    subLayerNode.renderAll();
+                    currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                }
                 _drawCanvasNode(currentPage,pageNode,function(){
+                    //-
                     if (currentPage.mode==1){
                         _leaveFromSubLayer(currentSubLayer,_successCallback);
                     }else {
                         _successCallback&&_successCallback();
                     }
+
                 })
             };
 
@@ -4664,28 +4678,23 @@ ideServices
                 subLayerNode.deactivateAll();
                 subLayerNode.renderAll();
 
-                currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
-
-
-                _successCallback && _successCallback();//+
-
-                //不需要重新触发渲染了，重新绘制本身就会重新渲染
+                // currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                 //-
-                // var pageNodeObjs = pageNode.getObjects();
-                // var totalNum = pageNodeObjs.length;
-                // if (totalNum > 0) {
-                //     var cb = function () {
-                //         totalNum -= 1;
-                //         if (totalNum <= 0) {
-                //             _successCallback && _successCallback();
-                //         }
-                //     }.bind(this);
-                //     _.forEach(pageNodeObjs, function (_fabLayer) {
-                //         _fabLayer.fire('OnRenderUrl', cb);
-                //     }.bind(this));
-                // } else {
-                //     _successCallback && _successCallback();
-                // }
+                var pageNodeObjs = pageNode.getObjects();
+                var totalNum = pageNodeObjs.length;
+                if (totalNum > 0) {
+                    var cb = function () {
+                        totalNum -= 1;
+                        if (totalNum <= 0) {
+                            _successCallback && _successCallback();
+                        }
+                    }.bind(this);
+                    _.forEach(pageNodeObjs, function (_fabLayer) {
+                        _fabLayer.fire('OnRenderUrl', cb);
+                    }.bind(this));
+                } else {
+                    _successCallback && _successCallback();
+                }
             };
 
             function belongToGroup(_obj,_target){

@@ -181,8 +181,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.height = layerHeight;
                 this.loaded = true;
                 this.setCoords();
-                var pageNode = CanvasService.getPageNode();
-                pageNode.renderAll();
+                // var pageNode = CanvasService.getPageNode();
+                // pageNode.renderAll();
                 cb && cb()
             }).bind(this);
             backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
