@@ -291,7 +291,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     curScope.project.CANId = NavModalCANConfigService.getCANId();
 
                     var currentProject = curScope.project;
-                    //console.log('currentProject',currentProject);
+                    console.log('currentProject',currentProject);
                     var thumb=_.cloneDeep(currentProject.pages[0].url);
                     scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
                         _.forEach(currentProject.pages,function (_page) {

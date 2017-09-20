@@ -790,7 +790,7 @@ ideServices
                 _self.currentFabWidgetIdList.push(_newWidget.id);
 
                 var syncSublayer = function(fabWidget) {
-                    currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                    // currentSubLayer.proJsonStr= subLayerNode.toJSON();
                     currentSubLayer.widgets.push(_newWidget);
                     currentSubLayer.currentFabWidget=fabWidget;
 
@@ -2380,7 +2380,7 @@ ideServices
 
                     currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                     pageNode.renderAll();
-                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                     //console.log(currentPage.proJsonStr);
 
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -2602,7 +2602,7 @@ ideServices
                         subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
-                            currentSubLayer.proJsonStr=subLayerNode.toJSON();
+                            // currentSubLayer.proJsonStr=subLayerNode.toJSON();
                             currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                             layerFab = self.getFabLayerByLayer(currentLayer);
                             if (layerFab) {
@@ -2645,7 +2645,7 @@ ideServices
                                 _self.ScaleCanvas('subCanvas',currentLayer);
                                 subLayerNode.deactivateAll();
                                 subLayerNode.renderAll();
-                                currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                                // currentSubLayer.proJsonStr= subLayerNode.toJSON();
                                 currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
                                 layerFab = self.getFabLayerByLayer(currentLayer);
                                 if (layerFab) {
@@ -3086,7 +3086,6 @@ ideServices
                         },{
                             width:currentLayer.info.width,
                             height:currentLayer.info.height
-
                         })
                 }
             };

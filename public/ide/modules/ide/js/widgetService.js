@@ -181,8 +181,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.height = layerHeight;
                 this.loaded = true;
                 this.setCoords();
-                // var pageNode = CanvasService.getPageNode();
-                // pageNode.renderAll();
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
                 cb && cb()
             }).bind(this);
             backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
@@ -202,7 +202,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         this.renderUrlInPage(self,function () {
             cb && cb();
         })
-    }
+    };
     fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
         // console.log('rendering url in page',self.id);
         var currentLayer=ProjectService.getLevelById(self.id);
