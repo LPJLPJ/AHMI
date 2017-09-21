@@ -2112,9 +2112,6 @@ ideServices
 
             };
 
-
-
-
             /**
              * 当前选中的layer列表
              * @type {Array}
