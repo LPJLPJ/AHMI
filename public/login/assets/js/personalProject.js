@@ -378,7 +378,7 @@ $(function(){
             if (local){
                 project.createTime = new Date().toLocaleString();
                 project.lastModifiedTime =  new Date().toLocaleString();
-                project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
+                project._id = ''+Date.now()+Math.round((Math.random()+1)*1000);
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources');
