@@ -121,6 +121,7 @@ $(function(){
             //console.log('newProject'+i,newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
+            delete newProject.backups;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
 
             addProjectButton.after(html);
