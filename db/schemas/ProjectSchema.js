@@ -14,6 +14,8 @@ var ProjectSchema = new mongoose.Schema({
     curSize:String,
     maxSize:String,
     thumbnail:String,
+    shared:{type:Boolean,default:false},
+    sharedKey:{type:String},
     content:{type:String},
     backups:[{
         time:Date,

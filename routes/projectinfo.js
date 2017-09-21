@@ -14,6 +14,8 @@ var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
 var Canvas = require('canvas');
 var archiver = require('archiver');
+var crypto = require('crypto');
+
 var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
@@ -26,6 +28,36 @@ projectRoute.getAllProjects=function(req, res){
         }
         res.end(projects)
     })
+}
+
+function generateUserKey(projectId,sharedKey,cb) {
+    var hash = crypto.createHash('sha256');
+    hash.on('readable', function() {
+        var data = hash.read();
+        if (data) {
+           data = data.toString('hex').slice(0,5)
+        }else{
+            data = ''
+        }
+        cb && cb(data)
+    });
+
+    hash.write(projectId+sharedKey);
+    hash.end();
+}
+
+function hasValidKey(user,projectId,sharedKey,cb) {
+    if (user && user.sharedKey){
+        generateUserKey(projectId,sharedKey,function (data) {
+            if (data === user.sharedKey){
+                cb && cb(true)
+            }else{
+                cb && cb(false)
+            }
+        })
+    }else{
+        cb && cb(false)
+    }
 }
 
 projectRoute.getProjectById = function (req, res) {
@@ -42,10 +74,32 @@ projectRoute.getProjectById = function (req, res) {
                 errHandler(res,500,'project is null');
             }else if (project.userId == userId){
                 res.render('ide/index.html')
-            }else{
+            }else if(!userId){
                 res.render('login/login.html',{
                     title:'重新登录'
                 });
+                // res.render('ide/index.html')
+            }else{
+                //user logged in, but not project owner
+                if (!!project.shared){
+
+                    hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
+                        if (result){
+                            res.render('ide/index.html')
+                        }else{
+                            res.render('ide/share.html',{
+                                title:project.name
+                            })
+                        }
+                    })
+
+                }else{
+                    res.render('login/login.html',{
+                        title:'重新登录'
+                    });
+                }
+
+
             }
 
         })
