@@ -96,7 +96,7 @@ $(function(){
         //     $(elem).remove();
         // });
 
-        $('#addproject').siblings().eacheach(function (index,elem) {
+        $('#addproject').siblings().each(function (index,elem) {
             $(elem).remove();
         });
         $('#addCANproject').siblings().each(function(index,elem){
@@ -210,27 +210,52 @@ $(function(){
     }
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////
-
-    // fs = require('fs');
-    // path = require('path');
+    //contextMenu last edit : LH 2017/9/21
     $.contextMenu({
         selector: '.projectpanel',
-        callback: function(key, options) {
-           if(key==="openFolder"){
-               // fs.readFileSync("c://2.txt",'utf-8');
-
-           }else if(key==="showInfo")
-           {
-               showProInfo($(this));
-           }
+        callback: function(key) {
+            curPanel = $(this);
+            var project = $(this).attr('data-project');
+            project = JSON.parse(project);
+            curProject=project;
+            switch (key){
+                case "openFolder":
+                   var localprojectpath = path.join(localProjectDir,String(project._id));
+                   var gui = require('nw.gui');
+                   // gui.Shell.showItemInFolder(localprojectpath);
+                   gui.Shell.openItem(localprojectpath);
+                   break;
+                case "showInfo":
+                   showProInfo($(this));
+                   break;
+                case "deletePro":
+                   closeModal.modal('show');
+                   break;
+                default:
+             }
 
         },
-        items: {
-            "openFolder": {name: "查看工程所在文件夹", icon: ""},
-            "sep1": "---------",
-            "showInfo": {name: "修改工程信息", icon: ""}
+        build:function(){
+            if(local){
+                return {
+                    items: {
+                        "openFolder": {name: "查看工程所在文件夹"},
+                        "showInfo": {name: "修改工程信息"},
+                        "sep1": "---------",
+                        "deletePro": {name: "删除工程"}
+                    }
+                };
+            }else{
+                return{
+                    items:{
+                        "showInfo": {name: "修改工程信息"},
+                        "sep1": "---------",
+                        "deletePro": {name: "删除工程"}
+                    }
+                };
+            }
         }
+
     });
 
 
@@ -298,19 +323,20 @@ $(function(){
         }
     });
 
-    if(local){
-        $('.projectpanel').contextMenu(true);
-    } else {
-        $('.projectpanel').contextMenu(true);
-    }
-    function showProInfo(th){
-         curPanel = th;
+    //控制右键菜单是否显示
+    // if(local===false){
+    //     $('.projectpanel').contextMenu(false);
+    // }
+
+    function showProInfo(cur){
+         curPanel = cur;
          curSelectedPanel = curPanel;
          $('#basicinfo-template').attr('disabled',false);
          $('#basicinfo-supportTouch').attr('disabled',false);
-         var project = th.attr('data-project');
+         var project = cur.attr('data-project');
          project = JSON.parse(project);
          curProject = project;
+
          $('#modal-ok').html('确认');
          var title = $('#basicinfo-title');
          var author = $('#basicinfo-author');
@@ -445,7 +471,7 @@ $(function(){
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources');
-                //console.log(localprojectpath);
+
 
                 try {
                     mkdir.sync(localresourcepath);
