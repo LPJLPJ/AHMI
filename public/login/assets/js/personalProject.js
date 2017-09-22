@@ -107,6 +107,12 @@ $(function(){
         var projects = readLocalProjects('normal').map(function (raw) {
             return JSON.parse(raw);
         });
+        projects.sort(function(p1,p2){
+            var s1 = parseInt(String(p1._id).slice(0,String(p1._id).length-4));
+            var s2 = parseInt(String(p2._id).slice(0,String(p2._id).length-4));
+            return s2-s1;
+        });
+        // console.log('projects',projects);
 
         var CANProjects = readLocalProjects('CAN').map(function(raw){
             return JSON.parse(raw);

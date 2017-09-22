@@ -474,34 +474,35 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 modalInstance.result.then(function(result){
                     showSpinner();
                     var projectUrl = ResourceService.getProjectUrl(),
-                        dataUrl = path.join(projectUrl, 'project.json'),
+                        oldJsonUrl = path.join(projectUrl, 'project.json'),
                         newId = ''+Date.now()+Math.round((Math.random()+1)*1000),
                         pattern = new RegExp(String(projectId),"g"),
                         localProjectPath = path.join(__dirname,'localproject'),
-                        projectStr = readSingleFile(dataUrl,true),
+                        projectStr = readSingleFile(oldJsonUrl,true),
                         project;
 
                     projectStr = projectStr.replace(pattern,newId);
                     project = JSON.parse(projectStr);
                     (!!result.saveAsName)?(project.name=result.saveAsName):(project.name=project.name+'副本');
                     (!!result.saveAsAuthor)?(project.author=result.saveAsAuthor):'';
-                    project.createdTime = Date.now();
-                    project.lastModified = Date.now();
+                    project.createTime = new Date().toLocaleString();
+                    project.lastModifiedTime = new Date().toLocaleString();
 
 
-                    var newProjectPath = path.join(localProjectPath,newId)
+                    var newProjectPath = path.join(localProjectPath,newId);
 
                     fse.emptyDir(newProjectPath,function(err){
                         if(err){
                             console.log(err);
                             toastr.error('另存为出错');
                         }
+                        console.log(projectUrl,newProjectPath);
                         fse.copy(projectUrl,newProjectPath,function(err){
                             if(err){
                                 console.error(err);
                                 toastr.error('另存为出错');
                             }
-                            fse.writeFile(path.join(projectUrl,'project.json'),JSON.stringify(project),function(err){
+                            fse.writeFile(path.join(newProjectPath,'project.json'),JSON.stringify(project),function(err){
                                 if(err){
                                     console.log(err);
                                     toastr.error('另存为出错');
