@@ -88,14 +88,16 @@ projectRoute.getProjectById = function (req, res) {
                             res.render('ide/index.html')
                         }else{
                             res.render('ide/share.html',{
-                                title:project.name
+                                title:project.name,
+                                share:true
                             })
                         }
                     })
 
                 }else{
-                    res.render('login/login.html',{
-                        title:'重新登录'
+                    res.render('ide/share.html',{
+                        title:'没有权限',
+                        share:false
                     });
                 }
 
@@ -129,6 +131,62 @@ projectRoute.getProjectContent = function (req, res) {
         //console.log(projectId)
         errHandler(res,500,'error')
     }
+}
+
+projectRoute.updateShare = function (req, res) {
+    var projectId = req.params.id
+    var shareState = (req.body.share === 'true');
+    if (projectId && projectId!=''){
+        var shareInfo = {}
+        if (shareState) {
+            shareInfo = {
+                shared: true,
+                sharedKey:parseInt(Math.random()*9000+1000)
+            }
+        }else {
+            shareInfo = {
+                shared: false,
+                sharedKey:''
+            }
+        }
+        ProjectModel.updateShare(projectId,shareInfo,function (err,newProject) {
+            if (err){
+                errHandler(res,500,JSON.stringify(err))
+            }else{
+                res.end(JSON.stringify({
+                    shared:newProject.shared,
+                    sharedKey:newProject.sharedKey
+                }))
+            }
+        })
+
+    }else
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+}
+
+
+projectRoute.getShareInfo = function (req, res) {
+    var projectId = req.params.id
+
+    if (projectId && projectId!=''){
+
+        ProjectModel.findById(projectId,function (err,_project) {
+            if (err){
+                errHandler(res,500,JSON.stringify(err))
+            }else{
+                res.end(JSON.stringify({
+                    shared:_project.shared,
+                    sharedKey:_project.sharedKey
+                }))
+            }
+        })
+
+    }else
+    //console.log(projectId)
+        errHandler(res,500,'error')
+}
 }
 
 projectRoute.getBackupList = function (req, res) {
