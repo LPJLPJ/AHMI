@@ -219,16 +219,66 @@ $(function(){
     }
 
 
+    //contextMenu last edit : LH 2017/9/21
+    $.contextMenu({
+        selector: '.projectpanel',
+        callback: function(key) {
+            curPanel = $(this);
+            var project = $(this).attr('data-project');
+            project = JSON.parse(project);
+            curProject=project;
+            switch (key){
+                case "openFolder":
+                   var localprojectpath = path.join(localProjectDir,String(project._id));
+                   var gui = require('nw.gui');
+                   // gui.Shell.showItemInFolder(localprojectpath);
+                   gui.Shell.openItem(localprojectpath);
+                   break;
+                case "showInfo":
+                   showProInfo($(this));
+                   break;
+                case "deletePro":
+                   closeModal.modal('show');
+                   break;
+                default:
+             }
+
+        },
+        build:function(){
+            if(local){
+                return {
+                    items: {
+                        "openFolder": {name: "查看工程所在文件夹"},
+                        "showInfo": {name: "修改工程信息"},
+                        "sep1": "---------",
+                        "deletePro": {name: "删除工程"}
+                    }
+                };
+            }else{
+                return{
+                    items:{
+                        "showInfo": {name: "修改工程信息"},
+                        "sep1": "---------",
+                        "deletePro": {name: "删除工程"}
+                    }
+                };
+            }
+        }
+
+    });
+
+
+
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
-        curPanel = $(this)
+        curPanel = $(this);
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         var project = $(this).attr('data-project');
         project = JSON.parse(project);
         curProject = project;
-        var curNodeName = e.target.nodeName
+        var curNodeName = e.target.nodeName;
         if (curNodeName == 'IMG'){
             //img
             //open in new window
@@ -253,8 +303,6 @@ $(function(){
             var customHeight = $('#customHeight');
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
-
-            //console.log('project',project)
             title.val(project.name);
             author.val(project.author);
             if(identifyCustomResolution(project.resolution)){
@@ -284,11 +332,52 @@ $(function(){
         }
     });
 
+    //控制右键菜单是否显示
+    // if(local===false){
+    //     $('.projectpanel').contextMenu(false);
+    // }
+
+    function showProInfo(cur){
+         curPanel = cur;
+         curSelectedPanel = curPanel;
+         $('#basicinfo-template').attr('disabled',false);
+         $('#basicinfo-supportTouch').attr('disabled',false);
+         var project = cur.attr('data-project');
+         project = JSON.parse(project);
+         curProject = project;
+
+         $('#modal-ok').html('确认');
+         var title = $('#basicinfo-title');
+         var author = $('#basicinfo-author');
+         var resolution = $('#basicinfo-resolution');
+         var customWidth = $('#customWidth');
+         var customHeight = $('#customHeight');
+         var template = $('#basicinfo-template');
+         var supportTouch = $('#basicinfo-supportTouch');
+         title.val(project.name);
+         author.val(project.author);
+         if(identifyCustomResolution(project.resolution)){
+             resolution.val(project.resolution);
+             $('#basicinfo-customResolution').hide();
+         }else{
+             resolution.val('custom');
+             $('#basicinfo-customResolution').show();
+             var arr=project.resolution.split('*');
+             customWidth.val(arr[0]);
+             customHeight.val(arr[1]);
+         }
+         template.val(project.template);
+         template.attr('disabled',true);
+         supportTouch.val(project.supportTouch);
+         supportTouch.attr('disabled',true);
+         $('#myModal').modal('show');
+    }
+
     function identifyCustomResolution(resolution){
         var result=false;
         $("#basicinfo-resolution option").each(function(){
             if($(this).val().trim()==resolution){
-                //console.log('haha',$(this).val().trim());
+                // console.log('haha',$(this).val().trim());
                 result=true;
             }
         });
@@ -391,7 +480,7 @@ $(function(){
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources');
-                //console.log(localprojectpath);
+
 
                 try {
                     mkdir.sync(localresourcepath);
@@ -497,6 +586,7 @@ $(function(){
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
         var thumbnailDOM = curPanel.find('img');
+        console.log("thumbnailDOM",thumbnailDOM);
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
         if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
             //changed
