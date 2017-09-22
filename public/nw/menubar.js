@@ -247,9 +247,10 @@
                 }
             })
         }
-
-        autoCheck();
-
+        console.log(process.env.debug,typeof process.env.debug);
+        if(process.env.debug!=='true'){
+            autoCheck();
+        }
         /**
          * 展示更新面板
          * @return {[type]} [description]

@@ -121,6 +121,7 @@ $(function(){
             //console.log('newProject'+i,newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
+            delete newProject.backups;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
 
             addProjectButton.after(html);
@@ -378,7 +379,7 @@ $(function(){
             if (local){
                 project.createTime = new Date().toLocaleString();
                 project.lastModifiedTime =  new Date().toLocaleString();
-                project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
+                project._id = ''+Date.now()+Math.round((Math.random()+1)*1000);
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources');
