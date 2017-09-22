@@ -176,6 +176,10 @@ router.route('/project/:id/editor')
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent);
 
+router.route('/project/:id/share')
+    .get(projectInfo.getShareInfo)
+    .post(projectInfo.updateShare)
+
 router.route('/project/:id/save')
     .put(projectInfo.saveProject);
 router.route('/project/:id/saveAs')
