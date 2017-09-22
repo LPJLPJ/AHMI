@@ -583,8 +583,8 @@ projectRoute.generateLocalProject = function(req, res){
                 tempPro.supportTouch = project.supportTouch;
                 tempPro.resolution = project.resolution;
                 tempPro._id = project._id;
-                tempPro.createdTime = project.createTime;
-                tempPro.lastModifiedTime = project.lastModifiedTime;
+                tempPro.createTime = new Date().toLocaleString();
+                tempPro.lastModifiedTime = new Date().toLocaleString();
                 //check and change resource url
                 var transformSrc = function(key,value){
                     //console.log('key');

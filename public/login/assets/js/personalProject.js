@@ -124,6 +124,8 @@ $(function(){
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
+            console.log('newProject.createTime',newProject.createTime);
+            console.log(new Date(newProject.createTime));
             //console.log('newProject'+i,newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
