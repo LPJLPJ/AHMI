@@ -134,8 +134,9 @@ projectRoute.getProjectContent = function (req, res) {
 }
 
 projectRoute.updateShare = function (req, res) {
+
     var projectId = req.params.id
-    var shareState = (req.body.share === 'true');
+    var shareState = !!req.body.share
     if (projectId && projectId!=''){
         var shareInfo = {}
         if (shareState) {
@@ -149,18 +150,17 @@ projectRoute.updateShare = function (req, res) {
                 sharedKey:''
             }
         }
+
         ProjectModel.updateShare(projectId,shareInfo,function (err,newProject) {
             if (err){
                 errHandler(res,500,JSON.stringify(err))
             }else{
-                res.end(JSON.stringify({
-                    shared:newProject.shared,
-                    sharedKey:newProject.sharedKey
-                }))
+
+                res.end(JSON.stringify(shareInfo))
             }
         })
 
-    }else
+    }else{
         //console.log(projectId)
         errHandler(res,500,'error')
     }
@@ -183,10 +183,11 @@ projectRoute.getShareInfo = function (req, res) {
             }
         })
 
-    }else
-    //console.log(projectId)
+    }else{
+        //console.log(projectId)
         errHandler(res,500,'error')
-}
+    }
+
 }
 
 projectRoute.getBackupList = function (req, res) {

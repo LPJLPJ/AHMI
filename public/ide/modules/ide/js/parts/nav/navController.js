@@ -86,6 +86,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     generateDataFile:generateDataFile,
                     play:play,
                     openPanel:openPanel,
+                    openShare:openShare,
                     openCANPanel:openCANPanel,
                     runSimulator:runSimulator,
                     closeSimulator:closeSimulator,
@@ -976,6 +977,33 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             return status;
         }
 
+        function openShare() {
+            console.log('share')
+            /**
+             * 利用$uiModal服务，制作模态窗口
+             */
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'shareModal.html',
+                controller: 'shareModalCtl',
+                size: 'md',
+                resolve: {
+                    id:function () {
+                        return $scope.project.projectId
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (result) {
+                // console.log('new action');
+                // console.log(newAction);
+                //process save
+                generateDataFile(result.format);
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+
 
         /**
          * 打开CAN配置模态框
@@ -1239,6 +1267,64 @@ ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uib
     };
 
     //取消
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+}]);
+
+ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http','id',function ($rootScope,$scope,$uibModalInstance,$http,id) {
+    console.log('load')
+    $scope.loading = true
+    $scope.processing = false
+    $scope.message = '加载中...'
+    $scope.shareInfo = {
+        shared:false,
+        sharedKey:''
+    }
+    loadInfo()
+    function loadInfo() {
+        $http({
+            method:'GET',
+            url:'/project/'+id+'/share'
+        })
+        .success(function(data,status,xhr){
+            $scope.shareInfo.shared = data.shared
+            $scope.shareInfo.sharedKey = data.sharedKey
+            $scope.loading = false
+            $scope.message = ''
+        })
+        .error(function(err){
+            console.log(err)
+            $scope.loading = false
+            $scope.message = '加载出错...'
+        });
+    }
+
+
+
+
+    $scope.toggleShare = function () {
+        $scope.processing = true
+        $http({
+            method:'POST',
+            url:'/project/'+id+'/share',
+            data:{
+                share:!$scope.shareInfo.shared
+            }
+        })
+        .success(function(data,status,xhr){
+            $scope.shareInfo.shared = data.shared
+            $scope.shareInfo.sharedKey = data.sharedKey
+            $scope.processing = false
+            $scope.message = ''
+        })
+        .error(function(err){
+            console.log(err)
+            $scope.processing = false
+            $scope.message = '更新出错...'
+        });
+    }
+
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };

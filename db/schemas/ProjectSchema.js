@@ -75,7 +75,7 @@ ProjectSchema.statics = {
             .exec(cb)
     },
     updateShare:function (id,stateInfo,cb) {
-        return this.findOneAndUpdate({_id:id},{shared:stateInfo.shared,sharedKey:stateInfo.sharedKey},{returnNewDocument:true})
+        return this.findOneAndUpdate({_id:id},{shared:stateInfo.shared,sharedKey:stateInfo.sharedKey})
             .exec(cb)
     },
     deleteById: function (_projectId, cb) {
