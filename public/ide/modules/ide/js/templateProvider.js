@@ -229,11 +229,11 @@ ideServices
             var r = 54;
             var g = 71;
             var b = 92;
-            var jsonStr = {"objects":[],"background":"rgb(" + r + "," + g + "," + b + ")"};
+            // var jsonStr = {"objects":[],"background":"rgb(" + r + "," + g + "," + b + ")"};
             return {
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                proJsonStr: jsonStr,
+                // proJsonStr: jsonStr,
                 layers: [],
                 name: 'NewPage',
                 type: Type.MyPage,
@@ -277,11 +277,11 @@ ideServices
         };
 
         this.getDefaultSubLayer = function () {
-            var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
+            // var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
             return {
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                proJsonStr: jsonStr,
+                // proJsonStr: jsonStr,
                 widgets: [],
                 name: 'NewSubCanvas',
                 type: Type.MySubLayer,
@@ -295,12 +295,12 @@ ideServices
         };
 
         this.getImageSubLayer = function () {
-            var jsonStr = '{"objects":[],"background":"rgba(255,255,255,1.0)","backgroundImage":{"type":"image","originX":"left","originY":"top","left":0,"top":0,"width":500,"height":284,"fill":"rgb(0,0,0)","strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","src":"http://localhost:63342/AHMIDesigner/modules/ide/demo3.jpg","filters":[],"crossOrigin":"","alignX":"none","alignY":"none","meetOrSlice":"meet"}}';
+            // var jsonStr = '{"objects":[],"background":"rgba(255,255,255,1.0)","backgroundImage":{"type":"image","originX":"left","originY":"top","left":0,"top":0,"width":500,"height":284,"fill":"rgb(0,0,0)","strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","src":"http://localhost:63342/AHMIDesigner/modules/ide/demo3.jpg","filters":[],"crossOrigin":"","alignX":"none","alignY":"none","meetOrSlice":"meet"}}';
             var backgroundImage=Preference.getRandomImageURL();
             return {
                 url: backgroundImage,
                 id: Math.random().toString(36).substr(2),
-                proJsonStr: jsonStr,
+                // proJsonStr: jsonStr,
                 widgets: [],
                 name: 'NewSubCanvas',
                 type: Type.MySubLayer,
