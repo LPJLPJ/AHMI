@@ -1430,7 +1430,8 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
     $scope.sharedUrl = window.location.href
     $scope.shareInfo = {
         shared:false,
-        sharedKey:''
+        sharedKey:'',
+        own:false
     }
     loadInfo()
     function loadInfo() {
@@ -1441,6 +1442,7 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
         .success(function(data,status,xhr){
             $scope.shareInfo.shared = data.shared
             $scope.shareInfo.sharedKey = data.sharedKey
+            $scope.shareInfo.own = data.own
             $scope.loading = false
             $scope.message = ''
         })

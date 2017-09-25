@@ -162,28 +162,42 @@ projectRoute.updateShare = function (req, res) {
 
     var projectId = req.params.id
     var shareState = !!req.body.share
+    var userId = req.session.user&&req.session.user.id;
+
     if (projectId && projectId!=''){
-        var shareInfo = {}
-        if (shareState) {
-            shareInfo = {
-                shared: true,
-                sharedKey:parseInt(Math.random()*9000+1000)
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
             }
-        }else {
-            shareInfo = {
-                shared: false,
-                sharedKey:''
-            }
-        }
+            //console.log(project)
+            if (project && project.userId == userId){
+                //user own project
+                var shareInfo = {}
+                if (shareState) {
+                    shareInfo = {
+                        shared: true,
+                        sharedKey:parseInt(Math.random()*9000+1000)
+                    }
+                }else {
+                    shareInfo = {
+                        shared: false,
+                        sharedKey:''
+                    }
+                }
 
-        ProjectModel.updateShare(projectId,shareInfo,function (err,newProject) {
-            if (err){
-                errHandler(res,500,JSON.stringify(err))
+                ProjectModel.updateShare(projectId,shareInfo,function (err,newProject) {
+                    if (err){
+                        errHandler(res,500,JSON.stringify(err))
+                    }else{
+
+                        res.end(JSON.stringify(shareInfo))
+                    }
+                })
             }else{
-
-                res.end(JSON.stringify(shareInfo))
+                errHandler(res,500,'forbidden')
             }
         })
+
 
     }else{
         //console.log(projectId)
@@ -194,7 +208,7 @@ projectRoute.updateShare = function (req, res) {
 
 projectRoute.getShareInfo = function (req, res) {
     var projectId = req.params.id
-
+    var userId = req.session.user&&req.session.user.id;
     if (projectId && projectId!=''){
 
         ProjectModel.findById(projectId,function (err,_project) {
@@ -202,6 +216,7 @@ projectRoute.getShareInfo = function (req, res) {
                 errHandler(res,500,JSON.stringify(err))
             }else{
                 res.end(JSON.stringify({
+                    own:(userId ==_project.userId),
                     shared:_project.shared,
                     sharedKey:_project.sharedKey
                 }))
