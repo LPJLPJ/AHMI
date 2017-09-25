@@ -14,6 +14,8 @@ var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
 var Canvas = require('canvas');
 var archiver = require('archiver');
+var crypto = require('crypto');
+
 var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
@@ -26,6 +28,61 @@ projectRoute.getAllProjects=function(req, res){
         }
         res.end(projects)
     })
+}
+
+function generateUserKey(projectId,sharedKey,cb) {
+    var hash = crypto.createHash('sha256');
+
+
+    hash.update(projectId+sharedKey);
+    var data = hash.digest('hex').slice(0,5)
+    cb && cb(data)
+
+
+}
+
+function hasValidKey(user,projectId,sharedKey,cb) {
+    if (user && user.sharedKey){
+        generateUserKey(projectId,sharedKey,function (data) {
+            if (data === user.sharedKey){
+                cb && cb(true)
+            }else{
+                cb && cb(false)
+            }
+        })
+    }else{
+        cb && cb(false)
+    }
+}
+
+projectRoute.checkSharedKey = function (req, res) {
+    var projectId = req.params.id
+    var sharedKey = req.body.sharedKey
+    var userId = req.session.user&&req.session.user.id;
+    if (userId&&projectId){
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+            if (!project){
+                errHandler(res,500,'empty project')
+            }else{
+                if (project.shared && project.sharedKey==sharedKey){
+                    //valid key
+                    generateUserKey(projectId,sharedKey,function (data) {
+                        req.session.user.sharedKey = data
+                        res.end('ok')
+                    })
+                }else{
+                    //invalid key or not shared
+                    errHandler(res,500,'invalid key')
+                }
+            }
+
+        })
+    }else{
+        errHandler(res,500,'error')
+    }
 }
 
 projectRoute.getProjectById = function (req, res) {
@@ -42,10 +99,34 @@ projectRoute.getProjectById = function (req, res) {
                 errHandler(res,500,'project is null');
             }else if (project.userId == userId){
                 res.render('ide/index.html')
-            }else{
+            }else if(!userId){
                 res.render('login/login.html',{
                     title:'重新登录'
                 });
+                // res.render('ide/index.html')
+            }else{
+                //user logged in, but not project owner
+                if (!!project.shared){
+
+                    hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
+                        if (result){
+                            res.render('ide/index.html')
+                        }else{
+                            res.render('ide/share.html',{
+                                title:project.name,
+                                share:true
+                            })
+                        }
+                    })
+
+                }else{
+                    res.render('ide/share.html',{
+                        title:'没有权限',
+                        share:false
+                    });
+                }
+
+
             }
 
         })
@@ -75,6 +156,78 @@ projectRoute.getProjectContent = function (req, res) {
         //console.log(projectId)
         errHandler(res,500,'error')
     }
+}
+
+projectRoute.updateShare = function (req, res) {
+
+    var projectId = req.params.id
+    var shareState = !!req.body.share
+    var userId = req.session.user&&req.session.user.id;
+
+    if (projectId && projectId!=''){
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+            //console.log(project)
+            if (project && project.userId == userId){
+                //user own project
+                var shareInfo = {}
+                if (shareState) {
+                    shareInfo = {
+                        shared: true,
+                        sharedKey:parseInt(Math.random()*9000+1000)
+                    }
+                }else {
+                    shareInfo = {
+                        shared: false,
+                        sharedKey:''
+                    }
+                }
+
+                ProjectModel.updateShare(projectId,shareInfo,function (err,newProject) {
+                    if (err){
+                        errHandler(res,500,JSON.stringify(err))
+                    }else{
+
+                        res.end(JSON.stringify(shareInfo))
+                    }
+                })
+            }else{
+                errHandler(res,500,'forbidden')
+            }
+        })
+
+
+    }else{
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+}
+
+
+projectRoute.getShareInfo = function (req, res) {
+    var projectId = req.params.id
+    var userId = req.session.user&&req.session.user.id;
+    if (projectId && projectId!=''){
+
+        ProjectModel.findById(projectId,function (err,_project) {
+            if (err){
+                errHandler(res,500,JSON.stringify(err))
+            }else{
+                res.end(JSON.stringify({
+                    own:(userId ==_project.userId),
+                    shared:_project.shared,
+                    sharedKey:_project.sharedKey
+                }))
+            }
+        })
+
+    }else{
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+
 }
 
 projectRoute.getBackupList = function (req, res) {

@@ -205,6 +205,9 @@
                 <a ng-click="component.tool.openPanel()" class="my-cmd-item" ng-class=""><span
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
                 </a>
+                <a ng-click="component.tool.openShare()" class="my-cmd-item" ng-class="">
+                    <span class="iconfont icon">&#xe60f;</span><span class="caption">分享</span>
+                </a>
                 <script type="text/ng-template" id="navModal.html">
                     <div class="modal-header">
                         <h3 class="modal-title">导出工程</h3>
@@ -217,6 +220,25 @@
                     <div class="modal-footer">
                         <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
                         <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
+                <script type="text/ng-template" id="shareModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">分享工程</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">{{message}}</div>
+                        <!--<div class="modal-title form-group modelPart">-->
+                            <!--开启分享-->
+                        <!--</div>-->
+                        <div ng-show="!loading">
+                            <button class='btn btn-default' ng-show="shareInfo.own" ng-click="toggleShare()" ng-disabled="processing">{{shareInfo.shared?'取消分享':'开启分享'}}</button>
+                            <div class='sharedUrl' ng-show="shareInfo.shared">路径：{{sharedUrl}}</div>
+                            <div class='sharedKey' ng-show="shareInfo.shared">密码：{{shareInfo.sharedKey}}</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
                     </div>
                 </script>
                 <script type="text/ng-template" id="navCANModal.html">
