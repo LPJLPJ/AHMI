@@ -233,7 +233,8 @@
                         <!--</div>-->
                         <div ng-show="!loading">
                             <button class='btn btn-default' ng-click="toggleShare()" ng-disabled="processing">{{shareInfo.shared?'取消分享':'开启分享'}}</button>
-                            <div class='btn btn-default' ng-show="shareInfo.shared">{{shareInfo.sharedKey}}</div>
+                            <div class='sharedUrl' ng-show="shareInfo.shared">路径：{{sharedUrl}}</div>
+                            <div class='sharedkey' ng-show="shareInfo.shared">密码：{{shareInfo.sharedKey}}</div>
                         </div>
                     </div>
                     <div class="modal-footer">

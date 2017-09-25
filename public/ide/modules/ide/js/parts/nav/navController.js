@@ -1277,6 +1277,8 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
     $scope.loading = true
     $scope.processing = false
     $scope.message = '加载中...'
+    console.log(window.location)
+    $scope.sharedUrl = window.location.href
     $scope.shareInfo = {
         shared:false,
         sharedKey:''

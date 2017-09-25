@@ -704,3 +704,20 @@ body{
 .my-font-image{
     font-size: 35px !important;
 }
+
+
+
+/*share modal*/
+.sharedKey,.sharedUrl{
+    padding:0.5em;
+    -moz-user-select:text;
+    /*火狐*/
+     -webkit-user-select: text;
+    /*webkit浏览器*/
+    -ms-user-select: text;
+    /*IE10*/
+    -khtml-user-select: text;
+    /*早期浏览器*/
+     user-select: text;
+
+}

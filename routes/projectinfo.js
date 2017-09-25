@@ -32,18 +32,13 @@ projectRoute.getAllProjects=function(req, res){
 
 function generateUserKey(projectId,sharedKey,cb) {
     var hash = crypto.createHash('sha256');
-    hash.on('readable', function() {
-        var data = hash.read();
-        if (data) {
-           data = data.toString('hex').slice(0,5)
-        }else{
-            data = ''
-        }
-        cb && cb(data)
-    });
 
-    hash.write(projectId+sharedKey);
-    hash.end();
+
+    hash.update(projectId+sharedKey);
+    var data = hash.digest('hex').slice(0,5)
+    cb && cb(data)
+
+
 }
 
 function hasValidKey(user,projectId,sharedKey,cb) {
@@ -57,6 +52,36 @@ function hasValidKey(user,projectId,sharedKey,cb) {
         })
     }else{
         cb && cb(false)
+    }
+}
+
+projectRoute.checkSharedKey = function (req, res) {
+    var projectId = req.params.id
+    var sharedKey = req.body.sharedKey
+    var userId = req.session.user&&req.session.user.id;
+    if (userId&&projectId){
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+            if (!project){
+                errHandler(res,500,'empty project')
+            }else{
+                if (project.shared && project.sharedKey==sharedKey){
+                    //valid key
+                    generateUserKey(projectId,sharedKey,function (data) {
+                        req.session.user.sharedKey = data
+                        res.end('ok')
+                    })
+                }else{
+                    //invalid key or not shared
+                    errHandler(res,500,'invalid key')
+                }
+            }
+
+        })
+    }else{
+        errHandler(res,500,'error')
     }
 }
 
