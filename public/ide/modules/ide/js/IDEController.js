@@ -243,7 +243,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     }else {
                         tempData = data
                     }
-                    if(tempData.format!==undefined){
+                    if(tempData.format!==undefined||tempData.DSFlag==='base'){
                         //load from a zip
                         preProcessData(data,function(newData){
                             loadFromContent(newData,id);
@@ -355,7 +355,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             //
             //readCache();
 
-            globalProject = GlobalService.getBlankProject()
+            globalProject = GlobalService.getBlankProject();
             globalProject.projectId = id;
             //change resolution
             //console.log(data);
@@ -1151,7 +1151,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 node.add(new fabric.MyTexNum(dataStructure,initiator));
                 break;
             default :
-                console.log('not match widget in preprocess!');
+                console.error('not match widget in preprocess!');
                 break;
         }
 

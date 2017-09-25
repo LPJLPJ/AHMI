@@ -211,3 +211,13 @@ update:
     3. a local update to web will rewrite its createTime and lastModifiedTime,projects will sort by createTime
     4. in personal projects space when pointer hover on a project ,will show its createTime and lastModifiedTime
     5. local IDE will check update auto when it is setup
+
+1.10.0
+add:
+fix:
+    1. subcanvas action bug
+    2. local ver save as bug
+update:
+    1. complete rebuild data structure and render canvas module.
+    2. remove proJson and loadFromProJson operate
+    3. compatible old local ver by generate compatible local project

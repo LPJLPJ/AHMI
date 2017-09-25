@@ -86,6 +86,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     generateDataFile:generateDataFile,
                     play:play,
                     openPanel:openPanel,
+                    openShare:openShare,
                     openCANPanel:openCANPanel,
                     runSimulator:runSimulator,
                     closeSimulator:closeSimulator,
@@ -144,18 +145,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             c.style.cssText="transform:rotate(270deg);left:0;top:0";
             backgroundCanvas.style.cssText="transform:rotate(270deg);left:0;top:0";
             c1.style.cssText="transform:rotate(270deg);left:0;top:0";
-            //var cNode = CanvasService.getPageNode();
-            //var c1Node = CanvasService.getSubLayerNode();
-            //cNode.deactivateAll();
-            //c1Node.deactivateAll();
-            //var cArr=cNode.getObjects();
-            //var c1Arr=c1Node.getObjects();
-            //cArr.map(function(obj){
-            //    obj['selectable']=false;
-            //});
-            //c1Arr.map(function(obj){
-            //    obj['selectable']=false;
-            //});
         }
         function rotateCanvasRight(){
             var c = document.getElementById('c');
@@ -164,18 +153,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             c.style.cssText="transform:rotate(0deg);left:0;top:0";
             backgroundCanvas.style.cssText="transform:rotate(0deg);left:0;top:0";
             c1.style.cssText="transform:rotate(0deg);left:0;top:0";
-            //var cNode = CanvasService.getPageNode();
-            //var c1Node = CanvasService.getSubLayerNode();
-            //cNode.deactivateAll();
-            //c1Node.deactivateAll();
-            //var cArr=cNode.getObjects();
-            //var c1Arr=c1Node.getObjects();
-            //cArr.map(function(obj){
-            //    obj['selectable']=true;
-            //});
-            //c1Arr.map(function(obj){
-            //    obj['selectable']=true;
-            //});
         }
 
         //listen for nw.win.close
@@ -289,7 +266,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         }
 
 
-        function saveProject(_saveCb, useSpinner) {
+        function saveProject(_saveCb, useSpinner,compatible) {
             // ProjectService.getProjectTo($scope);
             //console.log('save arguments',arguments);
             if (useSpinner) {
@@ -298,184 +275,191 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             ProjectService.addSaveInfo();
             var projectClone=ProjectService.SaveCurrentOperate();
             ProjectService.changeCurrentPageIndex(0,
-
                 function () {
                     var curScope = {};
-
                     ProjectService.getProjectCopyTo(curScope);
-                    console.log(curScope.project)
-                    curScope.project.resourceList = ResourceService.getAllResource();
+                    // curScope.project = ProjectTransformService.transDateFileBase(curScope.project);//+
+                    if(compatible){
+                        generateProJson(curScope.project,function(newProject){
+                            curScope.project = newProject;
+                            postFun();
+                        })
+                    }else{
+                        postFun();
+                    }
 
-                    curScope.project.customTags = TagService.getAllCustomTags();
-                    curScope.project.timerTags = TagService.getAllTimerTags();
-                    curScope.project.timers = TagService.getTimerNum();
-                    curScope.project.version = window.ideVersion;
-                    curScope.project.CANId = NavModalCANConfigService.getCANId();
-                    var currentProject = curScope.project;
-                    //console.log('currentProject',currentProject);
-                    var thumb=_.cloneDeep(currentProject.pages[0].url);
-                    scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
-                        _.forEach(currentProject.pages,function (_page) {
-                            _page.url='';
-                            _.forEach(_page.layers,function (_layer) {
-                                _layer.url='';
-                                _layer.showSubLayer.url='';
-                                _.forEach(_layer.subLayers,function (_subLayer) {
-                                    _subLayer.url='';
+                    function postFun(){
+                        curScope.project.resourceList = ResourceService.getAllResource();
+                        curScope.project.customTags = TagService.getAllCustomTags();
+                        curScope.project.timerTags = TagService.getAllTimerTags();//-
+                        curScope.project.timers = TagService.getTimerNum();//-
+                        curScope.project.version = window.ideVersion;
+                        curScope.project.CANId = NavModalCANConfigService.getCANId();
+                        var currentProject = curScope.project;
+                        var thumb=_.cloneDeep(currentProject.pages[0].url);
+                        scaleImg(thumb,['jpeg'],200,200,true, function (scaledThumb) {
+                            _.forEach(currentProject.pages,function (_page) {
+                                _page.url='';
+                                _.forEach(_page.layers,function (_layer) {
+                                    _layer.url='';
+                                    _layer.showSubLayer.url='';
+                                    _.forEach(_layer.subLayers,function (_subLayer) {
+                                        _subLayer.url='';
+                                    })
+
                                 })
-
-                            })
-                        });
-                        if (window.local) {
-                            saveThumb(scaledThumb, function () {
-                                //save
-                                //save currentProject
-                                var projectUrl = ResourceService.getProjectUrl();
-                                var dataUrl = path.join(projectUrl, 'project.json');
-                                var resourceUrl = path.join(projectUrl,'resources');
-                                var resourceIds = currentProject.resourceList&&currentProject.resourceList.map(function(file){
-                                    return file.id;
-                                });
-                                try {
-                                    var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
-                                    oldProjectData.lastModifiedTime = new Date().toLocaleString();
-                                    oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
-                                    // console.log(oldProjectData.thumbnail);
-                                    oldProjectData.content = JSON.stringify(currentProject);
-                                    if (oldProjectData.backups && oldProjectData.backups instanceof Array){
-
-                                    }else{
-                                        oldProjectData.backups = []
-                                    }
-                                    if (oldProjectData.backups.length>=5){
-                                        oldProjectData.backups.shift()
-                                    }
-                                    oldProjectData.backups.push({time:new Date(),content:oldProjectData.content});
-
-                                    //delete file
-                                    fs.readdir(resourceUrl,function(err,files){
-                                        if(err){
-                                            console.log('err in read files',err);
-
-                                        }else if(files&&files.length){
-                                            var diffResources = _.difference(files,resourceIds);
-                                            diffResources.map(function (dFile) {
-                                                var dFilePath = path.join(resourceUrl,dFile);
-                                                // console.log(dFilePath)
-                                                fs.stat(dFilePath,function (err,stats) {
-                                                    // console.log(stats)
-                                                    if (stats && stats.isFile()){
-                                                        fs.unlink(dFilePath);
-                                                    }
-                                                })
-                                            });
-                                        }
-                                    });
-
-                                    //save json
-                                    fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
-                                    //success
-                                    toastr.info('保存成功');
-                                    ProjectService.LoadCurrentOperate(projectClone, function () {
-                                        $scope.$emit('UpdateProject');
-                                        //change url
-                                        var newUrl = '/project/' + currentProject.projectId + '/editor'
-                                        history.pushState(null, '',newUrl );
-                                        _saveCb && _saveCb();
-                                    });
-                                } catch (e) {
-                                    //fail
-                                    toastr.warning('保存失败');
-                                    ProjectService.LoadCurrentOperate(projectClone, function () {
-                                        $scope.$emit('UpdateProject');
-                                    });
-                                }
-                                if (useSpinner) {
-                                    hideSpinner();
-                                }
                             });
-                        } else {
-                            uploadThumb(scaledThumb, function () {
-                                // console.log(currentProject)
-                                $http({
-                                    method: 'PUT',
-                                    url: '/project/' + currentProject.projectId + '/save',
-                                    data: {
-                                        project: currentProject
-                                    }
-                                })
-                                    .success(function (t) {
-                                        var saveState = false
-                                        if (t == 'ok') {
-                                            toastr.info('保存成功');
-                                            saveState = true
-                                        } else {
-                                            toastr.warning('保存失败')
+                            if (window.local) {
+                                saveThumb(scaledThumb, function () {
+                                    //save
+                                    //save currentProject
+                                    var projectUrl = ResourceService.getProjectUrl();
+                                    var dataUrl = path.join(projectUrl, 'project.json');
+                                    var resourceUrl = path.join(projectUrl,'resources');
+                                    var resourceIds = currentProject.resourceList&&currentProject.resourceList.map(function(file){
+                                        return file.id;
+                                    });
+                                    try {
+                                        var oldProjectData = JSON.parse(fs.readFileSync(dataUrl));
+                                        oldProjectData.lastModifiedTime = new Date().toLocaleString();
+                                        oldProjectData.thumbnail = path.join(projectUrl, 'thumbnail.jpg');
+                                        // console.log(oldProjectData.thumbnail);
+                                        oldProjectData.content = JSON.stringify(currentProject);
+                                        if (oldProjectData.backups && oldProjectData.backups instanceof Array){
+
+                                        }else{
+                                            oldProjectData.backups = []
                                         }
-                                        if (useSpinner) {
-                                            hideSpinner();
+                                        if (oldProjectData.backups.length>=5){
+                                            oldProjectData.backups.shift()
                                         }
+                                        oldProjectData.backups.push({time:new Date(),content:oldProjectData.content});
+
+                                        //delete file
+                                        fs.readdir(resourceUrl,function(err,files){
+                                            if(err){
+                                                console.log('err in read files',err);
+
+                                            }else if(files&&files.length){
+                                                var diffResources = _.difference(files,resourceIds);
+                                                diffResources.map(function (dFile) {
+                                                    var dFilePath = path.join(resourceUrl,dFile);
+                                                    // console.log(dFilePath)
+                                                    fs.stat(dFilePath,function (err,stats) {
+                                                        // console.log(stats)
+                                                        if (stats && stats.isFile()){
+                                                            fs.unlink(dFilePath);
+                                                        }
+                                                    })
+                                                });
+                                            }
+                                        });
+
+                                        //save json
+                                        fs.writeFileSync(dataUrl, JSON.stringify(oldProjectData));
+                                        //success
+                                        toastr.info('保存成功');
                                         ProjectService.LoadCurrentOperate(projectClone, function () {
                                             $scope.$emit('UpdateProject');
-                                            //modify url
-                                            if (saveState){
-                                                var newUrl = '/project/' + currentProject.projectId + '/editor'
-                                                if ("undefined" !== typeof history.pushState) {
-                                                    history.pushState(null, '',newUrl )
-                                                }else{
-                                                    window.location.assign(newUrl)
-                                                }
-                                            }
+                                            //change url
+                                            var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                            history.pushState(null, '',newUrl );
                                             _saveCb && _saveCb();
                                         });
+                                    } catch (e) {
+                                        //fail
+                                        toastr.warning('保存失败');
+                                        ProjectService.LoadCurrentOperate(projectClone, function () {
+                                            $scope.$emit('UpdateProject');
+                                        });
+                                    }
+                                    if (useSpinner) {
+                                        hideSpinner();
+                                    }
+                                });
+                            } else {
+                                uploadThumb(scaledThumb, function () {
+                                    // console.log(currentProject)
+                                    $http({
+                                        method: 'PUT',
+                                        url: '/project/' + currentProject.projectId + '/save',
+                                        data: {
+                                            project: currentProject
+                                        }
+                                    })
+                                        .success(function (t) {
+                                            var saveState = false
+                                            if (t == 'ok') {
+                                                toastr.info('保存成功');
+                                                saveState = true
+                                            } else {
+                                                toastr.warning('保存失败')
+                                            }
+                                            if (useSpinner) {
+                                                hideSpinner();
+                                            }
+                                            ProjectService.LoadCurrentOperate(projectClone, function () {
+                                                $scope.$emit('UpdateProject');
+                                                //modify url
+                                                if (saveState){
+                                                    var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                                    if ("undefined" !== typeof history.pushState) {
+                                                        history.pushState(null, '',newUrl )
+                                                    }else{
+                                                        window.location.assign(newUrl)
+                                                    }
+                                                }
+                                                _saveCb && _saveCb();
+                                            });
+                                        })
+                                        .error(function (err) {
+                                            console.log(err);
+                                            toastr.warning('保存失败');
+                                            if (useSpinner) {
+                                                hideSpinner();
+                                            }
+                                            ProjectService.LoadCurrentOperate(projectClone, function () {
+                                                $scope.$emit('UpdateProject');
+                                            });
+
+                                        });
+                                });
+                            }
+
+                            function uploadThumb(thumb,_callback){
+                                $http({
+                                    method:'POST',
+                                    url:'/project/'+currentProject.projectId+'/thumbnail',
+                                    data:{
+                                        thumbnail:thumb
+                                    }
+                                })
+                                    .success(function(r){
+                                        console.log(r);
+                                        _callback&&_callback();
                                     })
                                     .error(function (err) {
                                         console.log(err);
-                                        toastr.warning('保存失败');
-                                        if (useSpinner) {
-                                            hideSpinner();
-                                        }
-                                        ProjectService.LoadCurrentOperate(projectClone, function () {
-                                            $scope.$emit('UpdateProject');
-                                        });
-
+                                        toastr.warning('上传失败');
                                     });
-                            });
-                        }
-
-                        function uploadThumb(thumb,_callback){
-                            $http({
-                                method:'POST',
-                                url:'/project/'+currentProject.projectId+'/thumbnail',
-                                data:{
-                                    thumbnail:thumb
-                                }
-                            })
-                                .success(function(r){
-                                    console.log(r);
-                                    _callback&&_callback();
-                                })
-                                .error(function (err) {
-                                    console.log(err);
-                                    toastr.warning('上传失败');
-                                });
-                            //_callback && _callback();
-                        }
-
-                        function saveThumb(thumb, _callback) {
-                            // console.log(thumb);
-                            var thumbFile = new Buffer(thumb.split(',')[1], 'base64');
-                            var projectUrl = $scope.project.projectUrl || path.join(__dirname, 'localproject', currentProject.projectId);
-                            var thumbUrl = path.join(projectUrl, 'thumbnail.jpg');
-                            try {
-                                fs.writeFileSync(thumbUrl, thumbFile);
-                                _callback && _callback();
-                            } catch (e) {
-                                _callback && _callback(e);
+                                //_callback && _callback();
                             }
 
-                        }
-                    });
+                            function saveThumb(thumb, _callback) {
+                                // console.log(thumb);
+                                var thumbFile = new Buffer(thumb.split(',')[1], 'base64');
+                                var projectUrl = $scope.project.projectUrl || path.join(__dirname, 'localproject', currentProject.projectId);
+                                var thumbUrl = path.join(projectUrl, 'thumbnail.jpg');
+                                try {
+                                    fs.writeFileSync(thumbUrl, thumbFile);
+                                    _callback && _callback();
+                                } catch (e) {
+                                    _callback && _callback(e);
+                                }
+
+                            }
+                        });
+                    }
                     //console.log(thumb)
                 });
         }
@@ -495,34 +479,35 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 modalInstance.result.then(function(result){
                     showSpinner();
                     var projectUrl = ResourceService.getProjectUrl(),
-                        dataUrl = path.join(projectUrl, 'project.json'),
+                        oldJsonUrl = path.join(projectUrl, 'project.json'),
                         newId = ''+Date.now()+Math.round((Math.random()+1)*1000),
                         pattern = new RegExp(String(projectId),"g"),
                         localProjectPath = path.join(__dirname,'localproject'),
-                        projectStr = readSingleFile(dataUrl,true),
+                        projectStr = readSingleFile(oldJsonUrl,true),
                         project;
 
                     projectStr = projectStr.replace(pattern,newId);
                     project = JSON.parse(projectStr);
                     (!!result.saveAsName)?(project.name=result.saveAsName):(project.name=project.name+'副本');
                     (!!result.saveAsAuthor)?(project.author=result.saveAsAuthor):'';
-                    project.createdTime = Date.now();
-                    project.lastModified = Date.now();
+                    project.createTime = new Date().toLocaleString();
+                    project.lastModifiedTime = new Date().toLocaleString();
 
 
-                    var newProjectPath = path.join(localProjectPath,newId)
+                    var newProjectPath = path.join(localProjectPath,newId);
 
                     fse.emptyDir(newProjectPath,function(err){
                         if(err){
                             console.log(err);
                             toastr.error('另存为出错');
                         }
+                        console.log(projectUrl,newProjectPath);
                         fse.copy(projectUrl,newProjectPath,function(err){
                             if(err){
                                 console.error(err);
                                 toastr.error('另存为出错');
                             }
-                            fse.writeFile(path.join(projectUrl,'project.json'),JSON.stringify(project),function(err){
+                            fse.writeFile(path.join(newProjectPath,'project.json'),JSON.stringify(project),function(err){
                                 if(err){
                                     console.log(err);
                                     toastr.error('另存为出错');
@@ -798,42 +783,41 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
          */
 
         function generateDataFile(format){
-            if(format=='local'){
+            if(format=='local'||format=='localCompatible'){
                 var curScope = {};
+                var postFun = function(){
+                    if (window.spinner){
+                        window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                        window.spinner.show();
+                    }
+                    $http({
+                        method:'POST',
+                        url:'/project/'+$scope.project.projectId+'/generateLocalProject'
+                        //data:{currentProject:currentProject}
+                    })
+                        .success(function(data,status,xhr){
+                            window.spinner&&window.spinner.hide();
+                            if(data=='ok'){
+                                toastr.info('生成本地版成功');
+                                window.location.href = '/project/'+$scope.project.projectId+'/downloadLocalProject'
+                            }else{
+                                toastr.error('生成失败')
+                            }
+                        })
+                        .error(function(err,status,xhr){
+                            window.spinner&&window.spinner.hide();
+                            toastr.error('生成失败,请尝试先保存');
+                            console.log(err);
+                        })
+                };
                 ProjectService.getProjectCopyTo(curScope);
-                curScope.project.resourceList = ResourceService.getAllResource();
-
-                curScope.project.customTags = TagService.getAllCustomTags();
-                curScope.project.timerTags = TagService.getAllTimerTags();
-                curScope.project.timers = TagService.getTimerNum();
-                curScope.project.version = window.ideVersion;
-                curScope.project.CANId = NavModalCANConfigService.getCANId();
-                var currentProject = curScope.project;
-                //saveProject(function(){
-                if (window.spinner){
-                    window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                    window.spinner.show();
+                if(format==='localCompatible'){
+                    saveProject(postFun,true,true);
+                    // console.log(curScope.project);
+                }else{
+                    postFun();
                 }
-                $http({
-                    method:'POST',
-                    url:'/project/'+$scope.project.projectId+'/generateLocalProject'
-                    //data:{currentProject:currentProject}
-                })
-                    .success(function(data,status,xhr){
-                        window.spinner&&window.spinner.hide();
-                        if(data=='ok'){
-                            toastr.info('生成本地版成功');
-                            window.location.href = '/project/'+$scope.project.projectId+'/downloadLocalProject'
-                        }else{
-                            toastr.error('生成失败')
-                        }
-                    })
-                    .error(function(err,status,xhr){
-                        window.spinner&&window.spinner.hide();
-                        toastr.error('生成失败,请尝试先保存');
-                        console.log(err);
-                    })
-                //})
+
             }else{
                 generateData(format);
                 if (window){
@@ -901,6 +885,166 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         }
 
+
+        /**
+         * 为工程生成proJSON，用来兼容旧的本地版IDE
+         * @param rawData
+         */
+        function generateProJson(project,cb){
+            var newProject = _.cloneDeep(project),
+                i = 0,//循环变量
+                attrArr = [],//属性名数组
+                pageNode = new fabric.Canvas('tmp1'),
+                subLayerNode = new fabric.Canvas('tmp2',{renderOnAddRemove: false });
+
+            i=0;
+            var pageLength = newProject.pages.length;
+            var page;
+            var index;
+            var ergodicPages = function(){
+                page = null;
+                page = newProject.pages[i];
+                index = i;
+                pageNode.setWidth(newProject.initSize.width);
+                pageNode.setHeight(newProject.initSize.height);
+                pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                // pageNode.clear();
+                if(page.layers!==undefined){
+                    page.layers.forEach(function(layer,index){
+                        layer.subLayers.forEach(function (subLayer,index) {
+                            subLayerNode.setWidth(layer.w);
+                            subLayerNode.setHeight(layer.h);
+                            subLayerNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                            // subLayerNode.clear();
+                            subLayer.widgets.forEach(function (widget,index) {
+                                addWidgetInCurrentSubLayer(widget,subLayerNode);
+                            });
+                            subLayer.proJsonStr  = subLayerNode.toJSON();
+                            subLayerNode.clear();
+                        });
+                        addWidgetInCurrentSubLayer(layer,pageNode)
+                    });
+                    if(page.backgroundImage&&page.backgroundImage!==''){
+                        pageNode.setBackgroundImage(page.backgroundImage,function () {
+                            pageNode.setBackgroundColor(page.backgroundColor,function () {
+                                page.proJsonStr = pageNode.toJSON();
+                                pageNode.clear();
+                                i++;
+                                if(i<pageLength){
+                                    ergodicPages();
+                                }else{
+                                    // console.log('after preprocess',newData);
+                                    cb&&cb(newProject)
+                                }
+                            });
+                        },{
+                            width:pageNode.getWidth(),
+                            height:pageNode.getHeight()
+                        });
+                    }else{
+                        pageNode.setBackgroundImage(null,function(){
+                            pageNode.setBackgroundColor(page.backgroundColor,function () {
+                                page.proJsonStr = pageNode.toJSON();
+                                pageNode.clear();
+                                i++;
+                                if(i<pageLength){
+                                    ergodicPages();
+                                }else{
+                                    // console.log('after preprocess',newData);
+                                    cb&&cb(newProject)
+                                }
+                            });
+                        });
+                    }
+                }
+            };
+            ergodicPages();
+        }
+
+        /**
+         * 将widget加入sublayer
+         * @param dataStructure
+         * @param node
+         * @param _successCallback
+         */
+        function addWidgetInCurrentSubLayer(dataStructure,node,_successCallback) {
+            var initiator = {
+                width: dataStructure.info.width,
+                height: dataStructure.info.height,
+                top: dataStructure.info.top,
+                left: dataStructure.info.left,
+                id: dataStructure.id,
+                lockScalingFlip:true,
+                hasRotatingPoint:false,
+                shadow:{
+                    color:'rgba(0,0,0,0.4)',blur:2
+                }
+            };
+            var addFabWidget = function(fabWidget){
+                node.add(fabWidget);
+            };
+
+            switch (dataStructure.type){
+                case 'MySlide':
+                    fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyProgress':
+                    fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyDashboard':
+                    fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyButton':
+                    fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyButtonGroup':
+                    fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyNumber':
+                    fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyTextArea':
+                    fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyKnob':
+                    fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyOscilloscope':
+                    fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MySwitch':
+                    fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyRotateImg':
+                    fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyDateTime':
+                    fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyScriptTrigger':
+                    fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyVideo':
+                    fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyAnimation':
+                    fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyLayer':
+                    node.add(new fabric.MyLayer(dataStructure,initiator));
+                    break;
+                case 'MyNum':
+                    node.add(new fabric.MyNum(dataStructure,initiator));
+                    break;
+                case 'MyTexNum':
+                    node.add(new fabric.MyTexNum(dataStructure,initiator));
+                    break;
+                default :
+                    console.error('not match widget in preprocess!');
+                    break;
+            }
+
+        };
 
         function play(){
             generateData()
@@ -975,6 +1119,33 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 status=true;
             }
             return status;
+        }
+
+        function openShare() {
+            console.log('share')
+            /**
+             * 利用$uiModal服务，制作模态窗口
+             */
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'shareModal.html',
+                controller: 'shareModalCtl',
+                size: 'md',
+                resolve: {
+                    id:function () {
+                        return $scope.project.projectId
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (result) {
+                // console.log('new action');
+                // console.log(newAction);
+                //process save
+                generateDataFile(result.format);
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
         }
 
 
@@ -1228,9 +1399,14 @@ ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uib
     var localFormat = {
         type:'local',
         name:'本地'
+    };
+    var localFormatCompatible = {
+        type:'localCompatible',
+        name:'本地(兼容)'
     }
     if(!window.local){
         $scope.formats[2] = localFormat;
+        $scope.formats[3] = localFormatCompatible
     };
     $scope.generateFormat = 'normal';
     $scope.ok = function () {
@@ -1240,6 +1416,68 @@ ide.controller('NavModalCtl',['$scope','$uibModalInstance',function ($scope,$uib
     };
 
     //取消
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+}]);
+
+ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http','id',function ($rootScope,$scope,$uibModalInstance,$http,id) {
+    console.log('load')
+    $scope.loading = true
+    $scope.processing = false
+    $scope.message = '加载中...'
+    console.log(window.location)
+    $scope.sharedUrl = window.location.href
+    $scope.shareInfo = {
+        shared:false,
+        sharedKey:'',
+        own:false
+    }
+    loadInfo()
+    function loadInfo() {
+        $http({
+            method:'GET',
+            url:'/project/'+id+'/share'
+        })
+        .success(function(data,status,xhr){
+            $scope.shareInfo.shared = data.shared
+            $scope.shareInfo.sharedKey = data.sharedKey
+            $scope.shareInfo.own = data.own
+            $scope.loading = false
+            $scope.message = ''
+        })
+        .error(function(err){
+            console.log(err)
+            $scope.loading = false
+            $scope.message = '加载出错...'
+        });
+    }
+
+
+
+
+    $scope.toggleShare = function () {
+        $scope.processing = true
+        $http({
+            method:'POST',
+            url:'/project/'+id+'/share',
+            data:{
+                share:!$scope.shareInfo.shared
+            }
+        })
+        .success(function(data,status,xhr){
+            $scope.shareInfo.shared = data.shared
+            $scope.shareInfo.sharedKey = data.sharedKey
+            $scope.processing = false
+            $scope.message = ''
+        })
+        .error(function(err){
+            console.log(err)
+            $scope.processing = false
+            $scope.message = '更新出错...'
+        });
+    }
+
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
