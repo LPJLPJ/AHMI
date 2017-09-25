@@ -50,6 +50,8 @@ ideServices
 
             var pageRendering = false;
 
+            var timeStamp='';
+
             /**
              * 设置渲染状态
              * @param _rendering
@@ -194,12 +196,10 @@ ideServices
                 });
                 var pageCount=project.pages.length;
                 openAllPage(0,_successCallback);
-                //
-
 
                 function openAllPage(_index, _successCallback) {
                     if (_index==pageCount){
-                        _self.changeCurrentPageIndex(0,_successCallback);
+                        _self.changeCurrentPageIndex(0,_successCallback,true);
                     }else{
                         _self.changeCurrentPageIndex(_index,function () {
                             openAllPage(_index+1,_successCallback);
@@ -441,6 +441,8 @@ ideServices
 
             var inChangingPage = false;
             this.changeCurrentPageIndex = function (_pageIndex, successCallback,isInit) {
+                // timeStamp = Date.now();
+
                 var _successCallback = function () {
                     inChangingPage = false;
                     successCallback && successCallback()
@@ -454,9 +456,11 @@ ideServices
                 }
                 inChangingPage = true;
                 if (isInit){
-                    //console.log化页面');
+                    // 初始化
+                    // console.log('初始化页面');
                     if(oldPage){
                         if(oldPage.mode==1){
+                            //oldstate is editing sublayer
                             _.forEach(project.pages, function (__page,__pageIndex) {
 
                                 if (__page.id==oldPage.id){
@@ -465,7 +469,6 @@ ideServices
                             });
                             if (oldPageIndex!=_pageIndex){
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
-
                             }
                         }else{
                             intoNewPage();
@@ -474,46 +477,40 @@ ideServices
                         intoNewPage();
                     }
                 }else if (_pageIndex>=0){
-
-
+                    //切换page
                     if (oldPage){
-
                         _.forEach(project.pages, function (__page,__pageIndex) {
-
                             if (__page.id==oldPage.id){
                                 oldPageIndex=__pageIndex;
                             }
                         });
-                        //console.log(oldPageIndex+'/'+_pageIndex);
                         if (oldPageIndex!=_pageIndex){
-                            console.log('页面间切换');
+                            // 页面切换
                             if (oldPage.mode==1){
+                                //从sublayer切换到page,进入不同的页面
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
-
                             }else{
+                                //从page a 进入 page b
                                 _self.OnPageSelected(_pageIndex,function(){
                                     _successCallback&&_successCallback(true);
                                 });
                             }
-
                         }else{
-                            //console.log('相同页面点击');
-
+                            //进入同一个页面，从sublayer状态进入
                             _self.OnPageSelected(_pageIndex,function(){
                                 _successCallback&&_successCallback(true);
                             },isInit);
-
-
-
                         }
                     }else {
                         console.log('异常情况');
                         intoNewPage();
-
                     }
-
                 }
 
+                /**
+                 * 进入一个新page
+                 * private function
+                 */
                 function intoNewPage(){
                     var pageNode=CanvasService.getPageNode();
                     var currentPage=project.pages[_pageIndex];
@@ -526,50 +523,73 @@ ideServices
                     OnPageClicked(_pageIndex);
 
                     var pageCount=currentPage.layers.length;
+                    var options = !!currentPage.backgroundImage?{
+                        width:project.currentSize.width,
+                        height:project.currentSize.height
+                    }:null;
+                    pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
+                        pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
+                            //-
+                            // pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                            //     if (isInit){
+                            //         // console.log('init layer');
+                            //         updateLayerImage(0,function () {
+                            //             _self.ScaleCanvas('page');
+                            //             // console.log('currentPage',_.cloneDeep(currentPage))
+                            //             pageNode.deactivateAll();
+                            //             pageNode.renderAll();
+                            //             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                            //             _self.OnPageSelected(_pageIndex,_successCallback,true);
+                            //         })
+                            //     }else{
+                            //         console.log('不更新layer');
+                            //         _self.ScaleCanvas('page');
+                            //         pageNode.renderAll();
+                            //         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                            //         _self.OnPageSelected(_pageIndex,_successCallback);
+                            //     }
+                            // })
 
-                    pageNode.setBackgroundImage(null,function(){
-                        pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                            //pageNode.setWidth(project.currentSize.width);
-                            //pageNode.setHeight(project.currentSize.height);
-                            // console.log(currentPage.proJsonStr)
-                            if (isInit){
-                                // console.log('init layer');
-                                updateLayerImage(0,function () {
+                            //+
+                            _drawCanvasNode(currentPage,pageNode,function(){
+                                if (isInit){
+                                    updateLayerImage(0,function () {
+                                        _self.ScaleCanvas('page');
+                                        pageNode.deactivateAll();
+                                        pageNode.renderAll();
+                                        currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                        _self.OnPageSelected(_pageIndex,_successCallback,true);
+                                    })
+                                }else{
+                                    console.log('不更新layer');
+                                    console.log('cb in intoNewPage',currentPage.name);
+                                    var layers = currentPage.layers||[];
+                                    layers.map(function(layer,index){
+                                        var layerFab = _self.getFabLayerByLayer(layer);
+                                        if(layerFab){
+                                            layerFab.fire('OnRefresh',function(){
+                                                if(index===layers.length-1){
+                                                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                                }
+                                            });
+                                        }
+                                    });
                                     _self.ScaleCanvas('page');
-                                    // console.log('currentPage',_.cloneDeep(currentPage))
-
-                                    // console.log(_pageIndex,currentPage,currentPage.layers[0].showSubLayer.url);
-                                    pageNode.deactivateAll();
                                     pageNode.renderAll();
-                                    // console.log('page pro',JSON.stringify(pageNode.toJSON()));
+                                    _successCallback&&_successCallback();
 
-                                    currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                                    // console.log('pageurl',''+currentPage.url,currentPage)
-                                    // setTestImg(''+currentPage.url)
-                                    // window.currentPage = currentPage
-                                    // _successCallback && _successCallback();
-                                    _self.OnPageSelected(_pageIndex,_successCallback,true);
-                                })
-
-
-
-
-                            }else{
-                                console.log('不更新layer');
-                                _self.ScaleCanvas('page');
-
-                                //pageNode.backgroundImage.src="";
-                                pageNode.renderAll();
-
-
-                                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                                _self.OnPageSelected(_pageIndex,_successCallback);
-                            }
-
-
-                        })
+                                    // console.log('cost time is:',Date.now()-timeStamp);
+                                    // _self.OnPageSelected(_pageIndex,_successCallback);
+                                }
+                            })
+                        },options);
                     });
 
+                    /**
+                     * private function
+                     * @param _index
+                     * @param _successCallback
+                     */
                     function updateLayerImage(_index,_successCallback) {
                         // console.log('updating layer image')
                         if (_index==pageCount){
@@ -582,17 +602,8 @@ ideServices
                             })
                         }
                     }
-
-                    // function updateLayerImage(_index,_successCallback) {
-                    //     if (_index==pageCount){
-                    //         _successCallback&&_successCallback();
-                    //     }else{
-                    //
-                    //     }
-                    // }
-
                 }
-            }
+            };
 
             this.changeCurrentSubLayerIndex= function (_subLayerIndex,_successCallback) {
                 if (_subLayerIndex<0){
@@ -732,14 +743,12 @@ ideServices
                 _newLayer.info.width=fabLayer.getWidth();
                 _newLayer.info.height=fabLayer.getHeight();
 
-
                 currentPage.currentFabLayer=fabLayer;
                 pageNode.renderAll.bind(pageNode)();
 
                 _self.currentFabLayerIdList=[];
                 _self.currentFabLayerIdList.push(_newLayer.id);
                 _self.OnLayerSelected(_newLayer,_successCallback);
-
 
             };
 
@@ -781,7 +790,7 @@ ideServices
                 _self.currentFabWidgetIdList.push(_newWidget.id);
 
                 var syncSublayer = function(fabWidget) {
-                    currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                    // currentSubLayer.proJsonStr= subLayerNode.toJSON();
                     currentSubLayer.widgets.push(_newWidget);
                     currentSubLayer.currentFabWidget=fabWidget;
 
@@ -1273,7 +1282,7 @@ ideServices
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
 
-                            currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                            // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                             _self.OnSubLayerSelected(layerIndex,subLayerIndex,_successCallback);
                         }
                     });
@@ -1373,8 +1382,8 @@ ideServices
                         var fabLayer=_self.getFabricObject(layer.id);
                         if (fabLayer){
                             _self.SyncLevelFromFab(layer,fabLayer);
-                            var currentPage=_self.getCurrentPage();
-                            currentPage.proJsonStr=JSON.stringify(fabNode.toJSON());
+                            // var currentPage=_self.getCurrentPage();
+                            // currentPage.proJsonStr=JSON.stringify(fabNode.toJSON());
                         }
                     }
                 }else{
@@ -1397,8 +1406,8 @@ ideServices
                             }
                         }
                     }
-                    var currentSubLayer = getCurrentSubLayer();
-                    currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
+                    // var currentSubLayer = getCurrentSubLayer();
+                    // currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
                 }
 
                 _self.UpdateCurrentThumb();
@@ -1422,21 +1431,24 @@ ideServices
                 }
                 _.forEach(copyLayer.subLayers, function (_subLayer) {
                     _subLayer.id=_genUUID();
-                    var proJson1=_subLayer.proJsonStr;
-                    if(typeof proJson1==='string'){
-                        proJ
-                    }
-                    _.forEach(proJson1.objects, function (_fabWidget) {
-                        _.forEach(_subLayer.widgets, function (_widget) {
-                            _widget.$$hashKey=undefined;
-                            if (_widget.id==_fabWidget.id){
-                                var newId=_genUUID();
-                                _widget.id=newId;
-                                _fabWidget.id=newId;
-                            }
-                        })
-                    });
-                    _subLayer.proJsonStr=proJson1;
+                    // var proJson1=_subLayer.proJsonStr;
+                    // if(typeof proJson1==='string'){
+                    //     proJson1=JSON.parse(_subLayer.proJsonStr);
+                    // }
+                    // _.forEach(proJson1.objects, function (_fabWidget) {
+                    //     _.forEach(_subLayer.widgets, function (_widget) {
+                    //         _widget.$$hashKey=undefined;
+                    //         if (_widget.id==_fabWidget.id){
+                    //             var newId=_genUUID();
+                    //             _widget.id=newId;
+                    //             _fabWidget.id=newId;
+                    //         }
+                    //     })
+                    // });
+                    // _subLayer.proJsonStr=proJson1;
+                    _subLayer.widgets&&_subLayer.widgets.forEach(function(_widget,index){
+                        _widget.id = _genUUID();
+                    })
 
                 });
                 return copyLayer;
@@ -1447,36 +1459,49 @@ ideServices
                 pageCopy.id=Math.random().toString(36).substr(2);   //重置id
                 pageCopy.mode=0;    //显示page模式
                 pageCopy.current = false;
-                var proJson=pageCopy.proJsonStr;    //改proJson
-                _.forEach(proJson.objects, function (_fabLayer) {
-                    _.forEach(pageCopy.layers, function (_layer) {
-                        if (_layer.id==_fabLayer.id){
-                            var newId=Math.random().toString(36).substr(2);
-                            _layer.id=newId;
-                            _fabLayer.id=newId;
-                            // _fabLayer.layer= _.cloneDeep(_layer);
-                        }
-                    })
-                });
-                pageCopy.proJsonStr=proJson;
-                _.forEach(pageCopy.layers, function (_layer) {
-                    _.forEach(_layer.subLayers, function (_subLayer) {
-                        _subLayer.id=Math.random().toString(36).substr(2);
-                        var proJson1=_subLayer.proJsonStr;
-                        _.forEach(proJson1.objects, function (_fabWidget) {
-                            _.forEach(_subLayer.widgets, function (_widget) {
-                                if (_widget.id==_fabWidget.id){
-                                    var newId=Math.random().toString(36).substr(2);
-                                    _widget.id=newId;
-                                    _fabWidget.id=newId;
-                                }
-                            })
-                        });
-                        _subLayer.proJsonStr=proJson1;
-                    })
-                });
+                pageCopy.$$hashKey = undefined;
+                // var proJson=pageCopy.proJsonStr;    //改proJson
+                // _.forEach(proJson.objects, function (_fabLayer) {
+                //     _.forEach(pageCopy.layers, function (_layer) {
+                //         if (_layer.id==_fabLayer.id){
+                //             var newId=Math.random().toString(36).substr(2);
+                //             _layer.id=newId;
+                //             _fabLayer.id=newId;
+                //         }
+                //     })
+                // });
+                // pageCopy.proJsonStr=proJson;
+                // _.forEach(pageCopy.layers, function (_layer) {
+                //     _.forEach(_layer.subLayers, function (_subLayer) {
+                //         _subLayer.id=Math.random().toString(36).substr(2);
+                //         var proJson1=_subLayer.proJsonStr;
+                //         _.forEach(proJson1.objects, function (_fabWidget) {
+                //             _.forEach(_subLayer.widgets, function (_widget) {
+                //                 if (_widget.id==_fabWidget.id){
+                //                     var newId=Math.random().toString(36).substr(2);
+                //                     _widget.id=newId;
+                //                     _fabWidget.id=newId;
+                //                 }
+                //             })
+                //         });
+                //         _subLayer.proJsonStr=proJson1;
+                //     })
+                // });
 
-                // console.log('pagecopy',pageCopy)
+                var layers = pageCopy.layers;
+                var subLayers;
+                var widgets;
+                layers&&layers.forEach(function(_layer){
+                    _layer.id = _genUUID();
+                    subLayers = _layer.subLayers;
+                    subLayers&&subLayers.forEach(function(_subLayer){
+                        _subLayer.id=_genUUID();
+                        widgets = _subLayer.widgets;
+                        widgets&&widgets.forEach(function(_widget){
+                            _widget.id=_genUUID();
+                        })
+                    })
+                });
                 return pageCopy;
             }
 
@@ -1488,8 +1513,7 @@ ideServices
              */
             function _getCopyWidget(_widget){
                 var copyWidget= _.cloneDeep(_widget);
-                var newId=_genUUID();
-                copyWidget.id=newId;
+                copyWidget.id=_genUUID();
                 if(copyWidget&&copyWidget.info){
                     copyWidget.info.left+=5;
                     copyWidget.info.top+=5;
@@ -1505,7 +1529,6 @@ ideServices
                 var f = function(){
                     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
                 };
-
                 return ''+f()+f();
             }
 
@@ -1532,7 +1555,6 @@ ideServices
             };
 
             this.CopyLayer= function (_layer, _successCallback) {
-                console.log('_layer',_layer);
                 var fabLayer=_self.getFabricObject(_layer.id);
                 shearPlate = {
                     type: Type.MyLayer,
@@ -1724,39 +1746,9 @@ ideServices
                 }
                 var pastePage = _getCopyPage(shearPagePlate.objects[0]);
 
-                //修改page中的所有layer sublayer  widget的id
-                pastePage.id = _genUUID();
-                pastePage.$$hashKey = undefined;
-                var layers = pastePage.layers;
-                for(var i=0;i<layers.length;i++){
-                    var proJsonObj = pastePage.proJsonStr.objects;
-                    proJsonObj.forEach(function(item){
-                        if(item.id==layers[i].id){
-                            item.id = _genUUID();
-                            layers[i].id = item.id;
-                        }
-                    });
-                    var subLayers = layers[i].subLayers;
-                    for(var j=0;j<subLayers.length;j++){
-                        subLayers[j].id = _genUUID();
-                        proJsonObj = (typeof subLayers[j].proJsonStr==='string')?JSON.parse(subLayers[j].proJsonStr):subLayers[j].proJsonStr;
-                        var widgets = subLayers[j].widgets;
-                        for(var k=0;k<widgets.length;k++){
-                            proJsonObj.objects.forEach(function(item){
-                               if(item.id==widgets[k].id){
-                                   item.id = _genUUID();
-                                   widgets[k].id = item.id
-                               }
-                            });
-                        }
-                        subLayers[j].proJsonStr = JSON.stringify(proJsonObj);
-                    }
-                }
-                // console.log('new pastePage',pastePage);
                 this.AddNewPage(pastePage, function () {
                     _successCallback && _successCallback();
                 });
-
 
             };
 
@@ -1846,19 +1838,15 @@ ideServices
                     var currentPage=_self.getCurrentPage();
                     if (!currentPage){
                         console.warn('找不到Page');
-                        alertErr()
+                        alertErr();
                         return;
                     }
-                    currentPage.proJsonStr =
-                        JSON.stringify(CanvasService.getPageNode().toJSON());
-                    //console.log(currentPage.proJsonStr);
+                    // currentPage.proJsonStr = JSON.stringify(CanvasService.getPageNode().toJSON());
 
-                    var currentSubLayer=_self.getCurrentSubLayer();
-                    if (currentSubLayer){
-
-                        currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-
-                    }
+                    // var currentSubLayer=_self.getCurrentSubLayer();
+                    // if (currentSubLayer){
+                    //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
+                    // }
                     _successCallback && _successCallback();
                 }
             };
@@ -1976,8 +1964,9 @@ ideServices
             };
 
 
-            /**
-             * 次要操作
+            /**edit in 2017/9/18 by lixiang
+             * 这个操作要遍历一遍数据结构，非常影响速度.
+             * 次要操作，重置所有的page、layer、subLayer的selected和current属性
              * Page空白被点击后的响应
              * @param pageIndex         序号
              * @param _successCallback  回调
@@ -1987,7 +1976,7 @@ ideServices
             this.OnPageClicked= function (pageIndex, _successCallback,skipClean) {
                 if (pageIndex<0){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 if (!skipClean){
@@ -2018,7 +2007,6 @@ ideServices
                                 })
                             })
                         })
-
                     }
                 );
                 _successCallback&&_successCallback();
@@ -2064,51 +2052,85 @@ ideServices
                 var pageNode = CanvasService.getPageNode();
 
                 if (currentPage.mode==0&&editInSamePage&&!forceReload){
+                    //当前在page a状态，并且点击了page a
                     _self.OnPageClicked(pageIndex,null,skipClean);
                     pageNode.deactivateAll();
                     pageNode.renderAll();
-                    currentPage.proJsonStr=pageNode.toJSON();
+                    // currentPage.proJsonStr=pageNode.toJSON();
 
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
 
                     _successCallback && _successCallback();
                 }else if (currentPage.mode==1){
+                    //当前在sublayer状态
                     _backToPage(currentPage, function () {
                         _self.OnPageClicked(pageIndex,null,skipClean);
                         pageNode.deactivateAll();
 
                         pageNode.renderAll();
-                        currentPage.proJsonStr=pageNode.toJSON();
+                        // currentPage.proJsonStr=pageNode.toJSON();
 
+                        console.log('cb in _backToPage',currentPage.name);
                         currentPage.mode=0;
                         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+
                         _successCallback && _successCallback();
 
                     });
                 }else{
-                    pageNode.setBackgroundImage(null, function () {
-                        pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                            _self.OnPageClicked(pageIndex,null,skipClean);
+                    //当前在page a状态，并且点击了page b
+                    //-
+                    // pageNode.setBackgroundImage(null, function () {
+                    //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                    //         _self.OnPageClicked(pageIndex,null,skipClean);
+                    //
+                    //         pageNode.deactivateAll();
+                    //         pageNode.renderAll();
+                    //         currentPage.proJsonStr=pageNode.toJSON();
+                    //
+                    //
+                    //         currentPage.mode=0;
+                    //         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                    //
+                    //         _successCallback && _successCallback();
+                    //     });
+                    // });
 
-                            pageNode.deactivateAll();
-                            pageNode.renderAll();
-                            currentPage.proJsonStr=pageNode.toJSON();
+                    //+
+                    //切换到另一页，不需要更新这一页的缩率图
+                    var options = !!currentPage.backgroundImage?{
+                        width:project.currentSize.width,
+                        height:project.currentSize.height
+                    }:null;
+                    //+
+                    pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
+                        pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
+                            _drawCanvasNode(currentPage,pageNode,function(){
+                                //重新draw layer的背景图片,这些将展示在page上
+                                // var layers = currentPage.layers||[];
+                                // layers.map(function(layer,index){
+                                //     var layerFab = _self.getFabLayerByLayer(layer);
+                                //     if(layerFab){
+                                //         layerFab.fire('OnRefresh',function(){
+                                //             // if(index===layers.length-1){
+                                //             //     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                                //             // }
+                                //         });
+                                //     }
+                                // });
+                                _self.OnPageClicked(pageIndex,null,skipClean);
+                                pageNode.deactivateAll();
+                                pageNode.renderAll();
+                                // currentPage.proJsonStr=pageNode.toJSON();
+                                currentPage.mode=0;
+                                _successCallback && _successCallback();
 
-
-                            currentPage.mode=0;
-                            currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-
-                            _successCallback && _successCallback();
-
-
-                        });
-
+                                // console.log('cost time is:',Date.now()-timeStamp);
+                            })
+                        },options);
                     });
                 }
-
             };
-
-
 
 
             /**
@@ -2125,12 +2147,10 @@ ideServices
                 var currentPage=_self.getCurrentPage();
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 currentPage.selected=false;
-
-
 
                 _.forEach(currentPage.layers, function (_layer) {
                     if (_target.id==_layer.id){
@@ -2299,7 +2319,7 @@ ideServices
                     pageNode.setActive(currentFabLayer);
                     currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                     pageNode.renderAll();
-                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                     //console.log(currentPage.proJsonStr);
 
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -2311,7 +2331,7 @@ ideServices
                         pageNode.setActive(currentFabLayer);
                         currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                         pageNode.renderAll();
-                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                        // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                         //console.log(currentPage.proJsonStr);
 
                         currentPage.mode=0;
@@ -2335,7 +2355,7 @@ ideServices
                 var currentPage=_self.getCurrentPage();
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
 
@@ -2352,7 +2372,7 @@ ideServices
                     //console.log('currentFabLayer',currentFabLayer);
                     if(!currentFabLayer){
                         //error
-                        alertErr()
+                        alertErr();
                         return
                     }
 
@@ -2360,7 +2380,7 @@ ideServices
 
                     currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
                     pageNode.renderAll();
-                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                    // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                     //console.log(currentPage.proJsonStr);
 
                     currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -2368,13 +2388,14 @@ ideServices
                         _successCallback&&_successCallback(currentFabLayer)
                     });
                 }else {
+                    //从sublayer选择layer，需要先返回page
                     _backToPage(currentPage, function () {
                         currentPage.currentFabLayer=getFabricObject(_layer.id);
                         var currentFabLayer= currentPage.currentFabLayer;
                         if(!currentFabLayer){
                             //error
-                            alertErr()
-                            return
+                            alertErr();
+                            return;
                         }
 
                         pageNode.deactivateAll();
@@ -2384,7 +2405,7 @@ ideServices
                         currentPage.currentFabLayer= _.cloneDeep(currentFabLayer);
 
                         pageNode.renderAll();
-                        currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                        // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
 
                         currentPage.mode=0;
                         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -2392,19 +2413,20 @@ ideServices
                         _self.SyncSubLayerImage(_layer,_layer.showSubLayer, function () {
                             _successCallback&&_successCallback(currentFabLayer);
                         });
-
-
-
                     });
-
-
                 }
-
-
             };
+
+            /**
+             * 效率低
+             * 遍历所有的layer、sublayer、widgets
+             * 重置所有的selected、current、currentSublayer属性
+             * @param layerIndex
+             * @param subLayerIndex
+             * @param _successCallback
+             */
             this.OnSubLayerClicked= function (layerIndex,subLayerIndex,_successCallback) {
                 _self.currentFabLayerIdList=[];
-
 
                 var currentPage=_self.getCurrentPage();
                 var currentLayer=currentPage.layers[layerIndex];
@@ -2430,37 +2452,28 @@ ideServices
                                 _subLayer.selected=true;
                                 currentSubLayer=_subLayer;
                                 currentSubLayer.currentFabWidget=null;
-
-
                             }else {
                                 _subLayer.current=false;
                                 _subLayer.selected=false;
                             }
                         }
-
                         _.forEach(_subLayer.widgets, function (_widget) {
                             _widget.current=false;
                             _widget.selected=false;
                         })
-
                     })
-
                 });
-
                 _successCallback&&_successCallback();
             };
+
             this.OnSubLayerSelected= function (layerIndex,subLayerIndex,_successCallback,forceReload) {
-
-
                 //除了当前的SubLayer,取消所有Page,Layer,SubLayer,Widget的current
                 var currentPage=_self.getCurrentPage();
-
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
-
                 //如果当前正在编辑subLayer,需要保存之前的subLayer再跳转
                 if (currentPage.mode==1){
                     _leaveFromSubLayer(_self.getCurrentSubLayer());
@@ -2472,30 +2485,23 @@ ideServices
                     alertErr()
                 }
                 if (!currentLayer){
-                    alertErr()
+                    alertErr();
                     return;
                 }
-
                 var currentSubLayer=currentLayer.subLayers[subLayerIndex];
-
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
-                    alertErr()
+                    alertErr();
                     return;
                 }
-
                 drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
-
                 var editInSameSubLayer=false;
                 if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
                     editInSameSubLayer=true;
                 }
-
                 OnSubLayerClicked(layerIndex,subLayerIndex);
-
                 //如果当前在编辑SubLayer,需要使所有Widget失焦,如果在编辑Page,需要重新loadFromJSON
                 var subLayerNode = CanvasService.getSubLayerNode();
-
                 var fabLayer=getFabricObject(currentLayer.id);
                 if (currentPage.mode==1&&editInSameSubLayer&&!forceReload){
 
@@ -2506,43 +2512,39 @@ ideServices
                     subLayerNode.deactivateAll();
                     subLayerNode.renderAll();
 
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
-
+                    // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                     _successCallback && _successCallback();
-
-
                 }
                 else {
                     subLayerNode.clear();
-                    subLayerNode.setBackgroundImage(null, function () {
-                        subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+                    //-
+                    // subLayerNode.setBackgroundImage(null, function () {
+                    //     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+                    //         _self.ScaleCanvas('subCanvas',currentLayer);
+                    //         subLayerNode.deactivateAll();
+                    //         subLayerNode.renderAll();
+                    //         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                    //         currentPage.mode=1;
+                    //         renderingSubLayer=false;
+                    //         _successCallback && _successCallback();
+                    //     });
+                    //
+                    // });
 
-
-                            _self.ScaleCanvas('subCanvas',currentLayer);
-
-                            subLayerNode.deactivateAll();
-                            subLayerNode.renderAll();
-                            currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
-                            currentPage.mode=1;
-
-
-
-                            renderingSubLayer=false;
-
-                            _successCallback && _successCallback();
-                        });
-
+                    //+
+                    _drawCanvasNode(currentSubLayer, subLayerNode, function () {
+                        _self.ScaleCanvas('subCanvas', currentLayer);
+                        subLayerNode.deactivateAll();
+                        subLayerNode.renderAll();
+                        // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                        currentPage.mode = 1;
+                        renderingSubLayer = false;
+                        _successCallback && _successCallback();
                     });
-                    //console.log('');
-
                 }
             };
             var renderingSubLayer=false;
-            /**
-             *
-             */
+
 
             this.getFabLayerByLayer = function (layer) {
                 var fabLayer = null;
@@ -2553,35 +2555,54 @@ ideServices
                     }
                 });
                 return fabLayer;
-            }
+            };
 
-
-
+            /**
+             * 同步subalyer的背景图片,用于page上的layer显示
+             * @param layer
+             * @param subLayer
+             * @param _successCallback
+             * @constructor
+             */
             this.SyncSubLayerImage= function (layer,subLayer,_successCallback) {
 
                 var self = this;
                 var subLayerNode=CanvasService.getSubLayerNode();
                 var currentSubLayer=subLayer;
                 var currentLayer=layer;
-
-
                 var layerFab = null;
 
                 if (currentLayer.showSubLayer.backgroundImage&&currentLayer.showSubLayer.backgroundImage!=''){
                     subLayerNode.clear();
+                    //-
+                    // subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+                    //     _self.ScaleCanvas('subCanvas',currentLayer);
+                    //     subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
+                    //         subLayerNode.deactivateAll();
+                    //         subLayerNode.renderAll();
+                    //         currentSubLayer.proJsonStr=subLayerNode.toJSON();
+                    //         currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                    //         layerFab = self.getFabLayerByLayer(currentLayer);
+                    //         if (layerFab) {
+                    //             layerFab.fire('OnRefresh',function () {
+                    //                 _successCallback && _successCallback();
+                    //             })
+                    //         }else{
+                    //             _successCallback && _successCallback();
+                    //         }
+                    //     },{
+                    //         width:currentLayer.info.width,
+                    //         height:currentLayer.info.height
+                    //     })
+                    // })
 
-
-                    subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
-                        //subLayerNode.setWidth(currentLayer.info.width);
-                        //subLayerNode.setHeight(currentLayer.info.height);
+                    //+
+                    _drawCanvasNode(currentLayer.showSubLayer,subLayerNode,function(){
                         _self.ScaleCanvas('subCanvas',currentLayer);
-
                         subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
-
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
-                            currentSubLayer.proJsonStr=subLayerNode.toJSON();
-
+                            // currentSubLayer.proJsonStr=subLayerNode.toJSON();
                             currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                             layerFab = self.getFabLayerByLayer(currentLayer);
                             if (layerFab) {
@@ -2595,27 +2616,36 @@ ideServices
                             width:currentLayer.info.width,
                             height:currentLayer.info.height
                         })
-
-
-                    })
+                    });
                 }
                 else {
                     //subLayerNode.clear();
-
-
                     subLayerNode.setBackgroundImage(null, function () {
-
                         subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
-                            subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+                            //-
+                            // subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
+                            //     _self.ScaleCanvas('subCanvas',currentLayer);
+                            //     subLayerNode.deactivateAll();
+                            //     subLayerNode.renderAll();
+                            //     currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                            //     currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+                            //     layerFab = self.getFabLayerByLayer(currentLayer);
+                            //     if (layerFab) {
+                            //         layerFab.fire('OnRefresh',function () {
+                            //             renderingSubLayer = false;
+                            //             _successCallback && _successCallback();
+                            //         })
+                            //     }else{
+                            //         _successCallback && _successCallback();
+                            //     }
+                            // });
 
-                                //subLayerNode.setWidth(currentLayer.info.width);
-                                //subLayerNode.setHeight(currentLayer.info.height);
-                                // console.log('currentlayer',currentLayer.info.width,currentLayer.info.height)
+                            //+
+                            _drawCanvasNode(currentLayer.showSubLayer,subLayerNode,function(){
                                 _self.ScaleCanvas('subCanvas',currentLayer);
-
                                 subLayerNode.deactivateAll();
                                 subLayerNode.renderAll();
-                                currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                                // currentSubLayer.proJsonStr= subLayerNode.toJSON();
                                 currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
                                 layerFab = self.getFabLayerByLayer(currentLayer);
                                 if (layerFab) {
@@ -2626,34 +2656,22 @@ ideServices
                                 }else{
                                     _successCallback && _successCallback();
                                 }
-
-                                // renderingSubLayer = false;
-                                // _successCallback && _successCallback();
-                            });
+                            })
                         })
                     });
-
-
                 }
-
-
-
             };
 
 
 
             this.OnWidgetClicked= function (_target, _successCallback) {
                 //除了选中的layer,清除所有Layer,SubLayer,Widget的current
-
-
                 _self.currentFabLayerIdList=[];
-
                 var currentPage=_self.getCurrentPage();
                 currentPage.selected=false;
-
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 currentPage.selected=false;
@@ -2677,10 +2695,7 @@ ideServices
 
                                 _target.hasControls=true;
                                 SyncLevelFromFab(_widget,_target);
-
-
                             }else if (belongToGroup(_widget,_target)){
-
                                 _widget.selected=true;
                                 _widget.current=false;
                                 _subLayer.current=true;
@@ -2691,7 +2706,6 @@ ideServices
                                 var controlsVisibility=Preference.GROUP_CONTROL_VISIBLE;
                                 _target.setControlsVisibility(controlsVisibility);
                             } else {
-
                                 _widget.selected=false;
                                 _widget.current=false;
                             }
@@ -2727,12 +2741,12 @@ ideServices
 
                 if (!currentPage){
                     console.warn('找不到Page');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
-                    alertErr()
+                    alertErr();
                     return;
                 }
 
@@ -2757,9 +2771,7 @@ ideServices
                     //console.log('subLayerNode toJson',subLayerNode.toJSON());
                     currentSubLayer.currentFabWidget= _.cloneDeep(currentFabWidget);
 
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
-                    //console.log('currentSubLayer',currentSubLayer.proJsonStr);
+                    // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
 
                     subLayerNode.renderAll();
 
@@ -2767,28 +2779,32 @@ ideServices
                 }else {
                     subLayerNode.clear();
                     subLayerNode.setBackgroundImage(null, function () {
-
-                        subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
-                            //subLayerNode.setWidth(currentLayer.info.width);
-                            //subLayerNode.setHeight(currentLayer.info.height);
+                        // subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+                        //     _self.ScaleCanvas('subCanvas',currentLayer);
+                        //     subLayerNode.deactivateAll();
+                        //     subLayerNode.renderAll();
+                        //     currentSubLayer.currentFabWidget=getFabricObject(_widget.id,true);
+                        //     var currentFabWidget= currentSubLayer.currentFabWidget;
+                        //     subLayerNode.setActive(currentFabWidget);
+                        //     currentSubLayer.currentFabWidget=_.cloneDeep(currentFabWidget);
+                        //     currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                        //     subLayerNode.renderAll();
+                        //     currentPage.mode=1;
+                        //     _successCallback && _successCallback(currentFabWidget);
+                        // });
+                        _drawCanvasNode(currentSubLayer,subLayerNode,function(){
                             _self.ScaleCanvas('subCanvas',currentLayer);
                             subLayerNode.deactivateAll();
-
                             subLayerNode.renderAll();
-
                             currentSubLayer.currentFabWidget=getFabricObject(_widget.id,true);
-
                             var currentFabWidget= currentSubLayer.currentFabWidget;
                             subLayerNode.setActive(currentFabWidget);
                             currentSubLayer.currentFabWidget=_.cloneDeep(currentFabWidget);
-
-                            currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
+                            // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                             subLayerNode.renderAll();
                             currentPage.mode=1;
                             _successCallback && _successCallback(currentFabWidget);
                         });
-
                     })
                 }
 
@@ -2815,32 +2831,42 @@ ideServices
                     subLayerNode.setActive(currentFabWidget);
                     currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
                     subLayerNode.renderAll();
-
-
-                    currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
+                    // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                     currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                     _successCallback && _successCallback();
                 }else {
                     subLayerNode.clear();
                     subLayerNode.setBackgroundImage(null, function () {
+                        // subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+                        //     subLayerNode.renderAll();
+                        //     currentSubLayer.currentFabwidget=fabGroup;
+                        //
+                        //     //重载时,需要重新创建一个group
+                        //     var currentFabWidget=_createGroup(currentSubLayer.currentFabwidget,true);
+                        //     subLayerNode.setActive(currentFabWidget);
+                        //     currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
+                        //     subLayerNode.renderAll();
+                        //     currentPage.mode=1;
+                        //
+                        //     currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                        //
+                        //     currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                        //     _successCallback && _successCallback();
+                        // });
 
-                        subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
+                        _drawCanvasNode(currentSubLayer,subLayerNode,function(){
                             subLayerNode.renderAll();
                             currentSubLayer.currentFabwidget=fabGroup;
-
                             //重载时,需要重新创建一个group
                             var currentFabWidget=_createGroup(currentSubLayer.currentFabwidget,true);
                             subLayerNode.setActive(currentFabWidget);
                             currentSubLayer.currentFabwidget= _.cloneDeep(currentFabWidget);
                             subLayerNode.renderAll();
                             currentPage.mode=1;
-
-                            currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-
+                            // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                             currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                             _successCallback && _successCallback();
-                        });
+                        })
 
                     })
                 }
@@ -2924,12 +2950,6 @@ ideServices
             this.UpdateCurrentThumb = function (_callback) {
                 var pageNode = CanvasService.getPageNode();
                 var currentPage=_self.getCurrentPage();
-                // $timeout(function () {
-                //
-                //     currentPage.url = pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                //     _callback && _callback();
-                // })
-
                 currentPage.url = pageNode.toDataURL({format: 'jpeg', quality: '0.2'});
                 _callback && _callback();
             };
@@ -2938,7 +2958,7 @@ ideServices
                 var subLayerNode = CanvasService.getSubLayerNode();
                 if (!getCurrentLayer()) {
                     console.warn('当前Layer为空');
-                    alertErr()
+                    alertErr();
                     return;
                 }
                 getCurrentLayer().url = subLayerNode.toDataURL({format:'png'});
@@ -2961,9 +2981,8 @@ ideServices
                         pageNode.setBackgroundColor(_option.color, function () {
                             pageNode.renderAll();
                             currentPage.backgroundColor=_option.color;
-                            currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                            // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                             //console.log(currentPage.proJsonStr);
-
                             var currentPageIndex= _indexById(project.pages, currentPage);
                             _self.OnPageSelected(currentPageIndex, function () {
                                 _successCallback&&_successCallback(currentOperate);
@@ -2978,8 +2997,7 @@ ideServices
                         subLayerNode.setBackgroundColor(_option.color, function () {
                             subLayerNode.renderAll();
                             currentSubLayer.backgroundColor=_option.color;
-
-                            currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                            // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                             var currentPageIndex= _indexById(project.pages, _self.getCurrentPage());
                             var currentLayerIndex=_indexById(project.pages[currentPageIndex].layers,_self.getCurrentLayer());
                             var currentSubLayerIndex= _indexById(project.pages[currentPageIndex].layers[currentLayerIndex].subLayers, _self.getCurrentSubLayer());
@@ -3041,9 +3059,7 @@ ideServices
                         pageNode.setBackgroundImage(img, function () {
                                 pageNode.renderAll();
                                 currentPage.backgroundImage=_option.image;
-                                currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-                                //console.log(currentPage.proJsonStr);
-
+                                // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                                 var currentPageIndex= _indexById(project.pages, currentPage);
                                 _self.OnPageSelected(currentPageIndex, function () {
                                     _successCallback&&_successCallback(currentOperate);
@@ -3061,10 +3077,8 @@ ideServices
                         subLayerNode.setBackgroundImage(_option.image, function () {
                             subLayerNode.renderAll();
                             currentSubLayer.backgroundImage=_option.image;
-
-                            currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
+                            // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                             var currentLayerIndex= _indexById(_self.getCurrentPage().layers, currentLayer);
-
                             var currentSubLayerIndex= _indexById(currentLayer.subLayers, currentSubLayer);
                             _self.OnSubLayerSelected(currentLayerIndex,currentSubLayerIndex, function () {
                                 _successCallback&&_successCallback(currentOperate);
@@ -3072,7 +3086,6 @@ ideServices
                         },{
                             width:currentLayer.info.width,
                             height:currentLayer.info.height
-
                         })
                 }
             };
@@ -3702,12 +3715,12 @@ ideServices
                         break;
                     default :break;
                 }
-                if(getCurrentSubLayer()){
-                    var currentSubLayer=getCurrentSubLayer();
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                }else {
-                    currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                }
+                // if(getCurrentSubLayer()){
+                //     var currentSubLayer=getCurrentSubLayer();
+                //     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                // }else {
+                //     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                // }
                 _self.ReleaseObject({});
                 subLayerNode.renderAll();
                 pageNode.renderAll();
@@ -3918,18 +3931,13 @@ ideServices
                         currentLayer.info.top = _option.top;
 
                     }
-
                     pageNode.renderAll();
-                    currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                    //console.log(currentPage.proJsonStr);
-
+                    // currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
                     _self.OnLayerSelected(currentLayer, function () {
                         _successCallback && _successCallback(currentOperate);
 
                     });
                 }else if (Type.isWidget(object.type)) {
-
-
                     var fabWidget = null;
                     var currentSubLayer = getCurrentSubLayer();
                     var currentWidget = getCurrentWidget(currentSubLayer);
@@ -3957,7 +3965,7 @@ ideServices
 
                     subLayerNode.renderAll();
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     _self.OnWidgetSelected(currentWidget, function () {
                         _successCallback && _successCallback(currentOperate);
 
@@ -3981,17 +3989,13 @@ ideServices
                         currentGroup.info.top = _option.top;
                     }
 
-                    if (getCurrentSubLayer()){
-                        var currentSubLayer=getCurrentSubLayer();
-
-                        currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-
-
-                    }else {
-                        currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                        //console.log(currentPage.proJsonStr);
-
-                    }
+                    // if (getCurrentSubLayer()){
+                    //     var currentSubLayer=getCurrentSubLayer();
+                    //     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    // }else {
+                    //     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                    //     //console.log(currentPage.proJsonStr);
+                    // }
                     subLayerNode.renderAll();
                     pageNode.renderAll();
                     _successCallback && _successCallback(currentOperate);
@@ -4219,8 +4223,7 @@ ideServices
                     }else if(_option.index==='back'){
                         fabLayer.sendToBack();
                     }
-                    currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
-
+                    // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                     var layers = pageNode.getObjects();
                     _.forEach(currentPage.layers, function (_layer,index) {
                         for (var i=0;i<layers.length;i++){
@@ -4258,7 +4261,7 @@ ideServices
                     }else if(_option.index==='back'){
                         fabWidget.sendToBack();
                     }
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     var widgetObjs = subLayerNode.getObjects();
                     _.forEach(currentSubLayer.widgets, function (_widget,index) {
                         for (var i=0;i<widgetObjs.length;i++){
@@ -4344,7 +4347,7 @@ ideServices
                     object.target.fire('OnRelease',object.target.id);
 
                     pageNode.renderAll();
-                    currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
+                    // currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
                     //console.log(currentPage.proJsonStr);
 
                     var layer = getCurrentLayer();
@@ -4379,7 +4382,7 @@ ideServices
                     }
                     subLayerNode.renderAll();
 
-                    currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                    // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     OnWidgetSelected(currentWidget, function () {
                         _successCallback && _successCallback(currentOperate);
 
@@ -4605,23 +4608,40 @@ ideServices
                 var currentSubLayer=getCurrentSubLayer();
                 var pageNode=CanvasService.getPageNode();
 
-                if (currentSubLayer){
-                    currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
+                // if (currentSubLayer){
+                //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
+                // }
 
+                //-
+                // pageNode.setBackgroundImage(null, function () {
+                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
+                //         if (currentPage.mode==1){
+                //             _leaveFromSubLayer(currentSubLayer,_successCallback);
+                //         }else {
+                //             _successCallback&&_successCallback();
+                //         }
+                //
+                //
+                //     });
+                //     //console.log('pageNode',pageNode);
+                // });
+
+                //+ 离开page之前，更新layer的backgroundImage
+                if(currentPage.mode===1){
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.deactivateAll();
+                    subLayerNode.renderAll();
+                    currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
                 }
+                _drawCanvasNode(currentPage,pageNode,function(){
+                    //-
+                    if (currentPage.mode==1){
+                        _leaveFromSubLayer(currentSubLayer,_successCallback);
+                    }else {
+                        _successCallback&&_successCallback();
+                    }
 
-                pageNode.setBackgroundImage(null, function () {
-                    pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                        if (currentPage.mode==1){
-                            _leaveFromSubLayer(currentSubLayer,_successCallback);
-                        }else {
-                            _successCallback&&_successCallback();
-                        }
-
-
-                    });
-                    //console.log('pageNode',pageNode);
-                });
+                })
             };
 
 
@@ -4639,7 +4659,7 @@ ideServices
             }
 
             /**
-             * 辅助函数
+             * 辅助函数，用来更新layer在page上的显示图片
              * 当离开当前SubLayer触发
              * @param _successCallback
              * @private
@@ -4647,7 +4667,7 @@ ideServices
             var _leaveFromSubLayer = function (currentSubLayer, _successCallback) {
                 if (!currentSubLayer){
                     console.warn('找不到SubLayer');
-                    alertErr()
+                    alertErr();
                     return;
                 }
 
@@ -4657,9 +4677,8 @@ ideServices
                 subLayerNode.deactivateAll();
                 subLayerNode.renderAll();
 
-                currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
-
-
+                // currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
+                //-
                 var pageNodeObjs = pageNode.getObjects();
                 var totalNum = pageNodeObjs.length;
                 if (totalNum > 0) {
@@ -4667,23 +4686,15 @@ ideServices
                         totalNum -= 1;
                         if (totalNum <= 0) {
                             _successCallback && _successCallback();
-
                         }
                     }.bind(this);
                     _.forEach(pageNodeObjs, function (_fabLayer) {
                         _fabLayer.fire('OnRenderUrl', cb);
-
                     }.bind(this));
                 } else {
                     _successCallback && _successCallback();
                 }
-
-
-
-
-
-
-            }
+            };
 
             function belongToGroup(_obj,_target){
                 var result=false;
@@ -4752,7 +4763,7 @@ ideServices
 
 
             /**
-             *
+             * 进入sublayer后，背景为page的透视,在backgroundCanvas上画出page的透视。
              * @param width
              * @param height
              */
@@ -4764,10 +4775,8 @@ ideServices
 
                 var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
                 var pageBackgroundImgSrc = currentPage.backgroundImage||"";
-                //var pageFromJson = JSON.parse(currentPage.proJsonStr);
                 var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
                 var pageHeight = (project.currentSize&&project.currentSize.height)||480;
-                //console.log('got page width and height',pageWidth,pageHeight);
 
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
                 backgroundCanvas.width=_width;
@@ -4788,9 +4797,6 @@ ideServices
                     ctx.fill();
                     ctx.closePath();
                 }
-                //ctx.lineWidth = 1;
-                //ctx.strokeStyle = 'rgba(102,153,255,0.75)';
-                //ctx.stroke();
             }
 
             /**
@@ -4826,8 +4832,138 @@ ideServices
 
             }
 
+            /**
+             * edit in 2017/9/18 by lixiang
+             * 刷新一个Canvas节点，重新绘制展示的page或者layer,不重新渲染
+             * @param node canvas节点
+             * @param data 数据
+             * @param _cb
+             */
+            function _drawCanvasNode(data,node,_cb){
+                var type = data.type,
+                    layers,
+                    widgets;
+                //clear node
+                node.clear();
 
+                //add obj then render node
+                switch(type){
+                    case Type.MyPage:
+                        layers = data.layers;
+                        if(layers){
+                            layers.map(function(layer,index){
+                                _addFabricObjInCanvasNode(layer,node);
+                            });
+                            _cb&&_cb();
+                        }
+                        break;
+                    case Type.MySubLayer:
+                        widgets = data.widgets;
+                        if(widgets){
+                            widgets.map(function(widget,index){
+                               _addFabricObjInCanvasNode(widget,node);
+                            });
+                            _cb&&_cb();
+                        }
+                        break;
+                    default:
+                        console.error('not match data type when refreash Canvas');
+                        break
+                }
+            }
 
+            /**
+             * eidt 2017/9/18 by lixiang
+             *
+             * 将fabric对象添加到Canvas
+             * 1、将layer添加到pageNode。2、将widget添加到subLayerNode。
+             * @param dataStructure 数据机构
+             * @param node canvas节点
+             * @param _successCallback 回调函数
+             * @private
+             */
+            function _addFabricObjInCanvasNode(dataStructure,node,_cb){
+                var initiator = {
+                    width: dataStructure.info.width,
+                    height: dataStructure.info.height,
+                    top: dataStructure.info.top,
+                    left: dataStructure.info.left,
+                    id: dataStructure.id,
+                    lockScalingFlip:true,
+                    hasRotatingPoint:false,
+                    shadow:{
+                        color:'rgba(0,0,0,0.4)',blur:2
+                    }
+                };
+                var addFabWidget = function(fabWidget){
+                    node.add(fabWidget);
+                };
+
+                switch (dataStructure.type){
+                    case 'MySlide':
+                        fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyProgress':
+                        fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyDashboard':
+                        fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyButton':
+                        fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyButtonGroup':
+                        fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyNumber':
+                        fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyTextArea':
+                        fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyKnob':
+                        fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MySlideBlock':
+                        fabric.MySlideBlock.fromLevel(dataStructure,addFabWidget,initiator);
+                        break;
+                    case 'MyOscilloscope':
+                        fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MySwitch':
+                        fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyRotateImg':
+                        fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyDateTime':
+                        fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyScriptTrigger':
+                        fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyVideo':
+                        fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyAnimation':
+                        fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
+                    case 'MyLayer':
+                        fabric.MyLayer.fromLevel(dataStructure,addFabWidget,initiator);
+                        // node.add(new fabric.MyLayer(dataStructure,initiator));
+                        break;
+                    case 'MyNum':
+                        node.add(new fabric.MyNum(dataStructure,initiator));
+                        break;
+                    case 'MyTexNum':
+                        node.add(new fabric.MyTexNum(dataStructure,initiator));
+                        break;
+                    default :
+                        console.error('not match widget in preprocess!');
+                        break;
+                };
+                _cb&&_cb();
+            }
 
 
         }]);

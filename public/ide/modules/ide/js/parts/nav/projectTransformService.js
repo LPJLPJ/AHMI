@@ -89,16 +89,6 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     function transWidget(rawWidget,widgetIdx,subLayerIdx){
         var targetWidget = {};
-        //targetWidget.id = subLayerIdx+'.'+widgetIdx;
-        //targetWidget.type = 'widget';
-        //targetWidget.subType = rawWidget.type;
-        //deepCopyAttributes(rawWidget,targetWidget,['name','triggers','actions','tag','zIndex','texList']);
-        //targetWidget.w = rawWidget.info.width;
-        //targetWidget.h = rawWidget.info.height;
-        //targetWidget.x = rawWidget.info.left;
-        //targetWidget.y = rawWidget.info.top;
-        //targetWidget.info = rawWidget.info;
-
         targetWidget = _.cloneDeep(rawWidget);
         transActions(targetWidget);
         targetWidget.type = 'widget';
@@ -118,4 +108,87 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         }
     }
+
+
+    /**
+     * edit in 2017/09/15
+     * use for save simple project date
+     */
+    this.transDateFileBase = transDataFileBase;
+
+    function transDataFileBase(rawProject){
+        var targetProject = {};
+        targetProject.DSFlag = 'base';
+        targetProject.projectId = rawProject.projectId;
+        targetProject.version = rawProject.version;
+        targetProject.name = rawProject.name || 'default project';
+        targetProject.author = rawProject.author || 'author';
+
+        targetProject.CANId = rawProject.CANId;
+        targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
+        targetProject.lastSaveUUID = rawProject.lastSaveUUID;
+
+        targetProject.size = rawProject.currentSize;
+        var pages = rawProject.pages;
+        targetProject.pages = [];
+        for (var i=0;i<pages.length;i++){
+            targetProject.pages.push(transPageBase(pages[i]));
+        }
+        return targetProject;
+    }
+
+    function transPageBase(rawPage){
+        // console.log(rawPage);
+        var targetPage = {};
+        deepCopyAttributes(rawPage,targetPage,['id','name','url','type','mode','selected','expand','current','currentFablayer','backgroundImage','backgroundColor','triggers','actions','tag','transition']);
+        transActions(targetPage);
+        //CanvasList
+        var layers = rawPage.layers;
+        targetPage.layers = [];
+        for (var i=0;i<layers.length;i++){
+            targetPage.layers.push(transLayerBase(layers[i]));
+        }
+        return targetPage;
+    }
+
+    function transLayerBase(rawLayer){
+        var targetLayer = {};
+        deepCopyAttributes(rawLayer,targetLayer,['id','name','url','type','zIndex','info','selected','current','expand','actions','animations','transition']);
+        targetLayer.w = rawLayer.info.width;
+        targetLayer.h = rawLayer.info.height;
+        targetLayer.x = rawLayer.info.left;
+        targetLayer.y = rawLayer.info.top;
+
+        var subLayers = rawLayer.subLayers
+        targetLayer.subLayers = [];
+        //curSubCanvasIdx
+        for (var i=0;i<subLayers.length;i++){
+            var curSubLayer = subLayers[i];
+            if (rawLayer.showSubLayer.id == curSubLayer){
+                targetLayer.curSubCanvasIdx = i;
+            }
+            targetLayer.subLayers.push(transSubLayerBase(curSubLayer));
+        }
+        return targetLayer;
+    }
+
+    function transSubLayerBase(rawSubLayer){
+        var targetSubLayer = {};
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        var widgets = rawSubLayer.widgets;
+        targetSubLayer.widgets = [];
+        for (var i=0;i<widgets.length;i++){
+            var curWidget = widgets[i];
+            targetSubLayer.widgets.push(transWidgetBase(curWidget));
+        }
+
+        return targetSubLayer;
+    }
+
+    function transWidgetBase(rawWidget){
+        var targetWidget = {};
+        targetWidget = _.cloneDeep(rawWidget);
+        return targetWidget;
+    }
+
 }]);

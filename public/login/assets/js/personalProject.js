@@ -107,6 +107,12 @@ $(function(){
         var projects = readLocalProjects('normal').map(function (raw) {
             return JSON.parse(raw);
         });
+        projects.sort(function(p1,p2){
+            var s1 = parseInt(String(p1._id).slice(0,String(p1._id).length-4));
+            var s2 = parseInt(String(p2._id).slice(0,String(p2._id).length-4));
+            return s2-s1;
+        });
+        // console.log('projects',projects);
 
         var CANProjects = readLocalProjects('CAN').map(function(raw){
             return JSON.parse(raw);
@@ -118,9 +124,12 @@ $(function(){
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
+            console.log('newProject.createTime',newProject.createTime);
+            console.log(new Date(newProject.createTime));
             //console.log('newProject'+i,newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
+            delete newProject.backups;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
 
             addProjectButton.after(html);
@@ -210,16 +219,66 @@ $(function(){
     }
 
 
+    //contextMenu last edit : LH 2017/9/21
+    $.contextMenu({
+        selector: '.projectpanel',
+        callback: function(key) {
+            curPanel = $(this);
+            var project = $(this).attr('data-project');
+            project = JSON.parse(project);
+            curProject=project;
+            switch (key){
+                case "openFolder":
+                   var localprojectpath = path.join(localProjectDir,String(project._id));
+                   var gui = require('nw.gui');
+                   // gui.Shell.showItemInFolder(localprojectpath);
+                   gui.Shell.openItem(localprojectpath);
+                   break;
+                case "showInfo":
+                   showProInfo($(this));
+                   break;
+                case "deletePro":
+                   closeModal.modal('show');
+                   break;
+                default:
+             }
+
+        },
+        build:function(){
+            if(local){
+                return {
+                    items: {
+                        "openFolder": {name: "查看工程所在文件夹"},
+                        "showInfo": {name: "修改工程信息"},
+                        "sep1": "---------",
+                        "deletePro": {name: "删除工程"}
+                    }
+                };
+            }else{
+                return{
+                    items:{
+                        "showInfo": {name: "修改工程信息"},
+                        "sep1": "---------",
+                        "deletePro": {name: "删除工程"}
+                    }
+                };
+            }
+        }
+
+    });
+
+
+
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
-        curPanel = $(this)
+        curPanel = $(this);
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         var project = $(this).attr('data-project');
         project = JSON.parse(project);
         curProject = project;
-        var curNodeName = e.target.nodeName
+        var curNodeName = e.target.nodeName;
         if (curNodeName == 'IMG'){
             //img
             //open in new window
@@ -244,8 +303,6 @@ $(function(){
             var customHeight = $('#customHeight');
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
-
-            //console.log('project',project)
             title.val(project.name);
             author.val(project.author);
             if(identifyCustomResolution(project.resolution)){
@@ -275,11 +332,52 @@ $(function(){
         }
     });
 
+    //控制右键菜单是否显示
+    // if(local===false){
+    //     $('.projectpanel').contextMenu(false);
+    // }
+
+    function showProInfo(cur){
+         curPanel = cur;
+         curSelectedPanel = curPanel;
+         $('#basicinfo-template').attr('disabled',false);
+         $('#basicinfo-supportTouch').attr('disabled',false);
+         var project = cur.attr('data-project');
+         project = JSON.parse(project);
+         curProject = project;
+
+         $('#modal-ok').html('确认');
+         var title = $('#basicinfo-title');
+         var author = $('#basicinfo-author');
+         var resolution = $('#basicinfo-resolution');
+         var customWidth = $('#customWidth');
+         var customHeight = $('#customHeight');
+         var template = $('#basicinfo-template');
+         var supportTouch = $('#basicinfo-supportTouch');
+         title.val(project.name);
+         author.val(project.author);
+         if(identifyCustomResolution(project.resolution)){
+             resolution.val(project.resolution);
+             $('#basicinfo-customResolution').hide();
+         }else{
+             resolution.val('custom');
+             $('#basicinfo-customResolution').show();
+             var arr=project.resolution.split('*');
+             customWidth.val(arr[0]);
+             customHeight.val(arr[1]);
+         }
+         template.val(project.template);
+         template.attr('disabled',true);
+         supportTouch.val(project.supportTouch);
+         supportTouch.attr('disabled',true);
+         $('#myModal').modal('show');
+    }
+
     function identifyCustomResolution(resolution){
         var result=false;
         $("#basicinfo-resolution option").each(function(){
             if($(this).val().trim()==resolution){
-                //console.log('haha',$(this).val().trim());
+                // console.log('haha',$(this).val().trim());
                 result=true;
             }
         });
@@ -376,13 +474,13 @@ $(function(){
 
 
             if (local){
-                project.createdTime = Date.now();
-                project.lastModified =  Date.now();
-                project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
+                project.createTime = new Date().toLocaleString();
+                project.lastModifiedTime =  new Date().toLocaleString();
+                project._id = ''+Date.now()+Math.round((Math.random()+1)*1000);
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
-                var localresourcepath = path.join(localprojectpath,'resources')
-                //console.log(localprojectpath);
+                var localresourcepath = path.join(localprojectpath,'resources');
+
 
                 try {
                     mkdir.sync(localresourcepath);
@@ -488,6 +586,7 @@ $(function(){
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
         var thumbnailDOM = curPanel.find('img');
+        console.log("thumbnailDOM",thumbnailDOM);
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
         if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
             //changed

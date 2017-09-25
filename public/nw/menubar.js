@@ -110,7 +110,7 @@
 
             })
         }
-        var checkUpdate = function(){
+        var checkUpdate = function(auto){
             showUpdaterWrapper();
             changeUpdateState('正在检查更新...',100);
 
@@ -129,10 +129,12 @@
                     hideUpdaterWrapper();
                 }
                 if (!error && newVersionExists) {
-                    console.log('manifest',manifest.version);
-                    if(!confirm('检查到新版本，是否升级？')){
-                        hideUpdaterWrapper();
-                        return;
+                    // console.log('manifest',manifest.version);
+                    if(!auto){
+                        if(!confirm('检查到新版本，是否升级？')){
+                            hideUpdaterWrapper();
+                            return;
+                        }
                     }
                     // ------------- Step 2 如果存在新版本，下载最新版本文件-------------
                     changeUpdateState('正在下载 1/3',0);
@@ -222,8 +224,33 @@
                 //console.log('folderPath',folderPath);
                 return folderPath;
             }
-        }
+        };
 
+        /**
+         * 自动更新
+         */
+
+        function autoCheck(){
+            upd.checkNewVersion(function(error, newVersionExists, manifest) {
+                //显示更新进度面板
+                if (error) {
+                    console.log('检查版本出错', error);
+                }else{
+                    if (!error && newVersionExists) {
+                        console.log('manifest', manifest.version);
+                        if (!confirm('系统检查到有新版本，是否升级？')) {
+                            return;
+                        }else{
+                            checkUpdate(true);
+                        }
+                    }
+                }
+            })
+        }
+        console.log(process.env.debug,typeof process.env.debug);
+        if(process.env.debug!=='true'){
+            autoCheck();
+        }
         /**
          * 展示更新面板
          * @return {[type]} [description]

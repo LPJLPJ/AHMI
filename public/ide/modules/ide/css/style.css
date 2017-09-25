@@ -704,6 +704,10 @@ body{
 .my-font-image{
     font-size: 35px !important;
 }
+.my-dropdown-menu{
+    padding: 0px 30px;
+    line-height: 30px;
+}
 
 
 

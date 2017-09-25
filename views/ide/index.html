@@ -323,7 +323,7 @@
                             <span class="iconfont icon">&#xe61f;</span>
                             <span class="caption">排列</span>
                         </div>
-                        <ul class="dropdown-menu" uib-dropdown-menu>
+                        <ul class="dropdown-menu my-dropdown-menu" uib-dropdown-menu>
                             <li ng-click="changeZIndex(0)">上移一层</li>
                             <li ng-click="changeZIndex(1)">下移一层</li>
                             <li ng-click="changeZIndex('front')">移至顶层</li>
@@ -453,10 +453,7 @@
     </div>
 
     <!--/** thumb colum **/-->
-    <div class="my-pages" ng-controller="ThumbCtrl"
-
-         ng-class="{'my-tool-show':component.out.toolShow}"
-    >
+    <div class="my-pages" ng-controller="ThumbCtrl" ng-class="{'my-tool-show':component.out.toolShow}">
         <div class="my-add-page">
             <i class="iconfont" ng-click="component.addPage()">&#xe604;</i>
         </div>
@@ -3112,6 +3109,8 @@
 </div>
 
 <canvas id="offCanvas" hidden></canvas>
+<canvas id="tmp1" hidden></canvas>
+<canvas id="tmp2" hidden></canvas>
 <script language="javascript">
     for (i in document.images)document.images[i].ondragstart = imgdragstart;
 
