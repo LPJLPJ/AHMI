@@ -52,33 +52,36 @@ module.exports.uploadTest = function(req, res){
 
 module.exports.uploadProjectFile = function (req, res) {
     var projectId = req.params.id;
+    // if (projectId){
+    //     //valid
+    //     //whether user logged in?
+    //     var user = req.session.user;
+    //     if (user && user.id){
+    //         //user logged in
+    //         ProjectModel.findById(projectId, function (err,project) {
+    //             if (err){
+    //                 errHandler(res,500,'project error')
+    //             }else{
+    //                 if (project.userId == user.id){
+    //                     //valid for cur user
+    //                     uploadSingleFile(req,res);
+    //                 }else{
+    //                     errHandler(res,500,'user not valid');
+    //                 }
+    //             }
+    //         })
+    //
+    //     }else{
+    //         errHandler(res,500,'not logged in');
+    //     }
+    //
+    //     //form.parse(req)
+    //
+    // }else{
+    //     errHandler(res, 500, 'invalid projectid')
+    // }
     if (projectId){
-        //valid
-        //whether user logged in?
-        var user = req.session.user;
-        if (user && user.id){
-            //user logged in
-            ProjectModel.findById(projectId, function (err,project) {
-                if (err){
-                    errHandler(res,500,'project error')
-                }else{
-                    if (project.userId == user.id){
-                        //valid for cur user
-                        uploadSingleFile(req,res);
-                    }else{
-                        errHandler(res,500,'user not valid');
-                    }
-                }
-            })
-
-        }else{
-            errHandler(res,500,'not logged in');
-        }
-
-
-
-        //form.parse(req)
-
+        uploadSingleFile(req,res);
     }else{
         errHandler(res, 500, 'invalid projectid')
     }
@@ -87,33 +90,38 @@ module.exports.uploadProjectFile = function (req, res) {
 
 module.exports.uploadTex = function (req, res) {
     var projectId = req.params.id;
+    // if (projectId){
+    //     //valid
+    //     //whether user logged in?
+    //     var user = req.session.user;
+    //     if (user && user.id){
+    //         //user logged in
+    //         ProjectModel.findById(projectId, function (err,project) {
+    //             if (err){
+    //                 errHandler(res,500,'project error')
+    //             }else{
+    //                 if (project.userId == user.id){
+    //                     //valid for cur user
+    //                     uploadSingleFile(req,res);
+    //                 }else{
+    //                     errHandler(res,500,'user not valid');
+    //                 }
+    //             }
+    //         })
+    //
+    //     }else{
+    //         errHandler(res,500,'not logged in');
+    //     }
+    //
+    //
+    //
+    //     //form.parse(req)
+    //
+    // }else{
+    //     errHandler(res, 500, 'invalid projectid')
+    // }
     if (projectId){
-        //valid
-        //whether user logged in?
-        var user = req.session.user;
-        if (user && user.id){
-            //user logged in
-            ProjectModel.findById(projectId, function (err,project) {
-                if (err){
-                    errHandler(res,500,'project error')
-                }else{
-                    if (project.userId == user.id){
-                        //valid for cur user
-                        uploadSingleFile(req,res);
-                    }else{
-                        errHandler(res,500,'user not valid');
-                    }
-                }
-            })
-
-        }else{
-            errHandler(res,500,'not logged in');
-        }
-
-
-
-        //form.parse(req)
-
+        uploadSingleFile(req,res);
     }else{
         errHandler(res, 500, 'invalid projectid')
     }
