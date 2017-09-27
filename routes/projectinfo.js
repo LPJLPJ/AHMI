@@ -572,64 +572,70 @@ projectRoute.saveProject = function (req, res) {
 projectRoute.saveProjectAs = function(req,res){
     var projectId = req.params.id;
     var data = req.body;
+    var userId = req.session.user&&req.session.user.id;
     //console.log('receive request');
-    if(projectId!=''){
-        ProjectModel.findById(projectId,function(err,project){
-            if(err){
-                errHandler(res,500,'find project err');
-            }
-            else if(!project){
-                errHandler(res,500,'project is null');
-            }else{
-                //console.log('find project');
-                var copyProject = {};
-                copyProject.name = _.cloneDeep(project.name);
-                copyProject.userId = _.cloneDeep(project.userId);
-                copyProject.author = _.cloneDeep(project.author);
-                copyProject.resolution = _.cloneDeep(project.resolution);
-                copyProject.type = _.cloneDeep(project.type);
-                copyProject.template = _.cloneDeep(project.template);
-                copyProject.supportTouch = _.cloneDeep(project.supportTouch);
-                copyProject.curSize = _.cloneDeep(project.curSize);
-                copyProject.thumbnail = _.cloneDeep(project.thumbnail);
-                copyProject.content = _.cloneDeep(project.content);
-
-                copyProject.name = data.saveAsName?(data.saveAsName):(copyProject.name+"副本");
-                copyProject.author = data.saveAsAuthor?(data.saveAsAuthor):(copyProject.author);
-                var newProject = new ProjectModel(copyProject);
-                var newId = newProject._id;
-                if(newProject.content){
-                    newProject.content=newProject.content.replace(/project\/[\S]+?\/resources/g,'project/'+newId+'/resources');
+    if(req.session.user){
+        if(projectId!=''){
+            ProjectModel.findById(projectId,function(err,project){
+                if(err){
+                    errHandler(res,500,'find project err');
                 }
-                newProject.save(function(err){
-                    if(err){
-                        errHandler(res,500,'save new project err')
-                    }else{
-                        //console.log('save new project success');
-                        var targetDir = path.join(__dirname,'../project/',String(newProject._id));
-                        var srcDir = path.join(__dirname,'../project/',projectId);
-                        fse.ensureDir(targetDir,function(err){
-                            if(err){
-                                console.log(err);
-                                errHandler(res,500,'ensureDir err');
-                            }else{
-                                //console.log('make dir success');
-                                fse.copy(srcDir,targetDir,function(err){
-                                    if(err){
-                                        console.log(err);
-                                        errHandler(res,500,'copy project folder err')
-                                    }else{
-                                        //console.log('copy dir success');
-                                        res.send('ok');
-                                    }
-                                })
-                            }
-                        })
+                else if(!project){
+                    errHandler(res,500,'project is null');
+                }else{
+                    //console.log('find project');
+                    var copyProject = {};
+                    copyProject.name = _.cloneDeep(project.name);
+                    copyProject.userId = _.cloneDeep(userId);
+                    copyProject.author = _.cloneDeep(project.author);
+                    copyProject.resolution = _.cloneDeep(project.resolution);
+                    copyProject.type = _.cloneDeep(project.type);
+                    copyProject.template = _.cloneDeep(project.template);
+                    copyProject.supportTouch = _.cloneDeep(project.supportTouch);
+                    copyProject.curSize = _.cloneDeep(project.curSize);
+                    copyProject.thumbnail = _.cloneDeep(project.thumbnail);
+                    copyProject.content = _.cloneDeep(project.content);
+
+                    copyProject.name = data.saveAsName?(data.saveAsName):(copyProject.name+"副本");
+                    copyProject.author = data.saveAsAuthor?(data.saveAsAuthor):(copyProject.author);
+                    var newProject = new ProjectModel(copyProject);
+                    var newId = newProject._id;
+                    if(newProject.content){
+                        newProject.content=newProject.content.replace(/project\/[\S]+?\/resources/g,'project/'+newId+'/resources');
                     }
-                });
-            }
-        })
+                    newProject.save(function(err){
+                        if(err){
+                            errHandler(res,500,'save new project err')
+                        }else{
+                            //console.log('save new project success');
+                            var targetDir = path.join(__dirname,'../project/',String(newProject._id));
+                            var srcDir = path.join(__dirname,'../project/',projectId);
+                            fse.ensureDir(targetDir,function(err){
+                                if(err){
+                                    console.log(err);
+                                    errHandler(res,500,'ensureDir err');
+                                }else{
+                                    //console.log('make dir success');
+                                    fse.copy(srcDir,targetDir,function(err){
+                                        if(err){
+                                            console.log(err);
+                                            errHandler(res,500,'copy project folder err')
+                                        }else{
+                                            //console.log('copy dir success');
+                                            res.send('ok');
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    });
+                }
+            })
+        }
+    }else{
+        res.status(500).end('not login')
     }
+
 };
 
 projectRoute.saveThumbnail = function (req, res) {
