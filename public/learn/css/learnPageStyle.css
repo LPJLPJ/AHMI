@@ -75,6 +75,11 @@
 .my-font-h1::after{
     right: 220px;
 }
+.my-font-h2{
+
+    font-size: 18px;
+
+}
 
 
 .col-xs-1-5,
@@ -122,10 +127,15 @@
     text-align: center;
 }
 
+.my-header{
+    text-align: center;
+    margin-bottom:80px;
+}
+
 .view-box {
     display: block;
-    width: 270px;
-    height: 225px;
+    /*width: 100%;*/
+    /*height: 225px;*/
     cursor: pointer;
     position: relative;
     transition: box-shadow .2s linear;
@@ -135,67 +145,128 @@
     display: block;
     position: relative;
     width: 100%;
-    height: 150px;
+    /*height: 150px;*/
     overflow: hidden;
     transition: box-shadow 1s ease-out;
 }
 .s-play{
-    opacity: 0;
-    transition: opacity .2s linear;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 52px;
-    height: 52px;
-    margin: -26px 0 0 -26px;
+    /*opacity: 0;*/
+    /*transition: opacity .2s linear;*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*width: 52px;*/
+    /*height: 52px;*/
+    /*margin: -26px 0 0 -26px;*/
     /*background: url(http://vs5.bdstatic.com/browse_static/v3/search_v2/page/play_f073d9b.png) no-repeat;*/
 }
 .my-play-icon{
-   text-align: center;
-    vertical-align: middle;
-    z-index: -1;
+    position:  absolute;
+    top: 50%;
+    left: 50%;
+    width: 66px;
+    height: 66px;
+    margin: -33px 0 0 -33px;
+    /*z-index: -1;*/
+    z-index: 3;
+    opacity: 0;
 }
-.my-play-icon:hover{
-    z-index: 2;
+.my-play-icon-hover{
+    /*z-index: 10000 !important;*/
+    opacity: 1;
 }
+
 .s-mask {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: #fff;
-    filter: alpha(opacity=0);
-    -khtml-opacity: 0;
-    -moz-opacity: 0;
+    background-color: #000000;
+    /*filter: alpha(opacity=0);*/
+    /*-khtml-opacity: 0;*/
+    /*-moz-opacity: 0;*/
     opacity: 0;
+    z-index: 2;
+}
+.s-mask-hover{
+    opacity: 0.6;
 }
 
-.info {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    height: 20px;
-    line-height: 20px;
-    padding: 1px 5px;
-    color: #fff;
-    font-size: 12px;
-}
-.info-bg {
-    display: block;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 50px;
-    line-height: 18px;
-    background-image: linear-gradient(to bottom,rgba(255,255,255,0),rgba(0,0,0,.8));
-    background-image: -moz-linear-gradient(top,rgba(225,225,225,0),rgba(0,0,0,.8));
-    filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#00ffffff', endColorstr='#80000000');
-    -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#00ffffff', endColorstr='#80000000');
-}
-.img {
+.img{
+    position: relative;
+    z-index: 1;
     height: 100%;
     width: 100%;
     transition: transform .1s ease-in,-webkit-filter 1s ease-out;
 }
+.my-modal-content{
+    /*background-color: #dddddd;*/
+    background-color: transparent;
+}
+.my-modal-header{
+    border: 0;
+    padding-bottom: 20px;
+    background-color: black;
+    opacity: 0.5;
+}
+.my-close-icon{
+    top: auto;
+    bottom:3px;
+    color:white;
+    /*font-size: 30px;*/
+}
+.my-video-modal{
+    width: 902.5px;
+
+}
+.my-video{
+    width: 900px;
+    display:none;
+    /*border:10px solid #888888;*/
+    /*border: 3px white solid;*/
+}
+
+.my-Block{
+    overflow-wrap:normal;
+    min-height: 300px;
+    background-color: white;
+    border: 5px double #cccccc;
+    border-radius:25px;
+    margin-top: 60px;
+    padding:30px 50px 70px 90px;
+    text-align: left;
+    font-size: 20px;
+}
+
+#dom-learn li{
+    list-style-type: decimal;
+}
+#dom-learn a{
+    /*text-decoration:none;*/
+    color: #333;
+}
+#QA li{
+    list-style-type: decimal;
+}
+.my-question{
+    padding:10px 25px 10px 5px;
+    width: 100%;
+}
+.my-answer{
+    width: 100%;
+    display:none;
+    padding:8px 25px 15px 25px;
+    margin-bottom:15px;
+    margin-left:-25px;
+    background-color: #f0f0f0;
+    border: 1px #cccccc solid;
+    border-radius:10px;
+    font-size: 18px;
+}
+.my-domLink{
+    display: block;
+    padding:10px 25px 10px 5px;
+    width: 100%;
+}
+
