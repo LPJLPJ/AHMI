@@ -3,7 +3,7 @@
 
 .my-start-learn{
     font-size: 50px;
-    font-family: 幼圆;
+    /*font-family: 幼圆;*/
 }
 
 .my-main-div{
@@ -200,10 +200,14 @@
     width: 100%;
     transition: transform .1s ease-in,-webkit-filter 1s ease-out;
 }
+.my-video-modal {
+    width: 902.5px;
+}
 .my-modal-content{
     /*background-color: #dddddd;*/
     background-color: transparent;
 }
+
 .my-modal-header{
     border: 0;
     padding-bottom: 20px;
@@ -214,11 +218,12 @@
     top: auto;
     bottom:3px;
     color:white;
+    float: right;
+    font-size: inherit;
     /*font-size: 30px;*/
 }
-.my-video-modal{
-    width: 902.5px;
-
+.my-modal-body{
+    padding: 0;
 }
 .my-video{
     width: 900px;
@@ -269,4 +274,41 @@
     padding:10px 25px 10px 5px;
     width: 100%;
 }
-
+.my-txtBlock{
+    min-height: 600px;
+    background-color: #f0f0f0;
+    border: 5px double lightgrey;
+    margin-top: 60px;
+    margin-bottom:100px;
+    padding:40px 100px;
+    text-align: left;
+    font-size: 20px
+}
+.my-textarea-border{
+    height: 350px;
+    background-color: #f4f4f4;
+    border: 1px solid lightgrey;
+    padding:20px;
+    text-align: left;
+    font-size: 20px
+}
+.my-textarea{
+    margin-top:30px;
+    width: 100%;
+    height: 280px;
+    word-break: break-all;
+    word-wrap: break-word;
+    /*font-family: Helvetica;*/
+    resize: none;
+}
+.my-guestInfo{
+    display:none;
+    margin-top:20px;
+    padding:30px 70px 40px 20px;
+    background-color: #f4f4f4;
+    border:1px solid lightgray
+}
+.my-submit{
+    text-align: right;
+    padding-top: 30px;
+}

@@ -132,20 +132,15 @@
     <div class="modal-dialog my-video-modal">
         <div class="modal-content my-modal-content">
             <div class="modal-header my-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >
-                    <!--&times;-->
-                    <span class="glyphicon glyphicon-remove my-close-icon">
-                </button>
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true" >-->
+                    <!--&lt;!&ndash;&times;&ndash;&gt;-->
+
+                    <!--<div class="glyphicon glyphicon-remove my-close-icon"></div>-->
+                <!--</button>-->
+                <span class="glyphicon glyphicon-remove my-close-icon" data-dismiss="modal" aria-hidden="true"></span>
             </div>
-            <div class="modal-body" style="padding:0px">
-                <video id="video1" class="my-video" controls="controls">
-                    <source src='./source/视频1.mp4'>
-                    <source src='./source/视频1.ogg'>
-                </video>
-                <video id="video2" class="my-video" controls="controls">
-                    <source src='./source/视频2.mp4'>
-                    <source src='./source/视频2.ogg'>
-                </video>
+            <div class="modal-body my-modal-body">
+
             </div>
             <!--<div class="modal-footer">-->
                 <!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭-->
@@ -228,37 +223,7 @@
                     <p class="my-font-h1">视频学习</p>
                 </div>
             </div>
-
-            <div class="row">
-                <div>
-                    <li class="view-box col-lg-4  col-md-4 col-sm-4"  data-toggle="modal" data-target="#myModal">
-                        <div>
-                            <div class="view">
-                                <img class="img" src="./source/视频1.png">
-                                <span class="s-mask"></span>
-
-                                <span class="s-play"></span>
-                                <img class="my-play-icon" src="./source/Play12.png">
-
-                            </div>
-                            <span class="title my-font-h2">视频1</span>
-                        </div>
-                    </li>
-                    <li class="view-box col-lg-4  col-md-4 col-sm-4"  data-toggle="modal" data-target="#myModal">
-                        <div>
-                            <div class="view" target="_blank">
-                                <img class="img" alt="" src="./source/视频2.png">
-                                <span class="s-mask"></span>
-                                <img class="my-play-icon" src="./source/Play12.png">
-                                <span class="s-play">
-                                </span>
-                            </div>
-                            <span class="title my-font-h2">星凯龙视频</span>
-                        </div>
-                    </li>
-
-                </div>
-
+            <div class="row" id="vedio-body">
             </div>
         </div>
 
@@ -270,18 +235,8 @@
                     <p class="my-font-h1">文档学习</p>
                 </div>
             </div>
-
             <div class="row my-Block">
                 <ul>
-                    <li>
-                        <a class="my-domLink" href="https://ide.graphichina.com/blog/post?id=598d0dbb9ac7a1a612096077">自定义动画的配置2（按比例平移和缩放）</a>
-                    </li>
-                    <li>
-                        <a class="my-domLink" href="https://ide.graphichina.com/blog/post?id=58e5a5db4fbaccc522e7b5be">模板动画的使用</a>
-                    </li>
-                    <li>
-                        <a class="my-domLink" href="https://ide.graphichina.com/blog/post?id=58e4922df5fd9fd508193abb">自定义动画的配置</a>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -295,18 +250,6 @@
             </div>
             <div class="row my-Block">
                 <ul>
-                    <li>
-                        <div class="my-question">这是问题1</div>
-                        <div class="my-answer">答：问题1没有答案。</div>
-                    </li>
-                    <li>
-                        <div class="my-question">这是问题2这是问题2这是问题2这是问题2这是问题2这是问题2</div>
-                        <div class="my-answer">答：问题2也没有答案问题2也没有答案问题2也没有答案问题2也没有答案问题2也没有答案</div>
-                    </li>
-                    <li>
-                        <div class="my-question">这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3这是问题3</div>
-                        <div class="my-answer">答：问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案问题3依旧没有答案</div>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -318,19 +261,18 @@
                     <p class="my-font-h1">我要提问</p>
                 </div>
             </div>
-            <div style="min-height: 600px;background-color: #f0f0f0;border: 5px double lightgrey;margin-top: 60px;margin-bottom:100px;padding:40px 100px;text-align: left;font-size: 20px">
-            <!--<div class="row my-Block">-->
+            <div class="my-txtBlock">
                 <p><strong>编辑问题：</strong></p>
                 <br>
-                <div style=" height: 350px;background-color: #f4f4f4;border: 1px solid lightgrey;padding:20px;text-align: left;font-size: 20px">
-                    <textarea class="required quoteOnly markItUpEditor"cols="40" id="questionTxt" name="post[body]" rows="20" style="margin-top:30px; width: 100%; height: 280px; word-break: break-all; word-wrap: break-word; font-family: Helvetica;resize: none;"></textarea>
+                <div class="my-textarea-border">
+                    <textarea class="required quoteOnly markItUpEditor my-textarea"cols="40" id="questionTxt" name="post[body]" rows="20"></textarea>
                 </div>
                 <br>
                 <form>
-                    <input class="my-radio" type="radio" name="loginUser" value="true" checked>用IDE账号留言&nbsp&nbsp&nbsp&nbsp&nbsp
-                    <input class="my-radio" type="radio" name="loginUser" value="false">游客留言
+                    <input class="my-radio" id="loginUserTrue" type="radio" name="loginUser" value="true" checked="checked">用IDE账号留言&nbsp&nbsp&nbsp&nbsp&nbsp
+                    <input class="my-radio" id="loginUserFalse" type="radio" name="loginUser" value="false">游客留言
                 </form>
-                <div id="guestInfo" style="display:none;margin-top:20px;padding:30px 70px 40px 20px;background-color: #f4f4f4;border:1px solid lightgray" >
+                <div id="guestInfo" class="my-guestInfo">
                     <div class="input-group input-group-lg">
                         <span class="input-group-addon" id="guestName">你的昵称 ：</span>
                         <input type="text" class="form-control" aria-describedby="guestName">
@@ -341,18 +283,17 @@
                         <input type="text" class="form-control" placeholder="我们会将回答通过邮箱反馈给你^^"aria-describedby="guestMail">
                     </div>
                 </div>
-                <div style="text-align: right;padding-top: 30px;">
+                <div class="my-submit">
                     <input id="questionSubmit" class="btn btn-primary btn-lg" type="button" value="提交">
-                    <!--<a class="btn btn-primary btn-lg" href="/user/login">登录</a>-->
                 </div>
 
             </div>
         </div>
 
     </div>
+    <!-- MAIN SECTION END-->
 
 
-    <!-- CONTACT SECTION END-->
     <footer>
         <% include ../all/footer.html %>
     </footer>
@@ -360,5 +301,4 @@
 </div>
 </body>
 <script src="../../public/learn/js/learnPage.js"></script>
-<!--<script src="../../public/general/js/versionTag.js"></script>-->
 </html>

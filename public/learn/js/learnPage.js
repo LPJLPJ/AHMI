@@ -1,27 +1,135 @@
 //create:LH 2017/09/26
 
-$(function(){
+$(function($){
 
     var currentVideo;
+    var videoArray=[
+        {
+            id:"video1",
+            src1:'./source/视频1.mp4',
+            src2:'./source/视频1.ogg',
+            imgSrc:"./source/视频1.png",
+            name:"视频1"
+        },
+        {
+            id:"video2",
+            src1:'./source/视频2.mp4',
+            src2:'./source/视频2.ogg',
+            imgSrc:"./source/视频2.png",
+            name:"星凯龙视频"
+        }
+
+    ];
+    var domcumentArray=[
+        {
+            url:"https://ide.graphichina.com/blog/post?id=598d0dbb9ac7a1a612096077",
+            name:"自定义动画的配置2（按比例平移和缩放）"
+        },
+        {
+            url:"https://ide.graphichina.com/blog/post?id=58e5a5db4fbaccc522e7b5be",
+            name:"模板动画的使用"
+        },
+        {
+            url:"https://ide.graphichina.com/blog/post?id=58e4922df5fd9fd508193abb",
+            name:"自定义动画的配置"
+        },
+    ];
+    var QAArray=[
+        {
+            question:"问题1",
+            answer:"答案1"
+        },
+        {
+            question:"问题2",
+            answer:"答案2"
+        },
+        {
+            question:"问题3",
+            answer:"答案3"
+        },
+        {
+            question:"问题4",
+            answer:"答案4"
+        }
+    ];
+
     initAll();
 
     function initAll(){
-        initQA();
         initVedioModal();
+        initVedioBlock();
+        initDomLearn();
+        initQA();
         initMyQuestion();
+    }
+
+
+    //vedio播放模态框序列初始化
+    function initVedioModal(){
+        var curItem=$(".modal-body");
+        var txt="";
+        for(var i=0;i<videoArray.length;i++){
+            txt="<video id='" + videoArray[i].id+ "' class='my-video' controls='controls'>\n" +
+                "<source src='"+ videoArray[i].src1+"'>\n" +
+                "<source src='"+videoArray[i].src2+"'>\n" +
+                "</video>";
+            curItem.append(txt);
+        }
+    }
+    //vedio模块初始化
+    function initVedioBlock(){
+        var curItem=$("#vedio-body");
+        var txt="";
+        for(var i=0;i<videoArray.length;i++){
+            txt="<li class='view-box col-lg-4 col-md-4 col-sm-4' data-toggle='modal' data-target='#myModal'>\n" +
+                "<div>\n" +
+                "<div class='view'>\n" +
+                "<img class='img' src='"+ videoArray[i].imgSrc+"'>\n" +
+                "<span class='s-mask'></span>\n" +
+                "<span class='s-play'></span>\n" +
+                "<img class='my-play-icon' src='./source/Play12.png'>\n" +
+                "</div>\n" +
+                "<span class='title my-font-h2'>"+ videoArray[i].name+"</span>\n" +
+                "</div>\n" +
+                "</li>";
+            curItem.append(txt);
+        }
+    }
+    //文档模块初始化
+    function initDomLearn(){
+        var curItem=$("#dom-learn").find("ul");
+        var txt="";
+        for(var i=0;i<domcumentArray.length;i++){
+            txt="<li>\n" +
+                "<a class='my-domLink' href='"+domcumentArray[i].url+"'>"+domcumentArray[i].name+"</a>\n" +
+                "</li>";
+            curItem.append(txt);
+        }
     }
 
     //常见问题模块初始化
     function initQA(){
-        // $(".my-Block").odd
+        var curItem=$("#QA").find("ul");
+        var txt="";
+        for(var i=0;i<QAArray.length;i++){
+            txt="<li>\n" +
+                "<div class='my-question'>"+QAArray[i].question+"</div>\n" +
+                "<div class='my-answer'>"+QAArray[i].answer+"</div>\n" +
+                "</li>";
+            curItem.append(txt);
+        }
     }
-    //vedio序列初始化
-    function initVedioModal(){
-        //
-    }
+
     //我要提问模块初始化
     function initMyQuestion(){
         //
+        $("#questionTxt").val("");
+        // $("#loginUserFalse").removeAttr("checked");
+        // $("#loginUserTrue").attr("checked","true");
+        $("#loginUserTrue").trigger("click");
+        $("#guestInfo").slideUp();
+        $("input[aria-describedby='guestName']").val("");
+        $("input[aria-describedby='guestMail']").val("");
     }
 
     //为视频预览添加hover-play效果
@@ -37,14 +145,13 @@ $(function(){
     $(".view-box").click(function(){
         var cur=$(this).parents(".view-box").find(".my-font-h2")?$(this).parents(".view-box"):$(this);
         var txt=cur.context.innerText;
-
-        if(txt.search(/视频1/)>0){
-            currentVideo=$("#myModal").find("#video1");
-        }else if(txt.search(/星凯龙视频/)>0){
-            currentVideo=$("#myModal").find("#video2");
+        for(var i=0;i<videoArray.length;i++){
+            if(txt.search(videoArray[i].name)>0){
+                currentVideo=$("#myModal").find("#"+videoArray[i].id);
+                currentVideo.css("display","block");
+                break;
+            }
         }
-        currentVideo.css("display","block");
-
     });
     $("#myModal").on("hidden.bs.modal", function(){
         currentVideo.css("display","none");
@@ -66,7 +173,7 @@ $(function(){
     function centerModals() {
         $("#myModal").each(function(i) {
             var $clone = $(this).clone().css('display','block').appendTo('body');
-            var top = Math.round(($clone.height() - $clone.find('.my-video-modal').height()) / 4);
+            var top = Math.round(($clone.height() - $clone.find('video').height()) / 3);
             top = top > 0 ? top : 0;
             // var left = Math.round(($clone.find('.modal-dialog').width() - $clone.find('.my-video-modal').width()) / 2);
             $clone.remove();
@@ -82,7 +189,6 @@ $(function(){
 
     //根据留言角色显示邮箱输入框
     $(".my-radio").on("click",function(){
-        console.log($("input[name='loginUser']:checked").val());
         if($("input[name='loginUser']:checked").val()==="true"){
             $("#guestInfo").slideUp();
         }else{
@@ -108,7 +214,7 @@ $(function(){
             //验证登陆状态
             //..................................
 
-            if(isLogin=="false"){//没有登陆
+            if(isLogin==="false"){//没有登陆
                 alert("请先登录！");
                 return;
             }else{//已登录
@@ -118,7 +224,7 @@ $(function(){
             //验证游客邮箱
             email=$("input[aria-describedby='guestMail']").val();
             if(isEmail(email)){
-                userName=$("input[aria-describedby='guestName']").val();
+                // userName=$("input[aria-describedby='guestName']").val();
                 alert("success!");
             }else{
                 alert("请输入正确的邮箱地址！");
@@ -128,15 +234,19 @@ $(function(){
         }
         //提交问题
         //...........
-        alert("问题已经提交，请稍作等待，我们会尽快通过邮箱给您反馈^^");
+
 
         //正确提交问题后重新加载模块
-        // initMyQuestion();
+        initMyQuestion();
+
+        alert("问题已经提交，请稍作等待，我们会尽快通过邮箱给您反馈^^");
     });
 
     //判断字符串是否为空
     function isEmpty( str ){
-        if ( str == "" ) return true;
+        if ( str === "" ) {
+            return true;
+        }
         var regu = "^[ ]+$";
         var re = new RegExp(regu);
         return re.test(str);
