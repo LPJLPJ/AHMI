@@ -173,6 +173,9 @@ router.route('/project/:id/backuplist')
 router.route('/project/:id/editor')
     .get(projectInfo.getProjectById);
 
+router.route('/project/:id/visualization')
+    .get(projectInfo.getProjectTreeById);
+
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent);
 
