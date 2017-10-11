@@ -4,7 +4,7 @@ $(function(){
         top:20,
         right:90,
         bottom:50,
-        left:90
+        left:140
     },
         width = 1000-margin.left-margin.right,
         height = 800-margin.top-margin.bottom;
@@ -70,7 +70,7 @@ $(function(){
 
     d3.json('/project/'+projectId+'/content',function(error,data){
         project = JSON.parse(data.content);
-        project.name = project.name||data.name;
+        project.name = data.name;
         root = d3.hierarchy(project,function(d){
             return d.pages||d.layers||d.subLayers||d.widgets;
         });
@@ -134,14 +134,28 @@ $(function(){
             });
 
         nodeEnter.append('text')
-            .attr("dy", ".35em")
-            .attr("x", function(d) {
-                return d.children || d._children ? -13 : 13;
-            })
+            .attr("y","-1em")
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
             })
-            .text(function(d) { return d.data.name; })
+            .selectAll('tspan')
+            .data(function(d){
+                var name = d.data.name;
+                var nameArr = [];
+                for(var i=0;i<name.length;i++){
+                    nameArr.push(name.substr(i,8));
+                    i+=8;
+                }
+                d.nameArr = nameArr;
+                return d.nameArr;
+            })
+            .enter()
+            .append('tspan')
+            .attr("x", function(d) {
+                return d.children || d._children ? 13 : -13;
+            })
+            .attr("dy", "1em")
+            .text(function(d) { return d})
             .on("mouseover",toolTip.show)
             .on("mouseout",toolTip.hide);
 
