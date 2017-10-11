@@ -220,13 +220,13 @@
     color:white;
     float: right;
     font-size: inherit;
-    /*font-size: 30px;*/
 }
 .my-modal-body{
     padding: 0;
 }
 .my-video{
-    width: 900px;
+    /*width: 900px;*/
+    width: 100%;
     display:none;
     /*border:10px solid #888888;*/
     /*border: 3px white solid;*/
