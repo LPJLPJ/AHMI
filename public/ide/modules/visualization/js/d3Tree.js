@@ -70,6 +70,7 @@ $(function(){
 
     d3.json('/project/'+projectId+'/content',function(error,data){
         project = JSON.parse(data.content);
+        project.name = project.name||data.name;
         root = d3.hierarchy(project,function(d){
             return d.pages||d.layers||d.subLayers||d.widgets;
         });
