@@ -324,7 +324,7 @@ $(function(){
                         str += `<div>画布数:${data.layers.length}</div>`;
                         break;
                     case 'MyLayer':
-                        str += `<div>子图层数:${data.subLayers.length}</div>`;
+                        str += `<div>子画布数:${data.subLayers.length}</div>`;
                         break;
                     case 'MySubLayer':
                         str +=`<div>控件数:${data.widgets.length}</div>`;
