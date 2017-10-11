@@ -218,6 +218,9 @@ function parseFormData(req,res,newProject){
             //console.log('project',project,);
             delete project._id;
             delete project.createdTime;
+            delete project.lastModified;
+            delete project.createTime;
+            delete project.lastModifiedTime;
             project.lastModifiedTime = new Date();
             for (var key in project) {
                 if (key === 'content') {
