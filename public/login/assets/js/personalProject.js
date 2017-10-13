@@ -848,4 +848,35 @@ $(function(){
         var html = new EJS({url:'../../public/login/assets/views/CANProjectPanel.ejs'}).render({project:newCANProject,thumbnail:null});
         $('#addCANproject').after(html)
     }
+
+    //改变window大小的时候，重新计算filedrag的大小
+    $(window).resize(function() {
+        setHundredPercentHeight("#filedrag", "window", "#mianHeader");
+        var height=$(".all").height()+$(".top").height();
+        if($("#filedrag").height()<height){
+            $("#filedrag").height(height*1.1);
+        }
+    })
+    //页面加载时，计算filedrag的大小
+    setHundredPercentHeight("#filedrag", "window", "#mianHeader");
+    var height=$(".all").height()+$(".top").height();
+    if($("#filedrag").height()<height){
+        $("#filedrag").height(height*1.1);
+    }
+    //计算filedrag的大小
+    function setHundredPercentHeight(objId,containerId)
+    {
+        var length = arguments.length;
+        var height = 0;
+        for (var i = 2; i < length; i++)
+        {
+            height += $(arguments[i]).outerHeight();
+        }
+        if(containerId==="window"){
+            $(objId).height(($(window).height() - height)*0.99);
+        }else{
+            $(objId).height(($(containerId).height() - height)*0.99);
+        }
+
+    }
 });
