@@ -308,8 +308,16 @@ projectRoute.getBackupList = function (req, res) {
             if (err) {
                 errHandler(res,500,'error')
             }
-
-            res.end(JSON.stringify(project.backups))
+            var backups = project.backups,
+                backupList = [],
+                backupDate = '';
+            if(backups){
+                for(var i=0,il=backups.length;i<il;i++){
+                    backupDate = moment(backups[i].lastModifiedTime).format("YYYY-MM-DD HH:mm");
+                    backupList.push(backupDate);
+                }
+            }
+            res.end(JSON.stringify(backupList));
         })
     }else{
         //console.log(projectId)
