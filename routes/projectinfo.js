@@ -310,11 +310,13 @@ projectRoute.getBackupList = function (req, res) {
             }
             var backups = project.backups,
                 backupList = [],
-                backupDate = '';
+                item;
             if(backups){
                 for(var i=0,il=backups.length;i<il;i++){
-                    backupDate = moment(backups[i].lastModifiedTime).format("YYYY-MM-DD HH:mm");
-                    backupList.push(backupDate);
+                    item = {};
+                    item.date = moment(backups[i].lastModifiedTime).format("YYYY-MM-DD HH:mm");
+                    item.thumbnail = backups[i].thumbnail;
+                    backupList.push(item);
                 }
             }
             res.end(JSON.stringify(backupList));
