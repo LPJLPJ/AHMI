@@ -240,6 +240,9 @@ $(function(){
                 case "deletePro":
                    closeModal.modal('show');
                    break;
+                case "visualization":
+                    window.open('/project/'+project._id+'/visualization');
+                    break;
                 default:
              }
 
@@ -258,7 +261,9 @@ $(function(){
                 return{
                     items:{
                         "showInfo": {name: "修改工程信息"},
-                        "sep1": "---------",
+                        "sep1":"---------",
+                        "visualization":{name:"结构可视化"},
+                        "sep2": "---------",
                         "deletePro": {name: "删除工程"}
                     }
                 };

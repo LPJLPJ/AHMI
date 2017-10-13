@@ -115,9 +115,8 @@ projectRoute.checkSharedKey = function (req, res) {
 
 
 projectRoute.getProjectById = function (req, res) {
-    var projectId = req.params.id
+    var projectId = req.params.id;
     var userId = req.session.user&&req.session.user.id;
-
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -136,7 +135,6 @@ projectRoute.getProjectById = function (req, res) {
             }else{
                 //user logged in, but not project owner
                 if (!!project.shared){
-
                     hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
                         if (result){
                             res.render('ide/index.html')
@@ -147,23 +145,58 @@ projectRoute.getProjectById = function (req, res) {
                             })
                         }
                     })
-
                 }else{
                     res.render('ide/share.html',{
                         title:'没有权限',
                         share:false
                     });
                 }
-
-
             }
-
         })
     }else{
         errHandler(res,500,'error')
     }
+};
 
-}
+projectRoute.getProjectTreeById = function(req,res){
+    var projectId = req.params.id;
+    var userId = req.session&&req.session.user&&req.session.user.id;
+    if(!userId){
+        res.render('login/login.html',{
+            title:'重新登录'
+        })
+    }else{
+        ProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'error')
+            }else{
+                if(!project){
+                    errHandler(res,500,'project is null');
+                }else if (project.userId == userId){
+                    res.render('ide/projectTree.html')
+                }else{
+                    if (!!project.shared){
+                        hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
+                            if (result){
+                                res.render('ide/projectTree.html')
+                            }else{
+                                res.render('ide/share.html',{
+                                    title:project.name,
+                                    share:true
+                                })
+                            }
+                        })
+                    }else{
+                        res.render('ide/share.html',{
+                            title:'没有权限',
+                            share:false
+                        });
+                    }
+                }
+            }
+        })
+    }
+};
 
 projectRoute.getProjectContent = function (req, res) {
     var projectId = req.params.id
@@ -275,8 +308,18 @@ projectRoute.getBackupList = function (req, res) {
             if (err) {
                 errHandler(res,500,'error')
             }
-
-            res.end(JSON.stringify(project.backups))
+            var backups = project.backups,
+                backupList = [],
+                item;
+            if(backups){
+                for(var i=0,il=backups.length;i<il;i++){
+                    item = {};
+                    item.date = moment(backups[i].lastModifiedTime).format("YYYY-MM-DD HH:mm");
+                    item.thumbnail = backups[i].thumbnail;
+                    backupList.push(item);
+                }
+            }
+            res.end(JSON.stringify(backupList));
         })
     }else{
         //console.log(projectId)

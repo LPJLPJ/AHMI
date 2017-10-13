@@ -168,10 +168,13 @@ router.route('/project/:id/basicinfo')
     .post(projectInfo.updateProject);
 
 router.route('/project/:id/backuplist')
-    .get(projectInfo.getBackupList)
+    .get(projectInfo.getBackupList);
 
 router.route('/project/:id/editor')
     .get(projectInfo.getProjectById);
+
+router.route('/project/:id/visualization')
+    .get(projectInfo.getProjectTreeById);
 
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent);
