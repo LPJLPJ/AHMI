@@ -41,7 +41,7 @@ $(function(){
 		$.ajax({
 			type:'POST',
 			async:false,
-			url:'https://ide.graphichina.com/user/checkUserType',
+			url:'https://test.graphichina.com/user/checkUserType',
 			data:{
 				username:username,
 				password:password
