@@ -17,6 +17,7 @@ var Session = require('express-session');
 var MongoStore = require('connect-mongo')(Session);
 var CookieParser = require('cookie-parser');
 var sessionControl = require('./middlewares/sessionControl');
+var socket = require('socket.io');
 
 //init projects
 var projectUrl = path.join(__dirname,'project');
@@ -146,17 +147,41 @@ var options = {
     key:privateKey,
     cert:certificate
 };
-http.createServer(app).listen(app.get('port'), function () {
-    console.log('listening: '+app.get('port'))
-});
+
+var server;
+var io;
 
 if(!process.env.USING_HTTP){
-    https.createServer(options,app).listen(443,function(){
+    server = http.createServer(app);
+
+    // io = new socket(server,{
+    //     path:'/project'
+    // });
+
+    server.listen(app.get('port'),function(){
+        console.log('listen:',app.get('port'));
+    })
+}else{
+    server = https.createServer(options,app);
+
+    // io = new socket(server,{
+    //     path:'/project/*/edit'
+    // });
+
+    server.listen(443,function(){
         console.log('listening: '+443)
     });
 }
 
+//io linstening
 
+// io.on('connection',function(socket){
+//     console.log('a user connect')
+// });
+//
+// io.on('disconnection',function (socket) {
+//     console.log('a user disconnect');
+// });
 
 
 
