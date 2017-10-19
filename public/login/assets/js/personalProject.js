@@ -589,9 +589,8 @@ $(function(){
             project.author = author.val().trim();
             project.template = template.val().trim();
             project.supportTouch = supportTouch.val().trim();
-            if (!checkName(project.name,project.author)){
+            if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
-                toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
             if(resolution.val().trim()==="custom"){
@@ -682,8 +681,21 @@ $(function(){
         // name.match(/["'\/\\\(\){},\.\+\-\*\?]/)
         try {
             for (var i=0;i<arguments.length;i++){
-                var name = arguments[i];
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)){
+                var name = arguments[i].value;
+                if(arguments[i].empty===false){
+                    console.log("name.match(/\\s+/)",name,name.match(/^$|^\s+$/));
+                    if (name.match(/^$|^\s+$/)){
+                        toastr.error('名称不能为空');
+                        return false;
+                    }
+                }
+                console.log("arguments",arguments);
+                if(name.length>30){
+                    toastr.error('长度不能大于30个字');
+                    return false;
+                }
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—]/)){
+                    toastr.error('名称和作者只能包含：汉字、英文、数字、下划线_、英文破折号-、中文破折号—');
                     return false;
                 }
             }
@@ -725,9 +737,8 @@ $(function(){
             project.name = title.val().trim();
             project.author = author.val().trim();
             //check name;
-            if (!checkName(project.name,project.author)){
+            if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
-                toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
             //check resolution
@@ -863,8 +874,7 @@ $(function(){
         if(title.val().trim()!=''){
             CANProject.name = title.val().trim();
             CANProject.author = author.val().trim();
-            if(!checkName(CANProject.name)){
-                toastr.error('名称只能是汉字、英文和数字');
+            if(!checkName({value:CANProject.name,empty:false})){
                 return;
             }
             if(local){
@@ -936,8 +946,7 @@ $(function(){
                 //title not empty
                 project.name = title.val().trim();
                 project.author = author.val().trim();
-                if(!checkName(project.name,project.author)){
-                    toastr.error('名称只能是汉字、英文和数字');
+                if(!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                     return;
                 }
                 if(local){
