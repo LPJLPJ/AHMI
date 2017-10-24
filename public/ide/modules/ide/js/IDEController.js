@@ -1166,9 +1166,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     $scope.wrapperForCoop = false;
     var inCharge = false;
     function initSocketIO(){
+        console.log('initSocketIO');
         socketIOService.createSocket(function(data){
 
-            // console.log('you have connect');
+            console.log('you have connect');
 
             //capture current users in room
             socketIOService.on('connect:success',function(allUsers,currentUser){
