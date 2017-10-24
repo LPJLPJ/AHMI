@@ -279,6 +279,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     function loadFromContent(data,id) {
         //若是分享的工程，则需要开启socket
+        console.log('data.shared',data.shared);
         if(!!data.shared){
             initSocketIO()
         }
@@ -1166,7 +1167,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     $scope.wrapperForCoop = false;
     var inCharge = false;
     function initSocketIO(){
-        console.log('initSocketIO');
+        console.log('initSocketIO haha ');
         socketIOService.createSocket(function(data){
 
             console.log('you have connect');
