@@ -91,20 +91,22 @@ app.use(morgan('combined', {stream: accessLogStream}))
 app.use(CookieParser());
 
 //session
-app.use(Session({
-	resave:false,
-	saveUninitialized:false,
+var sessionMiddleware = Session({
+    resave:false,
+    saveUninitialized:false,
     cookie:{
         maxAge:24*60*60*1000 //a day
     },
-	secret:'ahmi',
+    secret:'ahmi',
     domain:'.graphichina.com',
-	store:new MongoStore({
-		url:dbConfig.dbPath,
+    store:new MongoStore({
+        url:dbConfig.dbPath,
         ttl:24 * 60 * 60,
         autoRemove: 'native'
-	})
-}));
+    })
+});
+
+app.use(sessionMiddleware);
 
 // Enable cors.
 app.use(function(req, res, next) {
@@ -151,22 +153,14 @@ var options = {
 var server;
 var io;
 
+http.createServer(app).listen(app.get('port'), function () {
+    console.log('listening: '+app.get('port'))
+});
+
 if(!process.env.USING_HTTP){
-    server = http.createServer(app);
-
-    // io = new socket(server,{
-    //     path:'/project'
-    // });
-
-    server.listen(app.get('port'),function(){
-        console.log('listen:',app.get('port'));
-    })
-}else{
     server = https.createServer(options,app);
 
-    // io = new socket(server,{
-    //     path:'/project/*/edit'
-    // });
+    initSocketIO(io,server);
 
     server.listen(443,function(){
         console.log('listening: '+443)
@@ -175,13 +169,105 @@ if(!process.env.USING_HTTP){
 
 //io linstening
 
-// io.on('connection',function(socket){
-//     console.log('a user connect')
-// });
-//
-// io.on('disconnection',function (socket) {
-//     console.log('a user disconnect');
-// });
+
+/**
+ * 初始化socketIO
+ * @param server
+ */
+var roomInfo = {};
+
+function initSocketIO(io,server){
+    io = new socket(server);
+
+
+    //user session middleware to capture session in session
+    io.use(function(socket,next){
+       sessionMiddleware(socket.request,socket.request.res,next)
+    });
+
+
+    io.on('connection',function(socket){
+        // console.log('a new connections');
+
+        var session = socket.request.session;
+        var user = session.user;
+        var urlArr = (socket.request.headers.referer||'').split('/');
+        var roomId = urlArr[urlArr.length-2];
+
+        if(!roomId){
+            socket.emit('error','roomId is invalid!');
+            return;
+        }
+
+        //create roomInfo
+        if(!roomInfo[roomId]){
+            roomInfo[roomId] = [];
+        }
+        var checkUnique = roomInfo[roomId].every(function(item){
+            return item.id!==user.id;
+        });
+        //check user unique
+        if(checkUnique){
+            //检查用户是否还未加入room，避免事件的重复绑定
+            roomInfo[roomId].push(user);
+
+            var usersForSend = roomInfo[roomId].map(function(item){
+                return {
+                    id:item.id,
+                    username:item.username
+                }
+            });
+
+            //emit to current user
+            socket.emit('connect:success',usersForSend,user);
+
+            //join room
+            socket.join(roomId);
+
+            //broadcast to other user
+            var userForSend={};
+            for(var key in user){
+                if(key==='id'||key==='username'){
+                    userForSend[key]=user[key];
+                }
+            }
+            socket.to(roomId).emit('user:enter',userForSend);
+
+            //监听断开连接事件
+            socket.on('disconnect',function(){
+                //remove user from roomInfo
+                if(roomInfo[roomId]){
+                    var roomItem = roomInfo[roomId];
+                    for(var i=0,il=roomItem.length;i<il;i++){
+                        if(user.id===roomItem[i].id){
+                            roomItem.splice(i,1);
+                            break;
+                        }
+                    }
+                    // if room is empty ,delete it
+                    if(roomItem.length===0){
+                        delete roomInfo[roomInfo];
+                    }
+                }
+
+                //leave
+                socket.leave(roomId);
+
+                //broadcast to other user leave msg
+                var userForSend={};
+                for(var key in user){
+                    if(key==='id'||key==='username'){
+                        userForSend[key]=user[key];
+                    }
+                }
+                socket.to(roomId).emit('user:leave',userForSend);
+            })
+        }
+
+    });
+
+}
+
 
 
 

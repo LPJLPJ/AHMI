@@ -109,6 +109,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             ProjectService.getProjectTo($scope);
             $scope.$on('NavStatusChanged', onNavStatusChanged);
 
+            $scope.$on('OpenSimulator',$scope.component.tool.play)
             // setInterval(function () {
             //     saveProject();
             // }.bind(this),5*60*1000)

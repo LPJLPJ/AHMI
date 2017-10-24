@@ -32,6 +32,7 @@
     <script src="../../public/ide/lib/angular-modal/modal.min.js"></script>
     <script src="../../public/ide/lib/jquery-ui.js"></script>
     <script src="../../public/libs/uuidv1.js"></script>
+    <script src="../../public/ide/lib/socket.io/socket.io.slim.js"></script>
     <!--<script src="../../public/ide/lib/sortable.js"></script>-->
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
@@ -84,6 +85,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/userType.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/socketIOService.js"></script>
 
 
     <!--controllers-->
@@ -126,6 +128,30 @@
 <body ng-app="ide" style="height: 100%" ng-controller="IDECtrl">
 <!--loading spinner-->
 <script src="../../public/ide/lib/spinner.bundle.js"></script>
+<!--工程协作遮盖窗口-->
+<div class="wrapper-custom" ng-show="wrapperForCoop">
+    <div class="container container-custom">
+        <div class="jumbotron">
+            <h2>工程协作</h2>
+            <p>此工程正在被其他人编辑，为了保证工程状态的一致性，同一时间，只允许一位用户编辑，您可以运行模拟器，或者主动联系当前的操作人员。</p>
+            <button class="btn btn-success btn-lg center-block" ng-click="openSimulator()">打开模拟器</button>
+        </div>
+        <div class="row">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        <h4>在线用户列表</h4>
+                    </a>
+                    <a href="#" class="list-group-item" ng-repeat="user in currentUsers track by $index">
+                        <span class="pull-right glyphicon glyphicon-star" ng-show="$index===0"></span>
+                        {{user.username}}
+                        <small class="text-muted" ng-show="$index===0">编辑中</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <input type="hidden" value="true" id="saveFlag">
 <div class="container-fluid" tabindex="-1" ng-controller="ContainerCtl" ng-keydown="handleKeyDown($event)"
@@ -3113,7 +3139,6 @@
 <canvas id="tmp2" hidden></canvas>
 <script language="javascript">
     for (i in document.images)document.images[i].ondragstart = imgdragstart;
-
 </script>
 <!--<script type="text/javascript" src="../../public/ide/modules/ide/js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
