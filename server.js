@@ -153,9 +153,14 @@ var options = {
 var server;
 var io;
 
-http.createServer(app).listen(app.get('port'), function () {
+server = http.createServer(app).listen(app.get('port'), function () {
     console.log('listening: '+app.get('port'))
 });
+server.listen(app.get('port'), function () {
+    console.log('listening: '+app.get('port'))
+});
+
+initSocketIO(io,server);
 
 if(!process.env.USING_HTTP){
     server = https.createServer(options,app);
@@ -187,7 +192,6 @@ function initSocketIO(io,server){
 
 
     io.on('connection',function(socket){
-        console.log('a new connections');
 
         var session = socket.request.session;
         var user = session.user;
