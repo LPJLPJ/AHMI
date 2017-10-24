@@ -8,7 +8,7 @@ ideServices.service('socketIOService',[function(){
     var roomUsers={};
 
     this.createSocket = function(cb){
-        socket = io();
+        socket = io('https://test.graphichina.com');
         socket.on('connect',function(){
             cb&&cb();
         })
