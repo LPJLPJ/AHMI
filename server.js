@@ -178,7 +178,7 @@ var roomInfo = {};
 
 function initSocketIO(io,server){
     io = new socket(server);
-
+    console.log(io)
 
     //user session middleware to capture session in session
     io.use(function(socket,next){
@@ -187,7 +187,7 @@ function initSocketIO(io,server){
 
 
     io.on('connection',function(socket){
-        // console.log('a new connections');
+        console.log('a new connections');
 
         var session = socket.request.session;
         var user = session.user;
