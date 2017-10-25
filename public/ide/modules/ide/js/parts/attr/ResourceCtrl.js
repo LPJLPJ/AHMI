@@ -88,7 +88,6 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         }
     }
 
-
     /**
      * 删除文件
      * @param indexArr
@@ -187,6 +186,49 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         }
 
     }
+
+    var restoreValue;
+    var validation=true;
+    //保存旧值
+    $scope.store=function(th){
+        console.log("store",th);
+        restoreValue=th.file.name;
+
+    };
+
+    //恢复旧值
+    $scope.restore = function (th) {
+        th.file.name=restoreValue;
+        console.log("restore");
+    };
+
+    //验证新值
+    $scope.enterName=function(th){
+
+        console.log("enterName");
+        //判断是否和初始一样
+        if (th.file.name===restoreValue){
+            return;
+        }
+        //输入有效性检测
+        validation=ProjectService.resourceValidate(th.file.name);
+        if(!validation){
+            console.log("input error!");
+            $scope.restore(th);
+            return;
+        }
+        toastr.info('修改成功');
+        restoreValue=th.file.name;
+    };
+
+    //验证enter键
+    $scope.enterPress=function(e,th){
+        if (e.keyCode==13){
+            $scope.enterName(th);
+
+
+        }
+    };
 
 
 }])
