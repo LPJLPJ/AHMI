@@ -583,7 +583,7 @@ $(function(){
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
 
-        if (title.val().trim()!=''&&resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
+        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
@@ -682,18 +682,19 @@ $(function(){
         try {
             for (var i=0;i<arguments.length;i++){
                 var name = arguments[i].value;
+                //是否为空
                 if(arguments[i].empty===false){
-                    console.log("name.match(/\\s+/)",name,name.match(/^$|^\s+$/));
                     if (name.match(/^$|^\s+$/)){
                         toastr.error('名称不能为空');
                         return false;
                     }
                 }
-                console.log("arguments",arguments);
+                //是否大于30个字
                 if(name.length>30){
                     toastr.error('长度不能大于30个字');
                     return false;
                 }
+                //是否含有非法字符
                 if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—]/)){
                     toastr.error('名称和作者只能包含：汉字、英文、数字、下划线_、英文破折号-、中文破折号—');
                     return false;

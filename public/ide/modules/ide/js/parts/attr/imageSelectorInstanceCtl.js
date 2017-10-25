@@ -1,7 +1,7 @@
 /**
  * Created by Zzen1sS on 24/3/2016
  */
-ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInstance','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$timeout, $uibModalInstance,Type, ResourceService,widgetInfo,TexService) {
+ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService) {
 
 
     $scope.images = ResourceService.getAllImagesAndTemplates();
@@ -106,7 +106,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
 
 
     $scope.save = function () {
-        $uibModalInstance.close($scope.tex);
+        if(validation){
+            $uibModalInstance.close($scope.tex);
+        }
     };
 
     $scope.cancel = function () {
@@ -160,6 +162,48 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     $scope.curIndex = 0;
     $scope.selectItem = function(index){
         $scope.curIndex = index;
-    }
+    };
+
+    var restoreValue;
+    var validation=true;
+    //保存旧值
+    $scope.store=function(th){
+        restoreValue=th.slice.name;
+    };
+
+    //回复旧值
+    $scope.restore = function (th) {
+        th.slice.name=restoreValue;
+    };
+
+    //验证新值
+    $scope.enterName=function(th){
+
+        //判断是否和初始一样
+        if (th.slice.name===restoreValue){
+            return;
+        }
+        //输入有效性检测
+        validation=ProjectService.inputValidate(th.slice.name);
+        if(!validation){
+            $scope.restore(th);
+            return;
+        }
+        toastr.info('修改成功');
+        restoreValue=th.slice.name;
+    };
+
+    //验证enter键
+    $scope.enterPress=function(e,th){
+        if (e.keyCode==13){
+            // angular.element($(th)).trigger("blur");
+            // angular.element(document.getElementById('texBar')).trigger("click");
+            // console.log(angular.element($("#texBar")));
+            // console.log(angular.element(document.getElementById('texBar')));
+            $scope.enterName(th);
+
+
+        }
+    };
 
 }]);

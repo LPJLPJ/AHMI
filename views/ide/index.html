@@ -2357,7 +2357,14 @@
                                     <td>{{$index+1}}</td>
                                     <td>
                                         <div class="form-group">
-                                            <input class="form-control" type="text" ng-model="slice.name" ng-disabled="disableEditName"/>
+                                            <input class="form-control"
+                                                   type="text"
+                                                   ng-model="slice.name"
+                                                   ng-focus="store(this)"
+                                                   ng-blur="enterName(this)"
+                                                   ng-keypress="enterPress($event,this)"
+                                                   ng-disabled="disableEditName"/>
+
                                         </div>
                                         <div class="form-group">
                                             <input type="text" class="form-control" ng-show="canAddNewSlice" ng-model="slice.text" placeholder="可输入文本...">
@@ -2443,7 +2450,13 @@
                         <div class="modal-body dengModel-body">
                             <div class="modal-title form-group modelPart">
                                 <label for="actionName">动作名称</label>
-                                <input class="form-control" id="actionName" type="text" ng-model="action.title">
+                                <input class="form-control"
+                                       id="actionName"
+                                       type="text"
+                                       ng-model="action.title"
+                                       ng-focus="store(this)"
+                                       ng-blur="enterName(this)"
+                                       ng-keypress="enterPress($event,this)">
                             </div>
 
                             <div class="modal-title form-group modelPart">
@@ -2526,7 +2539,7 @@
                             </button>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-primary" type="button" ng-click="save()">保存</button>
+                            <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
                             <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                         </div>
                     </script>
@@ -2559,7 +2572,12 @@
                         <div class="modal-body dengModel-body">
                             <div class="modal-title form-group modelPart">
                                 <span class="my-attr-title  " >动画名称</span>
-                                <input class="width150px form-control time-input" type="text" ng-model="animation.title"><br>
+                                <input class="width150px form-control time-input"
+                                       type="text"
+                                       ng-model="animation.title"
+                                       ng-focus="store(this)"
+                                       ng-blur="enterName(this)"
+                                       ng-keypress="enterPress($event,this)"><br>
                                 <span class="my-attr-title" >动画序号</span>
                                 <input class="width150px form-control time-input" type="text" ng-model="animation.id"><br>
                                 <span>动画类型</span>
@@ -2600,7 +2618,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-primary" type="button" ng-click="confirm()">保存</button>
+                            <button class="btn btn-primary" type="button" ng-click="confirm(this)">保存</button>
                             <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                         </div>
                     </script>
@@ -2690,7 +2708,13 @@
                                 <span width="40px" height="40px" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
                             </td>
                             <td>
-                                <input class="img-name" type='text' style="width: 80px;border: 0;" ng-model="file.name">
+                                <input class="img-name"
+                                       type='text'
+                                       style="width: 80px;border: 0;"
+                                       ng-model="file.name"
+                                       ng-focus="store(this)"
+                                       ng-blur="enterName(this)"
+                                       ng-keypress="enterPress($event,this)">
                                 <p>
                                     <span>{{file.type||''}}</span>
                                     <span>{{file.size/1024 | number:2}}K</span>
