@@ -34,13 +34,13 @@ console.log = (function (console) {
 
 var logs=[];
 ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService','NavModalCANConfigService',
-    function ($scope,$timeout,$http,$interval,
+    'socketIOService',function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
                                     ResourceService,
                                     TagService,
-                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService) {
+                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService,socketIOService) {
 
     ideScope=$scope;
     $scope.ide={
@@ -278,6 +278,11 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     }
 
     function loadFromContent(data,id) {
+        //若是分享的工程，则需要开启socket
+        console.log('data.shared',data.shared);
+        if(!!data.shared){
+            initSocketIO()
+        }
         //change html title to name
         var name = data&&data.name||''
         document.title = '工程编辑-'+name
@@ -453,7 +458,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             $scope.ide.loaded=true;
             window.spinner && window.spinner.hide();
             // intervalSave();
-
         },200)
     }
 
@@ -1156,4 +1160,67 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         }
 
     };
+
+    /**
+     * 初始化socket
+     */
+    $scope.wrapperForCoop = false;
+    var inCharge = false;
+    function initSocketIO(){
+        socketIOService.createSocket(function(data){
+
+            console.log('you have connect');
+
+            //capture current users in room
+            socketIOService.on('connect:success',function(allUsers,currentUser){
+                // console.log('connect:success',allUsers);
+                socketIOService.setRoomUsers(allUsers);
+                $scope.currentUser = currentUser;
+                inCharge = allUsers[0]&&(allUsers[0].id===$scope.currentUser.id);
+                if(!inCharge){
+                    $scope.wrapperForCoop = true;
+                    $scope.currentUsers = socketIOService.getRoomUsers();
+                }
+            });
+
+
+            //capture new user enter this room
+            socketIOService.on("user:enter",function(data){
+                toastr.info('用户 '+data.username +'加入');
+                $scope.$apply(function(){
+                    $scope.currentUsers = socketIOService.addUserInRoom(data);
+                    // console.log('add user',$scope.currentUsers);
+                })
+            });
+
+            //capture user leave this room
+            socketIOService.on("user:leave",function (data) {
+                toastr.info('用户 '+data.username+' 已离开');
+                $scope.$apply(function(){
+                    $scope.currentUsers = socketIOService.deleteUserInRoom(data);
+                });
+
+                //check currentUser have right to edit project
+                // console.log('inCharge',inCharge);
+                if(!inCharge){
+                    inCharge = $scope.currentUsers[0]&&($scope.currentUsers[0].id===$scope.currentUser.id);
+                    $timeout(function(){
+                        if(inCharge){
+                            alert('您已获得编辑工程的权限，即将重新加载工程');
+                            window.spinner&&window.spinner.show();
+                            $scope.wrapperForCoop = false;
+                            loadStep = 0;
+                            readProjectData();
+                        }
+                    },1500)
+                }
+            })
+        });
+
+    }
+
+    $scope.openSimulator = function(){
+        $scope.$broadcast('OpenSimulator')
+    }
+
 }]);

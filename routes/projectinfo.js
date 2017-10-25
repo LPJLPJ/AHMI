@@ -314,8 +314,10 @@ projectRoute.getBackupList = function (req, res) {
             if(backups){
                 for(var i=0,il=backups.length;i<il;i++){
                     item = {};
-                    item.date = moment(backups[i].lastModifiedTime).format("YYYY-MM-DD HH:mm");
-                    item.thumbnail = backups[i].thumbnail;
+
+                    item.date = moment(backups[i].time).format("YYYY-MM-DD HH:mm");
+                    // item.thumbnail = backups[i].thumbnail;
+                    // console.log("backups[i].lastModifiedTime",backups[i].lastModifiedTime)
                     backupList.push(item);
                 }
             }

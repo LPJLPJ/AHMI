@@ -51,9 +51,11 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         });
 
         $scope.deleteAnimation=function(index){
+            ProjectService.deleteAnimationName(AnimationService.getAllAnimations()[index].title);
             AnimationService.deleteAnimationByIndex(index,function(){
                 $scope.animations=AnimationService.getAllAnimations();
             }.bind(this));
+
         };
 
         $scope.openPanel=function(index){
@@ -94,7 +96,7 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
 }])
 
-    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','animation',function($scope,$uibModalInstance,animation){
+    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','ProjectService','animation',function($scope,$uibModalInstance,ProjectService,animation){
         $scope.animation=animation;
         $scope.checkDuration = function (e) {
             if($scope.animation.duration<0){
@@ -105,10 +107,65 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
                 $scope.animation.duration=5000;
             }
         };
-        $scope.confirm = function () {
-            $uibModalInstance.close($scope.animation);
+        $scope.confirm = function (th) {
+            if(validation&&duplicate(th)){
+                titleArray.push(th.animation.title);
+                ProjectService.setAnimationArray(titleArray);
+                $uibModalInstance.close($scope.animation);
+            }
+
         };
         $scope.cancel = function () {
             $uibModalInstance.dismiss();
+        };
+
+        var restoreValue;
+        var validation=true;
+        var titleArray=[];
+        //保存旧值
+        $scope.store=function(th){
+            restoreValue=th.animation.title;
+
+        };
+
+        //恢复旧值
+        $scope.restore = function (th) {
+            th.animation.title=restoreValue;
+        };
+
+        //验证新值
+        $scope.enterName=function(th){
+            //判断是否和初始一样
+            if (th.animation.title===restoreValue){
+                return;
+            }
+            //输入有效性检测
+            validation=ProjectService.inputValidate(th.animation.title);
+            if(!validation||!duplicate(th)){
+                $scope.restore(th);
+                return;
+            }
+            toastr.info('修改成功');
+            ProjectService.deleteAnimationName(restoreValue);
+            restoreValue=th.animation.title;
+        };
+        //验证重名
+        function duplicate(th){
+            titleArray=_.cloneDeep(ProjectService.getAnimationArray());
+            for(var i=0;i<titleArray.length;i++){
+                if(th.animation.title===titleArray[i]){
+                    toastr.info('重复的动画名');
+                    return false;
+                }
+            }
+            return true;
         }
+
+        //验证enter键
+        $scope.enterPress=function(e,th){
+            if (e.keyCode==13){
+                $scope.enterName(th);
+            }
+        };
+
 }]);
