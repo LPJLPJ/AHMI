@@ -157,9 +157,7 @@ var options = {
 var server;
 var io;
 
-server = http.createServer(app).listen(app.get('port'), function () {
-    console.log('listening: '+app.get('port'))
-});
+server = http.createServer(app);
 server.listen(app.get('port'), function () {
     console.log('listening: '+app.get('port'))
 });
@@ -187,7 +185,7 @@ var roomInfo = {};
 
 function initSocketIO(io,server){
     io = new socket(server);
-    console.log(io)
+    // console.log(io)
 
     //user session middleware to capture session in session
     io.use(function(socket,next){
@@ -269,7 +267,14 @@ function initSocketIO(io,server){
                     }
                 }
                 socket.to(roomId).emit('user:leave',userForSend);
-            })
+            });
+
+            //监听取消分享事件（关闭room）
+            socket.on('room:close',function(){
+                // console.log('room close in server');
+                socket.to(roomId).emit('room:close');
+            });
+
         }
 
     });

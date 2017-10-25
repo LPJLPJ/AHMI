@@ -1131,6 +1131,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 animation: $scope.animationsEnabled,
                 templateUrl: 'shareModal.html',
                 controller: 'shareModalCtl',
+                scope:$scope,
                 size: 'md',
                 resolve: {
                     id:function () {
@@ -1145,7 +1146,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 //process save
                 generateDataFile(result.format);
             }, function () {
-                console.log('Modal dismissed at: ' + new Date());
+
             });
         }
 
@@ -1455,10 +1456,8 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
     }
 
 
-
-
     $scope.toggleShare = function () {
-        $scope.processing = true
+        $scope.processing = true;
         $http({
             method:'POST',
             url:'/project/'+id+'/share',
@@ -1471,6 +1470,12 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
             $scope.shareInfo.sharedKey = data.sharedKey
             $scope.processing = false
             $scope.message = ''
+
+            if(data.shared){
+                $scope.$emit('createSocketIO');
+            }else{
+                $scope.$emit('closeSocketIO');
+            }
         })
         .error(function(err){
             console.log(err)
@@ -1480,7 +1485,7 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
     }
 
     $scope.cancel = function () {
-        $uibModalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss($scope.shareInfo.shared);
     };
 }]);
 

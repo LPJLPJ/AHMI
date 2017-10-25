@@ -7,11 +7,16 @@ ideServices.service('socketIOService',[function(){
     var socket;
     var roomUsers={};
 
-    this.createSocket = function(cb){
-        socket = io('https://test.graphichina.com');
+    this.createSocket = function(path,cb){
+        socket = io(path||'');
         socket.on('connect',function(){
             cb&&cb();
         })
+    };
+
+    this.closeSocket = function(cb){
+        socket.close();
+        cb&&cb();
     };
 
     this.on = function(evtName,cb){
@@ -42,6 +47,10 @@ ideServices.service('socketIOService',[function(){
             }
         }
         return roomUsers;
+    };
+
+    this.getSocket = function(){
+        return socket;
     }
 
 }]);

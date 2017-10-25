@@ -134,28 +134,14 @@ $(function(){
             });
 
         nodeEnter.append('text')
-            .attr("y","-1em")
+            .attr("dy", ".35em")
+            .attr("x", function(d) {
+                return d.children || d._children ? -13 : 13;
+            })
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
             })
-            .selectAll('tspan')
-            .data(function(d){
-                var name = d.data.name;
-                var nameArr = [];
-                for(var i=0;i<name.length;i++){
-                    nameArr.push(name.substr(i,8));
-                    i+=8;
-                }
-                d.nameArr = nameArr;
-                return d.nameArr;
-            })
-            .enter()
-            .append('tspan')
-            .attr("x", function(d) {
-                return d.children || d._children ? 13 : -13;
-            })
-            .attr("dy", "1em")
-            .text(function(d) { return d})
+            .text(function(d) { return d.data.name; })
             .on("mouseover",toolTip.show)
             .on("mouseout",toolTip.hide);
 
@@ -342,6 +328,9 @@ $(function(){
                         break;
                     case 'MySubLayer':
                         str +=`<div>控件数:${data.widgets.length}</div>`;
+                        break;
+                    case 'MySwitch':
+                        str +=`<div>bindBit:${data.info.bindBit}</div>`;
                         break;
                     default:
                         break;

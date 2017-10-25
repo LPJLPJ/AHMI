@@ -211,7 +211,7 @@ projectRoute.getProjectContent = function (req, res) {
             if (v in project.backups){
                 project.content = project.backups[v].content||''
             }
-            project.backups = []
+            project.backups = [];
             res.end(JSON.stringify(project))
         })
     }else{
