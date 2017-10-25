@@ -4966,4 +4966,97 @@ ideServices
             }
 
 
+
+            /**
+             * input内容有效性验证
+             *
+             * @param dataString 要验证的数据
+             * @return
+             * true：input有效
+             * false：input无效
+             * @public
+             * @author 2017/10/18 by LH
+             */
+            this.inputValidate=function(dataString){
+                //是否为空
+                if (dataString.match(/^$|^\s+$/)){
+                    toastr.error('名称不能为空');
+                    return false;
+                }//是否大于30个字
+                if(dataString.length>30){
+                    toastr.error('长度不能大于30个字');
+                    return false;
+                }
+                //是否含有非法字符
+                if (dataString.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—]/)){
+                    toastr.error('名称和作者只能包含：汉字、英文、数字、下划线_、英文破折号-、中文破折号—');
+                    return false;
+                }
+                return true;
+
+            }
+            var animationArray=[];
+            this.setAnimationArray=function(newAnimationArray){
+                animationArray=newAnimationArray;
+            }
+            this.getAnimationArray=function(){
+                return animationArray;
+            }
+            this.deleteAnimationName=function(animationName){
+                for(var i=0;i<animationArray.length;i++) {
+                    if(animationName===animationArray[i]){
+                        animationArray.splice(i,1);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            var actionArray=['action0'];
+            this.setActionArray=function(newActionArray){
+                actionArray=newActionArray;
+            }
+            this.getActionArray=function(){
+                return actionArray;
+            }
+            this.deleteActionName=function(actionName){
+                for(var i=0;i<actionArray.length;i++) {
+                    if(actionName===actionArray[i]){
+                        actionArray.splice(i,1);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            /**
+             * resource内容有效性验证
+             *
+             * @param dataString 要验证的数据
+             * @return
+             * true：input有效
+             * false：input无效
+             * @public
+             * @author 2017/10/18 by LH
+             */
+            this.resourceValidate=function(dataString){
+                //是否为空
+                if (dataString.match(/^$|^\s+$/)){
+                    toastr.error('名称不能为空');
+                    return false;
+                }//是否大于225个字
+                if(dataString.length>30){
+                    toastr.error('长度不能大于225个字');
+                    return false;
+                }
+                //是否含有非法字符
+                if (dataString.match(/<|>|\/|\\|\||:|"|\*|\?/)){
+                    toastr.error('文件名不能包含下列任何字符之一：< > / \\ | : " * ?');
+                    return false;
+                }
+                return true;
+
+            }
+
+
         }]);
