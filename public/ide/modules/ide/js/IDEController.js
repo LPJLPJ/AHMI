@@ -281,7 +281,9 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         //若是分享的工程，则需要开启socket
         console.log('data.shared',data.shared);
         if(!!data.shared){
-            initSocketIO()
+            if(!socketIOService.getSocket()){
+                initSocketIO(data.userId);
+            }
         }
         //change html title to name
         var name = data&&data.name||''
@@ -1165,9 +1167,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
      * 初始化socket
      */
     $scope.wrapperForCoop = false;
+    $scope.projectOwner = false;
     var inCharge = false;
-    function initSocketIO(){
-        socketIOService.createSocket(function(data){
+    function initSocketIO(ownerId){
+        socketIOService.createSocket('',function(data){
 
             console.log('you have connect');
 
@@ -1178,6 +1181,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 $scope.currentUser = currentUser;
                 inCharge = allUsers[0]&&(allUsers[0].id===$scope.currentUser.id);
                 if(!inCharge){
+                    console.log('wenerId',ownerId,'currId',currentUser.id);
+                    $scope.projectOwner = (ownerId===currentUser.id);
                     $scope.wrapperForCoop = true;
                     $scope.currentUsers = socketIOService.getRoomUsers();
                 }
@@ -1214,6 +1219,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                         }
                     },1500)
                 }
+            });
+
+
+            //capture room close
+            socketIOService.on('room:close',function(){
+                toastr.warning('管理员已经关闭共享，页面即将关闭');
+                socketIOService.closeSocket(function(){
+                    setTimeout(function(){
+                        closeWebPage();
+                    },1000)
+                })
             })
         });
 
@@ -1221,6 +1237,66 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     $scope.openSimulator = function(){
         $scope.$broadcast('OpenSimulator')
-    }
+    };
 
+    $scope.cancelShare = function(){
+        if(confirm('强制取消将对正在编辑的工程产生影响，确定取消分享？')){
+            var arr = window.location.href.split('/');
+            var id = arr[arr.length-2];
+            console.log('id',id);
+            $http({
+                method:'POST',
+                url:'/project/'+id+'/share',
+                data:{
+                    share:false
+                }
+            })
+            .success(function(data,status,xhr){
+                socketIOService.emit('room:close');
+                socketIOService.closeSocket();
+                toastr.info('取消成功,工程即将重新加载!');
+                setTimeout(function(){
+                    window.spinner&&window.spinner.show();
+                    $scope.wrapperForCoop = false;
+                    loadStep = 0;
+                    readProjectData();
+                },1500);
+
+            })
+            .error(function(err){
+                console.log(err)
+            });
+        }
+    };
+
+    $scope.$on('createSocketIO',function () {
+        console.log('open share then create socketIO');
+        initSocketIO();
+    });
+
+    $scope.$on('closeSocketIO',function(){
+        console.log('close share then close socketIO');
+        socketIOService.emit('room:close');
+        socketIOService.closeSocket();
+    });
+
+
+    function closeWebPage(){
+        if (navigator.userAgent.indexOf("MSIE") > 0) {
+            if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+                window.opener = null;
+                window.close();
+            } else {
+                window.open('', '_top');
+                window.top.close();
+            }
+        }
+        else if (navigator.userAgent.indexOf("Firefox") > 0) {
+            window.location.href = 'about:blank ';
+        } else {
+            window.opener = null;
+            window.open('', '_self', '');
+            window.close();
+        }
+    }
 }]);

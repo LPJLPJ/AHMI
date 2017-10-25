@@ -134,7 +134,11 @@
         <div class="jumbotron">
             <h2>工程协作</h2>
             <p>此工程正在被其他人编辑，为了保证工程状态的一致性，同一时间，只允许一位用户编辑，您可以运行模拟器，或者主动联系当前的操作人员。</p>
+
             <button class="btn btn-success btn-lg center-block" ng-click="openSimulator()">打开模拟器</button>
+            <br/>
+            <button class="btn btn-warning btn-sm center-block" ng-show="projectOwner" ng-click="cancelShare()">取消分享</button>
+
         </div>
         <div class="row">
             <div class="col-xs-offset-1 col-xs-10">
