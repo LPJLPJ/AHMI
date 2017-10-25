@@ -183,7 +183,7 @@ var roomInfo = {};
 
 function initSocketIO(io,server){
     io = new socket(server);
-    console.log(io)
+    // console.log(io)
 
     //user session middleware to capture session in session
     io.use(function(socket,next){
