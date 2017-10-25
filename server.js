@@ -98,7 +98,7 @@ app.use(function(req, res, next) {
 });
 
 //cookie
-app.use(CookieParser());
+// app.use(CookieParser());
 
 //session
 var sessionMiddleware = Session({
