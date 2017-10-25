@@ -1167,7 +1167,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     $scope.wrapperForCoop = false;
     var inCharge = false;
     function initSocketIO(){
-        console.log('initSocketIO haha ');
         socketIOService.createSocket(function(data){
 
             console.log('you have connect');
