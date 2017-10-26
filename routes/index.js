@@ -112,6 +112,9 @@ router.route('/user/login')
 router.route('/user/loginAPI')
 .post(loginAPI.post);
 
+router.route('/user/logininfo')
+    .get(loginAPI.getLoginInfo)
+
 //logout
 router.route('/user/logout')
 .get(route_login.logout);

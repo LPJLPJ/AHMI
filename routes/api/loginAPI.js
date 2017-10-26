@@ -6,6 +6,16 @@ var path = require('path');
 var errHandler = require('../../utils/errHandler');
 var loginAPI = {};
 
+loginAPI.getLoginInfo = function (req, res) {
+    console.log('loginInfo',req.session.user)
+    if (req.session.user){
+        res.end(JSON.stringify(req.session.user))
+    }else{
+        res.end()
+    }
+
+}
+
 
 loginAPI.post = function(req, res){
 
