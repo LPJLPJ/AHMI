@@ -33,7 +33,8 @@ login.get = function(req, res){
 };
 
 login.logout = function(req, res){
-	delete req.session.user;
+	req.session.user = null
+    console.log('logout',req.session.user)
 	res.redirect('/user/login')
 };
 
