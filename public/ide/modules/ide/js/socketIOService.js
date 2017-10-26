@@ -36,7 +36,8 @@ ideServices.service('socketIOService',[function(){
     };
 
     this.addUserInRoom = function (user) {
-        return roomUsers.push(user);
+        roomUsers.push(user);
+        return roomUsers
     };
 
     this.deleteUserInRoom = function (user) {
