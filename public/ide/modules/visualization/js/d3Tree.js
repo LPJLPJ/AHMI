@@ -1,4 +1,5 @@
 $(function(){
+
     //
     let margin = {
         top:20,
@@ -86,8 +87,13 @@ $(function(){
             }
         });
 
-        // console.log('root',root);
-        update(root);
+        setTimeout(function(){
+            $('#loading').hide();
+
+            // console.log('root',root);
+            update(root);
+        },500)
+
     });
 
     //更新视图
