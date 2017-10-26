@@ -231,3 +231,12 @@ fix:
     1. names specification
 update:
     1. choose version in right click
+
+1.10.1
+add:
+    1. work with shared project using socketIO
+    2. visualization of project using D3
+fix:
+    1. names specification
+update:
+    1. choose version in right click
