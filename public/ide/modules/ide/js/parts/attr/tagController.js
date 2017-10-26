@@ -148,7 +148,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         function noDuplication(tag,tags){
             for(var i=0;i<tags.length;i++){
                 if(tag.name==tags[i].name) {
-                    console.log('equal');
+                    toastr.error('重复的tag名称');
                     return false;
                 }
             }
@@ -406,9 +406,21 @@ ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','TagService','Pro
                         return;
                     }
                 }
+                var allTags=_.cloneDeep(TagService.getAllTags());
+                for(var j=0;j<allTags.length;j++){
+                    if($scope.tag.name===allTags[j].name){
+                        if(index!=j){
+                            toastr.error('重复的tag名称');
+                            return;
+                        }
+                    }
+                }
             }
         }
-        if (!checkEmpty()){
+        // if (!checkEmpty()){
+        //     $uibModalInstance.close($scope.tag);
+        // }
+        if (ProjectService.inputValidate($scope.tag.name)){
             $uibModalInstance.close($scope.tag);
         }
 

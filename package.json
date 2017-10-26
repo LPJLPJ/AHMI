@@ -33,6 +33,7 @@
     "nodemailer": "^2.4.0",
     "pump": "^1.0.1",
     "qs": "^6.2.0",
+    "socket.io": "^2.0.3",
     "swig-email-templates": "^3.0.0",
     "yazl": "^2.4.1"
   },

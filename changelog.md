@@ -222,3 +222,12 @@ update:
     1. complete rebuild data structure and render canvas module.
     2. remove proJson and loadFromProJson operate
     3. compatible old local ver by generate compatible local project
+
+1.10.0
+add:
+    1. work with shared project using socketIO
+    2. visualization of project using D3
+fix:
+    1. names specification
+update:
+    1. choose version in right click

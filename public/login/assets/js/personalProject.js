@@ -15,6 +15,7 @@ $(function(){
     var closeModalConfirmButton = $('#closeModalConfirm');
     var localProjectDir='';
     var localCANProjectDir='';
+    var moment;
 
     closeModalConfirmButton.on('click',function (e) {
         //console.log('project',curProject);
@@ -52,6 +53,7 @@ $(function(){
     }
 
     if (local){
+        moment = require('moment');
         //create localproject folder
         fs = require('fs');
         path = require('path');
@@ -220,18 +222,95 @@ $(function(){
 
 
     //contextMenu last edit : LH 2017/9/21
+    var errorItems = { "errorItem": { name: "Items Load error" },};
+    //加载contextMenu子菜单：较早的工程版本
+    var loadItems = function (id) {
+        //异步
+        var dfd = jQuery.Deferred();
+        //从后端获取backuplist
+        $.ajax({
+            type:'get',
+            url:"/project/"+id+"/backuplist",
+            success:function(result){
+                //versionArray中保存了较早的工程版本
+                var versionArray=JSON.parse(result);
+                var subItems={};
+                if(versionArray&&versionArray.length&&versionArray.length>0){
+                    for(var i=0;i<((versionArray.length>5)?5:versionArray.length);i++){
+                        switch(i){
+                            case 0:
+                                subItems.sub1={name:versionArray[i].date};
+                                break;
+                            case 1:
+                                subItems.sub2={name:versionArray[i].date};
+                                break;
+                            case 2:
+                                subItems.sub3={name:versionArray[i].date};
+                                break;
+                            case 3:
+                                subItems.sub4={name:versionArray[i].date};
+                                break;
+                            case 4:
+                                subItems.sub5={name:versionArray[i].date};
+                                break;
+                            default:
+                        }
+                    }
+                }
+                else{
+                    subItems.sub1={name:"没有较早版本",disabled:true};
+                }
+                dfd.resolve(subItems);
+            }
+        });
+        return dfd.promise();
+    };
+    function localLoadItems(id){
+        var curProjectDir =  path.join(localProjectDir,id);
+        var curProject = readSingleFile(path.join(curProjectDir,'project.json'),true);
+        var cur=JSON.parse(curProject);
+        var versionArray=cur.backups;
+        var subItems={};
+        if(versionArray&&versionArray.length&&versionArray.length>0){
+            for(var i=0;i<((versionArray.length>5)?5:versionArray.length);i++){
+                switch(i){
+                    case 0:
+                        subItems.sub1={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        break;
+                    case 1:
+                        subItems.sub2={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        break;
+                    case 2:
+                        subItems.sub3={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        break;
+                    case 3:
+                        subItems.sub4={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        break;
+                    case 4:
+                        subItems.sub5={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        break;
+                    default:
+                }
+            }
+        }
+        else{
+            subItems.sub1={name:"没有较早版本",disabled:true};
+        }
+        return subItems;
+    }
+
     $.contextMenu({
         selector: '.projectpanel',
         callback: function(key) {
-            curPanel = $(this);
             var project = $(this).attr('data-project');
             project = JSON.parse(project);
-            curProject=project;
+            curPanel = $(this);
+            curSelectedPanel = curPanel;
+            curProject = project;
             switch (key){
                 case "openFolder":
                    var localprojectpath = path.join(localProjectDir,String(project._id));
                    var gui = require('nw.gui');
-                   // gui.Shell.showItemInFolder(localprojectpath);
                    gui.Shell.openItem(localprojectpath);
                    break;
                 case "showInfo":
@@ -240,25 +319,55 @@ $(function(){
                 case "deletePro":
                    closeModal.modal('show');
                    break;
+                case "visualization":
+                    window.open('/project/'+project._id+'/visualization');
+                    break;
+                case "showProjectVersion":
+                    break;
+                case "sub1":
+                    openVertion(0,project._id);
+                    break;
+                case "sub2":
+                    openVertion(1,project._id);
+                    break;
+                case "sub3":
+                    openVertion(2,project._id);
+                    break;
+                case "sub4":
+                    openVertion(3,project._id);
+                    break;
+                case "sub5":
+                    openVertion(4,project._id);
+                    break;
                 default:
              }
 
         },
-        build:function(){
+        build:function($trigger, e){
+            var project=JSON.parse(e.currentTarget.dataset.project);
             if(local){
+                var items={
+                    "openFolder": {name: "查看工程所在文件夹"},
+                    "sep1":"---------",
+                    "showInfo": {name: "修改工程信息"},
+                    "sep2": "---------",
+                    "showProjectVersion": {name: "打开较早保存的工程"},
+                    "sep3":"---------",
+                    "deletePro": {name: "删除工程"}
+                };
+                items.showProjectVersion.items=localLoadItems(project._id);
                 return {
-                    items: {
-                        "openFolder": {name: "查看工程所在文件夹"},
-                        "showInfo": {name: "修改工程信息"},
-                        "sep1": "---------",
-                        "deletePro": {name: "删除工程"}
-                    }
+                    items:items
                 };
             }else{
                 return{
                     items:{
                         "showInfo": {name: "修改工程信息"},
-                        "sep1": "---------",
+                        "sep1":"---------",
+                        "showProjectVersion": {name: "打开较早保存的工程",items: loadItems(project._id)},
+                        "sep2":"---------",
+                        "visualization":{name:"结构可视化"},
+                        "sep4":"---------",
                         "deletePro": {name: "删除工程"}
                     }
                 };
@@ -266,8 +375,34 @@ $(function(){
         }
 
     });
+    //打开较早的版本
+    function openVertion(v,id){
+        var targetUrl="";
+        if (local){
+            targetUrl = '../ide/index.html?project_id='+id+'&&v='+v;
+        }else{
+            targetUrl = '/project/'+id+'/editor'+'?v='+v;
+        }
+        window.open(targetUrl);
+    }
+    //normal promise usage example
+    var completedPromise = function (status) {
+        console.log("completed promise:", status);
+    };
 
+    var failPromise = function (status) {
+        console.log("fail promise:", status);
+    };
 
+    var notifyPromise = function (status) {
+        console.log("notify promise:", status);
+    };
+
+    $.loadItemsAsync = function() {
+        console.log("loadItemsAsync");
+        var promise = loadItems();
+        $.when(promise).then(completedPromise, failPromise, notifyPromise);
+    };
 
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
@@ -451,15 +586,14 @@ $(function(){
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
 
-        if (title.val().trim()!=''&&resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
+        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
             project.supportTouch = supportTouch.val().trim();
-            if (!checkName(project.name,project.author)){
+            if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
-                toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
             if(resolution.val().trim()==="custom"){
@@ -550,8 +684,22 @@ $(function(){
         // name.match(/["'\/\\\(\){},\.\+\-\*\?]/)
         try {
             for (var i=0;i<arguments.length;i++){
-                var name = arguments[i];
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)){
+                var name = arguments[i].value;
+                //是否为空
+                if(arguments[i].empty===false){
+                    if (name.match(/^$|^\s+$/)){
+                        toastr.error('名称不能为空');
+                        return false;
+                    }
+                }
+                //是否大于30个字
+                if(name.length>30){
+                    toastr.error('长度不能大于30个字');
+                    return false;
+                }
+                //是否含有非法字符
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—]/)){
+                    toastr.error('名称和作者只能包含：汉字、英文、数字、下划线_、英文破折号-、中文破折号—');
                     return false;
                 }
             }
@@ -593,9 +741,8 @@ $(function(){
             project.name = title.val().trim();
             project.author = author.val().trim();
             //check name;
-            if (!checkName(project.name,project.author)){
+            if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
-                toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
             //check resolution
@@ -731,8 +878,7 @@ $(function(){
         if(title.val().trim()!=''){
             CANProject.name = title.val().trim();
             CANProject.author = author.val().trim();
-            if(!checkName(CANProject.name)){
-                toastr.error('名称只能是汉字、英文和数字');
+            if(!checkName({value:CANProject.name,empty:false})){
                 return;
             }
             if(local){
@@ -804,8 +950,7 @@ $(function(){
                 //title not empty
                 project.name = title.val().trim();
                 project.author = author.val().trim();
-                if(!checkName(project.name,project.author)){
-                    toastr.error('名称只能是汉字、英文和数字');
+                if(!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                     return;
                 }
                 if(local){
@@ -842,5 +987,36 @@ $(function(){
     function addNewCANProject(newCANProject){
         var html = new EJS({url:'../../public/login/assets/views/CANProjectPanel.ejs'}).render({project:newCANProject,thumbnail:null});
         $('#addCANproject').after(html)
+    }
+
+    //改变window大小的时候，重新计算filedrag的大小
+    $(window).resize(function() {
+        setHundredPercentHeight("#filedrag", "window", "#mianHeader");
+        var height=$(".all").height()+$(".top").height();
+        if($("#filedrag").height()<height){
+            $("#filedrag").height(height*1.1);
+        }
+    })
+    //页面加载时，计算filedrag的大小
+    setHundredPercentHeight("#filedrag", "window", "#mianHeader");
+    var height=$(".all").height()+$(".top").height();
+    if($("#filedrag").height()<height){
+        $("#filedrag").height(height*1.1);
+    }
+    //计算filedrag的大小
+    function setHundredPercentHeight(objId,containerId)
+    {
+        var length = arguments.length;
+        var height = 0;
+        for (var i = 2; i < length; i++)
+        {
+            height += $(arguments[i]).outerHeight();
+        }
+        if(containerId==="window"){
+            $(objId).height(($(window).height() - height)*0.99);
+        }else{
+            $(objId).height(($(containerId).height() - height)*0.99);
+        }
+
     }
 });

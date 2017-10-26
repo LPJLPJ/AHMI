@@ -102,6 +102,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
          * @param index
          */
         $scope.deleteAction = function (index) {
+            ProjectService.deleteActionName(ActionService.getAllActions()[index].title);
             ActionService.deleteActionByIndex(index,function(){
                 $scope.actions = ActionService.getAllActions();
             }.bind(this))
@@ -175,7 +176,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 /**
  * action 模态窗口控制器
  */
-    .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance', 'action','triggers','tags','timerTags','OperationService', function ($scope, $uibModalInstance, action,triggers,tags,timerTags,OperationService) {
+    .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance','ProjectService', 'action','triggers','tags','timerTags','OperationService', function ($scope, $uibModalInstance,ProjectService, action,triggers,tags,timerTags,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
 
         var blankCmd = [{name:'',symbol:''}, {tag: '', value: ''}, {tag: '', value: ''}];
@@ -248,12 +249,65 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         };
 
         //保存
-        $scope.save = function () {
-            $uibModalInstance.close($scope.action);
+        $scope.save = function (th) {
+            if(validation&&duplicate(th)){
+                titleArray.push(th.action.title);
+                ProjectService.setActionArray(titleArray);
+                $uibModalInstance.close($scope.action);
+            }
         };
 
         //取消
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
+        };
+
+        var restoreValue;
+        var validation=true;
+        var titleArray=[];
+        //保存旧值
+        $scope.store=function(th){
+            restoreValue=th.action.title;
+
+        };
+
+        //恢复旧值
+        $scope.restore = function (th) {
+            th.action.title=restoreValue;
+        };
+
+        //验证新值
+        $scope.enterName=function(th){
+            //判断是否和初始一样
+            if (th.action.title===restoreValue){
+                return;
+            }
+            //输入有效性检测
+            validation=ProjectService.inputValidate(th.action.title,true);
+            if(!validation||!duplicate(th)){
+                $scope.restore(th);
+                return;
+            }
+            toastr.info('修改成功');
+            ProjectService.deleteActionName(restoreValue);
+            restoreValue=th.action.title;
+        };
+        //验证重名
+        function duplicate(th){
+            titleArray=_.cloneDeep(ProjectService.getActionArray());
+            for(var i=0;i<titleArray.length;i++){
+                if(th.action.title===titleArray[i]){
+                    toastr.info('重复的动作名');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //验证enter键
+        $scope.enterPress=function(e,th){
+            if (e.keyCode==13){
+                $scope.enterName(th);
+            }
         };
     }]);

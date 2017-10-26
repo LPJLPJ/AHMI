@@ -569,26 +569,32 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	 * 输入名字
 	 * @param e
      */
-	function enterName(e){
+	function enterName(e,th){
 		if (e.keyCode==13){
 
-			//判断是否超长
-			if ($scope.component.object.level.name.length>Preference.OBJECT_MAX_LENGTH){
-				toastr.warning('名称超长');
-				restore();
-				return;
-			}
-			//判断是否为空
-			if ($scope.component.object.level.name.length==0){
-				toastr.warning('名称不能为空');
-				restore();
-
-				return;
-			}
+			// //判断是否超长
+			// if ($scope.component.object.level.name.length>Preference.OBJECT_MAX_LENGTH){
+			// 	toastr.warning('名称超长');
+			// 	restore();
+			// 	return;
+			// }
+			// //判断是否为空
+			// if ($scope.component.object.level.name.length==0){
+			// 	toastr.warning('名称不能为空');
+			// 	restore();
+            //
+			// 	return;
+			// }
 			//判断是否和初始一样
 			if ($scope.component.object.level.name==initObject.level.name){
+                th.component.object.level.name=$scope.component.object.level.name;
 				return;
 			}
+            var validation=ProjectService.inputValidate($scope.component.object.level.name);
+            if(!validation){
+                restore();
+                return;
+            }
             toastr.info('修改成功');
 			var option={
 				name:$scope.component.object.level.name

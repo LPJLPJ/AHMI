@@ -218,6 +218,9 @@ function parseFormData(req,res,newProject){
             //console.log('project',project,);
             delete project._id;
             delete project.createdTime;
+            delete project.lastModified;
+            delete project.createTime;
+            delete project.lastModifiedTime;
             project.lastModifiedTime = new Date();
             for (var key in project) {
                 if (key === 'content') {
@@ -316,22 +319,28 @@ function fixProjectContent(content,id,host){
         str = '',
         transformSrc;
 
-    if(host){
+    if(host||(!!(contentObj.basicUrl.match(/(localproject)/)))){
         //修改本地版中的src
         str = '/project/'+id+'/';
-        pattern2 = /..\/..\/localproject\/[a-z\d]+\//g;
+        // pattern2 = /..\/..\/localproject\/[a-z\d]+\//g;
+        pattern2 = /^.*\/localproject\/[a-z\d]+\//g;//可以兼容绝对路径
     }else{
         //修改IDE生成的压缩包中的json的src，仅仅修改project id
         str = '/project/'+id+'/';
         pattern2 = /\/project\/[a-z\d]+\//g;
+        // pattern2 = /..\/..\/localproject\/[a-z\d]+\//g;
+
     }
     transformSrc = function(key,value) {
         if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage'||key=='originSrc') {
+            // console.log("key:",key);
+            // console.log("value0:",value);
             if((typeof value==='string')&&(value!='')){
                 if(value.indexOf('chrome-extension')==-1){
                     value = value.replace(/\\/g,'/');
                     value = value.replace(pattern2,str);
                     //console.log(key,value);
+                    // console.log("value1:",value);
                     return value;
                 }else{
                     var arr = value.split('/');
@@ -341,6 +350,7 @@ function fixProjectContent(content,id,host){
                     arr[4]=String(id);
                     value = arr.join('/');
                     return value;
+                    // console.log("value2:",value);
                 }
             }else{
                 return value;

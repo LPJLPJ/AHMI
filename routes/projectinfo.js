@@ -55,6 +55,33 @@ function hasValidKey(user,projectId,sharedKey,cb) {
     }
 }
 
+
+function checkAccessPriviledge(project,sessionUser,cb) {
+    var userId = sessionUser.id
+    if (userId){
+        if (project.userId == userId){
+            //own
+            cb && cb(null,'own')
+        }else{
+            //check share
+            if (!!project.shared){
+                hasValidKey(sessionUser,project._id,project.sharedKey,function (result) {
+                    if (result){
+                        cb && cb(null,'shareOK')
+                    }else{
+                        cb && cb(null,'shareLogin')
+                    }
+                })
+            }else{
+                cb && cb(null,'forbidden')
+            }
+        }
+    }else{
+        cb && cb(null,'unLogin')
+    }
+
+}
+
 projectRoute.checkSharedKey = function (req, res) {
     var projectId = req.params.id
     var sharedKey = req.body.sharedKey
@@ -85,10 +112,11 @@ projectRoute.checkSharedKey = function (req, res) {
     }
 }
 
-projectRoute.getProjectById = function (req, res) {
-    var projectId = req.params.id
-    var userId = req.session.user&&req.session.user.id;
 
+
+projectRoute.getProjectById = function (req, res) {
+    var projectId = req.params.id;
+    var userId = req.session.user&&req.session.user.id;
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -107,7 +135,6 @@ projectRoute.getProjectById = function (req, res) {
             }else{
                 //user logged in, but not project owner
                 if (!!project.shared){
-
                     hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
                         if (result){
                             res.render('ide/index.html')
@@ -118,23 +145,58 @@ projectRoute.getProjectById = function (req, res) {
                             })
                         }
                     })
-
                 }else{
                     res.render('ide/share.html',{
                         title:'没有权限',
                         share:false
                     });
                 }
-
-
             }
-
         })
     }else{
         errHandler(res,500,'error')
     }
+};
 
-}
+projectRoute.getProjectTreeById = function(req,res){
+    var projectId = req.params.id;
+    var userId = req.session&&req.session.user&&req.session.user.id;
+    if(!userId){
+        res.render('login/login.html',{
+            title:'重新登录'
+        })
+    }else{
+        ProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'error')
+            }else{
+                if(!project){
+                    errHandler(res,500,'project is null');
+                }else if (project.userId == userId){
+                    res.render('ide/projectTree.html')
+                }else{
+                    if (!!project.shared){
+                        hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
+                            if (result){
+                                res.render('ide/projectTree.html')
+                            }else{
+                                res.render('ide/share.html',{
+                                    title:project.name,
+                                    share:true
+                                })
+                            }
+                        })
+                    }else{
+                        res.render('ide/share.html',{
+                            title:'没有权限',
+                            share:false
+                        });
+                    }
+                }
+            }
+        })
+    }
+};
 
 projectRoute.getProjectContent = function (req, res) {
     var projectId = req.params.id
@@ -149,7 +211,7 @@ projectRoute.getProjectContent = function (req, res) {
             if (v in project.backups){
                 project.content = project.backups[v].content||''
             }
-            project.backups = []
+            project.backups = [];
             res.end(JSON.stringify(project))
         })
     }else{
@@ -215,11 +277,20 @@ projectRoute.getShareInfo = function (req, res) {
             if (err){
                 errHandler(res,500,JSON.stringify(err))
             }else{
-                res.end(JSON.stringify({
-                    own:(userId ==_project.userId),
-                    shared:_project.shared,
-                    sharedKey:_project.sharedKey
-                }))
+                if (userId==_project.userId){
+                    res.end(JSON.stringify({
+                        own:true,
+                        shared:_project.shared,
+                        sharedKey:_project.sharedKey
+                    }))
+                }else{
+                    res.end(JSON.stringify({
+                        own:false,
+                        shared:_project.shared,
+                        sharedKey:''
+                    }))
+                }
+
             }
         })
 
@@ -237,8 +308,20 @@ projectRoute.getBackupList = function (req, res) {
             if (err) {
                 errHandler(res,500,'error')
             }
+            var backups = project.backups,
+                backupList = [],
+                item;
+            if(backups){
+                for(var i=0,il=backups.length;i<il;i++){
+                    item = {};
 
-            res.end(JSON.stringify(project.backups))
+                    item.date = moment(backups[i].time).format("YYYY-MM-DD HH:mm");
+                    // item.thumbnail = backups[i].thumbnail;
+                    // console.log("backups[i].lastModifiedTime",backups[i].lastModifiedTime)
+                    backupList.push(item);
+                }
+            }
+            res.end(JSON.stringify(backupList));
         })
     }else{
         //console.log(projectId)
@@ -444,69 +527,83 @@ projectRoute.saveProject = function (req, res) {
                 if(!project){
                     errHandler(res,500,'project is null');
                 }else{
-                    var curProjectContent = req.body.project
-                    if (curProjectContent){
-                        //backup last content
-                        var backups = project.backups||[]
-                        if (backups.length>=5){
-                            backups.shift()
-                        }
-                        project.content = JSON.stringify(curProjectContent)
-                        backups.push({time:new Date(),content:project.content})
-                        project.save(function (err) {
-                            if (err){
-                                console.log(err)
-                                errHandler(res, 500, 'project resave error')
-                            }else{
+                    checkAccessPriviledge(project,req.session.user||{},function (err,access) {
+                        if (err){
+                            errHandler(res,500,JSON.stringify(err))
+                        }else{
+                            switch (access){
+                                case 'own':
+                                case 'shareOK':
+                                    var curProjectContent = req.body.project
+                                    if (curProjectContent){
+                                        //backup last content
+                                        var backups = project.backups||[]
+                                        if (backups.length>=5){
+                                            backups.shift()
+                                        }
+                                        project.content = JSON.stringify(curProjectContent)
+                                        backups.push({time:new Date(),content:project.content})
+                                        project.save(function (err) {
+                                            if (err){
+                                                console.log(err)
+                                                errHandler(res, 500, 'project resave error')
+                                            }else{
 
-                                res.end('ok')
-                                //delete files
-                                // var resourceList = curProjectContent.resourceList;
-                                var resourceList = []
-                                project.backups.forEach(function (backup) {
-                                    var c = JSON.parse(backup.content)
-                                    if (c){
-                                        var curList = c.resourceList||[]
-                                        resourceList = resourceList.concat(curList)
+                                                res.end('ok')
+                                                //delete files
+                                                // var resourceList = curProjectContent.resourceList;
+                                                var resourceList = []
+                                                project.backups.forEach(function (backup) {
+                                                    var c = JSON.parse(backup.content)
+                                                    if (c){
+                                                        var curList = c.resourceList||[]
+                                                        resourceList = resourceList.concat(curList)
+                                                    }
+                                                })
+                                                var resourceNames = resourceList.map(function(res){
+                                                    return res.id;
+                                                })
+                                                //console.log(resourceNames);
+                                                var url = path.join(__dirname,'../project',projectId,'resources');
+                                                fs.readdir(url, function (err, files) {
+                                                    if (err){
+                                                        console.log(err)
+                                                    }
+                                                    //console.log(files)
+                                                    if (files && files.length){
+
+                                                        var diffResources = _.difference(files,resourceNames);
+                                                        // console.log(diffResources)
+                                                        // for (var i=0;i<diffResources.length;i++){
+                                                        //     fs.unlink(path.join(url,diffResources[i]));
+                                                        // }
+
+                                                        //filter
+                                                        diffResources.map(function (dFile) {
+                                                            var dFilePath = path.join(url,dFile);
+                                                            // console.log(dFilePath)
+                                                            fs.stat(dFilePath,function (err,stats) {
+                                                                // console.log(stats)
+                                                                if (stats && stats.isFile()){
+                                                                    fs.unlink(dFilePath);
+                                                                }
+                                                            })
+                                                        });
+                                                    }
+                                                })
+
+                                            }
+                                        })
+                                    }else{
+                                        errHandler(res,500,'project save error')
                                     }
-                                })
-                                var resourceNames = resourceList.map(function(res){
-                                    return res.id;
-                                })
-                                //console.log(resourceNames);
-                                var url = path.join(__dirname,'../project',projectId,'resources');
-                                fs.readdir(url, function (err, files) {
-                                    if (err){
-                                        console.log(err)
-                                    }
-                                    //console.log(files)
-                                    if (files && files.length){
-
-                                        var diffResources = _.difference(files,resourceNames);
-                                        // console.log(diffResources)
-                                        // for (var i=0;i<diffResources.length;i++){
-                                        //     fs.unlink(path.join(url,diffResources[i]));
-                                        // }
-
-                                        //filter
-                                        diffResources.map(function (dFile) {
-                                            var dFilePath = path.join(url,dFile);
-                                            // console.log(dFilePath)
-                                            fs.stat(dFilePath,function (err,stats) {
-                                                // console.log(stats)
-                                                if (stats && stats.isFile()){
-                                                    fs.unlink(dFilePath);
-                                                }
-                                            })
-                                        });
-                                    }
-                                })
-
+                                    break
+                                default:
+                                    errHandler(res,500,'forbidden to save')
                             }
-                        })
-                    }else{
-                        errHandler(res,500,'project save error')
-                    }
+                        }
+                    })
+
                 }
 
             }

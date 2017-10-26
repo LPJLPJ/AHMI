@@ -25,6 +25,8 @@ var ProjectSchema = new mongoose.Schema({
     lastModifiedTime:{type:Date,default:Date.now}
 })
 
+ProjectSchema.index({createTime:-1});
+
 ProjectSchema.pre('save',function(next){
     var project = this
     if (this.isNew){
