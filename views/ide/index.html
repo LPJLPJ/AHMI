@@ -572,7 +572,7 @@
                                    type="text"
                                    ng-blur="component.restore()"
                                    ng-model="component.object.level.name"
-                                   ng-keypress="component.enterName($event)">
+                                   ng-keypress="component.enterName($event,this)">
                         </div>
 
                         <div class="my-attr-item lg">
@@ -1418,7 +1418,7 @@
                             <!--</select>-->
                         <!--</div>-->
 
-                        <div class="my-attr-item lg">
+                        <div class="my-attr-item lg"  style="display: none">
                             <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
                             <input class="my-attr-title-cartoon-times form-control "
                                    ng-blur="component.restore()"
@@ -1583,7 +1583,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterName($event)">
                         </div>
-                        <div class="my-attr-item lg">
+                        <div class="my-attr-item lg" style="display: none">
                             <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
                             <input class="my-attr-title-cartoon-times form-control "
                                    ng-blur="component.restore()"
