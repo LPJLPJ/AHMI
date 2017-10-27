@@ -226,6 +226,7 @@ update:
 add:
     1. work with shared project using socketIO
     2. visualization of project using D3
+    3. user can choose project version in submenu
 fix:
     1. names specification
 update:
