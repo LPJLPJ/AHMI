@@ -304,6 +304,9 @@ $(function(){
         callback: function(key) {
             var project = $(this).attr('data-project');
             project = JSON.parse(project);
+            curPanel = $(this);
+            curSelectedPanel = curPanel;
+            curProject = project;
             switch (key){
                 case "openFolder":
                    var localprojectpath = path.join(localProjectDir,String(project._id));

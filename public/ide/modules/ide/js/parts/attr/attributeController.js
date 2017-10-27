@@ -569,7 +569,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 	 * 输入名字
 	 * @param e
      */
-	function enterName(e){
+	function enterName(e,th){
 		if (e.keyCode==13){
 
 			// //判断是否超长
@@ -587,6 +587,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 			// }
 			//判断是否和初始一样
 			if ($scope.component.object.level.name==initObject.level.name){
+                th.component.object.level.name=$scope.component.object.level.name;
 				return;
 			}
             var validation=ProjectService.inputValidate($scope.component.object.level.name);
