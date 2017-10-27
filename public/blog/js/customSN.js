@@ -103,7 +103,7 @@ var Library = function (context) {
     this.initialize = function () {
         var $container = options.dialogsInBody ? $(document.body) : $editor;
 
-        var body = '<div class="row"><input class="input upload col-md-3" type="file"  multiple="multiple" /><div class="progress col-md-8" style="padding:0"><div class="progress-bar" style="transition:none"></div></div></div><div class="row"><div class="library-preview col-md-3"></div><div class="col-md-8"><table class="library-table table"></table></div></div>'
+        var body = '<div class="row"><input class="input upload col-md-3" type="file"  multiple="multiple" /><div class="progress col-md-8" style="padding:0"><div class="progress-bar" style="transition:none"></div></div></div><div class="row"><div class="library-preview col-md-3"></div><div class="col-md-8"><table class="library-table table"></table></div></div><div class="row"><span class="msg"></span></div>'
 
 
         this.$dialog = ui.dialog({
@@ -246,6 +246,10 @@ var Library = function (context) {
         })
     }
 
+    this.copyUrl = function () {
+
+    }
+
     this.showLibrary = function () {
         var baseUrl = resourceUrl
         return $.Deferred(function (deferred) {
@@ -259,7 +263,7 @@ var Library = function (context) {
 
                 var DELAY = 300, clicks = 0, timer = null;
                 $libraryTable.click(function (e) {
-
+                    $('.msg').html('')
                     clicks++;  //count clicks
 
                     if(clicks === 1) {
@@ -269,13 +273,14 @@ var Library = function (context) {
                             
                             clicks = 0;             
                             var targetClass = $(e.target).attr('class')
+                            var curRow = $(e.target.parentNode)
+                            var fileName = curRow.siblings('.library-filename').text()
                             if (targetClass.indexOf('library-filename')!==-1) {
                                 self.showPreview(e.target.innerText)
                             }else if (targetClass.indexOf('btn-delete')!==-1) {
                                 //delete
                                 // self.deleteFile()
-                                var curRow = $(e.target.parentNode)
-                                var fileName = curRow.siblings('.library-filename').text()
+
                                 self.deleteFile(fileName,function () {
                                     for (var i = curFiles.length - 1; i >= 0; i--) {
                                         if(curFiles[i]==fileName){
@@ -286,6 +291,16 @@ var Library = function (context) {
                                     curRow.parent().remove()
 
                                 })
+                            }else if (targetClass.indexOf('btn-copy')!==-1){
+                                var clipBtn = document.createElement('button')
+                                var clipboard = new Clipboard(clipBtn,{
+                                    text:function () {
+                                        return baseUrl+'/'+fileName
+                                    }
+                                });
+                                $(clipBtn).click()
+                                clipboard.destroy()
+                                $('.msg').html('复制成功')
                             }
 
 
@@ -305,6 +320,7 @@ var Library = function (context) {
                             });
                             $(clipBtn).click()
                             clipboard.destroy()
+                            $('.msg').html('复制成功') 
                         }
 
 
@@ -391,7 +407,7 @@ var Library = function (context) {
     }
 
     this.renderFile = function (file) {
-        return '<tr><td class="library-filename">'+file+'</td><td>'+self.getExt(file)+'</td><td><button class="btn btn-delete">x</button></td></tr>'
+        return '<tr><td class="library-filename">'+file+'</td><td>'+self.getExt(file)+'</td><td><button class="btn btn-default btn-copy">复制</button></td><td><button class="btn btn-delete">x</button></td></tr>'
     }
    
    // context.memo('mis.lib', function () {
