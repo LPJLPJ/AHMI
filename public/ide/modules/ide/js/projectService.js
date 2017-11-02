@@ -1881,7 +1881,7 @@ ideServices
                     }
                     return layer;
                 }
-                
+
             };
 
             this.SaveCurrentOperate= function () {
@@ -4994,39 +4994,6 @@ ideServices
                 }
                 return true;
 
-            }
-            var animationArray=[];
-            this.setAnimationArray=function(newAnimationArray){
-                animationArray=newAnimationArray;
-            }
-            this.getAnimationArray=function(){
-                return animationArray;
-            }
-            this.deleteAnimationName=function(animationName){
-                for(var i=0;i<animationArray.length;i++) {
-                    if(animationName===animationArray[i]){
-                        animationArray.splice(i,1);
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            var actionArray=['action0'];
-            this.setActionArray=function(newActionArray){
-                actionArray=newActionArray;
-            }
-            this.getActionArray=function(){
-                return actionArray;
-            }
-            this.deleteActionName=function(actionName){
-                for(var i=0;i<actionArray.length;i++) {
-                    if(actionName===actionArray[i]){
-                        actionArray.splice(i,1);
-                        return true;
-                    }
-                }
-                return false;
             }
 
             /**
