@@ -15,7 +15,6 @@ $(function(){
     var closeModalConfirmButton = $('#closeModalConfirm');
     var localProjectDir='';
     var localCANProjectDir='';
-    var moment;
 
     closeModalConfirmButton.on('click',function (e) {
         //console.log('project',curProject);
@@ -53,7 +52,6 @@ $(function(){
     }
 
     if (local){
-        moment = require('moment');
         //create localproject folder
         fs = require('fs');
         path = require('path');
@@ -265,6 +263,57 @@ $(function(){
         });
         return dfd.promise();
     };
+
+    //author: LH 2017-10-30
+    function ChinaFormatItem(fmt) {
+        var Y=fmt.slice(11,15);
+        var M=fmt.slice(4,7);
+        var D=fmt.slice(8,10);
+        var HMS=fmt.slice(16,24);
+
+        switch (M){
+            case "Jan":
+                M='01';
+                break;
+            case "Feb":
+                M='02';
+                break;
+            case "Mar":
+                M='03';
+                break;
+            case "Apr":
+                M='04';
+                break;
+            case "May":
+                M='05';
+                break;
+            case "Jun":
+                M='06';
+                break;
+            case "Jul":
+                M='07';
+                break;
+            case "Aug":
+                M='08';
+                break;
+            case "Sep":
+                M='09';
+                break;
+            case "Oct":
+                M='10';
+                break;
+            case "Nov":
+                M='11';
+                break;
+            case "Dec":
+                M='12';
+                break;
+
+        }
+        fmt=Y+"-"+M+"-"+D+" "+HMS;
+        return fmt;
+
+    }
     function localLoadItems(id){
         var curProjectDir =  path.join(localProjectDir,id);
         var curProject = readSingleFile(path.join(curProjectDir,'project.json'),true);
@@ -275,19 +324,24 @@ $(function(){
             for(var i=0;i<((versionArray.length>5)?5:versionArray.length);i++){
                 switch(i){
                     case 0:
-                        subItems.sub1={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub1={name:ChinaFormatItem(temp.toString())};
                         break;
                     case 1:
-                        subItems.sub2={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub2={name:ChinaFormatItem(temp.toString())};
                         break;
                     case 2:
-                        subItems.sub3={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub3={name:ChinaFormatItem(temp.toString())};
                         break;
                     case 3:
-                        subItems.sub4={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub4={name:ChinaFormatItem(temp.toString())};
                         break;
                     case 4:
-                        subItems.sub5={name:moment(versionArray[i].time).format("YYYY-MM-DD HH:mm")};
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub5={name:ChinaFormatItem(temp.toString())};
                         break;
                     default:
                 }
