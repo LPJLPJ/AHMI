@@ -30,7 +30,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     $scope.sliceNum = 0;
     switch (widgetInfo.type){
         case Type.MyButton:
-            initConfigure(false,2,widgetInfo.tex,false,false,false);
+            initConfigure(false,2,widgetInfo.tex,true,false,false);
             break;
         case Type.MyProgress:
             if((widgetInfo.objInfo.progressModeId==='1'||widgetInfo.objInfo.progressModeId==='3')&&(widgetInfo.index==1||widgetInfo.index==2||widgetInfo.index==3)){
@@ -49,10 +49,10 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             initConfigure(false,13,widgetInfo.tex,false,false,false);
             break;
         case Type.MyDashboard:
-            initConfigure(false,2,widgetInfo.tex,false,false,false);
+            initConfigure(false,2,widgetInfo.tex,true,false,false);
             break;
         case Type.MyTextArea:
-            initConfigure(false,1,widgetInfo.tex,false,false,false);
+            initConfigure(false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MyNum:
             initConfigure(false,1,widgetInfo.tex,false,false,false);
@@ -67,18 +67,24 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
             initConfigure(false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MySwitch:
-            initConfigure(false,1,widgetInfo.tex,false,false,false);
+            initConfigure(false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MyRotateImg:
-            initConfigure(false,1,widgetInfo.tex,false,false,false);
+            initConfigure(false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MySlideBlock:
-            initConfigure(false,1,widgetInfo.tex,false,false,false);
+            initConfigure(false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MyAnimation:
             initConfigure(true,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MyTexNum:
+            initConfigure(false,1,widgetInfo.tex,true,false,false);
+            break;
+        case Type.MyDateTime:
+            initConfigure(false,1,widgetInfo.tex,true,false,false);
+            break;
+        case Type.MyButtonGroup:
             initConfigure(false,1,widgetInfo.tex,true,false,false);
             break;
         default:

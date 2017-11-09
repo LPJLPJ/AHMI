@@ -608,7 +608,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
                 var successHandler = function(e){
 
-                    console.log(e);
+                    // console.log(e);
                     if (e.status == 200){
 
                         ResourceService.appendFileUnique(translatedFile, function (file,files) {
