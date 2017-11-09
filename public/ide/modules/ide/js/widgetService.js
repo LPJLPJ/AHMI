@@ -1808,7 +1808,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.fontColor=arg.fontColor;
                 }
                 self.setHeight(self.fontSize*1.1);
-                var font = self.fontSize + "px" + " " + self.fontFamily;
+                var font = self.fontSize + "px" + " " + '"'+self.fontFamily+'"';
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 level.info.maxFontWidth = maxWidth;
                 self.maxFontWidth = maxWidth;
@@ -2478,7 +2478,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 //设置宽高
-                var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
+                var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + '"'+self.fontFamily+'"';
                 console.log('new font',font)
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.+-',font));
                 self.maxFontWidth = maxWidth;
