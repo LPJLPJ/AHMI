@@ -99,6 +99,8 @@ var Library = function (context) {
     var deleteUrl = ""
     var progress
     var fileLimit=0
+    var curFilesNum = 0
+    var maxFilesNum = 10
 
 
     this.initialize = function () {
@@ -128,6 +130,13 @@ var Library = function (context) {
         });
     };
 
+    this.setMaxFilesNum = function (maxNum) {
+        maxFilesNum = maxNum
+    }
+
+    function exceedMaxNum(curNum) {
+        return curNum > maxFilesNum
+    }
 
 
     this.resourceType = function (url) {
@@ -174,6 +183,11 @@ var Library = function (context) {
                 return fcb&& fcb(new Error('文件过大，不能超过'+(fileLimit/1000/1000)+'MB'))
             }
         }
+
+        if (exceedMaxNum(files.length+curFilesNum)){
+            return fcb&& fcb(new Error('文件过多，不能超过'+(maxFilesNum)+'个'))
+        }
+
         var data = new FormData();
         for (var i=0;i<files.length;i++){
             data.append("file", files[i]);
@@ -307,16 +321,24 @@ var Library = function (context) {
                             curRow.parent().remove()
 
                         })
-                    }else if (targetClass.indexOf('btn-copy')!==-1){
-                        var clipBtn = document.createElement('button')
-                        var clipboard = new Clipboard(clipBtn,{
-                            text:function () {
-                                return baseUrl+'/'+fileName
+                    }else if (targetClass.indexOf('btn-copy')!==-1) {
+                        $('.msg').html('')
+                        var copy = function (e) {
+                            e.preventDefault();
+                            console.log('copy');
+                            var text = baseUrl+'/'+fileName
+                            if (e.clipboardData) {
+                                e.clipboardData.setData('text/plain', text);
+                                $('.msg').html('复制成功')
+                            } else if (window.clipboardData) {
+                                window.clipboardData.setData('Text', text);
+                                $('.msg').html('复制成功')
                             }
-                        });
-                        $(clipBtn).click()
-                        clipboard.destroy()
-                        $('.msg').html('复制成功')
+                        }
+                        window.addEventListener('copy', copy);
+                        document.execCommand('copy');
+                        window.removeEventListener('copy', copy);
+
                     }
 
 
@@ -328,6 +350,7 @@ var Library = function (context) {
                 var $uploadBtn = self.$dialog.find('.upload')
 
                 $uploadBtn.change(function (e) {
+                    $('.msg').html('')
                     if (!uploadUrl) {return}
                     sendFiles(e.target.files,uploadUrl,function () {
                         self.updateLibrary(retriveUrl)
@@ -362,7 +385,6 @@ var Library = function (context) {
 
     this.updateLibrary = function (url) {
         //update resources from url
-        console.log(url)
         $.ajax({
             type:"GET",
             url:url
@@ -372,9 +394,11 @@ var Library = function (context) {
             files = files.filter(function (file) {
                 return !self.isHiddenFile(file)
             })
-            console.log(files,files.map(function (file) {
-                return self.getExt(file)
-            }))
+            // console.log(files,files.map(function (file) {
+            //     return self.getExt(file)
+            // }))
+            files.sort()
+            curFilesNum = files.length
             curFiles = files
             self.insertFiles(files)
         })
@@ -398,10 +422,14 @@ var Library = function (context) {
             return self.renderFile(file)
         })
         libraryTable.innerHTML = fileDOMs.join("")
+        // var clipboard = new Clipboard('.btn-copy')
+        // clipboard.on('success', function(e) {
+        //     $('.msg').html('复制成功')
+        // });
     }
 
     this.renderFile = function (file) {
-        return '<tr><td class="library-filename">'+file+'</td><td>'+self.getExt(file)+'</td><td><button class="btn btn-default btn-copy">复制</button></td><td><button class="btn btn-delete">x</button></td></tr>'
+        return '<tr><td class="library-filename">'+file+'</td><td>'+self.getExt(file)+'</td><td><button class="btn btn-default btn-copy" >复制</button></td><td><button class="btn btn-delete">x</button></td></tr>'
     }
 
     // context.memo('mis.lib', function () {
@@ -500,7 +528,16 @@ $summernote.summernote({
             })
         },
         onImageUploadError:function (e) {
-            console.log(arguments)
+            $.alert({
+                title: '',
+                content: '插入图片失败，链接无效'
+            });
+        },
+        onVideoInsertError:function () {
+            $.alert({
+                title: '',
+                content: '插入视频失败，链接无效'
+            });
         }
     }
 
