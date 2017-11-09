@@ -46,7 +46,6 @@ ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
             }
             return customFont;
         });
-        console.log(customFonts)
         $scope.componentOfChar.fontFamilies = [{name:'宋体'},{name:'Arial'},{name:'times'}].concat(customFonts)
     }
 
