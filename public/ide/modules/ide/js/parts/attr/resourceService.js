@@ -190,7 +190,7 @@ ideServices
 
         this.addWebFont = function (fontFile,type) {
             console.log('font: ',fontFile,type,fontFile)
-            var fontName = fontFile.name.split('.')[0];
+            var fontName = fontFile.name;
             //handle window url
             var curSrc = fontFile.src;
             if (local){
@@ -247,43 +247,43 @@ ideServices
                 //ttf
                 //font
 
-                // var ext = this.getExt(file.id);
-                // var type;
-                // console.log(ext)
-                // if (ext==='ttf'){
-                //     type = 'truetype'
-                // }else if (ext === 'woff'){
-                //     type = 'woff'
-                // }
-                // this.addWebFont(file,type);
-                // resourceObj.type = 'font/'+type;
-                // file.type=resourceObj.type;
-                // globalResources.push(resourceObj);
-                // console.log('added',globalResources)
-                // scb && scb({type:'ok'},resourceObj);
-
                 var ext = this.getExt(file.id);
                 var type;
+                // console.log(ext)
                 if (ext==='ttf'){
                     type = 'truetype'
                 }else if (ext === 'woff'){
                     type = 'woff'
                 }
+                this.addWebFont(file,type);
                 resourceObj.type = 'font/'+type;
                 file.type=resourceObj.type;
-                var curFont = new Font();
-                resourceObj.content = curFont;
-                curFont.onload = function () {
-                    resourceObj.complete = true;
-                    scb && scb({type:'ok'}, resourceObj);
-                };
-                curFont.onerror = function (errMsg) {
-                    resourceObj.complete = false;
-                    fcb && fcb({type:'error',msg:errMsg}, resourceObj);
-                };
-                curFont.fontFamily = file.name
-                curFont.src = file.src;
                 globalResources.push(resourceObj);
+                console.log('added',globalResources)
+                scb && scb({type:'ok'},resourceObj);
+
+                // var ext = this.getExt(file.id);
+                // var type;
+                // if (ext==='ttf'){
+                //     type = 'truetype'
+                // }else if (ext === 'woff'){
+                //     type = 'woff'
+                // }
+                // resourceObj.type = 'font/'+type;
+                // file.type=resourceObj.type;
+                // var curFont = new Font();
+                // resourceObj.content = curFont;
+                // curFont.onload = function () {
+                //     resourceObj.complete = true;
+                //     scb && scb({type:'ok'}, resourceObj);
+                // };
+                // curFont.onerror = function (errMsg) {
+                //     resourceObj.complete = false;
+                //     fcb && fcb({type:'error',msg:errMsg}, resourceObj);
+                // };
+                // curFont.fontFamily = file.name
+                // curFont.src = file.src;
+                // globalResources.push(resourceObj);
 
             }else{
                 //other
