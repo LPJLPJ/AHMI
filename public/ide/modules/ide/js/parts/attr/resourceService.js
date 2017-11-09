@@ -249,7 +249,7 @@ ideServices
 
                 var ext = this.getExt(file.id);
                 var type;
-                console.log(ext)
+                // console.log(ext)
                 if (ext==='ttf'){
                     type = 'truetype'
                 }else if (ext === 'woff'){
@@ -259,7 +259,7 @@ ideServices
                 resourceObj.type = 'font/'+type;
                 file.type=resourceObj.type;
                 globalResources.push(resourceObj);
-                console.log('added',globalResources)
+                // console.log('added',globalResources)
                 scb && scb({type:'ok'},resourceObj);
 
             }else{
@@ -585,7 +585,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
                 var successHandler = function(e){
 
-                    console.log(e);
+                    // console.log(e);
                     if (e.status == 200){
 
                         ResourceService.appendFileUnique(translatedFile, function (file,files) {
