@@ -394,7 +394,12 @@ ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','TagService','Pro
     $scope.type = type;
 
     //保存
-    $scope.save = function () {
+    $scope.save = function (th) {
+        //如果是定时器，就不验证，直接关闭
+        if(th.type==="timer"){
+            $uibModalInstance.close($scope.tag);
+            return;
+        }
         if(index!==-1){
             //edit tag
             var oldTag = TagService.getTagByIndex(index);
@@ -421,6 +426,10 @@ ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','TagService','Pro
         //     $uibModalInstance.close($scope.tag);
         // }
         if (ProjectService.inputValidate($scope.tag.name)){
+            if($scope.tag.name.match(/^SysTmr_[0-9]+_t$/)){
+                toastr.error('SysTmr_数字_t 为定时器保留名称');
+                return;
+            }
             $uibModalInstance.close($scope.tag);
         }
 

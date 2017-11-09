@@ -1828,7 +1828,6 @@ ideServices
                     //     fabWidget.fire('OnRelease',fabWidget.id);
                     // })
                     fabGroup.forEachObject(function(item){
-
                         var widget = getLevelById(item.id,'widget');
                         widget.info.left = Math.round(baseLeft+item.left);
                         widget.info.top = Math.round(baseTop+item.top);
@@ -1881,7 +1880,7 @@ ideServices
                     }
                     return layer;
                 }
-                
+
             };
 
             this.SaveCurrentOperate= function () {
@@ -3981,13 +3980,20 @@ ideServices
 
                     if (_.isNumber(_option.left)) {
                         fabGroup.setLeft(_option.left);
-                        currentGroup.info.left = _option.left;
+                        object.level.info.left=currentGroup.info.left = _option.left
 
                     }
                     if (_.isNumber(_option.top)) {
                         fabGroup.setTop(_option.top);
-                        currentGroup.info.top = _option.top;
+                        object.level.info.top=currentGroup.info.top = _option.top;
                     }
+                    var baseLeft=object.level.info.left+fabGroup.width/2;
+                    var baseTop=object.level.info.top+fabGroup.height/2;
+                    fabGroup.forEachObject(function(item){
+                        var widget = getLevelById(item.id,'widget');
+                        widget.info.left = Math.round(baseLeft+item.left);
+                        widget.info.top = Math.round(baseTop+item.top);
+                    })
 
                     // if (getCurrentSubLayer()){
                     //     var currentSubLayer=getCurrentSubLayer();
@@ -4994,39 +5000,6 @@ ideServices
                 }
                 return true;
 
-            }
-            var animationArray=[];
-            this.setAnimationArray=function(newAnimationArray){
-                animationArray=newAnimationArray;
-            }
-            this.getAnimationArray=function(){
-                return animationArray;
-            }
-            this.deleteAnimationName=function(animationName){
-                for(var i=0;i<animationArray.length;i++) {
-                    if(animationName===animationArray[i]){
-                        animationArray.splice(i,1);
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            var actionArray=['action0'];
-            this.setActionArray=function(newActionArray){
-                actionArray=newActionArray;
-            }
-            this.getActionArray=function(){
-                return actionArray;
-            }
-            this.deleteActionName=function(actionName){
-                for(var i=0;i<actionArray.length;i++) {
-                    if(actionName===actionArray[i]){
-                        actionArray.splice(i,1);
-                        return true;
-                    }
-                }
-                return false;
             }
 
             /**

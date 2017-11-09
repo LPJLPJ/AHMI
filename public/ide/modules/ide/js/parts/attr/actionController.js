@@ -2,7 +2,7 @@
  * Created by Zzen1ss on 23/3/2016
  */
 
-ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','ProjectService', 'Type','OperationService',function ($scope, ActionService,TagService,$uibModal,ProjectService,Type,OperationService) {
+ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','ProjectService', 'Type','OperationService',function ($scope, ActionService,TagService,$uibModal,ProjectService,Type,OperationService) {
 
     $scope.$on('GlobalProjectReceived', function () {
 
@@ -102,7 +102,6 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
          * @param index
          */
         $scope.deleteAction = function (index) {
-            ProjectService.deleteActionName(ActionService.getAllActions()[index].title);
             ActionService.deleteActionByIndex(index,function(){
                 $scope.actions = ActionService.getAllActions();
             }.bind(this))
@@ -119,10 +118,16 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             if (index == -1){
                 //newAction
                 targetAction = ActionService.getNewAction();
+                targetAction.newAction=true;
             }else if (index>=0&&index<$scope.actions.length){
                 targetAction = _.cloneDeep($scope.actions[index]);
+                targetAction.newAction=false;
             }
             //console.log('targetAction',targetAction);
+            var actionNames=[];
+            for(var i=0;i<$scope.actions.length;i++){
+                actionNames.push($scope.actions[i].title);
+            }
             /**
              * 利用$uiModal服务，制作模态窗口
              */
@@ -143,6 +148,9 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
                     },
                     timerTags: function(){
                         return $scope.timerTags;
+                    },
+                    actionNames: function(){
+                        return actionNames;
                     }
                 }
             });
@@ -176,7 +184,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 /**
  * action 模态窗口控制器
  */
-    .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance','ProjectService', 'action','triggers','tags','timerTags','OperationService', function ($scope, $uibModalInstance,ProjectService, action,triggers,tags,timerTags,OperationService) {
+    .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance','ProjectService', 'action','triggers','tags','timerTags','actionNames','OperationService', function ($scope, $uibModalInstance,ProjectService, action,triggers,tags,timerTags,actionNames,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
 
         var blankCmd = [{name:'',symbol:''}, {tag: '', value: ''}, {tag: '', value: ''}];
@@ -191,6 +199,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         });
         $scope.action = action;
         $scope.triggers = triggers;
+        $scope.actionNames = actionNames;
 
         $scope.currentChosenIdx = $scope.action.commands.length-1;
         if ($scope.currentChosenIdx>0){
@@ -250,9 +259,14 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 
         //保存
         $scope.save = function (th) {
+            //判断是否和初始一样
+            if(th.action.newAction===false){
+                if (th.action.title===restoreValue){
+                    $uibModalInstance.close($scope.action);
+                    return;
+                }
+            }
             if(validation&&duplicate(th)){
-                titleArray.push(th.action.title);
-                ProjectService.setActionArray(titleArray);
                 $uibModalInstance.close($scope.action);
             }
         };
@@ -262,9 +276,8 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             $uibModalInstance.dismiss('cancel');
         };
 
-        var restoreValue;
+        var restoreValue=$scope.action.title;
         var validation=true;
-        var titleArray=[];
         //保存旧值
         $scope.store=function(th){
             restoreValue=th.action.title;
@@ -289,14 +302,13 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
                 return;
             }
             toastr.info('修改成功');
-            ProjectService.deleteActionName(restoreValue);
             restoreValue=th.action.title;
         };
         //验证重名
         function duplicate(th){
-            titleArray=_.cloneDeep(ProjectService.getActionArray());
-            for(var i=0;i<titleArray.length;i++){
-                if(th.action.title===titleArray[i]){
+            var tempArray=$scope.actionNames;
+            for(var i=0;i<tempArray.length;i++){
+                if(th.action.title===tempArray[i]){
                     toastr.info('重复的动作名');
                     return false;
                 }
