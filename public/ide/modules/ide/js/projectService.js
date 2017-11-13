@@ -1828,7 +1828,6 @@ ideServices
                     //     fabWidget.fire('OnRelease',fabWidget.id);
                     // })
                     fabGroup.forEachObject(function(item){
-
                         var widget = getLevelById(item.id,'widget');
                         widget.info.left = Math.round(baseLeft+item.left);
                         widget.info.top = Math.round(baseTop+item.top);
@@ -3981,13 +3980,20 @@ ideServices
 
                     if (_.isNumber(_option.left)) {
                         fabGroup.setLeft(_option.left);
-                        currentGroup.info.left = _option.left;
+                        object.level.info.left=currentGroup.info.left = _option.left
 
                     }
                     if (_.isNumber(_option.top)) {
                         fabGroup.setTop(_option.top);
-                        currentGroup.info.top = _option.top;
+                        object.level.info.top=currentGroup.info.top = _option.top;
                     }
+                    var baseLeft=object.level.info.left+fabGroup.width/2;
+                    var baseTop=object.level.info.top+fabGroup.height/2;
+                    fabGroup.forEachObject(function(item){
+                        var widget = getLevelById(item.id,'widget');
+                        widget.info.left = Math.round(baseLeft+item.left);
+                        widget.info.top = Math.round(baseTop+item.top);
+                    })
 
                     // if (getCurrentSubLayer()){
                     //     var currentSubLayer=getCurrentSubLayer();

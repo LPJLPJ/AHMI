@@ -1448,7 +1448,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.text){
                     ctx.save();
                     ctx.fillStyle=this.fontColor;
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
                     // console.log('button font',fontString)
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
@@ -1808,7 +1808,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.fontColor=arg.fontColor;
                 }
                 self.setHeight(self.fontSize*1.1);
-                var font = self.fontSize + "px" + " " + self.fontFamily;
+                var font = self.fontSize + "px" + " " + '"'+self.fontFamily+'"';
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 level.info.maxFontWidth = maxWidth;
                 self.maxFontWidth = maxWidth;
@@ -2130,7 +2130,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.restore();
                 if(this.text){
                     ctx.save();
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
                     // console.log('button font',fontString)
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
@@ -2308,7 +2308,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 //var subLayerNode=CanvasService.getSubLayerNode();
 
                 if(this.text){
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
                     //console.log(fontString);
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
@@ -2478,7 +2478,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 //设置宽高
-                var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
+                var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + '"'+self.fontFamily+'"';
+                console.log('new font',font)
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.+-',font));
                 self.maxFontWidth = maxWidth;
                 level.info.maxFontWidth = maxWidth;
@@ -2487,8 +2488,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if(self.decimalCount!=0){
                         width +=0.5*maxWidth;
                     }
-                    var height = self.fontSize*1.1;
-                    self.set({width:width,height:height});
+                    var height = self.fontSize*1.5;
+                    if(self.width<=width){
+                        self.setWidth(width);
+                    }
+                    if(self.height<=height){
+                        self.setHeight(height);
+                    }
+                    // self.set({width:width,height:height});
                 };
                 //console.log('width',width,'maxWidth',maxWidth);
                 var subLayerNode = CanvasService.getSubLayerNode();
@@ -2505,9 +2512,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.fillStyle=this.fontColor;
                 //在数字框里展示数字预览效果
                 if(!isNaN(this.numValue)) {
-                    ctx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
+                    ctx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + '"'+this.fontFamily+'"';
                     //ctx.textAlign = this.align;
                     ctx.textBaseline='middle';//设置数字垂直居中
+                    ctx.textAlign='center';//设置数字水平居中
                     var negative=false;
                     if(this.numValue<0){
                         negative=true;
@@ -2628,7 +2636,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 initXPos = (width-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos-width/2;    
+        // xCoordinate = initXPos-width/2;
+        xCoordinate = initXPos-width/2+maxFontWidth/2;
         for(i=0;i<numStr.length;i++){
             ctx.fillText(numStr[i],xCoordinate,0);
             if(numStr[i]=='.'){
@@ -3442,7 +3451,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.text){
                     ctx.save();
                     ctx.fillStyle=this.fontColor;
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
                     // console.log('button font',fontString)
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;

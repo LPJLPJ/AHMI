@@ -320,7 +320,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             var coutDown = function (e, resourceObj) {
                 if (e.type === 'error'){
                     // console.log(e)
-                    toastr.warning('图片加载失败: ' + resourceObj.name);
+                    toastr.warning('资源加载失败: ' + resourceObj.name);
                     resourceObj.complete = false;
                 } else {
                     resourceObj.complete = true;

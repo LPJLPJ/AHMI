@@ -113,6 +113,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
             switch (currentSelectedObject.type){
                 //case "MyDateTime" :
                 case "MyVideo":
+                case "MyScriptTrigger":
                 case "MyNum":
                     $scope.showTexPanel=false;
                     $scope.showSizeButtion=false;
@@ -124,7 +125,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                 default :
                     $scope.showTexPanel = true;
                     $scope.showSizeButtion=false;
-                    break
+                    break;
             }
         }else{
             $scope.showTexPanel = false;
