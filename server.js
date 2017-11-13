@@ -200,6 +200,10 @@ function initSocketIO(io,server){
         var urlArr = (socket.request.headers.referer||'').split('/');
         var roomId = urlArr[urlArr.length-2];
 
+        if(!user){
+            return
+        }
+
         if(!roomId){
             socket.emit('error','roomId is invalid!');
             return;
@@ -215,9 +219,6 @@ function initSocketIO(io,server){
         //check user unique
         if(checkUnique){
             //检查用户是否还未加入room，避免事件的重复绑定
-            if(!user){
-                return;
-            }
             roomInfo[roomId].push(user);
 
             var usersForSend = roomInfo[roomId].map(function(item){
