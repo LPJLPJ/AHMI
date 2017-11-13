@@ -215,6 +215,9 @@ function initSocketIO(io,server){
         //check user unique
         if(checkUnique){
             //检查用户是否还未加入room，避免事件的重复绑定
+            if(!user){
+                return;
+            }
             roomInfo[roomId].push(user);
 
             var usersForSend = roomInfo[roomId].map(function(item){
