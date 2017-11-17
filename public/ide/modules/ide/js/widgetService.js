@@ -1289,7 +1289,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
-                self.backgroundColor=level.texList[0].slices[0].color;
+                self.backgroundColo
+                r=level.texList[0].slices[0].color;
                 self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 self.knobColor=level.texList[1].slices[0].color;
                 self.knobImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
@@ -1763,13 +1764,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontFamily=level.info.fontFamily;
             this.fontSize=level.info.fontSize;
             this.fontColor=level.info.fontColor;
+            this.fontBold=level.info.fontBold;
+            this.fontItalic=level.info.fontItalic;
             this.align=level.info.align;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
             this.maxFontWidth=level.info.maxFontWidth;
             if(this.maxFontWidth===undefined){
                 //维护旧的时间控件
-                var font = this.fontSize + "px" + " " + this.fontFamily;
+                var font=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 this.maxFontWidth = maxWidth;
                 level.info.maxFontWidth = maxWidth;
@@ -1804,11 +1807,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.hasOwnProperty('fontSize')){
                     self.fontSize=arg.fontSize;
                 }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+                if(arg.hasOwnProperty('fontBold')){
+                    self.fontBold=arg.fontBold;
+                }
                 if(arg.hasOwnProperty('fontColor')){
                     self.fontColor=arg.fontColor;
                 }
                 self.setHeight(self.fontSize*1.1);
-                var font = self.fontSize + "px" + " " + self.fontFamily;
+                var font=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 level.info.maxFontWidth = maxWidth;
                 self.maxFontWidth = maxWidth;
@@ -1847,8 +1856,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render: function (ctx) {
             try{
-                var fontString;
-                fontString=this.fontSize+'px'+" "+this.fontFamily;
+                var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
                 //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
                 drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.width,this.maxFontWidth);
                 //将图片超出canvas的部分裁剪
