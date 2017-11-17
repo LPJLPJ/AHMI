@@ -200,6 +200,10 @@ function initSocketIO(io,server){
         var urlArr = (socket.request.headers.referer||'').split('/');
         var roomId = urlArr[urlArr.length-2];
 
+        if(!user){
+            return
+        }
+
         if(!roomId){
             socket.emit('error','roomId is invalid!');
             return;

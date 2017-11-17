@@ -1289,8 +1289,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
-                self.backgroundColo
-                r=level.texList[0].slices[0].color;
+                self.backgroundColor=level.texList[0].slices[0].color;
                 self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 self.knobColor=level.texList[1].slices[0].color;
                 self.knobImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
@@ -2495,8 +2494,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if(self.decimalCount!=0){
                         width +=0.5*maxWidth;
                     }
-                    var height = self.fontSize*1.1;
-                    self.set({width:width,height:height});
+                    var height = self.fontSize*1.5;
+                    if(self.width<=width){
+                        self.setWidth(width);
+                    }
+                    if(self.height<=height){
+                        self.setHeight(height);
+                    }
+                    // self.set({width:width,height:height});
                 };
                 //console.log('width',width,'maxWidth',maxWidth);
                 var subLayerNode = CanvasService.getSubLayerNode();
@@ -2516,6 +2521,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.font =this.fontItalic + " " + this.fontBold + " " + this.fontSize + "px" + " " + this.fontFamily;
                     //ctx.textAlign = this.align;
                     ctx.textBaseline='middle';//设置数字垂直居中
+                    ctx.textAlign='center';//设置数字水平居中
                     var negative=false;
                     if(this.numValue<0){
                         negative=true;
@@ -2636,7 +2642,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 initXPos = (width-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos-width/2;    
+        // xCoordinate = initXPos-width/2;
+        xCoordinate = initXPos-width/2+maxFontWidth/2;
         for(i=0;i<numStr.length;i++){
             ctx.fillText(numStr[i],xCoordinate,0);
             if(numStr[i]=='.'){
@@ -3450,7 +3457,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.text){
                     ctx.save();
                     ctx.fillStyle=this.fontColor;
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
                     // console.log('button font',fontString)
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;

@@ -21392,7 +21392,7 @@
 	        tempctx.textAlign = font.textAlign || 'center';
 	        tempctx.textBaseline = font.textBaseline || 'middle';
 	        //font style
-	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + (font['font-family'] || 'arial');
+	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + ('"' + font['font-family'] + '"' || 'arial');
 	        tempctx.font = fontStr;
 	        // console.log('tempctx.font',fontStr);
 	        tempctx.fillStyle = font['font-color'];
@@ -22227,7 +22227,7 @@
 	        var tempCtx = tempcanvas.getContext('2d');
 	        tempCtx.clearRect(0, 0, curWidth, curHeight);
 	        //offCtx.scale(1/this.scaleX,1/this.scaleY);
-	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
+	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + '"' + numFamily + '"';
 	        //offCtx.fillStyle = this.numColor;
 	        tempCtx.font = numString;
 	        //tempCtx.textAlign=widget.info.align;
