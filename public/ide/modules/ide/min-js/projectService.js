@@ -2192,7 +2192,9 @@ ideServices
              * 在多选模式下的选择
              * @constructor
              */
-            this.OnLayerMultiSelected= function (_successCallback) {
+
+
+               this.OnLayerMultiSelected= function (_successCallback) {
                 var currentFabLayerIdList=_self.currentFabLayerIdList;
                 var pageNode=CanvasService.getPageNode();
 
@@ -3660,7 +3662,7 @@ ideServices
                         var currentWidget=selectObj.level;
                         OnWidgetSelected(currentWidget,_successCallback);
                     }
-                }
+                };
 
                 if(_option.hasOwnProperty('fontFamily')){
                     selectObj.level.info.fontFamily=_option.fontFamily;
@@ -3673,6 +3675,14 @@ ideServices
                 if(_option.hasOwnProperty('fontColor')){
                     selectObj.level.info.fontColor=_option.fontColor;
                     arg.fontColor = _option.fontColor;
+                }
+                if(_option.hasOwnProperty('fontBold')){
+                    selectObj.level.info.fontBold=_option.fontBold;
+                    arg.fontBold = _option.fontBold;
+                }
+                if(_option.hasOwnProperty('fontItalic')){
+                    selectObj.level.info.fontItalic=_option.fontItalic;
+                    arg.fontItalic = _option.fontItalic;
                 }
 
                 selectObj.target.fire('changeDateTimeText',arg);
