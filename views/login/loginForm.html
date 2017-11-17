@@ -1,6 +1,6 @@
 <form id='login-form' class="form-horizontal form" >
 <div class="fieldset">
-	<input name="username" id="username" type='text' placeholder="用户名或邮箱" class="form-control" required />
+	<input name="username" id="username" type='text' placeholder="用户名或邮箱" class="form-control" required/>
 	<span id="username-verify" class="verify-result"></span>
 </div>
 <div class="fieldset">
@@ -12,7 +12,7 @@
 	<input type="text" id="captcha-input" class="form-control" placeholder="输入验证码" />
 	<div class="captcha-wrap">
 		<img id="captcha-img"  src="/captcha" />
-		<a id='change-captcha' class="noselelct" style="cursor: pointer;" >换一张</a>
+		<a id='change-captcha' class="noselelct" style="cursor: pointer;" sx-model="login.normal[2]">换一张</a>
 	</div>
 	
 </div>
@@ -20,9 +20,9 @@
 	<span id="captcha-verify" class="verify-result"></span>
 </div>
 <div class="fieldset">
-	<button type="button" id="submit" class="form-control" disabled>登录</button>
+	<button type="button" id="submit" class="form-control" disabled sx-model="login.normal[1]">登录</button>
 </div>
 <div>
-	<a style="float: left;" href="/user/forgetpassword">忘记密码</a> <a style="float: right;" href="/user/signup">没有账号，注册</a>
+	<a style="float: left;" href="/user/forgetpassword" sx-model="login.normal[3]">忘记密码</a> <a style="float: right;" href="/user/signup" sx-model="login.normal[4]">没有账号，注册</a>
 </div>
 </form>

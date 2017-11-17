@@ -384,8 +384,10 @@ router.route('/download/index.html')
 router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
 
-
-
+// router.route('/language/English')
+//     .get(function(req,res){
+//         res.sendFile(path.join(__dirname,'../language','English.json'));
+//     });
 
 
 //router.route('*')

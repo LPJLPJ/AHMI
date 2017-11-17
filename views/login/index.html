@@ -34,6 +34,8 @@
     <script src="../../public/login/assets/js/custom.js"></script>
 
     <script src="../../public/login/assets/js/vector-zyj.js"></script>
+    <script src="../../language/lib/binding.js"></script>
+
     <!--<script>$(function(){
         // 初始化 传入dom id
         var victor = new Victor("container-zyj", "output");
@@ -97,14 +99,15 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#menu"><h4  class="">首页</h4></a></li>
-                <li><a href="#features-sec"><h4 class="">关于IDE</h4></a></li>
+                <li><a href="#menu"><h4  class="" sx-model="homePage.nav[0]">首页</h4></a></li>
+                <li><a href="#features-sec"><h4 class="" sx-model="homePage.nav[1]">关于IDE</h4></a></li>
                 <!--<li><a href="#faculty-sec"><h4>员工信息</h4></a></li>-->
-                <li><a href="#course-sec"><h4 class="">产品介绍</h4></a></li>
-                <li><a href="#course-cases"><h4 class="">IDE开发案例</h4></a></li>
-                <li><a href="/private/space"><h4 class="">IDE</h4></a></li>
-                <li><a href="#contact-sec"><h4 class="">联系我们</h4></a></li>
-                <li><a href="/blog/"><h4 class="">Blog</h4></a></li>
+                <li><a href="#course-sec"><h4 class="" sx-model="homePage.nav[2]">产品介绍</h4></a></li>
+                <li><a href="#course-cases"><h4 class="" sx-model="homePage.nav[3]">IDE开发案例</h4></a></li>
+                <li><a href="/private/space"><h4 class="" sx-model="homePage.nav[4]">IDE</h4></a></li>
+                <li><a href="#contact-sec"><h4 class="" sx-model="homePage.nav[5]">联系我们</h4></a></li>
+                <li><a href="/blog/"><h4 class="" sx-model="homePage.nav[6]">Blog</h4></a></li>
+                <li><a><h4 class="" id="language" sx-model="homePage.nav[7]">English</h4></a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
@@ -124,29 +127,29 @@
                             <ul class="slides move-me" data-scroll-reveal="enter from the bottom after 0.7s">
                                 <!-- Slider 01 -->
                                 <li>
-                                    <h3>极富特色的人机交互界面开发工具</h3>
-                                    <h1>极速掌握</h1>
-                                    <a class="btn btn-primary btn-lg" href="/user/login">登录</a>
-                                    <a class="btn btn-primary btn-lg" href="/user/signup">注册</a>
+                                    <h3 sx-model="homePage.home.slides1[0]">极富特色的人机交互界面开发工具</h3>
+                                    <h1 sx-model="homePage.home.slides1[1]">极速掌握</h1>
+                                    <a sx-model="homePage.home.btn.login" class="btn btn-primary btn-lg" href="/user/login">登录</a>
+                                    <a sx-model="homePage.home.btn.register" class="btn btn-primary btn-lg" href="/user/signup">注册</a>
                                 </li>
                                 <!-- End Slider 01 -->
 
                                 <!-- Slider 02 -->
                                 <li>
-                                    <h3>极富特色的人机交互界面开发工具</h3>
-                                    <h1>云端开发</h1>
-                                    <a class="btn btn-primary btn-lg" href="/user/login">登录</a>
-                                    <a class="btn btn-primary btn-lg" href="/user/signup">注册</a>
+                                    <h3 sx-model="homePage.home.slides2[0]">极富特色的人机交互界面开发工具</h3>
+                                    <h1 sx-model="homePage.home.slides2[1]">云端开发</h1>
+                                    <a sx-model="homePage.home.btn.login" class="btn btn-primary btn-lg" href="/user/login">登录</a>
+                                    <a sx-model="homePage.home.btn.register" class="btn btn-primary btn-lg" href="/user/signup">注册</a>
 
                                 </li>
                                 <!-- End Slider 02 -->
 
                                 <!-- Slider 03 -->
                                 <li>
-                                    <h3>极富特色的人机交互界面开发工具</h3>
-                                    <h1>操作便捷</h1>
-                                    <a class="btn btn-primary btn-lg" href="/user/login">登录</a>
-                                <a class="btn btn-primary btn-lg" href="/user/signup">注册</a>
+                                    <h3 sx-model="homePage.home.slides3[0]">极富特色的人机交互界面开发工具</h3>
+                                    <h1 sx-model="homePage.home.slides3[1]" >操作便捷</h1>
+                                    <a sx-model="homePage.home.btn.login" class="btn btn-primary btn-lg" href="/user/login">登录</a>
+                                    <a sx-model="homePage.home.btn.register" class="btn btn-primary btn-lg" href="/user/signup">注册</a>
                                 </li>
                                 <!-- End Slider 03 -->
                             </ul>
@@ -167,8 +170,8 @@
     <div class="container">
         <div class="row  text-center">
             <div class="col-lg-12  col-md-12 col-sm-12">
-                <h2 data-scroll-reveal="enter from the bottom after 0.1s"><i class="fa fa-circle-o-notch"></i> 欢迎来到AHMI
-                    IDE！
+                <h2 data-scroll-reveal="enter from the bottom after 0.1s"><i class="fa fa-circle-o-notch"></i> <span sx-model="homePage.tag-line">欢迎来到AHMI
+                    IDE！</span>
                     <i class="fa fa-circle-o-notch"></i></h2>
             </div>
         </div>
@@ -179,8 +182,8 @@
 <div id="features-sec" class="container set-pad">
     <div class="row text-center">
         <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
-            <h1 data-scroll-reveal="enter from the bottom after 0.2s" class="header-line">关于IDE </h1>
-            <p data-scroll-reveal="enter from the bottom after 0.3s">
+            <h1 data-scroll-reveal="enter from the bottom after 0.2s" class="header-line" sx-model="homePage.features-sec[0]">关于IDE </h1>
+            <p data-scroll-reveal="enter from the bottom after 0.3s" sx-model="homePage.features-sec[1]">
                 我们提供快捷高效的二次开发工具链，可在网络客户端或本地客户端实现无代码二次开发工程。入门简单，且开发效果好。为广大客户
                 节省了大量的产品迭代开发时间，降低研发成本。用户不用花费大量时间和金钱成本去适应安卓等复杂操作系统的软件开发流程，只需
                 要用简单的鼠标操作和坐标输入就能像做ppt一样做出优良的人机交互界面。
@@ -194,11 +197,11 @@
             <div class="about-div">
                 <div class="col-md-12 col-lg-offset-3">
                     <i class="fa fa-bolt fa-4x icon-round-border"></i>
-                    <h3>快速掌握</h3>
+                    <h3 sx-model="homePage.features-sec[2]">快速掌握</h3>
                 </div>
                 <hr/>
                 <hr/>
-                <p>
+                <p sx-model="homePage.features-sec[3]">
                     AHMI Web-IDE 使用图形化设计方法，不用学习新的编程语言，使您快速上手，迅速掌握整个开发流程。
 
                 </p>
@@ -208,11 +211,11 @@
             <div class="about-div">
                 <div class="col-md-12 col-lg-offset-3">
                     <i class="fa fa-paper-plane-o fa-4x icon-round-border"></i>
-                    <h3>云端开发</h3>
+                    <h3 sx-model="homePage.features-sec[4]">云端开发</h3>
                 </div>
                 <hr/>
                 <hr/>
-                <p>
+                <p sx-model="homePage.features-sec[5]">
                     连接互联网，随时随地进行高效开发，工程文件存储在云端，随时获取，缩短周期，快人一步。
 
                 </p>
@@ -222,11 +225,11 @@
             <div class="about-div">
                 <div class="col-md-12 col-lg-offset-3">
                     <i class="fa fa-magic fa-4x icon-round-border"></i>
-                    <h3>操作便捷</h3>
+                    <h3 sx-model="homePage.features-sec[6]">操作便捷</h3>
                 </div>
                 <hr/>
                 <hr/>
-                <p>
+                <p sx-model="homePage.features-sec[7]">
                     您可以像制作一份PPT一样设计您的屏幕界面，所有的操作都是那么熟悉。
 
                 </p>
@@ -238,25 +241,25 @@
             <div class="about-div">
                 <ul>
                     <li>
-                        <h3>&nbsp<span class="fa fa-bolt fa-4x icon-style"></span>&nbsp&nbsp快速掌握</h3>
+                        <h3>&nbsp<span class="fa fa-bolt fa-4x icon-style"></span>&nbsp&nbsp<span sx-model="homePage.features-sec[2]">快速掌握</span></h3>
                         <hr/>
-                        <p>
+                        <p sx-model="homePage.features-sec[3]">
                             AHMI Web-IDE 使用图形化设计方法，不用学习新的编程语言，使您快速上手，迅速掌握整个开发流程。
                         </p>
 
                     </li>
                     <li>
-                        <h3>&nbsp<span class="fa fa-paper-plane-o fa-4x icon-style"></span>&nbsp&nbsp云端开发</h3>
+                        <h3>&nbsp<span class="fa fa-paper-plane-o fa-4x icon-style"></span>&nbsp&nbsp<span sx-model="homePage.features-sec[4]">云端开发</span></h3>
                         <hr/>
-                        <p>
+                        <p sx-model="homePage.features-sec[5]">
                             连接互联网，随时随地进行高效开发，工程文件存储在云端，随时获取，缩短周期，快人一步。
                         </p>
 
                     </li>
                     <li>
-                        <h3>&nbsp<span class="fa fa-magic fa-4x icon-style"></span>&nbsp&nbsp操作便捷</h3>
+                        <h3>&nbsp<span class="fa fa-magic fa-4x icon-style"></span>&nbsp&nbsp<span sx-model="homePage.features-sec[6]">操作便捷</span></h3>
                         <hr/>
-                        <p>
+                        <p sx-model="homePage.features-sec[7]">
                             您可以像制作一份PPT一样设计您的屏幕界面，所有的操作都是那么熟悉。
                         </p>
 
@@ -328,8 +331,8 @@
 <div id="course-sec" class="container set-pad">
     <div class="row text-center">
         <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
-            <h1 data-scroll-reveal="enter from the bottom after 0.1s" class="header-line">产品介绍 </h1>
-            <p data-scroll-reveal="enter from the bottom after 0.3s">
+            <h1 data-scroll-reveal="enter from the bottom after 0.1s" class="header-line" sx-model="homePage.course-sec[0]">产品介绍 </h1>
+            <p data-scroll-reveal="enter from the bottom after 0.3s" sx-model="homePage.course-sec[1]">
                 我们能够在围绕自主芯片核心的硬件平台上实现绚丽的图形显示效果，及快速的图形刷新速率,提供给客户无代码网络端工具链，实现低成本二次开发
                 使低成本人机界面摆脱廉价、古板、粗糙的印象。
             </p>
@@ -350,13 +353,13 @@
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapse1" class="collapsed">
-                                <strong>巨大变革 </strong>来自独有的核心技术
+                                <strong sx-model="homePage.course-sec[2]">巨大变革 </strong><span sx-model="homePage.course-sec[3]">来自独有的核心技术</span>
                             </a>
                         </h4>
                     </div>
                     <div id="collapse1" class="panel-collapse collapse my-info1">
                         <div class="panel-body">
-                            <p>
+                            <p sx-model="homePage.course-sec[4]">
                                 始于我们带来的核心运算芯片GPU,这颗核心显示芯片优化精简了传统GPU架构，使其满足于更高效果、更低功耗、更稳定的物联网设备显示需求。
                             </p>
                         </div>
@@ -366,13 +369,13 @@
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapse2" class="collapsed">
-                                <strong>完美体验 </strong>源自快速稳定的系统
+                                <strong sx-model="homePage.course-sec[5]">完美体验 </strong><span sx-model="homePage.course-sec[6]">源自快速稳定的系统</span>
                             </a>
                         </h4>
                     </div>
                     <div id="collapse2" class="panel-collapse collapse my-info1">
                         <div class="panel-body">
-                            <p>
+                            <p sx-model="homePage.course-sec[7]">
                                 业界的CPU方案由于有操作系统的存在，会有不小的故障率。而我们实现的GPU方案系统中只有一个轻量级操作系统，零延迟启动，按键即显示。且硬件和RTL经过了可靠性设计，稳定性极佳。
                             </p>
                         </div>
@@ -382,13 +385,13 @@
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapse3" class="collapsed">
-                                <strong>二次开发 </strong>依托便捷的图形工具链
+                                <strong sx-model="homePage.course-sec[8]">二次开发 </strong><span sx-model="homePage.course-sec[9]" >依托便捷的图形工具链</span>
                             </a>
                         </h4>
                     </div>
                     <div id="collapse3" class="panel-collapse collapse my-info1">
                         <div class="panel-body">
-                            <p>
+                            <p sx-model="homePage.course-sec[10]">
                                 网络端软件开发工具链提供图形化开发环境，降低对开发者编程背景的需求。提高客户二次开发效率，降低迭代成本。
                             </p>
                         </div>
@@ -397,9 +400,9 @@
             </div>
             <div class="alert alert-info" data-scroll-reveal="enter from the bottom after 1.1s">
                        <span style="font-size:30px;">
-                          <strong>我们做  </strong>
+                          <strong sx-model="homePage.course-sec[11]">我们做  </strong>
                            <hr/>
-                           物联网时代的美化大师
+                           <span sx-model="homePage.course-sec[12]">物联网时代的美化大师</span>
                        </span>
             </div>
         </div>
@@ -409,8 +412,8 @@
 <div id="course-cases" class="container set-pad">
     <div class="row text-center">
         <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
-            <h1 data-scroll-reveal="enter from the bottom after 0.1s" class="header-line">IDE开发案例</h1>
-              <p data-scroll-reveal="enter from the bottom after 0.3s">经过简单的学习后，开发者可以根据自己的想法创意去自由制作汽车仪表盘界面、工控仪表盘界面、智能家居人机交互界面。</p>
+            <h1 data-scroll-reveal="enter from the bottom after 0.1s" class="header-line" sx-model="homePage.course-cases[0]">IDE开发案例</h1>
+              <p data-scroll-reveal="enter from the bottom after 0.3s" sx-model="homePage.course-cases[1]">经过简单的学习后，开发者可以根据自己的想法创意去自由制作汽车仪表盘界面、工控仪表盘界面、智能家居人机交互界面。</p>
 
         </div>
     </div>
@@ -455,7 +458,7 @@
     <div class="row my-row">
         <!--视频插入开始-->
         <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-1 col-md-offset-1 col-sm-offset-1 video-p">
-            <p data-scroll-reveal="enter from the bottom after 0.3s" class="product">
+            <p data-scroll-reveal="enter from the bottom after 0.3s" class="product" sx-model="homePage.course-cases[2]">
                加入定时器后的仿真效果视频
             </p>
         </div>
@@ -465,7 +468,7 @@
             </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-12 video-p2">
-            <p data-scroll-reveal="enter from the bottom after 0.3s" class="product product2">
+            <p data-scroll-reveal="enter from the bottom after 0.3s" class="product product2" sx-model="homePage.course-cases[2]">
                 加入定时器后的仿真效果视频
             </p>
         </div>
@@ -485,7 +488,7 @@
                     <td><img src="../../public/images/animate/3.gif" class="animatePic" alt="3.gif"/></td>
                 </div>
                 <div class="col-lg-2 col-md-2 col-sm-12 my-animate-style">
-                    <p data-scroll-reveal="enter from the bottom after 0.3s" class="product">
+                    <p data-scroll-reveal="enter from the bottom after 0.3s" class="product" sx-model="homePage.course-cases[3]">
                         IDE动画效果展示
                     </p>
                 </div>
@@ -526,4 +529,5 @@
 <!-- FOOTER SECTION END-->
 </body>
 <script src="../../public/general/js/versionTag.js"></script>
+<script src="../../language/js/homePageLanguage.js"></script>
 </html>

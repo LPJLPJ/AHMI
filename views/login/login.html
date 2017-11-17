@@ -19,6 +19,7 @@
     <link href="/public/login/assets/css/signupform.css" rel="stylesheet" />
     <script src="/public/login/assets/js/loginform.js"></script>
     <script src="/public/login/assets/js/md5.js"></script>
+    <script src="../../language/lib/binding.js"></script>
 
 </head>
 <body>
@@ -35,8 +36,8 @@
         </div>
         <div class="navbar-collapse collapse move-me">
             <ul class="nav navbar-nav navbar-right findback">
-                <li><a href="/user/signup">注册</a></li>
-                <li><a href="/user/login">登录</a></li>
+                <li><a href="/user/signup" sx-model="login.normal[0]">注册</a></li>
+                <li><a href="/user/login" sx-model="login.normal[1]">登录</a></li>
             </ul>
         </div>
 
@@ -44,7 +45,7 @@
 </div>
 <!--NAVBAR SECTION END-->
 <div class="subtitle" style="text-align: center">
-    <h2 id="form-title" class="title"><%= title %></h2>
+    <h2 id="form-title" class="title" sx-model="login.normal[1]">登录</h2>
 </div>
 <div class="form-wrapper">
     <% include loginForm.html %>
@@ -69,4 +70,5 @@
 
 </body >
 <script src="/public/general/js/versionTag.js"></script>
+<script src="/language/js/loginLanguage.js"></script>
 </html >

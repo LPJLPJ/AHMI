@@ -132,6 +132,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use('/public',express.static('public'));
 app.use('/release',express.static('release'));
 app.use('/.well-known', express.static('.well-known'));
+app.use('/language', express.static('language'));
 
 //session control
 app.use(sessionControl);
