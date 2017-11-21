@@ -3053,9 +3053,9 @@ ideServices
                     case Type.MyPage:
                         var pageNode=CanvasService.getPageNode();
                         var opts = (!!_option.image)?{
-                                width:pageNode.getWidth()/pageNode.getZoom(),
-                                height:pageNode.getHeight()/pageNode.getZoom()
-                            }:null;
+                            width:pageNode.getWidth()/pageNode.getZoom(),
+                            height:pageNode.getHeight()/pageNode.getZoom()
+                        }:null;
                         var img = _option.image?_option.image:null;
                         pageNode.setBackgroundImage(img, function () {
                                 pageNode.renderAll();
@@ -3662,7 +3662,7 @@ ideServices
                         var currentWidget=selectObj.level;
                         OnWidgetSelected(currentWidget,_successCallback);
                     }
-                };
+                }
 
                 if(_option.hasOwnProperty('fontFamily')){
                     selectObj.level.info.fontFamily=_option.fontFamily;
