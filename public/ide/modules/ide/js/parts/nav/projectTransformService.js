@@ -68,7 +68,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     var curF = generalWidgetFunctions[i]
                     if (curF in modelObj) {
                         //button.onInitialize
-                        modelObj[curF] = ASTTransformer.transAST(widgetCompiler.parse(modelObj[curF]))
+                        var ast = widgetCompiler.parse(modelObj[curF])
+                        console.log(ast)
+                        modelObj[curF] = ASTTransformer.transAST(ast)
                         //trans to jump end
                         transGeneralWidgetCommands(modelObj,curF)
 
