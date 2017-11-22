@@ -20771,13 +20771,16 @@
 	                this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
 	            }
 	            var subCanvas = subCanvasList[nextSubCanvasIdx];
-	            if (subCanvas) {
-	                // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-	                var transition = canvasData.transition;
-
-	                this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas);
-	            } else {
-	                this.handleTargetAction(oldSubCanvas, 'UnLoad');
+	            // if (subCanvas) {
+	            //     // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+	            //     var transition = canvasData.transition;
+	            //
+	            //     this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition,firstSubCanvas);
+	            //
+	            // }
+	            var transition = canvasData.transition;
+	            for (var i = 0; i < subCanvasList.length; i++) {
+	                this.drawSubCanvas(subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, i != nextSubCanvasIdx);
 	            }
 	        }
 	    },
@@ -20821,9 +20824,12 @@
 	        ctx.closePath();
 	        ctx.clip();
 	    },
-	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition, firstSubCanvas) {
+	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
+	        if (updateOnly) {
+	            return this.drawSingleSubCanvas(subCanvas, x, y, w, h, options, updateOnly);
+	        }
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
 	            subCanvas.state = LoadState.willLoad;
 	            //init subcanvas pos and size
@@ -20947,23 +20953,30 @@
 
 	        offctx.restore();
 	    },
-	    drawSingleSubCanvas: function (subCanvas, x, y, w, h, options) {
+	    drawSingleSubCanvas: function (subCanvas, x, y, w, h, options, updateOnly) {
 
-	        subCanvas.state = LoadState.loading;
+	        if (!updateOnly) {
+	            subCanvas.state = LoadState.loading;
+	        }
 
 	        subCanvas.widgetList = subCanvas.widgetList || [];
 	        var widgetList = subCanvas.widgetList;
 	        if (widgetList.length) {
 	            widgetList.sort(this.compareZIndex);
 	            for (var i = 0; i < widgetList.length; i++) {
-	                this.drawWidget(widgetList[i], x, y, options);
+	                this.drawWidget(widgetList[i], x, y, options, updateOnly);
 	            }
 	        }
 
-	        subCanvas.state = LoadState.loaded;
+	        if (!updateOnly) {
+	            subCanvas.state = LoadState.loaded;
+	        }
 	    },
-	    drawWidget: function (widget, sx, sy, options) {
+	    drawWidget: function (widget, sx, sy, options, updateOnly) {
 	        var willExecuteAnimation = false;
+	        if (updateOnly) {
+	            return updateWidget.call(this);
+	        }
 	        if (options && options.animation) {
 	            //has animation execute
 	            if (widget.tag === options.animation.tag && widget.animations) {
@@ -20983,7 +20996,10 @@
 	        }
 	        if (!willExecuteAnimation) {
 	            // console.log('drawing widget',widget);
+	            updateWidget.call(this);
+	        }
 
+	        function updateWidget() {
 	            var curX = widget.info.left + sx;
 	            var curY = widget.info.top + sy;
 	            //this.drawBgColor(curX,curY,widget.w,widget.h,widget.bgColor);
