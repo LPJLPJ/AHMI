@@ -1,5 +1,4 @@
 var Scope = new Scope();
-
 $(function() {
     init();
     function init(){
@@ -36,6 +35,9 @@ $(function() {
     }
 
     $("#language").on('click', function (e) {
+        var loadingAnimation=$(".loadEffect");
+        loadingAnimation.css("visibility","visible");
+
         var urlString;
         if (localStorage.language==="Chinese") {
             urlString="/language/data/English.json";
@@ -52,7 +54,10 @@ $(function() {
             success: function (data, status, xhr) {
                 Scope.homePage = data.homePage;
                 Scope.footer=data.footer;
+                setTimeout("$('.loadEffect').css('visibility','hidden')",1000);
                 Scope.digest();
+
+                // loadingAnimation.css("visibility","hidden");
 
                 if (localStorage.language==="Chinese") {
                     localStorage.language="English";

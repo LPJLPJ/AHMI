@@ -34,7 +34,7 @@
     <script src="../../public/login/assets/js/custom.js"></script>
 
     <script src="../../public/login/assets/js/vector-zyj.js"></script>
-    <script src="../../language/lib/binding.js"></script>
+    <script src="language/lib/binding.js"></script>
 
     <!--<script>$(function(){
         // 初始化 传入dom id
@@ -107,7 +107,25 @@
                 <li><a href="/private/space"><h4 class="" sx-model="homePage.nav[4]">IDE</h4></a></li>
                 <li><a href="#contact-sec"><h4 class="" sx-model="homePage.nav[5]">联系我们</h4></a></li>
                 <li><a href="/blog/"><h4 class="" sx-model="homePage.nav[6]">Blog</h4></a></li>
-                <li><a><h4 class="" id="language" sx-model="homePage.nav[7]">English</h4></a></li>
+                <li>
+                    <a>
+                        <h4 class="" id="language" >
+                            <span class="glyphicon glyphicon-globe my-glyphicon-global"></span>
+                            <span sx-model="homePage.nav[7]" class="my-global">English  </span>
+                            <div class="loadEffect my-global-load">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </h4>
+                    </a>
+                </li>
+
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
@@ -529,5 +547,5 @@
 <!-- FOOTER SECTION END-->
 </body>
 <script src="../../public/general/js/versionTag.js"></script>
-<script src="../../language/js/homePageLanguage.js"></script>
+<script src="language/js/homePageLanguage.js"></script>
 </html>
