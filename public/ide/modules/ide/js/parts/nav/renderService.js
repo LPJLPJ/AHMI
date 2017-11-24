@@ -299,7 +299,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
 
                 //generate file
-                var imgName = widget.id.split('.').join('');
+                var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ index+'.png';
 
 
@@ -392,7 +392,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
                 //output
-                var imgName = widget.id.split('.').join('');
+                var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ i+'.png';
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
@@ -467,7 +467,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
                 //output
-                var imgName = widget.id.split('.').join('');
+                var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ i+'.png';
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
@@ -561,7 +561,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
 
                 //output
-                var imgName = widget.id.split('.').join('');
+                var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ i+'.png';
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
@@ -629,7 +629,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
 
                 //output
-                var imgName = widget.id.split('.').join('');
+                var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ i+'.png';
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
@@ -695,7 +695,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                     renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
                 //output
-                var imgName = widget.id.split('.').join('');
+                var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ i+'.png';
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
@@ -755,7 +755,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             }
             renderingX.renderGrid(ctx,new Size(width,height),new Pos(),new Size(info.spacing,info.spacing),new Pos());
             //output
-            var imgName = widget.id.split('.').join('');
+            var imgName = widget.id.split('.').join('-');
             var outputFilename = imgName +'-'+ 1+'.png';
 
 
@@ -822,7 +822,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 renderingX.renderText(ctx,new Size(width,height),new Pos(),info.text,style,true,new Pos(0.5*width,0.5*height),this.customFonts);
             }
             //output
-            var imgName = widget.id.split('.').join('');
+            var imgName = widget.id.split('.').join('-');
             var outputFilename = imgName +'-'+ 1+'.png';
 
             var startTime = new Date();
