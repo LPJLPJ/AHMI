@@ -1569,7 +1569,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 }
             }else if(type===Type.MyNum||type==Type.MyTexNum){
                 //默认是数字框
-                if (maxValue<$scope.component.object.level.info.initValue){
+                if (maxValue<$scope.component.object.level.info.numValue){
                     toastr.warning('不能比当前值小');
                     restore();
                     return;
