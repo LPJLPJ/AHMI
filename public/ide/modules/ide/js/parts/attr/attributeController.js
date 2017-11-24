@@ -854,7 +854,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
      * @param e
      */
     function enterFontBold(e){
-        console.log("test")
         var fontBold = $scope.component.object.level.info.fontBold;
         if(fontBold==="100"){
             fontBold="bold";
