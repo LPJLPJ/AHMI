@@ -1828,7 +1828,6 @@ ideServices
                     //     fabWidget.fire('OnRelease',fabWidget.id);
                     // })
                     fabGroup.forEachObject(function(item){
-
                         var widget = getLevelById(item.id,'widget');
                         widget.info.left = Math.round(baseLeft+item.left);
                         widget.info.top = Math.round(baseTop+item.top);
@@ -2193,7 +2192,9 @@ ideServices
              * 在多选模式下的选择
              * @constructor
              */
-            this.OnLayerMultiSelected= function (_successCallback) {
+
+
+               this.OnLayerMultiSelected= function (_successCallback) {
                 var currentFabLayerIdList=_self.currentFabLayerIdList;
                 var pageNode=CanvasService.getPageNode();
 
@@ -3052,9 +3053,9 @@ ideServices
                     case Type.MyPage:
                         var pageNode=CanvasService.getPageNode();
                         var opts = (!!_option.image)?{
-                                width:pageNode.getWidth()/pageNode.getZoom(),
-                                height:pageNode.getHeight()/pageNode.getZoom()
-                            }:null;
+                            width:pageNode.getWidth()/pageNode.getZoom(),
+                            height:pageNode.getHeight()/pageNode.getZoom()
+                        }:null;
                         var img = _option.image?_option.image:null;
                         pageNode.setBackgroundImage(img, function () {
                                 pageNode.renderAll();
@@ -3675,6 +3676,14 @@ ideServices
                     selectObj.level.info.fontColor=_option.fontColor;
                     arg.fontColor = _option.fontColor;
                 }
+                if(_option.hasOwnProperty('fontBold')){
+                    selectObj.level.info.fontBold=_option.fontBold;
+                    arg.fontBold = _option.fontBold;
+                }
+                if(_option.hasOwnProperty('fontItalic')){
+                    selectObj.level.info.fontItalic=_option.fontItalic;
+                    arg.fontItalic = _option.fontItalic;
+                }
 
                 selectObj.target.fire('changeDateTimeText',arg);
             };
@@ -3981,13 +3990,20 @@ ideServices
 
                     if (_.isNumber(_option.left)) {
                         fabGroup.setLeft(_option.left);
-                        currentGroup.info.left = _option.left;
+                        object.level.info.left=currentGroup.info.left = _option.left
 
                     }
                     if (_.isNumber(_option.top)) {
                         fabGroup.setTop(_option.top);
-                        currentGroup.info.top = _option.top;
+                        object.level.info.top=currentGroup.info.top = _option.top;
                     }
+                    var baseLeft=object.level.info.left+fabGroup.width/2;
+                    var baseTop=object.level.info.top+fabGroup.height/2;
+                    fabGroup.forEachObject(function(item){
+                        var widget = getLevelById(item.id,'widget');
+                        widget.info.left = Math.round(baseLeft+item.left);
+                        widget.info.top = Math.round(baseTop+item.top);
+                    })
 
                     // if (getCurrentSubLayer()){
                     //     var currentSubLayer=getCurrentSubLayer();

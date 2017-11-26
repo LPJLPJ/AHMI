@@ -136,8 +136,6 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
             })
         });
 
-
-
     }
 
     function updateShearPlate(){
@@ -196,8 +194,8 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
 
                         $scope.$emit('SwitchCurrentPage');
 
-
                     }else{
+
                         $scope.$emit('ChangeCurrentPage',oldOperate, function () {
                         });
                     }

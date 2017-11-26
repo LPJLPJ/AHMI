@@ -10,6 +10,8 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
 
     });
 
+
+    //test
     function initUserInterface(){
         $scope.component={
             out:{
@@ -18,11 +20,11 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             top: {
                 currentNav: 0,
 
-                navs: [{name: '属性'}
-                    , {name: '资源'},
+                navs: [{name: '属性'},
+                    {name: '资源'},
                     {name:'变量'},
                     {name:'字体'}],
-                changeNav: changeNav,
+                changeNav: changeNav
 
             },
             bottom:{
@@ -39,7 +41,7 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
         $timeout(function () {
             ProjectService.getProjectTo($scope);
             switchCurrentPage();
-        })
+        });
 
         //loadBottomFromPage($scope.project.pages[$scope.project.currentPageIndex]);
 
@@ -162,7 +164,6 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
                             }
                         }
                     }
-
                 }
             }
 
@@ -171,7 +172,6 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
 
 
     function onAttributeChanged() {
-
         $timeout(function () {
             $scope.component.bottom.page = ProjectService.getCurrentPage();
 
