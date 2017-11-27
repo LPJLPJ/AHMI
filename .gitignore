@@ -8,3 +8,8 @@ temp/
 release/
 .idea/
 log/
+
+.db/
+
+views/learn/
+public/learn/

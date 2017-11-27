@@ -1,9 +1,10 @@
 /**
  * Created by ChangeCheng on 16/7/12.
+ * lastModifyTime  2017/9/7  by lixiang add autoCheck
  */
 
 (function () {
-     try {
+    try {
         //basic modules
         var os = require('os');
         var fs = require('fs');
@@ -109,9 +110,9 @@
 
             })
         }
-        var checkUpdate = function(){  
+        var checkUpdate = function(auto){
             showUpdaterWrapper();
-            changeUpdateState('正在检查更新...',100);     
+            changeUpdateState('正在检查更新...',100);
 
             // ------------- Step 1 检查服务器上的版本-------------
             upd.checkNewVersion(function(error, newVersionExists, manifest) {
@@ -128,17 +129,19 @@
                     hideUpdaterWrapper();
                 }
                 if (!error && newVersionExists) {
-                    console.log('manifest',manifest.version);
-                    if(!confirm('检查到新版本，是否升级？')){
-                        hideUpdaterWrapper();
-                        return;
+                    // console.log('manifest',manifest.version);
+                    if(!auto){
+                        if(!confirm('检查到新版本，是否升级？')){
+                            hideUpdaterWrapper();
+                            return;
+                        }
                     }
                     // ------------- Step 2 如果存在新版本，下载最新版本文件-------------
                     changeUpdateState('正在下载 1/3',0);
                     var newVersion = upd.download(function(error, filename) {
                         if(!error){
                             //     ------------- Step 3 下载完成，拷贝旧的程序 至临时文件夹-------------
-            
+
                             var tempFolderPath = path.join(getFolderPathByFilePath(filename),'tempNW');
                             var oldAppPath = getFolderPathByFilePath(process.execPath);
 
@@ -165,33 +168,33 @@
                                 var zipFileFolder = path.join(getFolderPathByFilePath(filename),'updFiles');
                                 console.log('filename',filename);
                                 fs.createReadStream(filename).pipe(unzip2.Extract({ path: zipFileFolder }))
-                                .on('error',function(err){
-                                    alert('解压失败');
-                                    hideUpdaterWrapper();
-                                    console.error('err in unpack zip',err);
-                                })
-                                .on('close',function(){
-                                    //解压成功
-                                    clearInterval(timer);
-                                    changeUpdateState('解压完成，程序即将重启 2/3',100);
-                                    if(fs.existsSync(zipFileFolder)){
-                                        var NWPackagePath = path.join(tempFolderPath,'package.nw');
-                                        fse.copy(zipFileFolder,NWPackagePath,function(err){
-                                            if(err){
-                                                alert('更新失败');
-                                                return console.error(err)
-                                            }
-                                            console.log('copy updateFile success');
-                                            var newNWPath = path.join(tempFolderPath,'NW.exe');
-                                            setTimeout(function(){
-                                                //运行临时程序
-                                                upd.runInstaller(newNWPath, [upd.getAppPath(), upd.getAppExec(), zipFileFolder],{});
-                                                //关闭当前程序
-                                                gui.App.quit();
-                                            },1000);
-                                        });
-                                    }
-                                })
+                                    .on('error',function(err){
+                                        alert('解压失败');
+                                        hideUpdaterWrapper();
+                                        console.error('err in unpack zip',err);
+                                    })
+                                    .on('close',function(){
+                                        //解压成功
+                                        clearInterval(timer);
+                                        changeUpdateState('解压完成，程序即将重启 2/3',100);
+                                        if(fs.existsSync(zipFileFolder)){
+                                            var NWPackagePath = path.join(tempFolderPath,'package.nw');
+                                            fse.copy(zipFileFolder,NWPackagePath,function(err){
+                                                if(err){
+                                                    alert('更新失败');
+                                                    return console.error(err)
+                                                }
+                                                console.log('copy updateFile success');
+                                                var newNWPath = path.join(tempFolderPath,'NW.exe');
+                                                setTimeout(function(){
+                                                    //运行临时程序
+                                                    upd.runInstaller(newNWPath, [upd.getAppPath(), upd.getAppExec(), zipFileFolder],{});
+                                                    //关闭当前程序
+                                                    gui.App.quit();
+                                                },1000);
+                                            });
+                                        }
+                                    })
                             })
                         }else{
                             alert('下载失败');
@@ -221,8 +224,33 @@
                 //console.log('folderPath',folderPath);
                 return folderPath;
             }
-        }
+        };
 
+        /**
+         * 自动更新
+         */
+
+        function autoCheck(){
+            upd.checkNewVersion(function(error, newVersionExists, manifest) {
+                //显示更新进度面板
+                if (error) {
+                    console.log('检查版本出错', error);
+                }else{
+                    if (!error && newVersionExists) {
+                        console.log('manifest', manifest.version);
+                        if (!confirm('系统检查到有新版本，是否升级？')) {
+                            return;
+                        }else{
+                            checkUpdate(true);
+                        }
+                    }
+                }
+            })
+        }
+        console.log(process.env.debug,typeof process.env.debug);
+        if(process.env.debug!=='true'){
+            autoCheck();
+        }
         /**
          * 展示更新面板
          * @return {[type]} [description]
@@ -277,7 +305,7 @@
                     if(startC>90){
                         clearInterval(timer);
                     }
-                    changeUpdateState(null,startC); 
+                    changeUpdateState(null,startC);
                 },100)
             },100);
         }
@@ -300,7 +328,7 @@
         console.log(menu);
 
         nw.Window.get().menu = menu;
-     } catch (e) {
-         console.log(e);
-     }
+    } catch (e) {
+        console.log(e);
+    }
 })();

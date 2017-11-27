@@ -54,6 +54,7 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             AnimationService.deleteAnimationByIndex(index,function(){
                 $scope.animations=AnimationService.getAllAnimations();
             }.bind(this));
+
         };
 
         $scope.openPanel=function(index){
@@ -61,8 +62,15 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             var targetAnimation;
             if(index==-1){
                 targetAnimation = AnimationService.getNewAnimation();
+                targetAnimation.newAnimation=true;
             }else if(index>=0&&index<$scope.animations.length){
                 targetAnimation=_.cloneDeep($scope.animations[index]);
+                targetAnimation.newAnimation=false;
+            }
+
+            var animationNames=[];
+            for(var i=0;i<$scope.animations.length;i++){
+                animationNames.push($scope.animations[i].title);
             }
 
             var modalInstance = $uibModal.open({
@@ -73,6 +81,9 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
                 resolve:{
                     animation:function(){
                         return targetAnimation;
+                    },
+                    animationNames: function(){
+                        return animationNames;
                     }
                 }
             });
@@ -94,8 +105,9 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
 }])
 
-    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','animation',function($scope,$uibModalInstance,animation){
+    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','ProjectService','animation','animationNames',function($scope,$uibModalInstance,ProjectService,animation,animationNames){
         $scope.animation=animation;
+        $scope.animationNames=animationNames;
         $scope.checkDuration = function (e) {
             if($scope.animation.duration<0){
                 toastr.error('持续时间必须大于0s');
@@ -105,10 +117,68 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
                 $scope.animation.duration=5000;
             }
         };
-        $scope.confirm = function () {
-            $uibModalInstance.close($scope.animation);
+        $scope.confirm = function (th) {
+            if(th.animation.newAnimation===false){
+                if (th.animation.title===restoreValue){
+                    $uibModalInstance.close($scope.animation);
+                    return;
+                }
+            }
+            if(validation&&duplicate(th)){
+                $uibModalInstance.close($scope.animation);
+            }
+
+
         };
         $scope.cancel = function () {
             $uibModalInstance.dismiss();
+        };
+
+        var restoreValue=$scope.animation.title;
+        var validation=true;
+        //保存旧值
+        $scope.store=function(th){
+            restoreValue=th.animation.title;
+
+        };
+
+        //恢复旧值
+        $scope.restore = function (th) {
+            th.animation.title=restoreValue;
+        };
+
+        //验证新值
+        $scope.enterName=function(th){
+            //判断是否和初始一样
+            if (th.animation.title===restoreValue){
+                return;
+            }
+            //输入有效性检测
+            validation=ProjectService.inputValidate(th.animation.title);
+            if(!validation||!duplicate(th)){
+                $scope.restore(th);
+                return;
+            }
+            toastr.info('修改成功');
+            restoreValue=th.animation.title;
+        };
+        //验证重名
+        function duplicate(th){
+            var tempArray=$scope.animationNames;
+            for(var i=0;i<tempArray.length;i++){
+                if(th.animation.title===tempArray[i]){
+                    toastr.info('重复的动画名');
+                    return false;
+                }
+            }
+            return true;
         }
+
+        //验证enter键
+        $scope.enterPress=function(e,th){
+            if (e.keyCode==13){
+                $scope.enterName(th);
+            }
+        };
+
 }]);

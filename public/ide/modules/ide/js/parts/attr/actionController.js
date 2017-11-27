@@ -2,7 +2,7 @@
  * Created by Zzen1ss on 23/3/2016
  */
 
-ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','ProjectService', 'Type','OperationService',function ($scope, ActionService,TagService,$uibModal,ProjectService,Type,OperationService) {
+ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','ProjectService', 'Type','OperationService',function ($scope, ActionService,TagService,$uibModal,ProjectService,Type,OperationService) {
 
     $scope.$on('GlobalProjectReceived', function () {
 
@@ -67,6 +67,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             case Type.MyImage:
             case Type.MyScriptTrigger:
             case Type.MySlideBlock:
+            case Type.MyTexNum:
                 $scope.showActionPanel = true;
                 break;
             case Type.MySlide:
@@ -117,10 +118,16 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             if (index == -1){
                 //newAction
                 targetAction = ActionService.getNewAction();
+                targetAction.newAction=true;
             }else if (index>=0&&index<$scope.actions.length){
                 targetAction = _.cloneDeep($scope.actions[index]);
+                targetAction.newAction=false;
             }
             //console.log('targetAction',targetAction);
+            var actionNames=[];
+            for(var i=0;i<$scope.actions.length;i++){
+                actionNames.push($scope.actions[i].title);
+            }
             /**
              * 利用$uiModal服务，制作模态窗口
              */
@@ -141,6 +148,9 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
                     },
                     timerTags: function(){
                         return $scope.timerTags;
+                    },
+                    actionNames: function(){
+                        return actionNames;
                     }
                 }
             });
@@ -174,7 +184,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
 /**
  * action 模态窗口控制器
  */
-    .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance', 'action','triggers','tags','timerTags','OperationService', function ($scope, $uibModalInstance, action,triggers,tags,timerTags,OperationService) {
+    .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance','ProjectService', 'action','triggers','tags','timerTags','actionNames','OperationService', function ($scope, $uibModalInstance,ProjectService, action,triggers,tags,timerTags,actionNames,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
 
         var blankCmd = [{name:'',symbol:''}, {tag: '', value: ''}, {tag: '', value: ''}];
@@ -189,6 +199,7 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         });
         $scope.action = action;
         $scope.triggers = triggers;
+        $scope.actionNames = actionNames;
 
         $scope.currentChosenIdx = $scope.action.commands.length-1;
         if ($scope.currentChosenIdx>0){
@@ -197,10 +208,36 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
             $scope.chosenCmd = _.cloneDeep(blankCmd);
         }
 
+        $scope.showCustomTags = true;
+        $scope.changeTagShowState = function(){
+            var operation = $scope.chosenCmd[0].symbol;
+            if(operation.indexOf('setTimer')!==-1){
+                $scope.showCustomTags = false;
+            }else{
+                $scope.showCustomTags = true;
+            }
+        };
+
+        //检查输入值是否为整数
+        $scope.checkValueIsInt = function () {
+            var value = $scope.chosenCmd[2].value;
+            if(!!value&&!_.isInteger(value)){
+                toastr.warning('值只能为整数');
+                $scope.chosenCmd[2].value = parseInt(value);
+            }
+        };
+
         //选择指令
         $scope.chooseCmd = function (index) {
+            var operation = $scope.action.commands[index][0].symbol||'';
+            if(operation.indexOf('setTimer')!==-1){
+                $scope.showCustomTags = false;
+            }else{
+                $scope.showCustomTags = true;
+            }
             $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
+
             //console.log('chosenCmd',$scope.chosenCmd);
         };
 
@@ -221,12 +258,68 @@ ide.controller('ActionCtl',['$scope','ActionService','TagService','$uibModal','P
         };
 
         //保存
-        $scope.save = function () {
-            $uibModalInstance.close($scope.action);
+        $scope.save = function (th) {
+            //判断是否和初始一样
+            if(th.action.newAction===false){
+                if (th.action.title===restoreValue){
+                    $uibModalInstance.close($scope.action);
+                    return;
+                }
+            }
+            if(validation&&duplicate(th)){
+                $uibModalInstance.close($scope.action);
+            }
         };
 
         //取消
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
+        };
+
+        var restoreValue=$scope.action.title;
+        var validation=true;
+        //保存旧值
+        $scope.store=function(th){
+            restoreValue=th.action.title;
+
+        };
+
+        //恢复旧值
+        $scope.restore = function (th) {
+            th.action.title=restoreValue;
+        };
+
+        //验证新值
+        $scope.enterName=function(th){
+            //判断是否和初始一样
+            if (th.action.title===restoreValue){
+                return;
+            }
+            //输入有效性检测
+            validation=ProjectService.inputValidate(th.action.title,true);
+            if(!validation||!duplicate(th)){
+                $scope.restore(th);
+                return;
+            }
+            toastr.info('修改成功');
+            restoreValue=th.action.title;
+        };
+        //验证重名
+        function duplicate(th){
+            var tempArray=$scope.actionNames;
+            for(var i=0;i<tempArray.length;i++){
+                if(th.action.title===tempArray[i]){
+                    toastr.info('重复的动作名');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //验证enter键
+        $scope.enterPress=function(e,th){
+            if (e.keyCode==13){
+                $scope.enterName(th);
+            }
         };
     }]);

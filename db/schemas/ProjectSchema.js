@@ -14,10 +14,18 @@ var ProjectSchema = new mongoose.Schema({
     curSize:String,
     maxSize:String,
     thumbnail:String,
+    shared:{type:Boolean,default:false},
+    sharedKey:{type:String},
     content:{type:String},
+    backups:[{
+        time:Date,
+        content:String
+    }],
     createTime:{type:Date,default:Date.now},
     lastModifiedTime:{type:Date,default:Date.now}
 })
+
+ProjectSchema.index({createTime:-1});
 
 ProjectSchema.pre('save',function(next){
     var project = this
@@ -46,6 +54,11 @@ ProjectSchema.statics = {
             .findOne({_id:id})
             .exec(cb)
     },
+    findBackupsById:function (id,cb) {
+        return this
+            .findOne({_id:id},{"backups.time":1})
+            .exec(cb)
+    },
     findByName:function(_name,cb){
         return this
             .findOne({name:_name})
@@ -54,7 +67,17 @@ ProjectSchema.statics = {
     findByUser: function (_userId,cb) {
         return this
             .find({userId:_userId})
-            .sort('lastModifiedTime')
+            .sort({'createTime':-1})
+            .exec(cb)
+    },
+    findProjectInfosByUser: function (_userId,cb) {
+        return this
+            .find({userId:_userId},{content:0,backups:0})
+            .sort({'createTime':-1})
+            .exec(cb)
+    },
+    updateShare:function (id,stateInfo,cb) {
+        return this.findOneAndUpdate({_id:id},{shared:stateInfo.shared,sharedKey:stateInfo.sharedKey})
             .exec(cb)
     },
     deleteById: function (_projectId, cb) {

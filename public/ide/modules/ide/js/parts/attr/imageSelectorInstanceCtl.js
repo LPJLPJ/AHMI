@@ -1,7 +1,7 @@
 /**
  * Created by Zzen1sS on 24/3/2016
  */
-ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInstance','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$timeout, $uibModalInstance,Type, ResourceService,widgetInfo,TexService) {
+ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService) {
 
 
     $scope.images = ResourceService.getAllImagesAndTemplates();
@@ -23,59 +23,83 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     });
 
 
-
+    $scope.canInputText = false;
     $scope.canAddNewSlice = false;
+    $scope.disableEditImg = false;
+    $scope.disableEditColor = false;
     $scope.sliceNum = 0;
     switch (widgetInfo.type){
         case Type.MyButton:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,false,2,widgetInfo.tex,true,false,false);
             break;
         case Type.MyProgress:
-            initConfigure(false,1,widgetInfo.tex);
+            if((widgetInfo.objInfo.progressModeId==='1'||widgetInfo.objInfo.progressModeId==='3')&&(widgetInfo.index==1||widgetInfo.index==2||widgetInfo.index==3)){
+                initConfigure(false,false,1,widgetInfo.tex,true,true,false);
+            }else{
+                initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            }
+            if(widgetInfo.tex.name==='光标纹理'){
+                initConfigure(false,false,1,widgetInfo.tex,true,false,true);
+            }
             break;
         case Type.MySlide:
-            initConfigure(true,2,widgetInfo.tex);
+            initConfigure(true,true,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyNumber:
-            initConfigure(false,13,widgetInfo.tex);
+            initConfigure(false,false,13,widgetInfo.tex,false,false,false);
             break;
         case Type.MyDashboard:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,false,2,widgetInfo.tex,true,false,false);
             break;
         case Type.MyTextArea:
-            initConfigure(false,1,widgetInfo.tex);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MyNum:
-            initConfigure(false,1,widgetInfo.tex);
+            initConfigure(false,false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MyOscilloscope:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,false,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyKnob:
-            initConfigure(false,2,widgetInfo.tex);
+            initConfigure(false,false,2,widgetInfo.tex,false,false,false);
             break;
         case Type.MyImage:
-            initConfigure(false,1,widgetInfo.tex);
+            initConfigure(false,false,1,widgetInfo.tex,false,false,false);
             break;
         case Type.MySwitch:
-            initConfigure(false,1,widgetInfo.tex);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MyRotateImg:
-            initConfigure(false,1,widgetInfo.tex);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MySlideBlock:
-            initConfigure(false,1,widgetInfo.tex);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
             break;
         case Type.MyAnimation:
-            initConfigure(true,1,widgetInfo.tex);
+            initConfigure(true,false,1,widgetInfo.tex,false,false,false);
+            break;
+        case Type.MyTexNum:
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            break;
+        case Type.MyDateTime:
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            break;
+        case Type.MyButtonGroup:
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
             break;
         default:
-            initConfigure(true,1,widgetInfo.tex);
+            initConfigure(true,false,1,widgetInfo.tex,false,false,false);
             break;
     }
 
+    // $scope.addSlice = function () {
+    //     $scope.tex.slices.push(TexService.getDefaultSlice());
+    // };
+
+    //last edtor: liuhuan 2017/8/17
+    //从当前行的下一行插入默认新行
     $scope.addSlice = function () {
-        $scope.tex.slices.push(TexService.getDefaultSlice());
+        $scope.tex.slices.splice($scope.curIndex+1,0,TexService.getDefaultSlice());
     };
 
     $scope.removeSlice = function (index) {
@@ -86,8 +110,11 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         }
     };
 
+
     $scope.save = function () {
-        $uibModalInstance.close($scope.tex);
+        if(validation){
+            $uibModalInstance.close($scope.tex);
+        }
     };
 
     $scope.cancel = function () {
@@ -104,10 +131,15 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     };
 
 
-    function initConfigure(_canAddNewSlice,_sliceNum,_tex){
+
+    function initConfigure(_canAddNewSlice,_canInputText,_sliceNum,_tex,_disableEditName,_disableEditImg,_disableEditColor){
         $scope.canAddNewSlice = _canAddNewSlice;
+        $scope.canInputText = _canInputText;
         $scope.sliceNum = _sliceNum;
         $scope.tex = _tex;
+        $scope.disableEditName = _disableEditName;
+        $scope.disableEditImg = _disableEditImg;
+        $scope.disableEditColor = _disableEditColor;
     }
 
     //edit by lixiang
@@ -122,10 +154,8 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         }
     }
     function restore(){
-        //console.log('restore');
         $timeout(function () {
             $scope.tex.slices= _.cloneDeep($scope.tempSlices);
-            //console.log($scope.tex.slices);
         });
     }
 
@@ -135,5 +165,53 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         var b = _.random(64, 255);
         return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
     }
+
+    $scope.curIndex = 0;
+    $scope.selectItem = function(index){
+        $scope.curIndex = index;
+    };
+
+    var restoreValue;
+    var validation=true;
+    //保存旧值
+    $scope.store=function(th){
+        restoreValue=th.slice.name;
+    };
+
+    //回复旧值
+    $scope.restore = function (th) {
+        th.slice.name=restoreValue;
+    };
+
+    //验证新值
+    $scope.enterName=function(th){
+        console.log("$scope.canInputText:",$scope.canInputText)
+
+        //判断是否和初始一样
+        if (th.slice.name===restoreValue){
+            return;
+        }
+        //输入有效性检测
+        validation=ProjectService.inputValidate(th.slice.name);
+        if(!validation){
+            $scope.restore(th);
+            return;
+        }
+        toastr.info('修改成功');
+        restoreValue=th.slice.name;
+    };
+
+    //验证enter键
+    $scope.enterPress=function(e,th){
+        if (e.keyCode==13){
+            // angular.element($(th)).trigger("blur");
+            // angular.element(document.getElementById('texBar')).trigger("click");
+            // console.log(angular.element($("#texBar")));
+            // console.log(angular.element(document.getElementById('texBar')));
+            $scope.enterName(th);
+
+
+        }
+    };
 
 }]);

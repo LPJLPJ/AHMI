@@ -107,6 +107,12 @@ $(function(){
         var projects = readLocalProjects('normal').map(function (raw) {
             return JSON.parse(raw);
         });
+        projects.sort(function(p1,p2){
+            var s1 = parseInt(String(p1._id).slice(0,String(p1._id).length-4));
+            var s2 = parseInt(String(p2._id).slice(0,String(p2._id).length-4));
+            return s2-s1;
+        });
+        // console.log('projects',projects);
 
         var CANProjects = readLocalProjects('CAN').map(function(raw){
             return JSON.parse(raw);
@@ -118,9 +124,12 @@ $(function(){
         var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
+            console.log('newProject.createTime',newProject.createTime);
+            console.log(new Date(newProject.createTime));
             //console.log('newProject'+i,newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
+            delete newProject.backups;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
 
             addProjectButton.after(html);
@@ -210,16 +219,255 @@ $(function(){
     }
 
 
+    //contextMenu last edit : LH 2017/9/21
+    var errorItems = { "errorItem": { name: "Items Load error" },};
+    //加载contextMenu子菜单：较早的工程版本
+    var loadItems = function (id) {
+        //异步
+        var dfd = jQuery.Deferred();
+        //从后端获取backuplist
+        $.ajax({
+            type:'get',
+            url:"/project/"+id+"/backuplist",
+            success:function(result){
+                //versionArray中保存了较早的工程版本
+                var versionArray=JSON.parse(result);
+                var subItems={};
+                if(versionArray&&versionArray.length&&versionArray.length>0){
+                    for(var i=0;i<((versionArray.length>5)?5:versionArray.length);i++){
+                        switch(i){
+                            case 0:
+                                subItems.sub1={name:versionArray[i].date};
+                                break;
+                            case 1:
+                                subItems.sub2={name:versionArray[i].date};
+                                break;
+                            case 2:
+                                subItems.sub3={name:versionArray[i].date};
+                                break;
+                            case 3:
+                                subItems.sub4={name:versionArray[i].date};
+                                break;
+                            case 4:
+                                subItems.sub5={name:versionArray[i].date};
+                                break;
+                            default:
+                        }
+                    }
+                }
+                else{
+                    subItems.sub1={name:"没有较早版本",disabled:true};
+                }
+                dfd.resolve(subItems);
+            }
+        });
+        return dfd.promise();
+    };
+
+    //author: LH 2017-10-30
+    function ChinaFormatItem(fmt) {
+        var Y=fmt.slice(11,15);
+        var M=fmt.slice(4,7);
+        var D=fmt.slice(8,10);
+        var HMS=fmt.slice(16,24);
+
+        switch (M){
+            case "Jan":
+                M='01';
+                break;
+            case "Feb":
+                M='02';
+                break;
+            case "Mar":
+                M='03';
+                break;
+            case "Apr":
+                M='04';
+                break;
+            case "May":
+                M='05';
+                break;
+            case "Jun":
+                M='06';
+                break;
+            case "Jul":
+                M='07';
+                break;
+            case "Aug":
+                M='08';
+                break;
+            case "Sep":
+                M='09';
+                break;
+            case "Oct":
+                M='10';
+                break;
+            case "Nov":
+                M='11';
+                break;
+            case "Dec":
+                M='12';
+                break;
+
+        }
+        fmt=Y+"-"+M+"-"+D+" "+HMS;
+        return fmt;
+
+    }
+    function localLoadItems(id){
+        var curProjectDir =  path.join(localProjectDir,id);
+        var curProject = readSingleFile(path.join(curProjectDir,'project.json'),true);
+        var cur=JSON.parse(curProject);
+        var versionArray=cur.backups;
+        var subItems={};
+        if(versionArray&&versionArray.length&&versionArray.length>0){
+            for(var i=0;i<((versionArray.length>5)?5:versionArray.length);i++){
+                switch(i){
+                    case 0:
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub1={name:ChinaFormatItem(temp.toString())};
+                        break;
+                    case 1:
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub2={name:ChinaFormatItem(temp.toString())};
+                        break;
+                    case 2:
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub3={name:ChinaFormatItem(temp.toString())};
+                        break;
+                    case 3:
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub4={name:ChinaFormatItem(temp.toString())};
+                        break;
+                    case 4:
+                        var temp=new Date(versionArray[i].time);
+                        subItems.sub5={name:ChinaFormatItem(temp.toString())};
+                        break;
+                    default:
+                }
+            }
+        }
+        else{
+            subItems.sub1={name:"没有较早版本",disabled:true};
+        }
+        return subItems;
+    }
+
+    $.contextMenu({
+        selector: '.projectpanel',
+        callback: function(key) {
+            var project = $(this).attr('data-project');
+            project = JSON.parse(project);
+            curPanel = $(this);
+            curSelectedPanel = curPanel;
+            curProject = project;
+            switch (key){
+                case "openFolder":
+                   var localprojectpath = path.join(localProjectDir,String(project._id));
+                   var gui = require('nw.gui');
+                   gui.Shell.openItem(localprojectpath);
+                   break;
+                case "showInfo":
+                   showProInfo($(this));
+                   break;
+                case "deletePro":
+                   closeModal.modal('show');
+                   break;
+                case "visualization":
+                    window.open('/project/'+project._id+'/visualization');
+                    break;
+                case "showProjectVersion":
+                    break;
+                case "sub1":
+                    openVertion(0,project._id);
+                    break;
+                case "sub2":
+                    openVertion(1,project._id);
+                    break;
+                case "sub3":
+                    openVertion(2,project._id);
+                    break;
+                case "sub4":
+                    openVertion(3,project._id);
+                    break;
+                case "sub5":
+                    openVertion(4,project._id);
+                    break;
+                default:
+             }
+
+        },
+        build:function($trigger, e){
+            var project=JSON.parse(e.currentTarget.dataset.project);
+            if(local){
+                var items={
+                    "openFolder": {name: "查看工程所在文件夹"},
+                    "sep1":"---------",
+                    "showInfo": {name: "修改工程信息"},
+                    "sep2": "---------",
+                    "showProjectVersion": {name: "打开较早保存的工程"},
+                    "sep3":"---------",
+                    "deletePro": {name: "删除工程"}
+                };
+                items.showProjectVersion.items=localLoadItems(project._id);
+                return {
+                    items:items
+                };
+            }else{
+                return{
+                    items:{
+                        "showInfo": {name: "修改工程信息"},
+                        "sep1":"---------",
+                        "showProjectVersion": {name: "打开较早保存的工程",items: loadItems(project._id)},
+                        "sep2":"---------",
+                        "visualization":{name:"结构可视化"},
+                        "sep4":"---------",
+                        "deletePro": {name: "删除工程"}
+                    }
+                };
+            }
+        }
+
+    });
+    //打开较早的版本
+    function openVertion(v,id){
+        var targetUrl="";
+        if (local){
+            targetUrl = '../ide/index.html?project_id='+id+'&&v='+v;
+        }else{
+            targetUrl = '/project/'+id+'/editor'+'?v='+v;
+        }
+        window.open(targetUrl);
+    }
+    //normal promise usage example
+    var completedPromise = function (status) {
+        console.log("completed promise:", status);
+    };
+
+    var failPromise = function (status) {
+        console.log("fail promise:", status);
+    };
+
+    var notifyPromise = function (status) {
+        console.log("notify promise:", status);
+    };
+
+    $.loadItemsAsync = function() {
+        console.log("loadItemsAsync");
+        var promise = loadItems();
+        $.when(promise).then(completedPromise, failPromise, notifyPromise);
+    };
+
     $('#projectlist')
         .on('click','.projectpanel', function (e) {
-        curPanel = $(this)
+        curPanel = $(this);
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         var project = $(this).attr('data-project');
         project = JSON.parse(project);
         curProject = project;
-        var curNodeName = e.target.nodeName
+        var curNodeName = e.target.nodeName;
         if (curNodeName == 'IMG'){
             //img
             //open in new window
@@ -244,8 +492,6 @@ $(function(){
             var customHeight = $('#customHeight');
             var template = $('#basicinfo-template');
             var supportTouch = $('#basicinfo-supportTouch');
-
-            //console.log('project',project)
             title.val(project.name);
             author.val(project.author);
             if(identifyCustomResolution(project.resolution)){
@@ -275,11 +521,52 @@ $(function(){
         }
     });
 
+    //控制右键菜单是否显示
+    // if(local===false){
+    //     $('.projectpanel').contextMenu(false);
+    // }
+
+    function showProInfo(cur){
+         curPanel = cur;
+         curSelectedPanel = curPanel;
+         $('#basicinfo-template').attr('disabled',false);
+         $('#basicinfo-supportTouch').attr('disabled',false);
+         var project = cur.attr('data-project');
+         project = JSON.parse(project);
+         curProject = project;
+
+         $('#modal-ok').html('确认');
+         var title = $('#basicinfo-title');
+         var author = $('#basicinfo-author');
+         var resolution = $('#basicinfo-resolution');
+         var customWidth = $('#customWidth');
+         var customHeight = $('#customHeight');
+         var template = $('#basicinfo-template');
+         var supportTouch = $('#basicinfo-supportTouch');
+         title.val(project.name);
+         author.val(project.author);
+         if(identifyCustomResolution(project.resolution)){
+             resolution.val(project.resolution);
+             $('#basicinfo-customResolution').hide();
+         }else{
+             resolution.val('custom');
+             $('#basicinfo-customResolution').show();
+             var arr=project.resolution.split('*');
+             customWidth.val(arr[0]);
+             customHeight.val(arr[1]);
+         }
+         template.val(project.template);
+         template.attr('disabled',true);
+         supportTouch.val(project.supportTouch);
+         supportTouch.attr('disabled',true);
+         $('#myModal').modal('show');
+    }
+
     function identifyCustomResolution(resolution){
         var result=false;
         $("#basicinfo-resolution option").each(function(){
             if($(this).val().trim()==resolution){
-                //console.log('haha',$(this).val().trim());
+                // console.log('haha',$(this).val().trim());
                 result=true;
             }
         });
@@ -353,15 +640,14 @@ $(function(){
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
 
-        if (title.val().trim()!=''&&resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
+        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
             project.supportTouch = supportTouch.val().trim();
-            if (!checkName(project.name,project.author)){
+            if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
-                toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
             if(resolution.val().trim()==="custom"){
@@ -376,13 +662,13 @@ $(function(){
 
 
             if (local){
-                project.createdTime = Date.now();
-                project.lastModified =  Date.now();
-                project._id = ''+project.createdTime+Math.round((Math.random()+1)*1000);
+                project.createTime = new Date().toLocaleString();
+                project.lastModifiedTime =  new Date().toLocaleString();
+                project._id = ''+Date.now()+Math.round((Math.random()+1)*1000);
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
-                var localresourcepath = path.join(localprojectpath,'resources')
-                //console.log(localprojectpath);
+                var localresourcepath = path.join(localprojectpath,'resources');
+
 
                 try {
                     mkdir.sync(localresourcepath);
@@ -452,8 +738,22 @@ $(function(){
         // name.match(/["'\/\\\(\){},\.\+\-\*\?]/)
         try {
             for (var i=0;i<arguments.length;i++){
-                var name = arguments[i];
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)){
+                var name = arguments[i].value;
+                //是否为空
+                if(arguments[i].empty===false){
+                    if (name.match(/^$|^\s+$/)){
+                        toastr.error('名称不能为空');
+                        return false;
+                    }
+                }
+                //是否大于30个字
+                if(name.length>30){
+                    toastr.error('长度不能大于30个字');
+                    return false;
+                }
+                //是否含有非法字符
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—]/)){
+                    toastr.error('名称和作者只能包含：汉字、英文、数字、下划线_、英文破折号-、中文破折号—');
                     return false;
                 }
             }
@@ -488,15 +788,15 @@ $(function(){
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
         var thumbnailDOM = curPanel.find('img');
+        console.log("thumbnailDOM",thumbnailDOM);
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
         if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
             //changed
             project.name = title.val().trim();
             project.author = author.val().trim();
             //check name;
-            if (!checkName(project.name,project.author)){
+            if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
-                toastr.error('名称只能是汉字、英文和数字');
                 return;
             }
             //check resolution
@@ -632,8 +932,7 @@ $(function(){
         if(title.val().trim()!=''){
             CANProject.name = title.val().trim();
             CANProject.author = author.val().trim();
-            if(!checkName(CANProject.name)){
-                toastr.error('名称只能是汉字、英文和数字');
+            if(!checkName({value:CANProject.name,empty:false})){
                 return;
             }
             if(local){
@@ -705,8 +1004,7 @@ $(function(){
                 //title not empty
                 project.name = title.val().trim();
                 project.author = author.val().trim();
-                if(!checkName(project.name,project.author)){
-                    toastr.error('名称只能是汉字、英文和数字');
+                if(!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                     return;
                 }
                 if(local){
@@ -743,5 +1041,36 @@ $(function(){
     function addNewCANProject(newCANProject){
         var html = new EJS({url:'../../public/login/assets/views/CANProjectPanel.ejs'}).render({project:newCANProject,thumbnail:null});
         $('#addCANproject').after(html)
+    }
+
+    //改变window大小的时候，重新计算filedrag的大小
+    $(window).resize(function() {
+        setHundredPercentHeight("#filedrag", "window", "#mianHeader");
+        var height=$(".all").height()+$(".top").height();
+        if($("#filedrag").height()<height){
+            $("#filedrag").height(height*1.1);
+        }
+    })
+    //页面加载时，计算filedrag的大小
+    setHundredPercentHeight("#filedrag", "window", "#mianHeader");
+    var height=$(".all").height()+$(".top").height();
+    if($("#filedrag").height()<height){
+        $("#filedrag").height(height*1.1);
+    }
+    //计算filedrag的大小
+    function setHundredPercentHeight(objId,containerId)
+    {
+        var length = arguments.length;
+        var height = 0;
+        for (var i = 2; i < length; i++)
+        {
+            height += $(arguments[i]).outerHeight();
+        }
+        if(containerId==="window"){
+            $(objId).height(($(window).height() - height)*0.99);
+        }else{
+            $(objId).height(($(containerId).height() - height)*0.99);
+        }
+
     }
 });

@@ -50,6 +50,8 @@ router.route('/releases/updapp/win/updFiles.zip')
 //upload local project
 router.route('/upload/project')
     .post(localIDEService.uploadProject);
+router.route('/upload/project/zip')
+    .post(localIDEService.uploadProjectZip);
 //return user type
 router.route('/user/checkUserType')
     .post(localIDEService.returnUserType);
@@ -110,6 +112,9 @@ router.route('/user/login')
 router.route('/user/loginAPI')
 .post(loginAPI.post);
 
+router.route('/user/logininfo')
+    .get(loginAPI.getLoginInfo)
+
 //logout
 router.route('/user/logout')
 .get(route_login.logout);
@@ -165,11 +170,24 @@ router.route('/project/*')
 router.route('/project/:id/basicinfo')
     .post(projectInfo.updateProject);
 
+router.route('/project/:id/backuplist')
+    .get(projectInfo.getBackupList);
+
 router.route('/project/:id/editor')
     .get(projectInfo.getProjectById);
 
+router.route('/project/:id/visualization')
+    .get(projectInfo.getProjectTreeById);
+
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent);
+
+router.route('/project/:id/share')
+    .get(projectInfo.getShareInfo)
+    .post(projectInfo.updateShare)
+
+router.route('/project/:id/sharedkey')
+    .post(projectInfo.checkSharedKey)
 
 router.route('/project/:id/save')
     .put(projectInfo.saveProject);

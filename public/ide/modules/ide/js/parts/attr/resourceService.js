@@ -190,7 +190,7 @@ ideServices
 
         this.addWebFont = function (fontFile,type) {
             console.log('font: ',fontFile,type,fontFile)
-            var fontName = fontFile.name.split('.')[0];
+            var fontName = fontFile.name;
             //handle window url
             var curSrc = fontFile.src;
             if (local){
@@ -209,10 +209,25 @@ ideServices
 
         //cache file to targetarray
         this.cacheFile = function (file, targetArray, scb, fcb) {
-
+            // console.log(file)
             var resourceObj = {};
+            var ttf=''
+
             resourceObj.id = file.id;
             resourceObj.type = file.type;
+            // if(file.type){
+            //     resourceObj.type = file.type;
+            // }else{
+            //     switch (this.getExt(file.id)){
+            //         case 'ttf':
+            //             resourceObj.type ="ttf";
+            //             console.log("rrrrrrrrrrrrrrrrrrr"+resourceObj.type);
+            //             console.log("wwwwwwwwwwwwwwwwwwww"+this.getExt(file.id));
+            //             break;
+            //
+            //         default:
+            //     }
+            // }
             resourceObj.name = file.name;
             resourceObj.src = file.src;
             if (file.type.match(/image/)) {
@@ -231,9 +246,10 @@ ideServices
             }else if (this.getExt(file.id)==='ttf'||this.getExt(file.id)==='woff'){
                 //ttf
                 //font
+
                 var ext = this.getExt(file.id);
                 var type;
-                console.log(ext)
+                // console.log(ext)
                 if (ext==='ttf'){
                     type = 'truetype'
                 }else if (ext === 'woff'){
@@ -241,9 +257,33 @@ ideServices
                 }
                 this.addWebFont(file,type);
                 resourceObj.type = 'font/'+type;
+                file.type=resourceObj.type;
                 globalResources.push(resourceObj);
                 console.log('added',globalResources)
                 scb && scb({type:'ok'},resourceObj);
+
+                // var ext = this.getExt(file.id);
+                // var type;
+                // if (ext==='ttf'){
+                //     type = 'truetype'
+                // }else if (ext === 'woff'){
+                //     type = 'woff'
+                // }
+                // resourceObj.type = 'font/'+type;
+                // file.type=resourceObj.type;
+                // var curFont = new Font();
+                // resourceObj.content = curFont;
+                // curFont.onload = function () {
+                //     resourceObj.complete = true;
+                //     scb && scb({type:'ok'}, resourceObj);
+                // };
+                // curFont.onerror = function (errMsg) {
+                //     resourceObj.complete = false;
+                //     fcb && fcb({type:'error',msg:errMsg}, resourceObj);
+                // };
+                // curFont.fontFamily = file.name
+                // curFont.src = file.src;
+                // globalResources.push(resourceObj);
 
             }else{
                 //other
@@ -275,6 +315,7 @@ ideServices
             console.log(files)
 
         };
+
 
         this.deleteFileByIndex = function (index, successCb, failCb) {
             var success = false;
@@ -406,12 +447,15 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
                 if (files && files.length){
                     files = files.filter(isValidFile);
+
                     for (var i=0;i<files.length;i++){
                         //加入等待上传数组
                         var translatedFile = transFile(files[i]);
                         scope.component.top.uploadingArray.push(translatedFile);
                         upload(files[i],translatedFile);
                     }
+
+
                 }
             }
 
@@ -423,7 +467,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     case 'jpg':
                     case 'bmp':
                     case 'jpeg':
-                    case 'tiff':
+                    // case 'tiff':
                     case 'ttf':
                     case 'woff':
                         return true;
@@ -433,7 +477,9 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 }
             }
 
+
             function deleteUploadingItem(translatedFile) {
+
                 var uploadingArray = scope.component.top.uploadingArray;
                 for (var i = 0; i < uploadingArray.length; i++) {
                     if (uploadingArray[i].id == translatedFile.id) {
@@ -464,8 +510,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 var successHandler = function () {
 
                     ResourceService.appendFileUnique(translatedFile, function (file,files) {
-                        for (var i =0;i< files.length;i++){
-                            if (files[i].id == file.id ){
+                        for (var i = 0; i < files.length; i++) {
+                            if (files[i].id == file.id) {
                                 return false;
                             }
                         }
@@ -475,6 +521,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                             //删除scope.uploadingArray中该项
                             deleteUploadingItem(translatedFile);
                             //update
+
                             //scope.component.top.files = ResourceService.getAllImages();
                             // console.log('updating fonts')
                             scope.$emit('ResourceUpdate');
@@ -561,12 +608,25 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
                 var successHandler = function(e){
 
-                    console.log(e);
+                    // console.log(e);
                     if (e.status == 200){
-                        //success
+
                         ResourceService.appendFileUnique(translatedFile, function (file,files) {
-                            for (var i =0;i< files.length;i++){
-                                if (files[i].id == file.id ){
+                        //     var unique=true;
+                        //     do {
+                        //         unique=true;
+                        //         for (var i = 0; i < files.length; i++) {
+                        //             if (files[i].id == file.id) {
+                        //                 var separate = file.id.split('.');//从.后缀开始分割我一个字符串数组，数组的第一个元素是id，第二个元素是后缀名。
+                        //                 file.id = separate[0]+(Math.ceil(Math.random() * 10)).toString()+'.'+separate[separate.length-1];
+                        //                 unique=false;
+                        //                 break;
+                        //             }
+                        //         }
+                        //     }while(unique===false);
+                        //     return true;
+                            for (var i = 0; i < files.length; i++) {
+                                if (files[i].id == file.id) {
                                     return false;
                                 }
                             }
@@ -590,7 +650,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 }
 
                 var errHandler = function (e) {
-
                     console.error(e);
                     translatedFile.progress ='上传失败';
                     switch (e.data.errMsg){
@@ -612,7 +671,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                  * @param e
                  */
                 var progressHandler = function(e){
-
                     translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100)+'%';
 
                 }
@@ -620,11 +678,12 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 ////console.log('/project/'+ResourceService.getResourceUrl().split('/')[1]+'/upload')
                 //
                 //console.log(file);
+
                 Upload.upload({
                     //url:baseUrl+'/resource',
                     //url:'/api/upload',
-                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/upload',
-                    data:{file:file,name:translatedFile.id}
+                    url: '/project/' + ResourceService.getResourceUrl().split('/')[2] + '/upload',
+                    data: {file: file, name: translatedFile.id}//rename error
                     //data:{file:file},
                     //params:{
                     //    token:window.localStorage.getItem('token'),
@@ -640,6 +699,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
 
 
+
             }
 
 
@@ -650,6 +710,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
              * @returns {*}
              */
 
+            var idnum=Math.ceil(Math.random() * 100000);//生成一个0-100000的随机数，作为id编码的起始位置
             function transFile(uploadingFile){
                 var newSelectFile = {};
                 //process newSelectFile with uploadingFile
@@ -666,7 +727,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 var fileNameArray = uploadingFile.name.split('.');//从.后缀开始分割我一个字符串数组，数组的第一个元素是名字，第二个元素是后缀名。
 
                 //生成唯一识别码，作为fileName。
-                var fileName = idService.generateId(uploadingFile.name,Date.now())+'.'+fileNameArray[fileNameArray.length-1];
+                var fileName = (idnum++).toString()+'.'+fileNameArray[fileNameArray.length-1];//顺序生成id
+                // var fileName = idService.generateId(uploadingFile.name,Date.now())+'.'+fileNameArray[fileNameArray.length-1];
                 var fd = new FormData();
                 fd.append('file',uploadingFile);
                 fd.append('name',fileName);

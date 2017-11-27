@@ -6,6 +6,8 @@
     <title>AHMI-IDE BLOG</title>
     <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../public/blog/css/index.css">
+    <!-- CUSTOM STYLE CSS -->
+    <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
 
     <script src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
     <script src="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -13,6 +15,7 @@
     <script src="../../public/blog/libs/paginationer.js"></script>
 </head>
 <body>
+
 <header>
     <% include header.html %>
 </header>
@@ -22,9 +25,14 @@
         <div id="paginator"></div>
     </div>
     <footer>
-        <% include footer.html %>
+        <% include ../all/footer.html %>
     </footer>
 </div>
+
+
+
+
+
 <script>
     ;(function () {
         var paginationer = new Paginationer(5,<%=currentPage%>,<%=totalPage%>);

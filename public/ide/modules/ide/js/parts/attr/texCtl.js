@@ -28,14 +28,14 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
         $scope.editTex = function(index){
             $scope.selectedIdx = index;
             var transTex = null;
-            if  (index == -1){
+            if  (index === -1){
                 transTex = {
                     name:'default',
                     currentSliceIdx:0,
                     slices:[]
                 };
             }else{
-                if($scope.widgetType==Type.MyButton){
+                if($scope.widgetType===Type.MyButton){
                     if(!$scope.texList[index].slices[2]){
                         $scope.texList[index].slices[2]={
                             color:'rgba(244,244,244,0.3)',
@@ -45,6 +45,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     }
                 }
                 transTex = _.cloneDeep($scope.texList[index]);
+                objInfo = _.cloneDeep($scope.objInfo)
             }
             var modalInstance = $uibModal.open({
                 animation: $scope.animationsEnabled,
@@ -55,7 +56,9 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     widgetInfo:{
                         name:$scope.widgetName,
                         type:$scope.widgetType,
-                        tex: transTex
+                        tex: transTex,
+                        index:index,
+                        objInfo:objInfo
                     }
                 }
             });
@@ -110,6 +113,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
             switch (currentSelectedObject.type){
                 //case "MyDateTime" :
                 case "MyVideo":
+                case "MyScriptTrigger":
                 case "MyNum":
                     $scope.showTexPanel=false;
                     $scope.showSizeButtion=false;
@@ -121,7 +125,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                 default :
                     $scope.showTexPanel = true;
                     $scope.showSizeButtion=false;
-                    break
+                    break;
             }
         }else{
             $scope.showTexPanel = false;
@@ -131,6 +135,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
         $scope.widgetType = currentSelectedObject.type;
         if (currentSelectedObject.texList && currentSelectedObject.texList.length){
             $scope.texList = currentSelectedObject.texList;
+            $scope.objInfo = currentSelectedObject.info;
         }else{
             $scope.texList = TexService.getDefaultWidget($scope.widgetType);
             var oldOperate=ProjectService.SaveCurrentOperate();

@@ -22,7 +22,7 @@ angular.module('GlobalModule',[])
             pages:[{
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                proJsonStr:  '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',1.0)"}',
+                // proJsonStr:  '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',1.0)"}',
                 layers: [],
                 name: 'NewPage',
                 type: 'MyPage',

@@ -78,11 +78,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     //MyLayer
     fabric.MyLayer = fabric.util.createClass(fabric.Object, {
         type: Type.MyLayer,
-
         initialize: function (layerId, options) {
-
             var self=this;
-
             //开始移动时Layer的Scale
             if (!this.initScale){
                 this.initScale={
@@ -90,25 +87,20 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     Y:1
                 }
             }
-
             this.callSuper('initialize', options);
             this.loadAll(layerId);
             this.layerId = layerId;
             this.lockRotation=true;
             this.hasRotatingPoint=false;
-
+            // this.backgroundImg =
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
-
                 var layerNode=ProjectService.getFabricObject(self.id);
-
                 self.initPosition.left = self.getLeft();
                 self.initPosition.top = self.getTop();
                 self.initScale.X=layerNode.getScaleX().toFixed(2);
                 self.initScale.Y=layerNode.getScaleY().toFixed(2);
-
-
             });
 
             this.on('OnScaleRelease', function (objId) {
@@ -128,7 +120,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
-
             try{
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
@@ -136,29 +127,21 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     -(this.height / 2) ,
                     this.width ,
                     this.height );
-
                 var currentLayer=ProjectService.getCurrentLayer();
-
                 if (currentLayer&&ProjectService.scalingOperate.scaling&&ProjectService.scalingOperate.objId==this.id){
                     this.widgetImgs=[];
                     var layerNode= ProjectService.getFabricObject(currentLayer.id);
-
                     var angle=layerNode.getAngle()*Math.PI/180;
                     var sin=Math.sin(angle);
                     var cos=Math.cos(angle);
                     var deltaLeft=this.initPosition.left-this.getLeft();
                     var deltaTop=this.initPosition.top-this.getTop();
-
                     this.backgroundImg.width=this.width/layerNode.getScaleX()*this.initScale.X;
                     this.backgroundImg.height=this.height/layerNode.getScaleY()*this.initScale.Y;
-
                     this.backgroundImg.top=(-sin*deltaLeft+cos*deltaTop)/layerNode.getScaleY()-this.height/2;
                     this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
-
                 }
 
-                // var elem = this.backgroundImg.element;
-                // console.log('2',elem && elem.src)
                 if(this.backgroundImg.element){
                     // console.log('drawing background element',this.backgroundImg.element)
                     ctx.drawImage(this.backgroundImg.element,
@@ -179,30 +162,31 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyLayer.prototype.loadAll= function (layerId,cb) {
 
         var backgroundImg = new Image();
-        var layer=ProjectService.getLevelById(layerId)
+        var layer=null;
+        if(typeof layerId ==='string'){
+            layer=ProjectService.getLevelById(layerId);
+        }else{
+            layer = layerId;
+        }
         var layerWidth=layer.info.width/this.initScale.X;
         var layerHeight=layer.info.height/this.initScale.Y;
 
-
-
         this.initPosition={};
-
 
         if (layer.showSubLayer.url==''){
             backgroundImg = null;
         }else{
-
             backgroundImg.onload = (function () {
                 this.width = layerWidth;
                 this.height = layerHeight;
                 this.loaded = true;
                 this.setCoords();
-                this.fire('image:loaded');
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
                 cb && cb()
             }).bind(this);
             backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
         }
-
         this.backgroundImg={
             element:backgroundImg,
             width:layerWidth,
@@ -210,53 +194,39 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             left:-layerWidth / 2,
             top:-layerHeight/2
         };
-
         this.backgroundColor=layer.showSubLayer.backgroundColor;
         this.initPosition.left = this.getLeft();
         this.initPosition.top = this.getTop();
-
     };
     fabric.MyLayer.prototype.refresh = function (self,cb) {
         this.renderUrlInPage(self,function () {
             cb && cb();
         })
-    }
+    };
     fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
-        // console.log('rendering url in page')
-
+        // console.log('rendering url in page',self.id);
         var currentLayer=ProjectService.getLevelById(self.id);
         var backgroundImg = new Image();
-
-
         backgroundImg.onload = function () {
             self.backgroundImg.element = backgroundImg;
-
             self.backgroundImg.width = self.width;
             self.backgroundImg.height = self.height;
             self.backgroundImg.left = -self.width / 2;
             self.backgroundImg.top = -self.height / 2;
-
-
             self.initPosition.left = self.getLeft();
             self.initPosition.top = self.getTop();
             var pageNode = CanvasService.getPageNode();
             pageNode.renderAll();
             cb && cb();
         }.bind(self);
-
         backgroundImg.onerror = function (err) {
             backgroundImg = null;
             cb && cb(err);
         }.bind(self);
-
         backgroundImg.src = currentLayer.showSubLayer.url;
-
-
     };
     fabric.MyLayer.prototype.toObject = (function (toObject) {
         return function () {
-
-
             return fabric.util.object.extend(toObject.call(this), {
                 //id: this.id,
                 loaded: this.loaded,
@@ -271,9 +241,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyLayer.fromObject = function (object, callback) {
         callback && callback(new fabric.MyLayer(object.id,object));
     };
+    fabric.MyLayer.fromLevel = function(level,callback,option){
+        // console.log('level in',level);
+        callback && callback(new fabric.MyLayer(level.id,option));
+    };
     fabric.MyLayer.async = true;
-
-
 
 
     //progress
@@ -1396,6 +1368,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.hasRotatingPoint=false;
             this.backgroundColor=level.texList[0].slices[0].color;
             this.bindBit=level.info.bindBit;
+
+            this.text=level.info.text||'';
+            this.fontFamily=level.info.fontFamily||"宋体";
+            this.fontSize=level.info.fontSize||20;
+            this.fontColor=level.info.fontColor||'rgba(0,0,0,1)';
+            this.fontBold=level.info.fontBold||"100";
+            this.fontItalic=level.info.fontItalic||"";
+
             this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.imageElement) {
                 this.loaded = true;
@@ -1423,12 +1403,37 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+            this.on('changeFontStyle',function(arg){
+                if(arg.hasOwnProperty('text')){
+                    self.text=arg.text;
+                }
+                if(arg.fontFamily){
+                    self.fontFamily=arg.fontFamily;
+                }
+                if(arg.fontBold){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+                if(arg.fontSize){
+                    self.fontSize=arg.fontSize;
+                }
+                if(arg.fontColor){
+                    self.fontColor=arg.fontColor;
+                }
+                var _callback=arg.callback;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                ctx.save();
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -1439,6 +1444,30 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if (this.imageElement){
                     ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
+                ctx.restore();
+                if(this.text){
+                    ctx.save();
+                    ctx.fillStyle=this.fontColor;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    // console.log('button font',fontString)
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.text,0,0);
+                    ctx.restore();
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
             }
             catch(err){
                 console.log('错误描述',err);
@@ -1734,6 +1763,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontFamily=level.info.fontFamily;
             this.fontSize=level.info.fontSize;
             this.fontColor=level.info.fontColor;
+            this.fontBold=level.info.fontBold;
+            this.fontItalic=level.info.fontItalic;
             this.align=level.info.align;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
@@ -1751,7 +1782,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else
                     this.setWidth(10*this.maxFontWidth);
             }
-            
+
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
                 self.dateTimeModeId=arg.dateTimeModeId;
@@ -1778,8 +1809,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.hasOwnProperty('fontColor')){
                     self.fontColor=arg.fontColor;
                 }
+                if(arg.hasOwnProperty('fontBold')){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
                 self.setHeight(self.fontSize*1.1);
-                var font = self.fontSize + "px" + " " + self.fontFamily;
+                var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
                 var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
                 level.info.maxFontWidth = maxWidth;
                 self.maxFontWidth = maxWidth;
@@ -1819,7 +1856,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         _render: function (ctx) {
             try{
                 var fontString;
-                fontString=this.fontSize+'px'+" "+this.fontFamily;
+                fontString=this.fontItalic + " " + this.fontBold + " " + this.fontSize+'px'+" "+this.fontFamily;
                 //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
                 drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.width,this.maxFontWidth);
                 //将图片超出canvas的部分裁剪
@@ -1993,7 +2030,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.fillText(dateTimeStr[i],xCoordinate+colonCoordinate,0);
             }
             else
-            ctx.fillText(dateTimeStr[i],xCoordinate,0);
+                ctx.fillText(dateTimeStr[i],xCoordinate,0);
             xCoordinate+=maxFontWidth;
         }
     }
@@ -2037,10 +2074,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
-            this.on('changeButtonText',function(arg){
+            this.on('changeFontStyle',function(arg){
                 if(arg.hasOwnProperty('text')){
                     self.text=arg.text;
-
                 }
                 if(arg.fontFamily){
                     self.fontFamily=arg.fontFamily;
@@ -2380,7 +2416,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.setCoords();
                 this.fire('image:loaded');
             }
-            
+
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -2572,7 +2608,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyNum(level,object));
     };
     fabric.MyNum.async = true;
-
     /**
      * 逐字渲染数字控件
      * @param  {[type]} ctx           [Canvas对象]
@@ -2588,7 +2623,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             initXPos,            //渲染字符的起始位置
             widthOfNumStr;       //渲染的字符串的长度
 
-        widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
+        widthOfNumStr=(decimalCount===0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
         switch(align){
             case 'left':
                 initXPos=0;
@@ -2601,7 +2636,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 initXPos = (width-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos-width/2;    
+        xCoordinate = initXPos-width/2;
         for(i=0;i<numStr.length;i++){
             ctx.fillText(numStr[i],xCoordinate,0);
             if(numStr[i]=='.'){
@@ -2612,6 +2647,333 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }
     }
 
+    //TexNum
+    fabric.MyTexNum = fabric.util.createClass(fabric.Object,{
+        type: Type.MyTexNum,
+        initialize: function (level, options) {
+            var self = this;
+            var slices = level.texList[0].slices;
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.hasRotatingPoint = false;
+
+            this.numValue = level.info.numValue;
+            this.align = level.info.align;
+            this.arrange = level.info.arrange;
+            //下面为数字图层的属性
+            this.numOfDigits = level.info.numOfDigits;
+            this.decimalCount = level.info.decimalCount;
+            this.symbolMode = level.info.symbolMode;
+            this.frontZeroMode = level.info.frontZeroMode;
+            this.maxFontWidth = level.info.maxFontWidth;
+            this.characterW = level.info.characterW;
+            this.characterH = level.info.characterH;
+
+
+            //初始化数字字符
+            this.numObj = [];
+            for(var i=0,il=13;i<il;i++){
+                this.numObj[i] = {};
+                this.numObj[i].color = slices[i].color;
+                this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+            }
+
+            //修改数字纹理
+            this.on('changeTex', function (arg) {
+                var slices=arg.level.texList[0].slices;
+                var _callback=arg.callback;
+
+                for(var i=0,il=13;i<il;i++){
+                    self.numObj[i] = {};
+                    self.numObj[i].color = slices[i].color;
+                    self.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+                }
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+            //修改数字图层控件属性
+            this.on('changeTexNumContent', function (arg) {
+                var _callback=arg.callback;
+                var level=arg.level;
+                if(arg.hasOwnProperty('numValue')){
+                    self.numValue=arg.numValue;
+                }
+                if(arg.numOfDigits){
+                    self.numOfDigits=arg.numOfDigits;
+                }
+                if(arg.hasOwnProperty('decimalCount')){
+                    self.decimalCount=arg.decimalCount;
+                }
+                if(arg.symbolMode){
+                    self.symbolMode=arg.symbolMode;
+                }
+                if(arg.frontZeroMode){
+                    self.frontZeroMode=arg.frontZeroMode;
+                }
+                if(arg.align){
+                    self.align=arg.align;
+                }
+                if(arg.hasOwnProperty('characterW')){
+                    self.characterW = level.info.characterW;
+                }
+                if(arg.hasOwnProperty('characterH')){
+                    self.characterH = level.info.characterH;
+                }
+
+                //console.log('keke',this.characterW,"Y",this.characterH);
+                //设置图层数字控件的宽高
+                if(self.numOfDigits&&self.characterW){
+                    //加入符号宽度
+                    var width = self.symbolMode=='0'?(self.numOfDigits*self.characterW):((self.numOfDigits+1)*self.characterW);
+                    //加入小数点宽度
+                    if(self.decimalCount!=0){
+                        width +=0.5*self.characterW;
+                    }
+                    //设置高度
+                    var height = self.characterH;
+
+                    self.set({width:width,height:height});
+                };
+
+
+                //console.log('width',width,'maxWidth',maxWidth);
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+
+        _render:function(ctx){
+            try{
+                //在数字框里展示数字预览效果
+                if(!isNaN(this.numValue)) {
+                    //设置正负
+                    var negative=false;
+                    if(this.numValue<0){
+                        negative=true;
+                    }
+                    //取绝对值
+                    var tempNumValue=Math.abs(this.numValue);
+                    //数值字符串化
+                    tempNumValue= tempNumValue.toString();
+
+                    var i=0;
+                    //配置小数位数
+                    if(this.decimalCount>0){
+                        //Math.pow(x,y)返回x的y次幂
+                        var baseCount = Math.pow(10,this.decimalCount);
+                        //数值字符串化
+                        tempNumValue = (Math.abs(this.numValue)/baseCount).toString();
+                        //.indexOf('.')返回'.'在字符串中首次出现的位置，-1表示没有出现
+                        if(tempNumValue.indexOf('.')!=-1){
+                            //console.log('输入有小数')
+                            //.split('.')[1]把字符串分割，tempNumValue.split('.')是返回的字符串数组，tempNumValue.split('.')[1]是小数部分
+                            var tempDecimalCount=tempNumValue.split('.')[1];
+                            //当小数部分的后几位为0时将0补足
+                            for(i=0;i<this.decimalCount-tempDecimalCount.length;i++){
+                                tempNumValue=tempNumValue+'0';
+                            }
+                        }else{
+                            //console.log('输入无小数')
+                            tempNumValue= tempNumValue+".";
+                            for(i=0;i<this.decimalCount;i++){
+                                tempNumValue=tempNumValue+'0';
+                            }
+                        }
+                    }
+                    //配置前导0模式
+                    if(this.frontZeroMode=='1'){
+                        //console.log('minus',this.numOfDigits-tempNumValue.length);
+                        var minus=this.numOfDigits-tempNumValue.length;
+                        //console.log('minus',minus);
+                        if(this.decimalCount){
+                            for(i=0;i<minus+1;i++){
+                                tempNumValue='0'+tempNumValue;
+                            }
+                        }else{
+                            for(i=0;i<minus;i++){
+                                tempNumValue='0'+tempNumValue;
+                            }
+                        }
+                    }
+                    //配置正负号
+                    if((this.symbolMode=='1')&&(negative)){
+                        tempNumValue='-'+tempNumValue;
+                    }
+
+                    //console.log('keke',this.characterW,"Y",this.characterH);
+                    drawTexNumByCharacter(ctx,tempNumValue,this.align,this.width,this.characterW,this.characterH,this.decimalCount,this.numObj);
+
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();//此时的坐标在控件的正中，因为设置了originX: 'center', originY: 'center'
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染数字出错');
+            }
+
+        }
+    });
+    fabric.MyTexNum.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyTexNum(level, option));
+    };
+    fabric.MyTexNum.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MyTexNum(level,object));
+    };
+    fabric.MyTexNum.async = true;
+    /**
+     * 逐字渲染数字图层控件
+     * @param  {[type]} ctx           [Canvas对象]
+     * @param  {[type]} numStr        [数字字符串]
+     * @param  {[type]} align         [对齐方式]
+     * @param  {[type]} width         [数字图层控件总宽度]
+     * @param  {[type]} characterW    [单个数字图层宽度]
+     * @param  {[type]} height        [单个数字图层高度]
+     * @param  {[type]} decimalCount  [小数点位数]
+     * @param  {[type]} numObj        [数字图层纹理]
+     * @return {[type]}               [description]
+     */
+    function drawTexNumByCharacter(ctx,numStr,align,width,characterW,height,decimalCount,numObj){
+        var xCoordinate,         //每个字符的x坐标
+            initXPos,            //整个数字图层控件的起始位置
+            widthOfNumStr;       //整个数字图层控件的宽度
+
+        //计算整个数字图层控件的宽度
+        widthOfNumStr=(decimalCount===0?(characterW*numStr.length):(characterW*(numStr.length-0.5)));
+
+        //由对齐方式设置整个数字图层控件的起始位置
+        switch(align){
+            case 'left':
+                initXPos=characterW/2-width/2;
+                break;
+            case 'right':
+                initXPos=width/2+characterW/2-widthOfNumStr;
+                break;
+            case 'center':
+            default:
+                initXPos = (characterW-widthOfNumStr)/2;
+                break;
+        }
+        //设置第一个数字的起始位置
+        xCoordinate = initXPos;
+
+        for(var i=0;i<numStr.length;i++){
+            //根据数字字符绘制对应的数字图层
+            switch (numStr[i]){
+                case '0':
+                    drawNum(0,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '1':
+                    drawNum(1,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '2':
+                    drawNum(2,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '3':
+                    drawNum(3,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '4':
+                    drawNum(4,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '5':
+                    drawNum(5,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '6':
+                    drawNum(6,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '7':
+                    drawNum(7,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '8':
+                    drawNum(8,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '9':
+                    drawNum(9,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '.':
+                    drawNum(10,characterW/2,height,numObj,xCoordinate-characterW/4,ctx);
+                    break;
+                case '+':
+                    drawNum(11,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '-':
+                    drawNum(12,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+
+            }
+            //设置下一个数字的起始位置
+            if(numStr[i]=='.'){
+                xCoordinate+=characterW/2;
+            }else{
+                xCoordinate+=characterW;
+            }
+        }
+        // /**
+        //  * 绘制单个数字图层
+        //  * @param  {[type]} num           [要渲染的数字图层对象在numObj中的位置]
+        //  * @param  {[type]} characterW         [要渲染的数字图层对象宽度]
+        //  * @param  {[type]} height        [要渲染的数字图层对象高度]
+        //  * @param  {[type]} numObj        [数字图层纹理]
+        //  * @param  {[type]} xCoordinate   [要渲染的数字图层对象起始位置x坐标]
+        //  * @param  {[type]} ctx           [Canvas对象]
+        //  * @return {[type]} null          [null]
+        //  */
+        function drawNum(num,characterW,height,numObj,xCoordinate,ctx){
+            try{
+                ctx.beginPath();
+                //设置背景色
+                ctx.fillStyle=numObj[num].color;
+                ctx.fillRect(
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                //ctx.fillStyle=this.numObj[num].img;
+                //插入图片
+                ctx.drawImage(
+                    numObj[num].img,
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                ctx.closePath();
+                ctx.stroke();
+            }catch(err){
+
+            }
+
+
+        }
+    }
 
     fabric.MyButtonGroup = fabric.util.createClass(fabric.Object, {
         type: Type.MyButtonGroup,
@@ -3017,6 +3379,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             var tex=level.texList[0];
             this.currentColor=tex.slices[tex.currentSliceIdx].color;
 
+            this.text=tex.slices[0].text||'';
+            this.fontFamily=level.info.fontFamily||"宋体";
+            this.fontSize=level.info.fontSize||20;
+            this.fontColor=level.info.fontColor||'rgba(0,0,0,1)';
+            this.fontBold=level.info.fontBold||"100";
+            this.fontItalic=level.info.fontItalic||"";
+
             this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
             if (this.currentImageElement) {
                 this.loaded = true;
@@ -3031,17 +3400,42 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var tex=level.texList[0];
                 self.currentColor=tex.slices[tex.currentSliceIdx].color;
                 self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                self.text = tex.slices[0].text;
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
-
+            this.on('changeFontStyle',function(arg){
+                if(arg.hasOwnProperty('text')){
+                    self.text=arg.text;
+                }
+                if(arg.fontFamily){
+                    self.fontFamily=arg.fontFamily;
+                }
+                if(arg.fontBold){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+                if(arg.fontSize){
+                    self.fontSize=arg.fontSize;
+                }
+                if(arg.fontColor){
+                    self.fontColor=arg.fontColor;
+                }
+                var _callback=arg.callback;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                ctx.save();
                 ctx.fillStyle=this.currentColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -3050,8 +3444,32 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     this.height );
                 if (this.currentImageElement){
                     ctx.drawImage(this.currentImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
                 }
+                ctx.restore();
+
+                if(this.text){
+                    ctx.save();
+                    ctx.fillStyle=this.fontColor;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
+                    // console.log('button font',fontString)
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.text,0,0);
+                    ctx.restore();
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
             }
             catch(err){
                 console.log('错误描述',err);

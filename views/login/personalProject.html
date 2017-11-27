@@ -8,14 +8,18 @@
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
     <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../public/login/assets/css/personalProject.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/login/assets/css/jquery.contextMenu.min.css" type="text/css" />
     <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
+    <script src="../../public/login/assets/js/jquery.contextMenu.min.js"></script>
     <script src="../../public/login/assets/js/bootstrap.js"></script>
     <script src="../../public/login/assets/js/ejs_production.js"></script>
     <script src="../../public/login/assets/js/personalProject.js"></script>
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
+
+
 </head>
 <body>
-    <div class="header">
+    <div class="header" id="mianHeader" >
         <div class="header_main">
             <div class="header_main_logo"><a id="mainhref" href="/">
                 <img src="../../public/login/assets/img/速显微.png" />
@@ -71,8 +75,8 @@
             </div>
         </div>
     </div>
-    <div class="main" id="filedrag">
-        <div class="top">
+    <div class="main filedragOverflow" id="filedrag">
+        <div class="top" ng-click="console.log('123')">
             <span calss="pro">工程项目</span>
             <!--（<em class="var">2</em> )-->
             <!--<span class="pro2">-->
@@ -162,7 +166,8 @@
                 <!-- 识别符 勿删 -->
                 <!-- webProFlag -->
                 <%for(var i=0;i<projects.length;i++){%>
-                <li data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel">
+                <!--<li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  context-menu="component.menuOptions"  class="projectpanel" title="创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">-->
+                <li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel" title="创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
                     <div class="img">
                         <i class="projectdelete iconfont">&#xe607;</i>
                         <a href="#"><img src=<%= projects[i].thumbnail||"../../public/login/assets/img/pro_1.png" %> /></a>
@@ -289,4 +294,5 @@
 <script src="../../public/general/js/browserCheck.js"></script>
 <script src="../../public/nw/menubar.js"></script>
 <script src="../../public/login/assets/js/dragFolder.js"></script>
+<!--<script src="../../public/login/assets/js/perProCtrol.js"></script>-->
 </html>

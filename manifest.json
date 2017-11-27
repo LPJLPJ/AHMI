@@ -1,17 +1,17 @@
 {
     "name": "AHMI_IDE",
-    "version": "1.9.1",
+    "version": "1.10.1",
     "author": "graphichina",
-    "manifestUrl": "https://ide.graphichina.com/checkUpdate/manifest.json",
+    "manifestUrl": "https://test.graphichina.com/checkUpdate/manifest.json",
     "packages": {
         "mac": {
-           "url": "https://ide.graphichina.com/releases/updapp/mac/updFiles.zip"
+           "url": "https://test.graphichina.com/releases/updapp/mac/updFiles.zip"
         },
         "win": {
-           "url": "https://ide.graphichina.com/releases/updapp/win/updFiles.zip"
+           "url": "https://test.graphichina.com/releases/updapp/win/updFiles.zip"
         },
         "linux32": {
-           "url": "https://ide.graphichina/releases/updapp/linux32/updFiles.tar.gz"
+           "url": "https://test.graphichina/releases/updapp/linux32/updFiles.tar.gz"
         }
     }
 }

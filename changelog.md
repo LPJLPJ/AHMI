@@ -133,6 +133,102 @@ fix:
     5. num has decimal in simulator bug
     6. remove textarea widget's scale ctrl
     7. widget in default template imgSrc bug
+update:
+    1. add view port to display info in simulator
 add:
     1. add change subLayer zIndex fun
     2. now can delete multi-files at once
+    3. can upload a zip which is generated in IDE to rebuild a project
+
+1.9.2_test
+fix:
+    1. delete the first subcanvas in canvas bug
+    2. num widget in animation model cannot trigger high/low alarm
+update:
+    1. only show timer when opertion is setTimer***
+    2. remove button's tag
+    3. in  action value can only input integer
+update:
+    1. optimization upload a zip
+
+
+1.9.3
+add:
+    1. support switch and slide widget render text
+fix:
+    1. fix a bug that newly created project with templates can not be opend
+    2. fix a bug about tag's display in action
+    3. simulator reg input -1 but display nan
+    4. actions' op can't display in a saved project
+    5. num widget max val ue
+update:
+    1. x,y,range from -2000 to 2000.width,height range from 1 to 2000
+
+1.9.4
+add:
+    1. last save uuid and last save timestamp
+fix:
+    1. page animation will not show background during animation
+update:
+
+1.9.5
+add:
+    1. add texNum widget
+fix:
+    1. animation bug fix
+    2. fix redo/undo in some mode
+    3. fix css in select and widget dropdown
+    4. fix old switch render bug
+update:
+    1. slide widget can insert slice in middle
+    2. add resource select all
+
+1.9.6
+add:
+    1.add local save as option
+    2.add select all function
+    3.add ttf symbol when upload ttf
+fix:
+    1.resource upload bugs
+    2.gulp bug to cause undefined text in old switch tex after render
+    3.simulator bug high alarm 0 to 1
+
+1.9.7
+add:
+    1. alert err
+fix:
+
+1.9.8
+add:
+    1. dynamically change ide title to project name
+    2. add move to front and move to back in sort widgets and layers and sublayers
+fix:
+    1. canvas and canvas group copy bug caused by $$hashkey
+    2. when page backgroundImage is empty use null rather than blank.png
+update:
+    1. change index title and description
+    2. a tag cannot rename when it bind to a widget or page or canvas
+    3. a local update to web will rewrite its createTime and lastModifiedTime,projects will sort by createTime
+    4. in personal projects space when pointer hover on a project ,will show its createTime and lastModifiedTime
+    5. local IDE will check update auto when it is setup
+
+1.10.0
+add:
+fix:
+    1. subcanvas action bug
+    2. local ver save as bug
+update:
+    1. complete rebuild data structure and render canvas module.
+    2. remove proJson and loadFromProJson operate
+    3. compatible old local ver by generate compatible local project
+
+1.10.1
+add:
+    1. work with shared project using socketIO
+    2. visualization of project using D3
+    3. user can choose project version in submenu
+fix:
+    1. names specification
+update:
+    1. choose version in right click
+    2. when upload local project to web filter resources which generate by IDE

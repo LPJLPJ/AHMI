@@ -37,9 +37,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         for (var model in models){
             if (models.hasOwnProperty(model)) {
                 //Button
-            
+
                 var modelCommands = _.cloneDeep(models[model].prototype.commands);
-            
+
                 transGeneralWidgetMultiCommands(modelCommands,generalWidgetFunctions)
                 commands[model] = modelCommands;
             }
@@ -80,7 +80,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                 }
             }
         }
-        
+
         console.log('testModels',testModels)
         console.log('cppModels',cppModels)
         // return commands;
@@ -107,6 +107,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         var commandsObj = registerGeneralCommands()
         targetProject.generalWidgetCommands = commandsObj.commands
         targetProject.cppWidgetCommands = commandsObj.cppModels;
+        //add last save info
+        targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
+        targetProject.lastSaveUUID = rawProject.lastSaveUUID;
         targetProject.pageList = [];
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
@@ -182,7 +185,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         //targetWidget.x = rawWidget.info.left;
         //targetWidget.y = rawWidget.info.top;
         //targetWidget.info = rawWidget.info;
-        
+
         targetWidget = _.cloneDeep(rawWidget);
         transActions(targetWidget);
         // console.log(_.cloneDeep(targetWidget))
@@ -195,7 +198,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             var h = info.height;
             generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
             generalWidget = generalWidget.toObject();
-            
+
             generalWidget.generalType = 'Button'
             generalWidget.id = subLayerIdx+'.'+widgetIdx;
             generalWidget.type = 'widget';
@@ -243,7 +246,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                             slices.push(curTex.slices[1])
                         }
                     }
-                    
+
                     generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices,highLight)
                     generalWidget = generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
@@ -433,7 +436,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                             blockInfo.w = blockImg.width;
                             blockInfo.h = blockImg.height;
                         }
-                        
+
                     }
                     generalWidget = new WidgetModel.models['SlideBlock'](x,y,w,h,info.arrange,blockInfo,[targetWidget.texList[0].slices[0],targetWidget.texList[1].slices[0]]);
                     generalWidget = generalWidget.toObject();
@@ -477,7 +480,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.otherAttrs[6] = Number(info['maxFontWidth'])
                     switch(info['align']){
                         case 'left':
-                            generalWidget.otherAttrs[7] = 0 
+                            generalWidget.otherAttrs[7] = 0
                         break;
                         case 'center':
                             generalWidget.otherAttrs[7] = 1
@@ -488,7 +491,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                         default:
                             generalWidget.otherAttrs[7] = 1
                     }
-                    
+
                     generalWidget.generalType = 'Num';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
@@ -537,16 +540,16 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget
             }
-            
-            
+
+
 
 
 
             generalWidget.id = subLayerIdx+'.'+widgetIdx;
             generalWidget.type = 'widget';
-            
 
-            
+
+
         }
 
 
@@ -567,7 +570,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                 return cmd['cmd']
             })
         }
-        
+
     }
 
     function deepCopyAttributes(srcObj,dstObj,attrList){
@@ -612,6 +615,89 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             throw new Error('parsing color error: '+color)
         }
         return result
+    }
+
+
+
+    /**
+     * edit in 2017/09/15
+     * use for save simple project date
+     */
+    this.transDateFileBase = transDataFileBase;
+
+    function transDataFileBase(rawProject){
+        var targetProject = {};
+        targetProject.DSFlag = 'base';
+        targetProject.projectId = rawProject.projectId;
+        targetProject.version = rawProject.version;
+        targetProject.name = rawProject.name || 'default project';
+        targetProject.author = rawProject.author || 'author';
+
+        targetProject.CANId = rawProject.CANId;
+        targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
+        targetProject.lastSaveUUID = rawProject.lastSaveUUID;
+
+        targetProject.size = rawProject.currentSize;
+        var pages = rawProject.pages;
+        targetProject.pages = [];
+        for (var i=0;i<pages.length;i++){
+            targetProject.pages.push(transPageBase(pages[i]));
+        }
+        return targetProject;
+    }
+
+    function transPageBase(rawPage){
+        // console.log(rawPage);
+        var targetPage = {};
+        deepCopyAttributes(rawPage,targetPage,['id','name','url','type','mode','selected','expand','current','currentFablayer','backgroundImage','backgroundColor','triggers','actions','tag','transition']);
+        transActions(targetPage);
+        //CanvasList
+        var layers = rawPage.layers;
+        targetPage.layers = [];
+        for (var i=0;i<layers.length;i++){
+            targetPage.layers.push(transLayerBase(layers[i]));
+        }
+        return targetPage;
+    }
+
+    function transLayerBase(rawLayer){
+        var targetLayer = {};
+        deepCopyAttributes(rawLayer,targetLayer,['id','name','url','type','zIndex','info','selected','current','expand','actions','animations','transition']);
+        targetLayer.w = rawLayer.info.width;
+        targetLayer.h = rawLayer.info.height;
+        targetLayer.x = rawLayer.info.left;
+        targetLayer.y = rawLayer.info.top;
+
+        var subLayers = rawLayer.subLayers
+        targetLayer.subLayers = [];
+        //curSubCanvasIdx
+        for (var i=0;i<subLayers.length;i++){
+            var curSubLayer = subLayers[i];
+            if (rawLayer.showSubLayer.id == curSubLayer){
+                targetLayer.curSubCanvasIdx = i;
+            }
+            targetLayer.subLayers.push(transSubLayerBase(curSubLayer));
+        }
+        return targetLayer;
+    }
+
+    function transSubLayerBase(rawSubLayer){
+        var targetSubLayer = {};
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        var widgets = rawSubLayer.widgets;
+        targetSubLayer.widgets = [];
+        for (var i=0;i<widgets.length;i++){
+            var curWidget = widgets[i];
+            targetSubLayer.widgets.push(transWidgetBase(curWidget));
+        }
+
+        return targetSubLayer;
+    }
+
+    function transWidgetBase(rawWidget){
+        var targetWidget = {};
+        targetWidget = _.cloneDeep(rawWidget);
+        return targetWidget;
     }
 
 }]);

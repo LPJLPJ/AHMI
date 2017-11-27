@@ -36,7 +36,7 @@ var ProgressBar = function (context) {
     };
 
     this.hideProgress = function () {
-      self.$dialog.modal('hide');
+        self.$dialog.modal('hide');
     }
 
     this.showProgress = function () {
@@ -50,7 +50,7 @@ var ProgressBar = function (context) {
             });
 
             ui.onDialogHidden(self.$dialog, function () {
-            // detach events
+                // detach events
                 if (deferred.state() === 'pending') {
                     deferred.reject();
                 }
@@ -98,12 +98,15 @@ var Library = function (context) {
     var resourceUrl = ""
     var deleteUrl = ""
     var progress
+    var fileLimit=0
+    var curFilesNum = 0
+    var maxFilesNum = 10
 
 
     this.initialize = function () {
         var $container = options.dialogsInBody ? $(document.body) : $editor;
 
-        var body = '<div class="row"><input class="input upload col-md-3" type="file"  multiple="multiple" /><div class="progress col-md-8" style="padding:0"><div class="progress-bar" style="transition:none"></div></div></div><div class="row"><div class="library-preview col-md-3"></div><div class="col-md-8"><table class="library-table table"></table></div></div>'
+        var body = '<div class="row"><input class="input upload col-md-3" type="file"  multiple="multiple" /><div class="progress col-md-8" style="padding:0"><div class="progress-bar" style="transition:none"></div></div></div><div class="row"><div class="library-preview col-md-3"></div><div class="col-md-8"><table class="library-table table"></table></div></div><div class="row"><span class="msg"></span></div>'
 
 
         this.$dialog = ui.dialog({
@@ -127,11 +130,18 @@ var Library = function (context) {
         });
     };
 
-    
+    this.setMaxFilesNum = function (maxNum) {
+        maxFilesNum = maxNum
+    }
+
+    function exceedMaxNum(curNum) {
+        return curNum > maxFilesNum
+    }
+
 
     this.resourceType = function (url) {
         var ext = self.getExt(url)
-        switch (ext){
+        switch (ext.toLowerCase()){
             case 'jpg':
             case 'jpeg':
             case 'png':
@@ -153,7 +163,31 @@ var Library = function (context) {
             self.setPreview(fileName,type)
         }
     }
+
+    function checkFileSize(fileSize,limit) {
+        limit = limit||0
+        if (limit>0){
+            if(fileSize>limit){
+                return false
+            }else{
+                return true
+            }
+        }else{
+            return true
+        }
+
+    }
     function sendFiles(files,url,scb,fcb,pcb) {
+        for (var i=0;i<files.length;i++){
+            if (!checkFileSize(files[i].size,fileLimit)){
+                return fcb&& fcb(new Error('文件过大，不能超过'+(fileLimit/1000/1000)+'MB'))
+            }
+        }
+
+        if (exceedMaxNum(files.length+curFilesNum)){
+            return fcb&& fcb(new Error('文件过多，不能超过'+(maxFilesNum)+'个'))
+        }
+
         var data = new FormData();
         for (var i=0;i<files.length;i++){
             data.append("file", files[i]);
@@ -173,12 +207,12 @@ var Library = function (context) {
                 }, false);
                 //Download progress
                 xhr.addEventListener("progress", function(evt){
-                  if (evt.lengthComputable) {
-                    var percentComplete = evt.loaded / evt.total;
-                    //Do something with download progress
-                    // console.log(percentComplete);
-                }
-            }, false);
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        //Do something with download progress
+                        // console.log(percentComplete);
+                    }
+                }, false);
                 return xhr;
             },
             data: data,
@@ -188,12 +222,12 @@ var Library = function (context) {
             contentType: false,
             processData: false
         })
-        .done(function (msg) {
-            scb && scb(msg)
-        })
-        .fail(function (xhr) {
-            fcb && fcb(xhr)
-        })
+            .done(function (msg) {
+                scb && scb(msg)
+            })
+            .fail(function (xhr) {
+                fcb && fcb(xhr)
+            })
     }
 
 
@@ -205,14 +239,18 @@ var Library = function (context) {
         switch (type){
             case 'img':
                 node = '<img width="100%" src="'+baseUrl+fileName+'" />'
-            break
+                break
             case 'video':
                 node = '<video width="100%" src="'+baseUrl+fileName+'" />'
-            break
+                break
         }
         if (node) {
             $libraryPreview.html(node)
         }
+    }
+
+    this.setFileLimit = function (limit) {
+        fileLimit = limit
     }
 
     this.setUploadUrl = function (url) {
@@ -237,13 +275,17 @@ var Library = function (context) {
             url:deleteUrl,
             data:{fileName:fileName}
         })
-        .done(function (msg) {
-            console.log(msg)
-            cb && cb()
-        })
-        .fail(function (xhr,status) {
-            console.log('delete failed')
-        })
+            .done(function (msg) {
+                console.log(msg)
+                cb && cb()
+            })
+            .fail(function (xhr,status) {
+                console.log('delete failed')
+            })
+    }
+
+    this.copyUrl = function () {
+
     }
 
     this.showLibrary = function () {
@@ -259,58 +301,47 @@ var Library = function (context) {
 
                 var DELAY = 300, clicks = 0, timer = null;
                 $libraryTable.click(function (e) {
+                    $('.msg').html('')
+                    var targetClass = $(e.target).attr('class')
+                    var curRow = $(e.target.parentNode)
+                    var fileName = curRow.siblings('.library-filename').text()
+                    if (targetClass.indexOf('library-filename')!==-1) {
+                        self.showPreview(e.target.innerText)
+                    }else if (targetClass.indexOf('btn-delete')!==-1) {
+                        //delete
+                        // self.deleteFile()
 
-                    clicks++;  //count clicks
-
-                    if(clicks === 1) {
-
-                        timer = setTimeout(function() {
-
-                            
-                            clicks = 0;             
-                            var targetClass = $(e.target).attr('class')
-                            if (targetClass.indexOf('library-filename')!==-1) {
-                                self.showPreview(e.target.innerText)
-                            }else if (targetClass.indexOf('btn-delete')!==-1) {
-                                //delete
-                                // self.deleteFile()
-                                var curRow = $(e.target.parentNode)
-                                var fileName = curRow.siblings('.library-filename').text()
-                                self.deleteFile(fileName,function () {
-                                    for (var i = curFiles.length - 1; i >= 0; i--) {
-                                        if(curFiles[i]==fileName){
-                                            curFiles.splice(i,1)
-                                            break
-                                        }
-                                    }
-                                    curRow.parent().remove()
-
-                                })
-                            }
-
-
-                        }, DELAY);
-
-                    } else {
-
-                        clearTimeout(timer);    
-                        clicks = 0;             
-                        var targetClass = $(e.target).attr('class')
-                        if (targetClass.indexOf('library-filename')!==-1) {
-                            var clipBtn = document.createElement('button')
-                            var clipboard = new Clipboard(clipBtn,{
-                                text:function () {
-                                    return baseUrl+'/'+e.target.innerText
+                        self.deleteFile(fileName,function () {
+                            for (var i = curFiles.length - 1; i >= 0; i--) {
+                                if(curFiles[i]==fileName){
+                                    curFiles.splice(i,1)
+                                    break
                                 }
-                            });
-                            $(clipBtn).click()
-                            clipboard.destroy()
-                        }
+                            }
+                            curRow.parent().remove()
 
+                        })
+                    }else if (targetClass.indexOf('btn-copy')!==-1) {
+                        $('.msg').html('')
+                        var copy = function (e) {
+                            e.preventDefault();
+                            console.log('copy');
+                            var text = baseUrl+'/'+fileName
+                            if (e.clipboardData) {
+                                e.clipboardData.setData('text/plain', text);
+                                $('.msg').html('复制成功')
+                            } else if (window.clipboardData) {
+                                window.clipboardData.setData('Text', text);
+                                $('.msg').html('复制成功')
+                            }
+                        }
+                        window.addEventListener('copy', copy);
+                        document.execCommand('copy');
+                        window.removeEventListener('copy', copy);
 
                     }
 
-                    
+
 
                 })
 
@@ -319,11 +350,12 @@ var Library = function (context) {
                 var $uploadBtn = self.$dialog.find('.upload')
 
                 $uploadBtn.change(function (e) {
+                    $('.msg').html('')
                     if (!uploadUrl) {return}
                     sendFiles(e.target.files,uploadUrl,function () {
                         self.updateLibrary(retriveUrl)
-                    },function (xhr, status) {
-                        console.log('upload error')
+                    },function (err) {
+                        $('.msg').html(err)
                     },function (percentComplete) {
                         self.updateProgress((percentComplete*100).toFixed(2))
                     })
@@ -335,7 +367,7 @@ var Library = function (context) {
             });
 
             ui.onDialogHidden(self.$dialog, function () {
-            // detach events
+                // detach events
                 if (deferred.state() === 'pending') {
                     deferred.reject();
                 }
@@ -362,15 +394,17 @@ var Library = function (context) {
             files = files.filter(function (file) {
                 return !self.isHiddenFile(file)
             })
-            console.log(files,files.map(function (file) {
-                return self.getExt(file)
-            }))
+            // console.log(files,files.map(function (file) {
+            //     return self.getExt(file)
+            // }))
+            files.sort()
+            curFilesNum = files.length
             curFiles = files
             self.insertFiles(files)
         })
-        .fail(function (xhr,status) {
-            console.log('failed')
-        })
+            .fail(function (err) {
+                console.log('failed',err.responseText)
+            })
     }
 
     this.getExt = function (fileName) {
@@ -388,22 +422,26 @@ var Library = function (context) {
             return self.renderFile(file)
         })
         libraryTable.innerHTML = fileDOMs.join("")
+        // var clipboard = new Clipboard('.btn-copy')
+        // clipboard.on('success', function(e) {
+        //     $('.msg').html('复制成功')
+        // });
     }
 
     this.renderFile = function (file) {
-        return '<tr><td class="library-filename">'+file+'</td><td>'+self.getExt(file)+'</td><td><button class="btn btn-delete">x</button></td></tr>'
+        return '<tr><td class="library-filename">'+file+'</td><td>'+self.getExt(file)+'</td><td><button class="btn btn-default btn-copy" >复制</button></td><td><button class="btn btn-delete">x</button></td></tr>'
     }
-   
-   // context.memo('mis.lib', function () {
-   //      return ui.button({
-   //        contents: ui.icon(options.icons.picture),
-   //        tooltip: 'lib',
-   //        click: context.createInvokeHandler('library.showLibrary')
-   //      }).render();
-   //    });
-    
 
-    
+    // context.memo('mis.lib', function () {
+    //      return ui.button({
+    //        contents: ui.icon(options.icons.picture),
+    //        tooltip: 'lib',
+    //        click: context.createInvokeHandler('library.showLibrary')
+    //      }).render();
+    //    });
+
+
+
 };
 
 
@@ -413,25 +451,25 @@ var Library = function (context) {
 
 
 $.extend($.summernote.plugins, {
-  progressBar: ProgressBar,
-  library:Library
+    progressBar: ProgressBar,
+    library:Library
 });
 
 
 var LibraryButton = function (context) {
-  var ui = $.summernote.ui;
-  
-  // create button
-  var button = ui.button({
-    contents: '<i class="fa fa-child"/> lib',
-    tooltip: 'library',
-    click: function () {
-      // invoke insertText method with 'hello' on editor module.
-      context.invoke('library.showLibrary');
-    }
-  });
+    var ui = $.summernote.ui;
 
-  return button.render();   // return button as jquery object 
+    // create button
+    var button = ui.button({
+        contents: '<i class="fa fa-child"/> lib',
+        tooltip: 'library',
+        click: function () {
+            // invoke insertText method with 'hello' on editor module.
+            context.invoke('library.showLibrary');
+        }
+    });
+
+    return button.render();   // return button as jquery object
 }
 
 
@@ -444,7 +482,7 @@ $summernote.summernote({
     toolbar: [
         // [groupName, [list of button]]
         ['insert',['picture','link','video','hr','table']],
-        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['style', ['style','bold', 'italic', 'underline', 'clear']],
         ['font', ['strikethrough', 'superscript', 'subscript']],
         ['color', ['color']],
         ['para', ['ul', 'ol', 'paragraph']],
@@ -458,27 +496,28 @@ $summernote.summernote({
     height:400,
     lang:'zh-CN',
     popover: {
-      image: [
-        ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
-        ['float', ['floatLeft', 'floatRight', 'floatNone']],
-        ['remove', ['removeMedia']]
-      ],
-      link: [
-        ['link', ['linkDialogShow', 'unlink']]
-      ]
+        image: [
+            ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
+            ['float', ['floatLeft', 'floatRight', 'floatNone']],
+            ['remove', ['removeMedia']]
+        ],
+        link: [
+            ['link', ['linkDialogShow', 'unlink']]
+        ]
     },
     prettifyHtml:true,
     callbacks:{
         onImageUpload:function (files) {
-            var currentId = parseQuery().id
-            var url = '/blog/resources/upload?blogId='+currentId
+            var currentId = '59e81766895ec024825728e2'
+
+            var url = '/support/'+currentId+'/resource'
             $summernote.summernote('progressBar.showProgress')
             sendFiles(files,url,function (msg) {
                 //close dialog
                 $summernote.summernote('progressBar.hideProgress')
                 $summernote.summernote('restoreRange')
 
-                var baseUrl = '/public/blog/media/'
+                var baseUrl = url+'/'
                 for (var i=0;i<files.length;i++){
                     insertSingleImage($summernote,baseUrl+files[i].name,files[i].name)
                 }
@@ -487,6 +526,18 @@ $summernote.summernote({
             },function (percentComplete) {
                 $summernote.summernote('progressBar.updateProgress',percentComplete*100+'%')
             })
+        },
+        onImageUploadError:function (e) {
+            $.alert({
+                title: '',
+                content: '插入图片失败，链接无效'
+            });
+        },
+        onVideoInsertError:function () {
+            $.alert({
+                title: '',
+                content: '插入视频失败，链接无效'
+            });
         }
     }
 
@@ -522,18 +573,18 @@ function sendFile(file,url,scb,fcb,pcb) {
             xhr.upload.addEventListener("progress", function(evt){
                 if (evt.lengthComputable) {
                     var percentComplete = evt.loaded / evt.total;
-                //Do something with upload progress
-                console.log(percentComplete);
-            }
-        }, false);
+                    //Do something with upload progress
+                    console.log(percentComplete);
+                }
+            }, false);
             //Download progress
             xhr.addEventListener("progress", function(evt){
-              if (evt.lengthComputable) {
-                var percentComplete = evt.loaded / evt.total;
-                //Do something with download progress
-                console.log(percentComplete);
-            }
-        }, false);
+                if (evt.lengthComputable) {
+                    var percentComplete = evt.loaded / evt.total;
+                    //Do something with download progress
+                    console.log(percentComplete);
+                }
+            }, false);
             return xhr;
         },
         data: data,
@@ -569,12 +620,12 @@ function sendFiles(files,url,scb,fcb,pcb) {
             }, false);
             //Download progress
             xhr.addEventListener("progress", function(evt){
-              if (evt.lengthComputable) {
-                var percentComplete = evt.loaded / evt.total;
-                //Do something with download progress
-                // console.log(percentComplete);
-            }
-        }, false);
+                if (evt.lengthComputable) {
+                    var percentComplete = evt.loaded / evt.total;
+                    //Do something with download progress
+                    // console.log(percentComplete);
+                }
+            }, false);
             return xhr;
         },
         data: data,
@@ -584,13 +635,15 @@ function sendFiles(files,url,scb,fcb,pcb) {
         contentType: false,
         processData: false
     })
-    .done(function (msg) {
-        scb && scb(msg)
-    })
-    .fail(function (xhr) {
-        fcb && fcb(xhr)
-    })
+        .done(function (msg) {
+            scb && scb(msg)
+        })
+        .fail(function (xhr) {
+            fcb && fcb(xhr)
+        })
 }
+
+
 
 
 // $summernote.summernote('library.showLibrary')

@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
-    <title>首页</title>
+    <meta name="description" content="我们提供快捷高效的二次开发工具链，可在网络客户端或本地客户端实现无代码二次开发工程。入门简单，且开发效果好。为广大客户 节省了大量的产品迭代开发时间，降低研发成本。用户不用花费大量时间和金钱成本去适应安卓等复杂操作系统的软件开发流程，只需要用简单的鼠标操作和坐标输入就能像做ppt一样做出优良的人机交互界面。"/>
+    <meta name="author" content="graphichina web dev team"/>
+    <title>AHMI IDE：人机界面云端开发平台</title>
     <!-- BOOTSTRAP CORE STYLE CSS -->
     <link href="../../public/images/favicon.ico" rel="icon" type="image/x-icon"/>
     <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet"/>
@@ -34,7 +34,7 @@
     <script src="../../public/login/assets/js/custom.js"></script>
 
     <script src="../../public/login/assets/js/vector-zyj.js"></script>
-    <script>$(function(){
+    <!--<script>$(function(){
         // 初始化 传入dom id
         var victor = new Victor("container-zyj", "output");
         var theme = [
@@ -49,39 +49,75 @@
                 victor(color).set();
             })
         });
-    });</script>
+    });</script>-->
 
 </head>
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top " id="menu">
-    <div class="container container-zyj1">
+<!--<div class="navbar navbar-inverse navbar-fixed-top " id="menu">-->
+    <!--<div class="container container-zyj1">-->
+        <!--<div class="navbar-header">-->
+            <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#index-header-nav">-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+            <!--</button>-->
+            <!--<a class="navbar-brand"  href="/"><img class="logo-custom" data-scroll-reveal="enter from the bottom after 0.1s" src="../../public/login/assets/img/速显微.png"-->
+                                                  <!--alt=""></a>-->
+        <!--</div>-->
+        <!--<div class="collapse navbar-collapse" id="index-header-nav">-->
+            <!--<ul class="nav navbar-nav nav-pills navbar-right move-me move-bar">-->
+                <!--<li data-scroll-reveal="enter from the bottom after 0.1s"><a href="#menu"><h4  class="nav-bar">首页</h4></a></li>-->
+                <!--<li data-scroll-reveal="enter from the bottom after 0.2s"><a href="#features-sec"><h4 class="nav-bar">关于IDE</h4></a></li>-->
+                <!--&lt;!&ndash;<li><a href="#faculty-sec"><h4>员工信息</h4></a></li>&ndash;&gt;-->
+                <!--<li data-scroll-reveal="enter from the bottom after 0.3s"><a href="#course-sec"><h4 class="nav-bar">产品介绍</h4></a></li>-->
+                <!--<li data-scroll-reveal="enter from the bottom after 0.4s"><a href="#course-cases"><h4 class="nav-bar">IDE开发案例</h4></a></li>-->
+                <!--<li data-scroll-reveal="enter from the bottom after 0.5s"><a href="/private/space"><h4 class="nav-bar">IDE</h4></a></li>-->
+                <!--<li data-scroll-reveal="enter from the bottom after 0.6s"><a href="#contact-sec"><h4 class="nav-bar">联系我们</h4></a></li>-->
+                <!--<li data-scroll-reveal="enter from the bottom after 0.7s"><a href="/blog/"><h4 class="nav-bar">Blog</h4></a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+
+    <!--</div>-->
+<!--</div>-->
+
+<nav class="navbar  navbar-index" id="nav" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
-            </button>-->
-            <a class="navbar-brand"  href="/"><img class="logo-custom" data-scroll-reveal="enter from the bottom after 0.1s" src="../../public/login/assets/img/速显微.png"
-                                                  alt=""></a>
+            </button>
+            <a class="navbar-brand"  href="/"><img class="logo-custom" style='transform: translate(0%,-50%);' data-scroll-reveal="enter from the bottom after 0.1s" src="../../public/login/assets/img/速显微.png"
+                                                   alt=""></a>
         </div>
-        <ul class="nav nav-pills navbar-right move-me move-bar">
-            <li data-scroll-reveal="enter from the bottom after 0.1s"><a href="#menu"><h4  class="nav-bar">首页</h4></a></li>
-            <li data-scroll-reveal="enter from the bottom after 0.2s"><a href="#features-sec"><h4 class="nav-bar">关于IDE</h4></a></li>
-            <!--<li><a href="#faculty-sec"><h4>员工信息</h4></a></li>-->
-            <li data-scroll-reveal="enter from the bottom after 0.3s"><a href="#course-sec"><h4 class="nav-bar">产品介绍</h4></a></li>
-            <li data-scroll-reveal="enter from the bottom after 0.4s"><a href="#course-cases"><h4 class="nav-bar">IDE开发案例</h4></a></li>
-            <li data-scroll-reveal="enter from the bottom after 0.5s"><a href="/private/space"><h4 class="nav-bar">IDE</h4></a></li>
-            <li data-scroll-reveal="enter from the bottom after 0.6s"><a href="#contact-sec"><h4 class="nav-bar">联系我们</h4></a></li>
-            <li data-scroll-reveal="enter from the bottom after 0.7s"><a href="/blog/"><h4 class="nav-bar">Blog</h4></a></li>
-        </ul>
-    </div>
-</div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#menu"><h4  class="">首页</h4></a></li>
+                <li><a href="#features-sec"><h4 class="">关于IDE</h4></a></li>
+                <!--<li><a href="#faculty-sec"><h4>员工信息</h4></a></li>-->
+                <li><a href="#course-sec"><h4 class="">产品介绍</h4></a></li>
+                <li><a href="#course-cases"><h4 class="">IDE开发案例</h4></a></li>
+                <li><a href="/private/space"><h4 class="">IDE</h4></a></li>
+                <li><a href="#contact-sec"><h4 class="">联系我们</h4></a></li>
+                <li><a href="/blog/"><h4 class="">Blog</h4></a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
 <!--NAVBAR SECTION END-->
 <div class="home-sec" id="home">
-    <div id="output">
-        <div class="overlay" id="container-zyj">
-            <div class="container slide-container">
+    <div class="video-center" data-scroll-reveal="enter from the bottom after 0.4s">
+         <div class="filter">
+            <video src="/public/resources/long.mp4" poster="/public/login/assets/img/long.png" loop autoplay height="100%" width="1300px" class="my-video"></video>
+         </div>
+        <!--<div class="word-filter">嘿嘿嘿-->
+        <!--</div>-->
+            <div class="container slide-container " >
                 <div class="row text-center">
                     <div class="col-lg-12  col-md-12 col-sm-12">
                         <div class="flexslider set-flexi" id="main-section">
@@ -110,23 +146,22 @@
                                     <h3>极富特色的人机交互界面开发工具</h3>
                                     <h1>操作便捷</h1>
                                     <a class="btn btn-primary btn-lg" href="/user/login">登录</a>
-                                    <a class="btn btn-primary btn-lg" href="/user/signup">注册</a>
+                                <a class="btn btn-primary btn-lg" href="/user/signup">注册</a>
                                 </li>
                                 <!-- End Slider 03 -->
                             </ul>
                         </div>
-
                         <!-- Modal -->
                     </div>
                 </div>
-
-            </div>
         </div>
     </div>
-    <div class="move-me"><div class="back1"><div class="back"><a href="#menu" title="回到顶部"><img src="../../public/images/回到顶部.png"></a>
-    </div></div></div>
-</div>
+    <div class="move-me"><div class="back1"><div class="back"><a href="#nav" class="triangle-up" title="回到顶部"></a>
+    </div>
+    </div>
+    </div>
 
+    </div>
 <!--HOME SECTION END-->
 <div class="tag-line">
     <div class="container">
@@ -154,7 +189,7 @@
     </div>
     <!--/.HEADER LINE END-->
 
-    <div class="row">
+    <div class="row my-about-row">
         <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.4s">
             <div class="about-div">
                 <div class="col-md-12 col-lg-offset-3">
@@ -173,7 +208,7 @@
             <div class="about-div">
                 <div class="col-md-12 col-lg-offset-3">
                     <i class="fa fa-paper-plane-o fa-4x icon-round-border"></i>
-                    <h3>云端发开</h3>
+                    <h3>云端开发</h3>
                 </div>
                 <hr/>
                 <hr/>
@@ -197,9 +232,40 @@
                 </p>
             </div>
         </div>
-
-
     </div>
+    <div class="row my-about-table" >
+        <div class="col-lg-4  col-md-4 col-sm-4" data-scroll-reveal="enter from the bottom after 0.6s">
+            <div class="about-div">
+                <ul>
+                    <li>
+                        <h3>&nbsp<span class="fa fa-bolt fa-4x icon-style"></span>&nbsp&nbsp快速掌握</h3>
+                        <hr/>
+                        <p>
+                            AHMI Web-IDE 使用图形化设计方法，不用学习新的编程语言，使您快速上手，迅速掌握整个开发流程。
+                        </p>
+
+                    </li>
+                    <li>
+                        <h3>&nbsp<span class="fa fa-paper-plane-o fa-4x icon-style"></span>&nbsp&nbsp云端开发</h3>
+                        <hr/>
+                        <p>
+                            连接互联网，随时随地进行高效开发，工程文件存储在云端，随时获取，缩短周期，快人一步。
+                        </p>
+
+                    </li>
+                    <li>
+                        <h3>&nbsp<span class="fa fa-magic fa-4x icon-style"></span>&nbsp&nbsp操作便捷</h3>
+                        <hr/>
+                        <p>
+                            您可以像制作一份PPT一样设计您的屏幕界面，所有的操作都是那么熟悉。
+                        </p>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
 </div>
 <!-- FEATURES SECTION END-->
 <!--<div id="faculty-sec">
@@ -288,7 +354,7 @@
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse1" class="panel-collapse collapse" style="height: 0;">
+                    <div id="collapse1" class="panel-collapse collapse my-info1">
                         <div class="panel-body">
                             <p>
                                 始于我们带来的核心运算芯片GPU,这颗核心显示芯片优化精简了传统GPU架构，使其满足于更高效果、更低功耗、更稳定的物联网设备显示需求。
@@ -304,7 +370,7 @@
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse2" class="panel-collapse collapse" style="height: 0;">
+                    <div id="collapse2" class="panel-collapse collapse my-info1">
                         <div class="panel-body">
                             <p>
                                 业界的CPU方案由于有操作系统的存在，会有不小的故障率。而我们实现的GPU方案系统中只有一个轻量级操作系统，零延迟启动，按键即显示。且硬件和RTL经过了可靠性设计，稳定性极佳。
@@ -320,7 +386,7 @@
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse3" class="panel-collapse collapse" style="height: 0;">
+                    <div id="collapse3" class="panel-collapse collapse my-info1">
                         <div class="panel-body">
                             <p>
                                 网络端软件开发工具链提供图形化开发环境，降低对开发者编程背景的需求。提高客户二次开发效率，降低迭代成本。
@@ -347,6 +413,8 @@
               <p data-scroll-reveal="enter from the bottom after 0.3s">经过简单的学习后，开发者可以根据自己的想法创意去自由制作汽车仪表盘界面、工控仪表盘界面、智能家居人机交互界面。</p>
 
         </div>
+    </div>
+    <div class="row my-row">
         <!--轮播开始-->
         <div id="myCarousel" class="carousel slide slide-zyj" data-scroll-reveal="enter from the bottom after 0.4s">
             <ol class="carousel-indicators position-zyj" >
@@ -382,18 +450,62 @@
                 <a href="#myCarousel" data-slide="next" title="下一张" class="carousel-control right1"><span class="control-zyj">&rsaquo;</span></a>
             </div>
         </div>
+    </div>
         <!--轮播结束-->
+    <div class="row my-row">
         <!--视频插入开始-->
         <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-1 col-md-offset-1 col-sm-offset-1 video-p">
-            <p data-scroll-reveal="enter from the bottom after 0.3s">
-                加入定时器后的仿真效果视频
+            <p data-scroll-reveal="enter from the bottom after 0.3s" class="product">
+               加入定时器后的仿真效果视频
             </p>
         </div>
         <div class="col-lg-8 col-md-8 col-sm-8">
             <div class=" video-center" data-scroll-reveal="enter from the bottom after 0.4s">
-                <video src="/public/resources/1.mp4" controls loop autoplay  height="100%" width="100%"></video>
-            </div></div>
+                <video src="/public/resources/1.mp4" poster="/public/login/assets/img/1.png" controls loop autoplay height="100%" width="100%"></video>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-12 video-p2">
+            <p data-scroll-reveal="enter from the bottom after 0.3s" class="product product2">
+                加入定时器后的仿真效果视频
+            </p>
+        </div>
         <!--视频插入结束-->
+    </div>
+    <!--动画效果展示开始-->
+
+    <div class="row">
+
+        <div class="animateAll">
+        <div class="my-animate-img">
+            <div class="video-center " data-scroll-reveal="enter from the bottom after 0.5s">
+                <div class="col-lg-5 col-md-5 col-sm-12 my-animate-style">
+                    <td><img src="../../public/images/animate/2.gif" class="animatePic" alt="2.gif"/></td>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12 my-animate-style">
+                    <td><img src="../../public/images/animate/3.gif" class="animatePic" alt="3.gif"/></td>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 my-animate-style">
+                    <p data-scroll-reveal="enter from the bottom after 0.3s" class="product">
+                        IDE动画效果展示
+                    </p>
+                </div>
+           <!--<table>-->
+               <!--<tr>-->
+                   <!--<td style="margin-right: 30px"><img src="../../public/images/animate/2.gif" class="animatePic"  alt="2.gif"/></td>-->
+                   <!--<td><img src="../../public/images/animate/3.gif" class="animatePic" alt="3.gif"/></td>-->
+               <!--</tr>-->
+           <!--</table>-->
+            </div>
+        </div>
+
+        <!--<div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-1 col-md-offset-1 col-sm-offset-1  product-p">-->
+            <!--<p data-scroll-reveal="enter from the bottom after 0.3s" class="product">-->
+                <!--IDE动画效果展示-->
+            <!--</p>-->
+        <!--</div>-->
+        </div>
+        <!--动画效果展示结束-->
+    </div>
     </div>
     <!--/.HEADER LINE END-->
 </div>
@@ -401,21 +513,16 @@
     <div class="row set-row-pad">
         <div class="col-lg-offset-1 col-md-offset-1 col-sm-offset-1"
              data-scroll-reveal="enter from the bottom after 0.4s">
-            <h2><strong>联系方式 </strong></h2>
-            <hr/>
-            <h4>苏州公司地址：江苏省苏州市吴江区联杨路139号清华汽车园1号楼</h4>
-            <h4>安徽公司地址：安徽省合肥市高新区创新产业园二期F1幢</h4>
-            <h4><strong>联系电话:</strong>0512-63317830（苏州）  0551-64260997（合肥） </h4>
-            <h4><strong>Email: </strong>tian.xiang@graphichina.com</h4>
+
         </div>
     </div>
 </div>
 <!-- CONTACT SECTION END-->
-<div id="footer">
-    &copy 2016 <a href="http://www.graphichina.com" style="color: #fff"
-                  target="_blank">www.graphichina.com </a>All Rights Reserved
-    <br/><a href="http://www.miibeian.gov.cn/" style="color: #fff">苏ICP备16003792号-1</a>
-</div>
+
+<footer>
+    <% include ../all/footer.html %>
+</footer>
+
 <!-- FOOTER SECTION END-->
 </body>
 <script src="../../public/general/js/versionTag.js"></script>

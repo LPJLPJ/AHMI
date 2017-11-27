@@ -103,6 +103,9 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                     },
                     type:function(){
                         return type;
+                    },
+                    index:function(){
+                        return $scope.selectedIdx;
                     }
                 }
             });
@@ -113,7 +116,6 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
              * when clicking at the background, pressing the esc button on keyboard, or calling $modalInstance.dismiss will trigger the latter one
              */
             modalInstance.result.then(function (newTag) {
-                console.log(newTag);
                 //process save
                 if ($scope.selectedIdx == -1){
                     //new tag
@@ -133,7 +135,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                     }.bind(this));
                 }
             }, function (newTag) {
-                console.log('Modal dismissed at: ' + new Date());
+                // console.log('Modal dismissed at: ' + new Date());
             });
         }
 
@@ -146,7 +148,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         function noDuplication(tag,tags){
             for(var i=0;i<tags.length;i++){
                 if(tag.name==tags[i].name) {
-                    console.log('equal');
+                    toastr.error('重复的tag名称');
                     return false;
                 }
             }
@@ -245,7 +247,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
             }
             //console.log(currentSelectedObject);
             switch (currentSelectedObject.type) {
-                case Type.MyButton:
+                //case Type.MyButton:
                 case Type.MyNumber:
                 case Type.MySlide:
                 case Type.MyProgress:
@@ -265,6 +267,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 case Type.MySlideBlock:
                 case Type.MyVideo:
                 case Type.MyAnimation:
+                case Type.MyTexNum:
                     $scope.showTagPanel = true;
                     break;
                 default:
@@ -350,7 +353,9 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
          *更新所选控件的tag
          */
         function selectedTagFun(){
-            ProjectService.ChangeAttributeTag($scope.component.selectedTag);
+            ProjectService.ChangeAttributeTag($scope.component.selectedTag,function(oldOperate){
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
         }
 
         function readTags(){
@@ -383,14 +388,48 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
 
     }]);
 
-ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','tag','type',function ($scope, $uibModalInstance, tag,type) {
+ide.controller('TagInstanceCtrl',['$scope','$uibModalInstance','TagService','ProjectService','tag','type','index',function ($scope, $uibModalInstance,TagService,ProjectService,tag,type,index) {
 
     $scope.tag = tag;
     $scope.type = type;
 
     //保存
-    $scope.save = function () {
-        if (!checkEmpty()){
+    $scope.save = function (th) {
+        //如果是定时器，就不验证，直接关闭
+        if(th.type==="timer"){
+            $uibModalInstance.close($scope.tag);
+            return;
+        }
+        if(index!==-1){
+            //edit tag
+            var oldTag = TagService.getTagByIndex(index);
+            if(oldTag.name!==$scope.tag.name){
+                var requiredTagNames=ProjectService.getRequiredTagNames();
+                for (var i=0;i<requiredTagNames.length;i++){
+                    if (oldTag.name===requiredTagNames[i]){
+                        toastr.warning('该tag已经被使用,修改名称请先解除绑定');
+                        return;
+                    }
+                }
+                var allTags=_.cloneDeep(TagService.getAllTags());
+                for(var j=0;j<allTags.length;j++){
+                    if($scope.tag.name===allTags[j].name){
+                        if(index!=j){
+                            toastr.error('重复的tag名称');
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        // if (!checkEmpty()){
+        //     $uibModalInstance.close($scope.tag);
+        // }
+        if (ProjectService.inputValidate($scope.tag.name)){
+            if($scope.tag.name.match(/^SysTmr_[0-9]+_t$/)){
+                toastr.error('SysTmr_数字_t 为定时器保留名称');
+                return;
+            }
             $uibModalInstance.close($scope.tag);
         }
 

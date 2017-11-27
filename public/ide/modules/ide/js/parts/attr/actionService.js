@@ -48,9 +48,10 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
                 triggers = [tLoad,tUnload];
                 break;
             case Type.MyLayer:
-                triggers = [tLoad,tUnload];
+                // triggers = [tLoad,tUnload];
                 break;
             case Type.MySubLayer:
+                triggers = [tLoad,tUnload];
                 break;
             case Type.MyButton:
                 triggers = [tRelease];
@@ -63,6 +64,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyDashboard:
             case Type.MyNum:
             case Type.MySlideBlock:
+            case Type.MyTexNum:
                 triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm];
                 break;
             default:

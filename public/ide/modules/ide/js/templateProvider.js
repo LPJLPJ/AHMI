@@ -53,7 +53,14 @@ ideServices
                     width:50, height: 50,
                     left: 0, top: 0,
                     originX: 'center', originY: 'center',
-                    bindBit:null
+                    bindBit:null,
+
+                    text:'',
+                    fontFamily:"宋体",
+                    fontSize:20,
+                    fontColor:'rgba(0,0,0,1)',
+                    fontBold:"100",
+                    fontItalic:'',
                     },
                 texList:[{
                         currentSliceIdx:0,
@@ -256,11 +263,11 @@ ideServices
             var r = 54;
             var g = 71;
             var b = 92;
-            var jsonStr = {"objects":[],"background":"rgb(" + r + "," + g + "," + b + ")"};
+            // var jsonStr = {"objects":[],"background":"rgb(" + r + "," + g + "," + b + ")"};
             return {
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                proJsonStr: jsonStr,
+                // proJsonStr: jsonStr,
                 layers: [],
                 name: 'NewPage',
                 type: Type.MyPage,
@@ -304,11 +311,11 @@ ideServices
         };
 
         this.getDefaultSubLayer = function () {
-            var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
+            // var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
             return {
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                proJsonStr: jsonStr,
+                // proJsonStr: jsonStr,
                 widgets: [],
                 name: 'NewSubCanvas',
                 type: Type.MySubLayer,
@@ -322,12 +329,12 @@ ideServices
         };
 
         this.getImageSubLayer = function () {
-            var jsonStr = '{"objects":[],"background":"rgba(255,255,255,1.0)","backgroundImage":{"type":"image","originX":"left","originY":"top","left":0,"top":0,"width":500,"height":284,"fill":"rgb(0,0,0)","strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","src":"http://localhost:63342/AHMIDesigner/modules/ide/demo3.jpg","filters":[],"crossOrigin":"","alignX":"none","alignY":"none","meetOrSlice":"meet"}}';
+            // var jsonStr = '{"objects":[],"background":"rgba(255,255,255,1.0)","backgroundImage":{"type":"image","originX":"left","originY":"top","left":0,"top":0,"width":500,"height":284,"fill":"rgb(0,0,0)","strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","src":"http://localhost:63342/AHMIDesigner/modules/ide/demo3.jpg","filters":[],"crossOrigin":"","alignX":"none","alignY":"none","meetOrSlice":"meet"}}';
             var backgroundImage=Preference.getRandomImageURL();
             return {
                 url: backgroundImage,
                 id: Math.random().toString(36).substr(2),
-                proJsonStr: jsonStr,
+                // proJsonStr: jsonStr,
                 widgets: [],
                 name: 'NewSubCanvas',
                 type: Type.MySubLayer,
@@ -348,7 +355,13 @@ ideServices
             var info = {
                 width:200, height: 150,
                 left: 0, top: 0,
-                originX: 'center', originY: 'center'
+                originX: 'center', originY: 'center',
+
+                fontFamily:"宋体",
+                fontSize:20,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:'',
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -636,6 +649,56 @@ ideServices
                         imgSrc:'',
                         name:'数字背景'
                     }]
+                }],
+                transition:_.cloneDeep(defaultTransition)
+            }
+        };
+
+        this.getDefaultTexNum = function () {
+            var info={
+                width:90, height: 30,
+                characterW:30,characterH:30,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                minValue:0,maxValue:100,
+                lowAlarmValue:0,highAlarmValue:100,
+                noInit:'NO',
+                frontZeroMode:'0',//前导0模式标志，0：无前导0模式，1：有前导0模式
+                symbolMode:'0',//符号模式标志，0：无符号位，1：有符号位
+                decimalCount:0,//保留的小数位数
+                numOfDigits:3,//数字的位数，最小1，最大未定
+                overFlowStyle:'0',//指数字大于最大值时是否继续显示,0不显示，1显示
+                align:'center',//数字对齐方式
+                numValue:1,
+                enableAnimation:false //显示模式标志，false:无动画 true:有动画
+            };
+            var slices = [];
+            for(var i=0,il=13;i<il;i++){
+                slices[i] = {};
+                slices[i].imgSrc = '';
+                slices[i].color = 'rgba(120,120,120,1)';
+                if(i<=9){
+                    slices[i].name = '数字'+i;
+                }else if(i===10){
+                    slices[i].name = '.';
+                }else if(i===11){
+                    slices[i].name = '+';
+                }else if(i===12){
+                    slices[i].name = '-';
+                }
+            }
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTexNum',
+                type: Type.MyTexNum,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    name:'数字值',
+                    currentSliceIdx:0,
+                    slices:slices
                 }],
                 transition:_.cloneDeep(defaultTransition)
             }

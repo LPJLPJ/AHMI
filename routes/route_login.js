@@ -1,11 +1,28 @@
 var UserModel = require('../db/models/UserModel');
 var path = require('path');
+var url = require('url')
+var qs  = require('qs')
 var login = {};
 login.get = function(req, res){
-	//
     console.log('login user',req.session.user);
     if (req.session.user){
-        res.redirect('/private/space')
+        var urlQuery = url.parse(req.url).query
+        if (urlQuery){
+            var query = qs.parse(urlQuery)
+            var originalUrl = query.originalUrl
+            if (originalUrl){
+                res.redirect(originalUrl)
+            }else{
+                res.redirect('/private/space')
+            }
+        }else{
+            res.redirect('/private/space')
+        }
+
+
+
+
+
 
     }else{
         res.render('login/login.html',{
@@ -16,7 +33,8 @@ login.get = function(req, res){
 };
 
 login.logout = function(req, res){
-	delete req.session.user;
+	req.session.user = null
+    console.log('logout',req.session.user)
 	res.redirect('/user/login')
 };
 
