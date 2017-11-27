@@ -1788,11 +1788,24 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 self.dateTimeModeId=arg.dateTimeModeId;
                 self.setHeight(self.fontSize*1.1);
                 if(self.dateTimeModeId=='0'){
-                    self.setWidth(8*self.maxFontWidth);
+                    if(self.fontItalic=='italic'){
+                        self.setWidth(8.5*self.maxFontWidth);
+                    }else{
+                        self.setWidth(8*self.maxFontWidth);
+                    }
                 }else if(self.dateTimeModeId=='1'){
-                    self.setWidth(5*self.maxFontWidth);
-                }else
-                    self.setWidth(10*self.maxFontWidth);
+                    if(self.fontItalic=='italic'){
+                        self.setWidth(5.5*self.maxFontWidth);
+                    }else{
+                        self.setWidth(5*self.maxFontWidth);
+                    }
+                }else {
+                    if(self.fontItalic=='italic'){
+                        self.setWidth(10.5*self.maxFontWidth);
+                    }else{
+                        self.setWidth(10*self.maxFontWidth);
+                    }
+                }
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1822,11 +1835,24 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 self.maxFontWidth = maxWidth;
 
                 if(self.dateTimeModeId=='0'){
-                    self.setWidth(8*self.maxFontWidth);
+                    if(self.fontItalic=='italic'){
+                        self.setWidth(8.5*self.maxFontWidth);
+                    }else{
+                        self.setWidth(8*self.maxFontWidth);
+                    }
                 }else if(self.dateTimeModeId=='1'){
-                    self.setWidth(5*self.maxFontWidth);
-                }else
-                    self.setWidth(10*self.maxFontWidth);
+                    if(self.fontItalic=='italic'){
+                        self.setWidth(5.5*self.maxFontWidth);
+                    }else{
+                        self.setWidth(5*self.maxFontWidth);
+                    }
+                }else {
+                    if(self.fontItalic=='italic'){
+                        self.setWidth(10.5*self.maxFontWidth);
+                    }else{
+                        self.setWidth(10*self.maxFontWidth);
+                    }
+                }
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -2023,7 +2049,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }
         var widthOfDateTimeStr=maxFontWidth*dateTimeStr.length;
         var initXPos = (width-widthOfDateTimeStr)/2;
-        var xCoordinate=initXPos-width/2;
+        var xCoordinate=(fontString.indexOf('italic')==-1?(initXPos-width/2):(initXPos-width/2)-2);
         var colonCoordinate = maxFontWidth/2-colonWidth.width/2;
         for(i=0;i<dateTimeStr.length;i++){
             if(dateTimeStr[i] ==":"){
