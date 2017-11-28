@@ -52293,13 +52293,16 @@ module.exports = React.createClass({
                     } else {
                         curV = this.evalVariable(widget, curV);
                         // console.log('curV',curV);
-
-                        result = result[curV];
+                        if (result !== undefined) {
+                            result = result[curV];
+                        } else {
+                            console.log('get param error: ', result, curV);
+                        }
 
                         // console.log('result',result)
                     }
                 }
-                return result || 0;
+                return result;
         }
     },
     charFromCode: function charFromCode(code) {
@@ -52336,6 +52339,11 @@ module.exports = React.createClass({
                     return;
                 } else {
                     var upperRef = this.evalParam(widget, { type: 'EXP', value: refs.slice(0, rLen - 1).join('.') });
+                    if (upperRef === undefined) {
+                        //not exists
+                        console.log('upperRef undefined: ', refs);
+                        break;
+                    }
                     var nextV = this.evalVariable(widget, refs[rLen - 1]);
                     if (nextV == 'text' && upperRef.constructor.name == 'FontSubLayer') {
                         var charCode = this.evalParam(widget, value);

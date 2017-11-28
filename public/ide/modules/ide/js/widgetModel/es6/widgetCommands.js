@@ -911,7 +911,7 @@
         `,
         onTagChange:`
             var(len,'this.layers.length')
-            while(len>=0){
+            while(len>0){
                 minus(len,1)
                 set('this.layers.len.hidden',1)
             }
@@ -948,7 +948,7 @@
             set(tInnerY,'this.innerY')
             set('this.otherAttrs.4',0)
             if (tInnerX>=tBx) {
-                if(tInnerX<tBrx){
+                if(tInnerX < tBrx){
                     if (tInnerY>=tBy) {
                         if (tInnerY<tBry) {
                             set('this.otherAttrs.4',1)
