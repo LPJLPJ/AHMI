@@ -612,8 +612,8 @@
                       set(a1,'this.otherAttrs.3')
                       var(r2,0)
                       set(r2,'this.otherAttrs.4')
-                      var(g2,0)
-                      set(g2,'this.otherAttrs.5')
+                      var(g2,'this.otherAttrs.5')
+                
                       var(b2,0)
                       set(b2,'this.otherAttrs.6')
                       var(a2,0)
@@ -801,7 +801,7 @@
                     var(a1,0)
                     set(a1,'this.otherAttrs.3')
                     var(r2,0)
-                    set(r2,'this.otherAttrs.,0
+                    set(r2,'this.otherAttrs.4')
                     var(g2,0)
                     set(g2,'this.otherAttrs.5')
                     var(b2,0)
