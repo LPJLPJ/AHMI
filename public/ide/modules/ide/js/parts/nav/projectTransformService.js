@@ -405,6 +405,10 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     });
+                    //add minValue, maxValue
+                    generalWidget['minValue'] = generalWidget['lowAlarmValue']-1
+                    generalWidget['maxValue'] = generalWidget['highAlarmValue']+1
+                    generalWidget.actions = targetWidget.actions;
 
                 break;
                 case 'MyVideo':
