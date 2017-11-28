@@ -15,7 +15,8 @@
     WidgetCommands['Button'] = {
         onInitialize:`
 
-            var(a,'this.mode')
+            var(a,0)
+            set(a,'this.mode')
             set(a,3)
             if(a>=100){
                 set('this.layers.1.hidden',1)
@@ -24,7 +25,8 @@
             }
         `,
         onMouseDown:`
-            var(b,'this.mode')
+            var(b,0)
+            set(b,'this.mode')
             if(b==0){
                 set('this.layers.0.hidden',0)
                 set('this.layers.1.hidden',1)
@@ -39,7 +41,8 @@
             }
         `,
         onMouseUp:`
-            var(b,'this.mode')
+            var(b,0)
+            set(b,'this.mode')
             if(b==0){
                 set('this.layers.0.hidden',1)
                 set('this.layers.1.hidden',0)
@@ -47,7 +50,8 @@
         `,
         onTagChange:`
             var(a,0)
-            var(b,'this.mode')
+            var(b,0)
+            set(b,'this.mode')
             getTag(a)
             if(b==1){
                 if(a>0){
@@ -141,8 +145,6 @@
             }
         `,
         onMouseUp:`
-            var(d,1)
-            set(d,1)
         `,
         onTagChange:`
             var(a,0)
@@ -539,8 +541,10 @@
 
     WidgetCommands['Progress'] = {
         onInitialize:`
-            var(mod,'this.mode')
-            var(cur,'this.otherAttrs.19')
+            var(mod,0)
+            set(mod,'this.mode')
+            var(cur,0)
+            set(cur,'this.otherAttrs.19')
             set('this.layers.0.hidden',0)
             set('this.layers.1.hidden',0)
             if(cur==1){
@@ -549,19 +553,22 @@
             }
         `,
         onMouseUp:`
-            var(a,1)
+            
         `,
         onMouseDown:`
-            var(a,1)
+            
         `,
         onTagChange:`
             var(tTotalFrame,0)
             set(tTotalFrame,'this.totalFrame')
-            var(m,'this.mode')
+            var(m,0)
+            set(m,'this.mode')
             var(tTag,0)
             getTag(tTag)
-            var(min,'this.minValue')
-            var(max,'this.maxValue')
+            var(min,0)
+            set(min,'this.minValue')
+            var(max,0)
+            set(max,'this.maxValue')
             if (tTotalFrame>0) {
               var(tOldValue,0)
               set(tOldValue,'this.oldValue')
@@ -577,8 +584,10 @@
                   set(temp2,max)
                   minus(temp1,min)
                   minus(temp2,min)
-                  var(w,'this.layers.0.width')
-                  var(h,'this.layers.0.height')
+                  var(w,0)
+                  set(w,'this.layers.0.width')
+                  var(h,0)
+                  set(h,'this.layers.0.height')
                   if(m==0){
                       multiply(temp1,w)
                       divide(temp1,temp2)
@@ -593,18 +602,30 @@
                       set('this.layers.1.hidden',0)
                   }
                   if(m==1){
-                      var(r1,'this.otherAttrs.0')
-                      var(g1,'this.otherAttrs.1')
-                      var(b1,'this.otherAttrs.2')
-                      var(a1,'this.otherAttrs.3')
-                      var(r2,'this.otherAttrs.4')
-                      var(g2,'this.otherAttrs.5')
-                      var(b2,'this.otherAttrs.6')
-                      var(a2,'this.otherAttrs.7')
-                      var(rt,r2)
-                      var(gt,g2)
-                      var(bt,b2)
-                      var(at,a2)
+                      var(r1,0)
+                      set(r1,'this.otherAttrs.0')
+                      var(g1,0)
+                      set(g1,'this.otherAttrs.1')
+                      var(b1,0)
+                      set(b1,'this.otherAttrs.2')
+                      var(a1,0)
+                      set(a1,'this.otherAttrs.3')
+                      var(r2,0)
+                      set(r2,'this.otherAttrs.4')
+                      var(g2,0)
+                      set(g2,'this.otherAttrs.5')
+                      var(b2,0)
+                      set(b2,'this.otherAttrs.6')
+                      var(a2,0)
+                      set(a2,'this.otherAttrs.7')
+                      var(rt,0)
+                      set(rt,r2)
+                      var(gt,0)
+                      set(gt,g2)
+                      var(bt,0)
+                      set(bt,b2)
+                      var(at,0)
+                      set(at,a2)
                       minus(rt,r1)
                       minus(gt,g1)
                       minus(bt,b1)
@@ -631,17 +652,27 @@
                       set('this.layers.1.hidden',0)
                   }
                   if(m==3){
-                      var(thresM,'this.otherAttrs.0')
-                      var(r1,'this.otherAttrs.3')
-                      var(g1,'this.otherAttrs.4')
-                      var(b1,'this.otherAttrs.5')
-                      var(a1,'this.otherAttrs.6')
-                      var(r2,'this.otherAttrs.7')
-                      var(g2,'this.otherAttrs.8')
-                      var(b2,'this.otherAttrs.9')
-                      var(a2,'this.otherAttrs.10')
+                      var(thresM,0)
+                      set(thresM,'this.otherAttrs.0')
+                      var(r1,0)
+                      set(r1,'this.otherAttrs.3')
+                      var(g1,0)
+                      set(g1,'this.otherAttrs.4')
+                      var(b1,0)
+                      set(b1,'this.otherAttrs.5')
+                      var(a1,0)
+                      set(a1,'this.otherAttrs.6')
+                      var(r2,0)
+                      set(r2,'this.otherAttrs.7')
+                      var(g2,0)
+                      set(g2,'this.otherAttrs.8')
+                      var(b2,0)
+                      set(b2,'this.otherAttrs.9')
+                      var(a2,0)
+                      set(a2,'this.otherAttrs.10')
                       if(thresM==1){
-                         var(thres1,'this.otherAttrs.1')
+                         var(thres1,0)
+                         set(thres1,'this.otherAttrs.1')
                          if(tTag<thres1){
                             set('this.layers.1.subLayers.color.r',r1)
                             set('this.layers.1.subLayers.color.g',g1)
@@ -655,12 +686,18 @@
                          }
                       }
                       if(thresM==2){
-                         var(r3,'this.otherAttrs.11')
-                         var(g3,'this.otherAttrs.12')
-                         var(b3,'this.otherAttrs.13')
-                         var(a3,'this.otherAttrs.14')
-                         var(thres1,'this.otherAttrs.1')
-                         var(thres2,'this.otherAttrs.2')
+                         var(r3,0)
+                         set(r3,'this.otherAttrs.11')
+                         var(g3,0)
+                         set(g3,'this.otherAttrs.12')
+                         var(b3,0)
+                         set(b3,'this.otherAttrs.13')
+                         var(a3,0)
+                         set(a3,'this.otherAttrs.14')
+                         var(thres1,0)
+                         set(thres1,'this.otherAttrs.1')
+                         var(thres2,0)
+                         set(thres2,'this.otherAttrs.2')
                          if(tTag<thres1){
                             set('this.layers.1.subLayers.color.r',r1)
                             set('this.layers.1.subLayers.color.g',g1)
@@ -687,7 +724,8 @@
                       set('this.layers.1.hidden',0)
                   }
                }
-               var(cur,'this.otherAttrs.19')
+               var(cur,0)
+               set(cur,'this.otherAttrs.19')
                if(cur==1){
                   set('this.layers.2.x',temp1)
                }
@@ -702,7 +740,8 @@
 
         `,
         onAnimationFrame:`
-          var(m,'this.mode')
+          var(m,0)
+          set(m,'this.mode')
           var(tTag,0)
 
           var(tStartTag,0)
@@ -722,8 +761,10 @@
           add(tDist,tStartTag)
           set(tTag,tDist)
           set('this.curAnimationTag',tTag)
-          var(min,'this.minValue')
-          var(max,'this.maxValue')
+          var(min,0)
+          set(min,'this.minValue')
+          var(max,0)
+          set(max,'this.maxValue')
           if(tTag>=min){
              if(tTag<=max){
                 var(v,0)
@@ -733,8 +774,10 @@
                 set(temp2,max)
                 minus(temp1,min)
                 minus(temp2,min)
-                var(w,'this.layers.0.width')
-                var(h,'this.layers.0.height')
+                var(w,0)
+                set(w,'this.layers.0.width')
+                var(h,0)
+                set(h,'this.layers.0.height')
                 if(m==0){
                     multiply(temp1,w)
                     divide(temp1,temp2)
@@ -749,18 +792,30 @@
                     set('this.layers.1.hidden',0)
                 }
                 if(m==1){
-                    var(r1,'this.otherAttrs.0')
-                    var(g1,'this.otherAttrs.1')
-                    var(b1,'this.otherAttrs.2')
-                    var(a1,'this.otherAttrs.3')
-                    var(r2,'this.otherAttrs.4')
-                    var(g2,'this.otherAttrs.5')
-                    var(b2,'this.otherAttrs.6')
-                    var(a2,'this.otherAttrs.7')
-                    var(rt,r2)
-                    var(gt,g2)
-                    var(bt,b2)
-                    var(at,a2)
+                    var(r1,0)
+                    set(r1,'this.otherAttrs.0')
+                    var(g1,0)
+                    set(g1,'this.otherAttrs.1')
+                    var(b1,0)
+                    set(b1,'this.otherAttrs.2')
+                    var(a1,0)
+                    set(a1,'this.otherAttrs.3')
+                    var(r2,0)
+                    set(r2,'this.otherAttrs.,0
+                    var(g2,0)
+                    set(g2,'this.otherAttrs.5')
+                    var(b2,0)
+                    set(b2,'this.otherAttrs.6')
+                    var(a2,0)
+                    set(a2,'this.otherAttrs.7')
+                    var(rt,0)
+                    set(rt,r2)
+                    var(gt,0)
+                    set(gt,g2)
+                    var(bt,0)
+                    set(bt,b2)
+                    var(at,0)
+                    set(at,a2)
                     minus(rt,r1)
                     minus(gt,g1)
                     minus(bt,b1)
@@ -787,17 +842,27 @@
                     set('this.layers.1.hidden',0)
                 }
                 if(m==3){
-                    var(thresM,'this.otherAttrs.0')
-                    var(r1,'this.otherAttrs.3')
-                    var(g1,'this.otherAttrs.4')
-                    var(b1,'this.otherAttrs.5')
-                    var(a1,'this.otherAttrs.6')
-                    var(r2,'this.otherAttrs.7')
-                    var(g2,'this.otherAttrs.8')
-                    var(b2,'this.otherAttrs.9')
-                    var(a2,'this.otherAttrs.10')
+                    var(thresM,0)
+                    set(thresM,'this.otherAttrs.0')
+                    var(r1,0)
+                    set(r1,'this.otherAttrs.3')
+                    var(g1,0)
+                    set(g1,'this.otherAttrs.4')
+                    var(b1,0)
+                    set(b1,'this.otherAttrs.5')
+                    var(a1,0)
+                    set(a1,'this.otherAttrs.6')
+                    var(r2,0)
+                    set(r2,'this.otherAttrs.7')
+                    var(g2,0)
+                    set(g2,'this.otherAttrs.8')
+                    var(b2,0)
+                    set(b2,'this.otherAttrs.9')
+                    var(a2,0)
+                    set(a2,'this.otherAttrs.10')
                     if(thresM==1){
-                       var(thres1,'this.otherAttrs.1')
+                       var(thres1,0)
+                       set(thres1,'this.otherAttrs.1')
                        if(tTag<thres1){
                           set('this.layers.1.subLayers.color.r',r1)
                           set('this.layers.1.subLayers.color.g',g1)
@@ -811,12 +876,18 @@
                        }
                     }
                     if(thresM==2){
-                       var(r3,'this.otherAttrs.11')
-                       var(g3,'this.otherAttrs.12')
-                       var(b3,'this.otherAttrs.13')
-                       var(a3,'this.otherAttrs.14')
-                       var(thres1,'this.otherAttrs.1')
-                       var(thres2,'this.otherAttrs.2')
+                       var(r3,0)
+                       set(r3,'this.otherAttrs.11')
+                       var(g3,0)
+                       set(g3,'this.otherAttrs.12')
+                       var(b3,0)
+                       set(b3,'this.otherAttrs.13')
+                       var(a3,0)
+                       set(a3,'this.otherAttrs.14')
+                       var(thres1,0)
+                       set(thres1,'this.otherAttrs.1')
+                       var(thres2,0)
+                       set(thres2,'this.otherAttrs.2')
                        if(tTag<thres1){
                           set('this.layers.1.subLayers.color.r',r1)
                           set('this.layers.1.subLayers.color.g',g1)
@@ -843,9 +914,9 @@
                     set('this.layers.1.hidden',0)
                 }
              }
-             var(cur,'this.otherAttrs.19')
+             var(cur,0)
+             set(cur,'this.otherAttrs.19')
              if(cur==1){
-               
                 set('this.layers.2.x',temp1)
              }
             }
@@ -867,7 +938,8 @@
         `,
         onTagChange:`
             var(tag,0)
-            var(bt,'this.otherAttrs.0')
+            var(bt,0)
+            set(bt,'this.otherAttrs.0')
             getTag(tag)
             var(tBt,0)
             set(tBt,bt)
@@ -910,7 +982,8 @@
         onMouseDown:`
         `,
         onTagChange:`
-            var(len,'this.layers.length')
+            var(len,0)
+            set(len,'this.layers.length')
             while(len>0){
                 minus(len,1)
                 set('this.layers.len.hidden',1)
@@ -1269,7 +1342,8 @@
         onMouseDown:`
         `,
         onTagChange:`
-            var(m,'this.mode')
+            var(m,0)
+            set(m,'this.mode')
             var(tag,0)
             getTag(tag)
             var(tTag,0)
@@ -1277,10 +1351,13 @@
                 print(tag,'tag is 0')
             }else{
                 set(tTag,tag)
-                var(len,'this.otherAttrs.0')
+                var(len,0)
+                set(len,'this.otherAttrs.0')
                 minus(len,1)
-                var(flag1,10)
-                var(flag2,10)
+                var(flag1,0)
+                set(flag1,10)
+                var(flag2,0)
+                set(flag2,10)
                 if(m==0){
                     set(flag1,2)
                     set(flag2,5)
@@ -1326,7 +1403,8 @@
             set(okFlag,'this.otherAttrs.1')
             if(tMaxHighLightNum>0){
                 if(okFlag==0){
-                    var(totalLayerNum,'this.layers.length')
+                    var(totalLayerNum,0)
+                    set(totalLayerNum,'this.layers.length')
                     var(offset,0)
                     var(tHighLightNum,0)
                     //clear
@@ -1347,7 +1425,8 @@
                     var(tTag,0)
                     var(tMode,0)
                     var(xr,0)
-                    var(minusNum,1)
+                    var(minusNum,0)
+                    set(minusNum,1)
                     set(tHighLightNum,'this.highLightNum')
                     getTag(tTag)
                     set(tMode,'this.mode')
@@ -1401,7 +1480,8 @@
             set(okFlag,'this.otherAttrs.1')
             if(tMaxHighLightNum>0){
                 if(okFlag==0){
-                    var(totalLayerNum,'this.layers.length')
+                    var(totalLayerNum,0)
+                    set(totalLayerNum,'this.layers.length')
                     var(offset,0)
                     var(tHighLightNum,0)
                     //clear
@@ -1422,7 +1502,8 @@
                     var(tTag,0)
                     var(tMode,0)
                     var(xr,0)
-                    var(addNum,1)
+                    var(addNum,0)
+                    set(addNum,1)
                     set(tHighLightNum,'this.highLightNum')
                     getTag(tTag)
                     set(tMode,'this.mode')
@@ -1473,7 +1554,8 @@
             }
         `,
         onKeyBoardOK:`
-            var(okFlag,'this.otherAttrs.1')
+            var(okFlag,0)
+            set(okFlag,'this.otherAttrs.1')
             if(okFlag==0){
                 setglobalvar(0,1)
                 set('this.otherAttrs.1',1)
