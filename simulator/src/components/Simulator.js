@@ -8,7 +8,7 @@ var InputKeyboard = require('./inputKeyboard');
 var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
-var AnimationManager = require('../utils/animationManager')
+var AnimationManager = require('../utils/animationManager');
 var math = require('mathjs');
 
 var env = 'dev' //dev or build
