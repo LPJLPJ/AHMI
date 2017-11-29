@@ -203,7 +203,7 @@ function init() {
     currentId = parseQuery().id
     $summernote.summernote('library.setUploadUrl',urlPrefix+'/blog/resources/upload?blogId='+currentId)
     $summernote.summernote('library.setRetriveUrl',urlPrefix+'/blog/resources/getresources?blogId='+currentId)
-    $summernote.summernote('library.setResourceUrl',urlPrefix+'/public/blog/media')
+    $summernote.summernote('library.setResourceUrl',urlPrefix+'/public/blog/media/'+currentId)
     $summernote.summernote('library.setDeleteUrl',urlPrefix+'/blog/resources/deleteresource?blogId='+currentId)
     //init status
     editorStatus.init('.editor-status')
