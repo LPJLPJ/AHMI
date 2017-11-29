@@ -217,7 +217,27 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             switch(targetWidget.type){
                 case 'MyButton':
                     highLight = !targetWidget.info.disableHighlight;
-                    generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices,highLight)
+                    var fontStyle = {};
+                    for(var key in info){
+                        switch (key){
+                            case "fontItalic":
+                                fontStyle['font-style'] = info[key];
+                                break;
+                            case "fontBold":
+                                fontStyle['font-weight'] = info[key];
+                                break;
+                            case "fontSize":
+                                fontStyle['font-size'] = info[key];
+                                break;
+                            case "fontFamily":
+                                fontStyle['font-family'] = info[key];
+                                break;
+                            case "fontColor":
+                                fontStyle['font-color'] = info[key];
+                                break;
+                        }
+                    }
+                    generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',fontStyle,targetWidget.texList[0].slices,highLight);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'Button';
                     generalWidget.mode = Number(rawWidget.buttonModeId);
