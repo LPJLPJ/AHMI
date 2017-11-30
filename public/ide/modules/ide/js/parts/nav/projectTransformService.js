@@ -523,13 +523,29 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     console.log(generalWidget)
                 break;
                 case 'MyDateTime':
-                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline",
-                        fontStyle = {},
+                    var fontStyle = {},
                         baseLayerNum = 0;
 
-                    styleElems.split(',').forEach(function (elem) {
-                        fontStyle[elem] = info[elem]
-                    });
+                    var fontStyle = {};
+                    for(var key in info){
+                        switch (key){
+                            case "fontItalic":
+                                fontStyle['font-style'] = info[key];
+                                break;
+                            case "fontBold":
+                                fontStyle['font-weight'] = info[key];
+                                break;
+                            case "fontSize":
+                                fontStyle['font-size'] = info[key];
+                                break;
+                            case "fontFamily":
+                                fontStyle['font-family'] = info[key];
+                                break;
+                            case "fontColor":
+                                fontStyle['font-color'] = info[key];
+                                break;
+                        }
+                    }
                     generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle,targetWidget.texList[0].slices[0]);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'DateTime';
