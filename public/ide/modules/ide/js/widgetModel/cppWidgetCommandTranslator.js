@@ -1081,6 +1081,9 @@
             case 'checkalarm':
                 inst = ['OPCHKVALALARM']
             break;
+            case 'startanimation':
+                inst = ['OPSTARTANIMATION']
+                break;
             case 'setglobalvar':
                 inst = ['OPSETGLOBALVAR',command[1].value,command[2].value];
                 break;

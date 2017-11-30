@@ -201,7 +201,7 @@
 
               var(tTotalLayers,0)
               set(tTotalLayers,'this.layers.length')
-              if (tHighLightNum<tTotalLayers) {
+              if (tHighLightNum < tTotalLayers) {
                 //valid
                 //reset 
                 var(tCurLayer,0)
@@ -236,7 +236,7 @@
 
               var(tTotalLayers,0)
               set(tTotalLayers,'this.layers.length')
-              if (tHighLightNum<tTotalLayers) {
+              if (tHighLightNum  < tTotalLayers) {
                 //valid
                 //reset 
                 var(tCurLayer,0)
