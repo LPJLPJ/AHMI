@@ -3,39 +3,25 @@
  */
 
 $(function () {
-    var errMessages = {
-        mail:{
-            empty:'请输入邮箱',
-            error:'邮箱不存在'
-        },
-        captcha:{
-            empty:'请输入验证码',
-            error:'验证码错误'
-        },
-        general:{
-            error:'发生错误'
-        }
-    }
-
-    var successMessages = {
-        general:{
-            ok:'已发送邮件,请点击邮件链接进行重置'
-        }
-    }
+    var ErrMessages;
+    var successMessages;
+    console.log("myScope",myScope)
 
     $('#mail').on('keyup', function () {
+        ErrMessages=myScope.findback.ErrMessages;
         var mailVal = $(this).val()
         if (mailVal==""){
-            $('#mail-verify').html(errMessages.mail.empty)
+            $('#mail-verify').html(ErrMessages.mail.empty)
         }else{
             $('#mail-verify').html()
         }
     })
 
     $('#captcha-input').on('keyup', function () {
+        ErrMessages=myScope.findback.ErrMessages;
         var captchaVal = $(this).val()
         if (captchaVal==""){
-            $('#captcha-verify').html(errMessages.captcha.empty)
+            $('#captcha-verify').html(ErrMessages.captcha.empty)
         }else{
             $('#captcha-verify').html('')
         }
@@ -57,21 +43,23 @@ $(function () {
                     captcha:$('#captcha-input').val()
                 },
                 success: function (data, status, xhr) {
+                    successMessages=myScope.findback.successMessages;
                     $('#captcha-verify').html(successMessages.general.ok)
                     $('#captcha-img').attr('src','/captcha');
                     $('#submit').attr('disabled',false)
                 },
                 error: function (err, status, xhr) {
+                    ErrMessages=myScope.findback.ErrMessages;
                     //error
                     switch (err.responseText){
                         case 'captcha error':
-                            $('#captcha-verify').html(errMessages.captcha.error)
+                            $('#captcha-verify').html(ErrMessages.captcha.error)
                             break;
                         case 'user not found':
-                            $('#captcha-verify').html(errMessages.mail.error)
+                            $('#captcha-verify').html(ErrMessages.mail.error)
                             break;
                         default:
-                            $('#captcha-verify').html(errMessages.general.error)
+                            $('#captcha-verify').html(ErrMessages.general.error)
                             break;
 
                     }

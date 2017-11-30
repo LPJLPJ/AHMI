@@ -1,26 +1,26 @@
 /**
  * create by lixiang in 2017/11/15
- * 双向绑定模型,Scope对象维护一个watchers数组，watchers存放检查的表达式和对应的回调函数,详见设计文档与example
+ * 双向绑定模型,sx_Scope对象维护一个watchers数组，watchers存放检查的表达式和对应的回调函数,详见设计文档与example
  * 用例：
  * 在html中使用sx-model指令绑定值，例如：
  * <input type="text",sx-model="user.name">
  *
- * 在js中实例化一个Scope，例如：
- * var Scope = new Scope({reciprocal:true})//开启双向绑定。此时input中的变化会反应到Scope.user.name中。
- * Scope.user = {
+ * 在js中实例化一个sx_Scope，例如：
+ * var sx_Scope = new sx_Scope({reciprocal:true})//开启双向绑定。此时input中的变化会反应到sx_Scope.user.name中。
+ * sx_Scope.user = {
  *     name:'AHMI'
  * };
  * Scope.digest();//手动进行一次循环检查，更新视图。
  *
- * 开发者在后期需要通过更新model来更新视图时，出于性能考虑，需要手动触发Scope.digest()
+ * 开发者在后期需要通过更新model来更新视图时，出于性能考虑，需要手动触发sx_Scope.digest()
  */
 
 /**
- * Scope构造函数
+ * sx_Scope构造函数
  * @param {obj} options   选项，目前支持是否双向绑定。
  * @param {obj} dataModel 数据对象，通过这个方式初始化的数据模型，可以自动调用digest()
  */
-var Scope = function(options) {
+var sx_Scope = function(options) {
     this.watchers = [];
 
     var self = this;
@@ -67,7 +67,7 @@ var Scope = function(options) {
 };
 
 
-Object.assign(Scope.prototype,{
+Object.assign(sx_Scope.prototype,{
     watch:function(watchExp, callback) {
         this.watchers.push({
             watchExp: watchExp,
@@ -89,7 +89,7 @@ Object.assign(Scope.prototype,{
             }
         } while(dirty);
     },
-    // 获取Scope下的相关属性值
+    // 获取sx_Scope下的相关属性值
     //edit by LH in 2017/11/16:原本的函数只支持对象，修改后可以支持数组
     str2PropGet:function(propPath){
         var props = propPath.split('.');
@@ -108,7 +108,7 @@ Object.assign(Scope.prototype,{
         }
         return result;
     },
-    // 设置Scope下的相关属性值
+    // 设置sx_Scope下的相关属性值
     //edit by LH in 2017/11/16:原本的函数只支持对象，修改后可以支持数组
     str2PropSet:function(propPath,value){
         var props = propPath.split('.');

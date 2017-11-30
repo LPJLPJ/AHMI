@@ -33,6 +33,12 @@
     <script src="../../public/login/assets/js/scrollReveal.js"></script>
     <!--  Scroll Scripts -->
     <script src="../../public/login/assets/js/jquery.easing.min.js"></script>
+    <!--语言处理在最前面-->
+    <script src="/public/language/lib/binding.js"></script>
+    <script src="/public/language/data/English.js"></script>
+    <script src="/public/language/data/Chinese.js"></script>
+    <script src="/public/language/utils/languageServer.js"></script>
+    <script src="/public/language/js/404Language.js"></script>
     <!--  Custom Scripts -->
     <script src="../../public/login/assets/js/custom.js"></script>
 
@@ -87,8 +93,8 @@
                             <ul class="slides move-me">
                                 <!-- Slider 01 -->
                                 <li>
-                                    <h1 >页面没有找到</h1>
-                                    <a class="btn btn-primary btn-lg" href="/">返回主页</a>
+                                    <h1 sx-model="page404.normal[0]">页面没有找到</h1>
+                                    <a class="btn btn-primary btn-lg" href="/"   sx-model="page404.normal[1]">返回主页</a>
                                 </li>
                                 <!-- End Slider 01 -->
                             </ul>

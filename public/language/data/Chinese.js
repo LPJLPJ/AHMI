@@ -1,4 +1,7 @@
-{
+if (!window.langSets){
+    window.langSets = {}
+}
+window.langSets.dataChinese={
   "homePage": {
     "nav":[
       "首页",
@@ -114,6 +117,26 @@
       "用户名或邮箱",
       "密码",
       "输入验证码"
+    ],
+    "ErrMessages":{
+      "username":{
+        "empty":"用户名或邮箱不能为空"
+      },
+      "password":{
+        "empty":"密码不能为空"
+      },
+      "captcha":{
+        "empty":"请输入验证码",
+        "wrong":"验证码错误"
+      },
+      "general":{
+        "wrong":"账户错误",
+        "verify":"<a id='resend'>账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>",
+        "verifyErr":"邮箱不存在"
+      }
+    },
+    "tips":[
+      "已发送验证邮件, 请查收"
     ]
   },
   "register":{
@@ -132,7 +155,79 @@
       "密码",
       "确认密码",
       "输入验证码"
-    ]
-  }
+    ],
+    "ErrMessages": {
+      "username": {
+        "empty": "用户名不能为空",
+        "wrong": "用户名为2-16个字符",
+        "duplicate": "用户名已被使用"
+      },
+      "mail": {
+        "empty": "邮箱不能为空",
+        "wrong": "不是正确的邮箱",
+        "duplicate": "邮箱已被使用"
+      },
+      "password": {
+        "empty": "密码不能为空",
+        "wrong": "密码为6-16个字符的数字或字母"
+      },
+      "comparepassword": {
+        "empty": "请再次输入密码",
+        "wrong": "密码不匹配"
+      },
+      "agree": {
+        "empty": "请阅读并同意使用规范"
+      },
+      "captcha": {
+        "empty": "请输入验证码",
+        "wrong": "验证码错误"
+      },
+      "general": {
+        "wrong": "账户错误"
+      }
+    },
+    "successMessages":{
+      "general":{
+        "ok":"注册成功, 请进入邮箱进行确认!"
+      }
+    }
+  },
+  "findback":{
+    "normal":[
+      "注册",
+      "登录",
+      "English",
+      "换一张",
+      "提交"
+    ],
+    "input":[
+      "邮箱",
+      "输入验证码"
+    ],
+    "ErrMessages":{
+      "mail":{
+        "empty":"请输入邮箱",
+        "error":"邮箱不存在"
+      },
+      "captcha":{
+        "empty":"请输入验证码",
+        "error":"验证码错误"
+      },
+      "general":{
+        "error":"发生错误"
+      }
+    },
+    "successMessages":{
+      "general":{
+        "ok":"已发送邮件,请点击邮件链接进行重置"
+      }
+    }
+  },
+    "page404":{
+        "normal":[
+            "页面没有找到",
+            "返回主页"
+        ]
+    }
 
 }

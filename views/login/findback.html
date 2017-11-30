@@ -17,6 +17,12 @@
 
     <link href="/public/login/assets/css/style.css" rel="stylesheet"/>
     <link href="/public/login/assets/css/signupform.css" rel="stylesheet" />
+    <!--语言处理在最前面-->
+    <script src="/public/language/lib/binding.js"></script>
+    <script src="/public/language/data/English.js"></script>
+    <script src="/public/language/data/Chinese.js"></script>
+    <script src="/public/language/utils/languageServer.js"></script>
+    <script src="/public/language/js/findbackLanguage.js"></script>
     <script src="/public/login/assets/js/findPasswordForm.js"></script>
 
 
@@ -35,8 +41,24 @@
         </div>
         <div class="navbar-collapse collapse move-me findback">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/user/signup">注册</a></li>
-                <li><a href="/user/login">登录</a></li>
+                <li><a href="/user/signup" sx-model="findback.normal[0]">注册</a></li>
+                <li><a href="/user/login" sx-model="findback.normal[1]">登录</a></li>
+                <li>
+                    <a id="language" class="language-style">
+                        <span class="glyphicon glyphicon-globe my-glyphicon-global"></span>
+                        <span sx-model="findback.normal[2]" class="my-global">English  </span>
+                        <div class="loadEffect my-global-load">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </a>
+                </li>
             </ul>
         </div>
 

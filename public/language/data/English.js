@@ -1,4 +1,8 @@
-{
+
+if (!window.langSets){
+  window.langSets = {}
+}
+window.langSets.dataEnglish={
   "homePage": {
     "nav":[
       "HOME",
@@ -114,6 +118,26 @@
       "E用户名或邮箱",
       "E密码",
       "E输入验证码"
+    ],
+    "ErrMessages":{
+      "username":{
+        "empty":"E用户名或邮箱不能为空"
+      },
+      "password":{
+        "empty":"E密码不能为空"
+      },
+      "captcha":{
+        "empty":"E请输入验证码",
+        "wrong":"E验证码错误"
+      },
+      "general":{
+        "wrong":"E账户错误",
+        "verify":"E<a id='resend'>账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>",
+        "verifyErr":"E邮箱不存在"
+      }
+    },
+    "tips":[
+      "E已发送验证邮件, 请查收"
     ]
   },
   "register":{
@@ -132,7 +156,79 @@
       "E密码",
       "E确认密码",
       "E输入验证码"
-    ]
-  }
+    ],
+      "ErrMessages": {
+          "username": {
+              "empty": "E用户名不能为空",
+              "wrong": "E用户名为2-16个字符",
+              "duplicate": "E用户名已被使用"
+          },
+          "mail": {
+              "empty": "E邮箱不能为空",
+              "wrong": "E不是正确的邮箱",
+              "duplicate": "E邮箱已被使用"
+          },
+          "password": {
+              "empty": "E密码不能为空",
+              "wrong": "E密码为6-16个字符的数字或字母"
+          },
+          "comparepassword": {
+              "empty": "E请再次输入密码",
+              "wrong": "E密码不匹配"
+          },
+          "agree": {
+              "empty": "E请阅读并同意使用规范"
+          },
+          "captcha": {
+              "empty": "E请输入验证码",
+              "wrong": "E验证码错误"
+          },
+          "general": {
+              "wrong": "E账户错误"
+          }
+      },
+      "successMessages":{
+          "general":{
+              "ok":"E注册成功, 请进入邮箱进行确认!"
+          }
+      }
+  },
+  "findback":{
+    "normal":[
+      "E注册",
+      "E登录",
+      "English",
+      "E换一张",
+      "E提交"
+    ],
+    "input":[
+      "E邮箱",
+      "E输入验证码"
+    ],
+    "ErrMessages":{
+      "mail":{
+        "empty":"E请输入邮箱",
+        "error":"E邮箱不存在"
+      },
+      "captcha":{
+        "empty":"E请输入验证码",
+        "error":"E验证码错误"
+      },
+      "general":{
+        "error":"E发生错误"
+      }
+    },
+    "successMessages":{
+      "general":{
+        "ok":"E已发送邮件,请点击邮件链接进行重置"
+      }
+    }
+  },
+    "page404":{
+        "normal":[
+            "E页面没有找到",
+            "E返回主页"
+        ]
+    }
 
 }

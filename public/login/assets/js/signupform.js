@@ -3,37 +3,16 @@
  */
 
 $(function () {
-    console.log('haha')
-    var ErrMessages = {
-        username: {
-            empty: '用户名不能为空',
-            wrong: '用户名为2-16个字符',
-            duplicate: '用户名已被使用'
-        },
-        mail: {
-            empty: '邮箱不能为空',
-            wrong: '不是正确的邮箱',
-            duplicate: '邮箱已被使用'
-        },
-        password: {
-            empty: '密码不能为空',
-            wrong: '密码为6-16个字符的数字或字母'
-        },
-        comparepassword: {
-            empty: '请再次输入密码',
-            wrong: '密码不匹配'
-        },
-        agree: {
-            empty: '请阅读并同意使用规范'
-        },
-        captcha: {
-            empty: '请输入验证码',
-            wrong: '验证码错误'
-        },
-        general: {
-            wrong: '账户错误'
-        }
+    var dataCurrent;
+    if (localStorage.language==="English") {
+        dataCurrent=window.langSets.dataEnglish;
+    } else if(localStorage.language==="Chinese") {
+        dataCurrent=window.langSets.dataChinese;
+    }else{
+        console.log(err);
+        return;
     }
+    var ErrMessages=dataCurrent.register.ErrMessages;
 
     init();
 
@@ -93,7 +72,6 @@ $(function () {
             submit.disabled = true
         })
         username.addEventListener('keyup', function (e) {
-
             // console.log(username.value,e.target.value,e);
             var _username = username.value
             if (_username == '') {
@@ -245,7 +223,7 @@ $(function () {
                 data: userInfo,
                 success: function (data, textStatus, xhr) {
                     //console.log(data);
-                    captchaVerify.innerHTML = '注册成功, 请进入邮箱进行确认!';
+                    captchaVerify.innerHTML = dataCurrent.register.successMessages.general.ok;
                     setTimeout(function () {
                         window.location.href = '/user/login'
                     }, 2000);

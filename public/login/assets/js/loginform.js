@@ -1,22 +1,7 @@
 // loginform
 $(function(){
-	var ErrMessages = {
-		username:{
-			empty:'用户名或邮箱不能为空'
-		},
-		password:{
-			empty:'密码不能为空'
-		},
-		captcha:{
-			empty:'请输入验证码',
-			wrong:'验证码错误'
-		},
-		general:{
-			wrong:'账户错误',
-            verify:'<a id="resend">账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>',
-            verifyErr:'邮箱不存在'
-		}
-	};
+
+    var ErrMessages;
 	var formVerify = {
 		username:false,
 		password:false,
@@ -107,6 +92,7 @@ $(function(){
                 $('#submit').attr('disabled',false)
 			},
 			error:function(err, status, xhr){
+                ErrMessages=myScope.login.ErrMessages;
                 var errMsg = err.responseJSON.errMsg;
                 switch (errMsg){
                     case 'not match':
@@ -148,9 +134,12 @@ $(function(){
                     username:username
                 },
                 success:function(data, status, xhr){
-                    $('captcha-verify').html('已发送验证邮件, 请查收')
+                    // $('captcha-verify').html('已发送验证邮件, 请查收')
+                    $('captcha-verify').html(myScope.login.tips[0]);
+
                 },
                 error: function (err, status, xhr) {
+                    ErrMessages=myScope.login.ErrMessages;
                     var errMsg = err.responseJSON.errMsg;
                     var captchaVerify = $('#captcha-verify')
                     switch (errMsg){
@@ -170,6 +159,7 @@ $(function(){
 		var username = $('#username').val()&&$('#username').val().trim();
 		var password = $('#password').val()&&$('#password').val().trim();
 		var captcha = $('#captcha-input').val()&&$('#captcha-input').val().trim();
+        ErrMessages=myScope.login.ErrMessages;
 		var result = true;
 		if((!username)||(username.length==0)){
 			$('#username-verify').html(ErrMessages.username.empty);
