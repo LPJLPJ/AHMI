@@ -68,6 +68,7 @@
         this.fontStyle = fontStyle;
     }
     FontSubLayer.prototype = Object.create(SubLayer.prototype);
+    FontSubLayer.prototype.layerName = 'FontSubLayer';
 
     FontSubLayer.prototype.constructor = FontSubLayer;
 

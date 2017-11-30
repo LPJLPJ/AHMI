@@ -1148,6 +1148,7 @@
 
     WidgetCommands['Num']={
         onInitialize:`
+            
         `,
         onMouseUp:`
         `,
@@ -1197,6 +1198,7 @@
             var(tRealNum,0)
             set(tRealNum,1)
             while(tCurValue>0){
+                print(tCurValue,'tCurValue')
                 divide(tCurValue,10)
                 add(tRealNum,1)
             }
@@ -1226,6 +1228,9 @@
                     }
                 }
             }
+            print(tFront,'tFront')
+            print(tDecimalNum,'tDecimalNum')
+            print(tOverflowNum,0)
             var(tCurTotalNum,0)
             add(tCurTotalNum,tHasNeg)
             add(tCurTotalNum,tFrontNum)
@@ -1264,7 +1269,7 @@
                 add(tLayerIdx,1)
                 add(tCurX,tMaxWidth)
             }
-            while(tFrontNum>0){
+            while(a>0){
                 set('this.layers.tLayerIdx.x',tCurX)
                 set('this.layers.tLayerIdx.width',tMaxWidth)
                 set('this.layers.tLayerIdx.subLayers.font.text',48)
@@ -1315,13 +1320,12 @@
                     minus(tFacCount,1)
                 }
             }
-            while(tLayerIdx<tTotalLayers){
-                set('this.layers.tLayerIdx.subLayers.font.text',0)
-            }
+            // while(tLayerIdx<tTotalLayers){
+            //     set('this.layers.tLayerIdx.subLayers.font.text',0)
+            // }
 
             checkalarm(0)
             set('this.oldValue',tTagValue)
-
 
         `
     };
@@ -1386,7 +1390,7 @@
                             minus(len,1)
                         }else{
                             mod(tTag,16)
-                            // add(tTag,48)
+                            add(tTag,48)
                             set('this.layers.len.subLayers.font.text',tTag)
                             divide(tag,16)
                             set(tTag,tag)

@@ -469,7 +469,7 @@ module.exports =   React.createClass({
             case 'EXP':
                 var variables = value.split('.')
                 var result;
-                var isCharCode = false;
+                var isCharCode = true;
 
                 for (var i=0;i<variables.length;i++){
                     var curV = variables[i];
@@ -489,7 +489,7 @@ module.exports =   React.createClass({
                         // console.log('result',result)
                     }
                 }
-                return result;
+                return result||0;
         }
     },
     charFromCode:function (code) {
@@ -532,7 +532,7 @@ module.exports =   React.createClass({
                         break
                     }
                     var nextV = this.evalVariable(widget,refs[rLen-1])
-                    if (nextV=='text' && (upperRef.constructor.name=='FontSubLayer')) {
+                    if (nextV=='text' && (upperRef.layerName==='FontSubLayer')) {
                         var charCode = this.evalParam(widget,value)
                         upperRef[nextV] = this.charFromCode(charCode)
                     }else{
