@@ -1386,7 +1386,7 @@
                             minus(len,1)
                         }else{
                             mod(tTag,16)
-                            add(tTag,48)
+                            // add(tTag,48)
                             set('this.layers.len.subLayers.font.text',tTag)
                             divide(tag,16)
                             set(tTag,tag)
