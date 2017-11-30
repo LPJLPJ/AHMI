@@ -149,10 +149,11 @@ Object.assign(sx_Scope.prototype,{
                 }else{
                     result = result[props[i]];
                 }
-            }catch(err){
-                throw new Error('ng-model reference err',err);
             }
             result[props[i]] = value;
+        }catch(err){
+                throw new Error('ng-model reference err',err);
+            }
         },
         setup:function(){
             // 以数据劫持的方式支持数据绑定，可以自动刷新。
