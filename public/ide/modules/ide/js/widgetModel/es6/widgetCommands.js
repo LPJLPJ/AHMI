@@ -1409,7 +1409,7 @@
                     var(tHighLightNum,0)
                     //clear
                     set(offset,'this.otherAttrs.0')
-                    while(offset<totalLayerNum){
+                    while(offset < totalLayerNum){
                         set('this.layers.offset.hidden',1)
                         add(offset,1)
                     }
@@ -1486,7 +1486,7 @@
                     var(tHighLightNum,0)
                     //clear
                     set(offset,'this.otherAttrs.0')
-                    while(offset<totalLayerNum){
+                    while(offset < totalLayerNum){
                         set('this.layers.offset.hidden',1)
                         add(offset,1)
                     }
