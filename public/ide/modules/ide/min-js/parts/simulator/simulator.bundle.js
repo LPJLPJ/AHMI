@@ -53686,6 +53686,9 @@ module.exports = React.createClass({
             case 0:
                 return '';
                 break;
+            case 45:
+                return '-';
+                break;
             case 46:
                 return '.';
                 break;
@@ -53718,7 +53721,7 @@ module.exports = React.createClass({
                         break;
                     }
                     var nextV = this.evalVariable(widget, refs[rLen - 1]);
-                    if (nextV == 'text' && upperRef.layerName == 'FontSubLayer') {
+                    if (nextV == 'text' && upperRef.layerName === 'FontSubLayer') {
                         var charCode = this.evalParam(widget, value);
                         upperRef[nextV] = this.charFromCode(charCode);
                     } else {

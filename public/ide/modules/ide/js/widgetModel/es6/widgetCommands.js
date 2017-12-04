@@ -95,6 +95,7 @@
           executeaction(5)
         `
     };
+
     WidgetCommands['ButtonGroup'] = {
         onInitialize:`
             
@@ -1148,185 +1149,225 @@
 
     WidgetCommands['Num']={
         onInitialize:`
-            
+            // var(tInitValue,0)
+            // var(tLen,0)
+            // var(tIndex,0)
+            // var(tDecimalCount,0)
+            // var(tDecimalIndex,0)
+            // //init value
+            // add(tInitValue,48)
+            // set(tLen,'this.layers.length')
+            // set(tDecimalCount,'this.otherAttrs.3')
+            // set(tDecimalIndex,tLen)
+            // if(tDecimalCount>0){
+            //     minus(tDecimalIndex,1)
+            //     minus(tDecimalIndex,tDecimalCount)
+            // }
+            // // print(tDecimalIndex,'tDecimalIndex')
+            // // print(tLen,'tLen')
+            // while(tIndex<tLen){
+            //     // print(tIndex,'tIndex') 
+            //     if(tDecimalIndex==tIndex){
+            //         set('this.layers.tIndex.subLayers.font.text',46)
+            //     }else{
+            //         // print(tIndex,'tIndex')
+            //         set('this.layers.tIndex.subLayers.font.text',tInitValue)
+            //     }
+            //     add(tIndex,1)
+            // }
         `,
         onMouseUp:`
         `,
         onMouseDown:`
         `,
         onTagChange:`
-            var(tTagValue,0)
-            getTag(tTagValue)
-            var(tMinValue,0)
-            set(tMinValue,'this.minValue')
-            var(tMaxValue,0)
-            set(tMaxValue,'this.maxValue')
-            var(tFacCount,0)
-            var(tNumOfDigits,0)
-            var(tDecimalCount,0)
-            var(tMaxWidth,0)
-            set(tMaxWidth,'this.otherAttrs.6')
-            set(tFacCount,'this.otherAttrs.3')
-            var(tHasDot,0)
-            if (tFacCount>0) {
-                set(tHasDot,1)
+            //清空所有数字内容
+            var(tIndex,0)   //用于循环
+            var(tLaysLen,0)     //图层长度
+            set(tLaysLen,'this.layers.length')
+            set(tIndex,0)
+            while(tIndex<tLaysLen){
+                set('this.layers.tIndex.subLayers.font.text',0)
+                add(tIndex,1)
             }
-            set(tNumOfDigits,'this.otherAttrs.4')
-            set(tDecimalCount,tNumOfDigits)
-            minus(tDecimalCount,tFacCount)
-            var(tAlign,0)
-            set(tAlign,'this.otherAttrs.7')
-            var(tFrontZero,0)
-            set(tFrontZero,'this.otherAttrs.1')
-            var(tSymbol,0)
-            set(tSymbol,'this.otherAttrs.2')
-            var(tTotalLayers,0)
-            set(tTotalLayers,'this.layers.length')
-            var(tHasNeg,0)
-            if (tTagValue<0) {
-                if (tSymbol==1) {
-                    set(tHasNeg,1)
-                }
-            }
-            var(tCurValue,0)
-            set(tCurValue,tTagValue)
-            if (tCurValue<0) {
-                multiply(tCurValue,-1)
-            }
-            var(tCurValue2,0)
-            set(tCurValue2,tCurValue)
-            var(tRealNum,0)
-            set(tRealNum,1)
-            while(tCurValue>0){
-                print(tCurValue,'tCurValue')
-                divide(tCurValue,10)
-                add(tRealNum,1)
-            }
-            var(tFrontNum,0)
-            var(tDecimalNum,0)
-            var(tOverflowNum,0)
-            if (tRealNum<=tFacCount) {
-                set(tDecimalNum,0)
-                if (tFrontZero==1) {
-                    set(tFrontNum,tDecimalCount)
-                }else{
-                    set(tFrontNum,1)
-                }
+            
+            // draw num
+            
+            //初始化变量
+            var(tCurVal,0)        //当前值
+            var(tMaxVal,0)        //最大值
+            var(tMinVal,0)        //最小值
+            var(hasFrontZero,0)   //是否有前导零
+            var(hasSymbol,0)      //是否有符号
+            var(decimalCnt,0)     //小数位数
+            var(numOfDigits,0)    //字符数
+            var(overflow,0)       //溢出模式，0不显示，1显示
+            var(fontWidth,0)      //字符图层宽度
+            var(align,0)          //对齐方式，0左，1中，2右
+            var(widgetWidth,0)    //控件宽度
+            
+            var(initPosX,0)       //绘制起始坐标
+            var(symbolCnt,0)      //要绘制的符号的个数
+            var(decimalIndex,0)   //小数点的标识坐标，即在第图层位置绘制小数点
+            var(decimalZeroCnt,0) //要补齐的小数点后的0的个数
+            var(frontZeroCnt,0)   //要绘制的前导零的个数
+            var(curValCnt,0)      //要绘制的当前值数字的个数
+            var(allFontCnt,0)     //要绘制的总字符的个数
+            var(tempVal,0)        //临时变量
+            var(needDraw,0)       //是否需要绘制，在溢出不显示的情况下，不需要绘制。0不需要，1需要
+            
+            getTag(tCurVal)
+            set(tMaxVal,'this.maxValue')
+            set(tMinVal,'this.minValue')
+            set(hasFrontZero,'this.otherAttrs.1')
+            set(hasSymbol,'this.otherAttrs.2')
+            set(decimalCnt,'this.otherAttrs.3')
+            set(numOfDigits,'this.otherAttrs.4')
+            set(overflow,'this.otherAttrs.5')
+            set(fontWidth,'this.otherAttrs.6')
+            set(align,'this.otherAttrs.7')
+            set(widgetWidth,'this.otherAttrs.8')      
+            
+            set(needDraw,1)      
+           
+            //print(tCurVal,tMaxVal)
+            //print(tMinVal,hasFrontZero)
+            //print(hasSymbol,decimalCnt)
+            //print(numOfDigits,overflow)
+            //print(overflow,fontWidth)
+            //print(align,'align')
+            
+            //处理要显示的值
+            if(tCurVal>tMaxVal){
+                //溢出最大值
+                set(tCurVal,tMaxVal)
+                set(isOverflow,1)
             }else{
-                if (tRealNum>tNumOfDigits) {
-                    set(tDecimalNum,tDecimalCount)
-                    set(tOverflowNum,tRealNum)
-                    minus(tOverflowNum,tNumOfDigits)
+                //溢出最小值
+                if(tCurVal<tMinVal){
+                    set(tCurVal,tMinVal)
+                    set(isOverflow,1)
+                }
+            }
+            
+            if(isOverflow==1){
+                //溢出
+                if(overflow==0){
+                    //溢出不显示
+                    set(needDraw,0)
+                }
+            }
+            
+            //判断是否需要绘制
+            if(needDraw==1){
+    
+                //符号
+                if(hasSymbol==1){
+                    if(tCurVal<0){
+                        set(symbolCnt,1)
+                    }
+                }
+                
+                //当前值数字个数
+                set(tempVal,tCurVal)
+                //--while 没有>=，故tCurVal为0时，curValCnt为1
+                while(tempVal>0){
+                    add(curValCnt,1)
+                    divide(tempVal,10)
+                }
+                if(curValCnt==0){
+                    set(curValCnt,1) 
+                }
+                
+                //前导零
+                if(hasFrontZero==1){
+                    set(tempVal,numOfDigits)
+                    minus(tempVal,curValCnt)
+                    set(frontZeroCnt,tempVal)
+                }
+                
+                //小数
+                
+                
+                //总字符数
+                add(allFontCnt,symbolCnt)
+                add(allFontCnt,frontZeroCnt)
+                add(allFontCnt,curValCnt)
+                
+                //计算起始坐标
+                set(tempVal,allFontCnt)
+                var(tempValW,0) //总字符所占宽度
+                while(tempVal>0){
+                    add(tempValW,fontWidth)
+                    minus(tempVal,1)
+                }
+                if(align==0){
+                    //左对齐
+                    set(initPosX,0)
                 }else{
-                    set(tDecimalNum,tRealNum)
-                    minus(tDecimalNum,tFacCount)
-                    if (tFrontZero==1) {
-                        set(tFrontNum,tDecimalCount)
-                        minus(tFrontNum,tDecimalNum)
+                    if(align==2){
+                        //右对齐
+                        set(initPosX,widgetWidth)
+                        minus(initPosX,tempValW)
                     }else{
-                        set(tFrontNum,0)
+                        //居中对齐
+                        set(initPosX,widgetWidth)
+                        minus(initPosX,tempValW)
+                        divide(initPosX,2)
                     }
                 }
-            }
-            print(tFront,'tFront')
-            print(tDecimalNum,'tDecimalNum')
-            print(tOverflowNum,0)
-            var(tCurTotalNum,0)
-            add(tCurTotalNum,tHasNeg)
-            add(tCurTotalNum,tFrontNum)
-            add(tCurTotalNum,tDecimalNum)
-            add(tCurTotalNum,tHasDot)
-            add(tCurTotalNum,tFacCount)
-            var(tLeftPadding,0)
-            set(tLeftPadding,tTotalLayers)
-            minus(tLeftPadding,tCurTotalNum)
-            var(tLeftPaddingPixel,0)
-            if (tLeftPadding>0) {
-                if (tAlign==1) {
-                    set(tLeftPaddingPixel,tLeftPadding)
-                    multiply(tLeftPaddingPixel,tMaxWidth)
-                    divide(tLeftPaddingPixel,2)
+                
+                //开始绘制
+                var(tempValText,0)  //保存要绘制的数字
+                var(tempValMid1,0)  //保存临时中间结果
+                var(tempValMid2,0)  //保存临时中间结果
+                set(tempVal,0)
+                if(tempVal==0){
+                    if(symbolCnt==1){
+                        //有负号
+                        set('this.layers.tempVal.x',initPos)
+                        set('this.layers.tempVal.subLayers.font.text',45)
+                        add(tempVal,1)
+                        add(initPosX,fontWidth)
+                    }else{
+                        print(initPos,'跳过')
+                    }  
                 }else{
-                    if (tAlign==2) {
-                        set(tLeftPaddingPixel,tLeftPadding)
-                        multiply(tLeftPaddingPixel,tMaxWidth)
+                    print(initPos,'跳过')
+                }
+                
+                while(tempVal<allFontCnt){
+                    set('this.layers.tempVal.x',initPosX)
+                    set('this.layers.tempVal.width',fontWidth)
+                    
+                    if(frontZeroCnt>0){
+                        //绘制前导零
+                        set(tempValText,0)
+                        add(tempValText,48)
+                        set('this.layers.tempVal.subLayers.font.text',tempValText)
+                        minus(frontZeroCnt,1)
+                    }else{
+                        //绘制数字值
+                        set(tempValMid1,curValCnt)
+                        set(tempValMid2,1)
+                        while(tempValMid1>1){
+                            multiply(tempValMid2,10)
+                            minus(tempValMid1,1)
+                        }
+                        print(tempValMid2,'tempValMid2')
+                        set(tempValText,tCurVal)
+                        divide(tempValText,tempValMid2)
+                        mod(tempValText,10)
+                        add(tempValText,48)
+                        set('this.layers.tempVal.subLayers.font.text',tempValText)
+                        minus(curValCnt,1)
                     }
+                     
+                    add(tempVal,1)
+                    add(initPosX,fontWidth)
                 }
-            }
-            var(tCurX,0)
-            var(tLayerIdx,0)
-            var(tDotWidth,0)
-            set(tDotWidth,tMaxWidth)
-            divide(tDotWidth,2)
-            if (tDotWidth==0) {
-                set(tDotWidth,1)
-            }
-            set(tCurX,tLeftPaddingPixel)
-            if (tHasNeg==1) {
-                set('this.layers.tLayerIdx.x',tCurX)
-                set('this.layers.tLayerIdx.width',tMaxWidth)
-                set('this.layers.tLayerIdx.subLayers.font.text',45)
-                add(tLayerIdx,1)
-                add(tCurX,tMaxWidth)
-            }
-            while(a>0){
-                set('this.layers.tLayerIdx.x',tCurX)
-                set('this.layers.tLayerIdx.width',tMaxWidth)
-                set('this.layers.tLayerIdx.subLayers.font.text',48)
-                add(tLayerIdx,1)
-                add(tCurX,tMaxWidth)
-                minus(tFrontNum,1)
-            }
-            var(tDivider,0)
-            set(tDivider,1)
-            set(tRealNum,tDecimalNum)
-            add(tRealNum,tFacCount)
-            while(tRealNum>0){
-                multiply(tDivider,10)
-                minus(tRealNum,1)
-            }
-            mod(tCurValue2,tDivider)
-            var(tCurValue3,0)
-            while(tDecimalNum>0){
-                set('this.layers.tLayerIdx.x',tCurX)
-                set('this.layers.tLayerIdx.width',tMaxWidth)
-                set(tCurValue3,tCurValue2)
-                divide(tDivider,10)
-                mod(tCurValue2,tDivider)
-                divide(tCurValue3,tDivider)
-                add(tCurValue3,48)
-                set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
-                add(tLayerIdx,1)
-                add(tCurX,tMaxWidth)
-                minus(tDecimalNum,1)
-            }
-            if (tHasDot==1) {
-                set('this.layers.tLayerIdx.x',tCurX)
-                set('this.layers.tLayerIdx.width',tDotWidth)
-                set('this.layers.tLayerIdx.subLayers.font.text',46)
-                add(tLayerIdx,1)
-                add(tCurX,tDotWidth)
-                while(tFacCount>0){
-                    set('this.layers.tLayerIdx.x',tCurX)
-                    set('this.layers.tLayerIdx.width',tMaxWidth)
-                    set(tCurValue3,tCurValue2)
-                    divide(tDivider,10)
-                    mod(tCurValue2,tDivider)
-                    divide(tCurValue3,tDivider)
-                    add(tCurValue3,48)
-                    set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
-                    add(tLayerIdx,1)
-                    add(tCurX,tMaxWidth)
-                    minus(tFacCount,1)
-                }
-            }
-            // while(tLayerIdx<tTotalLayers){
-            //     set('this.layers.tLayerIdx.subLayers.font.text',0)
-            // }
-
-            checkalarm(0)
-            set('this.oldValue',tTagValue)
-
+                
+            }           
         `
     };
 
@@ -1596,3 +1637,180 @@
 // //    minus(xr,1)
 // //}
 // add(tTag,addNum)
+
+
+// //old code
+// var(tTagValue,0)
+// getTag(tTagValue)
+// // print(tTagValue,'tTagValue')
+// var(tMinValue,0)
+// set(tMinValue,'this.minValue')
+// var(tMaxValue,0)
+// set(tMaxValue,'this.maxValue')
+// var(tFacCount,0)
+// var(tNumOfDigits,0)
+// var(tDecimalCount,0)
+// var(tMaxWidth,0)
+// set(tMaxWidth,'this.otherAttrs.6')
+// set(tFacCount,'this.otherAttrs.3')
+// var(tHasDot,0)
+// if (tFacCount>0) {
+//     set(tHasDot,1)
+// }
+// set(tNumOfDigits,'this.otherAttrs.4')
+// set(tDecimalCount,tNumOfDigits)
+// minus(tDecimalCount,tFacCount)
+// var(tAlign,0)
+// set(tAlign,'this.otherAttrs.7')
+// var(tFrontZero,0)
+// set(tFrontZero,'this.otherAttrs.1')
+// var(tSymbol,0)
+// set(tSymbol,'this.otherAttrs.2')
+// var(tTotalLayers,0)
+// set(tTotalLayers,'this.layers.length')
+// var(tHasNeg,0)
+// if (tTagValue<0) {
+//     if (tSymbol==1) {
+//         set(tHasNeg,1)
+//     }
+// }
+// var(tCurValue,0)
+// set(tCurValue,tTagValue)
+// if (tCurValue<0) {
+//     multiply(tCurValue,-1)
+// }
+// var(tCurValue2,0)
+// set(tCurValue2,tCurValue)
+// var(tRealNum,0)
+// set(tRealNum,1)
+// while(tCurValue>0){
+//     print(tCurValue,'tCurValue')
+//     divide(tCurValue,10)
+//     add(tRealNum,1)
+// }
+// var(tFrontNum,0)
+// var(tDecimalNum,0)
+// var(tOverflowNum,0)
+// if (tRealNum<=tFacCount) {
+//     set(tDecimalNum,0)
+//     if (tFrontZero==1) {
+//         set(tFrontNum,tDecimalCount)
+//     }else{
+//         set(tFrontNum,1)
+//     }
+// }else{
+//     if (tRealNum>tNumOfDigits) {
+//         set(tDecimalNum,tDecimalCount)
+//         set(tOverflowNum,tRealNum)
+//         minus(tOverflowNum,tNumOfDigits)
+//     }else{
+//         set(tDecimalNum,tRealNum)
+//         minus(tDecimalNum,tFacCount)
+//         if (tFrontZero==1) {
+//             set(tFrontNum,tDecimalCount)
+//             minus(tFrontNum,tDecimalNum)
+//         }else{
+//             set(tFrontNum,0)
+//         }
+//     }
+// }
+// // print(tFront,'tFront')
+// // print(tDecimalNum,'tDecimalNum')
+// // print(tOverflowNum,'tOverflowNum')
+// var(tCurTotalNum,0)
+// add(tCurTotalNum,tHasNeg)
+// add(tCurTotalNum,tFrontNum)
+// add(tCurTotalNum,tDecimalNum)
+// add(tCurTotalNum,tHasDot)
+// add(tCurTotalNum,tFacCount)
+// var(tLeftPadding,0)
+// set(tLeftPadding,tTotalLayers)
+// minus(tLeftPadding,tCurTotalNum)
+// var(tLeftPaddingPixel,0)
+// if (tLeftPadding>0) {
+//     if (tAlign==1) {
+//         set(tLeftPaddingPixel,tLeftPadding)
+//         multiply(tLeftPaddingPixel,tMaxWidth)
+//         divide(tLeftPaddingPixel,2)
+//     }else{
+//         if (tAlign==2) {
+//             set(tLeftPaddingPixel,tLeftPadding)
+//             multiply(tLeftPaddingPixel,tMaxWidth)
+//         }
+//     }
+// }
+// var(tCurX,0)
+// var(tLayerIdx,0)
+// var(tDotWidth,0)
+// set(tDotWidth,tMaxWidth)
+// divide(tDotWidth,2)
+// if (tDotWidth==0) {
+//     set(tDotWidth,1)
+// }
+// set(tCurX,tLeftPaddingPixel)
+// if (tHasNeg==1) {
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tMaxWidth)
+//     print(tLayerIde,'in tHasNeg')
+//     set('this.layers.tLayerIdx.subLayers.font.text',45)
+//     add(tLayerIdx,1)
+//     add(tCurX,tMaxWidth)
+// }
+// while(a>0){
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tMaxWidth)
+//     print(tLayerIdx,'in while a>0')
+//     set('this.layers.tLayerIdx.subLayers.font.text',48)
+//     add(tLayerIdx,1)
+//     add(tCurX,tMaxWidth)
+//     minus(tFrontNum,1)
+// }
+// var(tDivider,0)
+// set(tDivider,1)
+// set(tRealNum,tDecimalNum)
+// add(tRealNum,tFacCount)
+// while(tRealNum>0){
+//     multiply(tDivider,10)
+//     minus(tRealNum,1)
+// }
+// mod(tCurValue2,tDivider)
+// var(tCurValue3,0)
+// while(tDecimalNum>0){
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tMaxWidth)
+//     set(tCurValue3,tCurValue2)
+//     divide(tDivider,10)
+//     mod(tCurValue2,tDivider)
+//     divide(tCurValue3,tDivider)
+//     add(tCurValue3,48)
+//     print(tLayerIdx,'in while tDecimalNum>0')
+//     print(tCurValue,'tCurValue')
+//     set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
+//     add(tLayerIdx,1)
+//     add(tCurX,tMaxWidth)
+//     minus(tDecimalNum,1)
+// }
+// if (tHasDot==1) {
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tDotWidth)
+//     set('this.layers.tLayerIdx.subLayers.font.text',46)
+//     add(tLayerIdx,1)
+//     add(tCurX,tDotWidth)
+//     while(tFacCount>0){
+//         set('this.layers.tLayerIdx.x',tCurX)
+//         set('this.layers.tLayerIdx.width',tMaxWidth)
+//         set(tCurValue3,tCurValue2)
+//         divide(tDivider,10)
+//         mod(tCurValue2,tDivider)
+//         divide(tCurValue3,tDivider)
+//         add(tCurValue3,48)
+//         print(tLayerIdx,'in hasDot')
+//         set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
+//         add(tLayerIdx,1)
+//         add(tCurX,tMaxWidth)
+//         minus(tFacCount,1)
+//     }
+// }
+//
+// checkalarm(0)
+// set('this.oldValue',tTagValue)

@@ -499,7 +499,10 @@ module.exports =   React.createClass({
         switch(code){
             case 0:
                 return ''
-            break
+            break;
+            case 45:
+                return '-';
+            break;
             case 46:
                 return '.'
             break;

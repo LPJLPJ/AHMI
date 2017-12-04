@@ -25,6 +25,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onKeyBoardRight: '\n          var(tMaxHighLightNum,0)\n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          if (tMaxHighLightNum>0) {\n            var(tHighLightNum,0)\n            set(tHighLightNum,\'this.highLightNum\')\n            if (tHighLightNum==1) {\n              //hashighlight\n              set(\'this.layers.2.hidden\',0)\n            }else{\n              set(\'this.layers.2.hidden\',1)\n            }\n          }\n        ',
         onKeyBoardOK: '\n          executeaction(5)\n        '
     };
+
     WidgetCommands['ButtonGroup'] = {
         onInitialize: '\n            \n        ',
         onMouseDown: '\n            var(a,0)\n            var(b,0)\n            var(c,0)\n            set(c,\'this.layers.length\')\n            var(tMaxHighLightNum,0)\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(tSingleButtonLayers,0)\n            if (tMaxHighLightNum>0) {\n              set(tSingleButtonLayers,3)\n            }else{\n              set(tSingleButtonLayers,2)\n            }\n            minus(c,tSingleButtonLayers)\n            set(a,\'this.innerX\')\n            set(b,\'this.innerY\')\n            var(lx,0)\n            var(ly,0)\n            var(lw,0)\n            var(lh,0)\n            var(rx,0)\n            var(ry,0)\n            while(c>=0){\n                set(lx,\'this.layers.c.x\')\n                set(ly,\'this.layers.c.y\')\n                set(lw,\'this.layers.c.width\')\n                set(lh,\'this.layers.c.height\')\n                set(rx,lx)\n                set(ry,ly)\n                add(rx,lw)\n                add(ry,lh)\n                if(a>=lx){\n                    if(rx>a){\n                        if(b>=ly){\n                            if(ry>b){\n                                divide(c,tSingleButtonLayers)\n                                setTag(c)\n                                set(c,0)\n                            }\n                        }\n                    }\n                }\n                minus(c,tSingleButtonLayers)\n            }\n        ',
@@ -90,10 +91,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     WidgetCommands['Num'] = {
-        onInitialize: '\n            \n        ',
+        onInitialize: '\n            // var(tInitValue,0)\n            // var(tLen,0)\n            // var(tIndex,0)\n            // var(tDecimalCount,0)\n            // var(tDecimalIndex,0)\n            // //init value\n            // add(tInitValue,48)\n            // set(tLen,\'this.layers.length\')\n            // set(tDecimalCount,\'this.otherAttrs.3\')\n            // set(tDecimalIndex,tLen)\n            // if(tDecimalCount>0){\n            //     minus(tDecimalIndex,1)\n            //     minus(tDecimalIndex,tDecimalCount)\n            // }\n            // // print(tDecimalIndex,\'tDecimalIndex\')\n            // // print(tLen,\'tLen\')\n            // while(tIndex<tLen){\n            //     // print(tIndex,\'tIndex\') \n            //     if(tDecimalIndex==tIndex){\n            //         set(\'this.layers.tIndex.subLayers.font.text\',46)\n            //     }else{\n            //         // print(tIndex,\'tIndex\')\n            //         set(\'this.layers.tIndex.subLayers.font.text\',tInitValue)\n            //     }\n            //     add(tIndex,1)\n            // }\n        ',
         onMouseUp: '\n        ',
         onMouseDown: '\n        ',
-        onTagChange: '\n            var(tTagValue,0)\n            getTag(tTagValue)\n            var(tMinValue,0)\n            set(tMinValue,\'this.minValue\')\n            var(tMaxValue,0)\n            set(tMaxValue,\'this.maxValue\')\n            var(tFacCount,0)\n            var(tNumOfDigits,0)\n            var(tDecimalCount,0)\n            var(tMaxWidth,0)\n            set(tMaxWidth,\'this.otherAttrs.6\')\n            set(tFacCount,\'this.otherAttrs.3\')\n            var(tHasDot,0)\n            if (tFacCount>0) {\n                set(tHasDot,1)\n            }\n            set(tNumOfDigits,\'this.otherAttrs.4\')\n            set(tDecimalCount,tNumOfDigits)\n            minus(tDecimalCount,tFacCount)\n            var(tAlign,0)\n            set(tAlign,\'this.otherAttrs.7\')\n            var(tFrontZero,0)\n            set(tFrontZero,\'this.otherAttrs.1\')\n            var(tSymbol,0)\n            set(tSymbol,\'this.otherAttrs.2\')\n            var(tTotalLayers,0)\n            set(tTotalLayers,\'this.layers.length\')\n            var(tHasNeg,0)\n            if (tTagValue<0) {\n                if (tSymbol==1) {\n                    set(tHasNeg,1)\n                }\n            }\n            var(tCurValue,0)\n            set(tCurValue,tTagValue)\n            if (tCurValue<0) {\n                multiply(tCurValue,-1)\n            }\n            var(tCurValue2,0)\n            set(tCurValue2,tCurValue)\n            var(tRealNum,0)\n            set(tRealNum,1)\n            while(tCurValue>0){\n                print(tCurValue,\'tCurValue\')\n                divide(tCurValue,10)\n                add(tRealNum,1)\n            }\n            var(tFrontNum,0)\n            var(tDecimalNum,0)\n            var(tOverflowNum,0)\n            if (tRealNum<=tFacCount) {\n                set(tDecimalNum,0)\n                if (tFrontZero==1) {\n                    set(tFrontNum,tDecimalCount)\n                }else{\n                    set(tFrontNum,1)\n                }\n            }else{\n                if (tRealNum>tNumOfDigits) {\n                    set(tDecimalNum,tDecimalCount)\n                    set(tOverflowNum,tRealNum)\n                    minus(tOverflowNum,tNumOfDigits)\n                }else{\n                    set(tDecimalNum,tRealNum)\n                    minus(tDecimalNum,tFacCount)\n                    if (tFrontZero==1) {\n                        set(tFrontNum,tDecimalCount)\n                        minus(tFrontNum,tDecimalNum)\n                    }else{\n                        set(tFrontNum,0)\n                    }\n                }\n            }\n            print(tFront,\'tFront\')\n            print(tDecimalNum,\'tDecimalNum\')\n            print(tOverflowNum,0)\n            var(tCurTotalNum,0)\n            add(tCurTotalNum,tHasNeg)\n            add(tCurTotalNum,tFrontNum)\n            add(tCurTotalNum,tDecimalNum)\n            add(tCurTotalNum,tHasDot)\n            add(tCurTotalNum,tFacCount)\n            var(tLeftPadding,0)\n            set(tLeftPadding,tTotalLayers)\n            minus(tLeftPadding,tCurTotalNum)\n            var(tLeftPaddingPixel,0)\n            if (tLeftPadding>0) {\n                if (tAlign==1) {\n                    set(tLeftPaddingPixel,tLeftPadding)\n                    multiply(tLeftPaddingPixel,tMaxWidth)\n                    divide(tLeftPaddingPixel,2)\n                }else{\n                    if (tAlign==2) {\n                        set(tLeftPaddingPixel,tLeftPadding)\n                        multiply(tLeftPaddingPixel,tMaxWidth)\n                    }\n                }\n            }\n            var(tCurX,0)\n            var(tLayerIdx,0)\n            var(tDotWidth,0)\n            set(tDotWidth,tMaxWidth)\n            divide(tDotWidth,2)\n            if (tDotWidth==0) {\n                set(tDotWidth,1)\n            }\n            set(tCurX,tLeftPaddingPixel)\n            if (tHasNeg==1) {\n                set(\'this.layers.tLayerIdx.x\',tCurX)\n                set(\'this.layers.tLayerIdx.width\',tMaxWidth)\n                set(\'this.layers.tLayerIdx.subLayers.font.text\',45)\n                add(tLayerIdx,1)\n                add(tCurX,tMaxWidth)\n            }\n            while(a>0){\n                set(\'this.layers.tLayerIdx.x\',tCurX)\n                set(\'this.layers.tLayerIdx.width\',tMaxWidth)\n                set(\'this.layers.tLayerIdx.subLayers.font.text\',48)\n                add(tLayerIdx,1)\n                add(tCurX,tMaxWidth)\n                minus(tFrontNum,1)\n            }\n            var(tDivider,0)\n            set(tDivider,1)\n            set(tRealNum,tDecimalNum)\n            add(tRealNum,tFacCount)\n            while(tRealNum>0){\n                multiply(tDivider,10)\n                minus(tRealNum,1)\n            }\n            mod(tCurValue2,tDivider)\n            var(tCurValue3,0)\n            while(tDecimalNum>0){\n                set(\'this.layers.tLayerIdx.x\',tCurX)\n                set(\'this.layers.tLayerIdx.width\',tMaxWidth)\n                set(tCurValue3,tCurValue2)\n                divide(tDivider,10)\n                mod(tCurValue2,tDivider)\n                divide(tCurValue3,tDivider)\n                add(tCurValue3,48)\n                set(\'this.layers.tLayerIdx.subLayers.font.text\',tCurValue3)\n                add(tLayerIdx,1)\n                add(tCurX,tMaxWidth)\n                minus(tDecimalNum,1)\n            }\n            if (tHasDot==1) {\n                set(\'this.layers.tLayerIdx.x\',tCurX)\n                set(\'this.layers.tLayerIdx.width\',tDotWidth)\n                set(\'this.layers.tLayerIdx.subLayers.font.text\',46)\n                add(tLayerIdx,1)\n                add(tCurX,tDotWidth)\n                while(tFacCount>0){\n                    set(\'this.layers.tLayerIdx.x\',tCurX)\n                    set(\'this.layers.tLayerIdx.width\',tMaxWidth)\n                    set(tCurValue3,tCurValue2)\n                    divide(tDivider,10)\n                    mod(tCurValue2,tDivider)\n                    divide(tCurValue3,tDivider)\n                    add(tCurValue3,48)\n                    set(\'this.layers.tLayerIdx.subLayers.font.text\',tCurValue3)\n                    add(tLayerIdx,1)\n                    add(tCurX,tMaxWidth)\n                    minus(tFacCount,1)\n                }\n            }\n            // while(tLayerIdx<tTotalLayers){\n            //     set(\'this.layers.tLayerIdx.subLayers.font.text\',0)\n            // }\n\n            checkalarm(0)\n            set(\'this.oldValue\',tTagValue)\n\n        '
+        onTagChange: '\n            //\u6E05\u7A7A\u6240\u6709\u6570\u5B57\u5185\u5BB9\n            var(tIndex,0)   //\u7528\u4E8E\u5FAA\u73AF\n            var(tLaysLen,0)     //\u56FE\u5C42\u957F\u5EA6\n            set(tLaysLen,\'this.layers.length\')\n            set(tIndex,0)\n            while(tIndex<tLaysLen){\n                set(\'this.layers.tIndex.subLayers.font.text\',0)\n                add(tIndex,1)\n            }\n            \n            // draw num\n            \n            //\u521D\u59CB\u5316\u53D8\u91CF\n            var(tCurVal,0)        //\u5F53\u524D\u503C\n            var(tMaxVal,0)        //\u6700\u5927\u503C\n            var(tMinVal,0)        //\u6700\u5C0F\u503C\n            var(hasFrontZero,0)   //\u662F\u5426\u6709\u524D\u5BFC\u96F6\n            var(hasSymbol,0)      //\u662F\u5426\u6709\u7B26\u53F7\n            var(decimalCnt,0)     //\u5C0F\u6570\u4F4D\u6570\n            var(numOfDigits,0)    //\u5B57\u7B26\u6570\n            var(overflow,0)       //\u6EA2\u51FA\u6A21\u5F0F\uFF0C0\u4E0D\u663E\u793A\uFF0C1\u663E\u793A\n            var(fontWidth,0)      //\u5B57\u7B26\u56FE\u5C42\u5BBD\u5EA6\n            var(align,0)          //\u5BF9\u9F50\u65B9\u5F0F\uFF0C0\u5DE6\uFF0C1\u4E2D\uFF0C2\u53F3\n            var(widgetWidth,0)    //\u63A7\u4EF6\u5BBD\u5EA6\n            \n            var(initPosX,0)       //\u7ED8\u5236\u8D77\u59CB\u5750\u6807\n            var(symbolCnt,0)      //\u8981\u7ED8\u5236\u7684\u7B26\u53F7\u7684\u4E2A\u6570\n            var(decimalIndex,0)   //\u5C0F\u6570\u70B9\u7684\u6807\u8BC6\u5750\u6807\uFF0C\u5373\u5728\u7B2C\u56FE\u5C42\u4F4D\u7F6E\u7ED8\u5236\u5C0F\u6570\u70B9\n            var(decimalZeroCnt,0) //\u8981\u8865\u9F50\u7684\u5C0F\u6570\u70B9\u540E\u76840\u7684\u4E2A\u6570\n            var(frontZeroCnt,0)   //\u8981\u7ED8\u5236\u7684\u524D\u5BFC\u96F6\u7684\u4E2A\u6570\n            var(curValCnt,0)      //\u8981\u7ED8\u5236\u7684\u5F53\u524D\u503C\u6570\u5B57\u7684\u4E2A\u6570\n            var(allFontCnt,0)     //\u8981\u7ED8\u5236\u7684\u603B\u5B57\u7B26\u7684\u4E2A\u6570\n            var(tempVal,0)        //\u4E34\u65F6\u53D8\u91CF\n            var(needDraw,0)       //\u662F\u5426\u9700\u8981\u7ED8\u5236\uFF0C\u5728\u6EA2\u51FA\u4E0D\u663E\u793A\u7684\u60C5\u51B5\u4E0B\uFF0C\u4E0D\u9700\u8981\u7ED8\u5236\u30020\u4E0D\u9700\u8981\uFF0C1\u9700\u8981\n            \n            getTag(tCurVal)\n            set(tMaxVal,\'this.maxValue\')\n            set(tMinVal,\'this.minValue\')\n            set(hasFrontZero,\'this.otherAttrs.1\')\n            set(hasSymbol,\'this.otherAttrs.2\')\n            set(decimalCnt,\'this.otherAttrs.3\')\n            set(numOfDigits,\'this.otherAttrs.4\')\n            set(overflow,\'this.otherAttrs.5\')\n            set(fontWidth,\'this.otherAttrs.6\')\n            set(align,\'this.otherAttrs.7\')\n            set(widgetWidth,\'this.otherAttrs.8\')      \n            \n            set(needDraw,1)      \n           \n            //print(tCurVal,tMaxVal)\n            //print(tMinVal,hasFrontZero)\n            //print(hasSymbol,decimalCnt)\n            //print(numOfDigits,overflow)\n            //print(overflow,fontWidth)\n            //print(align,\'align\')\n            \n            //\u5904\u7406\u8981\u663E\u793A\u7684\u503C\n            if(tCurVal>tMaxVal){\n                //\u6EA2\u51FA\u6700\u5927\u503C\n                set(tCurVal,tMaxVal)\n                set(isOverflow,1)\n            }else{\n                //\u6EA2\u51FA\u6700\u5C0F\u503C\n                if(tCurVal<tMinVal){\n                    set(tCurVal,tMinVal)\n                    set(isOverflow,1)\n                }\n            }\n            \n            if(isOverflow==1){\n                //\u6EA2\u51FA\n                if(overflow==0){\n                    //\u6EA2\u51FA\u4E0D\u663E\u793A\n                    set(needDraw,0)\n                }\n            }\n            \n            //\u5224\u65AD\u662F\u5426\u9700\u8981\u7ED8\u5236\n            if(needDraw==1){\n    \n                //\u7B26\u53F7\n                if(hasSymbol==1){\n                    if(tCurVal<0){\n                        set(symbolCnt,1)\n                    }\n                }\n                \n                //\u5F53\u524D\u503C\u6570\u5B57\u4E2A\u6570\n                set(tempVal,tCurVal)\n                //--while \u6CA1\u6709>=\uFF0C\u6545tCurVal\u4E3A0\u65F6\uFF0CcurValCnt\u4E3A1\n                while(tempVal>0){\n                    add(curValCnt,1)\n                    divide(tempVal,10)\n                }\n                if(curValCnt==0){\n                    set(curValCnt,1) \n                }\n                \n                //\u524D\u5BFC\u96F6\n                if(hasFrontZero==1){\n                    set(tempVal,numOfDigits)\n                    minus(tempVal,curValCnt)\n                    set(frontZeroCnt,tempVal)\n                }\n                \n                //\u5C0F\u6570\n                \n                \n                //\u603B\u5B57\u7B26\u6570\n                add(allFontCnt,symbolCnt)\n                add(allFontCnt,frontZeroCnt)\n                add(allFontCnt,curValCnt)\n                \n                //\u8BA1\u7B97\u8D77\u59CB\u5750\u6807\n                set(tempVal,allFontCnt)\n                var(tempValW,0) //\u603B\u5B57\u7B26\u6240\u5360\u5BBD\u5EA6\n                while(tempVal>0){\n                    add(tempValW,fontWidth)\n                    minus(tempVal,1)\n                }\n                if(align==0){\n                    //\u5DE6\u5BF9\u9F50\n                    set(initPosX,0)\n                }else{\n                    if(align==2){\n                        //\u53F3\u5BF9\u9F50\n                        set(initPosX,widgetWidth)\n                        minus(initPosX,tempValW)\n                    }else{\n                        //\u5C45\u4E2D\u5BF9\u9F50\n                        set(initPosX,widgetWidth)\n                        minus(initPosX,tempValW)\n                        divide(initPosX,2)\n                    }\n                }\n                \n                //\u5F00\u59CB\u7ED8\u5236\n                var(tempValText,0)  //\u4FDD\u5B58\u8981\u7ED8\u5236\u7684\u6570\u5B57\n                var(tempValMid1,0)  //\u4FDD\u5B58\u4E34\u65F6\u4E2D\u95F4\u7ED3\u679C\n                var(tempValMid2,0)  //\u4FDD\u5B58\u4E34\u65F6\u4E2D\u95F4\u7ED3\u679C\n                set(tempVal,0)\n                if(tempVal==0){\n                    if(symbolCnt==1){\n                        //\u6709\u8D1F\u53F7\n                        set(\'this.layers.tempVal.x\',initPos)\n                        set(\'this.layers.tempVal.subLayers.font.text\',45)\n                        add(tempVal,1)\n                        add(initPosX,fontWidth)\n                    }else{\n                        print(initPos,\'\u8DF3\u8FC7\')\n                    }  \n                }else{\n                    print(initPos,\'\u8DF3\u8FC7\')\n                }\n                \n                while(tempVal<allFontCnt){\n                    set(\'this.layers.tempVal.x\',initPosX)\n                    set(\'this.layers.tempVal.width\',fontWidth)\n                    \n                    if(frontZeroCnt>0){\n                        //\u7ED8\u5236\u524D\u5BFC\u96F6\n                        set(tempValText,0)\n                        add(tempValText,48)\n                        set(\'this.layers.tempVal.subLayers.font.text\',tempValText)\n                        minus(frontZeroCnt,1)\n                    }else{\n                        //\u7ED8\u5236\u6570\u5B57\u503C\n                        set(tempValMid1,curValCnt)\n                        set(tempValMid2,1)\n                        while(tempValMid1>1){\n                            multiply(tempValMid2,10)\n                            minus(tempValMid1,1)\n                        }\n                        print(tempValMid2,\'tempValMid2\')\n                        set(tempValText,tCurVal)\n                        divide(tempValText,tempValMid2)\n                        mod(tempValText,10)\n                        add(tempValText,48)\n                        set(\'this.layers.tempVal.subLayers.font.text\',tempValText)\n                        minus(curValCnt,1)\n                    }\n                     \n                    add(tempVal,1)\n                    add(initPosX,fontWidth)\n                }\n                \n            }           \n        '
     };
 
     WidgetCommands['DateTime'] = {
@@ -130,3 +131,180 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 // //    minus(xr,1)
 // //}
 // add(tTag,addNum)
+
+
+// //old code
+// var(tTagValue,0)
+// getTag(tTagValue)
+// // print(tTagValue,'tTagValue')
+// var(tMinValue,0)
+// set(tMinValue,'this.minValue')
+// var(tMaxValue,0)
+// set(tMaxValue,'this.maxValue')
+// var(tFacCount,0)
+// var(tNumOfDigits,0)
+// var(tDecimalCount,0)
+// var(tMaxWidth,0)
+// set(tMaxWidth,'this.otherAttrs.6')
+// set(tFacCount,'this.otherAttrs.3')
+// var(tHasDot,0)
+// if (tFacCount>0) {
+//     set(tHasDot,1)
+// }
+// set(tNumOfDigits,'this.otherAttrs.4')
+// set(tDecimalCount,tNumOfDigits)
+// minus(tDecimalCount,tFacCount)
+// var(tAlign,0)
+// set(tAlign,'this.otherAttrs.7')
+// var(tFrontZero,0)
+// set(tFrontZero,'this.otherAttrs.1')
+// var(tSymbol,0)
+// set(tSymbol,'this.otherAttrs.2')
+// var(tTotalLayers,0)
+// set(tTotalLayers,'this.layers.length')
+// var(tHasNeg,0)
+// if (tTagValue<0) {
+//     if (tSymbol==1) {
+//         set(tHasNeg,1)
+//     }
+// }
+// var(tCurValue,0)
+// set(tCurValue,tTagValue)
+// if (tCurValue<0) {
+//     multiply(tCurValue,-1)
+// }
+// var(tCurValue2,0)
+// set(tCurValue2,tCurValue)
+// var(tRealNum,0)
+// set(tRealNum,1)
+// while(tCurValue>0){
+//     print(tCurValue,'tCurValue')
+//     divide(tCurValue,10)
+//     add(tRealNum,1)
+// }
+// var(tFrontNum,0)
+// var(tDecimalNum,0)
+// var(tOverflowNum,0)
+// if (tRealNum<=tFacCount) {
+//     set(tDecimalNum,0)
+//     if (tFrontZero==1) {
+//         set(tFrontNum,tDecimalCount)
+//     }else{
+//         set(tFrontNum,1)
+//     }
+// }else{
+//     if (tRealNum>tNumOfDigits) {
+//         set(tDecimalNum,tDecimalCount)
+//         set(tOverflowNum,tRealNum)
+//         minus(tOverflowNum,tNumOfDigits)
+//     }else{
+//         set(tDecimalNum,tRealNum)
+//         minus(tDecimalNum,tFacCount)
+//         if (tFrontZero==1) {
+//             set(tFrontNum,tDecimalCount)
+//             minus(tFrontNum,tDecimalNum)
+//         }else{
+//             set(tFrontNum,0)
+//         }
+//     }
+// }
+// // print(tFront,'tFront')
+// // print(tDecimalNum,'tDecimalNum')
+// // print(tOverflowNum,'tOverflowNum')
+// var(tCurTotalNum,0)
+// add(tCurTotalNum,tHasNeg)
+// add(tCurTotalNum,tFrontNum)
+// add(tCurTotalNum,tDecimalNum)
+// add(tCurTotalNum,tHasDot)
+// add(tCurTotalNum,tFacCount)
+// var(tLeftPadding,0)
+// set(tLeftPadding,tTotalLayers)
+// minus(tLeftPadding,tCurTotalNum)
+// var(tLeftPaddingPixel,0)
+// if (tLeftPadding>0) {
+//     if (tAlign==1) {
+//         set(tLeftPaddingPixel,tLeftPadding)
+//         multiply(tLeftPaddingPixel,tMaxWidth)
+//         divide(tLeftPaddingPixel,2)
+//     }else{
+//         if (tAlign==2) {
+//             set(tLeftPaddingPixel,tLeftPadding)
+//             multiply(tLeftPaddingPixel,tMaxWidth)
+//         }
+//     }
+// }
+// var(tCurX,0)
+// var(tLayerIdx,0)
+// var(tDotWidth,0)
+// set(tDotWidth,tMaxWidth)
+// divide(tDotWidth,2)
+// if (tDotWidth==0) {
+//     set(tDotWidth,1)
+// }
+// set(tCurX,tLeftPaddingPixel)
+// if (tHasNeg==1) {
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tMaxWidth)
+//     print(tLayerIde,'in tHasNeg')
+//     set('this.layers.tLayerIdx.subLayers.font.text',45)
+//     add(tLayerIdx,1)
+//     add(tCurX,tMaxWidth)
+// }
+// while(a>0){
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tMaxWidth)
+//     print(tLayerIdx,'in while a>0')
+//     set('this.layers.tLayerIdx.subLayers.font.text',48)
+//     add(tLayerIdx,1)
+//     add(tCurX,tMaxWidth)
+//     minus(tFrontNum,1)
+// }
+// var(tDivider,0)
+// set(tDivider,1)
+// set(tRealNum,tDecimalNum)
+// add(tRealNum,tFacCount)
+// while(tRealNum>0){
+//     multiply(tDivider,10)
+//     minus(tRealNum,1)
+// }
+// mod(tCurValue2,tDivider)
+// var(tCurValue3,0)
+// while(tDecimalNum>0){
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tMaxWidth)
+//     set(tCurValue3,tCurValue2)
+//     divide(tDivider,10)
+//     mod(tCurValue2,tDivider)
+//     divide(tCurValue3,tDivider)
+//     add(tCurValue3,48)
+//     print(tLayerIdx,'in while tDecimalNum>0')
+//     print(tCurValue,'tCurValue')
+//     set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
+//     add(tLayerIdx,1)
+//     add(tCurX,tMaxWidth)
+//     minus(tDecimalNum,1)
+// }
+// if (tHasDot==1) {
+//     set('this.layers.tLayerIdx.x',tCurX)
+//     set('this.layers.tLayerIdx.width',tDotWidth)
+//     set('this.layers.tLayerIdx.subLayers.font.text',46)
+//     add(tLayerIdx,1)
+//     add(tCurX,tDotWidth)
+//     while(tFacCount>0){
+//         set('this.layers.tLayerIdx.x',tCurX)
+//         set('this.layers.tLayerIdx.width',tMaxWidth)
+//         set(tCurValue3,tCurValue2)
+//         divide(tDivider,10)
+//         mod(tCurValue2,tDivider)
+//         divide(tCurValue3,tDivider)
+//         add(tCurValue3,48)
+//         print(tLayerIdx,'in hasDot')
+//         set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
+//         add(tLayerIdx,1)
+//         add(tCurX,tMaxWidth)
+//         minus(tFacCount,1)
+//     }
+// }
+//
+// checkalarm(0)
+// set('this.oldValue',tTagValue)

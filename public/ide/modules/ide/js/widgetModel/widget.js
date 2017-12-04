@@ -612,7 +612,7 @@
             var curDotLayer = new Layer(curX,0,0.5*mW,h)
             curDotLayer.subLayers.font = new FontSubLayer('.',fontStyle)
             layers.push(curDotLayer)
-            curX = curX +0.5*mW
+            curX = Math.floor(curX+0.5*mW);
             for(var i=0;i<decimalCount;i++){
                 curDigitLayer = new Layer(curX,0,mW,h)
                 curDigitLayer.subLayers.font = new FontSubLayer('0',fontStyle)
