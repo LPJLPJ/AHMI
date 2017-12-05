@@ -1216,6 +1216,7 @@
             var(allFontCnt,0)     //要绘制的总字符的个数
             var(tempVal,0)        //临时变量
             var(needDraw,0)       //是否需要绘制，在溢出不显示的情况下，不需要绘制。0不需要，1需要
+            var(isOverFlow,0)     //是否溢出
             
             getTag(tCurVal)
             set(tMaxVal,'this.maxValue')
@@ -1286,6 +1287,8 @@
                 
                 //小数  add
                 set(decimalIndex,-1)
+                print(decimalIndex,'decimalIndex')
+                print(decimalCnt,'decimalCnt')
                 if(decimalCnt>0){
                     add(allFontCnt,1)
                     if(decimalCnt<curValCnt){
@@ -1308,7 +1311,7 @@
                     minus(decimalIndex,decimalCnt)
                     minus(decimalIndex,1)
                 }else{
-                    set(decimalIndex,0)
+                    set(decimalIndex,-1)
                 }
                 
                 //计算起始坐标
