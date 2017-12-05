@@ -1208,7 +1208,8 @@
             
             var(initPosX,0)       //绘制起始坐标
             var(symbolCnt,0)      //要绘制的符号的个数
-            var(decimalIndex,0)   //小数点的标识坐标，即在第图层位置绘制小数点
+            var(decimalIndex,0)   //小数点的标识坐标，即在第几个图层位置绘制小数点
+            var(decimalCnt,0)     //要绘制的小数点的个数
             var(decimalZeroCnt,0) //要补齐的小数点后的0的个数
             var(frontZeroCnt,0)   //要绘制的前导零的个数
             var(curValCnt,0)      //要绘制的当前值数字的个数
@@ -1229,13 +1230,6 @@
             set(widgetWidth,'this.otherAttrs.8')      
             
             set(needDraw,1)      
-           
-            //print(tCurVal,tMaxVal)
-            //print(tMinVal,hasFrontZero)
-            //print(hasSymbol,decimalCnt)
-            //print(numOfDigits,overflow)
-            //print(overflow,fontWidth)
-            //print(align,'align')
             
             //处理要显示的值
             if(tCurVal>tMaxVal){
@@ -1260,7 +1254,6 @@
             
             //判断是否需要绘制
             if(needDraw==1){
-    
                 //符号
                 if(hasSymbol==1){
                     if(tCurVal<0){
@@ -1286,21 +1279,51 @@
                     set(frontZeroCnt,tempVal)
                 }
                 
-                //小数
-                
-                
                 //总字符数
                 add(allFontCnt,symbolCnt)
                 add(allFontCnt,frontZeroCnt)
                 add(allFontCnt,curValCnt)
                 
+                //小数  add
+                set(decimalIndex,-1)
+                if(decimalCnt>0){
+                    add(allFontCnt,1)
+                    if(decimalCnt<curValCnt){
+                        //小数位数小于于字符位数
+                        set(decimalIndex,0)
+                    }else{
+                        //小数位数大于等于字符位数，在非前导零模式下需要补零
+                        set(decimalIndex,0)
+                        if(hasFrontZero==0){
+                            set(decimalZeroCnt,decimalCnt)
+                            minus(decimalZeroCnt,curValCnt)
+                            add(decimalZeroCnt,1)
+                            add(allFontCnt,decimalZeroCnt)
+                        }else{
+                            set(decimalIndex,0)
+                        }
+                    }
+                    //计算小数点坐标
+                    set(decimalIndex,allFontCnt)
+                    minus(decimalIndex,decimalCnt)
+                    minus(decimalIndex,1)
+                }else{
+                    set(decimalIndex,0)
+                }
+                
                 //计算起始坐标
                 set(tempVal,allFontCnt)
-                var(tempValW,0) //总字符所占宽度
+                var(tempValW,0)     //总字符所占宽度
+                var(fontWidthHalf,0) //半个字符所占宽度
+                set(fontWidthHalf,fontWidth)
+                divide(fontWidthHalf,2)
                 while(tempVal>0){
                     add(tempValW,fontWidth)
                     minus(tempVal,1)
                 }
+                if(decimalCnt>0){
+                    minus(tempValW,fontWidthHalf)
+                }                
                 if(align==0){
                     //左对齐
                     set(initPosX,0)
@@ -1346,27 +1369,41 @@
                         add(tempValText,48)
                         set('this.layers.tempVal.subLayers.font.text',tempValText)
                         minus(frontZeroCnt,1)
+                        add(initPosX,fontWidth)
                     }else{
-                        //绘制数字值
-                        set(tempValMid1,curValCnt)
-                        set(tempValMid2,1)
-                        while(tempValMid1>1){
-                            multiply(tempValMid2,10)
-                            minus(tempValMid1,1)
+                        if(decimalZeroCnt>0){
+                            set(tempValText,0)
+                            add(tempValText,48)
+                            set('this.layers.tempVal.subLayers.font.text',tempValText)
+                            minus(decimalZeroCnt,1)
+                            add(initPosX,fontWidth)
+                        }else{
+                            if(decimalIndex==tempVal){
+                                //绘制小数点
+                                set('this.layers.tempVal.width',fontWidthHalf)
+                                set(tempValMid1,46)
+                                set('this.layers.tempVal.subLayers.font.text',46)
+                                add(initPosX,fontWidthHalf)
+                            }else{
+                                //绘制数字值
+                                set(tempValMid1,curValCnt)
+                                set(tempValMid2,1)
+                                while(tempValMid1>1){
+                                    multiply(tempValMid2,10)
+                                    minus(tempValMid1,1)
+                                }
+                                set(tempValText,tCurVal)
+                                divide(tempValText,tempValMid2)
+                                mod(tempValText,10)
+                                add(tempValText,48)
+                                set('this.layers.tempVal.subLayers.font.text',tempValText)
+                                minus(curValCnt,1)
+                                add(initPosX,fontWidth)
+                            }
                         }
-                        print(tempValMid2,'tempValMid2')
-                        set(tempValText,tCurVal)
-                        divide(tempValText,tempValMid2)
-                        mod(tempValText,10)
-                        add(tempValText,48)
-                        set('this.layers.tempVal.subLayers.font.text',tempValText)
-                        minus(curValCnt,1)
                     }
-                     
                     add(tempVal,1)
-                    add(initPosX,fontWidth)
                 }
-                
             }           
         `
     };
