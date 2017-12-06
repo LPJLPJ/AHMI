@@ -2655,20 +2655,26 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 initXPos=0;
                 break;
             case 'right':
-                initXPos=width-widthOfNumStr;
+                initXPos= (widthOfNumStr > width) ? 0 : width-widthOfNumStr;
                 break;
             case 'center':
             default:
-                initXPos = (width-widthOfNumStr)/2;
+                initXPos = (widthOfNumStr > width) ? 0 : (width-widthOfNumStr)/2;
                 break;
         }
         xCoordinate = initXPos-width/2;
+        /*
+          修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
+         */
+        var  containerMeanValuePerChar = (0 === decimalCount ? ((width-maxFontWidth)/(numStr.length-1)) : ((width-maxFontWidth)/((numStr.length-1)+0.5-1)));
+        var displayStep = widthOfNumStr > width ? containerMeanValuePerChar : maxFontWidth;
+
         for(i=0;i<numStr.length;i++){
             ctx.fillText(numStr[i],xCoordinate,0);
             if(numStr[i]=='.'){
-                xCoordinate+=maxFontWidth/2;
+                xCoordinate+=displayStep/2;// 小数点显示坐标的步长为其它字符宽度的一半
             }else{
-                xCoordinate+=maxFontWidth;
+                xCoordinate+=displayStep;
             }
         }
     }
