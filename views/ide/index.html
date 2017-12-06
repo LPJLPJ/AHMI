@@ -1057,6 +1057,15 @@
                                 </option>
                             </select>
                         </div>
+                        <div class="my-attr-item lg" ng-show="component.progress.enableAnimationModeId=='0'">
+                            <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
+                            <input class="my-attr-title-cartoon-times form-control "
+                                   ng-model="component.object.level.transition.duration"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.changeTransitionDur($event)"
+                                   type="number"
+                                   ng-disabled="animationsDisabled">
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">方向</span>
 
@@ -1398,6 +1407,15 @@
                                 </option>
                             </select>
                         </div>
+                        <div class="my-attr-item lg" ng-show="component.dashboard.enableAnimationModeId=='0'">
+                            <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
+                            <input class="my-attr-title-cartoon-times form-control "
+                                   ng-model="component.object.level.transition.duration"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.changeTransitionDur($event)"
+                                   type="number"
+                                   ng-disabled="animationsDisabled">
+                        </div>
                     </div>
                     <div ng-show="component.object.type=='MyNum'">
                         <div class="my-attr-item lg">
@@ -1525,6 +1543,15 @@
                                     {{mode.name}}
                                 </option>
                             </select>
+                        </div>
+                        <div class="my-attr-item lg" ng-show="component.num.enableAnimationModeId=='0'">
+                            <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
+                            <input class="my-attr-title-cartoon-times form-control "
+                                   ng-model="component.object.level.transition.duration"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.changeTransitionDur($event)"
+                                   type="number"
+                                   ng-disabled="animationsDisabled">
                         </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">符号</span>
@@ -1696,6 +1723,25 @@
                                 <!--</option>-->
                             <!--</select>-->
                         <!--</div>-->
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">开启动画</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.texNum.enableAnimationModeId"
+                                    ng-change="component.enterEnableAnimationMode($event)">
+                                <option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg" ng-show="component.texNum.enableAnimationModeId=='0'">
+                            <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
+                            <input class="my-attr-title-cartoon-times form-control "
+                                   ng-model="component.object.level.transition.duration"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.changeTransitionDur($event)"
+                                   type="number"
+                                   ng-disabled="animationsDisabled">
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">符号</span>
                             <select class="my-attr-number-input form-control"

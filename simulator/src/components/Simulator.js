@@ -3119,23 +3119,29 @@ module.exports =   React.createClass({
                 initXPos=0;
                 break;
             case 'right':
-                initXPos=curWidth-widthOfNumStr;
+                initXPos= (widthOfNumStr > curWidth) ? 0 : curWidth-widthOfNumStr;
                 break;
             case 'center':
             default:
-                initXPos = (curWidth-widthOfNumStr)/2;
+                initXPos = (widthOfNumStr > curWidth) ? 0 : (curWidth-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos;   
+        xCoordinate = initXPos;
+        /*
+         修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
+         */
+        var  containerMeanValuePerChar = (0 === decimalCount ? ((curWidth-maxFontWidth)/(numStr.length-1)) : ((curWidth-maxFontWidth)/((numStr.length-1)+0.5-1)));
+        var displayStep = widthOfNumStr > curWidth ? containerMeanValuePerChar : maxFontWidth;
+
         for(i=0;i<numStr.length;i++){
             // tempCtx.strokeStyle="#00F";/*设置边框*/
             // tempCtx.lineWidth=1;边框的宽度 
             // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
             tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
             if(numStr[i]=='.'){
-                xCoordinate+=maxFontWidth/2;
+                xCoordinate+=displayStep/2;
             }else{
-                xCoordinate+=maxFontWidth;
+                xCoordinate+=displayStep;
             }
         }
         // switch(tempCtx.textAlign){

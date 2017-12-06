@@ -395,6 +395,16 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }else if($scope.component.object.level.info.enableAnimation===true){
                         $scope.component.progress.enableAnimationModeId='0'
                     }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition===undefined){
+                        selectObject.level.transition={};
+                        $scope.component.object.level.transition={};
+                    }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition.duration===undefined){
+                        selectObject.level.transition.duration=0;
+                        $scope.component.object.level.transition.duration=0;
+                    }
                     break;
                 case Type.MyDashboard:
                     $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
@@ -412,6 +422,16 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.dashboard.enableAnimationModeId='1'
                     }else if($scope.component.object.level.info.enableAnimation===true){
                         $scope.component.dashboard.enableAnimationModeId='0'
+                    }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition===undefined){
+                        selectObject.level.transition={};
+                        $scope.component.object.level.transition={};
+                    }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition.duration===undefined){
+                        selectObject.level.transition.duration=0;
+                        $scope.component.object.level.transition.duration=0;
                     }
                     break;
                 case Type.MyTextArea:
@@ -459,6 +479,16 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }else if($scope.component.object.level.info.enableAnimation==true){
                         $scope.component.num.enableAnimationModeId='0'
                     }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition===undefined){
+                        selectObject.level.transition={};
+                        $scope.component.object.level.transition={};
+                    }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition.duration===undefined){
+                        selectObject.level.transition.duration=0;
+                        $scope.component.object.level.transition.duration=0;
+                    }
                     break;
                 case Type.MyTexNum:
                     $scope.component.texNum.numModeId=$scope.component.object.level.info.numModeId;
@@ -471,6 +501,25 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.texNum.enableAnimationModeId='1'
                     }else if($scope.component.object.level.info.enableAnimation==true){
                         $scope.component.texNum.enableAnimationModeId='0'
+                    }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.info.enableAnimation===undefined){
+                        selectObject.level.info.enableAnimation=false;
+                        $scope.component.texNum.enableAnimationModeId='1';
+                    }else if($scope.component.object.level.info.enableAnimation==false){
+                        $scope.component.texNum.enableAnimationModeId='1'
+                    }else if($scope.component.object.level.info.enableAnimation==true){
+                        $scope.component.texNum.enableAnimationModeId='0'
+                    }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition===undefined){
+                        selectObject.level.transition={};
+                        $scope.component.object.level.transition={};
+                    }
+                    //added at 2017/12/5 by LH
+                    if($scope.component.object.level.transition.duration===undefined){
+                        selectObject.level.transition.duration=0;
+                        $scope.component.object.level.transition.duration=0;
                     }
                     break;
                 case Type.MyDateTime:
