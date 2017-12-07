@@ -1923,7 +1923,7 @@ module.exports =   React.createClass({
             if (widget.info.enableAnimation){
                 //using animation
 
-
+                var duration = (widget.transition && widget.transition.duration) || 0
 
 
                 //clear old animation
@@ -1943,7 +1943,7 @@ module.exports =   React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue,curProgress,500,30,null,function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue,curProgress,duration,30,null,function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this),function () {
@@ -2654,9 +2654,17 @@ module.exports =   React.createClass({
 
 
                 if(enableAnimation){
-                    var totalFrameNum = 10
+                    var fps = 30
+                    var duration = (widget.transition&&widget.transition.duration)||0
+                    var totalFrameNum = duration/1000 * fps
+
+                    totalFrameNum = totalFrameNum>1? totalFrameNum:1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        // console.log(totalFrameNum)
+                        widget.curTotalFrameNum = totalFrameNum
+                        // var startTime = new Date()
+                        // console.log('start time',startTime)
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1
@@ -2665,12 +2673,15 @@ module.exports =   React.createClass({
                             }
                             if (widget.curFrameNum > totalFrameNum - 1) {
                                 clearInterval(widget.animateTimerId)
+                                // var endTime = new Date()
+                                // console.log('end time',endTime,endTime-startTime)
+
                                 widget.animateTimerId = 0
                                 widget.curFrameNum = 0
 
                             }
                             this.draw()
-                        }.bind(this), 30)
+                        }.bind(this), 1000/fps)
                     }
                 }
 
@@ -2757,7 +2768,7 @@ module.exports =   React.createClass({
 
                     //drawbackground
                     var bgTex = widget.texList[0].slices[0]
-                    var totalFrameNum = 10
+                    var totalFrameNum = widget.curTotalFrameNum || 1
                     // //draw
                     var oldHeight=0;
                     var oleWidth=0;
@@ -2861,9 +2872,13 @@ module.exports =   React.createClass({
 
 
                 if(enableAnimation){
-                    var totalFrameNum = 10
+                    var fps = 30
+                    var duration = (widget.transition&&widget.transition.duration)||0
+                    var totalFrameNum = duration/1000 * fps
+                    totalFrameNum = totalFrameNum>1? totalFrameNum:1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        widget.curTotalFrameNum = totalFrameNum
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1
@@ -2877,7 +2892,7 @@ module.exports =   React.createClass({
 
                             }
                             this.draw()
-                        }.bind(this), 30)
+                        }.bind(this), 1000/fps)
                     }
                 }
 
@@ -2955,7 +2970,7 @@ module.exports =   React.createClass({
 
                 //drawbackground
 
-                var totalFrameNum = 10
+                var totalFrameNum = widget.curTotalFrameNum || 1
                 // //draw
                 var oldHeight=0;
                 var oleWidth=0;
@@ -3245,7 +3260,7 @@ module.exports =   React.createClass({
             if (widget.info.enableAnimation){
                 //using animation
 
-
+                var duration = (widget.transition && widget.transition.duration) || 0
 
 
                 //clear old animation
@@ -3265,7 +3280,7 @@ module.exports =   React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,500,30,null,function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,duration,30,null,function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this),function () {
