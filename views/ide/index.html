@@ -1524,6 +1524,21 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">数字值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   type="number"
+                                   ng-model="component.object.level.info.numValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.num.enterNumValue($event)">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">字符间距</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.decimalCount"
+                               ng-keypress="component.num.changeDecimalCount($event)"
+                               ng-blur="component.restore()"
+                               type="number">
+                        </div>
 
                         <!--<div class="my-attr-item lg">-->
                             <!--<span class="my-attr-title">切换模式</span>-->
@@ -1592,14 +1607,14 @@
                                 <!--<option value="vertical">竖直</option>-->
                             <!--</select>-->
                         <!--</div>-->
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">数字值</span>
-                            <input class="my-attr-number-input form-control"
-                                   type="number"
-                                   ng-model="component.object.level.info.numValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.num.enterNumValue($event)">
-                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">数字值</span>-->
+                            <!--<input class="my-attr-number-input form-control"-->
+                                   <!--type="number"-->
+                                   <!--ng-model="component.object.level.info.numValue"-->
+                                   <!--ng-blur="component.restore()"-->
+                                   <!--ng-keypress="component.num.enterNumValue($event)">-->
+                        <!--</div>-->
 
                     </div>
                     <div ng-show="component.object.type=='MyTexNum'">
