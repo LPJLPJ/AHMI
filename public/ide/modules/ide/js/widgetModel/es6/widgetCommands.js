@@ -1287,7 +1287,6 @@
                 
                 //小数  add
                 set(decimalIndex,-1)
-                print(decimalIndex,'decimalIndex')
                 print(decimalCnt,'decimalCnt')
                 if(decimalCnt>0){
                     add(allFontCnt,1)
@@ -1313,6 +1312,8 @@
                 }else{
                     set(decimalIndex,-1)
                 }
+                print(allFontCnt,'allFontCnt')
+                print(decimalIndex,'decimalIndex')
                 
                 //计算起始坐标
                 set(tempVal,allFontCnt)
@@ -1366,27 +1367,27 @@
                     set('this.layers.tempVal.x',initPosX)
                     set('this.layers.tempVal.width',fontWidth)
                     
-                    if(frontZeroCnt>0){
-                        //绘制前导零
-                        set(tempValText,0)
-                        add(tempValText,48)
-                        set('this.layers.tempVal.subLayers.font.text',tempValText)
-                        minus(frontZeroCnt,1)
-                        add(initPosX,fontWidth)
+                    if(decimalIndex==tempVal){
+                        //绘制小数点
+                        set('this.layers.tempVal.width',fontWidthHalf)
+                        set(tempValMid1,46)
+                        set('this.layers.tempVal.subLayers.font.text',46)
+                        add(initPosX,fontWidthHalf)
                     }else{
-                        if(decimalZeroCnt>0){
+                        if(frontZeroCnt>0){
+                            //绘制前导零
                             set(tempValText,0)
                             add(tempValText,48)
                             set('this.layers.tempVal.subLayers.font.text',tempValText)
-                            minus(decimalZeroCnt,1)
+                            minus(frontZeroCnt,1)
                             add(initPosX,fontWidth)
                         }else{
-                            if(decimalIndex==tempVal){
-                                //绘制小数点
-                                set('this.layers.tempVal.width',fontWidthHalf)
-                                set(tempValMid1,46)
-                                set('this.layers.tempVal.subLayers.font.text',46)
-                                add(initPosX,fontWidthHalf)
+                            if(decimalZeroCnt>0){
+                                set(tempValText,0)
+                                add(tempValText,48)
+                                set('this.layers.tempVal.subLayers.font.text',tempValText)
+                                add(initPosX,fontWidth)
+                                minus(decimalZeroCnt,1)
                             }else{
                                 //绘制数字值
                                 set(tempValMid1,curValCnt)
@@ -1405,6 +1406,8 @@
                             }
                         }
                     }
+                    
+                    
                     add(tempVal,1)
                 }
             }           
@@ -1854,3 +1857,5 @@
 //
 // checkalarm(0)
 // set('this.oldValue',tTagValue)
+
+
