@@ -44,7 +44,6 @@
             this.layers = layers
         }
     }
-
     Widget.prototype.toObject = function () {
         return {
             info:{
@@ -158,11 +157,8 @@
         this.subType = 'Button'
         Widget.call(this,x,y,w,h,layers)
     }
-
     Button.prototype = Object.create(Widget.prototype);
     Button.prototype.constructor = Button;
-
-
     // function () {
     //     console.log('onInitializing')
     //     this.layers[1].hidden = true;
@@ -179,7 +175,6 @@
         ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
         ['end']
     ]
-
     Button.prototype.commands.onMouseDown = [
         ['temp','b',new Param(EXP,'this.mode')],
         ['print',new Param(ID,'b')],
@@ -207,7 +202,6 @@
         //
 
     ]
-
     Button.prototype.commands.onMouseUp = [
         ['temp','b',new Param(EXP,'this.mode')],
         ['if'],
@@ -217,7 +211,6 @@
         ['setTag',new Param(Int,12)],
         ['end']
     ]
-
     Button.prototype.commands.onTagChange = [
         ['temp','a',new Param(Int,0)],
         ['temp','b',new Param(EXP,'this.mode')],
@@ -317,10 +310,8 @@
         this.subType = 'ButtonGroup'
         Widget.call(this,x,y,w,h,layers)
     }
-
     ButtonGroup.prototype = Object.create(Widget.prototype);
     ButtonGroup.prototype.constructor = ButtonGroup;
-
     ButtonGroup.prototype.commands.onInitialize = [
         // ['temp','a',new Param(EXP,'this.mode')],
         // ['setTag',new Param(Int,1)],
@@ -332,7 +323,6 @@
         // ['set',new Param(EXP,'this.layers.1.hidden'),new Param(Int,0)],
         // ['end']
     ]
-
     ButtonGroup.prototype.commands.onMouseDown = [
         ['temp','a',new Param(Int,0)],
         ['temp','b',new Param(Int,0)],
@@ -393,7 +383,6 @@
 
 
     ]
-
     ButtonGroup.prototype.commands.onMouseUp = [
         // ['temp','b',new Param(EXP,'this.mode')],
         // ['if'],
@@ -403,7 +392,6 @@
         // ['setTag',new Param(Int,12)],
         // ['end']
     ]
-
     ButtonGroup.prototype.commands.onTagChange = [
         ['temp','a',new Param(Int,0)],
         ['temp','b',new Param(Int,0)],
@@ -481,7 +469,6 @@
         Widget.call(this,x,y,w,h,layers)
         
     }
-
     Dashboard.prototype = Object.create(Widget.prototype);
     Dashboard.prototype.constructor = Dashboard;
 
@@ -497,7 +484,6 @@
         Widget.call(this,x,y,w,h,layers)
 
     }
-
     RotateImg.prototype = Object.create(Widget.prototype);
     RotateImg.prototype.constructor = RotateImg;
 
@@ -514,10 +500,8 @@
         Widget.call(this,x,y,w,h,layers)
 
     }
-
     TextArea.prototype = Object.create(Widget.prototype);
     TextArea.prototype.constructor = TextArea;
-
 
     //
     function ScriptTrigger(x,y,w,h) {
@@ -527,10 +511,8 @@
         Widget.call(this,x,y,w,h,layers)
 
     }
-
     ScriptTrigger.prototype = Object.create(Widget.prototype);
     ScriptTrigger.prototype.constructor = ScriptTrigger;
-
 
     function Video(x,y,w,h,slice) {
 
@@ -544,7 +526,6 @@
         Widget.call(this,x,y,w,h,layers)
 
     }
-
     Video.prototype = Object.create(Widget.prototype);
     Video.prototype.constructor = Video;
 
@@ -625,7 +606,6 @@
         Widget.call(this,x,y,w,h,layers)
 
     }
-
     Num.prototype = Object.create(Widget.prototype);
     Num.prototype.constructor = Num;
 
@@ -653,20 +633,8 @@
         Widget.call(this,x,y,w,h,layers)
 
     }
-
     SlideBlock.prototype = Object.create(Widget.prototype);
     SlideBlock.prototype.constructor = SlideBlock;
-
-
-
-
-
-
-
-
-
-
-
 
     //progress
     function Progress(x,y,w,h,info,slices){
@@ -706,7 +674,6 @@
         this.subType = 'Progress';
         Widget.call(this,x,y,w,h,layers);
     }
-
     Progress.prototype = Object.create(Widget.prototype);
     Progress.prototype.constructor = Progress;
 
@@ -722,7 +689,6 @@
     }
     Switch.prototype = Object.create(Widget.prototype);
     Switch.prototype.constructor = Switch;
-
 
     //slide
     function Slide(x,y,w,h,info,slices){
@@ -922,6 +888,69 @@
     };
     DateTime.prototype = Object.create(Widget.prototype);
     DateTime.prototype.constructor = DateTime;
+
+    //TexNum
+    function TexNum(x,y,w,h,valueObj,slices){
+        var layers = [];
+
+        //符号模式
+        var symbol,symbolLayer;
+        if (valueObj.symbolMode==0) {
+            symbol = false;
+        }else{
+            symbol = true;
+        }
+        //字符宽度
+        var mH = valueObj.characterH;
+        //字符宽度
+        var mW = valueObj.characterW;
+        if (!mW) {
+            return;
+        }
+        //小数位
+        var decimalCount = valueObj.decimalCount;
+        //字符位数
+        var numOfDigits = valueObj.numOfDigits;
+        //当前起始x坐标
+        var curX = 0;
+        //符号
+        if (symbol) {
+            symbolLayer = new Layer(0,0,mW,mH);
+            symbolLayer.subLayers.img = new TextureSubLayer(slices[12].imgSrc);
+            layers.push(symbolLayer);
+            curX +=mW;
+        }
+
+        //小数点
+        if(decimalCount>0){
+            var curDotLayer = new Layer(curX,0,0.5*mW,mH);
+            curDotLayer.subLayers.img = new TextureSubLayer(slices[10].imgSrc);
+            layers.push(curDotLayer);
+            curX = curX +0.5*mW;
+        }
+
+        //数字
+        var curDigitLayer;
+        for (var i=0;i<(numOfDigits);i++){
+            //add decimal digits
+            for(var j=0;j<9;j++){
+                curDigitLayer = new Layer(curX,0,mW,mH);
+                curDigitLayer.subLayers.img = new TextureSubLayer(slices[j].imgSrc);
+                layers.push(curDigitLayer);
+            }
+            layers.push(curDigitLayer);
+            curX = curX+mW;
+
+        }
+
+
+        console.log("layers",layers)
+        console.log("valueObj",valueObj)
+        this.subType = 'TexNum';
+        Widget.call(this,x,y,w,h,layers);
+    };
+    TexNum.prototype = Object.create(Widget.prototype);
+    TexNum.prototype.constructor = TexNum;
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -1260,6 +1289,7 @@
     WidgetModel.models.Num = Num;
     WidgetModel.models.SlideBlock = SlideBlock;
     WidgetModel.models.DateTime = DateTime;
+    WidgetModel.models.TexNum = TexNum;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 
