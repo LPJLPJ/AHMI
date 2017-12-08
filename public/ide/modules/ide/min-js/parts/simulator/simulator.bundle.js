@@ -52148,6 +52148,7 @@
 	}
 
 	function linkWidgets(widgetList) {
+	    console.log("widgetList", widgetList);
 	    var i;
 	    var curWidget;
 	    var linkedWidgetList = [];
@@ -52247,6 +52248,7 @@
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
 	                }
+	                console.log("linkedWidgetList", linkedWidgetList);
 	                break;
 	            case 'MyInputKeyboard':
 	                var keys = curWidget.info.keys;

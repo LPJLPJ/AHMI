@@ -664,7 +664,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             var width = info.characterW;
             var height = info.characterH;
 
-            var slideTex = widget.texList[0];
+            // var slideTex = widget.texList[0];
+            var slideTex = _.cloneDeep(widget.texList[0]);
             slideTex.slices.push(widget.texList[1].slices[0]);
             var totalSlices = slideTex.slices.length;
             slideTex.slices.map(function (slice,i) {

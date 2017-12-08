@@ -2258,7 +2258,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(i=0;i<dateTimeStr.length;i++){
                     numStr=numStr+dateTimeStr[i];
                 }
-                console.log("numStr:"+numStr);
+                // console.log("numStr:"+numStr);
 
                 // drawTexTime(this.dateTimeModeId,ctx,this.numObj,this.width,this.characterW,this.characterH);
                 drawTexTimeByCharacter(ctx,numStr,this.width,this.characterW,this.characterH,this.numObj);
