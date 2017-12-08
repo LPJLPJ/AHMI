@@ -1,17 +1,10 @@
-(function (factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define([], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        // Node/CommonJS
+/**
+ * create by lixiang in 2017/12/7
+ * 基于canvas 生成一张data Url 格式的ASCII码字符集图片
+ */
 
-        module.exports = factory()
-    } else {
-        // Browser globals
-        window.FontGenerator = factory();
-    }
-}(function () {
 
+ideServices.service('FontGeneratorService',['Type',function(Type){
     //SingleFontGenrator
     var font = {};
     var gridSize
@@ -70,15 +63,12 @@
         options = options||{};
         //add padding
         var paddingRatio = options.paddingRatio||1.0;
-        var paddingFontSize=paddingRatio*fontSize;
+        paddingFontSize=paddingRatio*fontSize;
         gridSize = calCanvasSize(paddingFontSize,128);
         if (gridSize) {
             initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize);
-            var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (fontSize) + 'px' + ' ' + ('"' + font['font-family'] + '"');
-            console.log('fontStr',fontStr);
-
+            var fontStr = (font['font-italic'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-bold'] || '') + ' ' + (fontSize) + 'px' + ' ' + ('"' + font['font-family'] + '"');
             //padding
-
             return drawChars(paddingFontSize,fontStr,options)
 
         }else{
@@ -87,8 +77,51 @@
         }
     }
 
-    return {
-        generateSingleFont:generateSingleFont
-
+    /**
+     * 返回所有字符集
+     * @param widgets
+     * @returns {Array}
+     */
+    function getFontCollections(widgets){
+        var fontWidgets,
+            fonts = [];
+        fontWidgets = widgets.filter(function(widget){
+            return ((widget.subType===Type.MyNum)||(widget.subType===Type.MyDateTime))
+        });
+        fontWidgets.forEach(function(widget){
+            var info = widget.info,
+                font={},
+                result;
+            result = fonts.some(function(item){
+                return ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic));
+            });
+            if(!result){
+                font['font-family'] = info.fontFamily;
+                font['font-size'] = info.fontSize;
+                font['font-bold'] = info.fontBold;
+                font['font-italic'] = info.fontItalic;
+                fonts.push(font);
+            }
+        });
+        return fonts;
     }
-}))
+
+    /**
+     * 返回正确的stream
+     * @param dataUrl
+     * @param local
+     * @returns {*}
+     */
+    function pngStream(dataUrl,local){
+        if (local){
+            var dataBuffer = new Buffer(dataUrl.split(',')[1],'base64');
+            return dataBuffer;
+        }else{
+            return dataUrl
+        }
+    }
+
+    this.generateSingleFont = generateSingleFont;
+    this.getFontCollections = getFontCollections;
+    this.pngStream = pngStream;
+}]);
