@@ -2048,16 +2048,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 break;
         }
         var widthOfDateTimeStr=maxFontWidth*dateTimeStr.length;
-        var initXPos = (width-widthOfDateTimeStr)/2;
-        var xCoordinate=(fontString.indexOf('italic')==-1?(initXPos-width/2):(initXPos-width/2)-2);
+        var initXPos = (widthOfDateTimeStr > width) ? 0 : (width-widthOfDateTimeStr)/2;//当装不下的时候，从控件开始处显示
+        var notItalic = (fontString.indexOf('italic')==-1);
+        var xCoordinate= notItalic ? (initXPos-width/2) : ((initXPos-width/2)-2);
         var colonCoordinate = maxFontWidth/2-colonWidth.width/2;
+        var italicAjust = notItalic ? 0 :  maxFontWidth/2; //如果是斜体需要往左调整
+        var displayStep = (widthOfDateTimeStr > width) ? ((width - maxFontWidth - italicAjust )/(dateTimeStr.length - 1)) : maxFontWidth; //当装不下的时候可以重叠显示
         for(i=0;i<dateTimeStr.length;i++){
             if(dateTimeStr[i] ==":"){
                 ctx.fillText(dateTimeStr[i],xCoordinate+colonCoordinate,0);
             }
             else
                 ctx.fillText(dateTimeStr[i],xCoordinate,0);
-            xCoordinate+=maxFontWidth;
+            xCoordinate+=displayStep;
         }
     }
 
