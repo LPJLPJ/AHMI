@@ -267,6 +267,7 @@
                             <button class='btn btn-default' ng-show="shareInfo.own" ng-click="toggleShare()" ng-disabled="processing">{{shareInfo.shared?'取消分享':'开启分享'}}</button>
                             <div class='sharedUrl' ng-show="shareInfo.shared">路径：{{sharedUrl}}</div>
                             <div class='sharedKey' ng-show="shareInfo.shared">密码：{{shareInfo.sharedKey}}</div>
+                            <div class='sharedKey' ng-show="shareInfo.shared">只读密码：{{shareInfo.readOnlySharedKey}}</div>
                         </div>
                     </div>
                     <div class="modal-footer">

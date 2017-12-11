@@ -16,6 +16,7 @@ var ProjectSchema = new mongoose.Schema({
     thumbnail:String,
     shared:{type:Boolean,default:false},
     sharedKey:{type:String},
+    readOnlySharedKey:{type:String},
     content:{type:String},
     backups:[{
         time:Date,
@@ -77,7 +78,7 @@ ProjectSchema.statics = {
             .exec(cb)
     },
     updateShare:function (id,stateInfo,cb) {
-        return this.findOneAndUpdate({_id:id},{shared:stateInfo.shared,sharedKey:stateInfo.sharedKey})
+        return this.findOneAndUpdate({_id:id},{shared:stateInfo.shared,sharedKey:stateInfo.sharedKey,readOnlySharedKey:stateInfo.readOnlySharedKey})
             .exec(cb)
     },
     deleteById: function (_projectId, cb) {
