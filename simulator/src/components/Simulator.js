@@ -1836,11 +1836,14 @@ module.exports =   React.createClass({
             // var widthOfDateTimeStr=maxFontWidth*text.length;
             // var initXPos = (width-widthOfDateTimeStr)/2;
             // var xCoordinate = initXPos+maxFontWidth/2;
-            var xCoordinate = ((width-maxFontWidth*text.length)+maxFontWidth)/2;
+            var xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth/2 :((width-maxFontWidth*text.length)+maxFontWidth)/2;//如果装不下字符串，从maxFontWidth处开始显示
+            var notItalic = (-1 == fontStr.indexOf('italic'));
+            var italicAjust = notItalic ? 0 : maxFontWidth/2; //如果是斜体的话，需要斜体往右伸出的宽度
+            var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
             var yCoordinate = 0.5*height;
             for(i=0;i<text.length;i++){
                 tempctx.fillText(text[i],xCoordinate,yCoordinate);
-                xCoordinate+=maxFontWidth;
+                xCoordinate+=displayStep;
             }
         }else{
             tempctx.fillText(text,0.5*width,0.5*height);
@@ -1923,7 +1926,7 @@ module.exports =   React.createClass({
             if (widget.info.enableAnimation){
                 //using animation
 
-
+                var duration = (widget.transition && widget.transition.duration) || 0
 
 
                 //clear old animation
@@ -1943,7 +1946,7 @@ module.exports =   React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue,curProgress,500,30,null,function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue,curProgress,duration,30,null,function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this),function () {
@@ -2654,9 +2657,17 @@ module.exports =   React.createClass({
 
 
                 if(enableAnimation){
-                    var totalFrameNum = 10
+                    var fps = 30
+                    var duration = (widget.transition&&widget.transition.duration)||0
+                    var totalFrameNum = duration/1000 * fps
+
+                    totalFrameNum = totalFrameNum>1? totalFrameNum:1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        // console.log(totalFrameNum)
+                        widget.curTotalFrameNum = totalFrameNum
+                        // var startTime = new Date()
+                        // console.log('start time',startTime)
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1
@@ -2665,12 +2676,15 @@ module.exports =   React.createClass({
                             }
                             if (widget.curFrameNum > totalFrameNum - 1) {
                                 clearInterval(widget.animateTimerId)
+                                // var endTime = new Date()
+                                // console.log('end time',endTime,endTime-startTime)
+
                                 widget.animateTimerId = 0
                                 widget.curFrameNum = 0
 
                             }
                             this.draw()
-                        }.bind(this), 30)
+                        }.bind(this), 1000/fps)
                     }
                 }
 
@@ -2757,7 +2771,7 @@ module.exports =   React.createClass({
 
                     //drawbackground
                     var bgTex = widget.texList[0].slices[0]
-                    var totalFrameNum = 10
+                    var totalFrameNum = widget.curTotalFrameNum || 1
                     // //draw
                     var oldHeight=0;
                     var oleWidth=0;
@@ -2861,9 +2875,13 @@ module.exports =   React.createClass({
 
 
                 if(enableAnimation){
-                    var totalFrameNum = 10
+                    var fps = 30
+                    var duration = (widget.transition&&widget.transition.duration)||0
+                    var totalFrameNum = duration/1000 * fps
+                    totalFrameNum = totalFrameNum>1? totalFrameNum:1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        widget.curTotalFrameNum = totalFrameNum
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1
@@ -2877,7 +2895,7 @@ module.exports =   React.createClass({
 
                             }
                             this.draw()
-                        }.bind(this), 30)
+                        }.bind(this), 1000/fps)
                     }
                 }
 
@@ -2955,7 +2973,7 @@ module.exports =   React.createClass({
 
                 //drawbackground
 
-                var totalFrameNum = 10
+                var totalFrameNum = widget.curTotalFrameNum || 1
                 // //draw
                 var oldHeight=0;
                 var oleWidth=0;
@@ -3245,7 +3263,7 @@ module.exports =   React.createClass({
             if (widget.info.enableAnimation){
                 //using animation
 
-
+                var duration = (widget.transition && widget.transition.duration) || 0
 
 
                 //clear old animation
@@ -3265,7 +3283,7 @@ module.exports =   React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,500,30,null,function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,duration,30,null,function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this),function () {

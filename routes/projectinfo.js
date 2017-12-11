@@ -65,11 +65,18 @@ function checkAccessPriviledge(project,sessionUser,cb) {
         }else{
             //check share
             if (!!project.shared){
+                //check all rights sharedKey
                 hasValidKey(sessionUser,project._id,project.sharedKey,function (result) {
                     if (result){
                         cb && cb(null,'shareOK')
                     }else{
-                        cb && cb(null,'shareLogin')
+                        hasValidKey(sessionUser,project._id,project.readOnlySharedKey,function (result) {
+                            if (result){
+                                cb && cb(null,'shareOKReadOnly')
+                            }else{
+                                cb && cb(null,'shareLogin')
+                            }
+                        })
                     }
                 })
             }else{
@@ -94,7 +101,8 @@ projectRoute.checkSharedKey = function (req, res) {
             if (!project){
                 errHandler(res,500,'empty project')
             }else{
-                if (project.shared && project.sharedKey==sharedKey){
+                console.log(project.sharedKey,project.readOnlySharedKey)
+                if (project.shared && (project.sharedKey==sharedKey||project.readOnlySharedKey==sharedKey)){
                     //valid key
                     generateUserKey(projectId,sharedKey,function (data) {
                         req.session.user.sharedKey = data
@@ -139,9 +147,15 @@ projectRoute.getProjectById = function (req, res) {
                         if (result){
                             res.render('ide/index.html')
                         }else{
-                            res.render('ide/share.html',{
-                                title:project.name,
-                                share:true
+                            hasValidKey(req.session.user,projectId,project.readOnlySharedKey,function (result) {
+                                if (result){
+                                    res.render('ide/index.html')
+                                }else{
+                                    res.render('ide/share.html',{
+                                        title:project.name,
+                                        share:true
+                                    })
+                                }
                             })
                         }
                     })
@@ -180,9 +194,15 @@ projectRoute.getProjectTreeById = function(req,res){
                             if (result){
                                 res.render('ide/projectTree.html')
                             }else{
-                                res.render('ide/share.html',{
-                                    title:project.name,
-                                    share:true
+                                hasValidKey(req.session.user,projectId,project.readOnlySharedKey,function (result) {
+                                    if (result){
+                                        res.render('ide/projectTree.html')
+                                    }else{
+                                        res.render('ide/share.html',{
+                                            title:project.name,
+                                            share:true
+                                        })
+                                    }
                                 })
                             }
                         })
@@ -240,10 +260,16 @@ projectRoute.updateShare = function (req, res) {
                         shared: true,
                         sharedKey:parseInt(Math.random()*9000+1000)
                     }
+                    var readOnlySharedKey
+                    do {
+                        readOnlySharedKey = parseInt(Math.random()*9000+1000)
+                    }while (readOnlySharedKey == shareInfo.shardKey)
+                    shareInfo.readOnlySharedKey = readOnlySharedKey
                 }else {
                     shareInfo = {
                         shared: false,
-                        sharedKey:''
+                        sharedKey:'',
+                        readOnlySharedKey:''
                     }
                 }
 
@@ -281,13 +307,15 @@ projectRoute.getShareInfo = function (req, res) {
                     res.end(JSON.stringify({
                         own:true,
                         shared:_project.shared,
-                        sharedKey:_project.sharedKey
+                        sharedKey:_project.sharedKey,
+                        readOnlySharedKey:_project.readOnlySharedKey
                     }))
                 }else{
                     res.end(JSON.stringify({
                         own:false,
                         shared:_project.shared,
-                        sharedKey:''
+                        sharedKey:'',
+                        readOnlySharedKey:''
                     }))
                 }
 

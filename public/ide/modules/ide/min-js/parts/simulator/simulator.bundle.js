@@ -21418,11 +21418,14 @@
 	            // var widthOfDateTimeStr=maxFontWidth*text.length;
 	            // var initXPos = (width-widthOfDateTimeStr)/2;
 	            // var xCoordinate = initXPos+maxFontWidth/2;
-	            var xCoordinate = (width - maxFontWidth * text.length + maxFontWidth) / 2;
+	            var xCoordinate = maxFontWidth * text.length > width ? 0 : (width - maxFontWidth * text.length + maxFontWidth) / 2;
+	            var notItalic = -1 == fontStr.indexOf('italic');
+	            var italicAjust = notItalic ? 0 : maxFontWidth / 2;
+	            var displayStep = maxFontWidth * text.length > width ? (width - maxFontWidth - italicAjust) / (text.length - 1) : maxFontWidth;
 	            var yCoordinate = 0.5 * height;
 	            for (i = 0; i < text.length; i++) {
 	                tempctx.fillText(text[i], xCoordinate, yCoordinate);
-	                xCoordinate += maxFontWidth;
+	                xCoordinate += displayStep;
 	            }
 	        } else {
 	            tempctx.fillText(text, 0.5 * width, 0.5 * height);
