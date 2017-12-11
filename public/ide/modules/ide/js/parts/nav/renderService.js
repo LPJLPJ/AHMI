@@ -906,8 +906,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     // add by lixiang in 2017/12/7
     renderer.prototype.renderFontPng = function(font,srcRootDir,dstDir,imgUrlPrefix,cb){
         var imgName = ''+font['font-family']+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
-        var stream = FontGeneratorService.generateSingleFont(font);
+        var options = {};
+        var stream = '';
         var outpath = path.join(dstDir,imgName);
+        options.paddingRatio = 1.2;
+        stream = FontGeneratorService.generateSingleFont(font,options);
         stream = FontGeneratorService.pngStream(stream,local);
         if(local){
             try {

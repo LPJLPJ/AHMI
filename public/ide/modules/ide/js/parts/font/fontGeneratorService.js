@@ -96,7 +96,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             widget.originFont.src = ''+info.fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
             widget.originFont.w = info.fontSize;
             widget.originFont.h = info.fontSize;
-            widget.originFont.paddingRatio = 1.0;
+            widget.originFont.paddingRatio = 1.2;
             result = fonts.some(function(item){
                 return ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic));
             });
