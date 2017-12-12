@@ -1,7 +1,7 @@
 /**
  * Created by zzen1ss on 16/7/11.
  */
-ideServices.service('RenderSerive',['ResourceService','Upload','$http',function (ResourceService,Upload,$http) {
+ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGeneratorService',function (ResourceService,Upload,$http,FontGeneratorService) {
 
     var local=false;
     var path;
@@ -10,9 +10,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
         var fs = require('fs');
         local = true;
     }catch (e){
-        path = {}
+        path = {};
 
-        path.sep = "/"
+        path.sep = "/";
         path.join = function (srcA, srcB) {
             if (srcA[srcA.length-1] == path.sep){
                 srcA = srcA.slice(0,srcA.length-1)
@@ -48,7 +48,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
 
 
     function uploadDataURI(dataURI,name, url,scb,fcb) {
-        var blob = dataURItoBlob(dataURI)
+        var blob = dataURItoBlob(dataURI);
 
         var successHandler = function () {
             console.log('save tex ok')
@@ -74,7 +74,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
 
 
     function prepareCachedRes() {
-        var curRes = ResourceService.getGlobalResources()
+        var curRes = ResourceService.getGlobalResources();
         var resRepo = {}
         for (var i=0;i<curRes.length;i++){
             var res = curRes[i]
@@ -108,7 +108,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             }
         }
         return true;
-    }
+    };
 
 
 
@@ -163,7 +163,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             uploadDataURI(stream,fileName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
         }
 
-    }
+    };
 
 
     function checkFileType(fileExt) {
@@ -215,6 +215,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
         this.trackedRes = [];
     }
 
+
     //compare tracked resources
     renderer.prototype.compareTrackedRes = function (nextTrackedRes) {
         for (var i=0;i<this.trackedRes.length;i++){
@@ -225,7 +226,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             }
         }
         return false;
-    }
+    };
 
     renderer.prototype.getTargetImage = function (url) {
         if (local){
@@ -246,8 +247,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
     renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
         if (info ){
-            //has text
-
             //font style
             var style = {};
             var font = {};
@@ -302,7 +301,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ index+'.png';
 
-
+                console.log('dstDir',dstDir,'outputFilename',outputFilename);
                 var outpath = path.join(dstDir,outputFilename);
                 _canvas.output(outpath,function (err) {
                     if (err){
@@ -886,7 +885,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
     };
 
     renderer.prototype.removeSameOutputFiles = function () {
-        var needRemoveFiles = []
+        var needRemoveFiles = [];
         for (var i=0;i<this.trackedRes.length;i++){
             var curJudgeTrack = this.trackedRes[i];
             for (var j=0;j<i;j++){
@@ -902,10 +901,31 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             }
         }
         return needRemoveFiles;
-    }
+    };
+
+    // add by lixiang in 2017/12/7
+    renderer.prototype.renderFontPng = function(font,srcRootDir,dstDir,imgUrlPrefix,cb){
+        var imgName = ''+font['font-family']+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
+        var options = {showGrid:true};
+        var stream = '';
+        var outpath = path.join(dstDir,imgName);
+        options.paddingRatio = 1.2;
+        stream = FontGeneratorService.generateSingleFont(font,options);
+        stream = FontGeneratorService.pngStream(stream,local);
+        if(local){
+            try {
+                fs.writeFileSync(outpath,stream);
+                cb && cb();
+            }catch (e) {
+                cb && cb(e);
+            }
+        }else{
+            uploadDataURI(stream,imgName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
+        }
+    };
 
     this.renderProject = function (dataStructure,sCb, fCb) {
-        var Renderer
+        var Renderer;
         var errReported = false;
         function errHandler(err) {
             console.log(err);
@@ -921,7 +941,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             sCb && sCb();
         }
 
-
         function zipResources(dst,src) {
             // var SrcUrl = path.join(ProjectBaseUrl,'resources');
             // var DistUrl = path.join(ProjectBaseUrl,'file.zip');
@@ -934,6 +953,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
             }.bind(this));
         }
+
+
         var ProjectBaseUrl = ResourceService.getProjectUrl();
         var ResourceUrl = ResourceService.getResourceUrl();
         var DataFileUrl = path.join(ResourceUrl,'data.json');
@@ -950,7 +971,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
             }
         }
-        var totalNum = allWidgets.length;
+        var fontList =  FontGeneratorService.getFontCollections(allWidgets),
+            totalNum = allWidgets.length+fontList.length,
+            m = 0,
+            curWidget = null,
+            curFont = null;
+
         if (totalNum>0){
             var okFlag = true;
             var cb = function (err) {
@@ -1011,19 +1037,30 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
             }.bind(this);
 
-
             if (local){
                 Renderer = new renderer();
                 var ViewUrl = path.join(global.__dirname,path.dirname(window.location.pathname));
-                console.log('viewUrl',ViewUrl)
-                for (var m=0;m<allWidgets.length;m++){
-                    var curWidget = allWidgets[m];
+                if(fontList.length!==0){
+                    for(m=0;m<fontList.length;m++){
+                        curFont = fontList[m];
+                        Renderer.renderFontPng(fontList[m],ViewUrl,ResourceUrl,ResourceUrl,cb);
+                    }
+                }
+                for (m=0;m<allWidgets.length;m++){
+                    curWidget = allWidgets[m];
                     Renderer.renderWidget(curWidget,ViewUrl,ResourceUrl,ResourceUrl,cb);
                 }
             }else{
                 Renderer = new renderer(prepareCachedRes());
-                for (var m=0;m<allWidgets.length;m++){
-                    var curWidget = allWidgets[m];
+                //生成不同种类的字符列表
+                if(fontList.length!==0){
+                    for(m=0;m<fontList.length;m++){
+                        curFont = fontList[m];
+                        Renderer.renderFontPng(fontList[m],'/',ResourceUrl,ResourceUrl,cb);
+                    }
+                }
+                for (m=0;m<allWidgets.length;m++){
+                    curWidget = allWidgets[m];
                     Renderer.renderWidget(curWidget,'/',ResourceUrl,ResourceUrl,cb);
                 }
             }
@@ -1066,13 +1103,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
             }
 
         }
-    }
+    };
 
     if (local){
 
         // my zip
         var spawn = require('child_process').spawn;
-
 
         function MyZipClass() {
             var _arguments;
@@ -1097,7 +1133,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 }
                 var params = _arguments.concat(_file).concat(_fileList);
                 var command = spawn(zipCommand, params);
-                console.log('command',zipCommand,params)
+                console.log('command',zipCommand,params);
 
                 command.stdout.on('data', function(data) {
                     // TODO: stdout
@@ -1111,7 +1147,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 command.on('error',function (err) {
                     console.log(err);
                     _callback(err);
-                })
+                });
                 command.on('exit', function(code) {
                     if(code === 0) {
                         _callback();
@@ -1119,8 +1155,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         _callback(new Error(code));
                     }
                 });
-            }
-
+            };
 
 
             this.compress = function(file, fileList, callback) {
@@ -1148,20 +1183,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                 })
             }
 
-
         };
 
-
         var MyZip = new MyZipClass();
-
-
-
-
-
-
-
-
-
 
     }
 

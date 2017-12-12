@@ -1836,11 +1836,14 @@ module.exports =   React.createClass({
             // var widthOfDateTimeStr=maxFontWidth*text.length;
             // var initXPos = (width-widthOfDateTimeStr)/2;
             // var xCoordinate = initXPos+maxFontWidth/2;
-            var xCoordinate = ((width-maxFontWidth*text.length)+maxFontWidth)/2;
+            var xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth/2 :((width-maxFontWidth*text.length)+maxFontWidth)/2;//如果装不下字符串，从maxFontWidth处开始显示
+            var notItalic = (-1 == fontStr.indexOf('italic'));
+            var italicAjust = notItalic ? 0 : maxFontWidth/2; //如果是斜体的话，需要斜体往右伸出的宽度
+            var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
             var yCoordinate = 0.5*height;
             for(i=0;i<text.length;i++){
                 tempctx.fillText(text[i],xCoordinate,yCoordinate);
-                xCoordinate+=maxFontWidth;
+                xCoordinate+=displayStep;
             }
         }else{
             tempctx.fillText(text,0.5*width,0.5*height);
@@ -3111,7 +3114,9 @@ module.exports =   React.createClass({
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
         tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height)
-        tempCtx.save()
+        tempCtx.save();
+        tempCtx.baseLine = 'middle';
+        tempCtx.textAlign = 'center';
         // console.log('arrange',arrange)
         if (arrange==='vertical'){
             tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
@@ -3142,20 +3147,22 @@ module.exports =   React.createClass({
                 break;
         }
         xCoordinate = initXPos;
+        xCoordinate += maxFontWidth/2;
         /*
          修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
          */
-        var  containerMeanValuePerChar = (0 === decimalCount ? ((curWidth-maxFontWidth)/(numStr.length-1)) : ((curWidth-maxFontWidth)/((numStr.length-1)+0.5-1)));
+        var containerMeanValuePerChar = (0 === decimalCount ? ((curWidth-maxFontWidth)/(numStr.length-1)) : ((curWidth-maxFontWidth)/((numStr.length-1)+0.5-1)));
         var displayStep = widthOfNumStr > curWidth ? containerMeanValuePerChar : maxFontWidth;
 
         for(i=0;i<numStr.length;i++){
             // tempCtx.strokeStyle="#00F";/*设置边框*/
             // tempCtx.lineWidth=1;边框的宽度 
             // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
-            tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
             if(numStr[i]=='.'){
+                tempCtx.fillText(numStr[i],xCoordinate-maxFontWidth/5,curHeight/2);
                 xCoordinate+=displayStep/2;
             }else{
+                tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
                 xCoordinate+=displayStep;
             }
         }

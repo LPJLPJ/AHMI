@@ -66,15 +66,17 @@
     }
 
     function generateSingleFont(font,options) {
-        var fontSize = font['font-size']||24
-        options = options||{}
+        var fontSize = font['font-size']||24;
+        options = options||{};
         //add padding
-        var paddingRatio = options.paddingRatio||1.0
-        paddingFontSize=paddingRatio*fontSize
-        gridSize = calCanvasSize(paddingFontSize,128)
+        var paddingRatio = options.paddingRatio||1.0;
+        var paddingFontSize=paddingRatio*fontSize;
+        gridSize = calCanvasSize(paddingFontSize,128);
         if (gridSize) {
-            initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize)
+            initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize);
             var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (fontSize) + 'px' + ' ' + ('"' + font['font-family'] + '"');
+            console.log('fontStr',fontStr);
+
             //padding
 
             return drawChars(paddingFontSize,fontStr,options)
