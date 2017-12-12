@@ -3114,7 +3114,9 @@ module.exports =   React.createClass({
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
         tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height)
-        tempCtx.save()
+        tempCtx.save();
+        tempCtx.baseLine = 'middle';
+        tempCtx.textAlign = 'center';
         // console.log('arrange',arrange)
         if (arrange==='vertical'){
             tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
@@ -3145,20 +3147,22 @@ module.exports =   React.createClass({
                 break;
         }
         xCoordinate = initXPos;
+        xCoordinate += maxFontWidth/2;
         /*
          修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
          */
-        var  containerMeanValuePerChar = (0 === decimalCount ? ((curWidth-maxFontWidth)/(numStr.length-1)) : ((curWidth-maxFontWidth)/((numStr.length-1)+0.5-1)));
+        var containerMeanValuePerChar = (0 === decimalCount ? ((curWidth-maxFontWidth)/(numStr.length-1)) : ((curWidth-maxFontWidth)/((numStr.length-1)+0.5-1)));
         var displayStep = widthOfNumStr > curWidth ? containerMeanValuePerChar : maxFontWidth;
 
         for(i=0;i<numStr.length;i++){
             // tempCtx.strokeStyle="#00F";/*设置边框*/
             // tempCtx.lineWidth=1;边框的宽度 
             // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
-            tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
             if(numStr[i]=='.'){
+                tempCtx.fillText(numStr[i],xCoordinate-maxFontWidth/5,curHeight/2);
                 xCoordinate+=displayStep/2;
             }else{
+                tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
                 xCoordinate+=displayStep;
             }
         }
