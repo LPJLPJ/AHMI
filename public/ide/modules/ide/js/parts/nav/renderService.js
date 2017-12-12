@@ -717,6 +717,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http',function 
                         }
                     }
                 }.bind(this));
+                var numberSlice=[];
+                for(var j=0;j<13;j++){
+                    numberSlice.push(slideTex.slices[j]);
+                }
+                widget.texList[0].slices=numberSlice;
 
                 ctx.restore();
             }.bind(this));

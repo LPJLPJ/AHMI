@@ -197,6 +197,12 @@ ideServices.service('LinkPageWidgetsService', [function () {
                     widget.wId = count++;
                     widget.info.absoluteLeft = widget.info.left + curCanvas.x;
                     widget.info.absoluteTop = widget.info.top + curCanvas.y;
+                    for (var l=0;l<widget.texList.length;l++){
+                            for (var m=0;m<widget.texList[l].slices.length;m++){
+                                delete widget.texList[l].slices[m].$$hashKey;
+                                console.log("widget.texList[l].slices[m]",widget.texList[l].slices[m])
+                            }
+                        }
                 }
                 allWidgets = allWidgets.concat(curSubCanvas.widgetList);
             }
