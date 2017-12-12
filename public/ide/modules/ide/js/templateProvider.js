@@ -550,7 +550,8 @@ ideServices
 
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font));
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
+            var maxFontWidth = 30;//+
             var width = 3*maxFontWidth;
             var info={
                 width:width, height: 33,
@@ -570,6 +571,7 @@ ideServices
 
                 align:'center',//数字对齐方式
                 arrange:'horizontal',//数字方向，垂直vertical，水平horizontal
+                spacing:0,//数字之间的间距，默认为0
 
                 //arrange:true,         //true:横向 false:竖向
                 numValue:1,

@@ -6,10 +6,11 @@
 
 ideServices.service('FontGeneratorService',['Type',function(Type){
     //SingleFontGenrator
-    var font = {};
-    var gridSize
-    var fontCanvas = document.createElement('canvas')
-    var ctx = fontCanvas.getContext('2d')
+    var font = {},
+        gridSize,
+        fontCanvas = document.createElement('canvas'),
+        ctx = fontCanvas.getContext('2d'),
+        paddingRatio = 1.2;
 
     // font['font-style'] = widget.info.fontItalic;
     // font['font-weight'] = widget.info.fontBold;
@@ -35,13 +36,17 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         var column = 0
         var row = 0
         for(var i = 0;i<128;i++){
-            row = Math.ceil(i/gridSize.w)
-            column = i - (row-1)*gridSize.w
+            row = Math.ceil(i/gridSize.w);
+            column = i - (row-1)*gridSize.w;
             if (options.showGrid) {
                 ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
             }
-
-            drawChar(i,(column-0.5)*fontSize,(row-0.5)*fontSize)
+            if(i===46){
+                //小数点往左边偏移百分之20%
+                drawChar(i,(column-0.7)*fontSize,(row-0.5)*fontSize)
+            }else{
+                drawChar(i,(column-0.5)*fontSize,(row-0.5)*fontSize)
+            }
         }
         return fontCanvas.toDataURL()
     }
@@ -96,7 +101,12 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             widget.originFont.src = ''+info.fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
             widget.originFont.w = info.fontSize;
             widget.originFont.h = info.fontSize;
-            widget.originFont.paddingRatio = 1.2;
+            widget.originFont.W = Math.ceil(info.fontSize*paddingRatio);
+            widget.originFont.H = Math.ceil(info.fontSize*paddingRatio);
+            widget.originFont.paddingX = Math.ceil(info.fontSize*(paddingRatio-1)/2);
+            widget.originFont.paddingY = Math.ceil(info.fontSize*(paddingRatio-1)/2);
+
+            widget.originFont.paddingRatio = paddingRatio;
             result = fonts.some(function(item){
                 return ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic));
             });

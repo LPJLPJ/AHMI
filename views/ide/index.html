@@ -1429,16 +1429,6 @@
                                    ng-keypress="component.enterName($event)">
                         </div>
 
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title dengPage-title ">切换动画</span>-->
-                            <!--<select class="form-control my-attr-number-input form-control dengPage-input"-->
-                                    <!--ng-options="transition.name as transition.show for transition in component.transitionMode"-->
-                                    <!--ng-model="component.transition.Name"-->
-                                    <!--ng-change="component.changeTransitionName()"-->
-                                    <!--ng-disabled="animationsDisabled">-->
-                            <!--</select>-->
-                        <!--</div>-->
-
                         <div class="my-attr-item lg"  style="display: none">
                             <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
                             <input class="my-attr-title-cartoon-times form-control "
@@ -1471,14 +1461,16 @@
                                    ng-model="component.object.level.info.width"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterWidth($event)"
-                                   type="number">
+                                   type="number"
+                                   disabled>
                         </div><div class="my-attr-item">
                             <span class="my-attr-title">高度</span>
                             <input class="my-attr-number-input form-control short-input  "
                                    ng-model="component.object.level.info.height"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterHeight($event)"
-                                   type="number">
+                                   type="number"
+                                   disabled>
                         </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
@@ -1526,16 +1518,13 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div>
-
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">切换模式</span>-->
-                            <!--<select class="my-attr-number-input form-control"-->
-                                    <!--ng-model="component.num.numModeId"-->
-                                    <!--ng-change="component.num.enterNumMode()">-->
-                                <!--<option ng-repeat="mode in component.num.numModes" value="{{mode.id}}">{{mode.name}}-->
-                                <!--</option>-->
-                            <!--</select>-->
-                        <!--</div>-->
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">字符间距</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="number"
+                                   ng-model="component.object.level.info.spacing"
+                                   ng-keypress="component.enterSpacing($event)">
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">开启动画</span>
                             <select class="my-attr-number-input form-control"

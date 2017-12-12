@@ -285,7 +285,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             changeTransitionName:changeTransitionName,
             changeTransitionDur:changeTransitionDur,
             enterHighlightMode:enterHighlightMode,
-            enterEnableAnimationMode:enterEnableAnimationMode
+            enterEnableAnimationMode:enterEnableAnimationMode,
+            enterSpacing:enterSpacing
 		};
         $scope.animationsDisabled=UserTypeService.getAnimationAuthor()
 	}
@@ -1779,6 +1780,41 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         }
     }
 
+    //输入字符间距
+    function enterSpacing(e){
+        if (e.keyCode==13){
+            //判断输入是否合法
+            var spacing = $scope.component.object.level.info.spacing,
+                fontSize = $scope.component.object.level.info.fontSize;
+            if (!_.isInteger(spacing)){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+
+            if(spacing===initObject.level.info.spacing){
+                return;
+            }
+
+            if(spacing<-fontSize||spacing>fontSize){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+
+            var option={
+                spacing:spacing
+            };
+            var oldOperate=ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeNumContent(option, function () {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+
+            })
+
+        }
+    }
+
     function enterButtonMode(e){
         var selectObj=ProjectService.getCurrentSelectObject();
         var selectButtonMode=null;
@@ -1998,6 +2034,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             }
         }
     }
+
+
     function enterNumMode(){
         var selectObj=ProjectService.getCurrentSelectObject();
         var selectNumMode=null;
