@@ -370,6 +370,13 @@
 }
 
 /*edit by lixiang*/
+.deng-attr-item .listTable >tbody>tr:first-child{
+    background-color: #eee;
+}
+.deng-attr-item .listTable >tbody>tr:first-child span{
+    padding: 2px;
+    cursor: pointer;
+}
 .deng-attr-item .listTable >tbody>tr:first-child >td{
     border-top: 0px;
 }
@@ -381,7 +388,7 @@
 }
 
 
-.deng-attr-item .listTable >tbody>tr:hover{
+.deng-attr-item .listTable >tbody>tr:not(:first-child):hover{
     background-color: #e0e0e0;
 }
 .deng-attr-item .listTable td{

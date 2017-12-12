@@ -2904,6 +2904,17 @@
 
                     <div class="listTable-container" uib-collapse="status.collapsed">
                         <table class="listTable table table-hover">
+                            <tr class="">
+                                <td>名称
+                                    <span class="iconfont" ng-click="component.sortByName()">
+                                    &#xe6a5;</span>
+                                </td>
+                                <td>寄存器号
+                                    <span class="iconfont" ng-click="component.sortByRegister()">
+                                        &#xe6a5;</span>
+                                </td>
+                                <td>操作</td>
+                            </tr>
                             <tr ng-repeat="tags in component.allCustomTags track by $index" class="tagTr"
                                 ng-class="{'selected':selected==$id}">
                                 <td ng-click="openPanel($index,'custom')">
