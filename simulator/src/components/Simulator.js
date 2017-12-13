@@ -3132,7 +3132,9 @@ module.exports =   React.createClass({
         // tempCtx.strokeRect(0,0,curWidth,curHeight);
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染每个字符的起始位置
-            widthOfNumStr;       //渲染的字符串的长度
+            widthOfNumStr,       //渲染的字符串的长度
+            padding;
+        padding = Math.ceil(maxFontWidth/10);
         widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
         switch(align){
             case 'left':
@@ -3146,7 +3148,7 @@ module.exports =   React.createClass({
                 initXPos = (widthOfNumStr > curWidth) ? 0 : (curWidth-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos;
+        xCoordinate = initXPos+padding;
         xCoordinate += maxFontWidth/2;
         /*
          修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
@@ -3156,7 +3158,7 @@ module.exports =   React.createClass({
 
         for(i=0;i<numStr.length;i++){
             // tempCtx.strokeStyle="#00F";/*设置边框*/
-            // tempCtx.lineWidth=1;边框的宽度 
+            // tempCtx.lineWidth=1;边框的宽度
             // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
             if(numStr[i]=='.'){
                 tempCtx.fillText(numStr[i],xCoordinate-maxFontWidth/5,curHeight/2);

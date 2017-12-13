@@ -40,7 +40,7 @@ ProjectSchema.pre('save',function(next){
 
 
 
-})
+});
 
 
 ProjectSchema.statics = {
