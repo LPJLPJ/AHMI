@@ -397,19 +397,20 @@ ideServices
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
+            var text='文本';
+            var fontSize=15;
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
+                width:fontSize*(text.length+1),height:fontSize*2,
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
 
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
 
-                text:'文本',
+                text:text,
                 fontName:'正文',
                 fontFamily:'宋体',
-                fontSize:15,
+                fontSize:fontSize,
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
                 fontItalic:"",

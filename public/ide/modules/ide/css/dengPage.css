@@ -189,6 +189,18 @@
     width: 125px;
 }
 
+.dengModel-body .projectScale .control-label{
+    vertical-align: -2px;
+}
+
+.dengModel-body .projectScale input{
+    outline: none;
+    vertical-align: middle;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
 .dengModel-body .dengModal-table span{
     font-size: 12px;
     font-weight: bold;
