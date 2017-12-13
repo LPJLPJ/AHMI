@@ -22627,7 +22627,7 @@
 	                initXPos = widthOfNumStr > curWidth ? 0 : (curWidth - widthOfNumStr) / 2;
 	                break;
 	        }
-	        console.log('initXPos', initXPos, 'paddingX', paddingX);
+	        // console.log('initXPos',initXPos,'paddingX',paddingX);
 	        xCoordinate = initXPos + paddingX;
 	        xCoordinate += maxFontWidth / 2;
 	        /*
@@ -22637,9 +22637,9 @@
 	        var displayStep = widthOfNumStr > curWidth ? containerMeanValuePerChar : maxFontWidth;
 
 	        for (i = 0; i < numStr.length; i++) {
-	            tempCtx.strokeStyle = "#00F"; /*设置边框*/
-	            tempCtx.lineWidth = 1; //边框的宽度
-	            tempCtx.strokeRect(xCoordinate, 0, maxFontWidth, curHeight);
+	            // tempCtx.strokeStyle="#00F";/*设置边框*/
+	            // tempCtx.lineWidth=1;//边框的宽度
+	            // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
 	            if (numStr[i] == '.') {
 	                tempCtx.fillText(numStr[i], xCoordinate - maxFontWidth / 5, curHeight / 2);
 	                xCoordinate += displayStep / 2;

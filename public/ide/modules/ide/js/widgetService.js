@@ -2425,19 +2425,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
             this.spacing = (level.info.spacing===undefined)?(level.info.spacing=0):level.info.spacing;//兼容旧的数字控件
-            this.paddingX = level.info.paddingX;
-            if(this.paddingX===undefined){
+            this.paddingRatio = level.info.paddingRatio;
+            if(this.paddingRatio===undefined){
                 //维护旧的数字控件
-                this.paddingX = Math.ceil(this.fontSize/10);
-                var maxWidth = parseInt(this.fontSize);//+
+                level.info.paddingRatio = 0.1;
+                this.paddingRatio = 0.1;
+                var maxWidth = parseInt(this.fontSize);
+                var paddingX = Math.ceil(maxWidth*this.paddingRatio);
                 this.maxFontWidth = maxWidth;
                 level.info.paddingX = this.paddingX;
                 level.info.maxFontWidth = maxWidth;
                 if(this.numOfDigits&&this.fontSize){
                     var width = this.symbolMode=='0'?(this.numOfDigits*(maxWidth+this.spacing)-this.spacing):((this.numOfDigits+1)*(maxWidth+this.spacing)-this.spacing);
-                    this.paddingX = Math.ceil(maxWidth/10);
-                    width+=this.paddingX*2;
-
+                    width+=paddingX*2;
                     if(this.decimalCount!=0){
                         width +=0.5*maxWidth+this.spacing;
                     }
@@ -2531,8 +2531,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 level.info.maxFontWidth = maxWidth;
 
                 var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
-                self.paddingX = Math.ceil(maxWidth/10);
-                width+=self.paddingX*2;
+                var paddingX = Math.ceil(maxWidth*self.paddingRatio);
+                width+=paddingX*2;
 
                 if(self.decimalCount!=0){
                     width +=0.5*maxWidth+self.spacing;
@@ -2689,11 +2689,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             if(numStr[i]==='.'){
                 //小数点往左偏移20%
                 ctx.fillText(numStr[i],xCoordinate-(maxFontWidth/5),0);
-                ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth/2,maxFontWidth);
+                // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth/2,maxFontWidth);
                 xCoordinate+=displayStep/2;// 小数点显示坐标的步长为其它字符宽度的一半
             }else{
                 ctx.fillText(numStr[i],xCoordinate,0);
-                ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth,maxFontWidth);
+                // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth,maxFontWidth);
                 xCoordinate+=displayStep;
             }
             xCoordinate += spacing;

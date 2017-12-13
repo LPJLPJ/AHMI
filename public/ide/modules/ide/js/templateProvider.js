@@ -552,8 +552,8 @@ ideServices
             var font = "30px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
             var maxFontWidth = 30;//+
-            var paddingX = Math.ceil(maxFontWidth/10);
-            var width = 3*maxFontWidth+paddingX*2;
+            var paddingRatio = 0.1;
+            var width = 3*maxFontWidth+Math.ceil(maxFontWidth*paddingRatio*2);
             var info={
                 width:width, height: 33,
                 left: 0, top: 0,
@@ -583,7 +583,7 @@ ideServices
                 fontItalic:"",
                 maxFontWidth:maxFontWidth,   //最大字体宽度
                 enableAnimation:false, //显示模式标志，false:无动画 true:有动画
-                paddingX:paddingX
+                paddingRatio:paddingRatio
             };
             return {
                 id: Math.random().toString(36).substr(2),
