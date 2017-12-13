@@ -397,19 +397,20 @@ ideServices
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
+            var text='文本';
+            var fontSize=15;
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
+                width:fontSize*(text.length+1),height:fontSize*2,
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
 
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
 
-                text:'文本',
+                text:text,
                 fontName:'正文',
                 fontFamily:'宋体',
-                fontSize:15,
+                fontSize:fontSize,
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
                 fontItalic:"",
@@ -550,7 +551,8 @@ ideServices
 
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font));
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
+            var maxFontWidth = 30;//+
             var width = 3*maxFontWidth;
             var info={
                 width:width, height: 33,
@@ -570,6 +572,7 @@ ideServices
 
                 align:'center',//数字对齐方式
                 arrange:'horizontal',//数字方向，垂直vertical，水平horizontal
+                spacing:0,//数字之间的间距，默认为0
 
                 //arrange:true,         //true:横向 false:竖向
                 numValue:1,

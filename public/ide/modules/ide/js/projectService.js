@@ -3436,6 +3436,10 @@ ideServices
                     selectObj.level.info.frontZeroMode=tempFrontZeroMode;
                     arg.frontZeroMode=tempFrontZeroMode;
                 }
+                if(_option.hasOwnProperty('spacing')){
+                    selectObj.level.info.spacing=_option.spacing;
+                    arg.spacing=_option.spacing;
+                }
 
                 //下面是数字数值
                 if(_option.hasOwnProperty('numValue')){

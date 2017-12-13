@@ -82,6 +82,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/closeBrowser.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/font/fontMesureService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/font/fontGeneratorService.js"></script>
 
     <script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
@@ -210,6 +211,35 @@
                                 <div class="form-group">
                                     <label for="author" class="control-label">作者:</label>
                                     <input type="text" class="form-control" id="author" ng-model="saveAsAuthor">
+                                </div>
+                                <div class="form-group projectScale">
+                                    <label class="control-label">选择其它分辨率保存：</label>
+                                    <input type="checkbox" ng-model="isScale"/>
+                                </div>
+                                <div ng-show="isScale">
+                                    <div class="form-group">
+                                        <select id="saveAs-resolution" class="form-control" ng-model="selectCustomResolution">
+                                            <option value="1280*480" ng-selected="true">1280 * 480</option>
+                                            <option value="1280*800">1280 * 800</option>
+                                            <option value="1920*1080">1920 * 1080</option>
+                                            <option value="1000*600">1000 * 600</option>
+                                            <option value="800*600">800 * 600</option>
+                                            <option value="800*480">800 * 480</option>
+                                            <option value="480*272">480 * 272</option>
+                                            <option value="320*240">320 * 240</option>
+                                            <option value="custom">自定义:{{saveAsWidth}} * {{saveAsHeight}}</option>
+                                        </select>
+                                    </div>
+                                    <div ng-show="selectCustomResolution=='custom'">
+                                        <div class="form-group">
+                                            <span class="control-label">自定义宽度：</span>
+                                            <input type="number" class="col-lg-2 form-control" placeholder="1~1920" ng-model="saveAsWidth" min="0" max="1920"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <span class="control-label">自定义高度：</span>
+                                            <input type="number" class="col-lg-2 form-control" placeholder="1~1920" ng-model="saveAsHeight" min="0" max="1920"/>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -1428,16 +1458,6 @@
                                    ng-keypress="component.enterName($event)">
                         </div>
 
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title dengPage-title ">切换动画</span>-->
-                            <!--<select class="form-control my-attr-number-input form-control dengPage-input"-->
-                                    <!--ng-options="transition.name as transition.show for transition in component.transitionMode"-->
-                                    <!--ng-model="component.transition.Name"-->
-                                    <!--ng-change="component.changeTransitionName()"-->
-                                    <!--ng-disabled="animationsDisabled">-->
-                            <!--</select>-->
-                        <!--</div>-->
-
                         <div class="my-attr-item lg"  style="display: none">
                             <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
                             <input class="my-attr-title-cartoon-times form-control "
@@ -1470,14 +1490,16 @@
                                    ng-model="component.object.level.info.width"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterWidth($event)"
-                                   type="number">
+                                   type="number"
+                                   disabled>
                         </div><div class="my-attr-item">
                             <span class="my-attr-title">高度</span>
                             <input class="my-attr-number-input form-control short-input  "
                                    ng-model="component.object.level.info.height"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterHeight($event)"
-                                   type="number">
+                                   type="number"
+                                   disabled>
                         </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
@@ -1525,16 +1547,13 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div>
-
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">切换模式</span>-->
-                            <!--<select class="my-attr-number-input form-control"-->
-                                    <!--ng-model="component.num.numModeId"-->
-                                    <!--ng-change="component.num.enterNumMode()">-->
-                                <!--<option ng-repeat="mode in component.num.numModes" value="{{mode.id}}">{{mode.name}}-->
-                                <!--</option>-->
-                            <!--</select>-->
-                        <!--</div>-->
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">字符间距</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="number"
+                                   ng-model="component.object.level.info.spacing"
+                                   ng-keypress="component.enterSpacing($event)">
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">开启动画</span>
                             <select class="my-attr-number-input form-control"
@@ -2914,6 +2933,17 @@
 
                     <div class="listTable-container" uib-collapse="status.collapsed">
                         <table class="listTable table table-hover">
+                            <tr class="">
+                                <td>名称
+                                    <span class="iconfont" ng-click="component.sortByName()">
+                                    &#xe6a5;</span>
+                                </td>
+                                <td>寄存器号
+                                    <span class="iconfont" ng-click="component.sortByRegister()">
+                                        &#xe6a5;</span>
+                                </td>
+                                <td>操作</td>
+                            </tr>
                             <tr ng-repeat="tags in component.allCustomTags track by $index" class="tagTr"
                                 ng-class="{'selected':selected==$id}">
                                 <td ng-click="openPanel($index,'custom')">
