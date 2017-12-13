@@ -2425,18 +2425,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
             this.spacing = (level.info.spacing===undefined)?(level.info.spacing=0):level.info.spacing;//兼容旧的数字控件
-            this.padding = level.info.padding;
-            if(this.padding===undefined){
+            this.paddingX = level.info.paddingX;
+            if(this.paddingX===undefined){
                 //维护旧的数字控件
-                this.padding = Math.ceil(this.fontSize/10);
+                this.paddingX = Math.ceil(this.fontSize/10);
                 var maxWidth = parseInt(this.fontSize);//+
                 this.maxFontWidth = maxWidth;
-                level.info.padding = this.padding;
+                level.info.paddingX = this.paddingX;
                 level.info.maxFontWidth = maxWidth;
                 if(this.numOfDigits&&this.fontSize){
                     var width = this.symbolMode=='0'?(this.numOfDigits*(maxWidth+this.spacing)-this.spacing):((this.numOfDigits+1)*(maxWidth+this.spacing)-this.spacing);
-                    this.padding = Math.ceil(maxWidth/10);
-                    width+=this.padding*2;
+                    this.paddingX = Math.ceil(maxWidth/10);
+                    width+=this.paddingX*2;
 
                     if(this.decimalCount!=0){
                         width +=0.5*maxWidth+this.spacing;
@@ -2531,8 +2531,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 level.info.maxFontWidth = maxWidth;
 
                 var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
-                self.padding = Math.ceil(maxWidth/10);
-                width+=self.padding*2;
+                self.paddingX = Math.ceil(maxWidth/10);
+                width+=self.paddingX*2;
 
                 if(self.decimalCount!=0){
                     width +=0.5*maxWidth+self.spacing;
@@ -2656,10 +2656,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染字符的起始位置
             widthOfNumStr,       //渲染的字符串的长度
-            padding;             //控件左右两边的留白
+            paddingX;             //控件左右两边的留白
 
-        padding = Math.ceil(maxFontWidth/10);
-        width = width-2*padding;
+        paddingX = Math.ceil(maxFontWidth/10);
+        width = width-2*paddingX;
 
         widthOfNumStr=(decimalCount===0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
         widthOfNumStr += (numStr.length-1)*spacing;
