@@ -736,7 +736,8 @@ ideServices
         };
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            var maxFontWidth = 20;//+
             var width = 8*maxFontWidth;
             var info={
                 width:width, height: 22,
@@ -753,7 +754,9 @@ ideServices
                 disableHighlight:false,
                 fontBold:"100",
                 fontItalic:"",
-                maxFontWidth:maxFontWidth   //最大字体宽度
+                maxFontWidth:maxFontWidth,   //最大字体宽度
+                spacing:0,//数字之间的间距，默认为0
+                paddingRatio:0.1//padding的值=paddingRatio*maxFontWidth
             };
             return {
                 id: Math.random().toString(36).substr(2),

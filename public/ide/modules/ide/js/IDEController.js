@@ -291,6 +291,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         if (data.content){
             //var globalProject = GlobalService.getBlankProject()
             var globalProject = JSON.parse(data.content);
+            console.log('hahhhh',globalProject);
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
             });

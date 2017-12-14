@@ -1739,7 +1739,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MySlideBlock.async = true;
 
 
-    //mydateTIme
+    //myDateTime
     fabric.MyDateTime = fabric.util.createClass(fabric.Object, {
         type: Type.MyDateTime,
         initialize: function (level, options) {
@@ -1768,44 +1768,44 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.align=level.info.align;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
-            this.maxFontWidth=level.info.maxFontWidth;
-            if(this.maxFontWidth===undefined){
-                //维护旧的时间控件
-                var font = this.fontSize + "px" + " " + this.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-                this.maxFontWidth = maxWidth;
-                level.info.maxFontWidth = maxWidth;
-                if(this.dateTimeModeId=='0'){
-                    this.setWidth(8*this.maxFontWidth);
-                }else if(this.dateTimeModeId=='1'){
-                    this.setWidth(5*this.maxFontWidth);
-                }else
-                    this.setWidth(10*this.maxFontWidth);
-            }
+            // this.maxFontWidth=level.info.maxFontWidth;
+            this.widthBeforePadding=this.width;
 
+            if(level.info.paddingRatio===undefined){
+                //维护旧的时间控件
+                this.paddingRatio= level.info.paddingRatio=0.1;
+                this.spacing = level.info.spacing=0
+                var font = this.fontSize + "px" + " " + this.fontFamily;
+                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
+                var maxWidth = parseInt(this.fontSize);//+
+                this.fontSize = maxWidth;
+                level.info.fontSize = maxWidth;
+                if(this.dateTimeModeId=='0'){
+                    this.widthBeforePadding=8*this.fontSize+7*this.spacing;
+                }else if(this.dateTimeModeId=='1'){
+                    this.widthBeforePadding=5*this.fontSize+4*this.spacing;
+                }else {
+                    this.widthBeforePadding=10*this.fontSize+9*this.spacing;
+                }
+                this.width=this.widthBeforePadding+2*this.paddingRatio*this.fontSize;
+                this.setWidth(this.width);
+                var height = this.fontSize*(1+2*this.paddingRatio);
+                this.setHeight(height);
+            }
+            this.spacing =level.info.spacing;
+            this.paddingRatio=level.info.paddingRatio;
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
                 self.dateTimeModeId=arg.dateTimeModeId;
-                self.setHeight(self.fontSize*1.1);
+                self.setHeight(self.fontSize*(1+2*self.paddingRatio));
                 if(self.dateTimeModeId=='0'){
-                    if(self.fontItalic=='italic'){
-                        self.setWidth(8.5*self.maxFontWidth);
-                    }else{
-                        self.setWidth(8*self.maxFontWidth);
-                    }
+                    self.widthBeforePadding=8*self.fontSize+7*self.spacing;
                 }else if(self.dateTimeModeId=='1'){
-                    if(self.fontItalic=='italic'){
-                        self.setWidth(5.5*self.maxFontWidth);
-                    }else{
-                        self.setWidth(5*self.maxFontWidth);
-                    }
+                    self.widthBeforePadding=5*self.fontSize+4*self.spacing;
                 }else {
-                    if(self.fontItalic=='italic'){
-                        self.setWidth(10.5*self.maxFontWidth);
-                    }else{
-                        self.setWidth(10*self.maxFontWidth);
-                    }
+                    self.widthBeforePadding=10*self.fontSize+9*self.spacing;
                 }
+                self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1828,31 +1828,37 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.hasOwnProperty('fontItalic')){
                     self.fontItalic=arg.fontItalic;
                 }
-                self.setHeight(self.fontSize*1.1);
-                var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-                level.info.maxFontWidth = maxWidth;
-                self.maxFontWidth = maxWidth;
-
+                self.setHeight(self.fontSize*(1+2*self.paddingRatio));
+                // var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
+                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
+                self.fontSize = parseInt(self.fontSize);//+
                 if(self.dateTimeModeId=='0'){
-                    if(self.fontItalic=='italic'){
-                        self.setWidth(8.5*self.maxFontWidth);
-                    }else{
-                        self.setWidth(8*self.maxFontWidth);
-                    }
+                    self.widthBeforePadding=8*self.fontSize+7*self.spacing;
                 }else if(self.dateTimeModeId=='1'){
-                    if(self.fontItalic=='italic'){
-                        self.setWidth(5.5*self.maxFontWidth);
-                    }else{
-                        self.setWidth(5*self.maxFontWidth);
-                    }
+                    self.widthBeforePadding=5*self.fontSize+4*self.spacing;
                 }else {
-                    if(self.fontItalic=='italic'){
-                        self.setWidth(10.5*self.maxFontWidth);
-                    }else{
-                        self.setWidth(10*self.maxFontWidth);
-                    }
+                    self.widthBeforePadding=10*self.fontSize+9*self.spacing;
                 }
+                self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            this.on('changeDateTimeAttr',function(arg){
+                var level = arg.level;
+                var _callback = arg.callback;
+                if(arg.hasOwnProperty('spacing')){
+                    self.spacing = arg.spacing;
+                }
+                if(self.dateTimeModeId=='0'){
+                    self.widthBeforePadding=8*self.fontSize+7*self.spacing;
+                }else if(self.dateTimeModeId=='1'){
+                    self.widthBeforePadding=5*self.fontSize+4*self.spacing;
+                }else {
+                    self.widthBeforePadding=10*self.fontSize+9*self.spacing;
+                }
+                self.setWidth(self.widthBeforePadding+0.2*self.fontSize);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1884,7 +1890,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var fontString;
                 fontString=this.fontItalic + " " + this.fontBold + " " + this.fontSize+'px'+" "+this.fontFamily;
                 //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
-                drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.width,this.maxFontWidth);
+                console.log("this.widthBeforePadding",this.widthBeforePadding)
+
+                drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.widthBeforePadding,this.fontSize,this.spacing);
                 //将图片超出canvas的部分裁剪
                 this.clipTo=function(ctx){
                     ctx.save();
@@ -1999,10 +2007,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @param  {[type]} width      [控件宽度]
      * @return {[type]}            [description]
      */
-    function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,maxFontWidth){
+    function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,fontSize,spacing){
         ctx.fillStyle=fontColor;
         ctx.font=fontString;
         ctx.textBaseline='middle';
+        ctx.textAlign = 'center';
 
         var dateObj = new Date(),
             arrTime = [],
@@ -2026,7 +2035,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 arrDate[i]='0'+arrDate[i];
             }
         }
-        var colonWidth = ctx.measureText(':');
         var dateTimeStr="";
 
         switch(mode){
@@ -2039,6 +2047,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 dateTimeStr=arrDate.join("/").toString();
                 break;
             case '3':
+                //减号日期
                 dateTimeStr=arrDate.join("-").toString();
                 break;
             case '0':
@@ -2047,16 +2056,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 dateTimeStr=arrTime.join(":").toString();
                 break;
         }
-        var widthOfDateTimeStr=maxFontWidth*dateTimeStr.length;
-        var initXPos = (widthOfDateTimeStr > width) ? 0 : (width-widthOfDateTimeStr)/2;//当装不下的时候，从控件开始处显示
-        var notItalic = (fontString.indexOf('italic')==-1);
-        var xCoordinate= notItalic ? (initXPos-width/2) : ((initXPos-width/2)-2);
-        var colonCoordinate = maxFontWidth/2-colonWidth.width/2;
-        var italicAjust = notItalic ? 0 :  maxFontWidth/2; //如果是斜体需要往左调整
-        var displayStep = (widthOfDateTimeStr > width) ? ((width - maxFontWidth - italicAjust )/(dateTimeStr.length - 1)) : maxFontWidth; //当装不下的时候可以重叠显示
+        var xCoordinate= fontSize/2-width/2;//每个字符的起始值
+        var displayStep = fontSize+spacing; //加入间隔
         for(i=0;i<dateTimeStr.length;i++){
             if(dateTimeStr[i] ==":"){
-                ctx.fillText(dateTimeStr[i],xCoordinate+colonCoordinate,0);
+                ctx.fillText(dateTimeStr[i],xCoordinate,0);
             }
             else
                 ctx.fillText(dateTimeStr[i],xCoordinate,0);
