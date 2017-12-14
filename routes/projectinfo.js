@@ -671,6 +671,12 @@ projectRoute.saveProjectAs = function(req,res){
 
                     copyProject.name = data.saveAsName?(data.saveAsName):(copyProject.name+"副本");
                     copyProject.author = data.saveAsAuthor?(data.saveAsAuthor):(copyProject.author);
+                    //改变另存为分辨率 重新设置大小
+                    if(data.saveAsResolution){
+                        copyProject.content=saveAsReset(data.saveAsResolution,copyProject.resolution,copyProject.content);
+                        copyProject.resolution=data.saveAsResolution;
+                    }
+
                     var newProject = new ProjectModel(copyProject);
                     var newId = newProject._id;
                     if(newProject.content){
@@ -710,6 +716,90 @@ projectRoute.saveProjectAs = function(req,res){
     }
 
 };
+
+//另存为重新设置项目及其内部控件大小
+function saveAsReset(newResolution,oldResolution,content){
+    var widthProportion=(newResolution.split("*")[0])/(oldResolution.split("*")[0]);
+    var heightProportion=(newResolution.split("*")[1])/(oldResolution.split("*")[1]);
+    var content=JSON.parse(content);
+    for(var a in content.pages){
+        if(content.pages[a].layers){
+            for(var b in content.pages[a].layers){
+                content.pages[a].layers[b].info.width=Math.round(content.pages[a].layers[b].info.width*widthProportion);
+                content.pages[a].layers[b].info.height=Math.round(content.pages[a].layers[b].info.height*heightProportion);
+                content.pages[a].layers[b].info.left=Math.round(content.pages[a].layers[b].info.left*widthProportion);
+                content.pages[a].layers[b].info.top=Math.round(content.pages[a].layers[b].info.top*heightProportion);
+                if(content.pages[a].layers[b].subLayers){
+                    for(var c in content.pages[a].layers[b].subLayers){
+                        for(var d in content.pages[a].layers[b].subLayers[c].widgets){
+                            var type=content.pages[a].layers[b].subLayers[c].widgets[d].type;
+                            content.pages[a].layers[b].subLayers[c].widgets[d].info.width=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.width*widthProportion);
+                            content.pages[a].layers[b].subLayers[c].widgets[d].info.height=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.height*heightProportion);
+                            content.pages[a].layers[b].subLayers[c].widgets[d].info.left=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.left*widthProportion);
+                            content.pages[a].layers[b].subLayers[c].widgets[d].info.top=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.top*heightProportion);
+                            if(type=="MyButton"||type=='MyTextArea') {
+                                content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
+                            }
+                            if(type=='MyTexNum'){
+                                content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW*widthProportion);
+                                content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH*heightProportion);
+                            }
+                            if(type=="MyDateTime"||type=='MyNum'){
+                                content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
+                                content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth*widthProportion);
+                            }
+                            //改变仪表盘指针 取宽高中较小值为边长
+                            if(type=="MyDashboard"){
+                                content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*widthProportion);
+                                /*if(content.pages[a].layers[b].subLayers[c].widgets[d].info.width-content.pages[a].layers[b].subLayers[c].widgets[d].info.height>0){
+                                 content.pages[a].layers[b].subLayers[c].widgets[d].info.width=content.pages[a].layers[b].subLayers[c].widgets[d].info.height;
+                                 content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*weightProportion);
+                                 }else{
+                                 content.pages[a].layers[b].subLayers[c].widgets[d].info.height=content.pages[a].layers[b].subLayers[c].widgets[d].info.width;
+                                 content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*widthProportion);
+                                 }*/
+                            }
+
+                        }
+                    }
+                }
+                if(content.pages[a].layers[b].showSubLayer){
+                    for(var h in content.pages[a].layers[b].showSubLayer.widgets){
+                        var type1=content.pages[a].layers[b].showSubLayer.widgets[h].type;
+                        content.pages[a].layers[b].showSubLayer.widgets[h].info.width=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.width*widthProportion);
+                        content.pages[a].layers[b].showSubLayer.widgets[h].info.height=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.height*heightProportion);
+                        content.pages[a].layers[b].showSubLayer.widgets[h].info.left=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.left*widthProportion);
+                        content.pages[a].layers[b].showSubLayer.widgets[h].info.top=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.top*heightProportion);
+                        if(type1=="MyButton"||type1=='MyTextArea') {
+                            content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize*widthProportion);
+                        }
+                        if(type1=='MyTexNum'){
+                            content.pages[a].layers[b].showSubLayer.widgets[h].info.characterW=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.characterW*widthProportion);
+                            content.pages[a].layers[b].showSubLayer.widgets[h].info.characterH=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.characterH*heightProportion);
+                        }
+                        if(type1=="MyDateTime"||type1=='MyNum'){
+                            content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize*widthProportion);
+                            content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth*widthProportion);
+                        }
+                        if(type1=="MyDashboard"){
+                            content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength*widthProportion);
+                        }
+                    }
+                }
+                //修改动画
+                if(content.pages[a].layers[b].animations){
+                    for(var x in content.pages[a].layers[b].animations){
+                        content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.x=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.x*widthProportion);
+                        content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.y=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.y*heightProportion);
+                        content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.x=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.x*widthProportion);
+                        content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.y=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.y*heightProportion);
+                    }
+                }
+            }
+        }
+    }
+    return JSON.stringify(content);
+}
 
 projectRoute.saveThumbnail = function (req, res) {
     var projectId = req.params.id;

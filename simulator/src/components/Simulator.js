@@ -2728,6 +2728,7 @@ module.exports =   React.createClass({
         var overFlowStyle = widget.info.overFlowStyle;
         var maxFontWidth = widget.info.maxFontWidth;
         var align = widget.info.align;
+        var spacing = widget.info.spacing;
         //console.log('maxFontWidth',maxFontWidth,'align',align);
         //size
         var curWidth = widget.info.width;
@@ -2770,7 +2771,7 @@ module.exports =   React.createClass({
                         name:'数字背景'
                     }
 
-                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount);
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing);
                     offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height)
 
                 } else {
@@ -2794,14 +2795,14 @@ module.exports =   React.createClass({
                             newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }
 
-                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
                         oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight
                         if (oldHeight>0){
                             offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
                         }
 
 
-                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
                         oldHeight = curFrameNum  / totalFrameNum * curHeight
                         if (oldHeight>0){
                             offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
@@ -2815,13 +2816,13 @@ module.exports =   React.createClass({
                             tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                             newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }
-                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
                         oldWidth = (totalFrameNum - curFrameNum)  / totalFrameNum * curWidth
                         if (oleWidth>0){
                             offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
                         }
 
-                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
 
                         oldWidth = curFrameNum  / totalFrameNum * curWidth;
                         if (oleWidth>0){
@@ -3118,10 +3119,10 @@ module.exports =   React.createClass({
         offctx.restore()
 
     },
-    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas,_arrange, align, maxFontWidth, decimalCount) {
+    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas,_arrange, align, maxFontWidth, decimalCount,spacing) {
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
-        tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height)
+        tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height);
         tempCtx.save();
         tempCtx.baseLine = 'middle';
         tempCtx.textAlign = 'center';
@@ -3140,8 +3141,11 @@ module.exports =   React.createClass({
         // tempCtx.strokeRect(0,0,curWidth,curHeight);
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染每个字符的起始位置
-            widthOfNumStr;       //渲染的字符串的长度
+            widthOfNumStr,       //渲染的字符串的长度
+            paddingX;
+        paddingX = Math.ceil(maxFontWidth/10);
         widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
+        curWidth-=paddingX*2;
         switch(align){
             case 'left':
                 initXPos=0;
@@ -3154,25 +3158,26 @@ module.exports =   React.createClass({
                 initXPos = (widthOfNumStr > curWidth) ? 0 : (curWidth-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos;
+        // console.log('initXPos',initXPos,'paddingX',paddingX);
+        xCoordinate = initXPos+paddingX;
         xCoordinate += maxFontWidth/2;
         /*
          修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
          */
-        var containerMeanValuePerChar = (0 === decimalCount ? ((curWidth-maxFontWidth)/(numStr.length-1)) : ((curWidth-maxFontWidth)/((numStr.length-1)+0.5-1)));
-        var displayStep = widthOfNumStr > curWidth ? containerMeanValuePerChar : maxFontWidth;
+        var displayStep = maxFontWidth;
 
-        for(i=0;i<numStr.length;i++){
-            // tempCtx.strokeStyle="#00F";/*设置边框*/
-            // tempCtx.lineWidth=1;边框的宽度 
-            // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
+        for(var i=0;i<numStr.length;i++){
             if(numStr[i]=='.'){
+                // console.log('displayStep',displayStep);
                 tempCtx.fillText(numStr[i],xCoordinate-maxFontWidth/5,curHeight/2);
+                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth/2,maxFontWidth);
                 xCoordinate+=displayStep/2;
             }else{
                 tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
+                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth,maxFontWidth);
                 xCoordinate+=displayStep;
             }
+            xCoordinate+=spacing;
         }
         // switch(tempCtx.textAlign){
         //     case 'left':
