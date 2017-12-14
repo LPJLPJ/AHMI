@@ -1787,10 +1787,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else {
                     this.widthBeforePadding=10*this.fontSize+9*this.spacing;
                 }
-                this.width=this.widthBeforePadding+2*this.paddingRatio*this.fontSize;
-                this.setWidth(this.width);
+                var width=this.widthBeforePadding+2*this.paddingRatio*this.fontSize;
+                // this.setWidth(width);
                 var height = this.fontSize*(1+2*this.paddingRatio);
-                this.setHeight(height);
+                level.info.width = width;
+                level.info.height=height;
+                // this.setHeight(height);
+                this.set({width:width,height:height});
             }
             this.spacing =level.info.spacing;
             this.paddingRatio=level.info.paddingRatio;

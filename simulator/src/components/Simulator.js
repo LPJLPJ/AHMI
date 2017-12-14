@@ -1806,7 +1806,7 @@ module.exports =   React.createClass({
         }
         cb && cb();
     },
-    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth) {
+    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth,spacing,paddingRatio) {
 
         var text = text||'';
         var font = font||{};
@@ -1818,6 +1818,8 @@ module.exports =   React.createClass({
         tempcanvas.height = height;
         var tempctx = tempcanvas.getContext('2d');
         tempctx.save();
+        if(spacing===undefined)spacing=0;
+        if(paddingRatio===undefined)paddingRatio=0;
         if (arrange==='vertical'){
             tempctx.translate(tempcanvas.width/2,tempcanvas.height/2);
             tempctx.rotate(Math.PI/2);
@@ -1837,14 +1839,18 @@ module.exports =   React.createClass({
             // var initXPos = (width-widthOfDateTimeStr)/2;
             // var xCoordinate = initXPos+maxFontWidth/2;
             var xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth/2 :((width-maxFontWidth*text.length)+maxFontWidth)/2;//如果装不下字符串，从maxFontWidth处开始显示
+            if(paddingRatio!==0)xCoordinate=paddingRatio*maxFontWidth+0.5*maxFontWidth;
             var notItalic = (-1 == fontStr.indexOf('italic'));
             var italicAjust = notItalic ? 0 : maxFontWidth/2; //如果是斜体的话，需要斜体往右伸出的宽度
             var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
+            displayStep+=spacing;
             var yCoordinate = 0.5*height;
             for(i=0;i<text.length;i++){
                 tempctx.fillText(text[i],xCoordinate,yCoordinate);
                 xCoordinate+=displayStep;
+
             }
+
         }else{
             tempctx.fillText(text,0.5*width,0.5*height);
         }
@@ -2337,6 +2343,8 @@ module.exports =   React.createClass({
         var fontColor = widget.info.fontColor;
         var tex = widget.texList&&widget.texList[0];
         var maxFontWidth = widget.info.maxFontWidth;
+        var spacing=widget.info.spacing;
+        var paddingRatio=widget.info.paddingRatio;
         // lg(tex,widget)
 
         var font = {};
@@ -2361,7 +2369,7 @@ module.exports =   React.createClass({
         //draw
         //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         //逐字渲染字符串
-        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange,true,maxFontWidth);
+        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange,true,widget.info.fontSize,spacing,paddingRatio);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
