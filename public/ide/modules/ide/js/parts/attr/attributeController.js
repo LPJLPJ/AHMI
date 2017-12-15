@@ -1806,11 +1806,29 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 spacing:spacing
             };
             var oldOperate=ProjectService.SaveCurrentOperate();
+            // console.log("$scope.component.object",$scope.component.object)
+            if($scope.component.object.type==="MyNum"){
 
-            ProjectService.ChangeAttributeNumContent(option, function () {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
+            }
+            switch ($scope.component.object.type){
+                case "MyNum":
+                    ProjectService.ChangeAttributeNumContent(option, function () {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
 
-            })
+                    })
+                    break;
+                case "MyDateTime":
+                    console.log("MyDateTimeEnterSpacing");
+                    ProjectService.ChangeAttributeOfDateTime(option, function () {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                    })
+                    break;
+                default:
+                    console.log("error!");
+            }
+
+
 
         }
     }

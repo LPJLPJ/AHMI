@@ -3642,6 +3642,25 @@ ideServices
                 };
                 selectObj.target.fire('changeInitValue',arg);
             };
+            //改变时间控件的属性值，added by LH 2017/12/13
+            this.ChangeAttributeOfDateTime=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.hasOwnProperty('spacing')){
+                    selectObj.level.info.spacing=_option.spacing;
+                    arg.spacing=_option.spacing;
+                }
+                selectObj.target.fire('changeDateTimeAttr',arg);
+            };
             //改变时间控件的显示模式
             this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){
                 var dateTimeModeId = _option.dateTimeModeId;

@@ -553,7 +553,8 @@ ideServices
             var font = "30px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
             var maxFontWidth = 30;//+
-            var width = 3*maxFontWidth;
+            var paddingRatio = 0.1;
+            var width = 3*maxFontWidth+Math.ceil(maxFontWidth*paddingRatio*2);
             var info={
                 width:width, height: 33,
                 left: 0, top: 0,
@@ -582,7 +583,8 @@ ideServices
                 fontBold:"100",
                 fontItalic:"",
                 maxFontWidth:maxFontWidth,   //最大字体宽度
-                enableAnimation:false //显示模式标志，false:无动画 true:有动画
+                enableAnimation:false, //显示模式标志，false:无动画 true:有动画
+                paddingRatio:paddingRatio
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -737,7 +739,8 @@ ideServices
         };
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            var maxFontWidth = 20;//+
             var width = 8*maxFontWidth;
             var info={
                 width:width, height: 22,
@@ -754,7 +757,9 @@ ideServices
                 disableHighlight:false,
                 fontBold:"100",
                 fontItalic:"",
-                maxFontWidth:maxFontWidth   //最大字体宽度
+                maxFontWidth:maxFontWidth,   //最大字体宽度
+                spacing:0,//数字之间的间距，默认为0
+                paddingRatio:0.1//padding的值=paddingRatio*maxFontWidth
             };
             return {
                 id: Math.random().toString(36).substr(2),

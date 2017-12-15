@@ -236,6 +236,10 @@ update:
 1.10.2
 add:
     1. dateTime widget add font style of italic and bold
+    2. save project as another and scale the resolution
+    3. sort tag by name or register
 fix:
     1. blog media bug fix
     2. animation bug  fix
+update:
+    1. new draw font logic
