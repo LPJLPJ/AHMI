@@ -386,7 +386,7 @@ body{
 }
 .my-attribute{
     /*min-width: 280px;*/
-    width: calc(20% - 2px);
+    width: 20%;
     background-color: #fff;
     border-left: 1px solid #E9EBED;
     vertical-align:top;
