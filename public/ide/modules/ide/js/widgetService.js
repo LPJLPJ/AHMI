@@ -2691,15 +2691,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             if(numStr[i]==='.'){
                 //小数点往左偏移20%
                 var tempXCor = xCoordinate-maxFontWidth/5;
-                console.log('corrd',tempXCor);
                 ctx.fillText(numStr[i],tempXCor,0);
                 // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth/2,maxFontWidth);
                 xCoordinate+=displayStep/2;// 小数点显示坐标的步长为其它字符宽度的一半
             }else{
-                console.log('coord',xCoordinate);
                 ctx.fillText(numStr[i],xCoordinate,0);
-                console.log('maxFontWidth',maxFontWidth);
-                ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth,maxFontWidth);
+                // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth,maxFontWidth);
                 xCoordinate+=displayStep;
             }
             xCoordinate += spacing;

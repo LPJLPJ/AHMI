@@ -2249,13 +2249,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontItalic=level.info.fontItalic;
             this.fontUnderline=level.info.fontUnderline;
 
-            //设置宽高
-            if(this.text&&this.fontSize){
-                this.setWidth(this.fontSize*(this.text.length+1));
-                this.setHeight(this.fontSize*2);
-            }
-
-
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -2432,20 +2425,26 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
             this.spacing = (level.info.spacing===undefined)?(level.info.spacing=0):level.info.spacing;//兼容旧的数字控件
-            if(this.maxFontWidth===undefined){
+            this.paddingRatio = level.info.paddingRatio;
+            if(this.paddingRatio===undefined){
                 //维护旧的数字控件
-                var font = this.fontSize + "px" + " " + this.fontFamily;
-                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
-                var maxWidth = parseInt(this.fontSize);//+
+                level.info.paddingRatio = 0.1;
+                this.paddingRatio = 0.1;
+                var maxWidth = parseInt(this.fontSize);
+                var paddingX = Math.ceil(maxWidth*this.paddingRatio);
                 this.maxFontWidth = maxWidth;
+                level.info.paddingX = this.paddingX;
                 level.info.maxFontWidth = maxWidth;
                 if(this.numOfDigits&&this.fontSize){
-                    var width = this.symbolMode=='0'?(this.numOfDigits*maxWidth):((this.numOfDigits+1)*maxWidth);
+                    var width = this.symbolMode=='0'?(this.numOfDigits*(maxWidth+this.spacing)-this.spacing):((this.numOfDigits+1)*(maxWidth+this.spacing)-this.spacing);
+                    width+=paddingX*2;
                     if(this.decimalCount!=0){
-                        width +=0.5*maxWidth;
+                        width +=0.5*maxWidth+this.spacing;
                     }
-                    var height = this.fontSize*1.2;
-                    this.set({width:width,height:height});
+                    var height = Math.ceil(self.fontSize*1.2);
+                    level.info.width = width;
+                    level.info.height = height;
+                    self.set({width:width,height:height});
                 };
             }
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
@@ -2534,6 +2533,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 level.info.maxFontWidth = maxWidth;
 
                 var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
+                var paddingX = Math.ceil(maxWidth*self.paddingRatio);
+                width+=paddingX*2;
+
                 if(self.decimalCount!=0){
                     width +=0.5*maxWidth+self.spacing;
                 }
@@ -2602,17 +2604,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if((this.symbolMode=='1')&&(negative)){
                         tempNumValue='-'+tempNumValue;
                     }
-                    //ctx.scale(1/this.scaleX,1/this.scaleY);
-                    //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
-                    // if(this.align=='center'){
-                    //     ctx.fillText(tempNumValue, 0, 0);
-                    // }else if(this.align=='left') {
-                    //     ctx.fillText(tempNumValue, -this.width/2, 0);
-                    // }else if(this.align=='right'){
-                    //     ctx.fillText(tempNumValue,this.width/2,0);
-                    // }
 
-                    drawNumByCharacter(ctx,tempNumValue,this.align,this.width,this.maxFontWidth,this.decimalCount,this.spacing);
+                    drawNumByCharacter(ctx,tempNumValue,this.align,this.width,this.fontSize,this.decimalCount,this.spacing);
 
                     //offCtx.restore();
                 }
@@ -2664,7 +2657,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     function drawNumByCharacter(ctx,numStr,align,width,maxFontWidth,decimalCount,spacing){
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染字符的起始位置
-            widthOfNumStr;       //渲染的字符串的长度
+            widthOfNumStr,       //渲染的字符串的长度
+            paddingX;             //控件左右两边的留白
+
+        paddingX = Math.ceil(maxFontWidth/10);
+        width = width-2*paddingX;
 
         widthOfNumStr=(decimalCount===0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
         widthOfNumStr += (numStr.length-1)*spacing;
@@ -2686,14 +2683,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         /*
           修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
          */
-        var  containerMeanValuePerChar = (0 === decimalCount ? ((width-maxFontWidth)/(numStr.length-1)) : ((width-maxFontWidth)/((numStr.length-1)+0.5-1)));
+        var containerMeanValuePerChar = (0 === decimalCount ? ((width-maxFontWidth)/(numStr.length-1)) : ((width-maxFontWidth)/((numStr.length-1)+0.5-1)));
         var displayStep = widthOfNumStr > width ? containerMeanValuePerChar : maxFontWidth;
 
         for(var i=0;i<numStr.length;i++){
 
             if(numStr[i]==='.'){
                 //小数点往左偏移20%
-                ctx.fillText(numStr[i],xCoordinate-(maxFontWidth/5),0);
+                var tempXCor = xCoordinate-maxFontWidth/5;
+                ctx.fillText(numStr[i],tempXCor,0);
                 // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth/2,maxFontWidth);
                 xCoordinate+=displayStep/2;// 小数点显示坐标的步长为其它字符宽度的一半
             }else{
@@ -2793,7 +2791,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.characterH = level.info.characterH;
                 }
 
-                //console.log('keke',this.characterW,"Y",this.characterH);
                 //设置图层数字控件的宽高
                 if(self.numOfDigits&&self.characterW){
                     //加入符号宽度
