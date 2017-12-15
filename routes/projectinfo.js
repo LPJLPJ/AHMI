@@ -101,7 +101,6 @@ projectRoute.checkSharedKey = function (req, res) {
             if (!project){
                 errHandler(res,500,'empty project')
             }else{
-                console.log(project.sharedKey,project.readOnlySharedKey)
                 if (project.shared && (project.sharedKey==sharedKey||project.readOnlySharedKey==sharedKey)){
                     //valid key
                     generateUserKey(projectId,sharedKey,function (data) {
@@ -118,13 +117,14 @@ projectRoute.checkSharedKey = function (req, res) {
     }else{
         errHandler(res,500,'error')
     }
-}
+};
 
 
 
 projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session.user&&req.session.user.id;
+    req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -139,7 +139,6 @@ projectRoute.getProjectById = function (req, res) {
                 res.render('login/login.html',{
                     title:'重新登录'
                 });
-                // res.render('ide/index.html')
             }else{
                 //user logged in, but not project owner
                 if (!!project.shared){
@@ -148,6 +147,7 @@ projectRoute.getProjectById = function (req, res) {
                             res.render('ide/index.html')
                         }else{
                             hasValidKey(req.session.user,projectId,project.readOnlySharedKey,function (result) {
+                                req.session.user.readOnlyState = result;//+ save readOnly state in session
                                 if (result){
                                     res.render('ide/index.html')
                                 }else{
@@ -232,6 +232,8 @@ projectRoute.getProjectContent = function (req, res) {
                 project.content = project.backups[v].content||''
             }
             project.backups = [];
+            // console.log('readonly state in session',req.session.user.readOnlyState);
+            project.readOnlyState = !!req.session.user.readOnlyState;
             res.end(JSON.stringify(project))
         })
     }else{
