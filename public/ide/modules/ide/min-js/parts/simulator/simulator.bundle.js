@@ -21427,9 +21427,7 @@
 	            var displayStep = maxFontWidth * text.length > width ? (width - maxFontWidth - italicAjust) / (text.length - 1) : maxFontWidth;
 	            displayStep += spacing;
 	            var yCoordinate = 0.5 * height;
-	            console.log("width", width);
 	            for (i = 0; i < text.length; i++) {
-	                console.log("xCoordinate", xCoordinate);
 	                tempctx.fillText(text[i], xCoordinate, yCoordinate);
 	                xCoordinate += displayStep;
 	            }
