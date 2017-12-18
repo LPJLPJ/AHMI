@@ -122,6 +122,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     }
 
+    function updateSpinner(value) {
+        window.spinner && window.spinner.update(value*100)
+    }
+
     function readUserType(){
         var userType = 'basic';
         if(window.local){
@@ -314,6 +318,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             var resourceList = globalProject.resourceList;
             // console.log('resourceList',resourceList);
             var count = resourceList.length;
+            var rLen = resourceList.length
             var globalResources = ResourceService.getGlobalResources();
             window.globalResources = globalResources;
 
@@ -326,6 +331,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     resourceObj.complete = true;
                 }
                 count = count - 1;
+
+                updateSpinner((rLen-count)/rLen)
                 if (count<=0){
                     // toastr.info('loaded');
                     TemplateProvider.saveProjectFromGlobal(globalProject);
@@ -345,6 +352,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 }
             }else{
                 // console.log(globalProject);
+                updateSpinner(100)
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -448,6 +456,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         $scope.$on('LoadUp', function () {
 
             loadStep++;
+
             if (loadStep == 6) {
                 //到达第8步,加载完成
                 showIDE();
@@ -458,7 +467,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     function showIDE() {
         $timeout(function () {
             $scope.ide.loaded=true;
-            window.spinner && window.spinner.hide();
+            window.spinner && window.spinner.hide(true);
             // intervalSave();
         },200)
     }

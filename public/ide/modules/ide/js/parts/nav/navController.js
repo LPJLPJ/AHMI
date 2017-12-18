@@ -121,7 +121,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function showSpinner() {
             if (window.spinner) {
                 window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                window.spinner.show();
+                console.log('show spinner')
+                window.spinner.show({progress:false});
             }
         }
 
