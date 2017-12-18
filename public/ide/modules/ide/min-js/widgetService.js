@@ -1892,6 +1892,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             try{
                 var fontString;
                 fontString=this.fontItalic + " " + this.fontBold + " " + this.fontSize+'px'+" "+this.fontFamily;
+                //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
 
                 drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.widthBeforePadding,this.fontSize,this.spacing);
                 //将图片超出canvas的部分裁剪
