@@ -93,7 +93,13 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                 result,
                 fontFamily = info.fontFamily,
                 reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
-            fontFamily = reg.test(fontFamily)?'songti':fontFamily;
+            if(reg.test(fontFamily)){
+                var str = ''
+                for(var i=0;i<fontFamily.length;i++){
+                    str += fontFamily.charCodeAt(i).toString(32);
+                }
+                fontFamily = str;
+            }
             console.log('fontFamily',fontFamily);
             widget.originFont = {};
             widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';

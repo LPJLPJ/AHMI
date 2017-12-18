@@ -907,7 +907,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     renderer.prototype.renderFontPng = function(font,srcRootDir,dstDir,imgUrlPrefix,cb){
         var fontFamily = font['font-family'];
         var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
-        fontFamily = reg.test(fontFamily)?'songti':fontFamily;
+        if(reg.test(fontFamily)){
+            var str = '';
+            for(var i=0;i<fontFamily.length;i++){
+                str += fontFamily.charCodeAt(i).toString(32);
+            }
+            fontFamily = str;
+        }
 
         var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
         var options = {};
