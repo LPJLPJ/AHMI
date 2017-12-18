@@ -263,13 +263,13 @@ body{
     -o-transition: width 0.2s;  /* Opera */
 }
 .container-fluid.my-left-hide.my-right-hide .my-stage-container{
-    width: calc(99% - 2px)
+    width: 99%;
 }
 .container-fluid.my-left-show.my-right-hide .my-stage-container{
-    width: calc(86% - 2px);
+    width: 86%;
 }
 .container-fluid.my-left-hide.my-right-show .my-stage-container{
-    width: calc(79% - 2px);
+    width: 79%;
 }
 
 .my-stage{
@@ -386,7 +386,7 @@ body{
 }
 .my-attribute{
     /*min-width: 280px;*/
-    width: calc(20% - 2px);
+    width: 20%;
     background-color: #fff;
     border-left: 1px solid #E9EBED;
     vertical-align:top;

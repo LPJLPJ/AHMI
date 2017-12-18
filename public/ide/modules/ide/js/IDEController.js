@@ -274,16 +274,23 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }
         }
 
-
     }
 
     function loadFromContent(data,id) {
         //若是分享的工程，则需要开启socket
-        console.log('data.shared',data.shared);
+        // console.log('data.shared',data);
         if(!!data.shared){
-            if(!socketIOService.getSocket()){
+            if(!!data.readOnlyState){
+                //在分享状态下，并且以只读方式打开，不用打开socket进行排队
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 0;
+                toastr.warning('注意：您无法执行保存工程操作','只读模式');
+                toastr.options.closeButton = close;
+                toastr.options.timeOut = 1000;
+            }else if(!socketIOService.getSocket()){
                 initSocketIO(data.userId);
             }
+
         }
         //change html title to name
         var name = data&&data.name||''
