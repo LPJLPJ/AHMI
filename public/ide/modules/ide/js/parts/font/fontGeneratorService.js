@@ -90,9 +90,13 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         fontWidgets.forEach(function(widget){
             var info = widget.info,
                 font={},
-                result;
+                result,
+                fontFamily = info.fontFamily,
+                reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+            fontFamily = reg.test(fontFamily)?'songti':fontFamily;
+            console.log('fontFamily',fontFamily);
             widget.originFont = {};
-            widget.originFont.src = '\\'+info.fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
+            widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
             widget.originFont.w = info.fontSize;
             widget.originFont.h = info.fontSize;
             widget.originFont.W = Math.ceil(info.fontSize*paddingRatio);

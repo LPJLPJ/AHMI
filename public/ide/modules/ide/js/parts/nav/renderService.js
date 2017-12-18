@@ -905,7 +905,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
     // add by lixiang in 2017/12/7
     renderer.prototype.renderFontPng = function(font,srcRootDir,dstDir,imgUrlPrefix,cb){
-        var imgName = ''+font['font-family']+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
+        var fontFamily = font['font-family'];
+        var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+        fontFamily = reg.test(fontFamily)?'songti':fontFamily;
+
+        var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
         var options = {};
         var stream = '';
         var outpath = path.join(dstDir,imgName);
