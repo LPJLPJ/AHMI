@@ -554,9 +554,11 @@ ideServices
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
             var maxFontWidth = 30;//+
             var paddingRatio = 0.1;
-            var width = 3*maxFontWidth+Math.ceil(maxFontWidth*paddingRatio*2);
+            var spacing = -10;
+            var width = 3*(maxFontWidth+spacing)+Math.ceil(maxFontWidth*paddingRatio*2);
+            var height = maxFontWidth*(1+2*paddingRatio);
             var info={
-                width:width, height: 33,
+                width:width, height: height,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
@@ -573,7 +575,7 @@ ideServices
 
                 align:'center',//数字对齐方式
                 arrange:'horizontal',//数字方向，垂直vertical，水平horizontal
-                spacing:0,//数字之间的间距，默认为0
+                spacing:spacing,//数字之间的间距，默认为-10
 
                 //arrange:true,         //true:横向 false:竖向
                 numValue:1,
@@ -740,17 +742,24 @@ ideServices
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-            var maxFontWidth = 20;//+
-            var width = 8*maxFontWidth;
+            // var maxFontWidth = 20;//+
+            // var width = 8*maxFontWidth;
+
+            //edit by lx in 17/12/18
+            var maxFontWidth = 30;//+
+            var paddingRatio = 0.1;
+            var spacing = -10;
+            var width = 8*(maxFontWidth+spacing)+Math.ceil(maxFontWidth*paddingRatio*2);
+            var height = maxFontWidth*(1+2*paddingRatio);
             var info={
-                width:width, height: 22,
+                width:width, height: height,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
                 dateTimeModeId:'0',//0表示时间秒，1表示时分，2表示斜杠日期，3表示减号日期
                 RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
                 fontFamily:'宋体',
-                fontSize:20,
+                fontSize:maxFontWidth,
                 fontColor:'rgba(255,255,255,1)',
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
@@ -758,8 +767,8 @@ ideServices
                 fontBold:"100",
                 fontItalic:"",
                 maxFontWidth:maxFontWidth,   //最大字体宽度
-                spacing:0,//数字之间的间距，默认为0
-                paddingRatio:0.1//padding的值=paddingRatio*maxFontWidth
+                spacing:spacing,//数字之间的间距，默认为-10
+                paddingRatio:paddingRatio//padding的值=paddingRatio*maxFontWidth
             };
             return {
                 id: Math.random().toString(36).substr(2),
