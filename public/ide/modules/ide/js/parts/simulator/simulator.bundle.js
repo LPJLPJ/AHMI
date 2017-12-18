@@ -21424,12 +21424,13 @@
 	            if (paddingRatio !== 0) xCoordinate = paddingRatio * maxFontWidth + 0.5 * maxFontWidth;
 	            var notItalic = -1 == fontStr.indexOf('italic');
 	            var italicAjust = notItalic ? 0 : maxFontWidth / 2; //如果是斜体的话，需要斜体往右伸出的宽度
-	            var displayStep = maxFontWidth * text.length > width ? (width - maxFontWidth - italicAjust) / (text.length - 1) : maxFontWidth;
-	            displayStep += spacing;
+	            // var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
+	            // displayStep+=spacing;
 	            var yCoordinate = 0.5 * height;
 	            for (i = 0; i < text.length; i++) {
 	                tempctx.fillText(text[i], xCoordinate, yCoordinate);
-	                xCoordinate += displayStep;
+	                xCoordinate += spacing;
+	                xCoordinate += maxFontWidth;
 	            }
 	        } else {
 	            tempctx.fillText(text, 0.5 * width, 0.5 * height);

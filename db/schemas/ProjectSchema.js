@@ -15,6 +15,7 @@ var ProjectSchema = new mongoose.Schema({
     maxSize:String,
     thumbnail:String,
     shared:{type:Boolean,default:false},
+    readOnlyState:{type:Boolean,default:false},
     sharedKey:{type:String},
     readOnlySharedKey:{type:String},
     content:{type:String},

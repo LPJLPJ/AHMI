@@ -12,12 +12,6 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         ctx = fontCanvas.getContext('2d'),
         paddingRatio = 1.2;
 
-    // font['font-style'] = widget.info.fontItalic;
-    // font['font-weight'] = widget.info.fontBold;
-    // font['font-size'] = widget.info.fontSize;
-    // font['font-family'] = widget.info.fontFamily;
-    // font['font-color'] = widget.info.fontColor;
-
     function initCanvas(width,height) {
         fontCanvas.width = width
         fontCanvas.height = height
@@ -96,9 +90,19 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         fontWidgets.forEach(function(widget){
             var info = widget.info,
                 font={},
-                result;
+                result,
+                fontFamily = info.fontFamily,
+                reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+            if(reg.test(fontFamily)){
+                var str = ''
+                for(var i=0;i<fontFamily.length;i++){
+                    str += fontFamily.charCodeAt(i).toString(32);
+                }
+                fontFamily = str;
+            }
+            console.log('fontFamily',fontFamily);
             widget.originFont = {};
-            widget.originFont.src = '\\'+info.fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
+            widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
             widget.originFont.w = info.fontSize;
             widget.originFont.h = info.fontSize;
             widget.originFont.W = Math.ceil(info.fontSize*paddingRatio);

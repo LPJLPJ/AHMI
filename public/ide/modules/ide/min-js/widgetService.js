@@ -1774,7 +1774,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             if(level.info.paddingRatio===undefined){
                 //维护旧的时间控件
                 this.paddingRatio= level.info.paddingRatio=0.1;
-                this.spacing = level.info.spacing=0
+                this.spacing = level.info.spacing= Math.ceil(this.fontSize/3);
                 var font = this.fontSize + "px" + " " + this.fontFamily;
                 // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
                 var maxWidth = parseInt(this.fontSize);//+
@@ -1892,8 +1892,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             try{
                 var fontString;
                 fontString=this.fontItalic + " " + this.fontBold + " " + this.fontSize+'px'+" "+this.fontFamily;
-                //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
-                console.log("this.widthBeforePadding",this.widthBeforePadding)
 
                 drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.widthBeforePadding,this.fontSize,this.spacing);
                 //将图片超出canvas的部分裁剪
@@ -2424,7 +2422,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.symbolMode=level.info.symbolMode;
             this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
-            this.spacing = (level.info.spacing===undefined)?(level.info.spacing=0):level.info.spacing;//兼容旧的数字控件
+            this.spacing = (level.info.spacing===undefined)?(level.info.spacing=Math.ceil(this.fontSize/3)):level.info.spacing;//兼容旧的数字控件
             this.paddingRatio = level.info.paddingRatio;
             if(this.paddingRatio===undefined){
                 //维护旧的数字控件
