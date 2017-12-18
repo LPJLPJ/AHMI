@@ -915,7 +915,7 @@
         var curX = 0;
         //符号
         if (symbol) {
-            symbolLayer = new Layer(0,0,mW,mH);
+            symbolLayer = new Layer(0,0,mW,mH,true);
             symbolLayer.subLayers.img = new TextureSubLayer(slices[12].imgSrc);
             layers.push(symbolLayer);
             curX +=mW;
@@ -923,7 +923,7 @@
 
         //小数点
         if(decimalCount>0){
-            var curDotLayer = new Layer(curX,0,0.5*mW,mH);
+            var curDotLayer = new Layer(curX,0,0.5*mW,mH,true);
             curDotLayer.subLayers.img = new TextureSubLayer(slices[10].imgSrc);
             layers.push(curDotLayer);
             curX = curX +0.5*mW;
@@ -934,7 +934,7 @@
         for (var i=0;i<(numOfDigits);i++){
             //add decimal digits
             for(var j=0;j<9;j++){
-                curDigitLayer = new Layer(curX,0,mW,mH);
+                curDigitLayer = new Layer(curX,0,mW,mH,true);
                 curDigitLayer.subLayers.img = new TextureSubLayer(slices[j].imgSrc);
                 layers.push(curDigitLayer);
             }
