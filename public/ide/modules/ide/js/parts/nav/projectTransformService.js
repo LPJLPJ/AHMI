@@ -557,18 +557,19 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);//溢出显示
                     generalWidget.otherAttrs[6] = Number(info['characterW']);//字符宽度
                     generalWidget.otherAttrs[7] = Number(info['characterH']);//字符高度
+                    generalWidget.otherAttrs[8] = Number(info['width']);//控件宽度
                     switch(info['align']){
                         case 'left':
-                            generalWidget.otherAttrs[8] = 0
+                            generalWidget.otherAttrs[9] = 0
                             break;
                         case 'center':
-                            generalWidget.otherAttrs[8] = 1
+                            generalWidget.otherAttrs[9] = 1
                             break;
                         case 'right':
-                            generalWidget.otherAttrs[8] = 2
+                            generalWidget.otherAttrs[9] = 2
                             break;
                         default:
-                            generalWidget.otherAttrs[8] = 1
+                            generalWidget.otherAttrs[9] = 1
                     }
 
                     console.log("generalWidget",generalWidget)

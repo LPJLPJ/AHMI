@@ -914,17 +914,17 @@
         //当前起始x坐标
         var curX = 0;
         //符号
-        if (symbol) {
+
             symbolLayer = new Layer(0,0,mW,mH,true);
-            symbolLayer.subLayers.img = new TextureSubLayer(slices[12].imgSrc);
+            symbolLayer.subLayers.image = new TextureSubLayer(slices[12].imgSrc);
             layers.push(symbolLayer);
             curX +=mW;
-        }
+
 
         //小数点
         if(decimalCount>0){
             var curDotLayer = new Layer(curX,0,0.5*mW,mH,true);
-            curDotLayer.subLayers.img = new TextureSubLayer(slices[10].imgSrc);
+            curDotLayer.subLayers.image = new TextureSubLayer(slices[10].imgSrc);
             layers.push(curDotLayer);
             curX = curX +0.5*mW;
         }
@@ -935,7 +935,7 @@
             //add decimal digits
             for(var j=0;j<9;j++){
                 curDigitLayer = new Layer(curX,0,mW,mH,true);
-                curDigitLayer.subLayers.img = new TextureSubLayer(slices[j].imgSrc);
+                curDigitLayer.subLayers.image = new TextureSubLayer(slices[j].imgSrc);
                 layers.push(curDigitLayer);
             }
             layers.push(curDigitLayer);
@@ -944,8 +944,6 @@
         }
 
 
-        console.log("layers",layers)
-        console.log("valueObj",valueObj)
         this.subType = 'TexNum';
         Widget.call(this,x,y,w,h,layers);
     };
