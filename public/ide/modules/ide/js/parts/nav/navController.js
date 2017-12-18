@@ -879,7 +879,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 var postFun = function(){
                     if (window.spinner){
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                        window.spinner.show();
+                        showSpinner();
                     }
                     $http({
                         method:'POST',
@@ -914,7 +914,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 if (window){
                     if (window.spinner){
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                        window.spinner.show();
+                        showSpinner();
                     }
                     RenderSerive.renderProject(window.projectData,function () {
                         toastr.info('生成成功');

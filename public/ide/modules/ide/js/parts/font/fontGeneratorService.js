@@ -62,7 +62,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         options = options||{};
         //add padding
         var paddingRatio = options.paddingRatio||1.0;
-        paddingFontSize=paddingRatio*fontSize;
+        paddingFontSize= Math.ceil(paddingRatio*fontSize);
         gridSize = calCanvasSize(paddingFontSize,128);
         if (gridSize) {
             initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize);
