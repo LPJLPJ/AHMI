@@ -94,13 +94,12 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                 fontFamily = info.fontFamily,
                 reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
             if(reg.test(fontFamily)){
-                var str = ''
+                var str = '';
                 for(var i=0;i<fontFamily.length;i++){
                     str += fontFamily.charCodeAt(i).toString(32);
                 }
                 fontFamily = str;
             }
-            console.log('fontFamily',fontFamily);
             widget.originFont = {};
             widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
             widget.originFont.w = info.fontSize;

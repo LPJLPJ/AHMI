@@ -993,7 +993,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
 
         var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
-        var options = {showGrid:true};
+        var options = {};
         var stream = '';
         var outpath = path.join(dstDir,imgName);
         options.paddingRatio = 1.2;
