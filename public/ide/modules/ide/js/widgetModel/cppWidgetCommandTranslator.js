@@ -433,6 +433,7 @@
 
             if ((attrs[0] == 'this') && (attrs[1] =='layers')) {
                 if (attrs[2] == 'length'){
+                    console.log('layers length')
                     return new AttrType('widget',widgetAttrMap['numOfLayers'])
                 }
             }
@@ -543,6 +544,7 @@
                     }else if (param2.type == 'EXP'){
                         // a = this.layers.1.hidden
                         curExp = expDepth(param2)
+                        console.log(curExp,'curExp')
                         if (curExp) {
                             switch(curExp.type){
                                 case 'widget':
@@ -556,6 +558,7 @@
                                         default:
                                             // console.log('command',command,curExp)
                                             inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
+                                            console.log('command',command,curExp,inst)
                                     }
                     
                                     

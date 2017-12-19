@@ -299,14 +299,14 @@ module.exports =   React.createClass({
     },
     paintGeneralWidget:function (curX,curY,widget,options,cb) {
         for (var i=0;i<widget.layers.length;i++){
-            this.paintGeneralLayer(curX,curY,widget.layers[i]);
+            this.paintGeneralLayer(curX,curY,widget.layers[i],widget);
         }
         cb &&cb();
     },
     paintGeneralButton:function (curX,curY,widget,options,cb) {
 
     },
-    paintGeneralLayer:function (curX,curY,layer) {
+    paintGeneralLayer:function (curX,curY,layer,widget) {
         var offcanvas = this.refs.offcanvas;
         var offCtx = offcanvas.getContext('2d');
         var transX,transY;
@@ -322,10 +322,10 @@ module.exports =   React.createClass({
                 offCtx.rotate((layer.rotateAngle)/180.0*Math.PI)
                 offCtx.translate(-transX,-transY)
 
-                this.paintSubLayers(baseX,baseY,layer.width,layer.height,subLayers)
+                this.paintSubLayers(baseX,baseY,layer.width,layer.height,subLayers,widget)
                 offCtx.restore()
             }else{
-                this.paintSubLayers(baseX,baseY,layer.width,layer.height,subLayers)
+                this.paintSubLayers(baseX,baseY,layer.width,layer.height,subLayers,widget)
             }
 
 
@@ -334,7 +334,7 @@ module.exports =   React.createClass({
         }
 
     },
-    paintSubLayers:function (baseX,baseY,width,height,subLayers) {
+    paintSubLayers:function (baseX,baseY,width,height,subLayers,widget) {
         var offcanvas = this.refs.offcanvas;
         var offCtx = offcanvas.getContext('2d');
         var hasROI = false
@@ -408,10 +408,14 @@ module.exports =   React.createClass({
     paintTextureSL:function (curX,curY,slWidth,slHeight,subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
-        if (subLayer) {
+        if (subLayer){
+            var imgSrc = (subLayer.textureList||[])[subLayer.texture]
+            if (imgSrc) {
 
-            this.drawBg(curX,curY,slWidth,slHeight,subLayer.imgSrc)
+                this.drawBg(curX,curY,slWidth,slHeight,imgSrc)
+            }
         }
+
 
     },
     paintColorSL:function (curX,curY,slWidth,slHeight,subLayer) {
