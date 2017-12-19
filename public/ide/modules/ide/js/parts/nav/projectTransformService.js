@@ -485,23 +485,39 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                 case 'MyNum':
                     var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
                     var fontStyle={}
-                    styleElems.split(',').forEach(function (elem) {
-                        fontStyle[elem] = info[elem]
-                    });
+                    for(var key in info){
+                        switch (key){
+                            case "fontItalic":
+                                fontStyle['font-style'] = info[key];
+                                break;
+                            case "fontBold":
+                                fontStyle['font-weight'] = info[key];
+                                break;
+                            case "fontSize":
+                                fontStyle['font-size'] = info[key];
+                                break;
+                            case "fontFamily":
+                                fontStyle['font-family'] = info[key];
+                                break;
+                            case "fontColor":
+                                fontStyle['font-color'] = info[key];
+                                break;
+                        }
+                    }
                     generalWidget = new WidgetModel.models['Num'](x,y,w,h,info,fontStyle);
                     generalWidget = generalWidget.toObject();
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     })
-                    generalWidget.mode = Number(info.numModeId)
-                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO')
-                    generalWidget.otherAttrs[1] = Number(info['frontZeroMode'])
-                    generalWidget.otherAttrs[2] = Number(info['symbolMode'])
-                    generalWidget.otherAttrs[3] = info['decimalCount']
-                    generalWidget.otherAttrs[4] = info['numOfDigits']
-                    generalWidget.otherAttrs[5] = Number(info['overFlowStyle'])
-                    generalWidget.otherAttrs[6] = Number(info['maxFontWidth'])
+                    generalWidget.mode = Number(info.numModeId);
+                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');
+                    generalWidget.otherAttrs[1] = Number(info['frontZeroMode']);
+                    generalWidget.otherAttrs[2] = Number(info['symbolMode']);
+                    generalWidget.otherAttrs[3] = info['decimalCount'];
+                    generalWidget.otherAttrs[4] = info['numOfDigits'];
+                    generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);
+                    generalWidget.otherAttrs[6] = Number(info['maxFontWidth']);
                     switch(info['align']){
                         case 'left':
                             generalWidget.otherAttrs[7] = 0
@@ -515,18 +531,57 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                         default:
                             generalWidget.otherAttrs[7] = 1
                     }
+                    generalWidget.otherAttrs[8] = Number(info['width']);
 
                     generalWidget.generalType = 'Num';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    console.log(generalWidget)
+                    console.log('generalNum',generalWidget);
                 break;
+                case 'MyTexNum':
+                    generalWidget = new WidgetModel.models['TexNum'](x,y,w,h,info,targetWidget.texList[0].slices);
+                    console.log("generalWidget1",generalWidget)
+                    generalWidget = generalWidget.toObject();
+                    console.log("generalWidget2",generalWidget)
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    })
+                    generalWidget.mode = Number(info.numModeId)
+                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    generalWidget.otherAttrs[1] = Number(info['frontZeroMode']);//前导零模式
+                    generalWidget.otherAttrs[2] = Number(info['symbolMode']);//符号模式
+                    generalWidget.otherAttrs[3] = info['decimalCount'];//小数位数
+                    generalWidget.otherAttrs[4] = info['numOfDigits'];//字符位数
+                    generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);//溢出显示
+                    generalWidget.otherAttrs[6] = Number(info['characterW']);//字符宽度
+                    generalWidget.otherAttrs[7] = Number(info['characterH']);//字符高度
+                    generalWidget.otherAttrs[8] = Number(info['width']);//控件宽度
+                    switch(info['align']){
+                        case 'left':
+                            generalWidget.otherAttrs[9] = 0
+                            break;
+                        case 'center':
+                            generalWidget.otherAttrs[9] = 1
+                            break;
+                        case 'right':
+                            generalWidget.otherAttrs[9] = 2
+                            break;
+                        default:
+                            generalWidget.otherAttrs[9] = 1
+                    }
+
+                    console.log("generalWidget",generalWidget)
+                    generalWidget.generalType = 'TexNum';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    console.log(generalWidget)
+                    break;
                 case 'MyDateTime':
                     var fontStyle = {},
                         baseLayerNum = 0;
-
-                    var fontStyle = {};
                     for(var key in info){
                         switch (key){
                             case "fontItalic":
@@ -593,7 +648,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         }
 
 
-
+        console.log("generalWidget4",generalWidget)
         return generalWidget;
     }
 
