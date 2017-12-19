@@ -75,7 +75,17 @@
 //img
     function TextureSubLayer(textureList,imgSrc,type) {
         SubLayer.call(this)
-        this.textureList = textureList||[]
+        if(typeof textureList !== 'object'){
+            if (textureList){
+                this.textureList = [textureList]
+            }else{
+                this.textureList = []
+            }
+
+        }else{
+            this.textureList = textureList||[]
+        }
+
         this.texture = imgSrc||0;
         this.type = type||0 // 0 png
     }
