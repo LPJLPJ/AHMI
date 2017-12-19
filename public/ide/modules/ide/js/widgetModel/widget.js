@@ -132,21 +132,24 @@
 
     function Button(x,y,w,h,text,fontStyle,slices,highLight) {
         var layerUp = new Layer(0,0,w,h);
+        // var textureList = (slices||[]).map(function (s) {
+        //     return s.imgSrc
+        // })
         var colorElems
         layerUp.subLayers.font = new FontSubLayer(text,fontStyle);
-        layerUp.subLayers.image =new TextureSubLayer(slices[0].imgSrc);
+        layerUp.subLayers.image =new TextureSubLayer([slices[0].imgSrc]);
         colorElems = parseColor(slices[0].color)
         layerUp.subLayers.color = new ColorSubLayer(colorElems);
         var layerDown = new Layer(0,0,w,h);
         layerDown.subLayers.font = new FontSubLayer(text,fontStyle);
-        layerDown.subLayers.image =new TextureSubLayer(slices[1].imgSrc);
+        layerDown.subLayers.image =new TextureSubLayer([slices[1].imgSrc]);
         colorElems = parseColor(slices[1].color)
         layerDown.subLayers.color = new ColorSubLayer(colorElems);
         var layers = [layerDown,layerUp];
         var layerHighlight;
         if (highLight) {
             layerHighlight = new Layer(0,0,w,h);
-            layerHighlight.subLayers.image =new TextureSubLayer(slices[2].imgSrc);
+            layerHighlight.subLayers.image =new TextureSubLayer([slices[2].imgSrc]);
             colorElems = parseColor(slices[2].color)
             layerHighlight.subLayers.color = new ColorSubLayer(colorElems);
             layerHighlight.hidden = true;

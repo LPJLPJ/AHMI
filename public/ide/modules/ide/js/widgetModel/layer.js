@@ -73,9 +73,11 @@
     FontSubLayer.prototype.constructor = FontSubLayer;
 
 //img
-    function TextureSubLayer(imgSrc) {
+    function TextureSubLayer(textureList,imgSrc,type) {
         SubLayer.call(this)
-        this.imgSrc = imgSrc;
+        this.textureList = textureList||[]
+        this.texture = imgSrc||0;
+        this.type = type||0 // 0 png
     }
     TextureSubLayer.prototype = Object.create(SubLayer.prototype);
 
