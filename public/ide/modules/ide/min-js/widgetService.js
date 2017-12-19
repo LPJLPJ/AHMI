@@ -78,11 +78,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     //MyLayer
     fabric.MyLayer = fabric.util.createClass(fabric.Object, {
         type: Type.MyLayer,
-
         initialize: function (layerId, options) {
-
             var self=this;
-
             //开始移动时Layer的Scale
             if (!this.initScale){
                 this.initScale={
@@ -90,25 +87,20 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     Y:1
                 }
             }
-
             this.callSuper('initialize', options);
             this.loadAll(layerId);
             this.layerId = layerId;
             this.lockRotation=true;
             this.hasRotatingPoint=false;
-
+            // this.backgroundImg =
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
-
                 var layerNode=ProjectService.getFabricObject(self.id);
-
                 self.initPosition.left = self.getLeft();
                 self.initPosition.top = self.getTop();
                 self.initScale.X=layerNode.getScaleX().toFixed(2);
                 self.initScale.Y=layerNode.getScaleY().toFixed(2);
-
-
             });
 
             this.on('OnScaleRelease', function (objId) {
@@ -128,7 +120,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
-
             try{
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
@@ -136,29 +127,21 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     -(this.height / 2) ,
                     this.width ,
                     this.height );
-
                 var currentLayer=ProjectService.getCurrentLayer();
-
                 if (currentLayer&&ProjectService.scalingOperate.scaling&&ProjectService.scalingOperate.objId==this.id){
                     this.widgetImgs=[];
                     var layerNode= ProjectService.getFabricObject(currentLayer.id);
-
                     var angle=layerNode.getAngle()*Math.PI/180;
                     var sin=Math.sin(angle);
                     var cos=Math.cos(angle);
                     var deltaLeft=this.initPosition.left-this.getLeft();
                     var deltaTop=this.initPosition.top-this.getTop();
-
                     this.backgroundImg.width=this.width/layerNode.getScaleX()*this.initScale.X;
                     this.backgroundImg.height=this.height/layerNode.getScaleY()*this.initScale.Y;
-
                     this.backgroundImg.top=(-sin*deltaLeft+cos*deltaTop)/layerNode.getScaleY()-this.height/2;
                     this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
-
                 }
 
-                // var elem = this.backgroundImg.element;
-                // console.log('2',elem && elem.src)
                 if(this.backgroundImg.element){
                     // console.log('drawing background element',this.backgroundImg.element)
                     ctx.drawImage(this.backgroundImg.element,
@@ -188,26 +171,22 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         var layerWidth=layer.info.width/this.initScale.X;
         var layerHeight=layer.info.height/this.initScale.Y;
 
-
-
         this.initPosition={};
-
 
         if (layer.showSubLayer.url==''){
             backgroundImg = null;
         }else{
-
             backgroundImg.onload = (function () {
                 this.width = layerWidth;
                 this.height = layerHeight;
                 this.loaded = true;
                 this.setCoords();
-                this.fire('image:loaded');
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
                 cb && cb()
             }).bind(this);
             backgroundImg.src = _.cloneDeep(layer.showSubLayer.url);
         }
-
         this.backgroundImg={
             element:backgroundImg,
             width:layerWidth,
@@ -215,53 +194,39 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             left:-layerWidth / 2,
             top:-layerHeight/2
         };
-
         this.backgroundColor=layer.showSubLayer.backgroundColor;
         this.initPosition.left = this.getLeft();
         this.initPosition.top = this.getTop();
-
     };
     fabric.MyLayer.prototype.refresh = function (self,cb) {
         this.renderUrlInPage(self,function () {
             cb && cb();
         })
-    }
+    };
     fabric.MyLayer.prototype.renderUrlInPage = function (self, cb) {
-        // console.log('rendering url in page')
-
+        // console.log('rendering url in page',self.id);
         var currentLayer=ProjectService.getLevelById(self.id);
         var backgroundImg = new Image();
-
-
         backgroundImg.onload = function () {
             self.backgroundImg.element = backgroundImg;
-
             self.backgroundImg.width = self.width;
             self.backgroundImg.height = self.height;
             self.backgroundImg.left = -self.width / 2;
             self.backgroundImg.top = -self.height / 2;
-
-
             self.initPosition.left = self.getLeft();
             self.initPosition.top = self.getTop();
             var pageNode = CanvasService.getPageNode();
             pageNode.renderAll();
             cb && cb();
         }.bind(self);
-
         backgroundImg.onerror = function (err) {
             backgroundImg = null;
             cb && cb(err);
         }.bind(self);
-
         backgroundImg.src = currentLayer.showSubLayer.url;
-
-
     };
     fabric.MyLayer.prototype.toObject = (function (toObject) {
         return function () {
-
-
             return fabric.util.object.extend(toObject.call(this), {
                 //id: this.id,
                 loaded: this.loaded,
@@ -276,9 +241,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyLayer.fromObject = function (object, callback) {
         callback && callback(new fabric.MyLayer(object.id,object));
     };
+    fabric.MyLayer.fromLevel = function(level,callback,option){
+        // console.log('level in',level);
+        callback && callback(new fabric.MyLayer(level.id,option));
+    };
     fabric.MyLayer.async = true;
-
-
 
 
     //progress
@@ -1772,7 +1739,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MySlideBlock.async = true;
 
 
-    //MyDateTime
+    //myDateTime
     fabric.MyDateTime = fabric.util.createClass(fabric.Object, {
         type: Type.MyDateTime,
         initialize: function (level, options) {
@@ -1796,34 +1763,52 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontFamily=level.info.fontFamily;
             this.fontSize=level.info.fontSize;
             this.fontColor=level.info.fontColor;
+            this.fontBold=level.info.fontBold;
+            this.fontItalic=level.info.fontItalic;
             this.align=level.info.align;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
-            this.maxFontWidth=level.info.maxFontWidth;
-            if(this.maxFontWidth===undefined){
+            // this.maxFontWidth=level.info.maxFontWidth;
+            this.widthBeforePadding=this.width;
+
+            if(level.info.paddingRatio===undefined){
                 //维护旧的时间控件
+                this.paddingRatio= level.info.paddingRatio=0.1;
+                this.spacing = level.info.spacing= Math.ceil(this.fontSize/3);
                 var font = this.fontSize + "px" + " " + this.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-                this.maxFontWidth = maxWidth;
-                level.info.maxFontWidth = maxWidth;
+                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
+                var maxWidth = parseInt(this.fontSize);//+
+                this.fontSize = maxWidth;
+                level.info.fontSize = maxWidth;
                 if(this.dateTimeModeId=='0'){
-                    this.setWidth(8*this.maxFontWidth);
+                    this.widthBeforePadding=8*this.fontSize+7*this.spacing;
                 }else if(this.dateTimeModeId=='1'){
-                    this.setWidth(5*this.maxFontWidth);
-                }else
-                    this.setWidth(10*this.maxFontWidth);
+                    this.widthBeforePadding=5*this.fontSize+4*this.spacing;
+                }else {
+                    this.widthBeforePadding=10*this.fontSize+9*this.spacing;
+                }
+                var width=this.widthBeforePadding+2*this.paddingRatio*this.fontSize;
+                // this.setWidth(width);
+                var height = this.fontSize*(1+2*this.paddingRatio);
+                level.info.width = width;
+                level.info.height=height;
+                // this.setHeight(height);
+                this.set({width:width,height:height});
             }
-            
+            this.spacing =level.info.spacing;
+            this.paddingRatio=level.info.paddingRatio;
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
                 self.dateTimeModeId=arg.dateTimeModeId;
-                self.setHeight(self.fontSize*1.1);
+                self.setHeight(self.fontSize*(1+2*self.paddingRatio));
                 if(self.dateTimeModeId=='0'){
-                    self.setWidth(8*self.maxFontWidth);
+                    self.widthBeforePadding=8*self.fontSize+7*self.spacing;
                 }else if(self.dateTimeModeId=='1'){
-                    self.setWidth(5*self.maxFontWidth);
-                }else
-                    self.setWidth(10*self.maxFontWidth);
+                    self.widthBeforePadding=5*self.fontSize+4*self.spacing;
+                }else {
+                    self.widthBeforePadding=10*self.fontSize+9*self.spacing;
+                }
+                self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1840,18 +1825,43 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.hasOwnProperty('fontColor')){
                     self.fontColor=arg.fontColor;
                 }
-                self.setHeight(self.fontSize*1.1);
-                var font = self.fontSize + "px" + " " + self.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-                level.info.maxFontWidth = maxWidth;
-                self.maxFontWidth = maxWidth;
-
+                if(arg.hasOwnProperty('fontBold')){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+                self.setHeight(self.fontSize*(1+2*self.paddingRatio));
+                // var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
+                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
+                self.fontSize = parseInt(self.fontSize);//+
                 if(self.dateTimeModeId=='0'){
-                    self.setWidth(8*self.maxFontWidth);
+                    self.widthBeforePadding=8*self.fontSize+7*self.spacing;
                 }else if(self.dateTimeModeId=='1'){
-                    self.setWidth(5*self.maxFontWidth);
-                }else
-                    self.setWidth(10*self.maxFontWidth);
+                    self.widthBeforePadding=5*self.fontSize+4*self.spacing;
+                }else {
+                    self.widthBeforePadding=10*self.fontSize+9*self.spacing;
+                }
+                self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            this.on('changeDateTimeAttr',function(arg){
+                var level = arg.level;
+                var _callback = arg.callback;
+                if(arg.hasOwnProperty('spacing')){
+                    self.spacing = arg.spacing;
+                }
+                if(self.dateTimeModeId=='0'){
+                    self.widthBeforePadding=8*self.fontSize+7*self.spacing;
+                }else if(self.dateTimeModeId=='1'){
+                    self.widthBeforePadding=5*self.fontSize+4*self.spacing;
+                }else {
+                    self.widthBeforePadding=10*self.fontSize+9*self.spacing;
+                }
+                self.setWidth(self.widthBeforePadding+0.2*self.fontSize);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -1881,9 +1891,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         _render: function (ctx) {
             try{
                 var fontString;
-                fontString=this.fontSize+'px'+" "+this.fontFamily;
-                //drawDateTime(this.dateTimeModeId,ctx,this.scaleX,this.scaleY,fontString,this.align,this.fontColor);
-                drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.width,this.maxFontWidth);
+                fontString=this.fontItalic + " " + this.fontBold + " " + this.fontSize+'px'+" "+this.fontFamily;
+
+                drawNewDateTime(this.dateTimeModeId,ctx,fontString,this.align,this.fontColor,this.widthBeforePadding,this.fontSize,this.spacing);
                 //将图片超出canvas的部分裁剪
                 this.clipTo=function(ctx){
                     ctx.save();
@@ -1998,10 +2008,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @param  {[type]} width      [控件宽度]
      * @return {[type]}            [description]
      */
-    function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,maxFontWidth){
+    function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,fontSize,spacing){
         ctx.fillStyle=fontColor;
         ctx.font=fontString;
         ctx.textBaseline='middle';
+        ctx.textAlign = 'center';
 
         var dateObj = new Date(),
             arrTime = [],
@@ -2025,7 +2036,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 arrDate[i]='0'+arrDate[i];
             }
         }
-        var colonWidth = ctx.measureText(':');
         var dateTimeStr="";
 
         switch(mode){
@@ -2038,6 +2048,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 dateTimeStr=arrDate.join("/").toString();
                 break;
             case '3':
+                //减号日期
                 dateTimeStr=arrDate.join("-").toString();
                 break;
             case '0':
@@ -2046,17 +2057,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 dateTimeStr=arrTime.join(":").toString();
                 break;
         }
-        var widthOfDateTimeStr=maxFontWidth*dateTimeStr.length;
-        var initXPos = (width-widthOfDateTimeStr)/2;
-        var xCoordinate=initXPos-width/2;
-        var colonCoordinate = maxFontWidth/2-colonWidth.width/2;
+        var xCoordinate= fontSize/2-width/2;//每个字符的起始值
+        var displayStep = fontSize+spacing; //加入间隔
         for(i=0;i<dateTimeStr.length;i++){
             if(dateTimeStr[i] ==":"){
-                ctx.fillText(dateTimeStr[i],xCoordinate+colonCoordinate,0);
+                ctx.fillText(dateTimeStr[i],xCoordinate,0);
             }
             else
-            ctx.fillText(dateTimeStr[i],xCoordinate,0);
-            xCoordinate+=maxFontWidth;
+                ctx.fillText(dateTimeStr[i],xCoordinate,0);
+            xCoordinate+=displayStep;
         }
     }
 
@@ -2596,13 +2605,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontItalic=level.info.fontItalic;
             this.fontUnderline=level.info.fontUnderline;
 
-            //设置宽高
-            if(this.text&&this.fontSize){
-                this.setWidth(this.fontSize*(this.text.length+1));
-                this.setHeight(this.fontSize*2);
-            }
-
-
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -2778,19 +2780,27 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.symbolMode=level.info.symbolMode;
             this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
-            if(this.maxFontWidth===undefined){
+            this.spacing = (level.info.spacing===undefined)?(level.info.spacing=Math.ceil(this.fontSize/3)):level.info.spacing;//兼容旧的数字控件
+            this.paddingRatio = level.info.paddingRatio;
+            if(this.paddingRatio===undefined){
                 //维护旧的数字控件
-                var font = this.fontSize + "px" + " " + this.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+                level.info.paddingRatio = 0.1;
+                this.paddingRatio = 0.1;
+                var maxWidth = parseInt(this.fontSize);
+                var paddingX = Math.ceil(maxWidth*this.paddingRatio);
                 this.maxFontWidth = maxWidth;
+                level.info.paddingX = this.paddingX;
                 level.info.maxFontWidth = maxWidth;
                 if(this.numOfDigits&&this.fontSize){
-                    var width = this.symbolMode=='0'?(this.numOfDigits*maxWidth):((this.numOfDigits+1)*maxWidth);
+                    var width = this.symbolMode=='0'?(this.numOfDigits*(maxWidth+this.spacing)-this.spacing):((this.numOfDigits+1)*(maxWidth+this.spacing)-this.spacing);
+                    width+=paddingX*2;
                     if(this.decimalCount!=0){
-                        width +=0.5*maxWidth;
+                        width +=0.5*maxWidth+this.spacing;
                     }
-                    var height = this.fontSize*1.1;
-                    this.set({width:width,height:height});
+                    var height = Math.ceil(self.fontSize*1.2);
+                    level.info.width = width;
+                    level.info.height = height;
+                    self.set({width:width,height:height});
                 };
             }
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
@@ -2799,7 +2809,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.setCoords();
                 this.fire('image:loaded');
             }
-            
+
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -2831,7 +2841,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
-            this.on('changeNumContent', function (arg) {
+            this.on('changeNumContent', function (arg){
                 var _callback=arg.callback;
                 var level=arg.level;
                 if(arg.hasOwnProperty('numValue')){
@@ -2867,20 +2877,27 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.fontColor){
                     self.fontColor=arg.fontColor;
                 }
+                if(arg.hasOwnProperty('spacing')){
+                    self.spacing = arg.spacing;
+                }
 
                 //设置宽高
                 var font = self.fontItalic + " " + self.fontBold + " " + self.fontSize + "px" + " " + self.fontFamily;
-                var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.+-',font));
+                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.+-',font));//-
+                var maxWidth = parseInt(self.fontSize);//+
                 self.maxFontWidth = maxWidth;
                 level.info.maxFontWidth = maxWidth;
-                if(self.numOfDigits&&self.fontSize){
-                    var width = self.symbolMode=='0'?(self.numOfDigits*maxWidth):((self.numOfDigits+1)*maxWidth);
-                    if(self.decimalCount!=0){
-                        width +=0.5*maxWidth;
-                    }
-                    var height = self.fontSize*1.1;
-                    self.set({width:width,height:height});
-                };
+
+                var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
+                var paddingX = Math.ceil(maxWidth*self.paddingRatio);
+                width+=paddingX*2;
+
+                if(self.decimalCount!=0){
+                    width +=0.5*maxWidth+self.spacing;
+                }
+                var height = self.fontSize*1.2;
+                self.set({width:width,height:height});
+
                 //console.log('width',width,'maxWidth',maxWidth);
                 var subLayerNode = CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
@@ -2943,17 +2960,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if((this.symbolMode=='1')&&(negative)){
                         tempNumValue='-'+tempNumValue;
                     }
-                    //ctx.scale(1/this.scaleX,1/this.scaleY);
-                    //选择对齐方式，注意：canvas里对齐的有一个参考点，左右是相对于参考点而言
-                    // if(this.align=='center'){
-                    //     ctx.fillText(tempNumValue, 0, 0);
-                    // }else if(this.align=='left') {
-                    //     ctx.fillText(tempNumValue, -this.width/2, 0);
-                    // }else if(this.align=='right'){
-                    //     ctx.fillText(tempNumValue,this.width/2,0);
-                    // }
 
-                    drawNumByCharacter(ctx,tempNumValue,this.align,this.width,this.maxFontWidth,this.decimalCount);
+                    drawNumByCharacter(ctx,tempNumValue,this.align,this.width,this.fontSize,this.decimalCount,this.spacing);
 
                     //offCtx.restore();
                 }
@@ -2999,34 +3007,55 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @param  {[type]} width         [控件宽度]
      * @param  {[type]} maxWidth      [字符最大宽度]
      * @param  {[type]} decimalCount  [小数点模式]
+     * @param  {[number]}spacing      [字符间距]
      * @return {[type]}               [description]
      */
-    function drawNumByCharacter(ctx,numStr,align,width,maxFontWidth,decimalCount){
+    function drawNumByCharacter(ctx,numStr,align,width,maxFontWidth,decimalCount,spacing){
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染字符的起始位置
-            widthOfNumStr;       //渲染的字符串的长度
+            widthOfNumStr,       //渲染的字符串的长度
+            paddingX;             //控件左右两边的留白
+
+        paddingX = Math.ceil(maxFontWidth/10);
+        width = width-2*paddingX;
 
         widthOfNumStr=(decimalCount===0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
+        widthOfNumStr += (numStr.length-1)*spacing;
+        ctx.textAlign = 'center';
         switch(align){
             case 'left':
                 initXPos=0;
                 break;
             case 'right':
-                initXPos=width-widthOfNumStr;
+                initXPos= (widthOfNumStr > width) ? 0 : width-widthOfNumStr;
                 break;
             case 'center':
             default:
-                initXPos = (width-widthOfNumStr)/2;
+                initXPos = (widthOfNumStr > width) ? 0 : (width-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos-width/2;    
-        for(i=0;i<numStr.length;i++){
-            ctx.fillText(numStr[i],xCoordinate,0);
-            if(numStr[i]=='.'){
-                xCoordinate+=maxFontWidth/2;
+        xCoordinate = initXPos-width/2;
+        xCoordinate +=maxFontWidth/2;//+ 使数字画在方格中央
+        /*
+          修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
+         */
+        var containerMeanValuePerChar = (0 === decimalCount ? ((width-maxFontWidth)/(numStr.length-1)) : ((width-maxFontWidth)/((numStr.length-1)+0.5-1)));
+        var displayStep = widthOfNumStr > width ? containerMeanValuePerChar : maxFontWidth;
+
+        for(var i=0;i<numStr.length;i++){
+
+            if(numStr[i]==='.'){
+                //小数点往左偏移20%
+                var tempXCor = xCoordinate-maxFontWidth/5;
+                ctx.fillText(numStr[i],tempXCor,0);
+                // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth/2,maxFontWidth);
+                xCoordinate+=displayStep/2;// 小数点显示坐标的步长为其它字符宽度的一半
             }else{
-                xCoordinate+=maxFontWidth;
+                ctx.fillText(numStr[i],xCoordinate,0);
+                // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth,maxFontWidth);
+                xCoordinate+=displayStep;
             }
+            xCoordinate += spacing;
         }
     }
 
@@ -3118,7 +3147,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.characterH = level.info.characterH;
                 }
 
-                //console.log('keke',this.characterW,"Y",this.characterH);
                 //设置图层数字控件的宽高
                 if(self.numOfDigits&&self.characterW){
                     //加入符号宽度
@@ -3833,7 +3861,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.text){
                     ctx.save();
                     ctx.fillStyle=this.fontColor;
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
                     // console.log('button font',fontString)
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
