@@ -408,11 +408,14 @@ module.exports =   React.createClass({
     paintTextureSL:function (curX,curY,slWidth,slHeight,subLayer) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
-        var imgSrc = (subLayer.textureList||[])[subLayer.texture]
-        if (imgSrc) {
+        if (subLayer){
+            var imgSrc = (subLayer.textureList||[])[subLayer.texture]
+            if (imgSrc) {
 
-            this.drawBg(curX,curY,slWidth,slHeight,imgSrc)
+                this.drawBg(curX,curY,slWidth,slHeight,imgSrc)
+            }
         }
+
 
     },
     paintColorSL:function (curX,curY,slWidth,slHeight,subLayer) {
