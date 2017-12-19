@@ -23793,6 +23793,17 @@
 	                        }
 	                    }
 	                    break;
+	                case 'MyTexTime':
+
+	                    if (type === 'release') {
+
+	                        if (this.simState.inModifingState) {
+	                            this.simState.inModifingState = false;
+	                        } else {
+	                            this.simState.inModifingState = true;
+	                        }
+	                    }
+	                    break;
 	            }
 
 	            this.mouseState.position.x = 0;
@@ -23811,6 +23822,7 @@
 	    handleModifyHighlightingWidget: function (widget, direction) {
 	        switch (widget.subType) {
 	            case 'MyDateTime':
+	            case 'MyTexTime':
 
 	                if (direction == 'right') {
 	                    direction = 1;
@@ -52223,7 +52235,6 @@
 	}
 
 	function linkWidgets(widgetList) {
-	    console.log("widgetList", widgetList);
 	    var i;
 	    var curWidget;
 	    var linkedWidgetList = [];
@@ -52323,7 +52334,6 @@
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
 	                }
-	                console.log("linkedWidgetList", linkedWidgetList);
 	                break;
 	            case 'MyInputKeyboard':
 	                var keys = curWidget.info.keys;
@@ -55128,7 +55138,7 @@
 	  if (isNaN(value) || !isFinite(value)) {
 	    return String(value);
 	  }
-
+	  
 	  var rounded = exports.roundDigits(exports.splitNumber(value), precision);
 
 	  var e = rounded.exponent;
@@ -61462,7 +61472,7 @@
 				 .replace(/'/g, '&#39;')
 				 .replace(/</g, '&lt;')
 				 .replace(/>/g, '&gt;');
-
+	  
 	  return text;
 	}
 
@@ -65174,11 +65184,11 @@
 	  if (!Array.isArray(a)) {
 		throw new TypeError('Array input expected');
 	  }
-
+		
 	  if (a.length === 0) {
 		return a;
 	  }
-
+		
 	  var b = [];
 	  var count = 0;
 	  b[0] = {value: a[0], identifier: 0};
@@ -65203,11 +65213,11 @@
 	  if (!Array.isArray(a)) {
 		throw new TypeError('Array input expected');
 	  }
-
+		
 	  if (a.length === 0) {
 		return a;
 	  }
-
+		
 	  var b = [];
 	  for (var i=0; i<a.length; i++) {
 	    b.push(a[i].value);
@@ -65909,7 +65919,7 @@
 	    m._size = size.slice(0);
 	    return m;
 	  };
-
+	  
 	  /**
 	   * Enlarge the matrix when it is smaller than given size.
 	   * If the matrix is larger or equal sized, nothing is done.
@@ -67304,7 +67314,7 @@
 
 	    return m;
 	  }
-
+	  
 	  /**
 	   * Create a clone of the matrix
 	   * @memberof SparseMatrix
@@ -77042,7 +77052,7 @@
 	  var algorithm11 = load(__webpack_require__(257));
 	  var algorithm12 = load(__webpack_require__(235));
 	  var algorithm14 = load(__webpack_require__(230));
-
+	  
 	  /**
 	   * Round a value towards the nearest integer.
 	   * For matrices, the function is evaluated element wise.
@@ -77091,7 +77101,7 @@
 
 	    'Complex, number': function (x, n) {
 	      if (n % 1) {throw new TypeError(NO_INT);}
-
+	      
 	      return x.round(n);
 	    },
 
@@ -85859,13 +85869,13 @@
 	// (a+b)+c=a+(b+c)
 	// (a+b)-c=a+(b-c)
 	//
-	// postfix operators are left associative, prefix operators
+	// postfix operators are left associative, prefix operators 
 	// are right associative
 	//
 	//It's also possible to set the following properties:
 	// latexParens: if set to false, this node doesn't need to be enclosed
 	//              in parentheses when using LaTeX
-	// latexLeftParens: if set to false, this !OperatorNode's!
+	// latexLeftParens: if set to false, this !OperatorNode's! 
 	//                  left argument doesn't need to be enclosed
 	//                  in parentheses
 	// latexRightParens: the same for the right argument
@@ -86319,7 +86329,7 @@
 	   */
 	  SymbolNode.prototype.toHTML = function(options) {
 		var name = escape(this.name);
-
+		
 	    if (name == "true" || name == "false") {
 		  return '<span class="math-symbol math-boolean">' + name + '</span>';
 		}
@@ -86338,7 +86348,7 @@
 		else if (name == "uninitialized") {
 		  return '<span class="math-symbol math-uninitialized-symbol">' + name + '</span>';
 		}
-
+		
 		return '<span class="math-symbol">' + name + '</span>';
 	  };
 
@@ -88731,11 +88741,11 @@
 	      if (parens[1]) { //right hand side in parenthesis?
 	        rhs = '<span class="math-parenthesis math-round-parenthesis">(</span>' + rhs + '<span class="math-parenthesis math-round-parenthesis">)</span>';
 	      }
-
+		  
 		  if (this.implicit && (this.getIdentifier() === 'OperatorNode:multiply') && (implicit == 'hide')) {
 		    return lhs + '<span class="math-operator math-binary-operator math-implicit-binary-operator"></span>' + rhs;
 		  }
-
+	      
 		  return lhs + '<span class="math-operator math-binary-operator math-explicit-binary-operator">' + escape(this.op) + '</span>' + rhs;
 	    }
 		else if ((args.length > 2) && ((this.getIdentifier() === 'OperatorNode:add') || (this.getIdentifier() === 'OperatorNode:multiply'))) {
@@ -89136,7 +89146,7 @@
 	    // format the arguments like "add(2, 4.2)"
 	    return fn + '(' + args.join(', ') + ')';
 	  };
-
+	  
 	  /**
 	   * Get HTML representation
 	   * @param {Object} options
@@ -93102,8 +93112,8 @@
 
 	    { l: 'n*(n1/n2)', r:'(n*n1)/n2' }, // '*' before '/'
 	    { l: 'n-(n1+n2)', r:'n-n1-n2' }, // '-' before '+'
-	    // { l: '(n1/n2)/n3', r: 'n1/(n2*n3)' },
-	    // { l: '(n*n1)/(n*n2)', r: 'n1/n2' },
+	    // { l: '(n1/n2)/n3', r: 'n1/(n2*n3)' }, 
+	    // { l: '(n*n1)/(n*n2)', r: 'n1/n2' }, 
 
 	    { l: '1*n', r: 'n' } // this pattern can be produced by simplifyConstant
 
@@ -94197,26 +94207,26 @@
 	  var zeros = load(__webpack_require__(261));
 	  var eye = load(__webpack_require__(255));
 	  var clone = load(__webpack_require__(534));
-
+	  
 	  var isZero = load(__webpack_require__(535));
 	  var isPositive = load(__webpack_require__(536));
 	  var unequal = load(__webpack_require__(537));
-
+	    
 	  var abs = load(__webpack_require__(258));
 	  var sign = load(__webpack_require__(538));
 	  var sqrt = load(__webpack_require__(539));
 	  var conj = load(__webpack_require__(540));
-
-	  var unaryMinus = load(__webpack_require__(250));
-	  var addScalar = load(__webpack_require__(225));
+	  
+	  var unaryMinus = load(__webpack_require__(250)); 
+	  var addScalar = load(__webpack_require__(225));  
 	  var divideScalar = load(__webpack_require__(253));
-	  var multiplyScalar = load(__webpack_require__(252));
+	  var multiplyScalar = load(__webpack_require__(252));  
 	  var subtract = load(__webpack_require__(249));
-
-
+	    
+	  
 	  /**
-	   * Calculate the Matrix QR decomposition. Matrix `A` is decomposed in
-	   * two matrices (`Q`, `R`) where `Q` is an
+	   * Calculate the Matrix QR decomposition. Matrix `A` is decomposed in 
+	   * two matrices (`Q`, `R`) where `Q` is an 
 	   * orthogonal matrix and `R` is an upper triangular matrix.
 	   *
 	   * Syntax:
@@ -94251,7 +94261,7 @@
 	   *
 	   *    lu
 	   *
-	   * @param {Matrix | Array} A    A two dimensional matrix or array
+	   * @param {Matrix | Array} A    A two dimensional matrix or array 
 	   * for which to get the QR decomposition.
 	   *
 	   * @return {{Q: Array | Matrix, R: Array | Matrix}} Q: the orthogonal
@@ -94262,7 +94272,7 @@
 	    'DenseMatrix': function (m) {
 	      return _denseQR(m);
 	    },
-
+	    
 	    'SparseMatrix': function (m) {
 	      return _sparseQR(m);
 	    },
@@ -94281,24 +94291,24 @@
 	  });
 
 	  var _denseQR = function (m) {
-
+	    
 	    // rows & columns (m x n)
 	    var rows = m._size[0]; // m
 	    var cols = m._size[1]; // n
-
+	            
 	    var Q = eye([rows], 'dense');
 	    var Qdata = Q._data;
-
+	    
 	    var R = m.clone();
 	    var Rdata = R._data;
-
+	    
 	    // vars
 	    var i, j, k;
-
+	        
 	    var w = zeros([rows], '');
-
+	    
 	    for (k = 0; k < Math.min(cols, rows); ++k) {
-
+	      
 	      /*
 	       * **k-th Household matrix**
 	       *
@@ -94313,52 +94323,52 @@
 	       * Household matrix = I - 2 * v * tranpose(v)
 	       *
 	       *  * Initially Q = I and R = A.
-	       *  * Household matrix is a reflection in a plane normal to v which
+	       *  * Household matrix is a reflection in a plane normal to v which 
 	       *    will zero out all but the top right element in R.
 	       *  * Appplying reflection to both Q and R will not change product.
-	       *  * Repeat this process on the (1,1) minor to get R as an upper
+	       *  * Repeat this process on the (1,1) minor to get R as an upper 
 	       *    triangular matrix.
-	       *  * Reflections leave the magnitude of the columns of Q unchanged
+	       *  * Reflections leave the magnitude of the columns of Q unchanged 
 	       *    so Q remains othoganal.
 	       *
-	       */
-
-	      var pivot = Rdata[k][k];
+	       */  
+	      
+	      var pivot = Rdata[k][k];          
 	      var sgn = unaryMinus(sign(pivot));
 	      var conjSgn = conj(sgn);
-
+	      
 	      var alphaSquared = 0;
 
 	      for(i = k; i < rows; i++) {
-	        alphaSquared = addScalar(alphaSquared, multiplyScalar(Rdata[i][k], conj(Rdata[i][k])));
+	        alphaSquared = addScalar(alphaSquared, multiplyScalar(Rdata[i][k], conj(Rdata[i][k])));        
 	      }
-
+	      
 	      var alpha = multiplyScalar(sgn, sqrt(alphaSquared));
-
-
+	      
+	      
 	      if (!isZero(alpha)) {
-
+	          
 	        // first element in vector u
 	        var u1 = subtract(pivot, alpha);
-
-	        // w = v * u1 / |u|    (only elements k to (rows-1) are used)
+	        
+	        // w = v * u1 / |u|    (only elements k to (rows-1) are used)    
 	        w[k] = 1;
-
+	        
 	        for (i = k+1; i < rows; i++) {
 	          w[i] = divideScalar(Rdata[i][k], u1);
-	        }
-
+	        }        
+	         
 	        // tau = - conj(u1 / alpha)
 	        var tau = unaryMinus(conj(divideScalar(u1, alpha)));
-
+	        
 	        var s;
-
+	        
 	        /*
 	         * tau and w have been choosen so that
-	         *
+	         * 
 	         * 2 * v * tranpose(v) = tau * w * tranpose(w)
 	         */
-
+	         
 	        /*
 	         * -- calculate R = R - tau * w * tranpose(w) * R --
 	         * Only do calculation with rows k to (rows-1)
@@ -94367,21 +94377,21 @@
 	         */
 	        for (j = k; j < cols; j++) {
 	          s = 0.0;
-
+	          
 	          // calculate jth element of [tranpose(w) * R]
 	          for (i = k; i < rows; i++) {
 	            s = addScalar(s, multiplyScalar(conj(w[i]), Rdata[i][j]));
 	          }
-
+	          
 	          // calculate the jth element of [tau * transpose(w) * R]
 	          s = multiplyScalar(s, tau);
-
+	          
 	          for (i = k; i < rows; i++) {
 	            Rdata[i][j] = multiplyScalar(
-	              subtract(Rdata[i][j], multiplyScalar(w[i], s)),
+	              subtract(Rdata[i][j], multiplyScalar(w[i], s)), 
 	              conjSgn
-	            );
-	          }
+	            );            
+	          }          
 	        }
 	        /*
 	         * -- calculate Q = Q - tau * Q * w * transpose(w) --
@@ -94392,43 +94402,43 @@
 	         */
 	        for (i = 0; i < rows; i++) {
 	          s = 0.0;
-
+	          
 	          // calculate ith element of [Q * w]
 	          for (j = k; j < rows; j++) {
 	            s = addScalar(s, multiplyScalar(Qdata[i][j], w[j]));
 	          }
-
+	          
 	          // calculate the ith element of [tau * Q * w]
 	          s = multiplyScalar(s, tau);
-
+	          
 	          for (j = k; j < rows; ++j) {
 	            Qdata[i][j] = divideScalar(
-	              subtract(Qdata[i][j], multiplyScalar(s, conj(w[j]))),
+	              subtract(Qdata[i][j], multiplyScalar(s, conj(w[j]))), 
 	              conjSgn
 	            );
 	          }
-
+	          
 	        }
 	      }
-
+	      
 	    }
-
+	    
 	    // coerse almost zero elements to zero
 	    // TODO I feel uneasy just zeroing these values
 	    for (i = 0; i < rows; ++i) {
 	      for (j = 0; j < i && j < cols; ++j) {
 	        if (unequal(0, divideScalar(Rdata[i][j], 1e5))) {
-	          throw new Error('math.qr(): unknown error - ' +
-	           'R is not lower triangular (element (' +
+	          throw new Error('math.qr(): unknown error - ' + 
+	           'R is not lower triangular (element (' + 
 	            i + ', ' + j + ')  = ' + Rdata[i][j] + ')'
 	          );
 	        }
 	        Rdata[i][j] = multiplyScalar(Rdata[i][j], 0);
 	      }
 	    }
-
+	    
 	    // return matrices
-	    return {
+	    return { 
 	      Q: Q,
 	      R: R,
 	      toString: function () {
@@ -94436,13 +94446,13 @@
 	      }
 	    };
 	  };
-
+	  
 	  var _sparseQR = function (m) {
-
+	    
 	    throw new Error('qr not implemented for sparse matrices yet');
-
+	  
 	  };
-
+	  
 	  return qr;
 	}
 
@@ -94700,7 +94710,7 @@
 	   * @return {boolean | Array | Matrix} Returns true when the compared values are unequal, else returns false
 	   */
 	  var unequal = typed('unequal', {
-
+	    
 	    'any, any': function (x, y) {
 	      // strict equality for null and undefined?
 	      if (x === null) { return y !== null; }
@@ -105898,7 +105908,7 @@
 
 	function factory (type, config, load, typed) {
 	  var matrix = load(__webpack_require__(224));
-
+	  
 	  /**
 	   * Filter the items in an array or one dimensional matrix.
 	   *
@@ -107429,7 +107439,7 @@
 	 *
 	 * - First, compare the real values of `x` and `y`
 	 * - If equal, compare the imaginary values of `x` and `y`
-	 *
+	 * 
 	 * @params {Complex} x
 	 * @params {Complex} y
 	 * @returns {number} Returns the comparison result: -1, 0, or 1
@@ -108930,7 +108940,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-
+	  
 	  /**
 	   * Create the cartesian product of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -108999,7 +109009,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-
+	  
 	  /**
 	   * Create the difference of two (multi)sets: every element of set1, that is not the element of set2.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -109078,7 +109088,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-
+	  
 	  /**
 	   * Collect the distinct elements of a multiset.
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109146,7 +109156,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-
+	  
 	  /**
 	   * Create the intersection of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -109217,7 +109227,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-
+	  
 	  /**
 	   * Check whether a (multi)set is a subset of another (multi)set. (Every element of set1 is the element of set2.)
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -109286,7 +109296,7 @@
 	  var index = load(__webpack_require__(238));
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
-
+	  
 	  /**
 	   * Count the multiplicity of an element in a multiset.
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109344,7 +109354,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-
+	  
 	  /**
 	   * Create the powerset of a (multi)set. (The powerset contains very possible subsets of a (multi)set.)
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109382,7 +109392,7 @@
 	  });
 
 	  return setPowerset;
-
+	  
 	  // create subset
 	  function _subset(array, bitarray) {
 	    var result = [];
@@ -109393,7 +109403,7 @@
 	    }
 	    return result;
 	  }
-
+	  
 	  // sort subsests by length
 	  function _sort(array) {
 	    var temp = [];
@@ -109425,7 +109435,7 @@
 	function factory (type, config, load, typed) {
 	  var equal = load(__webpack_require__(262));
 	  var compareNatural = load(__webpack_require__(646));
-
+	  
 	  /**
 	   * Count the number of elements of a (multi)set. When a second parameter is 'true', count only the unique values.
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109490,7 +109500,7 @@
 	  var sort = load(__webpack_require__(645));
 	  var subset = load(__webpack_require__(480));
 	  var setDifference = load(__webpack_require__(665));
-
+	  
 	  /**
 	   * Create the symmetric difference of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -109548,7 +109558,7 @@
 	  var subset = load(__webpack_require__(480));
 	  var setIntersect = load(__webpack_require__(667));
 	  var setSymDifference = load(__webpack_require__(672));
-
+	  
 	  /**
 	   * Create the union of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
