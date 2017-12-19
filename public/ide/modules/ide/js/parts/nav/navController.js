@@ -771,6 +771,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultAnimation();
             }else if(_index===14){
                 newWidget = TemplateProvider.getDefaultTexNum();
+            }else if(_index===15){
+                newWidget = TemplateProvider.getDefaultTexTime();
             }
             else {
                 return;

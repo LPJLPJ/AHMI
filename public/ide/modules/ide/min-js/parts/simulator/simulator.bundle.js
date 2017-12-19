@@ -20176,9 +20176,6 @@
 
 	        this.paintKey = requestAnimationFrame(this.paint);
 	    },
-	    dropCurrentDraw: function () {
-	        this.currentDrawedProject && (this.currentDrawingProject.shouldPaint = false);
-	    },
 	    drawSingleProject: function (_project, options) {
 	        var project;
 	        if (_project) {
@@ -20186,9 +20183,6 @@
 	        } else {
 	            project = this.state.project;
 	        }
-
-	        this.currentDrawingProject = project;
-	        this.currentDrawingProject.shouldPaint = true;
 
 	        var offcanvas = this.refs.offcanvas;
 
@@ -20245,11 +20239,8 @@
 	        } else {
 	                // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            }
-	        if (this.currentDrawingProject && this.currentDrawingProject.shouldPaint) {
-	            return project;
-	        } else {
-	            return null;
-	        }
+
+	        return project;
 	    },
 	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
@@ -20741,10 +20732,6 @@
 	            var nextSubCanvasIdx = canvasTag && canvasTag.value || 0;
 	            nextSubCanvasIdx = nextSubCanvasIdx >= subCanvasList.length ? subCanvasList.length - 1 : nextSubCanvasIdx;
 	            var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
-	            var firstSubCanvas = false;
-	            if (!oldSubCanvas) {
-	                firstSubCanvas = true;
-	            }
 	            canvasData.curSubCanvasIdx = nextSubCanvasIdx;
 	            //handle UnLoad subcanvas
 	            // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
@@ -20775,16 +20762,13 @@
 	                this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
 	            }
 	            var subCanvas = subCanvasList[nextSubCanvasIdx];
-	            // if (subCanvas) {
-	            //     // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-	            //     var transition = canvasData.transition;
-	            //
-	            //     this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition,firstSubCanvas);
-	            //
-	            // }
-	            var transition = canvasData.transition;
-	            for (var i = 0; i < subCanvasList.length; i++) {
-	                this.drawSubCanvas(subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, i != nextSubCanvasIdx);
+	            if (subCanvas) {
+	                // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+	                var transition = canvasData.transition;
+
+	                this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition);
+	            } else {
+	                this.handleTargetAction(oldSubCanvas, 'UnLoad');
 	            }
 	        }
 	    },
@@ -20828,12 +20812,9 @@
 	        ctx.closePath();
 	        ctx.clip();
 	    },
-	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
+	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
-	        if (updateOnly) {
-	            return this.drawSingleSubCanvas(subCanvas, x, y, w, h, options, updateOnly);
-	        }
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
 	            subCanvas.state = LoadState.willLoad;
 	            //init subcanvas pos and size
@@ -20853,7 +20834,7 @@
 	            var easing = 'easeInOutCubic';
 	            var hWidth = w / 2 + x;
 	            var hHeight = h / 2 + y;
-	            if (!firstSubCanvas && (!options || options && !options.pageAnimate)) {
+	            if (!options || options && !options.pageAnimate) {
 	                switch (method) {
 	                    case 'MOVE_LR':
 	                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20871,7 +20852,6 @@
 	                            subCanvas.translate = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
-	                        this.dropCurrentDraw();
 	                        break;
 	                    case 'MOVE_RL':
 	                        AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20889,7 +20869,6 @@
 	                            subCanvas.translate = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
-	                        this.dropCurrentDraw();
 	                        break;
 	                    case 'SCALE':
 	                        var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
@@ -20907,8 +20886,6 @@
 	                            subCanvas.transform = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
-
-	                        this.dropCurrentDraw();
 
 	                        break;
 	                    default:
@@ -20955,30 +20932,23 @@
 
 	        offctx.restore();
 	    },
-	    drawSingleSubCanvas: function (subCanvas, x, y, w, h, options, updateOnly) {
+	    drawSingleSubCanvas: function (subCanvas, x, y, w, h, options) {
 
-	        if (!updateOnly) {
-	            subCanvas.state = LoadState.loading;
-	        }
+	        subCanvas.state = LoadState.loading;
 
 	        subCanvas.widgetList = subCanvas.widgetList || [];
 	        var widgetList = subCanvas.widgetList;
 	        if (widgetList.length) {
 	            widgetList.sort(this.compareZIndex);
 	            for (var i = 0; i < widgetList.length; i++) {
-	                this.drawWidget(widgetList[i], x, y, options, updateOnly);
+	                this.drawWidget(widgetList[i], x, y, options);
 	            }
 	        }
 
-	        if (!updateOnly) {
-	            subCanvas.state = LoadState.loaded;
-	        }
+	        subCanvas.state = LoadState.loaded;
 	    },
-	    drawWidget: function (widget, sx, sy, options, updateOnly) {
+	    drawWidget: function (widget, sx, sy, options) {
 	        var willExecuteAnimation = false;
-	        if (updateOnly) {
-	            return updateWidget.call(this);
-	        }
 	        if (options && options.animation) {
 	            //has animation execute
 	            if (widget.tag === options.animation.tag && widget.animations) {
@@ -20998,10 +20968,7 @@
 	        }
 	        if (!willExecuteAnimation) {
 	            // console.log('drawing widget',widget);
-	            updateWidget.call(this);
-	        }
 
-	        function updateWidget() {
 	            var curX = widget.info.left + sx;
 	            var curY = widget.info.top + sy;
 	            //this.drawBgColor(curX,curY,widget.w,widget.h,widget.bgColor);
@@ -21048,6 +21015,9 @@
 	                    break;
 	                case 'MyDateTime':
 	                    this.drawTime(curX, curY, widget, options, cb);
+	                    break;
+	                case 'MyTexTime':
+	                    this.drawTexTime(curX, curY, widget, options, cb);
 	                    break;
 	                case 'MyTextArea':
 	                    this.drawTextArea(curX, curY, widget, options, cb);
@@ -21141,6 +21111,9 @@
 	                break;
 	            case 'MyDateTime':
 	                this.paintTime(curX, curY, widget, options, cb);
+	                break;
+	            case 'MyTexTime':
+	                this.paintTexTime(curX, curY, widget, options, cb);
 	                break;
 	            case 'MyTextArea':
 	                this.paintTextArea(curX, curY, widget, options, cb);
@@ -21388,7 +21361,7 @@
 	        }
 	        cb && cb();
 	    },
-	    drawTextByTempCanvas: function (curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth, spacing, paddingRatio) {
+	    drawTextByTempCanvas: function (curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth) {
 
 	        var text = text || '';
 	        var font = font || {};
@@ -21400,8 +21373,6 @@
 	        tempcanvas.height = height;
 	        var tempctx = tempcanvas.getContext('2d');
 	        tempctx.save();
-	        if (spacing === undefined) spacing = 0;
-	        if (paddingRatio === undefined) paddingRatio = 0;
 	        if (arrange === 'vertical') {
 	            tempctx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
 	            tempctx.rotate(Math.PI / 2);
@@ -21412,7 +21383,7 @@
 	        tempctx.textAlign = font.textAlign || 'center';
 	        tempctx.textBaseline = font.textBaseline || 'middle';
 	        //font style
-	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + ('"' + font['font-family'] + '"' || 'arial');
+	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + (font['font-family'] || 'arial');
 	        tempctx.font = fontStr;
 	        // console.log('tempctx.font',fontStr);
 	        tempctx.fillStyle = font['font-color'];
@@ -21420,16 +21391,10 @@
 	            // var widthOfDateTimeStr=maxFontWidth*text.length;
 	            // var initXPos = (width-widthOfDateTimeStr)/2;
 	            // var xCoordinate = initXPos+maxFontWidth/2;
-	            var xCoordinate = maxFontWidth * text.length > width ? maxFontWidth / 2 : (width - maxFontWidth * text.length + maxFontWidth) / 2; //如果装不下字符串，从maxFontWidth处开始显示
-	            if (paddingRatio !== 0) xCoordinate = paddingRatio * maxFontWidth + 0.5 * maxFontWidth;
-	            var notItalic = -1 == fontStr.indexOf('italic');
-	            var italicAjust = notItalic ? 0 : maxFontWidth / 2; //如果是斜体的话，需要斜体往右伸出的宽度
-	            // var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
-	            // displayStep+=spacing;
+	            var xCoordinate = (width - maxFontWidth * text.length + maxFontWidth) / 2;
 	            var yCoordinate = 0.5 * height;
 	            for (i = 0; i < text.length; i++) {
 	                tempctx.fillText(text[i], xCoordinate, yCoordinate);
-	                xCoordinate += spacing;
 	                xCoordinate += maxFontWidth;
 	            }
 	        } else {
@@ -21510,7 +21475,6 @@
 	            if (widget.info.enableAnimation) {
 	                //using animation
 
-	                var duration = widget.transition && widget.transition.duration || 0;
 
 	                //clear old animation
 
@@ -21528,7 +21492,7 @@
 	                    this.handleTargetAction(widget, alarmValue);
 	                }
 
-	                widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, duration, 30, null, function (obj) {
+	                widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, 500, 30, null, function (obj) {
 	                    widget.currentValue = obj.curX;
 	                    this.draw();
 	                }.bind(this), function () {
@@ -21900,8 +21864,6 @@
 	        var fontColor = widget.info.fontColor;
 	        var tex = widget.texList && widget.texList[0];
 	        var maxFontWidth = widget.info.maxFontWidth;
-	        var spacing = widget.info.spacing;
-	        var paddingRatio = widget.info.paddingRatio;
 	        // lg(tex,widget)
 
 	        var font = {};
@@ -21926,7 +21888,7 @@
 	        //draw
 	        //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
 	        //逐字渲染字符串
-	        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio);
+	        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, maxFontWidth);
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
@@ -22016,6 +21978,136 @@
 	            dateString = '' + year + '-' + month + '-' + day;
 	        }
 	        return dateString;
+	    },
+
+	    drawTexTime: function (curX, curY, widget, options, cb) {
+	        var curDate;
+	        if (widget.info.RTCModeId == '0') {
+	            curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
+	        } else {
+	            curDate = this.getCurDateOriginalData(widget, 'outer');
+	        }
+	        widget.curDate = curDate;
+	        //timer 1 s
+	        if (!(widget.timerId && widget.timerId !== 0)) {
+	            widget.timerId = setInterval(function () {
+	                this.draw();
+	            }.bind(this), 1000);
+	            var innerTimerList = this.state.innerTimerList;
+	            innerTimerList.push(widget.timerId);
+	            this.setState({ innerTimerList: innerTimerList });
+	        }
+	    },
+	    paintTexTime: function (curX, curY, widget, options, cb) {
+	        var width = widget.info.width;
+	        var height = widget.info.height;
+	        var dateTimeModeId = widget.info.dateTimeModeId;
+	        var highlightTex = widget.texList && widget.texList[1];
+	        var numTex = widget.texList && widget.texList[0];
+
+	        //生成时间日期字符串
+	        var curDate = widget.curDate;
+	        var dateTimeString = '';
+	        if (dateTimeModeId == '0') {
+	            //time
+	            dateTimeString = this.getCurTime(curDate);
+	        } else if (dateTimeModeId == '1') {
+	            dateTimeString = this.getCurTimeHM(curDate);
+	        } else {
+	            //date
+	            dateTimeString = this.getCurDate(curDate, dateTimeModeId);
+	        }
+
+	        //逐字渲染字符串
+	        this.paintStyledTexTime(widget, dateTimeString, curX, curY, width, height);
+
+	        //hightlight
+	        var eachWidth = 0;
+	        var delimiterWidth = 0;
+	        var eachHeight = 0;
+	        var delimiterHeight = 0;
+	        // console.log(widget)
+	        if (widget.highlight) {
+
+	            if (widget.info.arrange == 'vertical') {
+	                delimiterHeight = widget.delimiterWidth;
+	                if (dateTimeModeId == '0') {
+	                    eachHeight = (widget.info.height - 2 * delimiterHeight) / 3;
+	                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0]);
+	                } else if (dateTimeModeId == '1') {
+	                    eachHeight = (widget.info.height - delimiterHeight) / 2;
+	                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0]);
+	                } else {
+	                    eachHeight = (widget.info.height - 2 * delimiterHeight) / 4;
+	                    if (widget.highlightValue == 0) {
+	                        this.drawHighLight(curX, curY, width, eachHeight * 2, highlightTex.slices[0]);
+	                    } else {
+	                        this.drawHighLight(curX, curY + (eachHeight + delimiterHeight) * widget.highlightValue + eachHeight, width, eachHeight, highlightTex.slices[0]);
+	                    }
+	                }
+	            } else {
+	                delimiterWidth = widget.delimiterWidth;
+	                if (dateTimeModeId == '0') {
+	                    eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
+	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0]);
+	                } else if (dateTimeModeId == '1') {
+	                    eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
+	                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0]);
+	                } else {
+	                    eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
+	                    if (widget.highlightValue == 0) {
+	                        this.drawHighLight(curX, curY, eachWidth * 2, height, highlightTex.slices[0]);
+	                    } else {
+	                        this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, highlightTex.slices[0]);
+	                    }
+	                }
+	            }
+	        }
+
+	        cb && cb();
+	    },
+	    paintStyledTexTime: function (widget, numElems, clipX, clipY, clipW, clipH) {
+	        var offctx = this.offctx;
+	        var charW = widget.info.characterW;
+	        var charH = widget.info.characterH;
+
+	        offctx.save();
+	        offctx.beginPath();
+	        offctx.rect(clipX, clipY, clipW, clipH);
+	        offctx.clip();
+
+	        var leftOffset = 0;
+	        var curTexSlice = null;
+	        for (var i = 0; i < numElems.length; i++) {
+	            switch (numElems[i]) {
+	                case '0':
+	                case '1':
+	                case '2':
+	                case '3':
+	                case '4':
+	                case '5':
+	                case '6':
+	                case '7':
+	                case '8':
+	                case '9':
+	                    curTexSlice = widget.texList[0].slices[parseInt(numElems[i])];
+	                    break;
+	                case ':':
+	                    curTexSlice = widget.texList[0].slices[10];
+	                    break;
+	                case '/':
+	                    curTexSlice = widget.texList[0].slices[11];
+	                    break;
+	                case '-':
+	                    curTexSlice = widget.texList[0].slices[12];
+	                    break;
+	            }
+	            if (curTexSlice) {
+	                this.drawBg(clipX + leftOffset, clipY, charW, charH, curTexSlice.imgSrc, curTexSlice.color, offctx);
+	            }
+	            leftOffset += charW;
+	        }
+	        offctx.restore();
 	    },
 
 	    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
@@ -22197,17 +22289,9 @@
 	                widget.oldValue = curValue;
 
 	                if (enableAnimation) {
-	                    var fps = 30;
-	                    var duration = widget.transition && widget.transition.duration || 0;
-	                    var totalFrameNum = duration / 1000 * fps;
-
-	                    totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1;
+	                    var totalFrameNum = 10;
 
 	                    if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
-	                        // console.log(totalFrameNum)
-	                        widget.curTotalFrameNum = totalFrameNum;
-	                        // var startTime = new Date()
-	                        // console.log('start time',startTime)
 	                        widget.animateTimerId = setInterval(function () {
 	                            if (widget.curFrameNum != undefined) {
 	                                widget.curFrameNum += 1;
@@ -22216,14 +22300,11 @@
 	                            }
 	                            if (widget.curFrameNum > totalFrameNum - 1) {
 	                                clearInterval(widget.animateTimerId);
-	                                // var endTime = new Date()
-	                                // console.log('end time',endTime,endTime-startTime)
-
 	                                widget.animateTimerId = 0;
 	                                widget.curFrameNum = 0;
 	                            }
 	                            this.draw();
-	                        }.bind(this), 1000 / fps);
+	                        }.bind(this), 30);
 	                    }
 	                }
 	            }
@@ -22251,7 +22332,6 @@
 	        var overFlowStyle = widget.info.overFlowStyle;
 	        var maxFontWidth = widget.info.maxFontWidth;
 	        var align = widget.info.align;
-	        var spacing = widget.info.spacing;
 	        //console.log('maxFontWidth',maxFontWidth,'align',align);
 	        //size
 	        var curWidth = widget.info.width;
@@ -22268,7 +22348,7 @@
 	        var tempCtx = tempcanvas.getContext('2d');
 	        tempCtx.clearRect(0, 0, curWidth, curHeight);
 	        //offCtx.scale(1/this.scaleX,1/this.scaleY);
-	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + '"' + numFamily + '"';
+	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
 	        //offCtx.fillStyle = this.numColor;
 	        tempCtx.font = numString;
 	        //tempCtx.textAlign=widget.info.align;
@@ -22292,7 +22372,7 @@
 	                    name: '数字背景'
 	                };
 
-	                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
+	                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
 	            } else {
 	                //animate number
@@ -22300,7 +22380,7 @@
 
 	                //drawbackground
 	                var bgTex = widget.texList[0].slices[0];
-	                var totalFrameNum = widget.curTotalFrameNum || 1;
+	                var totalFrameNum = 10;
 	                // //draw
 	                var oldHeight = 0;
 	                var oleWidth = 0;
@@ -22315,13 +22395,13 @@
 	                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                    }
 
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
+	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                    oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight;
 	                    if (oldHeight > 0) {
 	                        offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
 	                    }
 
-	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
+	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                    oldHeight = curFrameNum / totalFrameNum * curHeight;
 	                    if (oldHeight > 0) {
 	                        offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
@@ -22334,13 +22414,13 @@
 	                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                    }
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
+	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 	                    oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth;
 	                    if (oleWidth > 0) {
 	                        offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
 	                    }
 
-	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
+	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
 
 	                    oldWidth = curFrameNum / totalFrameNum * curWidth;
 	                    if (oleWidth > 0) {
@@ -22392,13 +22472,9 @@
 	                widget.oldValue = curValue;
 
 	                if (enableAnimation) {
-	                    var fps = 30;
-	                    var duration = widget.transition && widget.transition.duration || 0;
-	                    var totalFrameNum = duration / 1000 * fps;
-	                    totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1;
+	                    var totalFrameNum = 10;
 
 	                    if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
-	                        widget.curTotalFrameNum = totalFrameNum;
 	                        widget.animateTimerId = setInterval(function () {
 	                            if (widget.curFrameNum != undefined) {
 	                                widget.curFrameNum += 1;
@@ -22411,7 +22487,7 @@
 	                                widget.curFrameNum = 0;
 	                            }
 	                            this.draw();
-	                        }.bind(this), 1000 / fps);
+	                        }.bind(this), 30);
 	                    }
 	                }
 	            }
@@ -22474,7 +22550,7 @@
 
 	                //drawbackground
 
-	                var totalFrameNum = widget.curTotalFrameNum || 1;
+	                var totalFrameNum = 10;
 	                // //draw
 	                var oldHeight = 0;
 	                var oleWidth = 0;
@@ -22598,13 +22674,11 @@
 
 	        offctx.restore();
 	    },
-	    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas, _arrange, align, maxFontWidth, decimalCount, spacing) {
+	    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas, _arrange, align, maxFontWidth, decimalCount) {
 	        var tempCtx = tempcanvas.getContext('2d');
 	        var arrange = _arrange || 'horizontal';
 	        tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
 	        tempCtx.save();
-	        tempCtx.baseLine = 'middle';
-	        tempCtx.textAlign = 'center';
 	        // console.log('arrange',arrange)
 	        if (arrange === 'vertical') {
 	            tempCtx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
@@ -22620,43 +22694,31 @@
 	        // tempCtx.strokeRect(0,0,curWidth,curHeight);
 	        var xCoordinate, //渲染每个字符的x坐标
 	        initXPos, //渲染每个字符的起始位置
-	        widthOfNumStr, //渲染的字符串的长度
-	        paddingX;
-	        paddingX = Math.ceil(maxFontWidth / 10);
+	        widthOfNumStr; //渲染的字符串的长度
 	        widthOfNumStr = decimalCount == 0 ? maxFontWidth * numStr.length : maxFontWidth * (numStr.length - 0.5);
-	        curWidth -= paddingX * 2;
 	        switch (align) {
 	            case 'left':
 	                initXPos = 0;
 	                break;
 	            case 'right':
-	                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - widthOfNumStr;
+	                initXPos = curWidth - widthOfNumStr;
 	                break;
 	            case 'center':
 	            default:
-	                initXPos = widthOfNumStr > curWidth ? 0 : (curWidth - widthOfNumStr) / 2;
+	                initXPos = (curWidth - widthOfNumStr) / 2;
 	                break;
 	        }
-	        // console.log('initXPos',initXPos,'paddingX',paddingX);
-	        xCoordinate = initXPos + paddingX;
-	        xCoordinate += maxFontWidth / 2;
-	        /*
-	         修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
-	         */
-	        var displayStep = maxFontWidth;
-
-	        for (var i = 0; i < numStr.length; i++) {
+	        xCoordinate = initXPos;
+	        for (i = 0; i < numStr.length; i++) {
+	            // tempCtx.strokeStyle="#00F";/*设置边框*/
+	            // tempCtx.lineWidth=1;边框的宽度 
+	            // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
+	            tempCtx.fillText(numStr[i], xCoordinate, curHeight / 2);
 	            if (numStr[i] == '.') {
-	                // console.log('displayStep',displayStep);
-	                tempCtx.fillText(numStr[i], xCoordinate - maxFontWidth / 5, curHeight / 2);
-	                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth/2,maxFontWidth);
-	                xCoordinate += displayStep / 2;
+	                xCoordinate += maxFontWidth / 2;
 	            } else {
-	                tempCtx.fillText(numStr[i], xCoordinate, curHeight / 2);
-	                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth,maxFontWidth);
-	                xCoordinate += displayStep;
+	                xCoordinate += maxFontWidth;
 	            }
-	            xCoordinate += spacing;
 	        }
 	        // switch(tempCtx.textAlign){
 	        //     case 'left':
@@ -22755,7 +22817,6 @@
 	            if (widget.info.enableAnimation) {
 	                //using animation
 
-	                var duration = widget.transition && widget.transition.duration || 0;
 
 	                //clear old animation
 
@@ -22773,7 +22834,7 @@
 	                    this.handleTargetAction(widget, alarmValue);
 	                }
 
-	                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, duration, 30, null, function (obj) {
+	                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, 500, 30, null, function (obj) {
 	                    widget.currentValue = obj.curX;
 	                    this.draw();
 	                }.bind(this), function () {
@@ -23159,23 +23220,23 @@
 	    handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
 	        //handle action
 
-	        if (curValue <= lowAlarm && widget.oldValue !== undefined && widget.oldValue > lowAlarm) {
+	        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
 
 	            this.handleTargetAction(widget, 'EnterLowAlarm');
 	        }
 
-	        if (curValue > lowAlarm && widget.oldValue !== undefined && widget.oldValue <= lowAlarm) {
+	        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
 	            //leave low alarm
 
 	            this.handleTargetAction(widget, 'LeaveLowAlarm');
 	        }
-	        if (curValue >= highAlarm && widget.oldValue !== undefined && widget.oldValue < highAlarm) {
+	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
 	            //enter high alarm
 
 
 	            this.handleTargetAction(widget, 'EnterHighAlarm');
 	        }
-	        if (curValue < highAlarm && widget.oldValue !== undefined && widget.oldValue >= highAlarm) {
+	        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
 	            //leave high alarm
 	            this.handleTargetAction(widget, 'LeaveHighAlarm');
 	        }
@@ -23185,19 +23246,19 @@
 	        //handle action
 	        var alarms = [];
 
-	        if (curValue <= lowAlarm && widget.oldValue !== undefined && widget.oldValue > lowAlarm) {
+	        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
 	            alarms.push('EnterLowAlarm');
 	        }
-	        if (curValue > lowAlarm && widget.oldValue !== undefined && widget.oldValue <= lowAlarm) {
+	        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
 	            //leave low alarm
 
 	            alarms.push('LeaveLowAlarm');
 	        }
-	        if (curValue >= highAlarm && widget.oldValue !== undefined && widget.oldValue < highAlarm) {
+	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
 	            //enter high alarm
 	            alarms.push('EnterHighAlarm');
 	        }
-	        if (curValue < highAlarm && widget.oldValue !== undefined && widget.oldValue >= highAlarm) {
+	        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
 	            //leave high alarm
 	            alarms.push('LeaveHighAlarm');
 	        }
@@ -52087,6 +52148,7 @@
 	}
 
 	function linkWidgets(widgetList) {
+	    console.log("widgetList", widgetList);
 	    var i;
 	    var curWidget;
 	    var linkedWidgetList = [];
@@ -52157,6 +52219,36 @@
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + delimiterWidth, curWidget.info.absoluteTop));
 	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
 	                }
+	                break;
+	            case 'MyTexTime':
+	                var mode = curWidget.info.dateTimeModeId;
+	                var charW = curWidget.info.characterW;
+	                if (mode == '0') {
+	                    delimiterWidth = measureMetrics(':', fontStr);
+	                    curWidget.delimiterWidth = charW;
+	                    var eachWidth = (curWidget.info.width - 2 * charW) / 3;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2, curWidget.info.absoluteTop));
+	                } else if (mode == '1') {
+	                    curWidget.delimiterWidth = charW;
+	                    var eachWidth = (curWidget.info.width - charW) / 2;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
+	                } else if (mode == '2') {
+	                    curWidget.delimiterWidth = charW;
+	                    var eachWidth = (curWidget.info.width - 2 * charW) / 4;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
+	                } else if (mode == '3') {
+	                    curWidget.delimiterWidth = charW;
+	                    var eachWidth = (curWidget.info.width - 2 * charW) / 4;
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
+	                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
+	                }
+	                console.log("linkedWidgetList", linkedWidgetList);
 	                break;
 	            case 'MyInputKeyboard':
 	                var keys = curWidget.info.keys;
@@ -52236,13 +52328,14 @@
 	    // console.log(allInteractiveWidgets,allWidgets);
 	    return allInteractiveWidgets;
 	}
-
+	//判断是不是需要添加高亮
 	function isInteractiveWidget(widget) {
 	    var is = false;
 	    switch (widget.subType) {
 	        case 'MyButton':
 	        case 'MyButtonGroup':
 	        case 'MyDateTime':
+	        case 'MyTexTime':
 	        case 'MyInputKeyboard':
 	            is = true;
 	            break;
@@ -52388,7 +52481,6 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
-	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52421,7 +52513,6 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
-	    frames = frames > 1 ? frames : 1;
 	    console.log('p', frames, duration);
 	    var count = frames;
 	    var deltaX = 0;
@@ -52458,7 +52549,6 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
-	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52491,7 +52581,6 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
-	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52534,7 +52623,6 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
-	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;

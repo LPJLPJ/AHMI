@@ -227,6 +227,24 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterDateTimeMode:enterDateTimeMode,
                 enterArrange:enterArrange,
             },
+            //图层时间
+            texTime:{
+                dateTimeModes:[
+                    {id:'0',name:'时分秒模式'},
+                    {id:'1',name:'时分模式'},
+                    {id:'2',name:'斜杠日期'},
+                    {id:'3',name:'减号日期'}
+                ],
+                RTCModes:[
+                    {id:'0',name:'使用内部时钟'},
+                    {id:'1',name:'使用外部时钟'}
+                ],
+                highlightModeId:'0',
+                enterDateTimeMode:enterDateTimeMode,
+                enterArrange:enterArrange,
+                enterCharacterW:enterCharacterW,
+                enterCharacterH:enterCharacterH
+            },
             //滑块
             slideBlock:{
                 enterInitValue:enterInitValue,
@@ -534,6 +552,19 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.dateTime.highlightModeId='0';
                     }else if($scope.component.object.level.info.disableHighlight==true){
                         $scope.component.dateTime.highlightModeId='1';
+                    }
+                    break;
+                case Type.MyTexTime:
+                    $scope.component.texTime.arrangeModel=$scope.component.object.level.info.arrange;/////////////////
+                    $scope.component.texTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
+                    $scope.component.texTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
+                    if($scope.component.object.level.info.disableHighlight==undefined){
+                        selectObject.level.info.disableHighlight=false;
+                        $scope.component.texTime.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==false){
+                        $scope.component.texTime.highlightModeId='0';
+                    }else if($scope.component.object.level.info.disableHighlight==true){
+                        $scope.component.texTime.highlightModeId='1';
                     }
                     break;
                 case Type.MySlideBlock:
@@ -979,6 +1010,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectHighlightMode=$scope.component.buttonGroup.highlightModeId;
         }else if(selectObj.type==Type.MyDateTime){
             selectHighlightMode=$scope.component.dateTime.highlightModeId;
+        }else if(selectObj.type==Type.MyTexTime){
+            selectHighlightMode=$scope.component.texTime.highlightModeId;
         }
         var option = {
             highlightMode:selectHighlightMode
@@ -1306,6 +1339,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectArrange=$scope.component.button.arrangeModel;
         }else if(selectObj.type=Type.MyDateTime){
             selectArrange=$scope.component.dateTime.arrangeModel;
+        }else if(selectObj.type=Type.MyTexTime){
+            selectArrange=$scope.component.texTime.arrangeModel;
         }else{
             return;
         }
@@ -2197,6 +2232,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     function enterCharacterW(e){
         if(e.keyCode===13){
             var characterW = $scope.component.object.level.info.characterW;
+            var type = $scope.component.object.level.type;
             if(!_.isInteger(characterW)||characterW<=0){
                 toastr.warning('输入不合法');
                 return;
@@ -2208,14 +2244,25 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var option={
                 characterW:characterW,
             };
-            ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            });
+            switch(type){
+                case Type.MyTexTime:
+                    ProjectService.ChangeAttributeTexTimeContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option,function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+            }
+
         }
     }
     function enterCharacterH(e){
         if(e.keyCode===13){
             var characterH = $scope.component.object.level.info.characterH;
+            var type = $scope.component.object.level.type;
             if(!_.isInteger(characterH)||characterH<=0){
                 toastr.warning('输入不合法');
                 return;
@@ -2227,9 +2274,18 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var option={
                 characterH:characterH,
             };
-            ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
-                $scope.$emit('ChangeCurrentPage',oldOperate);
-            });
+            switch(type){
+                case Type.MyTexTime:
+                    ProjectService.ChangeAttributeTexTimeContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option,function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    });
+                    break;
+            }
         }
     }
 
@@ -2438,6 +2494,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         if (selectObj.type==Type.MyDateTime){
             selectDateTimeModeId=$scope.component.dateTime.dateTimeModeId;
             selectRTCModeId=$scope.component.dateTime.RTCModeId;
+        }else if(selectObj.type==Type.MyTexTime){
+            selectDateTimeModeId=$scope.component.texTime.dateTimeModeId;
+            selectRTCModeId=$scope.component.texTime.RTCModeId;
         }else {
             return;
         }
@@ -2448,9 +2507,18 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             dateTimeModeId:selectDateTimeModeId,
             RTCModeId:selectRTCModeId
         };
-        ProjectService.ChangeAttributeDateTimeModeId(option, function () {
-            $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
+        switch(selectObj.type){
+            case Type.MyTexTime:
+                ProjectService.ChangeAttributeTexTimeModeId(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyDateTime:
+                ProjectService.ChangeAttributeDateTimeModeId(option,function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+        }
     }
 
     function changeGroupAlign(){

@@ -1020,6 +1020,18 @@ ideServices
 
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type==Type.MyTexTime){
+                    fabric.MyTexTime.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;//?
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else if(_newWidget.type==Type.MyScriptTrigger){
                     fabric.MyScriptTrigger.fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
@@ -3710,6 +3722,46 @@ ideServices
 
                 selectObj.target.fire('changeDateTimeText',arg);
             };
+            //改变时间图层控件的显示模式
+            this.ChangeAttributeTexTimeModeId = function(_option,_successCallback){
+                var dateTimeModeId = _option.dateTimeModeId;
+                var RTCModeId = _option.RTCModeId;
+                var selectObj= _self.getCurrentSelectObject();
+                selectObj.level.info.dateTimeModeId=dateTimeModeId;
+                selectObj.level.info.RTCModeId=RTCModeId;
+                var arg={
+                    dateTimeModeId:dateTimeModeId,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+                selectObj.target.fire('changeTexTimeModeId',arg);
+            };
+            this.ChangeAttributeTexTimeContent = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.characterW){
+                    selectObj.level.info.characterW=_option.characterW;
+                    arg.characterW=_option.characterW;
+                }
+                if(_option.characterH){
+                    selectObj.level.info.characterH=_option.characterH;
+                    arg.characterH=_option.characterH;
+                }
+
+                selectObj.target.fire('changeTexTimeContent',arg);
+            };
+
             this.ChangeAttributeGroupAlign=function(_option,_successCallback){
                 var currentOperate=SaveCurrentOperate();
                 var pageNode=CanvasService.getPageNode();

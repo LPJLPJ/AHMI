@@ -1453,6 +1453,9 @@ module.exports =   React.createClass({
                 case 'MyDateTime':
                     this.drawTime(curX,curY,widget,options,cb);
                     break;
+                case 'MyTexTime':
+                    this.drawTexTime(curX,curY,widget,options,cb);
+                    break;
                 case 'MyTextArea':
                     this.drawTextArea(curX,curY,widget,options,cb);
                     break;
@@ -1550,6 +1553,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyDateTime':
                 this.paintTime(curX,curY,widget,options,cb);
+                break;
+            case 'MyTexTime':
+                this.paintTexTime(curX,curY,widget,options,cb);
                 break;
             case 'MyTextArea':
                 this.paintTextArea(curX,curY,widget,options,cb);
@@ -2468,6 +2474,141 @@ module.exports =   React.createClass({
             dateString=''+year+'-'+month+'-'+day;
         }
         return dateString
+    },
+
+    drawTexTime:function (curX,curY,widget,options,cb) {
+        var curDate;
+        if (widget.info.RTCModeId=='0'){
+            curDate =  this.getCurDateOriginalData(widget,'inner',widget.timeOffset);
+        }else{
+            curDate = this.getCurDateOriginalData(widget,'outer');
+        }
+        widget.curDate = curDate;
+        //timer 1 s
+        if (!(widget.timerId && widget.timerId!==0)){
+            widget.timerId = setInterval(function () {
+                this.draw();
+            }.bind(this),1000)
+            var innerTimerList = this.state.innerTimerList;
+            innerTimerList.push(widget.timerId);
+            this.setState({innerTimerList:innerTimerList});
+        }
+    },
+    paintTexTime:function (curX,curY,widget,options,cb) {
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var dateTimeModeId = widget.info.dateTimeModeId;
+        var highlightTex = widget.texList&&widget.texList[1];
+        var numTex = widget.texList&&widget.texList[0];
+
+        //生成时间日期字符串
+        var curDate = widget.curDate;
+        var dateTimeString = '';
+        if (dateTimeModeId == '0'){
+            //time
+            dateTimeString = this.getCurTime(curDate);
+        }else if(dateTimeModeId=='1'){
+            dateTimeString = this.getCurTimeHM(curDate);
+        }else{
+            //date
+            dateTimeString = this.getCurDate(curDate,dateTimeModeId);
+        }
+
+        //逐字渲染字符串
+        this.paintStyledTexTime(widget,dateTimeString,curX,curY,width,height);
+
+        //hightlight
+        var eachWidth=0;
+        var delimiterWidth=0;
+        var eachHeight = 0;
+        var delimiterHeight = 0;
+// console.log(widget)
+        if (widget.highlight){
+
+            if (widget.info.arrange =='vertical'){
+                delimiterHeight = widget.delimiterWidth;
+                if (dateTimeModeId=='0'){
+                    eachHeight = (widget.info.height - 2*delimiterHeight)/3;
+                    this.drawHighLight(curX,(eachHeight+delimiterHeight)*widget.highlightValue+curY,width,eachHeight,highlightTex.slices[0]);
+                }else if(dateTimeModeId=='1'){
+                    eachHeight = (widget.info.height - delimiterHeight)/2;
+                    this.drawHighLight(curX,(eachHeight+delimiterHeight)*widget.highlightValue+curY,width,eachHeight,highlightTex.slices[0]);
+                }else{
+                    eachHeight = (widget.info.height - 2*delimiterHeight)/4;
+                    if (widget.highlightValue == 0){
+                        this.drawHighLight(curX,curY,width,eachHeight*2,highlightTex.slices[0]);
+                    }else{
+                        this.drawHighLight(curX,curY+(eachHeight+delimiterHeight)*widget.highlightValue+eachHeight,width,eachHeight,highlightTex.slices[0]);
+                    }
+
+                }
+            }else{
+                delimiterWidth = widget.delimiterWidth;
+                if (dateTimeModeId=='0'){
+                    eachWidth = (widget.info.width - 2*delimiterWidth)/3;
+                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,highlightTex.slices[0]);
+                }else if(dateTimeModeId=='1'){
+                    eachWidth = (widget.info.width - widget.delimiterWidth)/2;
+                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,highlightTex.slices[0]);
+                }else{
+                    eachWidth = (widget.info.width - 2*widget.delimiterWidth)/4;
+                    if (widget.highlightValue == 0){
+                        this.drawHighLight(curX,curY,eachWidth*2,height,highlightTex.slices[0]);
+                    }else{
+                        this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue+eachWidth,curY,eachWidth,height,highlightTex.slices[0]);
+                    }
+
+                }
+            }
+
+        }
+
+        cb && cb();
+
+
+    },
+    paintStyledTexTime:function(widget,numElems,clipX,clipY,clipW,clipH){
+        var offctx = this.offctx
+        var charW = widget.info.characterW;
+        var charH = widget.info.characterH;
+
+        offctx.save()
+        offctx.beginPath()
+        offctx.rect(clipX,clipY,clipW,clipH);
+        offctx.clip();
+
+        var leftOffset = 0
+        var curTexSlice = null;
+        for(var i=0;i<numElems.length;i++){
+            switch (numElems[i]){
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    curTexSlice = widget.texList[0].slices[parseInt(numElems[i])];
+                    break;
+                case ':':
+                    curTexSlice = widget.texList[0].slices[10];
+                    break;
+                case '/':
+                    curTexSlice = widget.texList[0].slices[11];
+                    break;
+                case '-':
+                    curTexSlice = widget.texList[0].slices[12];
+                    break;
+            }
+            if (curTexSlice){
+                this.drawBg(clipX+leftOffset,clipY,charW,charH,curTexSlice.imgSrc,curTexSlice.color,offctx)
+            }
+            leftOffset+=charW;
+        }
+        offctx.restore()
     },
 
     drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {

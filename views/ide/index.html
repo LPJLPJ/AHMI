@@ -2191,6 +2191,86 @@
                             </select>
                         </div>
                     </div>
+                    <div ng-show="component.object.type=='MyTexTime'">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">名称</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="text"
+                                   ng-model="component.object.level.name"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterName($event)">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.left"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number"
+                                    disabled>
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number"
+                                disabled>
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">字符宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.characterW"
+                                   ng-keypress="component.texTime.enterCharacterW($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">字符高度</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.characterH"
+                               ng-keypress="component.texTime.enterCharacterH($event)"
+                               ng-blur="component.restore()"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">显示模式</span>
+                            <select class="my-attr-number-input form-control" ng-model="component.texTime.dateTimeModeId" ng-change="component.texTime.enterDateTimeMode($event)">
+                                <option ng-repeat="mode in component.texTime.dateTimeModes" value="{{mode.id}}">{{mode.name}}</option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">时钟来源</span>
+                            <select class="my-attr-number-input form-control" ng-model="component.texTime.RTCModeId" ng-change="component.texTime.enterDateTimeMode($event)">
+                                <option ng-repeat="mode in component.texTime.RTCModes" value="{{mode.id}}">{{mode.name}}</option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">高亮</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.texTime.highlightModeId"
+                                    ng-change="component.enterHighlightMode($event)">
+                                <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <div ng-show="component.object.type=='MyVideo'">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
