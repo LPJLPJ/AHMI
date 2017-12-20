@@ -301,7 +301,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 var imgName = widget.id.split('.').join('-');
                 var outputFilename = imgName +'-'+ index+'.png';
 
-                console.log('dstDir',dstDir,'outputFilename',outputFilename);
+                // console.log('dstDir',dstDir,'outputFilename',outputFilename);
                 var outpath = path.join(dstDir,outputFilename);
                 _canvas.output(outpath,function (err) {
                     if (err){
