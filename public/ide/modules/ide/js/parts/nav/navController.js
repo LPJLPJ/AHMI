@@ -585,9 +585,15 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW*widthProportion);
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH*heightProportion);
                                     }
+                                    //added by LH in 2017/12/20
+                                    if(type=='MyTexTime'){
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH*heightProportion);
+                                    }
                                     if(type=="MyDateTime"||type=='MyNum'){
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.spacing = Math.round((content.pages[a].layers[b].subLayers[c].widgets[d].info.spacing||0)*widthProportion);
                                     }
                                     //改变仪表盘指针 取宽高中较小值为边长
                                     if(type=="MyDashboard"){
