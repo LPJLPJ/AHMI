@@ -5053,7 +5053,7 @@ ideServices
                         node.add(new fabric.MyTexTime(dataStructure,initiator));
                         break;
                     default :
-                        console.error('not match widget in preprocess!');
+                        console.error('not match widget in _addFabricObjInCanvasNode!');
                         break;
                 };
                 _cb&&_cb();
