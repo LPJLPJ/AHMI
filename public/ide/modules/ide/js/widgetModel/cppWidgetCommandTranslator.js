@@ -312,8 +312,9 @@
     }
 
     var textureAttrTable = {
-        texture:new Attr('texture',4,0),
-        type:new Attr('type',4,1)
+        textureList:new Attr('texture',4,0),
+        texture:new Attr('texture',4,1),
+        type:new Attr('type',4,2)
     }
 
 
