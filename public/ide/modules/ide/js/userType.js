@@ -28,7 +28,6 @@ ideServices.service('UserTypeService',[function(){
     this.getCustomFontAuthor=function(){
         var customFontDisabled=false;
         switch (userType){
-            case 'pro':
             case 'ultimate':
             case 'admin':
                 customFontDisabled=false;
