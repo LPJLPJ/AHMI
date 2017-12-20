@@ -20176,6 +20176,9 @@
 
 	        this.paintKey = requestAnimationFrame(this.paint);
 	    },
+	    dropCurrentDraw: function () {
+	        this.currentDrawedProject && (this.currentDrawingProject.shouldPaint = false);
+	    },
 	    drawSingleProject: function (_project, options) {
 	        var project;
 	        if (_project) {
@@ -20183,6 +20186,9 @@
 	        } else {
 	            project = this.state.project;
 	        }
+
+	        this.currentDrawingProject = project;
+	        this.currentDrawingProject.shouldPaint = true;
 
 	        var offcanvas = this.refs.offcanvas;
 
@@ -20239,8 +20245,11 @@
 	        } else {
 	                // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 	            }
-
-	        return project;
+	        if (this.currentDrawingProject && this.currentDrawingProject.shouldPaint) {
+	            return project;
+	        } else {
+	            return null;
+	        }
 	    },
 	    getRawValueByTagName: function (name) {
 	        var curTag = this.findTagByName(name);
@@ -20732,6 +20741,10 @@
 	            var nextSubCanvasIdx = canvasTag && canvasTag.value || 0;
 	            nextSubCanvasIdx = nextSubCanvasIdx >= subCanvasList.length ? subCanvasList.length - 1 : nextSubCanvasIdx;
 	            var oldSubCanvas = subCanvasList[canvasData.curSubCanvasIdx];
+	            var firstSubCanvas = false;
+	            if (!oldSubCanvas) {
+	                firstSubCanvas = true;
+	            }
 	            canvasData.curSubCanvasIdx = nextSubCanvasIdx;
 	            //handle UnLoad subcanvas
 	            // if (canvasData.curSubCanvasIdx != nextSubCanvasIdx) {
@@ -20762,13 +20775,16 @@
 	                this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
 	            }
 	            var subCanvas = subCanvasList[nextSubCanvasIdx];
-	            if (subCanvas) {
-	                // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-	                var transition = canvasData.transition;
-
-	                this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition);
-	            } else {
-	                this.handleTargetAction(oldSubCanvas, 'UnLoad');
+	            // if (subCanvas) {
+	            //     // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+	            //     var transition = canvasData.transition;
+	            //
+	            //     this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition,firstSubCanvas);
+	            //
+	            // }
+	            var transition = canvasData.transition;
+	            for (var i = 0; i < subCanvasList.length; i++) {
+	                this.drawSubCanvas(subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, i != nextSubCanvasIdx);
 	            }
 	        }
 	    },
@@ -20812,9 +20828,12 @@
 	        ctx.closePath();
 	        ctx.clip();
 	    },
-	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition) {
+	    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
+	        if (updateOnly) {
+	            return this.drawSingleSubCanvas(subCanvas, x, y, w, h, options, updateOnly);
+	        }
 	        if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
 	            subCanvas.state = LoadState.willLoad;
 	            //init subcanvas pos and size
@@ -20834,7 +20853,7 @@
 	            var easing = 'easeInOutCubic';
 	            var hWidth = w / 2 + x;
 	            var hHeight = h / 2 + y;
-	            if (!options || options && !options.pageAnimate) {
+	            if (!firstSubCanvas && (!options || options && !options.pageAnimate)) {
 	                switch (method) {
 	                    case 'MOVE_LR':
 	                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20852,6 +20871,7 @@
 	                            subCanvas.translate = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
+	                        this.dropCurrentDraw();
 	                        break;
 	                    case 'MOVE_RL':
 	                        AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
@@ -20869,6 +20889,7 @@
 	                            subCanvas.translate = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
+	                        this.dropCurrentDraw();
 	                        break;
 	                    case 'SCALE':
 	                        var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
@@ -20886,6 +20907,8 @@
 	                            subCanvas.transform = null;
 	                            this.handleTargetAction(subCanvas, 'Load');
 	                        }.bind(this));
+
+	                        this.dropCurrentDraw();
 
 	                        break;
 	                    default:
@@ -20932,23 +20955,30 @@
 
 	        offctx.restore();
 	    },
-	    drawSingleSubCanvas: function (subCanvas, x, y, w, h, options) {
+	    drawSingleSubCanvas: function (subCanvas, x, y, w, h, options, updateOnly) {
 
-	        subCanvas.state = LoadState.loading;
+	        if (!updateOnly) {
+	            subCanvas.state = LoadState.loading;
+	        }
 
 	        subCanvas.widgetList = subCanvas.widgetList || [];
 	        var widgetList = subCanvas.widgetList;
 	        if (widgetList.length) {
 	            widgetList.sort(this.compareZIndex);
 	            for (var i = 0; i < widgetList.length; i++) {
-	                this.drawWidget(widgetList[i], x, y, options);
+	                this.drawWidget(widgetList[i], x, y, options, updateOnly);
 	            }
 	        }
 
-	        subCanvas.state = LoadState.loaded;
+	        if (!updateOnly) {
+	            subCanvas.state = LoadState.loaded;
+	        }
 	    },
-	    drawWidget: function (widget, sx, sy, options) {
+	    drawWidget: function (widget, sx, sy, options, updateOnly) {
 	        var willExecuteAnimation = false;
+	        if (updateOnly) {
+	            return updateWidget.call(this);
+	        }
 	        if (options && options.animation) {
 	            //has animation execute
 	            if (widget.tag === options.animation.tag && widget.animations) {
@@ -20968,7 +20998,10 @@
 	        }
 	        if (!willExecuteAnimation) {
 	            // console.log('drawing widget',widget);
+	            updateWidget.call(this);
+	        }
 
+	        function updateWidget() {
 	            var curX = widget.info.left + sx;
 	            var curY = widget.info.top + sy;
 	            //this.drawBgColor(curX,curY,widget.w,widget.h,widget.bgColor);
@@ -21361,7 +21394,7 @@
 	        }
 	        cb && cb();
 	    },
-	    drawTextByTempCanvas: function (curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth) {
+	    drawTextByTempCanvas: function (curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth, spacing, paddingRatio) {
 
 	        var text = text || '';
 	        var font = font || {};
@@ -21373,6 +21406,8 @@
 	        tempcanvas.height = height;
 	        var tempctx = tempcanvas.getContext('2d');
 	        tempctx.save();
+	        if (spacing === undefined) spacing = 0;
+	        if (paddingRatio === undefined) paddingRatio = 0;
 	        if (arrange === 'vertical') {
 	            tempctx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
 	            tempctx.rotate(Math.PI / 2);
@@ -21383,7 +21418,7 @@
 	        tempctx.textAlign = font.textAlign || 'center';
 	        tempctx.textBaseline = font.textBaseline || 'middle';
 	        //font style
-	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + (font['font-family'] || 'arial');
+	        var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + ('"' + font['font-family'] + '"' || 'arial');
 	        tempctx.font = fontStr;
 	        // console.log('tempctx.font',fontStr);
 	        tempctx.fillStyle = font['font-color'];
@@ -21391,10 +21426,16 @@
 	            // var widthOfDateTimeStr=maxFontWidth*text.length;
 	            // var initXPos = (width-widthOfDateTimeStr)/2;
 	            // var xCoordinate = initXPos+maxFontWidth/2;
-	            var xCoordinate = (width - maxFontWidth * text.length + maxFontWidth) / 2;
+	            var xCoordinate = maxFontWidth * text.length > width ? maxFontWidth / 2 : (width - maxFontWidth * text.length + maxFontWidth) / 2; //如果装不下字符串，从maxFontWidth处开始显示
+	            if (paddingRatio !== 0) xCoordinate = paddingRatio * maxFontWidth + 0.5 * maxFontWidth;
+	            var notItalic = -1 == fontStr.indexOf('italic');
+	            var italicAjust = notItalic ? 0 : maxFontWidth / 2; //如果是斜体的话，需要斜体往右伸出的宽度
+	            // var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
+	            // displayStep+=spacing;
 	            var yCoordinate = 0.5 * height;
 	            for (i = 0; i < text.length; i++) {
 	                tempctx.fillText(text[i], xCoordinate, yCoordinate);
+	                xCoordinate += spacing;
 	                xCoordinate += maxFontWidth;
 	            }
 	        } else {
@@ -21475,6 +21516,7 @@
 	            if (widget.info.enableAnimation) {
 	                //using animation
 
+	                var duration = widget.transition && widget.transition.duration || 0;
 
 	                //clear old animation
 
@@ -21492,7 +21534,7 @@
 	                    this.handleTargetAction(widget, alarmValue);
 	                }
 
-	                widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, 500, 30, null, function (obj) {
+	                widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, duration, 30, null, function (obj) {
 	                    widget.currentValue = obj.curX;
 	                    this.draw();
 	                }.bind(this), function () {
@@ -21864,6 +21906,8 @@
 	        var fontColor = widget.info.fontColor;
 	        var tex = widget.texList && widget.texList[0];
 	        var maxFontWidth = widget.info.maxFontWidth;
+	        var spacing = widget.info.spacing;
+	        var paddingRatio = widget.info.paddingRatio;
 	        // lg(tex,widget)
 
 	        var font = {};
@@ -21888,7 +21932,7 @@
 	        //draw
 	        //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
 	        //逐字渲染字符串
-	        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, maxFontWidth);
+	        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio);
 	        var offcanvas = this.refs.offcanvas;
 	        var offctx = this.offctx;
 	        var tempcanvas = this.refs.tempcanvas;
@@ -22289,9 +22333,17 @@
 	                widget.oldValue = curValue;
 
 	                if (enableAnimation) {
-	                    var totalFrameNum = 10;
+	                    var fps = 30;
+	                    var duration = widget.transition && widget.transition.duration || 0;
+	                    var totalFrameNum = duration / 1000 * fps;
+
+	                    totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1;
 
 	                    if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+	                        // console.log(totalFrameNum)
+	                        widget.curTotalFrameNum = totalFrameNum;
+	                        // var startTime = new Date()
+	                        // console.log('start time',startTime)
 	                        widget.animateTimerId = setInterval(function () {
 	                            if (widget.curFrameNum != undefined) {
 	                                widget.curFrameNum += 1;
@@ -22300,11 +22352,14 @@
 	                            }
 	                            if (widget.curFrameNum > totalFrameNum - 1) {
 	                                clearInterval(widget.animateTimerId);
+	                                // var endTime = new Date()
+	                                // console.log('end time',endTime,endTime-startTime)
+
 	                                widget.animateTimerId = 0;
 	                                widget.curFrameNum = 0;
 	                            }
 	                            this.draw();
-	                        }.bind(this), 30);
+	                        }.bind(this), 1000 / fps);
 	                    }
 	                }
 	            }
@@ -22332,6 +22387,7 @@
 	        var overFlowStyle = widget.info.overFlowStyle;
 	        var maxFontWidth = widget.info.maxFontWidth;
 	        var align = widget.info.align;
+	        var spacing = widget.info.spacing;
 	        //console.log('maxFontWidth',maxFontWidth,'align',align);
 	        //size
 	        var curWidth = widget.info.width;
@@ -22348,7 +22404,7 @@
 	        var tempCtx = tempcanvas.getContext('2d');
 	        tempCtx.clearRect(0, 0, curWidth, curHeight);
 	        //offCtx.scale(1/this.scaleX,1/this.scaleY);
-	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + numFamily;
+	        var numString = numItalic + " " + numBold + " " + numSize + "px" + " " + '"' + numFamily + '"';
 	        //offCtx.fillStyle = this.numColor;
 	        tempCtx.font = numString;
 	        //tempCtx.textAlign=widget.info.align;
@@ -22372,7 +22428,7 @@
 	                    name: '数字背景'
 	                };
 
-	                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+	                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
 	                offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
 	            } else {
 	                //animate number
@@ -22380,7 +22436,7 @@
 
 	                //drawbackground
 	                var bgTex = widget.texList[0].slices[0];
-	                var totalFrameNum = 10;
+	                var totalFrameNum = widget.curTotalFrameNum || 1;
 	                // //draw
 	                var oldHeight = 0;
 	                var oleWidth = 0;
@@ -22395,13 +22451,13 @@
 	                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                    }
 
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
 	                    oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight;
 	                    if (oldHeight > 0) {
 	                        offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
 	                    }
 
-	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
 	                    oldHeight = curFrameNum / totalFrameNum * curHeight;
 	                    if (oldHeight > 0) {
 	                        offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
@@ -22414,13 +22470,13 @@
 	                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
 	                    }
-	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+	                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
 	                    oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth;
 	                    if (oleWidth > 0) {
 	                        offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
 	                    }
 
-	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+	                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
 
 	                    oldWidth = curFrameNum / totalFrameNum * curWidth;
 	                    if (oleWidth > 0) {
@@ -22472,9 +22528,13 @@
 	                widget.oldValue = curValue;
 
 	                if (enableAnimation) {
-	                    var totalFrameNum = 10;
+	                    var fps = 30;
+	                    var duration = widget.transition && widget.transition.duration || 0;
+	                    var totalFrameNum = duration / 1000 * fps;
+	                    totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1;
 
 	                    if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+	                        widget.curTotalFrameNum = totalFrameNum;
 	                        widget.animateTimerId = setInterval(function () {
 	                            if (widget.curFrameNum != undefined) {
 	                                widget.curFrameNum += 1;
@@ -22487,7 +22547,7 @@
 	                                widget.curFrameNum = 0;
 	                            }
 	                            this.draw();
-	                        }.bind(this), 30);
+	                        }.bind(this), 1000 / fps);
 	                    }
 	                }
 	            }
@@ -22550,7 +22610,7 @@
 
 	                //drawbackground
 
-	                var totalFrameNum = 10;
+	                var totalFrameNum = widget.curTotalFrameNum || 1;
 	                // //draw
 	                var oldHeight = 0;
 	                var oleWidth = 0;
@@ -22674,11 +22734,13 @@
 
 	        offctx.restore();
 	    },
-	    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas, _arrange, align, maxFontWidth, decimalCount) {
+	    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas, _arrange, align, maxFontWidth, decimalCount, spacing) {
 	        var tempCtx = tempcanvas.getContext('2d');
 	        var arrange = _arrange || 'horizontal';
 	        tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
 	        tempCtx.save();
+	        tempCtx.baseLine = 'middle';
+	        tempCtx.textAlign = 'center';
 	        // console.log('arrange',arrange)
 	        if (arrange === 'vertical') {
 	            tempCtx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
@@ -22694,31 +22756,43 @@
 	        // tempCtx.strokeRect(0,0,curWidth,curHeight);
 	        var xCoordinate, //渲染每个字符的x坐标
 	        initXPos, //渲染每个字符的起始位置
-	        widthOfNumStr; //渲染的字符串的长度
+	        widthOfNumStr, //渲染的字符串的长度
+	        paddingX;
+	        paddingX = Math.ceil(maxFontWidth / 10);
 	        widthOfNumStr = decimalCount == 0 ? maxFontWidth * numStr.length : maxFontWidth * (numStr.length - 0.5);
+	        curWidth -= paddingX * 2;
 	        switch (align) {
 	            case 'left':
 	                initXPos = 0;
 	                break;
 	            case 'right':
-	                initXPos = curWidth - widthOfNumStr;
+	                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - widthOfNumStr;
 	                break;
 	            case 'center':
 	            default:
-	                initXPos = (curWidth - widthOfNumStr) / 2;
+	                initXPos = widthOfNumStr > curWidth ? 0 : (curWidth - widthOfNumStr) / 2;
 	                break;
 	        }
-	        xCoordinate = initXPos;
-	        for (i = 0; i < numStr.length; i++) {
-	            // tempCtx.strokeStyle="#00F";/*设置边框*/
-	            // tempCtx.lineWidth=1;边框的宽度 
-	            // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
-	            tempCtx.fillText(numStr[i], xCoordinate, curHeight / 2);
+	        // console.log('initXPos',initXPos,'paddingX',paddingX);
+	        xCoordinate = initXPos + paddingX;
+	        xCoordinate += maxFontWidth / 2;
+	        /*
+	         修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
+	         */
+	        var displayStep = maxFontWidth;
+
+	        for (var i = 0; i < numStr.length; i++) {
 	            if (numStr[i] == '.') {
-	                xCoordinate += maxFontWidth / 2;
+	                // console.log('displayStep',displayStep);
+	                tempCtx.fillText(numStr[i], xCoordinate - maxFontWidth / 5, curHeight / 2);
+	                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth/2,maxFontWidth);
+	                xCoordinate += displayStep / 2;
 	            } else {
-	                xCoordinate += maxFontWidth;
+	                tempCtx.fillText(numStr[i], xCoordinate, curHeight / 2);
+	                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth,maxFontWidth);
+	                xCoordinate += displayStep;
 	            }
+	            xCoordinate += spacing;
 	        }
 	        // switch(tempCtx.textAlign){
 	        //     case 'left':
@@ -22817,6 +22891,7 @@
 	            if (widget.info.enableAnimation) {
 	                //using animation
 
+	                var duration = widget.transition && widget.transition.duration || 0;
 
 	                //clear old animation
 
@@ -22834,7 +22909,7 @@
 	                    this.handleTargetAction(widget, alarmValue);
 	                }
 
-	                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, 500, 30, null, function (obj) {
+	                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, duration, 30, null, function (obj) {
 	                    widget.currentValue = obj.curX;
 	                    this.draw();
 	                }.bind(this), function () {
@@ -23220,23 +23295,23 @@
 	    handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
 	        //handle action
 
-	        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+	        if (curValue <= lowAlarm && widget.oldValue !== undefined && widget.oldValue > lowAlarm) {
 
 	            this.handleTargetAction(widget, 'EnterLowAlarm');
 	        }
 
-	        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+	        if (curValue > lowAlarm && widget.oldValue !== undefined && widget.oldValue <= lowAlarm) {
 	            //leave low alarm
 
 	            this.handleTargetAction(widget, 'LeaveLowAlarm');
 	        }
-	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+	        if (curValue >= highAlarm && widget.oldValue !== undefined && widget.oldValue < highAlarm) {
 	            //enter high alarm
 
 
 	            this.handleTargetAction(widget, 'EnterHighAlarm');
 	        }
-	        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+	        if (curValue < highAlarm && widget.oldValue !== undefined && widget.oldValue >= highAlarm) {
 	            //leave high alarm
 	            this.handleTargetAction(widget, 'LeaveHighAlarm');
 	        }
@@ -23246,19 +23321,19 @@
 	        //handle action
 	        var alarms = [];
 
-	        if (curValue <= lowAlarm && widget.oldValue && widget.oldValue > lowAlarm) {
+	        if (curValue <= lowAlarm && widget.oldValue !== undefined && widget.oldValue > lowAlarm) {
 	            alarms.push('EnterLowAlarm');
 	        }
-	        if (curValue > lowAlarm && widget.oldValue && widget.oldValue <= lowAlarm) {
+	        if (curValue > lowAlarm && widget.oldValue !== undefined && widget.oldValue <= lowAlarm) {
 	            //leave low alarm
 
 	            alarms.push('LeaveLowAlarm');
 	        }
-	        if (curValue >= highAlarm && widget.oldValue && widget.oldValue < highAlarm) {
+	        if (curValue >= highAlarm && widget.oldValue !== undefined && widget.oldValue < highAlarm) {
 	            //enter high alarm
 	            alarms.push('EnterHighAlarm');
 	        }
-	        if (curValue < highAlarm && widget.oldValue && widget.oldValue >= highAlarm) {
+	        if (curValue < highAlarm && widget.oldValue !== undefined && widget.oldValue >= highAlarm) {
 	            //leave high alarm
 	            alarms.push('LeaveHighAlarm');
 	        }
@@ -52481,6 +52556,7 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
+	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52513,6 +52589,7 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
+	    frames = frames > 1 ? frames : 1;
 	    console.log('p', frames, duration);
 	    var count = frames;
 	    var deltaX = 0;
@@ -52549,6 +52626,7 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
+	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52581,6 +52659,7 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
+	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -52623,6 +52702,7 @@
 	    var curValue = 0;
 	    var framesPS = frames;
 	    frames = frames * duration / 1000;
+	    frames = frames > 1 ? frames : 1;
 	    var count = frames;
 	    var deltaX = 0;
 	    var deltaY = 0;
@@ -55048,7 +55128,7 @@
 	  if (isNaN(value) || !isFinite(value)) {
 	    return String(value);
 	  }
-	  
+
 	  var rounded = exports.roundDigits(exports.splitNumber(value), precision);
 
 	  var e = rounded.exponent;
@@ -61382,7 +61462,7 @@
 				 .replace(/'/g, '&#39;')
 				 .replace(/</g, '&lt;')
 				 .replace(/>/g, '&gt;');
-	  
+
 	  return text;
 	}
 
@@ -65094,11 +65174,11 @@
 	  if (!Array.isArray(a)) {
 		throw new TypeError('Array input expected');
 	  }
-		
+
 	  if (a.length === 0) {
 		return a;
 	  }
-		
+
 	  var b = [];
 	  var count = 0;
 	  b[0] = {value: a[0], identifier: 0};
@@ -65123,11 +65203,11 @@
 	  if (!Array.isArray(a)) {
 		throw new TypeError('Array input expected');
 	  }
-		
+
 	  if (a.length === 0) {
 		return a;
 	  }
-		
+
 	  var b = [];
 	  for (var i=0; i<a.length; i++) {
 	    b.push(a[i].value);
@@ -65829,7 +65909,7 @@
 	    m._size = size.slice(0);
 	    return m;
 	  };
-	  
+
 	  /**
 	   * Enlarge the matrix when it is smaller than given size.
 	   * If the matrix is larger or equal sized, nothing is done.
@@ -67224,7 +67304,7 @@
 
 	    return m;
 	  }
-	  
+
 	  /**
 	   * Create a clone of the matrix
 	   * @memberof SparseMatrix
@@ -76962,7 +77042,7 @@
 	  var algorithm11 = load(__webpack_require__(257));
 	  var algorithm12 = load(__webpack_require__(235));
 	  var algorithm14 = load(__webpack_require__(230));
-	  
+
 	  /**
 	   * Round a value towards the nearest integer.
 	   * For matrices, the function is evaluated element wise.
@@ -77011,7 +77091,7 @@
 
 	    'Complex, number': function (x, n) {
 	      if (n % 1) {throw new TypeError(NO_INT);}
-	      
+
 	      return x.round(n);
 	    },
 
@@ -85779,13 +85859,13 @@
 	// (a+b)+c=a+(b+c)
 	// (a+b)-c=a+(b-c)
 	//
-	// postfix operators are left associative, prefix operators 
+	// postfix operators are left associative, prefix operators
 	// are right associative
 	//
 	//It's also possible to set the following properties:
 	// latexParens: if set to false, this node doesn't need to be enclosed
 	//              in parentheses when using LaTeX
-	// latexLeftParens: if set to false, this !OperatorNode's! 
+	// latexLeftParens: if set to false, this !OperatorNode's!
 	//                  left argument doesn't need to be enclosed
 	//                  in parentheses
 	// latexRightParens: the same for the right argument
@@ -86239,7 +86319,7 @@
 	   */
 	  SymbolNode.prototype.toHTML = function(options) {
 		var name = escape(this.name);
-		
+
 	    if (name == "true" || name == "false") {
 		  return '<span class="math-symbol math-boolean">' + name + '</span>';
 		}
@@ -86258,7 +86338,7 @@
 		else if (name == "uninitialized") {
 		  return '<span class="math-symbol math-uninitialized-symbol">' + name + '</span>';
 		}
-		
+
 		return '<span class="math-symbol">' + name + '</span>';
 	  };
 
@@ -88651,11 +88731,11 @@
 	      if (parens[1]) { //right hand side in parenthesis?
 	        rhs = '<span class="math-parenthesis math-round-parenthesis">(</span>' + rhs + '<span class="math-parenthesis math-round-parenthesis">)</span>';
 	      }
-		  
+
 		  if (this.implicit && (this.getIdentifier() === 'OperatorNode:multiply') && (implicit == 'hide')) {
 		    return lhs + '<span class="math-operator math-binary-operator math-implicit-binary-operator"></span>' + rhs;
 		  }
-	      
+
 		  return lhs + '<span class="math-operator math-binary-operator math-explicit-binary-operator">' + escape(this.op) + '</span>' + rhs;
 	    }
 		else if ((args.length > 2) && ((this.getIdentifier() === 'OperatorNode:add') || (this.getIdentifier() === 'OperatorNode:multiply'))) {
@@ -89056,7 +89136,7 @@
 	    // format the arguments like "add(2, 4.2)"
 	    return fn + '(' + args.join(', ') + ')';
 	  };
-	  
+
 	  /**
 	   * Get HTML representation
 	   * @param {Object} options
@@ -93022,8 +93102,8 @@
 
 	    { l: 'n*(n1/n2)', r:'(n*n1)/n2' }, // '*' before '/'
 	    { l: 'n-(n1+n2)', r:'n-n1-n2' }, // '-' before '+'
-	    // { l: '(n1/n2)/n3', r: 'n1/(n2*n3)' }, 
-	    // { l: '(n*n1)/(n*n2)', r: 'n1/n2' }, 
+	    // { l: '(n1/n2)/n3', r: 'n1/(n2*n3)' },
+	    // { l: '(n*n1)/(n*n2)', r: 'n1/n2' },
 
 	    { l: '1*n', r: 'n' } // this pattern can be produced by simplifyConstant
 
@@ -94117,26 +94197,26 @@
 	  var zeros = load(__webpack_require__(261));
 	  var eye = load(__webpack_require__(255));
 	  var clone = load(__webpack_require__(534));
-	  
+
 	  var isZero = load(__webpack_require__(535));
 	  var isPositive = load(__webpack_require__(536));
 	  var unequal = load(__webpack_require__(537));
-	    
+
 	  var abs = load(__webpack_require__(258));
 	  var sign = load(__webpack_require__(538));
 	  var sqrt = load(__webpack_require__(539));
 	  var conj = load(__webpack_require__(540));
-	  
-	  var unaryMinus = load(__webpack_require__(250)); 
-	  var addScalar = load(__webpack_require__(225));  
+
+	  var unaryMinus = load(__webpack_require__(250));
+	  var addScalar = load(__webpack_require__(225));
 	  var divideScalar = load(__webpack_require__(253));
-	  var multiplyScalar = load(__webpack_require__(252));  
+	  var multiplyScalar = load(__webpack_require__(252));
 	  var subtract = load(__webpack_require__(249));
-	    
-	  
+
+
 	  /**
-	   * Calculate the Matrix QR decomposition. Matrix `A` is decomposed in 
-	   * two matrices (`Q`, `R`) where `Q` is an 
+	   * Calculate the Matrix QR decomposition. Matrix `A` is decomposed in
+	   * two matrices (`Q`, `R`) where `Q` is an
 	   * orthogonal matrix and `R` is an upper triangular matrix.
 	   *
 	   * Syntax:
@@ -94171,7 +94251,7 @@
 	   *
 	   *    lu
 	   *
-	   * @param {Matrix | Array} A    A two dimensional matrix or array 
+	   * @param {Matrix | Array} A    A two dimensional matrix or array
 	   * for which to get the QR decomposition.
 	   *
 	   * @return {{Q: Array | Matrix, R: Array | Matrix}} Q: the orthogonal
@@ -94182,7 +94262,7 @@
 	    'DenseMatrix': function (m) {
 	      return _denseQR(m);
 	    },
-	    
+
 	    'SparseMatrix': function (m) {
 	      return _sparseQR(m);
 	    },
@@ -94201,24 +94281,24 @@
 	  });
 
 	  var _denseQR = function (m) {
-	    
+
 	    // rows & columns (m x n)
 	    var rows = m._size[0]; // m
 	    var cols = m._size[1]; // n
-	            
+
 	    var Q = eye([rows], 'dense');
 	    var Qdata = Q._data;
-	    
+
 	    var R = m.clone();
 	    var Rdata = R._data;
-	    
+
 	    // vars
 	    var i, j, k;
-	        
+
 	    var w = zeros([rows], '');
-	    
+
 	    for (k = 0; k < Math.min(cols, rows); ++k) {
-	      
+
 	      /*
 	       * **k-th Household matrix**
 	       *
@@ -94233,52 +94313,52 @@
 	       * Household matrix = I - 2 * v * tranpose(v)
 	       *
 	       *  * Initially Q = I and R = A.
-	       *  * Household matrix is a reflection in a plane normal to v which 
+	       *  * Household matrix is a reflection in a plane normal to v which
 	       *    will zero out all but the top right element in R.
 	       *  * Appplying reflection to both Q and R will not change product.
-	       *  * Repeat this process on the (1,1) minor to get R as an upper 
+	       *  * Repeat this process on the (1,1) minor to get R as an upper
 	       *    triangular matrix.
-	       *  * Reflections leave the magnitude of the columns of Q unchanged 
+	       *  * Reflections leave the magnitude of the columns of Q unchanged
 	       *    so Q remains othoganal.
 	       *
-	       */  
-	      
-	      var pivot = Rdata[k][k];          
+	       */
+
+	      var pivot = Rdata[k][k];
 	      var sgn = unaryMinus(sign(pivot));
 	      var conjSgn = conj(sgn);
-	      
+
 	      var alphaSquared = 0;
 
 	      for(i = k; i < rows; i++) {
-	        alphaSquared = addScalar(alphaSquared, multiplyScalar(Rdata[i][k], conj(Rdata[i][k])));        
+	        alphaSquared = addScalar(alphaSquared, multiplyScalar(Rdata[i][k], conj(Rdata[i][k])));
 	      }
-	      
+
 	      var alpha = multiplyScalar(sgn, sqrt(alphaSquared));
-	      
-	      
+
+
 	      if (!isZero(alpha)) {
-	          
+
 	        // first element in vector u
 	        var u1 = subtract(pivot, alpha);
-	        
-	        // w = v * u1 / |u|    (only elements k to (rows-1) are used)    
+
+	        // w = v * u1 / |u|    (only elements k to (rows-1) are used)
 	        w[k] = 1;
-	        
+
 	        for (i = k+1; i < rows; i++) {
 	          w[i] = divideScalar(Rdata[i][k], u1);
-	        }        
-	         
+	        }
+
 	        // tau = - conj(u1 / alpha)
 	        var tau = unaryMinus(conj(divideScalar(u1, alpha)));
-	        
+
 	        var s;
-	        
+
 	        /*
 	         * tau and w have been choosen so that
-	         * 
+	         *
 	         * 2 * v * tranpose(v) = tau * w * tranpose(w)
 	         */
-	         
+
 	        /*
 	         * -- calculate R = R - tau * w * tranpose(w) * R --
 	         * Only do calculation with rows k to (rows-1)
@@ -94287,21 +94367,21 @@
 	         */
 	        for (j = k; j < cols; j++) {
 	          s = 0.0;
-	          
+
 	          // calculate jth element of [tranpose(w) * R]
 	          for (i = k; i < rows; i++) {
 	            s = addScalar(s, multiplyScalar(conj(w[i]), Rdata[i][j]));
 	          }
-	          
+
 	          // calculate the jth element of [tau * transpose(w) * R]
 	          s = multiplyScalar(s, tau);
-	          
+
 	          for (i = k; i < rows; i++) {
 	            Rdata[i][j] = multiplyScalar(
-	              subtract(Rdata[i][j], multiplyScalar(w[i], s)), 
+	              subtract(Rdata[i][j], multiplyScalar(w[i], s)),
 	              conjSgn
-	            );            
-	          }          
+	            );
+	          }
 	        }
 	        /*
 	         * -- calculate Q = Q - tau * Q * w * transpose(w) --
@@ -94312,43 +94392,43 @@
 	         */
 	        for (i = 0; i < rows; i++) {
 	          s = 0.0;
-	          
+
 	          // calculate ith element of [Q * w]
 	          for (j = k; j < rows; j++) {
 	            s = addScalar(s, multiplyScalar(Qdata[i][j], w[j]));
 	          }
-	          
+
 	          // calculate the ith element of [tau * Q * w]
 	          s = multiplyScalar(s, tau);
-	          
+
 	          for (j = k; j < rows; ++j) {
 	            Qdata[i][j] = divideScalar(
-	              subtract(Qdata[i][j], multiplyScalar(s, conj(w[j]))), 
+	              subtract(Qdata[i][j], multiplyScalar(s, conj(w[j]))),
 	              conjSgn
 	            );
 	          }
-	          
+
 	        }
 	      }
-	      
+
 	    }
-	    
+
 	    // coerse almost zero elements to zero
 	    // TODO I feel uneasy just zeroing these values
 	    for (i = 0; i < rows; ++i) {
 	      for (j = 0; j < i && j < cols; ++j) {
 	        if (unequal(0, divideScalar(Rdata[i][j], 1e5))) {
-	          throw new Error('math.qr(): unknown error - ' + 
-	           'R is not lower triangular (element (' + 
+	          throw new Error('math.qr(): unknown error - ' +
+	           'R is not lower triangular (element (' +
 	            i + ', ' + j + ')  = ' + Rdata[i][j] + ')'
 	          );
 	        }
 	        Rdata[i][j] = multiplyScalar(Rdata[i][j], 0);
 	      }
 	    }
-	    
+
 	    // return matrices
-	    return { 
+	    return {
 	      Q: Q,
 	      R: R,
 	      toString: function () {
@@ -94356,13 +94436,13 @@
 	      }
 	    };
 	  };
-	  
+
 	  var _sparseQR = function (m) {
-	    
+
 	    throw new Error('qr not implemented for sparse matrices yet');
-	  
+
 	  };
-	  
+
 	  return qr;
 	}
 
@@ -94620,7 +94700,7 @@
 	   * @return {boolean | Array | Matrix} Returns true when the compared values are unequal, else returns false
 	   */
 	  var unequal = typed('unequal', {
-	    
+
 	    'any, any': function (x, y) {
 	      // strict equality for null and undefined?
 	      if (x === null) { return y !== null; }
@@ -105818,7 +105898,7 @@
 
 	function factory (type, config, load, typed) {
 	  var matrix = load(__webpack_require__(224));
-	  
+
 	  /**
 	   * Filter the items in an array or one dimensional matrix.
 	   *
@@ -107349,7 +107429,7 @@
 	 *
 	 * - First, compare the real values of `x` and `y`
 	 * - If equal, compare the imaginary values of `x` and `y`
-	 * 
+	 *
 	 * @params {Complex} x
 	 * @params {Complex} y
 	 * @returns {number} Returns the comparison result: -1, 0, or 1
@@ -108850,7 +108930,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-	  
+
 	  /**
 	   * Create the cartesian product of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -108919,7 +108999,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-	  
+
 	  /**
 	   * Create the difference of two (multi)sets: every element of set1, that is not the element of set2.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -108998,7 +109078,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-	  
+
 	  /**
 	   * Collect the distinct elements of a multiset.
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109066,7 +109146,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-	  
+
 	  /**
 	   * Create the intersection of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -109137,7 +109217,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-	  
+
 	  /**
 	   * Check whether a (multi)set is a subset of another (multi)set. (Every element of set1 is the element of set2.)
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -109206,7 +109286,7 @@
 	  var index = load(__webpack_require__(238));
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
-	  
+
 	  /**
 	   * Count the multiplicity of an element in a multiset.
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109264,7 +109344,7 @@
 	  var size = load(__webpack_require__(644));
 	  var subset = load(__webpack_require__(480));
 	  var compareNatural = load(__webpack_require__(646));
-	  
+
 	  /**
 	   * Create the powerset of a (multi)set. (The powerset contains very possible subsets of a (multi)set.)
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109302,7 +109382,7 @@
 	  });
 
 	  return setPowerset;
-	  
+
 	  // create subset
 	  function _subset(array, bitarray) {
 	    var result = [];
@@ -109313,7 +109393,7 @@
 	    }
 	    return result;
 	  }
-	  
+
 	  // sort subsests by length
 	  function _sort(array) {
 	    var temp = [];
@@ -109345,7 +109425,7 @@
 	function factory (type, config, load, typed) {
 	  var equal = load(__webpack_require__(262));
 	  var compareNatural = load(__webpack_require__(646));
-	  
+
 	  /**
 	   * Count the number of elements of a (multi)set. When a second parameter is 'true', count only the unique values.
 	   * A multi-dimension array will be converted to a single-dimension array before the operation.
@@ -109410,7 +109490,7 @@
 	  var sort = load(__webpack_require__(645));
 	  var subset = load(__webpack_require__(480));
 	  var setDifference = load(__webpack_require__(665));
-	  
+
 	  /**
 	   * Create the symmetric difference of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
@@ -109468,7 +109548,7 @@
 	  var subset = load(__webpack_require__(480));
 	  var setIntersect = load(__webpack_require__(667));
 	  var setSymDifference = load(__webpack_require__(672));
-	  
+
 	  /**
 	   * Create the union of two (multi)sets.
 	   * Multi-dimension arrays will be converted to single-dimension arrays before the operation.
