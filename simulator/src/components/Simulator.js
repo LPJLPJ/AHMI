@@ -4378,6 +4378,17 @@ module.exports =   React.createClass({
                         }
                     }
                     break;
+                case 'MyTexTime':
+
+                    if (type === 'release'){
+
+                        if (this.simState.inModifingState){
+                            this.simState.inModifingState = false;
+                        }else{
+                            this.simState.inModifingState = true;
+                        }
+                    }
+                    break;
             }
 
             this.mouseState.position.x = 0;
@@ -4401,6 +4412,7 @@ module.exports =   React.createClass({
     handleModifyHighlightingWidget:function (widget,direction) {
         switch (widget.subType){
             case 'MyDateTime':
+            case 'MyTexTime':
 
                 if (direction=='right'){
                     direction = 1;

@@ -5049,6 +5049,9 @@ ideServices
                     case 'MyTexNum':
                         node.add(new fabric.MyTexNum(dataStructure,initiator));
                         break;
+                    case 'MyTexTime':
+                        node.add(new fabric.MyTexTime(dataStructure,initiator));
+                        break;
                     default :
                         console.error('not match widget in preprocess!');
                         break;
