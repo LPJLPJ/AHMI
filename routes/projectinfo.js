@@ -124,7 +124,9 @@ projectRoute.checkSharedKey = function (req, res) {
 projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session.user&&req.session.user.id;
-    req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
+    if(req.session.user){
+        req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
+    }
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -147,7 +149,9 @@ projectRoute.getProjectById = function (req, res) {
                             res.render('ide/index.html')
                         }else{
                             hasValidKey(req.session.user,projectId,project.readOnlySharedKey,function (result) {
-                                req.session.user.readOnlyState = result;//+ save readOnly state in session
+                                if(req.session.user){
+                                    req.session.user.readOnlyState = result;//+ save readOnly state in session
+                                }
                                 if (result){
                                     res.render('ide/index.html')
                                 }else{
