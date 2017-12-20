@@ -16,7 +16,6 @@ ideServices.service('UserTypeService',[function(){
         switch(userType){
             case 'ultimate':
             case 'admin':
-            case 'pro':
                 animationDisabled=false;
                 break;
             default:
@@ -28,6 +27,7 @@ ideServices.service('UserTypeService',[function(){
     this.getCustomFontAuthor=function(){
         var customFontDisabled=false;
         switch (userType){
+            case 'pro':
             case 'ultimate':
             case 'admin':
                 customFontDisabled=false;
