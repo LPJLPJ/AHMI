@@ -4438,39 +4438,121 @@ module.exports =   React.createClass({
                 }else{
                     changedType = changedDateTypes[widget.highlightValue];
                 }
-                switch (changedType){
-                    case 'year':
-                        curWidgetDate.setFullYear(curWidgetDate.getFullYear()+direction);
+                if(widget.info.RTCModeId=='0'){
+                    switch (changedType){
+                        case 'year':
+                            curWidgetDate.setFullYear(curWidgetDate.getFullYear()+direction);
 
-                        break;
-                    case 'month':
-                        curWidgetDate.setMonth(curWidgetDate.getMonth()+direction);
+                            break;
+                        case 'month':
+                            curWidgetDate.setMonth(curWidgetDate.getMonth()+direction);
 
-                        break;
-                    case 'day':
-                        curWidgetDate.setDate(curWidgetDate.getDate()+direction);
+                            break;
+                        case 'day':
+                            curWidgetDate.setDate(curWidgetDate.getDate()+direction);
 
-                        break;
-                    case 'hour':
-                        curWidgetDate.setHours(curWidgetDate.getHours()+direction);
+                            break;
+                        case 'hour':
+                            curWidgetDate.setHours(curWidgetDate.getHours()+direction);
 
-                        break;
-                    case 'minute':
-                        curWidgetDate.setMinutes(curWidgetDate.getMinutes()+direction);
+                            break;
+                        case 'minute':
+                            curWidgetDate.setMinutes(curWidgetDate.getMinutes()+direction);
 
-                        break;
-                    case 'second':
-                        curWidgetDate.setSeconds(curWidgetDate.getSeconds()+direction);
+                            break;
+                        case 'second':
+                            curWidgetDate.setSeconds(curWidgetDate.getSeconds()+direction);
 
-                        break;
+                            break;
+                    }
+                    curOffset = curWidgetDate.getTime() - oldWidgetDateTime;
+                    // console.log(curWidgetDate,oldWidgetDateStr,curOffset);
+                    widget.timeOffset = widget.timeOffset||0;
+                    widget.timeOffset += curOffset;
+                }else{
+                    var ymd=this.findTagByName('时钟变量年月日');
+                    var hms=this.findTagByName('时钟变量时分秒');
+                    var ymdValue;
+                    var hmsValue;
+                    var monthValue;
+                    var yearValue;
+                    switch (changedType){
+                        case 'year':
+                            ymdValue=Number(ymd.value)+10000*direction;
+                            ymd.value=ymdValue.toString();
+                            break;
+                        case 'month':
+                            ymdValue=Number(ymd.value)+100*direction;
+                            if(parseInt(ymdValue%10000/100)>12)ymdValue=ymdValue+(10000-1200)*parseInt(parseInt(ymdValue%10000/100)/12);
+                            if(parseInt(ymdValue%10000/100)===0)ymdValue=ymdValue+(1200-10000);
+                            ymd.value=ymdValue.toString();
+                            break;
+                        case 'day':
+                            ymdValue=Number(ymd.value)+1*direction;
+                            monthValue=parseInt(ymdValue%10000/100)%12;
+                            switch (monthValue){
+                                case 0:
+                                case 1:
+                                case 3:
+                                case 5:
+                                case 7:
+                                case 8:
+                                case 10:
+                                    if(ymdValue%100>31)ymdValue=ymdValue+(100-31)*parseInt(ymdValue%100/31);
+                                    if(ymdValue%100===0)ymdValue=ymdValue+(31-100);
+                                    break;
+                                case 4:
+                                case 6:
+                                case 9:
+                                case 11:
+                                    if(ymdValue%100>=30)ymdValue=ymdValue+(100-30)*parseInt(ymdValue%100/30);
+                                    if(ymdValue%100===0)ymdValue=ymdValue+(30-100);
+                                    break;
+                                case 2:
+                                    yearValue=parseInt(ymdValue/10000);
+                                    if(yearValue%4===0){
+                                        if(ymdValue%100>=29)ymdValue=ymdValue+(100-29)*parseInt(ymdValue%100/29);
+                                        if(ymdValue%100===0)ymdValue=ymdValue+(29-100);
+                                    }else {
+                                        if (ymdValue % 100 >= 28) ymdValue = ymdValue + (100 - 28) * parseInt(ymdValue%100 / 28);
+                                        if(ymdValue%100===0)ymdValue=ymdValue+(28-100);
+                                    }
+                                    break;
+                                default:
+                                    console.log("error!");
+                            }
+                            ymd.value=ymdValue.toString();
+                            break;
+                        case 'hour':
+                            hmsValue=Number(hms.value)+10000*direction;
+                            // if(parseInt(hmsValue%1000000/10000)==99){
+                            //     hmsValue=hmsValue-760000;
+                            // }
+                            // if(parseInt(hmsValue%1000000/10000)>=24)hmsValue=hmsValue-240000;
+                            hms.value=hmsValue.toString();
+                            break;
+                        case 'minute':
+                            hmsValue=Number(hms.value)+100*direction;
+                            if(parseInt(hmsValue%10000/100)==99){
+                                hmsValue=hmsValue-4000;
+                            }else{
+                                if(parseInt(hmsValue%10000/100)>=60)hmsValue=hmsValue-6000+10000;
+                            }
+                            hms.value=hmsValue.toString();
+                            break;
+                        case 'second':
+                            hmsValue=Number(hms.value)+1*direction;
+                            if(hmsValue%100==99){
+                                hmsValue=hmsValue-40;
+                            }else{
+                                if(hmsValue%100>=60)hmsValue=hmsValue-60+100;
+                            }
+                            hms.value=hmsValue.toString();
+                            break;
+                    }
                 }
-                curOffset = curWidgetDate.getTime() - oldWidgetDateTime;
-                // console.log(curWidgetDate,oldWidgetDateStr,curOffset);
-                widget.timeOffset = widget.timeOffset||0;
-                widget.timeOffset += curOffset;
-
+                console.log("parseInt(this.getValueByTagName('时钟变量年月日',0))",parseInt(this.getValueByTagName('时钟变量年月日',0)))
                 this.draw();
-
                 break;
         }
     },
