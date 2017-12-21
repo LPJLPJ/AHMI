@@ -121,7 +121,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function showSpinner() {
             if (window.spinner) {
                 window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                window.spinner.show();
+                window.spinner.show({progress:false});
             }
         }
 
@@ -491,6 +491,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     project = JSON.parse(projectStr);
                     (!!result.saveAsName)?(project.name=result.saveAsName):(project.name=project.name+'副本');
                     (!!result.saveAsAuthor)?(project.author=result.saveAsAuthor):'';
+                    if(result.saveAsResolution){
+                        project.content=saveAsReset(result.saveAsResolution,project.resolution,project.content);
+                        project.resolution=result.saveAsResolution;
+                    }
+
+
                     project.createTime = new Date().toLocaleString();
                     project.lastModifiedTime = new Date().toLocaleString();
 
@@ -551,6 +557,90 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 })
             }
         };
+
+        //另存为重新设置项目及其内部控件大小
+        function saveAsReset(newResolution,oldResolution,content){
+            var widthProportion=(newResolution.split("*")[0])/(oldResolution.split("*")[0]);
+            var heightProportion=(newResolution.split("*")[1])/(oldResolution.split("*")[1]);
+            var content=JSON.parse(content);
+            for(var a in content.pages){
+                if(content.pages[a].layers){
+                    for(var b in content.pages[a].layers){
+                        content.pages[a].layers[b].info.width=Math.round(content.pages[a].layers[b].info.width*widthProportion);
+                        content.pages[a].layers[b].info.height=Math.round(content.pages[a].layers[b].info.height*heightProportion);
+                        content.pages[a].layers[b].info.left=Math.round(content.pages[a].layers[b].info.left*widthProportion);
+                        content.pages[a].layers[b].info.top=Math.round(content.pages[a].layers[b].info.top*heightProportion);
+                        if(content.pages[a].layers[b].subLayers){
+                            for(var c in content.pages[a].layers[b].subLayers){
+                                for(var d in content.pages[a].layers[b].subLayers[c].widgets){
+                                    var type=content.pages[a].layers[b].subLayers[c].widgets[d].type;
+                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.width=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.width*widthProportion);
+                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.height=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.height*heightProportion);
+                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.left=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.left*widthProportion);
+                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.top=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.top*heightProportion);
+                                    if(type=="MyButton"||type=='MyTextArea') {
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
+                                    }
+                                    if(type=='MyTexNum'){
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH*heightProportion);
+                                    }
+                                    if(type=="MyDateTime"||type=='MyNum'){
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth*widthProportion);
+                                    }
+                                    //改变仪表盘指针 取宽高中较小值为边长
+                                    if(type=="MyDashboard"){
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*widthProportion);
+                                        /*if(content.pages[a].layers[b].subLayers[c].widgets[d].info.width-content.pages[a].layers[b].subLayers[c].widgets[d].info.height>0){
+                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.width=content.pages[a].layers[b].subLayers[c].widgets[d].info.height;
+                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*weightProportion);
+                                         }else{
+                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.height=content.pages[a].layers[b].subLayers[c].widgets[d].info.width;
+                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*widthProportion);
+                                         }*/
+                                    }
+
+                                }
+                            }
+                        }
+                        if(content.pages[a].layers[b].showSubLayer){
+                            for(var h in content.pages[a].layers[b].showSubLayer.widgets){
+                                var type1=content.pages[a].layers[b].showSubLayer.widgets[h].type;
+                                content.pages[a].layers[b].showSubLayer.widgets[h].info.width=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.width*widthProportion);
+                                content.pages[a].layers[b].showSubLayer.widgets[h].info.height=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.height*heightProportion);
+                                content.pages[a].layers[b].showSubLayer.widgets[h].info.left=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.left*widthProportion);
+                                content.pages[a].layers[b].showSubLayer.widgets[h].info.top=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.top*heightProportion);
+                                if(type1=="MyButton"||type1=='MyTextArea') {
+                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize*widthProportion);
+                                }
+                                if(type1=='MyTexNum'){
+                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.characterW=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.characterW*widthProportion);
+                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.characterH=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.characterH*heightProportion);
+                                }
+                                if(type1=="MyDateTime"||type1=='MyNum'){
+                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize*widthProportion);
+                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth*widthProportion);
+                                }
+                                if(type1=="MyDashboard"){
+                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength*widthProportion);
+                                }
+                            }
+                        }
+                        //修改动画
+                        if(content.pages[a].layers[b].animations){
+                            for(var x in content.pages[a].layers[b].animations){
+                                content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.x=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.x*widthProportion);
+                                content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.y=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.y*heightProportion);
+                                content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.x=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.x*widthProportion);
+                                content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.y=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.y*heightProportion);
+                            }
+                        }
+                    }
+                }
+            }
+            return JSON.stringify(content);
+        }
 
         /**
          * 改变nav
@@ -681,6 +771,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultAnimation();
             }else if(_index===14){
                 newWidget = TemplateProvider.getDefaultTexNum();
+            }else if(_index===15){
+                newWidget = TemplateProvider.getDefaultTexTime();
             }
             else {
                 return;
@@ -789,7 +881,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 var postFun = function(){
                     if (window.spinner){
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                        window.spinner.show();
+                        showSpinner();
                     }
                     $http({
                         method:'POST',
@@ -824,7 +916,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 if (window){
                     if (window.spinner){
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
-                        window.spinner.show();
+                        showSpinner();
                     }
                     RenderSerive.renderProject(window.projectData,function () {
                         toastr.info('生成成功');
@@ -1446,6 +1538,7 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
     $scope.shareInfo = {
         shared:false,
         sharedKey:'',
+        readOnlySharedKey:'',
         own:false
     }
     loadInfo()
@@ -1457,6 +1550,7 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
         .success(function(data,status,xhr){
             $scope.shareInfo.shared = data.shared
             $scope.shareInfo.sharedKey = data.sharedKey
+            $scope.shareInfo.readOnlySharedKey = data.readOnlySharedKey
             $scope.shareInfo.own = data.own
             $scope.loading = false
             $scope.message = ''
@@ -1481,6 +1575,7 @@ ide.controller('shareModalCtl',['$rootScope','$scope','$uibModalInstance','$http
         .success(function(data,status,xhr){
             $scope.shareInfo.shared = data.shared
             $scope.shareInfo.sharedKey = data.sharedKey
+            $scope.shareInfo.readOnlySharedKey = data.readOnlySharedKey
             $scope.processing = false
             $scope.message = ''
 
@@ -1556,17 +1651,39 @@ ide.service('NavModalCANConfigService',[function(){
 ide.controller('NavModalSaveAsCtrl',['$scope','$uibModalInstance',function($scope,$uibModalInstance){
     $scope.saveAsName = "";
     $scope.saveAsAuthor = "";
+    $scope.saveAsResolution="";
+    $scope.selectCustomResolution="1280*480";
 
     $scope.ok = function(){
+        var data="";
         if (!checkName($scope.saveAsName,$scope.saveAsAuthor)){
             //invalid name
-            $uibModalInstance.dismiss('cancel');
             toastr.error('名称只能是汉字、英文和数字');
+            return;
         }else{
-            var data = {
-                saveAsName:$scope.saveAsName,
-                saveAsAuthor:$scope.saveAsAuthor
-            };
+            if($scope.isScale){
+                if(getResolution()){
+                    var msg="请尽量保持与原尺寸等比例缩放，否则会导致控件变形";
+                    if(confirm(msg)==true){
+                        $scope.selectCustomResolution=getResolution();
+                        data = {
+                            saveAsName:$scope.saveAsName,
+                            saveAsAuthor:$scope.saveAsAuthor,
+                            saveAsResolution:$scope.selectCustomResolution
+                        }
+                    }else{
+                        return;
+                    }
+                }else{
+                    toastr.error('分辨率范围有误');
+                    return;
+                }
+            }else{
+                data = {
+                    saveAsName:$scope.saveAsName,
+                    saveAsAuthor:$scope.saveAsAuthor
+                };
+            }
             $uibModalInstance.close(data);
         }
     };
@@ -1588,5 +1705,20 @@ ide.controller('NavModalSaveAsCtrl',['$scope','$uibModalInstance',function($scop
         }catch (e){
             return false;
         }
+    }
+
+    //获取另存为分辨率
+    function getResolution(){
+        var resolution="";
+        if($scope.selectCustomResolution=='custom'){
+            if($scope.saveAsWidth&&$scope.saveAsHeight){
+                resolution=$scope.saveAsWidth+'*'+$scope.saveAsHeight;
+            }else{
+                return false;
+            }
+        }else{
+            resolution=$scope.selectCustomResolution;
+        }
+        return resolution;
     }
 }]);

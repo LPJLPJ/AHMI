@@ -9,7 +9,7 @@ var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
 var Debugger = require('./Debugger');
 var EasingFunctions = require('../utils/easing');
-var AnimationManager = require('../utils/animationManager')
+var AnimationManager = require('../utils/animationManager');
 var math = require('mathjs');
 var WidgetExecutor = {
 
@@ -1951,6 +1951,9 @@ module.exports =   React.createClass({
                 case 'MyDateTime':
                     this.drawTime(curX,curY,widget,options,cb);
                     break;
+                case 'MyTexTime':
+                    this.drawTexTime(curX,curY,widget,options,cb);
+                    break;
                 case 'MyTextArea':
                     this.drawTextArea(curX,curY,widget,options,cb);
                     break;
@@ -2051,6 +2054,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyDateTime':
                 this.paintTime(curX,curY,widget,options,cb);
+                break;
+            case 'MyTexTime':
+                this.paintTexTime(curX,curY,widget,options,cb);
                 break;
             case 'MyTextArea':
                 this.paintTextArea(curX,curY,widget,options,cb);
@@ -2310,7 +2316,7 @@ module.exports =   React.createClass({
         }
         cb && cb();
     },
-    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth) {
+    drawTextByTempCanvas:function (curX,curY,width,height,text,font,arrange,byteMode,maxFontWidth,spacing,paddingRatio) {
 
         var text = String(text)||'';
         var font = font||{};
@@ -2322,6 +2328,8 @@ module.exports =   React.createClass({
         tempcanvas.height = height;
         var tempctx = tempcanvas.getContext('2d');
         tempctx.save();
+        if(spacing===undefined)spacing=0;
+        if(paddingRatio===undefined)paddingRatio=0;
         if (arrange==='vertical'){
             tempctx.translate(tempcanvas.width/2,tempcanvas.height/2);
             tempctx.rotate(Math.PI/2);
@@ -2340,12 +2348,20 @@ module.exports =   React.createClass({
             // var widthOfDateTimeStr=maxFontWidth*text.length;
             // var initXPos = (width-widthOfDateTimeStr)/2;
             // var xCoordinate = initXPos+maxFontWidth/2;
-            var xCoordinate = ((width-maxFontWidth*text.length)+maxFontWidth)/2;
+            var xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth/2 :((width-maxFontWidth*text.length)+maxFontWidth)/2;//如果装不下字符串，从maxFontWidth处开始显示
+            if(paddingRatio!==0)xCoordinate=paddingRatio*maxFontWidth+0.5*maxFontWidth;
+            var notItalic = (-1 == fontStr.indexOf('italic'));
+            var italicAjust = notItalic ? 0 : maxFontWidth/2; //如果是斜体的话，需要斜体往右伸出的宽度
+            // var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
+            // displayStep+=spacing;
             var yCoordinate = 0.5*height;
             for(i=0;i<text.length;i++){
                 tempctx.fillText(text[i],xCoordinate,yCoordinate);
+                xCoordinate+=spacing;
                 xCoordinate+=maxFontWidth;
+
             }
+
         }else{
             tempctx.fillText(text,0.5*width,0.5*height);
         }
@@ -2427,7 +2443,7 @@ module.exports =   React.createClass({
             if (widget.info.enableAnimation){
                 //using animation
 
-
+                var duration = (widget.transition && widget.transition.duration) || 0
 
 
                 //clear old animation
@@ -2447,7 +2463,7 @@ module.exports =   React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue,curProgress,500,30,null,function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue,curProgress,duration,30,null,function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this),function () {
@@ -2838,6 +2854,8 @@ module.exports =   React.createClass({
         var fontColor = widget.info.fontColor;
         var tex = widget.texList&&widget.texList[0];
         var maxFontWidth = widget.info.maxFontWidth;
+        var spacing=widget.info.spacing;
+        var paddingRatio=widget.info.paddingRatio;
         // lg(tex,widget)
 
         var font = {};
@@ -2862,7 +2880,7 @@ module.exports =   React.createClass({
         //draw
         //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         //逐字渲染字符串
-        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange,true,maxFontWidth);
+        this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange,true,widget.info.fontSize,spacing,paddingRatio);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
@@ -2960,6 +2978,141 @@ module.exports =   React.createClass({
             dateString=''+year+'-'+month+'-'+day;
         }
         return dateString
+    },
+
+    drawTexTime:function (curX,curY,widget,options,cb) {
+        var curDate;
+        if (widget.info.RTCModeId=='0'){
+            curDate =  this.getCurDateOriginalData(widget,'inner',widget.timeOffset);
+        }else{
+            curDate = this.getCurDateOriginalData(widget,'outer');
+        }
+        widget.curDate = curDate;
+        //timer 1 s
+        if (!(widget.timerId && widget.timerId!==0)){
+            widget.timerId = setInterval(function () {
+                this.draw();
+            }.bind(this),1000)
+            var innerTimerList = this.state.innerTimerList;
+            innerTimerList.push(widget.timerId);
+            this.setState({innerTimerList:innerTimerList});
+        }
+    },
+    paintTexTime:function (curX,curY,widget,options,cb) {
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var dateTimeModeId = widget.info.dateTimeModeId;
+        var highlightTex = widget.texList&&widget.texList[1];
+        var numTex = widget.texList&&widget.texList[0];
+
+        //生成时间日期字符串
+        var curDate = widget.curDate;
+        var dateTimeString = '';
+        if (dateTimeModeId == '0'){
+            //time
+            dateTimeString = this.getCurTime(curDate);
+        }else if(dateTimeModeId=='1'){
+            dateTimeString = this.getCurTimeHM(curDate);
+        }else{
+            //date
+            dateTimeString = this.getCurDate(curDate,dateTimeModeId);
+        }
+
+        //逐字渲染字符串
+        this.paintStyledTexTime(widget,dateTimeString,curX,curY,width,height);
+
+        //hightlight
+        var eachWidth=0;
+        var delimiterWidth=0;
+        var eachHeight = 0;
+        var delimiterHeight = 0;
+// console.log(widget)
+        if (widget.highlight){
+
+            if (widget.info.arrange =='vertical'){
+                delimiterHeight = widget.delimiterWidth;
+                if (dateTimeModeId=='0'){
+                    eachHeight = (widget.info.height - 2*delimiterHeight)/3;
+                    this.drawHighLight(curX,(eachHeight+delimiterHeight)*widget.highlightValue+curY,width,eachHeight,highlightTex.slices[0]);
+                }else if(dateTimeModeId=='1'){
+                    eachHeight = (widget.info.height - delimiterHeight)/2;
+                    this.drawHighLight(curX,(eachHeight+delimiterHeight)*widget.highlightValue+curY,width,eachHeight,highlightTex.slices[0]);
+                }else{
+                    eachHeight = (widget.info.height - 2*delimiterHeight)/4;
+                    if (widget.highlightValue == 0){
+                        this.drawHighLight(curX,curY,width,eachHeight*2,highlightTex.slices[0]);
+                    }else{
+                        this.drawHighLight(curX,curY+(eachHeight+delimiterHeight)*widget.highlightValue+eachHeight,width,eachHeight,highlightTex.slices[0]);
+                    }
+
+                }
+            }else{
+                delimiterWidth = widget.delimiterWidth;
+                if (dateTimeModeId=='0'){
+                    eachWidth = (widget.info.width - 2*delimiterWidth)/3;
+                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,highlightTex.slices[0]);
+                }else if(dateTimeModeId=='1'){
+                    eachWidth = (widget.info.width - widget.delimiterWidth)/2;
+                    this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue,curY,eachWidth,height,highlightTex.slices[0]);
+                }else{
+                    eachWidth = (widget.info.width - 2*widget.delimiterWidth)/4;
+                    if (widget.highlightValue == 0){
+                        this.drawHighLight(curX,curY,eachWidth*2,height,highlightTex.slices[0]);
+                    }else{
+                        this.drawHighLight(curX+(eachWidth+delimiterWidth)*widget.highlightValue+eachWidth,curY,eachWidth,height,highlightTex.slices[0]);
+                    }
+
+                }
+            }
+
+        }
+
+        cb && cb();
+
+
+    },
+    paintStyledTexTime:function(widget,numElems,clipX,clipY,clipW,clipH){
+        var offctx = this.offctx
+        var charW = widget.info.characterW;
+        var charH = widget.info.characterH;
+
+        offctx.save()
+        offctx.beginPath()
+        offctx.rect(clipX,clipY,clipW,clipH);
+        offctx.clip();
+
+        var leftOffset = 0
+        var curTexSlice = null;
+        for(var i=0;i<numElems.length;i++){
+            switch (numElems[i]){
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    curTexSlice = widget.texList[0].slices[parseInt(numElems[i])];
+                    break;
+                case ':':
+                    curTexSlice = widget.texList[0].slices[10];
+                    break;
+                case '/':
+                    curTexSlice = widget.texList[0].slices[11];
+                    break;
+                case '-':
+                    curTexSlice = widget.texList[0].slices[12];
+                    break;
+            }
+            if (curTexSlice){
+                this.drawBg(clipX+leftOffset,clipY,charW,charH,curTexSlice.imgSrc,curTexSlice.color,offctx)
+            }
+            leftOffset+=charW;
+        }
+        offctx.restore()
     },
 
     drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
@@ -3158,9 +3311,17 @@ module.exports =   React.createClass({
 
 
                 if(enableAnimation){
-                    var totalFrameNum = 10
+                    var fps = 30
+                    var duration = (widget.transition&&widget.transition.duration)||0
+                    var totalFrameNum = duration/1000 * fps
+
+                    totalFrameNum = totalFrameNum>1? totalFrameNum:1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        // console.log(totalFrameNum)
+                        widget.curTotalFrameNum = totalFrameNum
+                        // var startTime = new Date()
+                        // console.log('start time',startTime)
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1
@@ -3169,12 +3330,15 @@ module.exports =   React.createClass({
                             }
                             if (widget.curFrameNum > totalFrameNum - 1) {
                                 clearInterval(widget.animateTimerId)
+                                // var endTime = new Date()
+                                // console.log('end time',endTime,endTime-startTime)
+
                                 widget.animateTimerId = 0
                                 widget.curFrameNum = 0
 
                             }
                             this.draw()
-                        }.bind(this), 30)
+                        }.bind(this), 1000/fps)
                     }
                 }
 
@@ -3210,6 +3374,7 @@ module.exports =   React.createClass({
         var overFlowStyle = widget.info.overFlowStyle;
         var maxFontWidth = widget.info.maxFontWidth;
         var align = widget.info.align;
+        var spacing = widget.info.spacing;
         //console.log('maxFontWidth',maxFontWidth,'align',align);
         //size
         var curWidth = widget.info.width;
@@ -3252,7 +3417,7 @@ module.exports =   React.createClass({
                         name:'数字背景'
                     }
 
-                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount);
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing);
                     offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height)
 
                 } else {
@@ -3261,7 +3426,7 @@ module.exports =   React.createClass({
 
                     //drawbackground
                     var bgTex = widget.texList[0].slices[0]
-                    var totalFrameNum = 10
+                    var totalFrameNum = widget.curTotalFrameNum || 1
                     // //draw
                     var oldHeight=0;
                     var oleWidth=0;
@@ -3276,14 +3441,14 @@ module.exports =   React.createClass({
                             newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }
 
-                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
                         oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight
                         if (oldHeight>0){
                             offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight)
                         }
 
 
-                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
                         oldHeight = curFrameNum  / totalFrameNum * curHeight
                         if (oldHeight>0){
                             offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight)
@@ -3297,13 +3462,13 @@ module.exports =   React.createClass({
                             tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                             newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
                         }
-                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
                         oldWidth = (totalFrameNum - curFrameNum)  / totalFrameNum * curWidth
                         if (oleWidth>0){
                             offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX+curWidth-oldWidth, curY , oldWidth, curHeight)
                         }
 
-                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount)
+                        this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas,arrange,align,maxFontWidth,decimalCount,spacing)
 
                         oldWidth = curFrameNum  / totalFrameNum * curWidth;
                         if (oleWidth>0){
@@ -3365,9 +3530,13 @@ module.exports =   React.createClass({
 
 
                 if(enableAnimation){
-                    var totalFrameNum = 10
+                    var fps = 30
+                    var duration = (widget.transition&&widget.transition.duration)||0
+                    var totalFrameNum = duration/1000 * fps
+                    totalFrameNum = totalFrameNum>1? totalFrameNum:1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        widget.curTotalFrameNum = totalFrameNum
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1
@@ -3381,7 +3550,7 @@ module.exports =   React.createClass({
 
                             }
                             this.draw()
-                        }.bind(this), 30)
+                        }.bind(this), 1000/fps)
                     }
                 }
 
@@ -3459,7 +3628,7 @@ module.exports =   React.createClass({
 
                 //drawbackground
 
-                var totalFrameNum = 10
+                var totalFrameNum = widget.curTotalFrameNum || 1
                 // //draw
                 var oldHeight=0;
                 var oleWidth=0;
@@ -3596,11 +3765,13 @@ module.exports =   React.createClass({
         offctx.restore()
 
     },
-    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas,_arrange, align, maxFontWidth, decimalCount) {
+    drawStyleString: function (numStr, curWidth, curHeight, font, bgTex, tempcanvas,_arrange, align, maxFontWidth, decimalCount,spacing) {
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
-        tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height)
-        tempCtx.save()
+        tempCtx.clearRect(0,0,tempcanvas.width,tempcanvas.height);
+        tempCtx.save();
+        tempCtx.baseLine = 'middle';
+        tempCtx.textAlign = 'center';
         // console.log('arrange',arrange)
         if (arrange==='vertical'){
             tempCtx.translate(tempcanvas.width/2,tempcanvas.height/2);
@@ -3616,31 +3787,45 @@ module.exports =   React.createClass({
         // tempCtx.strokeRect(0,0,curWidth,curHeight);
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染每个字符的起始位置
-            widthOfNumStr;       //渲染的字符串的长度
+            widthOfNumStr,       //渲染的字符串的长度
+            paddingX;
+        paddingX = Math.ceil(maxFontWidth/10);
         widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
+        widthOfNumStr += (numStr.length-1)*spacing;
+
         switch(align){
             case 'left':
-                initXPos=0;
+                initXPos=paddingX;
                 break;
             case 'right':
-                initXPos=curWidth-widthOfNumStr;
+                initXPos= (widthOfNumStr > curWidth) ? 0 : curWidth-(widthOfNumStr+paddingX);
                 break;
             case 'center':
             default:
-                initXPos = (curWidth-widthOfNumStr)/2;
+                curWidth-=paddingX*2;
+                initXPos = (widthOfNumStr > curWidth) ? 0 : (curWidth-widthOfNumStr)/2;
                 break;
         }
-        xCoordinate = initXPos;
-        for(i=0;i<numStr.length;i++){
-            // tempCtx.strokeStyle="#00F";/*设置边框*/
-            // tempCtx.lineWidth=1;边框的宽度
-            // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
-            tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
+        // console.log('initXPos',initXPos,'paddingX',paddingX);
+        xCoordinate = initXPos+paddingX;
+        xCoordinate += maxFontWidth/2;
+        /*
+         修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
+         */
+        var displayStep = maxFontWidth;
+
+        for(var i=0;i<numStr.length;i++){
             if(numStr[i]=='.'){
-                xCoordinate+=maxFontWidth/2;
+                // console.log('displayStep',displayStep);
+                tempCtx.fillText(numStr[i],xCoordinate-maxFontWidth/5,curHeight/2);
+                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth/2,maxFontWidth);
+                xCoordinate+=displayStep/2;
             }else{
-                xCoordinate+=maxFontWidth;
+                tempCtx.fillText(numStr[i],xCoordinate,curHeight/2);
+                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth,maxFontWidth);
+                xCoordinate+=displayStep;
             }
+            xCoordinate+=spacing;
         }
         // switch(tempCtx.textAlign){
         //     case 'left':
@@ -3743,7 +3928,7 @@ module.exports =   React.createClass({
             if (widget.info.enableAnimation){
                 //using animation
 
-
+                var duration = (widget.transition && widget.transition.duration) || 0
 
 
                 //clear old animation
@@ -3763,7 +3948,7 @@ module.exports =   React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,500,30,null,function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue,curDashboardTagValue,duration,30,null,function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this),function () {
@@ -4736,6 +4921,7 @@ module.exports =   React.createClass({
     handleModifyHighlightingWidget:function (widget,direction) {
         switch (widget.subType){
             case 'MyDateTime':
+            case 'MyTexTime':
 
                 if (direction=='right'){
                     direction = 1;
