@@ -449,19 +449,20 @@ ideServices
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
+            var text='文本';
+            var fontSize=15;
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
+                width:fontSize*(text.length+1),height:fontSize*2,
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
 
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
 
-                text:'文本',
+                text:text,
                 fontName:'正文',
                 fontFamily:'宋体',
-                fontSize:15,
+                fontSize:fontSize,
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
                 fontItalic:"",
@@ -602,10 +603,14 @@ ideServices
 
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font));
-            var width = 3*maxFontWidth;
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
+            var maxFontWidth = 30;//+
+            var paddingRatio = 0.1;
+            var spacing = -10;
+            var width = 3*(maxFontWidth+spacing)+Math.ceil(maxFontWidth*paddingRatio*2);
+            var height = maxFontWidth*(1+2*paddingRatio);
             var info={
-                width:width, height: 33,
+                width:width, height: height,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
@@ -622,6 +627,7 @@ ideServices
 
                 align:'center',//数字对齐方式
                 arrange:'horizontal',//数字方向，垂直vertical，水平horizontal
+                spacing:spacing,//数字之间的间距，默认为-10
 
                 //arrange:true,         //true:横向 false:竖向
                 numValue:1,
@@ -631,7 +637,8 @@ ideServices
                 fontBold:"100",
                 fontItalic:"",
                 maxFontWidth:maxFontWidth,   //最大字体宽度
-                enableAnimation:false //显示模式标志，false:无动画 true:有动画
+                enableAnimation:false, //显示模式标志，false:无动画 true:有动画
+                paddingRatio:paddingRatio
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -784,26 +791,37 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-            var width = 8*maxFontWidth;
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            // var maxFontWidth = 20;//+
+            // var width = 8*maxFontWidth;
+
+            //edit by lx in 17/12/18
+            var maxFontWidth = 30;//+
+            var paddingRatio = 0.1;
+            var spacing = -10;
+            var width = 8*(maxFontWidth+spacing)+Math.ceil(maxFontWidth*paddingRatio*2);
+            var height = maxFontWidth*(1+2*paddingRatio);
             var info={
-                width:width, height: 22,
+                width:width, height: height,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
                 dateTimeModeId:'0',//0表示时间秒，1表示时分，2表示斜杠日期，3表示减号日期
                 RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
                 fontFamily:'宋体',
-                fontSize:20,
+                fontSize:maxFontWidth,
                 fontColor:'rgba(255,255,255,1)',
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
                 disableHighlight:false,
                 fontBold:"100",
                 fontItalic:"",
-                maxFontWidth:maxFontWidth   //最大字体宽度
+                maxFontWidth:maxFontWidth,   //最大字体宽度
+                spacing:spacing,//数字之间的间距，默认为-10
+                paddingRatio:paddingRatio//padding的值=paddingRatio*maxFontWidth
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -816,6 +834,61 @@ ideServices
                 texList:[{
                     currentSliceIdx:0,
                     name:'时间日期',
+                    slices:[{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
+                    }]
+                }]
+
+            }
+        };
+        this.getDefaultTexTime=function(){
+            var info={
+                characterW:30,
+                characterH:30,
+                width:240, height: 30,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                initValue:0,
+                dateTimeModeId:'0',//0表示时间秒，1表示时分，2表示斜杠日期，3表示减号日期
+                RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
+
+                align:'center',
+                arrange:"horizontal",   //horizontal:水平   vertical:竖直
+                disableHighlight:false,//
+                maxFontWidth:30  //最大字体宽度
+            };
+            var slices = [];
+            for(var i=0,il=13;i<il;i++){
+                slices[i] = {};
+                slices[i].imgSrc = '';
+                slices[i].color = 'rgba(120,120,120,1)';
+                if(i<=9){
+                    slices[i].name = '数字'+i;
+                }else if(i===10){
+                    slices[i].name = ':';
+                }else if(i===11){
+                    slices[i].name = '/';
+                }else if(i===12){
+                    slices[i].name = '-';
+                }
+            }
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTexTime',
+                type: Type.MyTexTime,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'时间日期纹理',
+                    slices:slices,
+                },{
+                    currentSliceIdx:0,
+                    name:'高亮纹理',
                     slices:[{
                         color:'rgba(244,244,244,0.3)',
                         imgSrc:'',

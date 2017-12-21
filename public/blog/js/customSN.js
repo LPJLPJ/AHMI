@@ -508,16 +508,17 @@ $summernote.summernote({
     prettifyHtml:true,
     callbacks:{
         onImageUpload:function (files) {
-            var currentId = '59e81766895ec024825728e2'
+            var currentId = parseQuery().id
 
-            var url = '/support/'+currentId+'/resource'
+            var url = '/blog/resources/upload?blogId='+currentId
             $summernote.summernote('progressBar.showProgress')
             sendFiles(files,url,function (msg) {
                 //close dialog
                 $summernote.summernote('progressBar.hideProgress')
                 $summernote.summernote('restoreRange')
 
-                var baseUrl = url+'/'
+                var baseUrl = '/public/blog/media/'+currentId+'/'
+                console.log(baseUrl)
                 for (var i=0;i<files.length;i++){
                     insertSingleImage($summernote,baseUrl+files[i].name,files[i].name)
                 }

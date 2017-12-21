@@ -6,6 +6,7 @@ var UserModel = require('../db/models/UserModel');
 var CommentModel = require('../db/models/CommentModel');
 var path = require('path');
 var fs = require('fs');
+var fse = require('fs-extra')
 var errHandler = require('../utils/errHandler');
 var formidable = require('formidable');
 var _ = require('lodash');
@@ -192,7 +193,7 @@ BlogRoute.deleteBlog = function (req, res) {
                     }else{
                         //valid
                         //delete resources
-                        deleteBatchResources(_blog.resources,function (errFiles) {
+                        deleteBatchResources(blogId,_blog.resources,function (errFiles) {
                             BlogModel.deleteById(blogId,function (err) {
                                 if (err){
                                     errHandler(res,500,'delete error')
@@ -245,7 +246,7 @@ BlogRoute.unpublishBlog = function (req, res) {
     }
 }
 
-function deleteBatchResources(files,cb) {
+function deleteBatchResources(blogId,files,cb) {
     var count = files.length;
     var errFiles = []
     var deleteHandler = function (err,errFile) {
@@ -260,16 +261,16 @@ function deleteBatchResources(files,cb) {
     }
     if (count>0){
         files.map(function (_file) {
-            deleteTargetResource(_file,deleteHandler)
+            deleteTargetResource(blogId,_file,deleteHandler)
         })
     }else{
         cb &&cb(errFiles)
     }
 
 }
-function deleteTargetResource(fileName,cb) {
+function deleteTargetResource(blogId,fileName,cb) {
     if (fileName) {
-        var fileUrl = path.join(baseUrl,fileName)
+        var fileUrl = path.join(baseUrl,blogId,fileName)
 
         fs.stat(fileUrl,function (err,stats) {
             if (err){
@@ -507,7 +508,7 @@ BlogRoute.deleteResource = function (req, res) {
             })
         }
         if (fileName) {
-            var fileUrl = path.join(baseUrl,fileName)
+            var fileUrl = path.join(baseUrl,blogId,fileName)
 
             fs.stat(fileUrl,function (err,stats) {
                 if (err){
@@ -535,44 +536,52 @@ BlogRoute.deleteResource = function (req, res) {
 BlogRoute.uploadImage = function (req,res) {
     var blogId = req.query.blogId
     if (blogId){
-        uploadSingleFile(req,res,function (err,files) {
+        var curDstPath = path.join(baseUrl,blogId)
+        fse.ensureDir(curDstPath,function (err) {
             if (err){
-                errHandler(res,500,'upload error')
-            }else{
-                //save files
-                BlogModel.findById(blogId,function (err,_blog) {
-                    if (err){
-                        errHandler(res,500,'invalid blogId')
-                    }else{
-                        var oldResources = _blog.resources ||[]
-                        _blog.resources = _.union(oldResources,files)
-                        _blog.save(function (err) {
-                            if (err){
-                                errHandler(res,500,'save resources error')
-                            }else{
-                                res.end('ok')
-                            }
-                        })
-
-                    }
-                })
-
+                return errHandler(res,500,'create media dir error')
             }
+            uploadSingleFile(req,res,curDstPath,function (err,files) {
+                if (err){
+                    errHandler(res,500,'upload error')
+                }else{
+                    //save files
+                    BlogModel.findById(blogId,function (err,_blog) {
+                        if (err){
+                            errHandler(res,500,'invalid blogId')
+                        }else{
+                            var oldResources = _blog.resources ||[]
+                            _blog.resources = _.union(oldResources,files)
+                            _blog.save(function (err) {
+                                if (err){
+                                    errHandler(res,500,'save resources error')
+                                }else{
+                                    res.end('ok')
+                                }
+                            })
+
+                        }
+                    })
+
+                }
+            })
         })
+
     }else{
         errHandler(res,500,'invalid blogId')
     }
 
 }
 
-function uploadSingleFile(req, res,cb){
+function uploadSingleFile(req, res,dstDirPath,cb){
 
     var fields={}
     var files = []
     var form = new formidable.IncomingForm()
     form.encoding = 'utf-8'
     form.multiples = true
-    form.uploadDir = baseUrl
+    form.uploadDir = dstDirPath
+    // form.uploadDir = baseUrl
     form.on('field',function(name, value){
         fields[name] = value
         // console.log(arguments)

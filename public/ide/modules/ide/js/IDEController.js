@@ -120,6 +120,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         }
     }
 
+    function updateSpinner(value) {
+        window.spinner && window.spinner.update(value*100)
+    }
+
     function readUserType(){
         var userType = 'basic';
         if(window.local){
@@ -262,11 +266,19 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     function loadFromContent(data,id) {
         //若是分享的工程，则需要开启socket
-        console.log('data.shared',data.shared);
+        // console.log('data.shared',data);
         if(!!data.shared){
-            if(!socketIOService.getSocket()){
+            if(!!data.readOnlyState){
+                //在分享状态下，并且以只读方式打开，不用打开socket进行排队
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 0;
+                toastr.warning('注意：您无法执行保存工程操作','只读模式');
+                toastr.options.closeButton = close;
+                toastr.options.timeOut = 1000;
+            }else if(!socketIOService.getSocket()){
                 initSocketIO(data.userId);
             }
+
         }
         //change html title to name
         var name = data&&data.name||''
@@ -294,6 +306,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             var resourceList = globalProject.resourceList;
             // console.log('resourceList',resourceList);
             var count = resourceList.length;
+            var rLen = resourceList.length
             var globalResources = ResourceService.getGlobalResources();
             window.globalResources = globalResources;
 
@@ -305,6 +318,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     resourceObj.complete = true;
                 }
                 count = count - 1;
+
+                updateSpinner((rLen-count)/rLen)
                 if (count<=0){
                     // toastr.info('loaded');
                     TemplateProvider.saveProjectFromGlobal(globalProject);
@@ -321,6 +336,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 }
             }else{
                 // console.log(globalProject);
+                updateSpinner(100)
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -414,6 +430,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         $scope.$on('LoadUp', function () {
 
             loadStep++;
+
             if (loadStep == 6) {
                 //到达第8步,加载完成
                 showIDE();
@@ -424,7 +441,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     function showIDE() {
         $timeout(function () {
             $scope.ide.loaded=true;
-            window.spinner && window.spinner.hide();
+            window.spinner && window.spinner.hide(true);
             // intervalSave();
         },200)
     }
@@ -1121,6 +1138,9 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 break;
             case 'MyTexNum':
                 node.add(new fabric.MyTexNum(dataStructure,initiator));
+                break;
+            case 'MyTexTime':
+                node.add(new fabric.MyTexTime(dataStructure,initiator));
                 break;
             default :
                 console.error('not match widget in preprocess!');

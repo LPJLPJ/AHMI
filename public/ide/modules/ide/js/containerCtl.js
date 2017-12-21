@@ -64,6 +64,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
             }
             //console.log(KeydownService.isCtrlPressed());
             if (KeydownService.isValidKeyPair(currentKey)){
+                console.log('currentKey',currentKey,e);
 
                 // console.log(currentKey)
                 //emit

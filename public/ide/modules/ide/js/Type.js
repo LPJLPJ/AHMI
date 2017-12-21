@@ -31,6 +31,7 @@ ideServices.
         var MyVideo=this.MyVideo="MyVideo";
         var MyAnimation=this.MyAnimation="MyAnimation";
         var MyTexNum=this.MyTexNum="MyTexNum";
+        var MyTexTime = this.MyTexTime = 'MyTexTime';
 
         var General = this.General = "general"
 
