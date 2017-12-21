@@ -51936,7 +51936,8 @@ module.exports = React.createClass({
             position: {
                 x: 0,
                 y: 0
-            }
+            },
+            timeStamp: Date.now()
         };
         var offcanvas = this.refs.offcanvas;
         var projectWidth = data.size.width;
@@ -53333,12 +53334,25 @@ module.exports = React.createClass({
                 offctx.transform(t.a, t.b, t.c, t.d, t.e, t.f);
             }
 
+            this.showBorder(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+            this.clipToRect(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+            // offctx.translate(canvasData.contentOffsetX,canvasData.contentOffsetY)
+
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
             var transition = canvasData.transition;
 
             this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition);
             offctx.restore();
         } else {}
+    },
+    showBorder: function showBorder(ctx, originX, originY, w, h) {
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(originX + w, originY);
+        ctx.lineTo(originX + w, originY + h);
+        ctx.lineTo(originX, originY + h);
+        ctx.closePath();
+        ctx.stroke();
     },
     clipToRect: function clipToRect(ctx, originX, originY, w, h) {
         ctx.beginPath();
@@ -53454,6 +53468,8 @@ module.exports = React.createClass({
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         offctx.save();
+        //scroll sublayer
+        offctx.translate(subCanvas.contentOffsetX, subCanvas.contentOffsetY);
         if (subCanvas.transform) {
             var m = subCanvas.transform;
             offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
@@ -55932,8 +55948,8 @@ module.exports = React.createClass({
                             var widgetList = subCanvas.widgetList;
                             widgetList.sort(this.compareZIndex);
                             var curWidgetRealPoint = {
-                                x: curCanvasRealPoint.x - canvas.x,
-                                y: curCanvasRealPoint.y - canvas.y
+                                x: curCanvasRealPoint.x - canvas.x - (subCanvas.contentOffsetX || 0),
+                                y: curCanvasRealPoint.y - canvas.y - (subCanvas.contentOffsetY || 0)
                             };
 
                             for (var i = widgetList.length - 1; i >= 0; i--) {
@@ -56118,6 +56134,7 @@ module.exports = React.createClass({
         this.mouseState.state = 'press';
         this.mouseState.position.x = x;
         this.mouseState.position.y = y;
+        this.mouseState.timeStamp = Date.now();
 
         var targets = this.findClickTargets(x, y);
         this.state.currentPressedTargets = targets;
@@ -56126,6 +56143,8 @@ module.exports = React.createClass({
             if (targets[i].type == 'widget') {
                 this.handleWidgetPress(targets[i], _.cloneDeep(this.mouseState));
                 this.handleTargetAction(targets[i], 'Press');
+            } else if (targets[i].type == 'MyLayer') {
+                this.handleCanvasPress(targets[i], _.cloneDeep(this.mouseState));
             }
         }
     },
@@ -56362,6 +56381,7 @@ module.exports = React.createClass({
         };
     },
     handleMove: function handleMove(e) {
+
         var relativeRect = this.getRelativeRect(e);
         var x = relativeRect.x;
         var y = relativeRect.y;
@@ -56369,25 +56389,93 @@ module.exports = React.createClass({
             return;
         }
 
+        var lastMouseState = _.cloneDeep(this.mouseState);
+
         this.mouseState.position.x = x;
         this.mouseState.position.y = y;
+        this.mouseState.timeStamp = Date.now();
+
+        var timeD = (this.mouseState.timeStamp - lastMouseState.timeStamp) / 1000.0;
+        this.mouseState.speedX = parseInt((this.mouseState.position.x - lastMouseState.position.x) / timeD) || 0;
+        this.mouseState.speedY = parseInt((this.mouseState.position.y - lastMouseState.position.y) / timeD) || 0;
 
         if (this.mouseState.state === 'press' || this.mouseState.state === 'dragging') {
             this.mouseState.state = 'dragging';
-            this.handleDragging(_.cloneDeep(this.mouseState));
+            this.handleDragging(_.cloneDeep(this.mouseState), lastMouseState);
         } else {
             this.mouseState.state = 'move';
         }
     },
     handleHolding: function handleHolding() {},
-    handleDragging: function handleDragging(mouseState) {
+    handleDragging: function handleDragging(mouseState, lastMouseState) {
         var targets = this.state.currentPressedTargets;
-        for (var i = 0; i < targets.length; i++) {
-            if (targets[i].type == 'widget') {
-                this.handleWidgetDrag(targets[i], mouseState);
-                this.handleTargetAction(targets[i], 'drag');
-            }
+
+        var workTarget = targets[targets.length - 1];
+        if (workTarget.type == 'widget') {
+            this.handleWidgetDrag(workTarget, mouseState);
+            this.handleTargetAction(workTarget, 'drag');
+        } else if (workTarget.type == 'MyLayer') {
+            this.handleCanvasDrag(workTarget, mouseState, lastMouseState);
         }
+    },
+    handleCanvasPress: function handleCanvasPress(canvas, mouseState) {
+        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
+        if (subCanvas.scrollTimerId) {
+            clearInterval(subCanvas.scrollTimerId);
+        }
+    },
+
+    handleCanvasDrag: function handleCanvasDrag(canvas, mouseState, lastMouseState) {
+
+        // var originalPointX = canvas.innerX || 0
+        // var originalPointY = canvas.innerY || 0
+        var lastMousePointX = lastMouseState.position.x || 0;
+        var lastMousePointY = lastMouseState.position.y || 0;
+        var mousePointX = mouseState.position.x || 0;
+        var mousePointY = mouseState.position.y || 0;
+        var offsetX = mousePointX - lastMousePointX;
+        var offsetY = mousePointY - lastMousePointY;
+
+        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
+        if (subCanvas.scrollTimerId) {
+            clearInterval(subCanvas.scrollTimerId);
+        }
+
+        subCanvas.width = 800;
+        subCanvas.height = 400;
+
+        subCanvas.contentOffsetX = subCanvas.contentOffsetX || 0;
+        subCanvas.contentOffsetY = subCanvas.contentOffsetY || 0;
+        var nextContentOffsetX = subCanvas.contentOffsetX + offsetX;
+        var nextContentOffsetY = subCanvas.contentOffsetY + offsetY;
+        subCanvas.contentOffsetX = this.limitValueBetween(nextContentOffsetX, canvas.w - subCanvas.width, 0);
+        subCanvas.contentOffsetY = this.limitValueBetween(nextContentOffsetY, canvas.h - subCanvas.height, 0);
+
+        //canvas scroll effect
+        var elem = subCanvas;
+
+        var stepX = mouseState.speedX / (1000 / 30);
+        var stepY = mouseState.speedY / (1000 / 30);
+        var factor = 2;
+        var signX = stepX >= 0 ? 1 : -1;
+        var signY = stepY > 0 ? 1 : -1;
+        console.log(stepX, stepY);
+        elem.scrollTimerId = setInterval(function () {
+
+            elem.contentOffsetX = this.limitValueBetween(elem.contentOffsetX + stepX, canvas.w - subCanvas.width, 0);
+            elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY + stepY, canvas.h - subCanvas.height, 0);
+
+            stepX -= factor * signX;
+            stepY -= factor * signY;
+            stepX = stepX * signX <= 0 ? 0 : stepX;
+            stepY = stepY * signY <= 0 ? 0 : stepY;
+            if (stepX == 0 && stepY == 0) {
+                clearInterval(elem.scrollTimerId);
+            }
+            // if (count==0){
+            //     clearInterval(elem.scrollTimerId)
+            // }
+        }.bind(this), 30);
     },
     handleWidgetDrag: function handleWidgetDrag(widget, mouseState) {
         var subType = widget.subType;
@@ -56493,19 +56581,28 @@ module.exports = React.createClass({
     handleRelease: function handleRelease(e) {
         var x = Math.round(e.pageX - e.target.offsetLeft);
         var y = Math.round(e.pageY - e.target.offsetTop);
+        var lastMouseState = _.cloneDeep(this.mouseState);
         this.mouseState.state = 'release';
         this.mouseState.position.x = x;
         this.mouseState.position.y = y;
+        this.mouseState.timeStamp = Date.now();
+        this.mouseState.speedX = 0;
+        this.mouseState.speedY = 0;
+
+        if (lastMouseState.state == 'dragging') {
+            this.handleDraggingEnd(_.cloneDeep(this.mouseState), lastMouseState);
+        }
 
         var pressedTargets = this.state.currentPressedTargets;
 
         for (var i = 0; i < pressedTargets.length; i++) {
-            this.handleElementRelease(pressedTargets[i], _.cloneDeep(this.mouseState));
+            this.handleElementRelease(pressedTargets[i], _.cloneDeep(this.mouseState), lastMouseState);
             this.handleTargetAction(pressedTargets[i], 'Release');
         }
         this.state.currentPressedTargets = [];
     },
-    handleElementRelease: function handleElementRelease(elem, mouseState) {
+    handleDraggingEnd: function handleDraggingEnd(mouseState, lastMouseState) {},
+    handleElementRelease: function handleElementRelease(elem, mouseState, lastMouseState) {
         var needRedraw = false;
         switch (elem.type) {
             case 'widget':
@@ -56524,6 +56621,14 @@ module.exports = React.createClass({
                         needRedraw = true;
                         break;
                 }
+
+                break;
+            case 'MyLayer':
+
+                // elem.lastContentOffsetX = elem.contentOffsetX
+                // elem.lastContentOffsetY = elem.contentOffsetY
+
+                break;
 
         }
         if (needRedraw) {
@@ -57277,7 +57382,7 @@ module.exports = React.createClass({
             ),
             React.createElement(
                 'div',
-                { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseMove: this.handleMove, onMouseUp: this.handleRelease },
+                { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseMove: this.handleMove, onMouseUp: this.handleRelease, onMouseOut: this.handleRelease },
                 React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
                 React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
                 React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
