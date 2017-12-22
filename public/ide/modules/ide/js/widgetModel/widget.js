@@ -923,30 +923,28 @@
             layers.push(symbolLayer);
             curX +=mW;
 
-
         //小数点
-        if(decimalCount>0){
+
             var curDotLayer = new Layer(curX,0,0.5*mW,mH,true);
             curDotLayer.subLayers.image = new TextureSubLayer(slices[10].imgSrc);
             layers.push(curDotLayer);
             curX = curX +0.5*mW;
-        }
 
         //数字
         var curDigitLayer;
         for (var i=0;i<(numOfDigits);i++){
             //add decimal digits
-            for(var j=0;j<9;j++){
+            for(var j=0;j<=9;j++){
                 curDigitLayer = new Layer(curX,0,mW,mH,true);
                 curDigitLayer.subLayers.image = new TextureSubLayer(slices[j].imgSrc);
                 layers.push(curDigitLayer);
+                // console.log('layers',j,layers)
             }
-            layers.push(curDigitLayer);
             curX = curX+mW;
 
         }
 
-
+        console.log('layers',layers)
         this.subType = 'TexNum';
         Widget.call(this,x,y,w,h,layers);
     };
