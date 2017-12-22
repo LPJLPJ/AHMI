@@ -5224,6 +5224,10 @@ module.exports =   React.createClass({
         if (subCanvas.scrollTimerId){
             clearInterval(subCanvas.scrollTimerId)
         }
+        if (subCanvas.bounceAnimeX){
+            subCanvas.bounceAnimeX.stop()
+            subCanvas.bounceAnimeX = null
+        }
     },
 
     handleCanvasDrag:function (canvas,mouseState,lastMouseState) {
@@ -5240,6 +5244,11 @@ module.exports =   React.createClass({
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
         if (subCanvas.scrollTimerId){
             clearInterval(subCanvas.scrollTimerId)
+        }
+
+        if (subCanvas.bounceAnimeX){
+            subCanvas.bounceAnimeX.stop()
+            subCanvas.bounceAnimeX = null
         }
 
         subCanvas.width = 800
@@ -5274,8 +5283,22 @@ module.exports =   React.createClass({
             elem.contentOffsetX = elem.contentOffsetX + stepX
             elem.contentOffsetY = elem.contentOffsetY + stepY
 
-            stepX -= factor * signX
-            stepY -= factor * signY
+
+            //test x bounce
+            if (elem.contentOffsetX>0 && stepX>0){
+                clearInterval(elem.scrollTimerId)
+
+                elem.bounceAnimeX = new AnimationAPI.SpringAnimation(null,'x',stepX,12,180,{x:-100},{x:0},2000,elem.contentOffsetX/100 + 1)
+                elem.bounceAnimeX.onFrameCB = function () {
+                    elem.contentOffsetX = this.state.curValue.x
+                    console.log('frame',elem.contentOffsetX)
+                }
+                elem.bounceAnimeX.start()
+
+            }
+
+            // stepX -= factor * signX
+            // stepY -= factor * signY
             stepX = (stepX * signX <= 0 ? 0 : stepX)
             stepY = (stepY * signY) <= 0 ? 0 : stepY
             if (stepX==0 && stepY == 0){

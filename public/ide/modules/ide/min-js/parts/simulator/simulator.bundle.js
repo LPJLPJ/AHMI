@@ -56655,6 +56655,10 @@ module.exports = React.createClass({
         if (subCanvas.scrollTimerId) {
             clearInterval(subCanvas.scrollTimerId);
         }
+        if (subCanvas.bounceAnimeX) {
+            subCanvas.bounceAnimeX.stop();
+            subCanvas.bounceAnimeX = null;
+        }
     },
 
     handleCanvasDrag: function handleCanvasDrag(canvas, mouseState, lastMouseState) {
@@ -56671,6 +56675,11 @@ module.exports = React.createClass({
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
         if (subCanvas.scrollTimerId) {
             clearInterval(subCanvas.scrollTimerId);
+        }
+
+        if (subCanvas.bounceAnimeX) {
+            subCanvas.bounceAnimeX.stop();
+            subCanvas.bounceAnimeX = null;
         }
 
         subCanvas.width = 800;
@@ -56704,8 +56713,20 @@ module.exports = React.createClass({
             elem.contentOffsetX = elem.contentOffsetX + stepX;
             elem.contentOffsetY = elem.contentOffsetY + stepY;
 
-            stepX -= factor * signX;
-            stepY -= factor * signY;
+            //test x bounce
+            if (elem.contentOffsetX > 0 && stepX > 0) {
+                clearInterval(elem.scrollTimerId);
+
+                elem.bounceAnimeX = new AnimationAPI.SpringAnimation(null, 'x', stepX, 12, 180, { x: -100 }, { x: 0 }, 2000, elem.contentOffsetX / 100 + 1);
+                elem.bounceAnimeX.onFrameCB = function () {
+                    elem.contentOffsetX = this.state.curValue.x;
+                    console.log('frame', elem.contentOffsetX);
+                };
+                elem.bounceAnimeX.start();
+            }
+
+            // stepX -= factor * signX
+            // stepY -= factor * signY
             stepX = stepX * signX <= 0 ? 0 : stepX;
             stepY = stepY * signY <= 0 ? 0 : stepY;
             if (stepX == 0 && stepY == 0) {
@@ -109468,7 +109489,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return i - 1;
     }
 
-    function calTimingFunctionBySpring(damping, stiffness, initialVelocity) {
+    function calTimingFunctionBySpring(damping, stiffness, initialVelocity, startX) {
         var c = damping;
         var k = stiffness;
         var v = initialVelocity;
@@ -109477,7 +109498,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var alpha, beta;
         var f0;
         var fp0;
-        f0 = 0 - 1;
+        f0 = (startX || 0) - 1;
         fp0 = v;
         var C1, C2;
         if (t > 0) {
@@ -109515,12 +109536,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
 
     //Spring Animation
-    function SpringAnimation(refObj, refKey, initialVelocity, damping, stiffness, startValue, stopValue, duration) {
+    function SpringAnimation(refObj, refKey, initialVelocity, damping, stiffness, startValue, stopValue, duration, startX) {
         Animation.call(this, refObj, refKey, startValue, stopValue, duration);
         this.damping = damping;
         this.stiffness = stiffness;
         this.initialVelocity = initialVelocity || 0;
-        this.timingFunction = calTimingFunctionBySpring(this.damping, this.stiffness, this.initialVelocity);
+        this.startX = startX || 0;
+        this.timingFunction = calTimingFunctionBySpring(this.damping, this.stiffness, this.initialVelocity, this.startX);
     }
 
     SpringAnimation.prototype = Object.create(Animation.prototype);
