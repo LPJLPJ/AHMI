@@ -436,7 +436,7 @@ body{
 
 .my-attr-item .my-attr-title{
     display: inline-block;
-    width: 50px;
+    width: 100px;
     text-overflow:ellipsis;
     padding-left: 2px;
 }
