@@ -51860,6 +51860,7 @@ var VideoSource = __webpack_require__(225);
 var Debugger = __webpack_require__(220);
 var EasingFunctions = __webpack_require__(129);
 var AnimationManager = __webpack_require__(227);
+var AnimationAPI = __webpack_require__(678);
 var math = __webpack_require__(252);
 var WidgetExecutor = {};
 window.WidgetExecutor = WidgetExecutor;
@@ -53335,7 +53336,9 @@ module.exports = React.createClass({
             }
 
             this.showBorder(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+
             this.clipToRect(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
+            this.showScrollBar(offctx, canvasData, subCanvas);
             // offctx.translate(canvasData.contentOffsetX,canvasData.contentOffsetY)
 
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
@@ -53344,6 +53347,54 @@ module.exports = React.createClass({
             this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition);
             offctx.restore();
         } else {}
+    },
+    showScrollBar: function showScrollBar(ctx, canvasData, subCanvas) {
+        var ratioX = canvasData.w / (subCanvas.width || 800);
+        var ratioY = canvasData.h / (subCanvas.height || 400);
+        var scrollBarX = -(subCanvas.contentOffsetX || 0) * ratioX;
+        var scrollBarY = -(subCanvas.contentOffsetY || 0) * ratioY;
+
+        var scox = subCanvas.contentOffsetX || 0;
+        var scoy = subCanvas.contentOffsetY || 0;
+        var cw = canvasData.w;
+        var ch = canvasData.h;
+        var scw = subCanvas.width || 800;
+        var sch = subCanvas.height || 400;
+
+        if (scox > 0) {
+            scw += scox;
+            scox = 0;
+        } else if (scox + scw < cw) {
+            scw += cw - (scox + scw);
+        }
+
+        if (scoy > 0) {
+            sch += scoy;
+            scoy = 0;
+        } else if (scoy + sch < ch) {
+            sch += ch - (scoy + sch);
+        }
+
+        ratioX = cw / scw;
+        ratioY = ch / sch;
+        scrollBarX = -scox * ratioX;
+        scrollBarY = -scoy * ratioY;
+
+        var originX = canvasData.x;
+        var originY = canvasData.y;
+
+        this.paintLine(ctx, originX + scrollBarX, originY + canvasData.h, originX + scrollBarX + canvasData.w * ratioX, originY + canvasData.h);
+        this.paintLine(ctx, originX + canvasData.w, originY + scrollBarY, originX + canvasData.w, originY + scrollBarY + canvasData.h * ratioY);
+    },
+    paintLine: function paintLine(ctx, sx, sy, tx, ty) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'blue';
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(tx, ty);
+        ctx.stroke();
+        ctx.restore();
     },
     showBorder: function showBorder(ctx, originX, originY, w, h) {
         ctx.beginPath();
@@ -53588,6 +53639,9 @@ module.exports = React.createClass({
                 case 'MyDateTime':
                     this.drawTime(curX, curY, widget, options, cb);
                     break;
+                case 'MyTexTime':
+                    this.drawTexTime(curX, curY, widget, options, cb);
+                    break;
                 case 'MyTextArea':
                     this.drawTextArea(curX, curY, widget, options, cb);
                     break;
@@ -53683,6 +53737,9 @@ module.exports = React.createClass({
                 break;
             case 'MyDateTime':
                 this.paintTime(curX, curY, widget, options, cb);
+                break;
+            case 'MyTexTime':
+                this.paintTexTime(curX, curY, widget, options, cb);
                 break;
             case 'MyTextArea':
                 this.paintTextArea(curX, curY, widget, options, cb);
@@ -53933,7 +53990,7 @@ module.exports = React.createClass({
         }
         cb && cb();
     },
-    drawTextByTempCanvas: function drawTextByTempCanvas(curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth) {
+    drawTextByTempCanvas: function drawTextByTempCanvas(curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth, spacing, paddingRatio) {
 
         var text = String(text) || '';
         var font = font || {};
@@ -53945,6 +54002,8 @@ module.exports = React.createClass({
         tempcanvas.height = height;
         var tempctx = tempcanvas.getContext('2d');
         tempctx.save();
+        if (spacing === undefined) spacing = 0;
+        if (paddingRatio === undefined) paddingRatio = 0;
         if (arrange === 'vertical') {
             tempctx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
             tempctx.rotate(Math.PI / 2);
@@ -53963,10 +54022,16 @@ module.exports = React.createClass({
             // var widthOfDateTimeStr=maxFontWidth*text.length;
             // var initXPos = (width-widthOfDateTimeStr)/2;
             // var xCoordinate = initXPos+maxFontWidth/2;
-            var xCoordinate = (width - maxFontWidth * text.length + maxFontWidth) / 2;
+            var xCoordinate = maxFontWidth * text.length > width ? maxFontWidth / 2 : (width - maxFontWidth * text.length + maxFontWidth) / 2; //如果装不下字符串，从maxFontWidth处开始显示
+            if (paddingRatio !== 0) xCoordinate = paddingRatio * maxFontWidth + 0.5 * maxFontWidth;
+            var notItalic = -1 == fontStr.indexOf('italic');
+            var italicAjust = notItalic ? 0 : maxFontWidth / 2; //如果是斜体的话，需要斜体往右伸出的宽度
+            // var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
+            // displayStep+=spacing;
             var yCoordinate = 0.5 * height;
             for (i = 0; i < text.length; i++) {
                 tempctx.fillText(text[i], xCoordinate, yCoordinate);
+                xCoordinate += spacing;
                 xCoordinate += maxFontWidth;
             }
         } else {
@@ -54047,6 +54112,7 @@ module.exports = React.createClass({
             if (widget.info.enableAnimation) {
                 //using animation
 
+                var duration = widget.transition && widget.transition.duration || 0;
 
                 //clear old animation
 
@@ -54064,7 +54130,7 @@ module.exports = React.createClass({
                     this.handleTargetAction(widget, alarmValue);
                 }
 
-                widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, 500, 30, null, function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, duration, 30, null, function (obj) {
                     widget.currentValue = obj.curX;
                     this.draw();
                 }.bind(this), function () {
@@ -54436,6 +54502,8 @@ module.exports = React.createClass({
         var fontColor = widget.info.fontColor;
         var tex = widget.texList && widget.texList[0];
         var maxFontWidth = widget.info.maxFontWidth;
+        var spacing = widget.info.spacing;
+        var paddingRatio = widget.info.paddingRatio;
         // lg(tex,widget)
 
         var font = {};
@@ -54460,7 +54528,7 @@ module.exports = React.createClass({
         //draw
         //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         //逐字渲染字符串
-        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, maxFontWidth);
+        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
@@ -54550,6 +54618,136 @@ module.exports = React.createClass({
             dateString = '' + year + '-' + month + '-' + day;
         }
         return dateString;
+    },
+
+    drawTexTime: function drawTexTime(curX, curY, widget, options, cb) {
+        var curDate;
+        if (widget.info.RTCModeId == '0') {
+            curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
+        } else {
+            curDate = this.getCurDateOriginalData(widget, 'outer');
+        }
+        widget.curDate = curDate;
+        //timer 1 s
+        if (!(widget.timerId && widget.timerId !== 0)) {
+            widget.timerId = setInterval(function () {
+                this.draw();
+            }.bind(this), 1000);
+            var innerTimerList = this.state.innerTimerList;
+            innerTimerList.push(widget.timerId);
+            this.setState({ innerTimerList: innerTimerList });
+        }
+    },
+    paintTexTime: function paintTexTime(curX, curY, widget, options, cb) {
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var dateTimeModeId = widget.info.dateTimeModeId;
+        var highlightTex = widget.texList && widget.texList[1];
+        var numTex = widget.texList && widget.texList[0];
+
+        //生成时间日期字符串
+        var curDate = widget.curDate;
+        var dateTimeString = '';
+        if (dateTimeModeId == '0') {
+            //time
+            dateTimeString = this.getCurTime(curDate);
+        } else if (dateTimeModeId == '1') {
+            dateTimeString = this.getCurTimeHM(curDate);
+        } else {
+            //date
+            dateTimeString = this.getCurDate(curDate, dateTimeModeId);
+        }
+
+        //逐字渲染字符串
+        this.paintStyledTexTime(widget, dateTimeString, curX, curY, width, height);
+
+        //hightlight
+        var eachWidth = 0;
+        var delimiterWidth = 0;
+        var eachHeight = 0;
+        var delimiterHeight = 0;
+        // console.log(widget)
+        if (widget.highlight) {
+
+            if (widget.info.arrange == 'vertical') {
+                delimiterHeight = widget.delimiterWidth;
+                if (dateTimeModeId == '0') {
+                    eachHeight = (widget.info.height - 2 * delimiterHeight) / 3;
+                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0]);
+                } else if (dateTimeModeId == '1') {
+                    eachHeight = (widget.info.height - delimiterHeight) / 2;
+                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0]);
+                } else {
+                    eachHeight = (widget.info.height - 2 * delimiterHeight) / 4;
+                    if (widget.highlightValue == 0) {
+                        this.drawHighLight(curX, curY, width, eachHeight * 2, highlightTex.slices[0]);
+                    } else {
+                        this.drawHighLight(curX, curY + (eachHeight + delimiterHeight) * widget.highlightValue + eachHeight, width, eachHeight, highlightTex.slices[0]);
+                    }
+                }
+            } else {
+                delimiterWidth = widget.delimiterWidth;
+                if (dateTimeModeId == '0') {
+                    eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
+                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0]);
+                } else if (dateTimeModeId == '1') {
+                    eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
+                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0]);
+                } else {
+                    eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
+                    if (widget.highlightValue == 0) {
+                        this.drawHighLight(curX, curY, eachWidth * 2, height, highlightTex.slices[0]);
+                    } else {
+                        this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, highlightTex.slices[0]);
+                    }
+                }
+            }
+        }
+
+        cb && cb();
+    },
+    paintStyledTexTime: function paintStyledTexTime(widget, numElems, clipX, clipY, clipW, clipH) {
+        var offctx = this.offctx;
+        var charW = widget.info.characterW;
+        var charH = widget.info.characterH;
+
+        offctx.save();
+        offctx.beginPath();
+        offctx.rect(clipX, clipY, clipW, clipH);
+        offctx.clip();
+
+        var leftOffset = 0;
+        var curTexSlice = null;
+        for (var i = 0; i < numElems.length; i++) {
+            switch (numElems[i]) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    curTexSlice = widget.texList[0].slices[parseInt(numElems[i])];
+                    break;
+                case ':':
+                    curTexSlice = widget.texList[0].slices[10];
+                    break;
+                case '/':
+                    curTexSlice = widget.texList[0].slices[11];
+                    break;
+                case '-':
+                    curTexSlice = widget.texList[0].slices[12];
+                    break;
+            }
+            if (curTexSlice) {
+                this.drawBg(clipX + leftOffset, clipY, charW, charH, curTexSlice.imgSrc, curTexSlice.color, offctx);
+            }
+            leftOffset += charW;
+        }
+        offctx.restore();
     },
 
     drawBgClip: function drawBgClip(curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
@@ -54731,9 +54929,17 @@ module.exports = React.createClass({
                 widget.oldValue = curValue;
 
                 if (enableAnimation) {
-                    var totalFrameNum = 10;
+                    var fps = 30;
+                    var duration = widget.transition && widget.transition.duration || 0;
+                    var totalFrameNum = duration / 1000 * fps;
+
+                    totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1;
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        // console.log(totalFrameNum)
+                        widget.curTotalFrameNum = totalFrameNum;
+                        // var startTime = new Date()
+                        // console.log('start time',startTime)
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1;
@@ -54742,11 +54948,14 @@ module.exports = React.createClass({
                             }
                             if (widget.curFrameNum > totalFrameNum - 1) {
                                 clearInterval(widget.animateTimerId);
+                                // var endTime = new Date()
+                                // console.log('end time',endTime,endTime-startTime)
+
                                 widget.animateTimerId = 0;
                                 widget.curFrameNum = 0;
                             }
                             this.draw();
-                        }.bind(this), 30);
+                        }.bind(this), 1000 / fps);
                     }
                 }
             }
@@ -54774,6 +54983,7 @@ module.exports = React.createClass({
         var overFlowStyle = widget.info.overFlowStyle;
         var maxFontWidth = widget.info.maxFontWidth;
         var align = widget.info.align;
+        var spacing = widget.info.spacing;
         //console.log('maxFontWidth',maxFontWidth,'align',align);
         //size
         var curWidth = widget.info.width;
@@ -54814,7 +55024,7 @@ module.exports = React.createClass({
                     name: '数字背景'
                 };
 
-                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+                this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
                 offctx.drawImage(tempcanvas, curX, curY, tempcanvas.width, tempcanvas.height);
             } else {
                 //animate number
@@ -54822,7 +55032,7 @@ module.exports = React.createClass({
 
                 //drawbackground
                 var bgTex = widget.texList[0].slices[0];
-                var totalFrameNum = 10;
+                var totalFrameNum = widget.curTotalFrameNum || 1;
                 // //draw
                 var oldHeight = 0;
                 var oleWidth = 0;
@@ -54837,13 +55047,13 @@ module.exports = React.createClass({
                         newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
                     }
 
-                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
                     oldHeight = (totalFrameNum - curFrameNum) / totalFrameNum * curHeight;
                     if (oldHeight > 0) {
                         offctx.drawImage(tempcanvas, 0, 0, curWidth, oldHeight, curX, curY + curHeight - oldHeight, curWidth, oldHeight);
                     }
 
-                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
                     oldHeight = curFrameNum / totalFrameNum * curHeight;
                     if (oldHeight > 0) {
                         offctx.drawImage(tempcanvas, 0, curHeight - oldHeight, curWidth, oldHeight, curX, curY, curWidth, oldHeight);
@@ -54856,13 +55066,13 @@ module.exports = React.createClass({
                         tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
                         newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode);
                     }
-                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+                    this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth;
                     if (oleWidth > 0) {
                         offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight);
                     }
 
-                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount);
+                    this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing);
 
                     oldWidth = curFrameNum / totalFrameNum * curWidth;
                     if (oleWidth > 0) {
@@ -54914,9 +55124,13 @@ module.exports = React.createClass({
                 widget.oldValue = curValue;
 
                 if (enableAnimation) {
-                    var totalFrameNum = 10;
+                    var fps = 30;
+                    var duration = widget.transition && widget.transition.duration || 0;
+                    var totalFrameNum = duration / 1000 * fps;
+                    totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1;
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        widget.curTotalFrameNum = totalFrameNum;
                         widget.animateTimerId = setInterval(function () {
                             if (widget.curFrameNum != undefined) {
                                 widget.curFrameNum += 1;
@@ -54929,7 +55143,7 @@ module.exports = React.createClass({
                                 widget.curFrameNum = 0;
                             }
                             this.draw();
-                        }.bind(this), 30);
+                        }.bind(this), 1000 / fps);
                     }
                 }
             }
@@ -54992,7 +55206,7 @@ module.exports = React.createClass({
 
                 //drawbackground
 
-                var totalFrameNum = 10;
+                var totalFrameNum = widget.curTotalFrameNum || 1;
                 // //draw
                 var oldHeight = 0;
                 var oleWidth = 0;
@@ -55116,11 +55330,13 @@ module.exports = React.createClass({
 
         offctx.restore();
     },
-    drawStyleString: function drawStyleString(numStr, curWidth, curHeight, font, bgTex, tempcanvas, _arrange, align, maxFontWidth, decimalCount) {
+    drawStyleString: function drawStyleString(numStr, curWidth, curHeight, font, bgTex, tempcanvas, _arrange, align, maxFontWidth, decimalCount, spacing) {
         var tempCtx = tempcanvas.getContext('2d');
         var arrange = _arrange || 'horizontal';
         tempCtx.clearRect(0, 0, tempcanvas.width, tempcanvas.height);
         tempCtx.save();
+        tempCtx.baseLine = 'middle';
+        tempCtx.textAlign = 'center';
         // console.log('arrange',arrange)
         if (arrange === 'vertical') {
             tempCtx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
@@ -55136,31 +55352,45 @@ module.exports = React.createClass({
         // tempCtx.strokeRect(0,0,curWidth,curHeight);
         var xCoordinate, //渲染每个字符的x坐标
         initXPos, //渲染每个字符的起始位置
-        widthOfNumStr; //渲染的字符串的长度
+        widthOfNumStr, //渲染的字符串的长度
+        paddingX;
+        paddingX = Math.ceil(maxFontWidth / 10);
         widthOfNumStr = decimalCount == 0 ? maxFontWidth * numStr.length : maxFontWidth * (numStr.length - 0.5);
+        widthOfNumStr += (numStr.length - 1) * spacing;
+
         switch (align) {
             case 'left':
-                initXPos = 0;
+                initXPos = paddingX;
                 break;
             case 'right':
-                initXPos = curWidth - widthOfNumStr;
+                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - (widthOfNumStr + paddingX);
                 break;
             case 'center':
             default:
-                initXPos = (curWidth - widthOfNumStr) / 2;
+                curWidth -= paddingX * 2;
+                initXPos = widthOfNumStr > curWidth ? 0 : (curWidth - widthOfNumStr) / 2;
                 break;
         }
-        xCoordinate = initXPos;
-        for (i = 0; i < numStr.length; i++) {
-            // tempCtx.strokeStyle="#00F";/*设置边框*/
-            // tempCtx.lineWidth=1;边框的宽度
-            // tempCtx.strokeRect(xCoordinate,0,maxFontWidth,curHeight);
-            tempCtx.fillText(numStr[i], xCoordinate, curHeight / 2);
+        // console.log('initXPos',initXPos,'paddingX',paddingX);
+        xCoordinate = initXPos + paddingX;
+        xCoordinate += maxFontWidth / 2;
+        /*
+         修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
+         */
+        var displayStep = maxFontWidth;
+
+        for (var i = 0; i < numStr.length; i++) {
             if (numStr[i] == '.') {
-                xCoordinate += maxFontWidth / 2;
+                // console.log('displayStep',displayStep);
+                tempCtx.fillText(numStr[i], xCoordinate - maxFontWidth / 5, curHeight / 2);
+                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth/2,maxFontWidth);
+                xCoordinate += displayStep / 2;
             } else {
-                xCoordinate += maxFontWidth;
+                tempCtx.fillText(numStr[i], xCoordinate, curHeight / 2);
+                // tempCtx.strokeRect(xCoordinate-maxFontWidth/2,0+6,maxFontWidth,maxFontWidth);
+                xCoordinate += displayStep;
             }
+            xCoordinate += spacing;
         }
         // switch(tempCtx.textAlign){
         //     case 'left':
@@ -55259,6 +55489,7 @@ module.exports = React.createClass({
             if (widget.info.enableAnimation) {
                 //using animation
 
+                var duration = widget.transition && widget.transition.duration || 0;
 
                 //clear old animation
 
@@ -55276,7 +55507,7 @@ module.exports = React.createClass({
                     this.handleTargetAction(widget, alarmValue);
                 }
 
-                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, 500, 30, null, function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, duration, 30, null, function (obj) {
                     widget.currentValue = obj.curX;
                     this.draw();
                 }.bind(this), function () {
@@ -56196,6 +56427,7 @@ module.exports = React.createClass({
     handleModifyHighlightingWidget: function handleModifyHighlightingWidget(widget, direction) {
         switch (widget.subType) {
             case 'MyDateTime':
+            case 'MyTexTime':
 
                 if (direction == 'right') {
                     direction = 1;
@@ -56448,8 +56680,13 @@ module.exports = React.createClass({
         subCanvas.contentOffsetY = subCanvas.contentOffsetY || 0;
         var nextContentOffsetX = subCanvas.contentOffsetX + offsetX;
         var nextContentOffsetY = subCanvas.contentOffsetY + offsetY;
-        subCanvas.contentOffsetX = this.limitValueBetween(nextContentOffsetX, canvas.w - subCanvas.width, 0);
-        subCanvas.contentOffsetY = this.limitValueBetween(nextContentOffsetY, canvas.h - subCanvas.height, 0);
+
+        //limit contentOffsetX
+        // subCanvas.contentOffsetX =  this.limitValueBetween(nextContentOffsetX,canvas.w - subCanvas.width,0)
+        // subCanvas.contentOffsetY = this.limitValueBetween(nextContentOffsetY,canvas.h - subCanvas.height,0)
+
+        subCanvas.contentOffsetX = nextContentOffsetX;
+        subCanvas.contentOffsetY = nextContentOffsetY;
 
         //canvas scroll effect
         var elem = subCanvas;
@@ -56459,11 +56696,13 @@ module.exports = React.createClass({
         var factor = 2;
         var signX = stepX >= 0 ? 1 : -1;
         var signY = stepY > 0 ? 1 : -1;
-        console.log(stepX, stepY);
+        // console.log(stepX,stepY)
         elem.scrollTimerId = setInterval(function () {
 
-            elem.contentOffsetX = this.limitValueBetween(elem.contentOffsetX + stepX, canvas.w - subCanvas.width, 0);
-            elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY + stepY, canvas.h - subCanvas.height, 0);
+            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+            elem.contentOffsetX = elem.contentOffsetX + stepX;
+            elem.contentOffsetY = elem.contentOffsetY + stepY;
 
             stepX -= factor * signX;
             stepY -= factor * signY;
@@ -57886,6 +58125,7 @@ AnimationManager.moving = function (srcX, srcY, dstX, dstY, duration, frames, ea
     var curValue = 0;
     var framesPS = frames;
     frames = frames * duration / 1000;
+    frames = frames > 1 ? frames : 1;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -57918,6 +58158,7 @@ AnimationManager.step = function (srcX, srcY, dstX, dstY, duration, frames, easi
     var curValue = 0;
     var framesPS = frames;
     frames = frames * duration / 1000;
+    frames = frames > 1 ? frames : 1;
     console.log('p', frames, duration);
     var count = frames;
     var deltaX = 0;
@@ -57954,6 +58195,7 @@ AnimationManager.stepValue = function (srcX, dstX, duration, frames, easing, int
     var curValue = 0;
     var framesPS = frames;
     frames = frames * duration / 1000;
+    frames = frames > 1 ? frames : 1;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -57986,6 +58228,7 @@ AnimationManager.stepObj = function (srcObj, dstObj, duration, frames, easing, i
     var curValue = 0;
     var framesPS = frames;
     frames = frames * duration / 1000;
+    frames = frames > 1 ? frames : 1;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -58028,6 +58271,7 @@ AnimationManager.scaling = function (srcX, srcY, dstX, dstY, duration, frames, e
     var curValue = 0;
     var framesPS = frames;
     frames = frames * duration / 1000;
+    frames = frames > 1 ? frames : 1;
     var count = frames;
     var deltaX = 0;
     var deltaY = 0;
@@ -58180,6 +58424,35 @@ function linkWidgets(widgetList) {
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
                 }
                 break;
+            case 'MyTexTime':
+                var mode = curWidget.info.dateTimeModeId;
+                var charW = curWidget.info.characterW;
+                if (mode == '0') {
+                    delimiterWidth = measureMetrics(':', fontStr);
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width - 2 * charW) / 3;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2, curWidget.info.absoluteTop));
+                } else if (mode == '1') {
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width - charW) / 2;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
+                } else if (mode == '2') {
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width - 2 * charW) / 4;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
+                } else if (mode == '3') {
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width - 2 * charW) / 4;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
+                }
+                break;
             case 'MyInputKeyboard':
                 var keys = curWidget.info.keys;
                 keys.forEach(function (key, index) {
@@ -58258,13 +58531,14 @@ function getPageInteractiveWidgets(page) {
     // console.log(allInteractiveWidgets,allWidgets);
     return allInteractiveWidgets;
 }
-
+//判断是不是需要添加高亮
 function isInteractiveWidget(widget) {
     var is = false;
     switch (widget.subType) {
         case 'MyButton':
         case 'MyButtonGroup':
         case 'MyDateTime':
+        case 'MyTexTime':
         case 'MyInputKeyboard':
             is = true;
             break;
@@ -108881,6 +109155,387 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 module.exports = __webpack_require__(219);
 
+
+/***/ }),
+/* 678 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+(function (factory) {
+    if (true) {
+        // AMD. Register as an anonymous module.
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
+        // Node/CommonJS
+
+        module.exports = factory();
+    } else {
+        // Browser globals
+        window.AnimationAPI = factory();
+    }
+})(function () {
+
+    var AnimationAPI = {};
+
+    function copy(aObject) {
+        if ((typeof aObject === 'undefined' ? 'undefined' : _typeof(aObject)) !== 'object') {
+            return aObject;
+        }
+        if (aObject === null) {
+            return aObject;
+        }
+        var bObject, v, k;
+        if (aObject instanceof Date) {
+            return new Date(aObject);
+        }
+        bObject = Array.isArray(aObject) ? [] : {};
+        for (k in aObject) {
+            v = aObject[k];
+            bObject[k] = copy(v);
+        }
+        return bObject;
+    }
+
+    var timingFunctions = {
+        // no easing, no acceleration
+        linear: function linear(t) {
+            return t;
+        },
+        // accelerating from zero velocity
+        easeInQuad: function easeInQuad(t) {
+            return t * t;
+        },
+        // decelerating to zero velocity
+        easeOutQuad: function easeOutQuad(t) {
+            return t * (2 - t);
+        },
+        // acceleration until halfway, then deceleration
+        easeInOutQuad: function easeInOutQuad(t) {
+            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        },
+        // accelerating from zero velocity
+        easeInCubic: function easeInCubic(t) {
+            return t * t * t;
+        },
+        // decelerating to zero velocity
+        easeOutCubic: function easeOutCubic(t) {
+            return --t * t * t + 1;
+        },
+        // acceleration until halfway, then deceleration
+        easeInOutCubic: function easeInOutCubic(t) {
+            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        },
+        // accelerating from zero velocity
+        easeInQuart: function easeInQuart(t) {
+            return t * t * t * t;
+        },
+        // decelerating to zero velocity
+        easeOutQuart: function easeOutQuart(t) {
+            return 1 - --t * t * t * t;
+        },
+        // acceleration until halfway, then deceleration
+        easeInOutQuart: function easeInOutQuart(t) {
+            return t < .5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+        },
+        // accelerating from zero velocity
+        easeInQuint: function easeInQuint(t) {
+            return t * t * t * t * t;
+        },
+        // decelerating to zero velocity
+        easeOutQuint: function easeOutQuint(t) {
+            return 1 + --t * t * t * t * t;
+        },
+        // acceleration until halfway, then deceleration
+        easeInOutQuint: function easeInOutQuint(t) {
+            return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+        },
+
+        spring: function spring(t) {
+            return -0.5 * Math.exp(-6 * t) * (-2 * Math.exp(6 * t) + Math.sin(12 * t) + 2 * Math.cos(12 * t));
+        }
+    };
+
+    var stateTypes = {
+        idle: 'idle',
+        running: 'running',
+        paused: 'paused'
+    };
+
+    function State(stateType, repeat, curFrame, curValue) {
+        this.stateType = stateType || stateTypes.idle;
+        this.repeat = repeat || 0;
+        this.curFrame = curFrame || 0;
+        this.curValue = curValue;
+    }
+
+    function interpolateValueWithFactor(startValue, stopValue, factor) {
+        if ((typeof startValue === 'undefined' ? 'undefined' : _typeof(startValue)) === 'object') {
+            if (Array.isArray(startValue)) {
+                return startValue.map(function (sv, i) {
+                    return interpolateValueWithFactor(sv, stopValue[i], factor);
+                });
+            } else if (startValue instanceof Date) {
+                var startSeconds = Number(startValue);
+                var stopSeconds = Number(stopValue);
+                return new Date(startSeconds + factor * (stopSeconds - startSeconds));
+            } else {
+                var iObject = {};
+                for (var key in startValue) {
+                    iObject[key] = interpolateValueWithFactor(startValue[key], stopValue[key], factor);
+                }
+                return iObject;
+            }
+        } else {
+            return startValue + factor * (stopValue - startValue);
+        }
+    }
+
+    function Animation(refObj, refKey, startValue, stopValue, duration) {
+        if (refObj !== null && (typeof refObj === 'undefined' ? 'undefined' : _typeof(refObj)) === 'object') {
+            this.refObj = refObj;
+        } else {
+            this.refObj = window;
+        }
+        this.key = refKey;
+        if ((typeof startValue === 'undefined' ? 'undefined' : _typeof(startValue)) !== (typeof stopValue === 'undefined' ? 'undefined' : _typeof(stopValue))) {
+            throw Error('start value should be same type as stopValue');
+        } else {
+            this.startValue = copy(startValue);
+            this.stopValue = copy(stopValue);
+        }
+        this.duration = Number(duration) || 0;
+        this.fps = 30;
+        this.startDelay = 0;
+        this.autoReverse = false;
+        this.repeatCount = 1;
+        this.appliedOnComplete = false;
+        this.timingFunction = timingFunctions.linear;
+        this.state = new State();
+        this.lastState = null;
+
+        //events
+        this.didStartCB = null;
+        this.onFrameCB = null;
+        this.didPauseCB = null;
+        this.didStopCB = null;
+
+        //internal vars
+        this.timerId = 0;
+        this.singleRoundFrames = 0;
+    }
+
+    Animation.prototype.interpolateValue = function () {
+        var singleRoundFrames = this.singleRoundFrames;
+        var curFrame = this.state.curFrame;
+        var startValue = this.startValue;
+        var stopValue = this.stopValue;
+
+        var factor;
+        if (this.state.reversing) {
+            factor = this.timingFunction(1.0 * (singleRoundFrames - curFrame - 1) / singleRoundFrames);
+        } else {
+            factor = this.timingFunction(1.0 * (curFrame + 1) / singleRoundFrames);
+        }
+        this.state.curValue = interpolateValueWithFactor(startValue, stopValue, factor);
+    };
+
+    var startHandler = function startHandler() {
+        //stop if paused
+        if (this.state.stateType === stateTypes.paused) {
+            if (this.timerId) {
+                clearInterval(this.timerId);
+            }
+            this.didPauseCB && this.didPauseCB();
+        }
+
+        this.lastState = copy(this.state);
+
+        //stop if finished
+        var nextFrame = this.state.curFrame + 1;
+        var nextRepeat;
+        if (nextFrame > this.singleRoundFrames - 1) {
+            if (this.autoReverse) {
+                if (this.state.reversing) {
+                    //one loop finished
+                    nextRepeat = this.state.repeat + 1;
+                    if (this.repeatCount > 0 && nextRepeat > this.repeatCount - 1) {
+                        return this.stop();
+                    } else {
+                        this.state.repeat++;
+                    }
+                }
+                this.state.reversing = !this.state.reversing;
+            } else {
+                //single round finished
+                nextRepeat = this.state.repeat + 1;
+                if (this.repeatCount > 0 && nextRepeat > this.repeatCount - 1) {
+                    return this.stop();
+                } else {
+                    this.state.repeat++;
+                }
+            }
+        }
+
+        this.state.stateType = stateTypes.running;
+        this.state.curFrame++;
+        // this.state.repeat = Math.floor(this.state.curFrame/this.singleRoundFrames)
+        this.state.curFrame = this.state.curFrame % this.singleRoundFrames;
+        this.interpolateValue();
+        if (this.key !== null) {
+            this.refObj[this.key] = this.state.curValue;
+        }
+
+        this.onFrameCB && this.onFrameCB();
+    };
+
+    Animation.prototype.start = function () {
+        if (this.state.stateType === stateTypes.idle) {
+            setTimeout(function () {
+                this.didStartCB && this.didStartCB();
+                //
+                this.singleRoundFrames = this.duration / 1000 * this.fps;
+                this.timerId = setInterval(startHandler.bind(this), 1000 / this.fps);
+            }.bind(this), this.startDelay);
+        }
+    };
+
+    Animation.prototype.pause = function () {
+        if (this.state.stateType === stateTypes.running) {
+            this.state.stateType = stateTypes.paused;
+        }
+    };
+
+    Animation.prototype.resume = function () {
+        if (this.state.stateType === stateTypes.paused) {
+            this.timerId = setInterval(startHandler.bind(this), 1000 / this.fps);
+        }
+    };
+
+    Animation.prototype.stop = function () {
+        if (this.state.stateType !== stateTypes.idle) {
+            this.state.stateType = stateTypes.idle;
+            if (this.timerId) {
+                clearInterval(this.timerId);
+            }
+            this.didStopCB && this.didStopCB();
+        }
+    };
+
+    //key frame animation
+
+    function KeyFrameAnimation(refObj, refKey, values, timings, duration) {
+        Animation.call(this, refObj, refKey, null, null, duration);
+        this.values = values;
+        this.timings = timings;
+    }
+
+    KeyFrameAnimation.prototype = Object.create(Animation.prototype);
+    KeyFrameAnimation.prototype.constructor = KeyFrameAnimation;
+
+    KeyFrameAnimation.prototype.interpolateValue = function () {
+        var singleRoundFrames = this.singleRoundFrames;
+        var curFrame = this.state.curFrame;
+        if (this.state.reversing) {
+            curFrame = singleRoundFrames - curFrame;
+        }
+        var frameFactor = 1.0 * (curFrame + 1) / singleRoundFrames;
+        var leftPos = calFramePosInKeyFrames(this.timings, curFrame, singleRoundFrames);
+        var startValue = this.values[leftPos];
+        var stopValue = this.values[leftPos + 1];
+
+        var factor = (frameFactor - this.timings[leftPos]) / (this.timings[leftPos + 1] - this.timings[leftPos]);
+        factor = this.timingFunction(factor);
+        this.state.curValue = interpolateValueWithFactor(startValue, stopValue, factor);
+    };
+
+    function calFramePosInKeyFrames(timings, curFrame, singleRoundFrames) {
+        // if (timings[timings.length-1]!=1.0) {
+        //     timings.push(1.0)
+        // }
+        var frameFactor = 1.0 * (curFrame + 1) / singleRoundFrames;
+        for (var i = 0; i < timings.length; i++) {
+            if (frameFactor <= timings[i]) {
+                break;
+            }
+        }
+        return i - 1;
+    }
+
+    function calTimingFunctionBySpring(damping, stiffness, initialVelocity) {
+        var c = damping;
+        var k = stiffness;
+        var v = initialVelocity;
+        var t = c * c - 4 * k;
+        var r1, r2;
+        var alpha, beta;
+        var f0;
+        var fp0;
+        f0 = 0 - 1;
+        fp0 = v;
+        var C1, C2;
+        if (t > 0) {
+            t = Math.sqrt(t);
+            r1 = (-c + t) * 0.5;
+            r2 = (-c - t) * 0.5;
+
+            C1 = (fp0 - r2 * f0) / (r1 - r2);
+            C2 = (fp0 - r1 * f0) / (r2 - r1);
+            console.log(r1, r2, C1, C2);
+            return function (t) {
+                return C1 * Math.exp(r1 * t) + C2 * Math.exp(r2 * t) + 1;
+            };
+        } else if (t == 0) {
+            r1 = -c * 0.5;
+            C1 = f0;
+            C2 = fp0 - C1 * r1;
+            console.log(r1, C1, C2);
+            return function (t) {
+                return (C1 + C2 * t) * Math.exp(r1 * t) + 1;
+            };
+        } else {
+            t = Math.sqrt(-t);
+            alpha = -c * 0.5;
+            beta = t * 0.5;
+
+            C1 = f0;
+            C2 = (fp0 - alpha * f0) / beta;
+            console.log(alpha, beta, C1, C2);
+
+            return function (t) {
+                return (C1 * Math.cos(beta * t) + C2 * Math.sin(beta * t)) * Math.exp(alpha * t) + 1;
+            };
+        }
+    }
+
+    //Spring Animation
+    function SpringAnimation(refObj, refKey, initialVelocity, damping, stiffness, startValue, stopValue, duration) {
+        Animation.call(this, refObj, refKey, startValue, stopValue, duration);
+        this.damping = damping;
+        this.stiffness = stiffness;
+        this.initialVelocity = initialVelocity || 0;
+        this.timingFunction = calTimingFunctionBySpring(this.damping, this.stiffness, this.initialVelocity);
+    }
+
+    SpringAnimation.prototype = Object.create(Animation.prototype);
+    SpringAnimation.prototype.constructor = SpringAnimation;
+
+    AnimationAPI.Animation = Animation;
+
+    AnimationAPI.KeyFrameAnimation = KeyFrameAnimation;
+
+    AnimationAPI.SpringAnimation = SpringAnimation;
+
+    AnimationAPI.timingFunctions = timingFunctions;
+
+    return AnimationAPI;
+});
 
 /***/ })
 /******/ ]);

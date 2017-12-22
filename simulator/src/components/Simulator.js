@@ -10,6 +10,7 @@ var VideoSource = require('./VideoSource');
 var Debugger = require('./Debugger');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
+var AnimationAPI = require('../utils/animationAPI')
 var math = require('mathjs');
 var WidgetExecutor = {
 
@@ -1656,7 +1657,9 @@ module.exports =   React.createClass({
 
 
             this.showBorder(offctx,canvasData.x,canvasData.y,canvasData.w,canvasData.h)
+
             this.clipToRect(offctx,canvasData.x,canvasData.y,canvasData.w,canvasData.h)
+            this.showScrollBar(offctx,canvasData,subCanvas)
             // offctx.translate(canvasData.contentOffsetX,canvasData.contentOffsetY)
 
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
@@ -1667,6 +1670,56 @@ module.exports =   React.createClass({
         } else {
 
         }
+    },
+    showScrollBar:function (ctx,canvasData,subCanvas) {
+        var ratioX = canvasData.w / (subCanvas.width||800)
+        var ratioY = canvasData.h / (subCanvas.height||400)
+        var scrollBarX = - (subCanvas.contentOffsetX||0) * ratioX
+        var scrollBarY = - (subCanvas.contentOffsetY||0) * ratioY
+
+        var scox = subCanvas.contentOffsetX || 0
+        var scoy = subCanvas.contentOffsetY || 0
+        var cw = canvasData.w
+        var ch = canvasData.h
+        var scw = subCanvas.width || 800
+        var sch = subCanvas.height || 400
+
+        if (scox > 0){
+            scw += scox
+            scox = 0
+        }else if(scox+scw<cw){
+            scw += cw -(scox+scw)
+        }
+
+        if (scoy >0){
+            sch += scoy
+            scoy = 0
+        }else if(scoy + sch < ch){
+            sch += ch - (scoy+sch)
+        }
+
+        ratioX = cw /scw
+        ratioY = ch / sch
+        scrollBarX = -(scox)*ratioX
+        scrollBarY = -(scoy)*ratioY
+
+        var originX = canvasData.x
+        var originY = canvasData.y
+
+        this.paintLine(ctx,originX+scrollBarX,originY+canvasData.h,originX+scrollBarX+canvasData.w*ratioX,originY+canvasData.h)
+        this.paintLine(ctx,originX+canvasData.w,originY+scrollBarY,originX+canvasData.w,originY+scrollBarY+canvasData.h*ratioY)
+
+
+    },
+    paintLine:function (ctx,sx,sy,tx,ty) {
+        ctx.save()
+        ctx.beginPath()
+        ctx.lineWidth = 5
+        ctx.strokeStyle = 'blue'
+        ctx.moveTo(sx,sy)
+        ctx.lineTo(tx,ty)
+        ctx.stroke()
+        ctx.restore()
     },
     showBorder:function (ctx,originX,originY,w,h) {
         ctx.beginPath()
@@ -5196,9 +5249,13 @@ module.exports =   React.createClass({
         subCanvas.contentOffsetY  = subCanvas.contentOffsetY || 0
         var nextContentOffsetX = subCanvas.contentOffsetX + offsetX
         var nextContentOffsetY = subCanvas.contentOffsetY + offsetY
-        subCanvas.contentOffsetX =  this.limitValueBetween(nextContentOffsetX,canvas.w - subCanvas.width,0)
-        subCanvas.contentOffsetY = this.limitValueBetween(nextContentOffsetY,canvas.h - subCanvas.height,0)
 
+        //limit contentOffsetX
+        // subCanvas.contentOffsetX =  this.limitValueBetween(nextContentOffsetX,canvas.w - subCanvas.width,0)
+        // subCanvas.contentOffsetY = this.limitValueBetween(nextContentOffsetY,canvas.h - subCanvas.height,0)
+
+        subCanvas.contentOffsetX = nextContentOffsetX
+        subCanvas.contentOffsetY = nextContentOffsetY
 
 
         //canvas scroll effect
@@ -5209,11 +5266,13 @@ module.exports =   React.createClass({
         var factor = 2
         var signX  = (stepX>=0)?1:-1
         var signY = (stepY>0)?1:-1
-        console.log(stepX,stepY)
+        // console.log(stepX,stepY)
         elem.scrollTimerId = setInterval(function () {
 
-            elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
-            elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+            elem.contentOffsetX = elem.contentOffsetX + stepX
+            elem.contentOffsetY = elem.contentOffsetY + stepY
 
             stepX -= factor * signX
             stepY -= factor * signY

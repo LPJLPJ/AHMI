@@ -344,12 +344,12 @@
     }
 
     //Spring Animation
-    function SpringAnimation(refObj,refKey,damping,stiffness,startValue,stopValue,duration) {
+    function SpringAnimation(refObj,refKey,initialVelocity,damping,stiffness,startValue,stopValue,duration) {
         Animation.call(this,refObj,refKey,startValue,stopValue,duration)
         this.damping = damping
         this.stiffness = stiffness
-        this.initialVelocity = 0
-        this.timingFunction = calTimingFunctionBySpring(this.damping,this.stiffness,0)
+        this.initialVelocity = initialVelocity|| 0
+        this.timingFunction = calTimingFunctionBySpring(this.damping,this.stiffness,this.initialVelocity)
     }
 
     SpringAnimation.prototype = Object.create(Animation.prototype)
