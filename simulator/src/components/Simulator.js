@@ -5221,13 +5221,13 @@ module.exports =   React.createClass({
     },
     handleCanvasPress:function (canvas,mouseState) {
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
-        if (subCanvas.scrollTimerId){
-            clearInterval(subCanvas.scrollTimerId)
+        if (subCanvas.scrollXTimerId){
+            clearInterval(subCanvas.scrollXTimerId)
         }
-        if (subCanvas.bounceAnimeX){
-            subCanvas.bounceAnimeX.stop()
-            subCanvas.bounceAnimeX = null
+        if (subCanvas.scrollYTimerId){
+            clearInterval(subCanvas.scrollYTimerId)
         }
+        this.stopBounceAnimation(subCanvas,'bounceAnimeX','bounceAnimeY')
     },
 
     handleCanvasDrag:function (canvas,mouseState,lastMouseState) {
@@ -5242,14 +5242,15 @@ module.exports =   React.createClass({
         var offsetY = mousePointY - lastMousePointY
 
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
-        if (subCanvas.scrollTimerId){
-            clearInterval(subCanvas.scrollTimerId)
+        if (subCanvas.scrollXTimerId){
+            clearInterval(subCanvas.scrollXTimerId)
+        }
+        if (subCanvas.scrollYTimerId){
+            clearInterval(subCanvas.scrollYTimerId)
         }
 
-        if (subCanvas.bounceAnimeX){
-            subCanvas.bounceAnimeX.stop()
-            subCanvas.bounceAnimeX = null
-        }
+
+        this.stopBounceAnimation(subCanvas,'bounceAnimeX','bounceAnimeY')
 
         subCanvas.width = 800
         subCanvas.height = 400
@@ -5276,38 +5277,102 @@ module.exports =   React.createClass({
         var signX  = (stepX>=0)?1:-1
         var signY = (stepY>0)?1:-1
         // console.log(stepX,stepY)
-        elem.scrollTimerId = setInterval(function () {
+        elem.scrollXTimerId = setInterval(function () {
+
+            var leftLimit = canvas.w - subCanvas.width
+            var rightLimit = 0
+            var topLimit = canvas.h-subCanvas.height
+            var bottomLimit = 0
 
             // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
             // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
             elem.contentOffsetX = elem.contentOffsetX + stepX
-            elem.contentOffsetY = elem.contentOffsetY + stepY
 
-
+            var bounceDuration = 2000
+            var bounceLimit = 100
             //test x bounce
             if (elem.contentOffsetX>0 && stepX>0){
-                clearInterval(elem.scrollTimerId)
+                clearInterval(elem.scrollXTimerId)
 
-                elem.bounceAnimeX = new AnimationAPI.SpringAnimation(null,'x',stepX,12,180,{x:-100},{x:0},2000,elem.contentOffsetX/100 + 1)
-                elem.bounceAnimeX.onFrameCB = function () {
-                    elem.contentOffsetX = this.state.curValue.x
-                    console.log('frame',elem.contentOffsetX)
-                }
-                elem.bounceAnimeX.start()
+                this.startBounceAnimation(elem,'bounceAnimeX','contentOffsetX',stepX,-bounceLimit,0,bounceDuration,elem.contentOffsetX/bounceLimit + 1)
 
+
+            }else if (elem.contentOffsetX<canvas.w - subCanvas.width && stepX < 0){
+                clearInterval(elem.scrollXTimerId)
+                //left
+
+                this.startBounceAnimation(elem,'bounceAnimeX','contentOffsetX',stepX,leftLimit+bounceLimit,leftLimit,bounceDuration,(elem.contentOffsetX-leftLimit)/bounceLimit + 1)
             }
+
+
+
 
             // stepX -= factor * signX
             // stepY -= factor * signY
             stepX = (stepX * signX <= 0 ? 0 : stepX)
-            stepY = (stepY * signY) <= 0 ? 0 : stepY
-            if (stepX==0 && stepY == 0){
-                clearInterval(elem.scrollTimerId)
+
+            if (stepX==0 ){
+                clearInterval(elem.scrollXTimerId)
             }
-            // if (count==0){
-            //     clearInterval(elem.scrollTimerId)
-            // }
+
         }.bind(this),30)
+
+
+        elem.scrollYTimerId = setInterval(function () {
+
+            var leftLimit = canvas.w - subCanvas.width
+            var rightLimit = 0
+            var topLimit = canvas.h-subCanvas.height
+            var bottomLimit = 0
+
+            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+
+            elem.contentOffsetY = elem.contentOffsetY + stepY
+
+            var bounceDuration = 2000
+            var bounceLimit = 100
+            //test x bounce
+
+
+            if (elem.contentOffsetY>0 && stepY>0){
+                clearInterval(elem.scrollYTimerId)
+
+                this.startBounceAnimation(elem,'bounceAnimeY','contentOffsetY',stepY,-bounceLimit,0,bounceDuration,elem.contentOffsetY/bounceLimit + 1)
+
+
+            }else if (elem.contentOffsetY<canvas.h - subCanvas.height && stepY < 0){
+                clearInterval(elem.scrollYTimerId)
+                //left
+                this.startBounceAnimation(elem,'bounceAnimeY','contentOffsetY',stepY,topLimit+bounceLimit,topLimit,bounceDuration,(elem.contentOffsetY-topLimit)/bounceLimit + 1)
+            }
+
+
+            // stepX -= factor * signX
+            // stepY -= factor * signY
+
+            stepY = (stepY * signY) <= 0 ? 0 : stepY
+            if (stepY == 0){
+                clearInterval(elem.scrollYTimerId)
+            }
+
+        }.bind(this),30)
+    },
+    stopBounceAnimation:function (elem) {
+        for(var i=1;i<arguments.length;i++){
+            if (elem[arguments[i]]){
+                elem[arguments[i]].stop()
+                elem[arguments[i]] = null
+            }
+        }
+    },
+    startBounceAnimation:function (elem,animation,offset,initialVelocity,zeroPos,onePos,duration,startPos) {
+        elem[animation] = new AnimationAPI.SpringAnimation(null,'x',initialVelocity,12,180,{x:zeroPos},{x:onePos},duration,startPos)
+        elem[animation].onFrameCB = function () {
+            elem[offset] = this.state.curValue.x
+
+        }
+        elem[animation].start()
     },
     handleWidgetDrag:function (widget,mouseState) {
         var subType = widget.subType;
