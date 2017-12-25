@@ -105,6 +105,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.on('OnScaleRelease', function (objId) {
                 if (objId==self.id){
+                    this.syncSubLayer()
                     this.renderUrlInPage(self);
                 }
             });
@@ -143,12 +144,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 if(this.backgroundImg.element){
-                    // console.log('drawing background element',this.backgroundImg.element)
+                    // console.log('drawing background width',this.backgroundImg.width);
+                    // ctx.drawImage(this.backgroundImg.element,
+                    //     0,0,  //sx,sy
+                    //     this.backgroundImg.width,this.backgroundImg.height, //sw,sh
+                    //     this.backgroundImg.left,this.backgroundImg.top,     //dx,dy
+                    //     this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
+
                     ctx.drawImage(this.backgroundImg.element,
-                        0,0,  //sx,sy
-                        this.backgroundImg.width,this.backgroundImg.height, //sw,sh
-                        this.backgroundImg.left,this.backgroundImg.top,     //dx,dy
-                        this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
+                        this.backgroundImg.left,
+                        this.backgroundImg.top,
+
+                        this.backgroundImg.width,
+                        this.backgroundImg.height);
                 }
             }catch (err) {
                 console.log('错误描述',err);
@@ -237,6 +245,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             });
         }
     })(fabric.MyLayer.prototype.toObject);
+    fabric.MyLayer.prototype.syncSubLayer = function(){
+        var layer=ProjectService.getLevelById(this.layerId);
+    };
     fabric.MyLayer.fromObject = function (object, callback) {
         callback && callback(new fabric.MyLayer(object.id,object));
     };

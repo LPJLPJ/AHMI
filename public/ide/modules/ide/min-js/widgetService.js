@@ -143,12 +143,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 if(this.backgroundImg.element){
-                    // console.log('drawing background element',this.backgroundImg.element)
+                    // console.log('drawing background width',this.backgroundImg.width);
+                    // ctx.drawImage(this.backgroundImg.element,
+                    //     0,0,  //sx,sy
+                    //     this.backgroundImg.width,this.backgroundImg.height, //sw,sh
+                    //     this.backgroundImg.left,this.backgroundImg.top,     //dx,dy
+                    //     this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
+
                     ctx.drawImage(this.backgroundImg.element,
-                        0,0,  //sx,sy
-                        this.backgroundImg.width,this.backgroundImg.height, //sw,sh
-                        this.backgroundImg.left,this.backgroundImg.top,     //dx,dy
-                        this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
+                        this.backgroundImg.left,
+                        this.backgroundImg.top,
+
+                        this.backgroundImg.width,
+                        this.backgroundImg.height);
                 }
             }catch (err) {
                 console.log('错误描述',err);

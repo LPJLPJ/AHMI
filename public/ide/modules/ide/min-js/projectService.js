@@ -3022,13 +3022,34 @@ ideServices
              * @constructor
              */
             this.ChangeSubLayerScroll = function(_option,_successCallback){
-                var selectObj=_self.getCurrentSelectObject();
+                var currentLayer = null;
+                var currentSubLayer=_self.getCurrentSubLayer();
                 if(_option.hasOwnProperty('scrollVEnabled')){
-                    selectObj.level.info.scrollVEnabled = _option.scrollVEnabled;
+                    currentSubLayer.info.scrollVEnabled = _option.scrollVEnabled;
+                    if(!_option.scrollVEnabled){
+                        currentLayer = _self.getCurrentLayer();
+                        currentSubLayer.info.width = currentLayer.info.width;
+                        _self.ScaleCanvas({
+                            scaleMode:'subCanvas',
+                            layer:currentLayer,
+                            subLayer:currentSubLayer
+                        })
+                    }
                 }
                 if(_option.hasOwnProperty('scrollHEnabled')){
-                    selectObj.level.info.scrollHEnabled = _option.scrollHEnabled;
+                    currentSubLayer.info.scrollHEnabled = _option.scrollHEnabled;
+                    if(!_option.scrollHEnabled){
+                        currentLayer = _self.getCurrentLayer();
+                        currentSubLayer.info.height = currentLayer.info.height;
+                        _self.ScaleCanvas({
+                            scaleMode:'subCanvas',
+                            layer:currentLayer,
+                            subLayer:currentSubLayer
+                        })
+                    }
                 }
+
+                _successCallback&&_successCallback();
             };
 
             this.ChangeAttributePressImage=function (_option,_successCallback) {
@@ -4414,7 +4435,7 @@ ideServices
                     if(_option.hasOwnProperty('height')){
                         currentSubLayer.info.height = _option.height;
                     }
-
+                    _self.ScaleCanvas({scaleMode:'subCanvas',subLayer:currentSubLayer});
                     _successCallback&&_successCallback();
                 }
 
