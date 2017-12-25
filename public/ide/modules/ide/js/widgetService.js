@@ -88,10 +88,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
             }
             this.callSuper('initialize', options);
-            this.loadAll(layerId);
             this.layerId = layerId;
+            this.layer = null;
             this.lockRotation=true;
             this.hasRotatingPoint=false;
+            this.loadAll(layerId);
             // this.backgroundImg =
 
             //开始移动时Layer的Scale
@@ -175,6 +176,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }else{
             layer = layerId;
         }
+        this.layer = layer;
         var layerWidth=layer.info.width/this.initScale.X;
         var layerHeight=layer.info.height/this.initScale.Y;
 
@@ -246,7 +248,23 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }
     })(fabric.MyLayer.prototype.toObject);
     fabric.MyLayer.prototype.syncSubLayer = function(){
-        var layer=ProjectService.getLevelById(this.layerId);
+        var layer = this.layer;
+        var subLayers = this.layer.subLayers||[];
+        var showSubLayer = this.layer.showSubLayer;
+        subLayers.forEach(function(subLayer){
+            if(!subLayer.info.scrollVEnabled){
+                subLayer.info.width = layer.info.width;
+            }
+            if(!subLayer.info.scrollHEnabled){
+                subLayer.info.height = layer.info.height;
+            }
+        });
+        if(!showSubLayer.info.scrollVEnabled){
+            showSubLayer.info.width = layer.info.width;
+        }
+        if(!showSubLayer.info.scrollHEnabled){
+            showSubLayer.info.height = layer.info.height;
+        }
     };
     fabric.MyLayer.fromObject = function (object, callback) {
         callback && callback(new fabric.MyLayer(object.id,object));
