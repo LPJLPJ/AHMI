@@ -53338,7 +53338,10 @@ module.exports = React.createClass({
             this.showBorder(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
 
             this.clipToRect(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-            this.showScrollBar(offctx, canvasData, subCanvas);
+            if (subCanvas.shouldShowScrollBar) {
+                this.showScrollBar(offctx, canvasData, subCanvas);
+            }
+
             // offctx.translate(canvasData.contentOffsetX,canvasData.contentOffsetY)
 
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
@@ -53349,8 +53352,8 @@ module.exports = React.createClass({
         } else {}
     },
     showScrollBar: function showScrollBar(ctx, canvasData, subCanvas) {
-        var ratioX = canvasData.w / (subCanvas.width || 800);
-        var ratioY = canvasData.h / (subCanvas.height || 400);
+        var ratioX = canvasData.w / (subCanvas.width || canvasData.w);
+        var ratioY = canvasData.h / (subCanvas.height || canvasData.h);
         var scrollBarX = -(subCanvas.contentOffsetX || 0) * ratioX;
         var scrollBarY = -(subCanvas.contentOffsetY || 0) * ratioY;
 
@@ -53358,8 +53361,16 @@ module.exports = React.createClass({
         var scoy = subCanvas.contentOffsetY || 0;
         var cw = canvasData.w;
         var ch = canvasData.h;
-        var scw = subCanvas.width || 800;
-        var sch = subCanvas.height || 400;
+        var scw = subCanvas.width || canvasData.w;
+        var sch = subCanvas.height || canvasData.h;
+
+        var alpha = subCanvas.scrollBarAlpha;
+
+        if (alpha === undefined) {
+            alpha = 1.0;
+        }
+        var maxAlpha = 0.5;
+        alpha = alpha * maxAlpha;
 
         if (scox > 0) {
             scw += scox;
@@ -53383,14 +53394,15 @@ module.exports = React.createClass({
         var originX = canvasData.x;
         var originY = canvasData.y;
 
-        this.paintLine(ctx, originX + scrollBarX, originY + canvasData.h, originX + scrollBarX + canvasData.w * ratioX, originY + canvasData.h);
-        this.paintLine(ctx, originX + canvasData.w, originY + scrollBarY, originX + canvasData.w, originY + scrollBarY + canvasData.h * ratioY);
+        this.paintLine(ctx, originX + scrollBarX, originY + canvasData.h, originX + scrollBarX + canvasData.w * ratioX, originY + canvasData.h, alpha);
+        this.paintLine(ctx, originX + canvasData.w, originY + scrollBarY, originX + canvasData.w, originY + scrollBarY + canvasData.h * ratioY, alpha);
     },
-    paintLine: function paintLine(ctx, sx, sy, tx, ty) {
+    paintLine: function paintLine(ctx, sx, sy, tx, ty, alpha) {
         ctx.save();
         ctx.beginPath();
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = 'rgba(77,77,77)';
+        ctx.globalAlpha = alpha;
         ctx.moveTo(sx, sy);
         ctx.lineTo(tx, ty);
         ctx.stroke();
@@ -56637,7 +56649,6 @@ module.exports = React.createClass({
             this.handleDragging(_.cloneDeep(this.mouseState), lastMouseState);
         } else {
             this.mouseState.state = 'move';
-            console.log('moving', _.cloneDeep(this.mouseState), lastMouseState);
         }
     },
     handleHolding: function handleHolding() {},
@@ -56660,6 +56671,15 @@ module.exports = React.createClass({
         if (subCanvas.scrollYTimerId) {
             clearInterval(subCanvas.scrollYTimerId);
         }
+        if (subCanvas.scrollBarHideAnime) {
+            subCanvas.scrollBarHideAnime.stop();
+            subCanvas.scrollBarHideAnime = null;
+            subCanvas.scrollBarAlpha = 1.0;
+            console.log('cancel anime');
+        }
+        if (subCanvas.hideScrollBarTimerId) {
+            clearTimeout(subCanvas.hideScrollBarTimerId);
+        }
         this.stopBounceAnimation(subCanvas, 'bounceAnimeX', 'bounceAnimeY');
     },
 
@@ -56675,6 +56695,20 @@ module.exports = React.createClass({
         var offsetY = mousePointY - lastMousePointY;
 
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
+
+        //reset scrollbar
+
+        if (subCanvas.hideScrollBarTimerId) {
+            clearTimeout(subCanvas.hideScrollBarTimerId);
+        }
+
+        if (subCanvas.scrollBarHideAnime) {
+            subCanvas.scrollBarHideAnime.stop();
+            subCanvas.scrollBarHideAnime = null;
+        }
+        subCanvas.shouldShowScrollBar = true;
+        subCanvas.scrollBarAlpha = 1.0;
+
         if (subCanvas.scrollXTimerId) {
             clearInterval(subCanvas.scrollXTimerId);
         }
@@ -56684,8 +56718,8 @@ module.exports = React.createClass({
 
         this.stopBounceAnimation(subCanvas, 'bounceAnimeX', 'bounceAnimeY');
 
-        subCanvas.width = 800;
-        subCanvas.height = 400;
+        subCanvas.width = subCanvas.width || canvas.w;
+        subCanvas.height = subCanvas.height || canvas.h;
 
         subCanvas.contentOffsetX = subCanvas.contentOffsetX || 0;
         subCanvas.contentOffsetY = subCanvas.contentOffsetY || 0;
@@ -56708,9 +56742,12 @@ module.exports = React.createClass({
         }
     },
     startBounceAnimation: function startBounceAnimation(elem, animation, offset, initialVelocity, zeroPos, onePos, duration, startPos) {
-        elem[animation] = new AnimationAPI.SpringAnimation(null, 'x', initialVelocity, 12, 180, { x: zeroPos }, { x: onePos }, duration, startPos);
+        var self = this;
+        elem[animation] = new AnimationAPI.SpringAnimation(null, 'x', initialVelocity, 26, 170, { x: zeroPos }, { x: onePos }, duration, startPos);
         elem[animation].onFrameCB = function () {
             elem[offset] = this.state.curValue.x;
+            // elem.shouldShowScrollBar = true
+            self.addHideScrollBarTimeout(elem);
         };
         elem[animation].start();
     },
@@ -56848,6 +56885,9 @@ module.exports = React.createClass({
     handleDraggingEnd: function handleDraggingEnd(mouseState, lastMouseState) {
         var pressedTargets = this.state.currentPressedTargets;
         var canvas = pressedTargets[pressedTargets.length - 1];
+        if (canvas.type !== 'MyLayer') {
+            return;
+        }
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
         //canvas scroll effect
         var elem = subCanvas;
@@ -56859,6 +56899,7 @@ module.exports = React.createClass({
         var signY = stepY > 0 ? 1 : -1;
         // console.log(stepX,stepY)
         elem.scrollXTimerId = setInterval(function () {
+            console.log('slipping');
 
             var leftLimit = canvas.w - subCanvas.width;
             var rightLimit = 0;
@@ -56868,6 +56909,7 @@ module.exports = React.createClass({
             // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
             // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
             elem.contentOffsetX = elem.contentOffsetX + stepX;
+            this.addHideScrollBarTimeout(elem);
 
             var bounceDuration = 2000;
             var bounceLimit = 100;
@@ -56880,7 +56922,7 @@ module.exports = React.createClass({
                 clearInterval(elem.scrollXTimerId);
                 //left
 
-                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, leftLimit + bounceLimit, leftLimit, bounceDuration, (elem.contentOffsetX - leftLimit) / bounceLimit + 1);
+                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, leftLimit - bounceLimit, leftLimit, bounceDuration, (elem.contentOffsetX - leftLimit) / bounceLimit + 1);
             }
 
             stepX -= factor * signX;
@@ -56904,6 +56946,8 @@ module.exports = React.createClass({
 
             elem.contentOffsetY = elem.contentOffsetY + stepY;
 
+            this.addHideScrollBarTimeout(elem);
+
             var bounceDuration = 2000;
             var bounceLimit = 100;
             //test x bounce
@@ -56916,7 +56960,7 @@ module.exports = React.createClass({
             } else if (elem.contentOffsetY < canvas.h - subCanvas.height) {
                 clearInterval(elem.scrollYTimerId);
                 //left
-                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, topLimit + bounceLimit, topLimit, bounceDuration, (elem.contentOffsetY - topLimit) / bounceLimit + 1);
+                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, topLimit - bounceLimit, topLimit, bounceDuration, (elem.contentOffsetY - topLimit) / bounceLimit + 1);
             }
 
             // stepX -= factor * signX
@@ -56927,6 +56971,36 @@ module.exports = React.createClass({
                 clearInterval(elem.scrollYTimerId);
             }
         }.bind(this), 30);
+    },
+    addHideScrollBarTimeout: function addHideScrollBarTimeout(elem) {
+
+        if (elem.scrollBarHideAnime) {
+            elem.scrollBarHideAnime.stop();
+            elem.scrollBarHideAnime = null;
+            elem.scrollBarAlpha = 1.0;
+        }
+
+        if (elem.hideScrollBarTimerId) {
+            clearTimeout(elem.hideScrollBarTimerId);
+        }
+        // console.log('added ')
+        elem.hideScrollBarTimerId = setTimeout(function () {
+
+            this.easeOutScrollBar(elem);
+        }.bind(this), 100);
+    },
+    easeOutScrollBar: function easeOutScrollBar(elem) {
+
+        elem.scrollBarHideAnime = new AnimationAPI.Animation(null, 'alpha', 1.0, 0.0, 5000);
+        elem.scrollBarHideAnime.onFrameCB = function () {
+            elem.scrollBarAlpha = this.state.curValue;
+        };
+        elem.scrollBarHideAnime.timingFunction = AnimationAPI.timingFunctions.easeOutCubic;
+        elem.scrollBarHideAnime.start();
+        if (!window.animes) {
+            window.animes = [];
+        }
+        window.animes.push(elem.scrollBarHideAnime);
     },
     handleElementRelease: function handleElementRelease(elem, mouseState, lastMouseState) {
         var needRedraw = false;
