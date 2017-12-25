@@ -56633,9 +56633,11 @@ module.exports = React.createClass({
 
         if (this.mouseState.state === 'press' || this.mouseState.state === 'dragging') {
             this.mouseState.state = 'dragging';
+            // console.log('dragging',_.cloneDeep(this.mouseState),lastMouseState)
             this.handleDragging(_.cloneDeep(this.mouseState), lastMouseState);
         } else {
             this.mouseState.state = 'move';
+            console.log('moving', _.cloneDeep(this.mouseState), lastMouseState);
         }
     },
     handleHolding: function handleHolding() {},
@@ -56696,85 +56698,6 @@ module.exports = React.createClass({
 
         subCanvas.contentOffsetX = nextContentOffsetX;
         subCanvas.contentOffsetY = nextContentOffsetY;
-
-        //canvas scroll effect
-        var elem = subCanvas;
-
-        var stepX = mouseState.speedX / (1000 / 30);
-        var stepY = mouseState.speedY / (1000 / 30);
-        var factor = 2;
-        var signX = stepX >= 0 ? 1 : -1;
-        var signY = stepY > 0 ? 1 : -1;
-        // console.log(stepX,stepY)
-        elem.scrollXTimerId = setInterval(function () {
-
-            var leftLimit = canvas.w - subCanvas.width;
-            var rightLimit = 0;
-            var topLimit = canvas.h - subCanvas.height;
-            var bottomLimit = 0;
-
-            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
-            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
-            elem.contentOffsetX = elem.contentOffsetX + stepX;
-
-            var bounceDuration = 2000;
-            var bounceLimit = 100;
-            //test x bounce
-            if (elem.contentOffsetX > 0 && stepX > 0) {
-                clearInterval(elem.scrollXTimerId);
-
-                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, -bounceLimit, 0, bounceDuration, elem.contentOffsetX / bounceLimit + 1);
-            } else if (elem.contentOffsetX < canvas.w - subCanvas.width && stepX < 0) {
-                clearInterval(elem.scrollXTimerId);
-                //left
-
-                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, leftLimit + bounceLimit, leftLimit, bounceDuration, (elem.contentOffsetX - leftLimit) / bounceLimit + 1);
-            }
-
-            // stepX -= factor * signX
-            // stepY -= factor * signY
-            stepX = stepX * signX <= 0 ? 0 : stepX;
-
-            if (stepX == 0) {
-                clearInterval(elem.scrollXTimerId);
-            }
-        }.bind(this), 30);
-
-        elem.scrollYTimerId = setInterval(function () {
-
-            var leftLimit = canvas.w - subCanvas.width;
-            var rightLimit = 0;
-            var topLimit = canvas.h - subCanvas.height;
-            var bottomLimit = 0;
-
-            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
-            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
-
-            elem.contentOffsetY = elem.contentOffsetY + stepY;
-
-            var bounceDuration = 2000;
-            var bounceLimit = 100;
-            //test x bounce
-
-
-            if (elem.contentOffsetY > 0 && stepY > 0) {
-                clearInterval(elem.scrollYTimerId);
-
-                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, -bounceLimit, 0, bounceDuration, elem.contentOffsetY / bounceLimit + 1);
-            } else if (elem.contentOffsetY < canvas.h - subCanvas.height && stepY < 0) {
-                clearInterval(elem.scrollYTimerId);
-                //left
-                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, topLimit + bounceLimit, topLimit, bounceDuration, (elem.contentOffsetY - topLimit) / bounceLimit + 1);
-            }
-
-            // stepX -= factor * signX
-            // stepY -= factor * signY
-
-            stepY = stepY * signY <= 0 ? 0 : stepY;
-            if (stepY == 0) {
-                clearInterval(elem.scrollYTimerId);
-            }
-        }.bind(this), 30);
     },
     stopBounceAnimation: function stopBounceAnimation(elem) {
         for (var i = 1; i < arguments.length; i++) {
@@ -56893,8 +56816,13 @@ module.exports = React.createClass({
         }
     },
     handleRelease: function handleRelease(e) {
-        var x = Math.round(e.pageX - e.target.offsetLeft);
-        var y = Math.round(e.pageY - e.target.offsetTop);
+        // var x = Math.round(e.pageX - e.target.offsetLeft);
+        // var y = Math.round(e.pageY - e.target.offsetTop);
+        var x = 0;
+        var y = 0;
+        var pos = this.getRelativeRect(e) || { x: 0, y: 0 };
+        y = pos.y;
+        x = pos.x;
         var lastMouseState = _.cloneDeep(this.mouseState);
         this.mouseState.state = 'release';
         this.mouseState.position.x = x;
@@ -56902,6 +56830,8 @@ module.exports = React.createClass({
         this.mouseState.timeStamp = Date.now();
         this.mouseState.speedX = 0;
         this.mouseState.speedY = 0;
+
+        console.log('releasing', _.cloneDeep(this.mouseState), lastMouseState);
 
         if (lastMouseState.state == 'dragging') {
             this.handleDraggingEnd(_.cloneDeep(this.mouseState), lastMouseState);
@@ -56915,7 +56845,89 @@ module.exports = React.createClass({
         }
         this.state.currentPressedTargets = [];
     },
-    handleDraggingEnd: function handleDraggingEnd(mouseState, lastMouseState) {},
+    handleDraggingEnd: function handleDraggingEnd(mouseState, lastMouseState) {
+        var pressedTargets = this.state.currentPressedTargets;
+        var canvas = pressedTargets[pressedTargets.length - 1];
+        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
+        //canvas scroll effect
+        var elem = subCanvas;
+
+        var stepX = lastMouseState.speedX / (1000 / 30);
+        var stepY = lastMouseState.speedY / (1000 / 30);
+        var factor = 2;
+        var signX = stepX >= 0 ? 1 : -1;
+        var signY = stepY > 0 ? 1 : -1;
+        // console.log(stepX,stepY)
+        elem.scrollXTimerId = setInterval(function () {
+
+            var leftLimit = canvas.w - subCanvas.width;
+            var rightLimit = 0;
+            var topLimit = canvas.h - subCanvas.height;
+            var bottomLimit = 0;
+
+            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+            elem.contentOffsetX = elem.contentOffsetX + stepX;
+
+            var bounceDuration = 2000;
+            var bounceLimit = 100;
+            //test x bounce
+            if (elem.contentOffsetX > 0) {
+                clearInterval(elem.scrollXTimerId);
+
+                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, -bounceLimit, 0, bounceDuration, elem.contentOffsetX / bounceLimit + 1);
+            } else if (elem.contentOffsetX < canvas.w - subCanvas.width) {
+                clearInterval(elem.scrollXTimerId);
+                //left
+
+                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, leftLimit + bounceLimit, leftLimit, bounceDuration, (elem.contentOffsetX - leftLimit) / bounceLimit + 1);
+            }
+
+            stepX -= factor * signX;
+            // stepY -= factor * signY
+            stepX = stepX * signX <= 0 ? 0 : stepX;
+
+            if (stepX == 0) {
+                clearInterval(elem.scrollXTimerId);
+            }
+        }.bind(this), 30);
+
+        elem.scrollYTimerId = setInterval(function () {
+
+            var leftLimit = canvas.w - subCanvas.width;
+            var rightLimit = 0;
+            var topLimit = canvas.h - subCanvas.height;
+            var bottomLimit = 0;
+
+            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+
+            elem.contentOffsetY = elem.contentOffsetY + stepY;
+
+            var bounceDuration = 2000;
+            var bounceLimit = 100;
+            //test x bounce
+
+
+            if (elem.contentOffsetY > 0) {
+                clearInterval(elem.scrollYTimerId);
+
+                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, -bounceLimit, 0, bounceDuration, elem.contentOffsetY / bounceLimit + 1);
+            } else if (elem.contentOffsetY < canvas.h - subCanvas.height) {
+                clearInterval(elem.scrollYTimerId);
+                //left
+                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, topLimit + bounceLimit, topLimit, bounceDuration, (elem.contentOffsetY - topLimit) / bounceLimit + 1);
+            }
+
+            // stepX -= factor * signX
+            stepY -= factor * signY;
+
+            stepY = stepY * signY <= 0 ? 0 : stepY;
+            if (stepY == 0) {
+                clearInterval(elem.scrollYTimerId);
+            }
+        }.bind(this), 30);
+    },
     handleElementRelease: function handleElementRelease(elem, mouseState, lastMouseState) {
         var needRedraw = false;
         switch (elem.type) {
