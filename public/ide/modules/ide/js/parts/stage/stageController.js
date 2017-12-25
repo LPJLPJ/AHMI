@@ -143,7 +143,7 @@
             });
 
             $scope.$on('CanvasScaleChanged', function (_event,scaleMode) {
-                changeCanvasScale(scaleMode);
+                changeCanvasScale({scaleMode:scaleMode});
             })
             $scope.$on('CurrentSubLayerChanged', function (event, operate, callback) {
                 renderAllCanvases(operate,callback)

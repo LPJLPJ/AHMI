@@ -1216,8 +1216,7 @@
             var(allFontCnt,0)     //要绘制的总字符的个数
             var(tempVal,0)        //临时变量
             var(needDraw,0)       //是否需要绘制，在溢出不显示的情况下，不需要绘制。0不需要，1需要
-            var(isOverflow,0)     //数字值是否溢出
-            
+            var(isOverflow,0)     //是否溢出
             
             getTag(tCurVal)
             set(tMaxVal,'this.maxValue')
@@ -1231,7 +1230,8 @@
             set(align,'this.otherAttrs.7')
             set(widgetWidth,'this.otherAttrs.8')      
             
-            set(needDraw,1)      
+            set(needDraw,1)
+            print(needDraw,'needDrawInit')      
             
             //处理要显示的值
             if(tCurVal>tMaxVal){
@@ -1264,8 +1264,13 @@
                 }
                 
                 //当前值数字个数
-                set(tempVal,tCurVal)
                 //--while 没有>=，故tCurVal为0时，curValCnt为1
+                if(tCurVal<0){
+                   set(tempVal,0)
+                   minus(tempVal,tCurVal)
+                   set(tCurVal,tempVal) 
+                }
+                set(tempVal,tCurVal)
                 while(tempVal>0){
                     add(curValCnt,1)
                     divide(tempVal,10)
@@ -1288,7 +1293,6 @@
                 
                 //小数  add
                 set(decimalIndex,-1)
-                print(decimalIndex,'decimalIndex')
                 print(decimalCnt,'decimalCnt')
                 if(decimalCnt>0){
                     add(allFontCnt,1)
@@ -1314,6 +1318,8 @@
                 }else{
                     set(decimalIndex,-1)
                 }
+                print(allFontCnt,'allFontCnt')
+                print(decimalIndex,'decimalIndex')
                 
                 //计算起始坐标
                 set(tempVal,allFontCnt)
@@ -1349,65 +1355,61 @@
                 var(tempValMid1,0)  //保存临时中间结果
                 var(tempValMid2,0)  //保存临时中间结果
                 set(tempVal,0)
-                if(tempVal==0){
-                    if(symbolCnt==1){
-                        //有负号
-                        set('this.layers.tempVal.x',initPos)
-                        set('this.layers.tempVal.subLayers.font.text',45)
-                        add(tempVal,1)
-                        add(initPosX,fontWidth)
-                    }else{
-                        print(initPos,'跳过')
-                    }  
-                }else{
-                    print(initPos,'跳过')
-                }
-                
                 while(tempVal<allFontCnt){
                     set('this.layers.tempVal.x',initPosX)
                     set('this.layers.tempVal.width',fontWidth)
-                    
-                    if(frontZeroCnt>0){
-                        //绘制前导零
+                    if(symbolCnt==1){
+                        //绘制
+                        print(symbolCnt,'symbolCnt')
                         set(tempValText,0)
-                        add(tempValText,48)
+                        add(tempValText,45)
                         set('this.layers.tempVal.subLayers.font.text',tempValText)
-                        minus(frontZeroCnt,1)
+                        set(symbolCnt,0)
                         add(initPosX,fontWidth)
                     }else{
-                        if(decimalZeroCnt>0){
-                            set(tempValText,0)
-                            add(tempValText,48)
-                            set('this.layers.tempVal.subLayers.font.text',tempValText)
-                            minus(decimalZeroCnt,1)
-                            add(initPosX,fontWidth)
+                        if(decimalIndex==tempVal){
+                            //绘制小数点
+                            set('this.layers.tempVal.width',fontWidthHalf)
+                            set(tempValMid1,46)
+                            set('this.layers.tempVal.subLayers.font.text',46)
+                            add(initPosX,fontWidthHalf)
                         }else{
-                            if(decimalIndex==tempVal){
-                                //绘制小数点
-                                set('this.layers.tempVal.width',fontWidthHalf)
-                                set(tempValMid1,46)
-                                set('this.layers.tempVal.subLayers.font.text',46)
-                                add(initPosX,fontWidthHalf)
-                            }else{
-                                //绘制数字值
-                                set(tempValMid1,curValCnt)
-                                set(tempValMid2,1)
-                                while(tempValMid1>1){
-                                    multiply(tempValMid2,10)
-                                    minus(tempValMid1,1)
-                                }
-                                set(tempValText,tCurVal)
-                                divide(tempValText,tempValMid2)
-                                mod(tempValText,10)
+                            if(frontZeroCnt>0){
+                                //绘制前导零
+                                set(tempValText,0)
                                 add(tempValText,48)
                                 set('this.layers.tempVal.subLayers.font.text',tempValText)
-                                minus(curValCnt,1)
+                                minus(frontZeroCnt,1)
                                 add(initPosX,fontWidth)
+                            }else{
+                                if(decimalZeroCnt>0){
+                                    set(tempValText,0)
+                                    add(tempValText,48)
+                                    set('this.layers.tempVal.subLayers.font.text',tempValText)
+                                    add(initPosX,fontWidth)
+                                    minus(decimalZeroCnt,1)
+                                }else{
+                                    //绘制数字值
+                                    set(tempValMid1,curValCnt)
+                                    set(tempValMid2,1)
+                                    while(tempValMid1>1){
+                                        multiply(tempValMid2,10)
+                                        minus(tempValMid1,1)
+                                    }
+                                    set(tempValText,tCurVal)
+                                    divide(tempValText,tempValMid2)
+                                    mod(tempValText,10)
+                                    add(tempValText,48)
+                                    set('this.layers.tempVal.subLayers.font.text',tempValText)
+                                    minus(curValCnt,1)
+                                    add(initPosX,fontWidth)
+                                }
                             }
                         }
                     }
                     add(tempVal,1)
                 }
+                checkalarm(0)
             }           
         `
     };
@@ -1420,7 +1422,7 @@
         onMouseDown:`
         `,
         onTagChange:`
-             //清空所有数字内容
+            //清空所有数字内容
             //
             // var(tLaysLen,0)         //图层长度
             // set(tLaysLen,'this.layers.length')
@@ -1468,7 +1470,7 @@
             set(fontWidth,'this.otherAttrs.6')
 
             var(align,0)                         //对齐方式，0左，1中，2右
-            set(align,'this.otherAttrs.7')
+            set(align,'this.otherAttrs.9')
 
             var(widgetWidth,0)                   //控件宽度
             set(widgetWidth,'this.otherAttrs.8')
@@ -1487,9 +1489,6 @@
 
             var(decimalIndex,0)                  //小数点的标识坐标，即在第几个图层位置绘制小数点
             set(decimalIndex,0)
-
-            var(decimalCnt,0)                    //要绘制的小数点的个数
-            set(decimalCnt,0)
 
             var(decimalZeroCnt,0)                //要补齐的小数点后的0的个数
             set(decimalZeroCnt,0)
@@ -1520,6 +1519,7 @@
             var(i,0)                             //循环变量
             set(i,0)
             
+      
             
 
             //溢出处理
@@ -1556,13 +1556,12 @@
 
                 //当前值位数
                 set(tempVal,tCurVal)
+                while(tempVal>0){
+                    add(curValCnt,1)
+                    divide(tempVal,10)
+                }
                 if(curValCnt==0){
-                    set(curValCnt,1)
-                }else{
-                    while(tempVal>0){
-                        add(curValCnt,1)
-                        divide(tempVal,10)
-                    }
+                    set(curValCnt,1) 
                 }
 
                 //前导零
@@ -1578,9 +1577,6 @@
                 add(allFontCnt,curValCnt)
 
                 //小数点位置
-                set(decimalIndex,-1)//小数点的标识坐标，即在第几个图层位置绘制小数点
-                print(decimalIndex,'decimalIndex')
-                print(decimalCnt,'decimalCnt')
                 if(decimalCnt>0){
                     add(allFontCnt,1)
                     if(decimalCnt>=curValCnt){
@@ -1590,14 +1586,10 @@
                             minus(decimalZeroCnt,curValCnt)
                             add(decimalZeroCnt,1)//小数点前面的0
                             add(allFontCnt,decimalZeroCnt)
+                            print('allFontCnt3',allFontCnt)
                         }
                     }
-                    //计算小数点坐标
-                    set(decimalIndex,allFontCnt)
-                    minus(decimalIndex,decimalCnt)
-                    minus(decimalIndex,1)////////////////////////////////////////?
                 }
-
                 //计算字符所占总宽度
                 set(tempVal,allFontCnt)
                 multiply(tempVal,fontWidth)
@@ -1609,7 +1601,7 @@
                 }
 
                 //计算起始坐标
-                if（widgetWidth>tempValW){
+                if(widgetWidth>tempValW){
                     if(align==0){
                         //左对齐
                         set(initPosX,0)
@@ -1627,28 +1619,23 @@
                     }
                 }else{
                     set(initPosX,0)
-                }
+                }                
 
                 //绘制符号
                 if(symbolCnt==1){
                     //有负号
-                    print('this.layers',this.layers)
-                    set('this.layers.0.x',initPos)
+                    set('this.layers.0.x',initPosX)
                     set('this.layers.0.hidden',0)
-                    add(initPosX,fontWidth)
+                    minus(allFontCnt,1)
                 }
+                
+                
+                //设置每一个字符的初始位置
                 set(xCoordinate,initPosX)
                 add(xCoordinate,tempValW)
+
                 
                 //绘制逻辑
-                if(decimalCnt==0){
-                    //
-                }else{
-                    if(curValCnt>decimalCnt){
-                        add(curValCnt,1)
-                    }
-                }
-                
 
                 while(i<allFontCnt){
                     if(i==decimalCnt){
@@ -1663,6 +1650,10 @@
                        //draw(index,xCoordinate)
                        set('this.layers.index.hidden',0)
                        set('this.layers.index.x',xCoordinate)
+                       
+                       minus(i,1)
+                       minus(allFontCnt,1)
+                       set(decimalCnt,0)
                 
                     }else{
                         //畫數字
@@ -1712,7 +1703,6 @@
             }
         `
     };
-
     WidgetCommands['DateTime'] = {
         onInitialize:`
             var(offset,0)
@@ -1796,7 +1786,7 @@
                     var(tHighLightNum,0)
                     //clear
                     set(offset,'this.otherAttrs.0')
-                    while(offset<totalLayerNum){
+                    while(offset < totalLayerNum){
                         set('this.layers.offset.hidden',1)
                         add(offset,1)
                     }
@@ -1873,7 +1863,7 @@
                     var(tHighLightNum,0)
                     //clear
                     set(offset,'this.otherAttrs.0')
-                    while(offset<totalLayerNum){
+                    while(offset < totalLayerNum){
                         set('this.layers.offset.hidden',1)
                         add(offset,1)
                     }
@@ -2156,3 +2146,5 @@
 //
 // checkalarm(0)
 // set('this.oldValue',tTagValue)
+
+

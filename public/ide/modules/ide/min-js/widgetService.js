@@ -145,11 +145,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.backgroundImg.element){
                     // console.log('drawing background element',this.backgroundImg.element)
                     ctx.drawImage(this.backgroundImg.element,
-                        this.backgroundImg.left,
-                        this.backgroundImg.top,
-
-                        this.backgroundImg.width,
-                        this.backgroundImg.height);
+                        0,0,  //sx,sy
+                        this.backgroundImg.width,this.backgroundImg.height, //sw,sh
+                        this.backgroundImg.left,this.backgroundImg.top,     //dx,dy
+                        this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
                 }
             }catch (err) {
                 console.log('错误描述',err);
@@ -1768,35 +1767,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.align=level.info.align;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
-            // this.maxFontWidth=level.info.maxFontWidth;
-            this.widthBeforePadding=this.width;
-
-            if(level.info.paddingRatio===undefined){
-                //维护旧的时间控件
-                this.paddingRatio= level.info.paddingRatio=0.1;
-                this.spacing = level.info.spacing= Math.ceil(-this.fontSize/3);
-                var font = this.fontSize + "px" + " " + this.fontFamily;
-                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
-                var maxWidth = parseInt(this.fontSize);//+
-                this.fontSize = maxWidth;
-                level.info.fontSize = maxWidth;
-                if(this.dateTimeModeId=='0'){
-                    this.widthBeforePadding=8*this.fontSize+7*this.spacing;
-                }else if(this.dateTimeModeId=='1'){
-                    this.widthBeforePadding=5*this.fontSize+4*this.spacing;
-                }else {
-                    this.widthBeforePadding=10*this.fontSize+9*this.spacing;
-                }
-                var width=this.widthBeforePadding+2*this.paddingRatio*this.fontSize;
-                // this.setWidth(width);
-                var height = this.fontSize*(1+2*this.paddingRatio);
-                level.info.width = width;
-                level.info.height=height;
-                // this.setHeight(height);
-                this.set({width:width,height:height});
-            }
             this.spacing =level.info.spacing;
             this.paddingRatio=level.info.paddingRatio;
+            // this.maxFontWidth=level.info.maxFontWidth;
+            this.widthBeforePadding=this.width;
+            if(this.dateTimeModeId=='0'){
+                this.widthBeforePadding=8*this.fontSize+7*this.spacing;
+            }else if(this.dateTimeModeId=='1'){
+                this.widthBeforePadding=5*this.fontSize+4*this.spacing;
+            }else {
+                this.widthBeforePadding=10*this.fontSize+9*this.spacing;
+            }
+
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
                 self.dateTimeModeId=arg.dateTimeModeId;
@@ -2267,7 +2249,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(i=0;i<dateTimeStr.length;i++){
                     numStr=numStr+dateTimeStr[i];
                 }
-                // console.log("numStr:"+numStr);
 
                 // drawTexTime(this.dateTimeModeId,ctx,this.numObj,this.width,this.characterW,this.characterH);
                 drawTexTimeByCharacter(ctx,numStr,this.width,this.characterW,this.characterH,this.numObj);
@@ -2325,22 +2306,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         //计算整个数字图层控件的宽度
         widthOfNumStr=width;
         initXPos = (characterW-widthOfNumStr)/2;
-        //由对齐方式设置整个控件的起始位置
-        // switch(align){
-        //     case 'left':
-        //         initXPos=characterW/2-width/2;
-        //         break;
-        //     case 'right':
-        //         initXPos=width/2+characterW/2-widthOfNumStr;
-        //         break;
-        //     case 'center':
-        //     default:
-        //         initXPos = (characterW-widthOfNumStr)/2;
-        //         break;
-        // }
         //设置第一个数字的起始位置
         xCoordinate = initXPos;
-
         for(var i=0;i<numStr.length;i++){
             //根据数字字符绘制对应的数字图层
             switch (numStr[i]){
@@ -2423,10 +2390,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             }
 
-
         }
     }
-
 
 
     fabric.MyButton = fabric.util.createClass(fabric.Object, {
@@ -2447,11 +2412,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontItalic=level.info.fontItalic;
 
             this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-            if (this.normalImageElement) {
-                this.loaded = true;
-                this.setCoords();
-                this.fire('image:loaded');
-            }
+            // if (this.normalImageElement) {
+            //     this.loaded = true;
+            //     this.setCoords();
+            //     this.fire('image:loaded');
+            // }
 
             this.on('changeTex', function (arg) {
                 var level=arg.level;
@@ -2606,12 +2571,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontUnderline=level.info.fontUnderline;
 
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-            if (this.backgroundImageElement) {
-                this.loaded = true;
-                this.setCoords();
-                this.fire('image:loaded');
-            }
-
+            // if (this.backgroundImageElement) {
+            //     this.loaded = true;
+            //     this.setCoords();
+            //     this.fire('image:loaded');
+            // }
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -2780,29 +2744,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.symbolMode=level.info.symbolMode;
             this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
-            this.spacing = (level.info.spacing===undefined)?(level.info.spacing=Math.ceil(-this.fontSize/3)):level.info.spacing;//兼容旧的数字控件
+            this.spacing = level.info.spacing;
             this.paddingRatio = level.info.paddingRatio;
-            if(this.paddingRatio===undefined){
-                //维护旧的数字控件
-                level.info.paddingRatio = 0.1;
-                this.paddingRatio = 0.1;
-                var maxWidth = parseInt(this.fontSize);
-                var paddingX = Math.ceil(maxWidth*this.paddingRatio);
-                this.maxFontWidth = maxWidth;
-                level.info.paddingX = this.paddingX;
-                level.info.maxFontWidth = maxWidth;
-                if(this.numOfDigits&&this.fontSize){
-                    var width = this.symbolMode=='0'?(this.numOfDigits*(maxWidth+this.spacing)-this.spacing):((this.numOfDigits+1)*(maxWidth+this.spacing)-this.spacing);
-                    width+=paddingX*2;
-                    if(this.decimalCount!=0){
-                        width +=0.5*maxWidth+this.spacing;
-                    }
-                    var height = Math.ceil(self.fontSize*1.2);
-                    level.info.width = width;
-                    level.info.height = height;
-                    self.set({width:width,height:height});
-                };
-            }
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -3404,12 +3347,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 self.normalColors.push(level.texList[i].slices[0].color);
                 self.normalImageElements.push(ResourceService.getResourceFromCache(level.texList[i].slices[0].imgSrc));
             }
-            //_.forEach(level.texList, function (_tex) {
-            //    self.normalColors.push(_tex.slices[0].color);
-            //
-            //    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
-            //
-            //});
 
             this.on('changeArrange', function (arg) {
                 self.arrange=arg.arrange;
@@ -3536,203 +3473,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyButtonGroup(level, object));
     };
     fabric.MyButtonGroup.async = true;
-
-    fabric.MyNumber=fabric.util.createClass(fabric.Object,{
-        type:Type.MyNumber,
-        initialize: function (level, options) {
-
-            var self=this;
-            this.callSuper('initialize',options);
-            this.lockRotation=true;
-            this.hasRotatingPoint=false;
-            this.myNumber=level.info.initValue+'';
-            this.numberBackColors=[];
-            this.numberImageElements=[];
-
-            for (var i=0;i<13;i++){
-                if (level.texList[i]){
-
-                    var tex=level.texList[i];
-                    self.numberBackColors.push(tex.slices[0].color);
-
-                    var imageElement=new Image();
-                    if (tex.slices[0].imgSrc){
-                        imageElement.src=tex.slices[0].imgSrc;
-                    }else{
-                        imageElement.src=Preference.NUMBER_IMAGES[i];
-
-                    }
-                    imageElement.onload = (function () {}).bind(this);
-                    self.numberImageElements.push(imageElement);
-                }else {
-                    //填充默认的颜色和数字图片
-                    self.numberBackColors.push(Preference.WHITE_COLOR);
-                    var imageElement=new Image();
-                    imageElement.src=Preference.NUMBER_IMAGES[i];
-                    imageElement.onload = (function () {}).bind(this);
-                    self.numberImageElements.push(imageElement);
-                }
-            }
-
-            this.on('changeNumber', function (newLevel, _callback) {
-                self.myNumber=newLevel.info.initValue+'';
-                this.width=newLevel.info.width;
-                this.height=newLevel.info.height;
-                var subLayerNode=CanvasService.getSubLayerNode();
-                subLayerNode.renderAll();
-                _callback&&_callback();
-            });
-
-            this.on('changeTex', function (arg) {
-                //初始化列表
-                var level=arg.level;
-                var _callback=arg.callback;
-                self.numberBackColors=[];
-                self.numberImageElements=[];
-
-
-                for (var i=0;i<13;i++){
-                    if (level.texList[i]){
-
-                        var tex=level.texList[i];
-                        self.numberBackColors.push(tex.slices[0].color);
-
-                        var imageElement=new Image();
-                        if (tex.slices[0].imgSrc){
-                            imageElement.src=tex.slices[0].imgSrc;
-                        }else{
-                            imageElement.src=Preference.NUMBER_IMAGES[i];
-
-                        }
-                        imageElement.onload = (function () {}).bind(this);
-                        self.numberImageElements.push(imageElement);
-                    }else {
-                        //填充默认的颜色和数字图片
-                        self.numberBackColors.push(Preference.WHITE_COLOR);
-                        var imageElement=new Image();
-                        imageElement.src=Preference.NUMBER_IMAGES[i];
-                        imageElement.onload = (function () {}).bind(this);
-                        self.numberImageElements.push(imageElement);
-                    }
-                }
-
-                var subLayerNode=CanvasService.getSubLayerNode();
-                subLayerNode.renderAll();
-
-                _callback&&_callback();
-            });
-
-        },
-        toObject: function () {
-            return fabric.util.object.extend(this.callSuper('toObject'));
-        },
-        _render: function (ctx) {
-
-
-            //按数字画按钮
-            var charArray=this.myNumber.split('');
-            var count=charArray.length;
-            var width=this.width/count;
-            var height=this.height;
-
-            var colors=[];
-            var imageElements=[];
-            for (var i=0;i<charArray.length;i++) {
-                var _char=charArray[i];
-                switch (_char){
-                    case '0':
-                        colors.push(this.numberBackColors[0]);
-                        imageElements.push(this.numberImageElements[0]);
-                        break;
-                    case '1':
-                        colors.push(this.numberBackColors[1]);
-                        imageElements.push(this.numberImageElements[1]);
-                        break;
-                    case '2':
-                        colors.push(this.numberBackColors[2]);
-                        imageElements.push(this.numberImageElements[2]);
-                        break;
-                    case '3':
-                        colors.push(this.numberBackColors[3]);
-                        imageElements.push(this.numberImageElements[3]);
-                        break;
-                    case '4':
-                        colors.push(this.numberBackColors[4]);
-                        imageElements.push(this.numberImageElements[4]);
-                        break;
-                    case '5':
-                        colors.push(this.numberBackColors[5]);
-                        imageElements.push(this.numberImageElements[5]);
-                        break;
-                    case '6':
-                        colors.push(this.numberBackColors[6]);
-                        imageElements.push(this.numberImageElements[6]);
-                        break;
-                    case '7':
-                        colors.push(this.numberBackColors[7]);
-                        imageElements.push(this.numberImageElements[7]);
-                        break;
-                    case '8':
-                        colors.push(this.numberBackColors[8]);
-                        imageElements.push(this.numberImageElements[8]);
-                        break;
-                    case '9':
-                        colors.push(this.numberBackColors[9]);
-                        imageElements.push(this.numberImageElements[9]);
-                        break;
-                    case '+':
-                        colors.push(this.numberBackColors[10]);
-                        imageElements.push(this.numberImageElements[10]);
-                        break;
-                    case '-':
-                        colors.push(this.numberBackColors[11]);
-                        imageElements.push(this.numberImageElements[11]);
-                        break;
-                    case '.':
-                        colors.push(this.numberBackColors[12]);
-                        imageElements.push(this.numberImageElements[12]);
-                        break;
-
-                }
-            }
-            for (var i=0;i<colors.length;i++){
-                ctx.fillStyle=colors[i];
-                ctx.fillRect(
-                    -(this.width / 2)+width*i,
-                    -(this.height / 2) ,
-                    width ,
-                    height );
-            }
-            for (var i=0;i<imageElements.length;i++){
-                ctx.fillStyle=imageElements[i];
-                ctx.drawImage(
-                    imageElements[i],
-                    -(this.width / 2)+width*i,
-                    -(this.height / 2) ,
-                    width ,
-                    height );
-            }
-        }
-    });
-    fabric.MyNumber.fromLevel= function (level, callback,option) {
-        callback && callback(new fabric.MyNumber(level, option));
-    };
-    fabric.MyNumber.prototype.toObject = (function (toObject) {
-        return function () {
-            return fabric.util.object.extend(toObject.call(this), {
-                numberImageElements:this.numberImageElements,
-                numberBackColors:this.numberBackColors,
-                myNumber:this.myNumber
-            });
-        }
-    })(fabric.MyNumber.prototype.toObject);
-    fabric.MyNumber.fromObject= function (object, callback) {
-        var level=ProjectService.getLevelById(object.id);
-        callback&&callback(new fabric.MyNumber(level,object));
-    };
-    fabric.MyNumber.async = true;
-
-
 
     //myvideo
     fabric.MyVideo = fabric.util.createClass(fabric.Object, {
@@ -3913,36 +3653,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.callSuper('initialize',options);
             this.lockRotation=true;
             this.hasRotatingPoint=false;
-            // this.normalColor=level.texList[0].slices[0].color;
-            // this.arrange=level.info.arrange;
-            //
-            // this.text=level.info.text;
-            // this.fontFamily=level.info.fontFamily;
-            // this.fontSize=level.info.fontSize;
-            // this.fontColor=level.info.fontColor;
-            // this.fontBold=level.info.fontBold;
-            // this.fontItalic=level.info.fontItalic;
-            //
-            // this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-            // if (this.normalImageElement) {
-            //     this.loaded = true;
-            //     this.setCoords();
-            //     this.fire('image:loaded');
-            // }
             var x = level.info.left;
             var y = level.info.top;
             var w = level.info.width;
             var h = level.info.height;
 
-            console.log(level.type)
             this.curWidget = new WidgetModel.models['Button'](x,y,w,h,'button',null,level.texList[0].slices)
             this.curWidgetInfo = this.curWidget.toObject()
-            // console.log(this.curWidgetInfo)
-            // console.log(WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(this.curWidgetInfo.onInitialize)))
-            // var functionBody = WidgetModel.WidgetCommandParser.transFunction(this.curWidgetInfo,this.curWidgetInfo.onInitialize);
-            // console.log(functionBody)
-            // this.curWidgetInfo.onInitialize = new Function(functionBody)
-            // this.curWidgetInfo.onInitialize();
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3976,8 +3693,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.General.prototype.toObject = (function (toObject) {
         return function () {
             return fabric.util.object.extend(toObject.call(this), {
-                // normalImageElement:this.normalImageElement,
-                // normalColor:this.normalColor
             });
         }
     })(fabric.General.prototype.toObject);
