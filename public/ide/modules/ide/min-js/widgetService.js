@@ -93,7 +93,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.lockRotation=true;
             this.hasRotatingPoint=false;
             this.loadAll(layerId);
-            // this.backgroundImg =
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
@@ -144,13 +143,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
                 }
 
-                console.log('scalingOperate_scaling',ProjectService.scalingOperate.scaling);
-                console.log('layer_info_width',this.layer.info.width);
-                console.log('this_backgroundImg_width',this.backgroundImg.width);
                 if(this.backgroundImg.element){
-                    // console.log('width',this.backgroundImg.width);
-                    // console.log('left', this.backgroundImg.left);
-                    var layer = this.layer;
                     ctx.drawImage(this.backgroundImg.element,
                         0,0,  //sx,sy
                         this.backgroundImg.sw,this.backgroundImg.sh, //sw,sh
@@ -233,7 +226,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             self.backgroundImg.sh = self.layer.info.height;
             self.initPosition.left = self.getLeft();
             self.initPosition.top = self.getTop();
-            ProjectService.scalingOperate.scaling = false;
             var pageNode = CanvasService.getPageNode();
             pageNode.renderAll();
             cb && cb();

@@ -265,12 +265,11 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         if (data.content){
             var globalProject = JSON.parse(data.content);
             console.log('globalProject',globalProject);
-            //add by lixiang in 12/12/21 如果是旧版本工程，则注入数据
-            if(MiddleWareService.checkProjectVerIsOld(globalProject)){
-                timeStamp = Date.now();
-                MiddleWareService.injectDataToContent(globalProject);
-                console.log('time costs in inject Data:',Date.now()-timeStamp);
-            }
+            //add by lixiang in 12/12/21 如果是旧版本工程，则注入数据,数据进入中间件
+            timeStamp = Date.now();
+            MiddleWareService.useMiddleWare(globalProject);
+            console.log('time costs in inject Data:',Date.now()-timeStamp);
+
 
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)

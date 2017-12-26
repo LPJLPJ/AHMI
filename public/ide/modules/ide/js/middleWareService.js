@@ -249,6 +249,13 @@ ideServices.service('MiddleWareService',['AnimationService','Type',function(Anim
 
     }
 
-    this.injectDataToContent = injectDataToContent;
-    this.checkProjectVerIsOld = checkProjectVerIsOld;
+    function useMiddleWare(data){
+        if(checkProjectVerIsOld(data)){
+            injectDataToContent(data);
+        }
+    }
+
+    // this.injectDataToContent = injectDataToContent;
+    // this.checkProjectVerIsOld = checkProjectVerIsOld;
+    this.useMiddleWare = useMiddleWare;
 }]);
