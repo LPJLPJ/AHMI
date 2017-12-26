@@ -779,8 +779,8 @@
                             <span class="my-attr-title">水平拓展</span>
                             <select style="margin-left: 0px"
                                     class="my-attr-number-input form-control short-input"
-                                    ng-model="component.subLayer.scrollVEnabled"
-                                    ng-change="component.subLayer.changeScrollEnable('v')">
+                                    ng-model="component.subLayer.scrollHEnabled"
+                                    ng-change="component.subLayer.changeScrollEnable('h')">
                                 <option ng-repeat="mode in component.subLayer.scrollModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>
@@ -791,14 +791,14 @@
                                    ng-model="component.object.level.info.width"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterWidth($event)"
-                                   ng-disabled="component.subLayer.scrollVEnabled==='0'"
+                                   ng-disabled="component.subLayer.scrollHEnabled==='0'"
                                    type="number">
                         </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">垂直拓展</span>
                             <select style="margin-left: 0px" class="my-attr-number-input form-control short-input"
-                                    ng-model="component.subLayer.scrollHEnabled"
-                                    ng-change="component.subLayer.changeScrollEnable('h')">
+                                    ng-model="component.subLayer.scrollVEnabled"
+                                    ng-change="component.subLayer.changeScrollEnable('v')">
                                 <option ng-repeat="mode in component.subLayer.scrollModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>
@@ -809,7 +809,7 @@
                                    ng-model="component.object.level.info.height"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterHeight($event)"
-                                   ng-disabled="component.subLayer.scrollHEnabled==='0'"
+                                   ng-disabled="component.subLayer.scrollVEnabled==='0'"
                                    type="number">
                         </div>
                     </div>

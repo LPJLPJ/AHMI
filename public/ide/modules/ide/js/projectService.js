@@ -1794,14 +1794,26 @@ ideServices
              */
             this.ReleaseObject = function (status, _successCallback) {
                 var selectObj=getCurrentSelectObject();
+                var layer,subLayers,showSubLayer;
 
                 //如果缩放了Layer,需要和subLayer同步
                 if (scalingOperate.scaling){
                     scalingOperate.scaling=false;
                     scalingOperate.objId='';
                     if (selectObj.type==Type.MyLayer){
+                        // layer缩放后，同步宽高至sublayer和showsublayer
+                        layer = selectObj.level;
+                        subLayers = selectObj.level.subLayers||[];
+                        showSubLayer = selectObj.level.showSubLayer;
+                        subLayers.forEach(function(subLayer){
+                            (!subLayer.info.scrollHEnabled)?(subLayer.info.width = layer.info.width):'';
+                            (!subLayer.info.scrollVEnabled)?(subLayer.info.height = layer.info.height):'';
+                        });
+                        (!showSubLayer.info.scrollHEnabled)?(showSubLayer.info.width = layer.info.width):'';
+                        (!showSubLayer.info.scrollVEnabled)?(showSubLayer.info.height = layer.info.height):'';
+
                         _self.SyncSubLayerImage(selectObj.level,selectObj.level.showSubLayer, function () {
-                            selectObj.target.fire('OnScaleRelease',selectObj.target.id);
+                            // selectObj.target.fire('OnScaleRelease',selectObj.target.id);
                         })
                     }
 
@@ -1818,11 +1830,6 @@ ideServices
                         layer.info.left = Math.round(baseLeft+item.left);
                         layer.info.top = Math.round(baseTop+item.top);
                     })
-
-                    // _.forEach(selectObj.target.getObjects(), function (_obj) {
-                    //     var fabLayer = getFabricObject(_obj.id);
-                    //     fabLayer.fire('OnRelease', fabLayer.id);
-                    // })
                 }
                 else if (Type.isWidget(selectObj.type)){
                     selectObj.target.fire('OnRelease',selectObj.target.id);
@@ -1831,10 +1838,7 @@ ideServices
                     var fabGroup = selectObj.target;
                     var baseLeft=selectObj.level.info.left+fabGroup.width/2;
                     var baseTop=selectObj.level.info.top+fabGroup.height/2;
-                    // _.forEach(selectObj.target.getObjects(), function (_obj) {
-                    //     var fabWidget=getFabricObject(_obj.id,true);
-                    //     fabWidget.fire('OnRelease',fabWidget.id);
-                    // })
+
                     fabGroup.forEachObject(function(item){
                         var widget = getLevelById(item.id,'widget');
                         widget.info.left = Math.round(baseLeft+item.left);
@@ -1848,12 +1852,6 @@ ideServices
                         alertErr();
                         return;
                     }
-                    // currentPage.proJsonStr = JSON.stringify(CanvasService.getPageNode().toJSON());
-
-                    // var currentSubLayer=_self.getCurrentSubLayer();
-                    // if (currentSubLayer){
-                    //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-                    // }
                     _successCallback && _successCallback();
                 }
             };
@@ -2549,7 +2547,6 @@ ideServices
                     subLayerNode.clear();
                     //+
                     _drawCanvasNode(currentLayer.showSubLayer,subLayerNode,function(){
-                        // _self.ScaleCanvas('subCanvas',currentLayer,currentSubLayer);
                         _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                         subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
                             subLayerNode.deactivateAll();
@@ -2574,15 +2571,15 @@ ideServices
                     //subLayerNode.clear();
                     subLayerNode.setBackgroundImage(null, function () {
                         subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
-
                             //+
                             _drawCanvasNode(currentLayer.showSubLayer,subLayerNode,function(){
-                                // _self.ScaleCanvas('subCanvas',currentLayer,currentSubLayer);
+                                //1 缩放subLayer的画布
                                 _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                                 subLayerNode.deactivateAll();
                                 subLayerNode.renderAll();
-                                // currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                                //2 将画布转换为dataUrl图像
                                 currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+                                //3 触发myLayer的重绘
                                 layerFab = self.getFabLayerByLayer(currentLayer);
                                 if (layerFab) {
                                     layerFab.fire('OnRefresh',function () {
@@ -2865,7 +2862,7 @@ ideServices
                 }
 
 
-            }
+            };
 
             /**
              *更新当前Page的预览图
@@ -3019,7 +3016,6 @@ ideServices
              * 改变sublayer的scroll性质
              * @param _option
              * @param _successCallback
-             * @constructor
              */
             this.ChangeSubLayerScroll = function(_option,_successCallback){
                 var currentLayer = null;
@@ -3028,7 +3024,7 @@ ideServices
                     currentSubLayer.info.scrollVEnabled = _option.scrollVEnabled;
                     if(!_option.scrollVEnabled){
                         currentLayer = _self.getCurrentLayer();
-                        currentSubLayer.info.width = currentLayer.info.width;
+                        currentSubLayer.info.height = currentLayer.info.height;
                         _self.ScaleCanvas({
                             scaleMode:'subCanvas',
                             layer:currentLayer,
@@ -3040,7 +3036,7 @@ ideServices
                     currentSubLayer.info.scrollHEnabled = _option.scrollHEnabled;
                     if(!_option.scrollHEnabled){
                         currentLayer = _self.getCurrentLayer();
-                        currentSubLayer.info.height = currentLayer.info.height;
+                        currentSubLayer.info.width = currentLayer.info.width;
                         _self.ScaleCanvas({
                             scaleMode:'subCanvas',
                             layer:currentLayer,
@@ -3748,12 +3744,7 @@ ideServices
                         break;
                     default :break;
                 }
-                // if(getCurrentSubLayer()){
-                //     var currentSubLayer=getCurrentSubLayer();
-                //     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                // }else {
-                //     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                // }
+
                 _self.ReleaseObject({});
                 subLayerNode.renderAll();
                 pageNode.renderAll();

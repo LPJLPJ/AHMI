@@ -592,6 +592,7 @@
             if (layer){
                 var fabLayer=ProjectService.getFabricObject(layer.id);
                 if (fabLayer){
+                    //同步release后的属性值到数据结构
                     ProjectService.SyncLevelFromFab(layer,fabLayer);
                 }
             }
@@ -635,7 +636,7 @@
 
                     //生成落点的Point对象
                     var clickPoint=new fabric.Point(event.e.offsetX/$scope.component.canvas.node.getZoom(),
-                        event.e.offsetY/$scope.component.canvas.node.getZoom())
+                        event.e.offsetY/$scope.component.canvas.node.getZoom());
                     //获得当前选中的Group,如果落点在group中,则需要坐标变换后判断落点是否选中了group中的object
                     var activeGroup=$scope.component.canvas.node.getActiveGroup();
 
@@ -652,13 +653,9 @@
                     }
                     _.forEach($scope.component.canvas.node.getObjects(), function (_fabLayer) {
 
-                        //console.log(clickX+'/'+clickY);
-                        //console.log(_fabLayer.width+'/'+_fabLayer.getWidth());
-                        //console.log(_fabLayer.top+'/'+_fabLayer.getTop());
                         if (clickX<=(_fabLayer.getWidth()+_fabLayer.left)&&clickY<=(_fabLayer.getHeight()+_fabLayer.top)
                             &&clickX>=_fabLayer.left&&clickY>=_fabLayer.top){
                             clickedFabLayer=_fabLayer;
-
                         }
                     });
                     if (KeydownService.isCtrlPressed()){
@@ -670,9 +667,8 @@
                     }
 
 
-                }
-                else{
-                    console.log('偏移');
+                }else{
+                    // console.log('偏移');
                 }
             }
         }

@@ -106,7 +106,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.on('OnScaleRelease', function (objId) {
                 if (objId==self.id){
-                    this.syncSubLayer()
+                    // this.syncSubLayer()
                     this.renderUrlInPage(self);
                 }
             });
@@ -144,20 +144,25 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     this.backgroundImg.left=(cos*deltaLeft+sin*deltaTop)/layerNode.getScaleX()-this.width/2;
                 }
 
+                console.log('scalingOperate_scaling',ProjectService.scalingOperate.scaling);
+                console.log('layer_info_width',this.layer.info.width);
+                console.log('this_backgroundImg_width',this.backgroundImg.width);
                 if(this.backgroundImg.element){
-                    // console.log('drawing background width',this.backgroundImg.width);
-                    // ctx.drawImage(this.backgroundImg.element,
-                    //     0,0,  //sx,sy
-                    //     this.backgroundImg.width,this.backgroundImg.height, //sw,sh
-                    //     this.backgroundImg.left,this.backgroundImg.top,     //dx,dy
-                    //     this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
-
+                    // console.log('width',this.backgroundImg.width);
+                    // console.log('left', this.backgroundImg.left);
+                    var layer = this.layer;
                     ctx.drawImage(this.backgroundImg.element,
-                        this.backgroundImg.left,
-                        this.backgroundImg.top,
+                        0,0,  //sx,sy
+                        this.backgroundImg.sw,this.backgroundImg.sh, //sw,sh
+                        this.backgroundImg.left, this.backgroundImg.top,    //dx,dy
+                        this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
 
-                        this.backgroundImg.width,
-                        this.backgroundImg.height);
+                    // ctx.drawImage(this.backgroundImg.element,
+                    //     this.backgroundImg.left,
+                    //     this.backgroundImg.top,
+                    //
+                    //     this.backgroundImg.width,
+                    //     this.backgroundImg.height);
                 }
             }catch (err) {
                 console.log('错误描述',err);
@@ -201,7 +206,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             width:layerWidth,
             height:layerHeight,
             left:-layerWidth / 2,
-            top:-layerHeight/2
+            top:-layerHeight/2,
+            sw:layer.info.width,
+            sh:layer.info.height
         };
         this.backgroundColor=layer.showSubLayer.backgroundColor;
         this.initPosition.left = this.getLeft();
@@ -222,8 +229,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             self.backgroundImg.height = self.height;
             self.backgroundImg.left = -self.width / 2;
             self.backgroundImg.top = -self.height / 2;
+            self.backgroundImg.sw = self.layer.info.width;
+            self.backgroundImg.sh = self.layer.info.height;
             self.initPosition.left = self.getLeft();
             self.initPosition.top = self.getTop();
+            ProjectService.scalingOperate.scaling = false;
             var pageNode = CanvasService.getPageNode();
             pageNode.renderAll();
             cb && cb();
@@ -247,25 +257,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             });
         }
     })(fabric.MyLayer.prototype.toObject);
-    fabric.MyLayer.prototype.syncSubLayer = function(){
-        var layer = this.layer;
-        var subLayers = this.layer.subLayers||[];
-        var showSubLayer = this.layer.showSubLayer;
-        subLayers.forEach(function(subLayer){
-            if(!subLayer.info.scrollVEnabled){
-                subLayer.info.width = layer.info.width;
-            }
-            if(!subLayer.info.scrollHEnabled){
-                subLayer.info.height = layer.info.height;
-            }
-        });
-        if(!showSubLayer.info.scrollVEnabled){
-            showSubLayer.info.width = layer.info.width;
-        }
-        if(!showSubLayer.info.scrollHEnabled){
-            showSubLayer.info.height = layer.info.height;
-        }
-    };
     fabric.MyLayer.fromObject = function (object, callback) {
         callback && callback(new fabric.MyLayer(object.id,object));
     };
