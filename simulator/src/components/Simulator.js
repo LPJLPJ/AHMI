@@ -5290,22 +5290,50 @@ module.exports =   React.createClass({
 
         this.stopBounceAnimation(subCanvas,'bounceAnimeX','bounceAnimeY')
 
+
         subCanvas.width = subCanvas.width || canvas.w
         subCanvas.height = subCanvas.height || canvas.h
 
+        var leftLimit = canvas.w - subCanvas.width
+        var rightLimit = 0
+        var topLimit = canvas.h-subCanvas.height
+        var bottomLimit = 0
+
+        var mouseMovementX = mousePointX - canvas.innerX
+        var mouseMovementY = mousePointY - canvas.innerY
+
         subCanvas.contentOffsetX =  subCanvas.contentOffsetX || 0
         subCanvas.contentOffsetY  = subCanvas.contentOffsetY || 0
-        var nextContentOffsetX = subCanvas.contentOffsetX + offsetX
-        var nextContentOffsetY = subCanvas.contentOffsetY + offsetY
+        var lastContentOffsetX = subCanvas.contentOffsetX
+        var lastContentOffsetY = subCanvas.contentOffsetY
 
-        //limit contentOffsetX
-        // subCanvas.contentOffsetX =  this.limitValueBetween(nextContentOffsetX,canvas.w - subCanvas.width,0)
-        // subCanvas.contentOffsetY = this.limitValueBetween(nextContentOffsetY,canvas.h - subCanvas.height,0)
+        //cal faction 阻尼
+        if (subCanvas.contentOffsetX>rightLimit && offsetX>0){
+            // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
+            subCanvas.contentOffsetX = this.calMovementWithFaction(mouseMovementX-rightLimit,canvas.w)
+        }else if (subCanvas.contentOffsetX<leftLimit && offsetX<0){
+            subCanvas.contentOffsetX = leftLimit- this.calMovementWithFaction(leftLimit-mouseMovementX,canvas.w)
+        }else {
+            subCanvas.contentOffsetX += offsetX
+        }
 
-        subCanvas.contentOffsetX = nextContentOffsetX
-        subCanvas.contentOffsetY = nextContentOffsetY
+        if (subCanvas.contentOffsetY>bottomLimit && offsetY>0){
+            subCanvas.contentOffsetY = this.calMovementWithFaction(mouseMovementY-bottomLimit,canvas.h)
+        }else if (subCanvas.contentOffsetY<topLimit && offsetY<0){
+            subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit-mouseMovementY,canvas.h)
+        }else{
+            subCanvas.contentOffsetY += offsetY
+        }
+
+        var timeD = (mouseState.timeStamp - lastMouseState.timeStamp)/1000.0
+        subCanvas.speedX = ((subCanvas.contentOffsetX - lastContentOffsetX)/timeD) || 0
+        subCanvas.speedY = ((subCanvas.contentOffsetY - lastContentOffsetY)/timeD) || 0
 
 
+    },
+    calMovementWithFaction:function (x,d) {
+        var c = 0.55
+        return (1.0 - (1.0 / ((x * c / d) + 1.0))) * d
 
     },
     stopBounceAnimation:function (elem) {
@@ -5446,7 +5474,7 @@ module.exports =   React.createClass({
         this.mouseState.speedY = 0
 
 
-        console.log('releasing',_.cloneDeep(this.mouseState),lastMouseState)
+        // console.log('releasing',_.cloneDeep(this.mouseState),lastMouseState)
 
 
         if (lastMouseState.state == 'dragging'){
@@ -5474,14 +5502,13 @@ module.exports =   React.createClass({
         //canvas scroll effect
         var elem = subCanvas
 
-        var stepX = lastMouseState.speedX/(1000/30)
-        var stepY = lastMouseState.speedY/(1000/30)
+        var stepX = subCanvas.speedX/(1000/30)
+        var stepY = subCanvas.speedY/(1000/30)
         var factor = 2
         var signX  = (stepX>=0)?1:-1
         var signY = (stepY>0)?1:-1
         // console.log(stepX,stepY)
         elem.scrollXTimerId = setInterval(function () {
-            console.log('slipping')
 
             var leftLimit = canvas.w - subCanvas.width
             var rightLimit = 0
