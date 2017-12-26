@@ -159,6 +159,7 @@ ideServices.service('MiddleWareService',['AnimationService','Type',function(Anim
             }
         },
         subLayer:function(subLayer,opts){
+            var opts = opts||{};
             if(!subLayer.info){
                 Object.assign(subLayer,{
                     info:{
@@ -216,7 +217,6 @@ ideServices.service('MiddleWareService',['AnimationService','Type',function(Anim
         var project,pages,layers,subLayers,widgets;
 
         project = arguments[0];
-        // project.IDEVersion = IDEVersion;
 
         pages = project.pages||[];
         pages.forEach(function(page){
