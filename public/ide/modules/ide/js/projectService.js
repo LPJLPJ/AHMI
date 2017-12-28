@@ -1087,6 +1087,17 @@ ideServices
                         subLayerNode.renderAll.bind(subLayerNode)();
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MySelector){
+                    console.log("_newWidget",_newWidget)
+                    console.log("fabric",fabric)
+                        fabric.MySelector.fromLevel(_newWidget,function (fabWidget) {
+                            _self.currentFabLayerIdList = [fabWidget.id];
+                            subLayerNode.add(fabWidget);
+                            subLayerNode.renderAll.bind(subLayerNode)();
+                            _newWidget.info.width=fabWidget.getWidth();
+                            _newWidget.info.height=fabWidget.getHeight();
+                            syncSublayer(fabWidget);
+                        },initiator);
                 }else if (_newWidget.type==Type.General){
 
                     fabric.General.fromLevel(_newWidget, function (fabWidget) {
@@ -3669,6 +3680,128 @@ ideServices
                 };
                 selectObj.target.fire('changeInitValue',arg);
             };
+            //改变选择器控件的属性值info，不需要render，added by LH 2017/12/25
+            this.ChangeAttrOfSelectorNoRender=function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                console.log(_option)
+                // if(_option.itemCount){
+                //     selectObj.level.info.itemCount=_option.itemCount;
+                //     selectObj.level.texList[1].slices=_option.sliceList1;
+                //     selectObj.level.texList[2].slices=_option.sliceList2;
+                // }
+                if(_option.selectorLeft){
+                    selectObj.level.info.selectorLeft= _option.selectorLeft;
+                }
+                if(_option.selectorTop){
+                    selectObj.level.info.selectorLeft= _option.selectorTop;
+                }
+                _successCallback&&_successCallback();
+            };
+            //改变选择器控件的属性值info，需要render，added by LH 2017/12/25
+            this.ChangeAttributeOfSelector=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.itemCount){
+                    selectObj.level.info.itemCount=_option.itemCount;
+                    arg.itemCount=_option.itemCount;
+                    selectObj.level.texList[1].slices=_option.sliceList1;
+                    arg.sliceList1=_option.sliceList1;
+                    selectObj.level.texList[2].slices=_option.sliceList2;
+                    arg.sliceList2=_option.sliceList2;
+                }
+                if(_option.itemWidth){
+                    selectObj.level.info.itemWidth=_option.itemWidth;
+                    arg.itemWidth=_option.itemWidth;
+                }
+                if(_option.itemHeight){
+                    selectObj.level.info.itemHeight= _option.itemHeight;
+                    arg.itemHeight=_option.itemHeight;
+                }
+                if(_option.selectorWidth){
+                    selectObj.level.info.selectorWidth= _option.selectorWidth;
+                    arg.selectorWidth=_option.selectorWidth;
+                }
+                if(_option.selectorHeight){
+                    selectObj.level.info.selectorHeight= _option.selectorHeight;
+                    arg.selectorHeight=_option.selectorHeight;
+                }
+                if(_option.curValue){
+                    selectObj.level.info.curValue= _option.curValue;
+                    arg.curValue=_option.curValue;
+                }
+                if(_option.itemShowCount){
+                    selectObj.level.info.itemShowCount= _option.itemShowCount;
+                    arg.itemShowCount=_option.itemShowCount;
+                }
+                if(_option.selectorText){
+                    selectObj.level.info.selectorText= _option.selectorText;
+                    arg.selectorText=_option.selectorText;
+                }
+                selectObj.target.fire('changeSelectorAttr',arg);
+            };
+            //改变选择器控件的文本字体，added by LH 2017/12/25
+            this.ChangeSelectorFontStyle = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+                if(_option.itemFontFontFamily){
+                    selectObj.level.info.itemFont.fontFamily=_option.itemFontFontFamily;
+                    arg.itemFontFontFamily=_option.itemFontFontFamily;
+                }
+                if(_option.itemFontFontSize){
+                    selectObj.level.info.itemFont.fontSize=_option.itemFontFontSize;
+                    arg.itemFontFontSize=_option.itemFontFontSize;
+                }
+                if(_option.itemFontFontColor){
+                    selectObj.level.info.itemFont.fontColor=_option.itemFontFontColor;
+                    arg.itemFontFontColor=_option.itemFontFontColor;
+                }
+                if(_option.itemFontFontBold){
+                    selectObj.level.info.itemFont.fontBold=_option.itemFontFontBold;
+                    arg.itemFontFontBold=_option.itemFontFontBold;
+                }
+                if(_option.itemFontFontItalic){
+                    selectObj.level.info.itemFont.fontItalic=_option.itemFontFontItalic;
+                    arg.itemFontFontItalic=_option.itemFontFontItalic;
+                }
+                if(_option.selectorFontFontFamily){
+                    selectObj.level.info.selectorFont.fontFamily=_option.selectorFontFontFamily;
+                    arg.selectorFontFontFamily=_option.selectorFontFontFamily;
+                }
+                if(_option.selectorFontFontSize){
+                    selectObj.level.info.selectorFont.fontSize=_option.selectorFontFontSize;
+                    arg.selectorFontFontSize=_option.selectorFontFontSize;
+                }
+                if(_option.selectorFontFontColor){
+                    selectObj.level.info.selectorFont.fontColor=_option.selectorFontFontColor;
+                    arg.selectorFontFontColor=_option.selectorFontFontColor;
+                }
+                if(_option.selectorFontFontBold){
+                    selectObj.level.info.selectorFont.fontBold=_option.selectorFontFontBold;
+                    arg.selectorFontFontBold=_option.selectorFontFontBold;
+                }
+                if(_option.selectorFontFontItalic){
+                    selectObj.level.info.selectorFont.fontItalic=_option.fontItalic;
+                    arg.selectorFontFontItalic=_option.selectorFontFontItalic;
+                }
+
+                selectObj.target.fire('changeFontStyle',arg);
+            };
+
             //改变时间控件的属性值，added by LH 2017/12/13
             this.ChangeAttributeOfDateTime=function(_option,_successCallback){
                 var currentOperate = SaveCurrentOperate();
@@ -3737,6 +3870,7 @@ ideServices
 
                 selectObj.target.fire('changeDateTimeText',arg);
             };
+
             //改变时间图层控件的显示模式
             this.ChangeAttributeTexTimeModeId = function(_option,_successCallback){
                 var dateTimeModeId = _option.dateTimeModeId;
@@ -5066,6 +5200,9 @@ ideServices
                         break;
                     case 'MyTexTime':
                         node.add(new fabric.MyTexTime(dataStructure,initiator));
+                        break;
+                    case 'MySelector':
+                        node.add(new fabric.MySelector(dataStructure,initiator));
                         break;
                     default :
                         console.error('not match widget in _addFabricObjInCanvasNode!');

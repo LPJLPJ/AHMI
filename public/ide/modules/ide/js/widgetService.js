@@ -4062,4 +4062,370 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyAnimation.async = true;
 
 
+    //mySelector
+    fabric.MySelector = fabric.util.createClass(fabric.Object,{
+        type: Type.MySelector,
+        initialize: function (level, options) {
+            var self = this;
+
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.hasRotatingPoint = false;
+
+            //宽高
+            this.width = level.info.width;
+            this.height = level.info.height;
+            this.selectorWidth = level.info.selectorWidth;
+            this.selectorHeight = level.info.selectorHeight;
+            this.itemWidth = level.info.itemWidth;
+            this.itemHeight = level.info.itemHeight;
+            //位置
+            this.left = level.info.left;
+            this.top = level.info.top;
+            this.selectorLeft = level.info.selectorLeft;
+            this.selectorTop = level.info.selectorTop;
+            //item数
+            this.itemCount = level.info.itemCount;
+            //能显示出的item数，item视窗大小
+            this.itemShowCount = level.info.itemShowCount;
+            //item当前值
+            this.curValue = level.info.curValue;
+            //标题
+            this.text = level.info.text;
+            //字体
+            this.itemFont = _.cloneDeep(level.info.itemFont);
+            this.selectorFont = _.cloneDeep(level.info.selectorFont);
+            //高亮
+            this.disableHighlight = level.info.disableHighlight;
+            //纹理
+            this.slicesBackground = _.cloneDeep(level.texList[0].slices);
+            this.slicesItem = _.cloneDeep(level.texList[1].slices);
+            this.slicesSelected = _.cloneDeep(level.texList[2].slices);
+
+            //修改纹理
+            this.on('changeTex', function (arg) {
+                var _callback=arg.callback;
+
+                self.slicesBackground = _.cloneDeep(arg.level.texList[0].slices);
+                self.slicesItem = _.cloneDeep(arg.level.texList[1].slices);
+                self.slicesSelected = _.cloneDeep(arg.level.texList[2].slices);
+console.log("self.slicesSelected",self.slicesSelected)
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+            //修改控件属性
+            this.on('changeSelectorAttr', function (arg) {
+                var _callback=arg.callback;
+                if(arg.hasOwnProperty('itemCount')){
+                    self.itemCount=arg.itemCount;
+                    self.slicesItem = arg.sliceList1;
+                    self.slicesSelected = arg.sliceList2;
+                }
+                if(arg.hasOwnProperty('itemWidth')){
+                    self.itemWidth=arg.itemWidth;
+                }
+                if(arg.hasOwnProperty('itemHeight')){
+                    self.itemHeight=arg.itemHeight;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorWidth')){
+                    self.selectorWidth=arg.selectorWidth;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorHeight')){
+                    self.selectorHeight=arg.selectorHeight;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('curValue')){
+                    self.curValue=arg.curValue;
+                }
+                if(arg.hasOwnProperty('itemShowCount')){
+                    self.itemShowCount=arg.itemShowCount;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorText')){
+                    self.selectorText=arg.selectorText;
+                }
+                console.log("arg",arg)
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            //修改控件属性
+            this.on('changeFontStyle', function (arg) {
+                var _callback=arg.callback;
+                if(arg.hasOwnProperty('itemFontFontFamily')){
+                    self.itemFont.fontFamily=arg.itemFontFontFamily;
+                }
+                if(arg.hasOwnProperty('itemFontFontSize')){
+                    self.itemFont.fontSize=arg.itemFontFontSize;
+                }
+                if(arg.hasOwnProperty('itemFontFontColor')){
+                    self.itemFont.fontColor=arg.itemFontFontColor;
+                }
+                if(arg.hasOwnProperty('itemFontFontBold')){
+                    self.itemFont.fontBold=arg.itemFontFontBold;
+                }
+                if(arg.hasOwnProperty('itemFontFontItalic')){
+                    self.itemFont.fontItalic=arg.itemFontFontItalic;
+                }
+                if(arg.hasOwnProperty('selectorFontFontFamily')){
+                    self.selectorFont.fontFamily=arg.selectorFontFontFamily;
+                }
+                if(arg.hasOwnProperty('selectorFontFontSize')){
+                    self.selectorFont.fontSize=arg.selectorFontFontSize;
+                }
+                if(arg.hasOwnProperty('selectorFontFontColor')){
+                    self.selectorFont.fontColor=arg.selectorFontFontColor;
+                }
+                if(arg.hasOwnProperty('selectorFontFontBold')){
+                    self.selectorFont.fontBold=arg.selectorFontFontBold;
+                }
+                if(arg.hasOwnProperty('selectorFontFontItalic')){
+                    self.selectorFont.fontItalic=arg.selectorFontFontItalic;
+                }
+                console.log("self",self)
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            //修改控件宽高
+            function setWidthHeight(selectorW,selectorH,ItemH,itemShowCount){
+                var width=selectorW;
+                var height=selectorH+2*ItemH*itemShowCount;
+                self.set({width:width,height:height});
+            }
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            // try{
+            //     //在数字框里展示数字预览效果
+            //     if(!isNaN(this.numValue)) {
+            //         //设置正负
+            //         var negative=false;
+            //         if(this.numValue<0){
+            //             negative=true;
+            //         }
+            //         //取绝对值
+            //         var tempNumValue=Math.abs(this.numValue);
+            //         //数值字符串化
+            //         tempNumValue= tempNumValue.toString();
+            //
+            //         var i=0;
+            //         //配置小数位数
+            //         if(this.decimalCount>0){
+            //             //Math.pow(x,y)返回x的y次幂
+            //             var baseCount = Math.pow(10,this.decimalCount);
+            //             //数值字符串化
+            //             tempNumValue = (Math.abs(this.numValue)/baseCount).toString();
+            //             //.indexOf('.')返回'.'在字符串中首次出现的位置，-1表示没有出现
+            //             if(tempNumValue.indexOf('.')!=-1){
+            //                 //console.log('输入有小数')
+            //                 //.split('.')[1]把字符串分割，tempNumValue.split('.')是返回的字符串数组，tempNumValue.split('.')[1]是小数部分
+            //                 var tempDecimalCount=tempNumValue.split('.')[1];
+            //                 //当小数部分的后几位为0时将0补足
+            //                 for(i=0;i<this.decimalCount-tempDecimalCount.length;i++){
+            //                     tempNumValue=tempNumValue+'0';
+            //                 }
+            //             }else{
+            //                 //console.log('输入无小数')
+            //                 tempNumValue= tempNumValue+".";
+            //                 for(i=0;i<this.decimalCount;i++){
+            //                     tempNumValue=tempNumValue+'0';
+            //                 }
+            //             }
+            //         }
+            //         //配置前导0模式
+            //         if(this.frontZeroMode=='1'){
+            //             //console.log('minus',this.numOfDigits-tempNumValue.length);
+            //             var minus=this.numOfDigits-tempNumValue.length;
+            //             //console.log('minus',minus);
+            //             if(this.decimalCount){
+            //                 for(i=0;i<minus+1;i++){
+            //                     tempNumValue='0'+tempNumValue;
+            //                 }
+            //             }else{
+            //                 for(i=0;i<minus;i++){
+            //                     tempNumValue='0'+tempNumValue;
+            //                 }
+            //             }
+            //         }
+            //         //配置正负号
+            //         if((this.symbolMode=='1')&&(negative)){
+            //             tempNumValue='-'+tempNumValue;
+            //         }
+            //
+            //         //console.log('keke',this.characterW,"Y",this.characterH);
+            //         drawTexNumByCharacter(ctx,tempNumValue,this.align,this.width,this.characterW,this.characterH,this.decimalCount,this.numObj);
+            //
+            //     }
+            //     //将图片超出canvas的部分裁剪
+            //     this.clipTo=function(ctx){
+            //         ctx.save();
+            //         ctx.beginPath();//此时的坐标在控件的正中，因为设置了originX: 'center', originY: 'center'
+            //         ctx.rect(-this.width / 2,
+            //             -this.height / 2,
+            //             this.width,
+            //             this.height);
+            //         ctx.closePath();
+            //         ctx.restore();
+            //     };
+            // }
+            // catch(err){
+            //     console.log('错误描述',err);
+            //     toastr.warning('渲染数字出错');
+            // }
+
+        }
+    });
+    fabric.MySelector.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MySelector(level, option));
+    };
+    fabric.MySelector.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MySelector(level,object));
+    };
+    fabric.MySelector.async = true;
+    /**
+     * 逐字渲染数字图层控件
+     * @param  {[type]} ctx           [Canvas对象]
+     * @param  {[type]} numStr        [数字字符串]
+     * @param  {[type]} align         [对齐方式]
+     * @param  {[type]} width         [数字图层控件总宽度]
+     * @param  {[type]} characterW    [单个数字图层宽度]
+     * @param  {[type]} height        [单个数字图层高度]
+     * @param  {[type]} decimalCount  [小数点位数]
+     * @param  {[type]} numObj        [数字图层纹理]
+     * @return {[type]}               [description]
+     */
+    function drawTexNumByCharacter(ctx,numStr,align,width,characterW,height,decimalCount,numObj){
+        var xCoordinate,         //每个字符的x坐标
+            initXPos,            //整个数字图层控件的起始位置
+            widthOfNumStr;       //整个数字图层控件的宽度
+
+        //计算整个数字图层控件的宽度
+        widthOfNumStr=(decimalCount===0?(characterW*numStr.length):(characterW*(numStr.length-0.5)));
+
+        //由对齐方式设置整个数字图层控件的起始位置
+        switch(align){
+            case 'left':
+                initXPos=characterW/2-width/2;
+                break;
+            case 'right':
+                initXPos=width/2+characterW/2-widthOfNumStr;
+                break;
+            case 'center':
+            default:
+                initXPos = (characterW-widthOfNumStr)/2;
+                break;
+        }
+        //设置第一个数字的起始位置
+        xCoordinate = initXPos;
+
+        for(var i=0;i<numStr.length;i++){
+            //根据数字字符绘制对应的数字图层
+            switch (numStr[i]){
+                case '0':
+                    drawNum(0,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '1':
+                    drawNum(1,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '2':
+                    drawNum(2,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '3':
+                    drawNum(3,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '4':
+                    drawNum(4,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '5':
+                    drawNum(5,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '6':
+                    drawNum(6,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '7':
+                    drawNum(7,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '8':
+                    drawNum(8,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '9':
+                    drawNum(9,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '.':
+                    drawNum(10,characterW/2,height,numObj,xCoordinate-characterW/4,ctx);
+                    break;
+                case '+':
+                    drawNum(11,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '-':
+                    drawNum(12,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+
+            }
+            //设置下一个数字的起始位置
+            if(numStr[i]=='.'){
+                xCoordinate+=characterW/2;
+            }else{
+                xCoordinate+=characterW;
+            }
+        }
+        // /**
+        //  * 绘制单个数字图层
+        //  * @param  {[type]} num           [要渲染的数字图层对象在numObj中的位置]
+        //  * @param  {[type]} characterW         [要渲染的数字图层对象宽度]
+        //  * @param  {[type]} height        [要渲染的数字图层对象高度]
+        //  * @param  {[type]} numObj        [数字图层纹理]
+        //  * @param  {[type]} xCoordinate   [要渲染的数字图层对象起始位置x坐标]
+        //  * @param  {[type]} ctx           [Canvas对象]
+        //  * @return {[type]} null          [null]
+        //  */
+        function drawNum(num,characterW,height,numObj,xCoordinate,ctx){
+            try{
+                ctx.beginPath();
+                //设置背景色
+                ctx.fillStyle=numObj[num].color;
+                ctx.fillRect(
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                //ctx.fillStyle=this.numObj[num].img;
+                //插入图片
+                ctx.drawImage(
+                    numObj[num].img,
+                    xCoordinate-characterW/2,
+                    -height/2,
+                    characterW ,
+                    height );
+                ctx.closePath();
+                ctx.stroke();
+            }catch(err){
+
+            }
+
+
+        }
+    }
+
+
 }]);

@@ -728,3 +728,15 @@ body{
      user-select: text;
 
 }
+
+.my-Font-div{
+    border: 3px double #ccc;
+    border-radius: 4px;
+    padding:8px;
+    margin-bottom: 15px
+}
+.my-Font-title{
+    display: block;
+    padding:5px 0 5px 5px;
+    color: #777777;
+}
