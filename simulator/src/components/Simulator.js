@@ -1036,13 +1036,13 @@ module.exports =   React.createClass({
 
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!page.curPageImg){
-                            console.log('create img')
-                            options.pageAnimate = false
-                            page.curPageImg = this.refs.pagecanvas
+
+
+                            page.curPageImg = document.createElement('canvas')
                             page.curPageImg.width = offcanvas.width
                             page.curPageImg.height = offcanvas.height
                             this.paintPage(page,{resetTransform:true},page.curPageImg)
-                            window.curPageImg = page.curPageImg
+
                         }
                         page.translate = {
                             x:deltas.curX,
@@ -1063,57 +1063,107 @@ module.exports =   React.createClass({
                     }.bind(this))
                     break;
                 case 'MOVE_RL':
+                    page.translate = {
+                        x:offcanvas.width,
+                        y:0
+                    }
+                    options.pageAnimate = true
                     AnimationManager.step(offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
+                        if (!page.curPageImg){
+
+
+                            page.curPageImg = document.createElement('canvas')
+                            page.curPageImg.width = offcanvas.width
+                            page.curPageImg.height = offcanvas.height
+                            this.paintPage(page,{resetTransform:true},page.curPageImg)
+
+                        }
                         page.translate = {
                             x:deltas.curX,
                             y:deltas.curY
                         }
+                        page.animating = true
                         options.pageAnimate = true;
-                        this.draw(null,options);
+                        // this.draw(null,options);
 
 
                     }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
                     }.bind(this))
                     break;
                 case 'MOVE_TB':
+                    page.translate = {
+                        x:0,
+                        y:-offcanvas.height
+                    }
+                    options.pageAnimate = true
                     AnimationManager.step(-offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
+                        if (!page.curPageImg){
+
+
+                            page.curPageImg = document.createElement('canvas')
+                            page.curPageImg.width = offcanvas.width
+                            page.curPageImg.height = offcanvas.height
+                            this.paintPage(page,{resetTransform:true},page.curPageImg)
+
+                        }
                         page.translate = {
                             x:deltas.curX,
                             y:deltas.curY
                         }
+                        page.animating = true
                         options.pageAnimate = true;
-                        this.draw(null,options);
+                        // this.draw(null,options);
 
 
                     }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
                     }.bind(this))
                     break;
                 case 'MOVE_BT':
+                    page.translate = {
+                        x:0,
+                        y:offcanvas.height
+                    }
                     AnimationManager.step(offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
+                        if (!page.curPageImg){
+
+
+                            page.curPageImg = document.createElement('canvas')
+                            page.curPageImg.width = offcanvas.width
+                            page.curPageImg.height = offcanvas.height
+                            this.paintPage(page,{resetTransform:true},page.curPageImg)
+
+                        }
                         page.translate = {
                             x:deltas.curX,
                             y:deltas.curY
                         }
                         options.pageAnimate = true;
-                        this.draw(null,options);
+                        page.animating = true
+                        // this.draw(null,options);
 
 
                     }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false;
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
                     }.bind(this))
                     break;
                 case 'SCALE':
@@ -1137,7 +1187,20 @@ module.exports =   React.createClass({
                         [0,1,0],
                         [0,0,1]
                     ];
+                    page.transform = math.multiply(math.multiply(afterTranslateMatrix,beforeScaleMatrix),beforeTranslateMatrix)
+                    options.pageAnimate = true
                     AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
+
+                        if (!page.curPageImg){
+
+
+                            page.curPageImg = document.createElement('canvas')
+                            page.curPageImg.width = offcanvas.width
+                            page.curPageImg.height = offcanvas.height
+                            this.paintPage(page,{resetTransform:true},page.curPageImg)
+
+                        }
+
                         var curScaleMatrix = [
                             [deltas.a.curValue,deltas.c.curValue,deltas.e.curValue],
                             [deltas.b.curValue,deltas.d.curValue,deltas.f.curValue],
@@ -1148,11 +1211,14 @@ module.exports =   React.createClass({
                         combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
                         page.transform = combinedMatrix;
                         options.pageAnimate = true;
-                        this.draw(null,options);
+                        page.animating = true
+                        // this.draw(null,options);
                     }.bind(this),function () {
                         page.transform = null
                         options.pageAnimate = false;
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
                     }.bind(this))
 
 
@@ -1213,8 +1279,8 @@ module.exports =   React.createClass({
         offctx.save();
 
         if (options&&options.resetTransform){
-            console.log('resetTransform')
-            offctx.fillRect(0,0,100,100)
+            // console.log('resetTransform')
+            // offctx.fillRect(0,0,100,100)
         }else{
             if (page.transform){
                 var m = page.transform;
@@ -6393,7 +6459,7 @@ module.exports =   React.createClass({
                     <canvas ref='canvas' className='simulator-canvas' />
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
-                    < canvas ref='pagecanvas' className='simulator-tempcanvas'/>
+                    {/*< canvas ref='pagecanvas' className='simulator-tempcanvas'/>*/}
                 </div>
                 <div className="phical-keyboard-wrapper">
                     <button onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
