@@ -3331,7 +3331,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     drawNum(9,characterW,height,numObj,xCoordinate,ctx);
                     break;
                 case '.':
-                    drawNum(10,characterW/2,height,numObj,xCoordinate-characterW/4,ctx);
+                    drawNum(10,characterW,height,numObj,xCoordinate,ctx);
                     break;
                 case '+':
                     drawNum(11,characterW,height,numObj,xCoordinate,ctx);

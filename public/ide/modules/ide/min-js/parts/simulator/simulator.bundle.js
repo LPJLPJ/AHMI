@@ -22716,7 +22716,6 @@
 	                    break;
 	                case '.':
 	                    curTexSlice = widget.texList[0].slices[10];
-	                    drawW = 0.5 * charW;
 	                    break;
 	                case '+':
 	                    curTexSlice = widget.texList[0].slices[11];
@@ -22729,7 +22728,11 @@
 	            if (curTexSlice) {
 	                this.drawBg(dstX + leftOffset, dstY, drawW, charH, curTexSlice.imgSrc, curTexSlice.color, offctx);
 	            }
-	            leftOffset += drawW;
+	            if (curElem === '.') {
+	                leftOffset += drawW / 2;
+	            } else {
+	                leftOffset += drawW;
+	            }
 	        }
 
 	        offctx.restore();
