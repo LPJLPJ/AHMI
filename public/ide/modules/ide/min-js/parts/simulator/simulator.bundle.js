@@ -52829,11 +52829,7 @@ module.exports = React.createClass({
 
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!page.curPageImg) {
-
-                            page.curPageImg = document.createElement('canvas');
-                            page.curPageImg.width = offcanvas.width;
-                            page.curPageImg.height = offcanvas.height;
-                            this.paintPage(page, { resetTransform: true }, page.curPageImg);
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
                         }
                         page.translate = {
                             x: deltas.curX,
@@ -52863,10 +52859,7 @@ module.exports = React.createClass({
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!page.curPageImg) {
 
-                            page.curPageImg = document.createElement('canvas');
-                            page.curPageImg.width = offcanvas.width;
-                            page.curPageImg.height = offcanvas.height;
-                            this.paintPage(page, { resetTransform: true }, page.curPageImg);
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
                         }
                         page.translate = {
                             x: deltas.curX,
@@ -52895,10 +52888,7 @@ module.exports = React.createClass({
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!page.curPageImg) {
 
-                            page.curPageImg = document.createElement('canvas');
-                            page.curPageImg.width = offcanvas.width;
-                            page.curPageImg.height = offcanvas.height;
-                            this.paintPage(page, { resetTransform: true }, page.curPageImg);
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
                         }
                         page.translate = {
                             x: deltas.curX,
@@ -52926,10 +52916,7 @@ module.exports = React.createClass({
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!page.curPageImg) {
 
-                            page.curPageImg = document.createElement('canvas');
-                            page.curPageImg.width = offcanvas.width;
-                            page.curPageImg.height = offcanvas.height;
-                            this.paintPage(page, { resetTransform: true }, page.curPageImg);
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
                         }
                         page.translate = {
                             x: deltas.curX,
@@ -52958,10 +52945,7 @@ module.exports = React.createClass({
 
                         if (!page.curPageImg) {
 
-                            page.curPageImg = document.createElement('canvas');
-                            page.curPageImg.width = offcanvas.width;
-                            page.curPageImg.height = offcanvas.height;
-                            this.paintPage(page, { resetTransform: true }, page.curPageImg);
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
                         }
 
                         var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
@@ -53013,6 +52997,13 @@ module.exports = React.createClass({
                 // console.log('page', page);
             }
         }
+    },
+    generatePageCopy: function generatePageCopy(page, width, height) {
+        var curPageImg = document.createElement('canvas');
+        curPageImg.width = width;
+        curPageImg.height = height;
+        this.paintPage(page, { resetTransform: true }, curPageImg);
+        return curPageImg;
     },
     paintPage: function paintPage(page, options, offcanvas) {
 
@@ -53546,61 +53537,100 @@ module.exports = React.createClass({
             if (!firstSubCanvas && (!options || options && !options.pageAnimate)) {
                 switch (method) {
                     case 'MOVE_LR':
+                        subCanvas.translate = {
+                            x: -w,
+                            y: 0
+                        };
                         AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
+
+                            if (!subCanvas.curSubCanvasImg) {
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                            }
+
+                            subCanvas.animating = true;
+
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
                             };
                             // subCanvas.info.x += deltas.deltaX;
                             // subCanvas.info.y += deltas.deltaY;
-                            this.draw();
+                            // this.draw();
                             // offctx.restore();
                         }.bind(this), function () {
                             // offctx.restore()
                             subCanvas.translate = null;
+                            subCanvas.animating = false;
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
+                            subCanvas.curSubCanvasImg = null;
                             this.handleTargetAction(subCanvas, 'Load');
+                            this.draw();
                         }.bind(this));
-                        this.dropCurrentDraw();
+                        // this.dropCurrentDraw()
                         break;
                     case 'MOVE_RL':
+                        subCanvas.translate = {
+                            x: w,
+                            y: 0
+                        };
                         AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
+                            if (!subCanvas.curSubCanvasImg) {
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                            }
+
+                            subCanvas.animating = true;
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
                             };
                             // subCanvas.info.x += deltas.deltaX;
                             // subCanvas.info.y += deltas.deltaY;
-                            this.draw();
+                            // this.draw();
                             // offctx.restore();
                         }.bind(this), function () {
                             // offctx.restore()
                             subCanvas.translate = null;
                             this.handleTargetAction(subCanvas, 'Load');
+                            subCanvas.animating = false;
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
+                            subCanvas.curSubCanvasImg = null;
+                            this.draw();
                         }.bind(this));
-                        this.dropCurrentDraw();
+                        // this.dropCurrentDraw()
                         break;
                     case 'SCALE':
                         var beforeTranslateMatrix = [[1, 0, -hWidth], [0, 1, -hHeight], [0, 0, 1]];
                         var afterTranslateMatrix = [[1, 0, hWidth], [0, 1, hHeight], [0, 0, 1]];
                         var beforeScaleMatrix = [[0.1, 0, 0], [0, 0.1, 0], [0, 0, 1]];
                         var afterScaleMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+                        subCanvas.transform = math.multiply(math.multiply(afterTranslateMatrix, beforeScaleMatrix), beforeTranslateMatrix);
                         AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
                             var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
                             // console.log(curScaleMatrix)
+                            if (!subCanvas.curSubCanvasImg) {
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                            }
+
+                            subCanvas.animating = true;
                             var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix);
                             combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
                             subCanvas.transform = combinedMatrix;
-                            this.draw(null, options);
+                            // this.draw(null,options);
                         }.bind(this), function () {
                             subCanvas.transform = null;
                             this.handleTargetAction(subCanvas, 'Load');
+                            subCanvas.animating = false;
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
+                            subCanvas.curSubCanvasImg = null;
+                            this.draw();
                         }.bind(this));
 
-                        this.dropCurrentDraw();
+                        // this.dropCurrentDraw()
+
 
                         break;
                     default:
@@ -53608,12 +53638,24 @@ module.exports = React.createClass({
                         this.drawSingleSubCanvas(subCanvas, x, y, w, h, options);
 
                 }
+                this.drawSingleSubCanvas(subCanvas, x, y, w, h, options);
             } else {
                 this.drawSingleSubCanvas(subCanvas, x, y, w, h, options);
             }
         } else {
             this.drawSingleSubCanvas(subCanvas, x, y, w, h, options);
         }
+    },
+    generateSubCanvasCopy: function generateSubCanvasCopy(subcanvas, w, h, options) {
+        var subcanvasCopy = document.createElement('canvas');
+        // var subcanvasCopy = this.refs.pagecanvas
+        subcanvasCopy.width = w;
+        subcanvasCopy.height = h;
+        var scCtx = subcanvasCopy.getContext('2d');
+        options = options || {};
+        options.resetTransform = true;
+        this.paintSubCanvas(subcanvas, 0, 0, w, h, options, scCtx);
+        return subcanvasCopy;
     },
     paintSubCanvas: function paintSubCanvas(subCanvas, x, y, w, h, options, ctx) {
         // x = subCanvas.info.x;
@@ -53625,25 +53667,34 @@ module.exports = React.createClass({
         offctx.save();
         //scroll sublayer
         offctx.translate(subCanvas.contentOffsetX, subCanvas.contentOffsetY);
-        if (subCanvas.transform) {
-            var m = subCanvas.transform;
-            offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
-        } else {
-            if (subCanvas.translate) {
+        if (options && options.resetTransform) {} else {
 
-                offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
-            }
-            if (subCanvas.scale) {
-                offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
+            if (subCanvas.transform) {
+                var m = subCanvas.transform;
+                offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
+            } else {
+                if (subCanvas.translate) {
+
+                    offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
+                }
+                if (subCanvas.scale) {
+                    offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
+                }
             }
         }
-        //paint
-        this.drawBgColor(x, y, w, h, subCanvas.backgroundColor, offctx);
-        this.drawBgImg(x, y, w, h, subCanvas.backgroundImage, offctx);
-        var widgetList = subCanvas.widgetList;
-        if (widgetList.length) {
-            for (var i = 0; i < widgetList.length; i++) {
-                this.paintWidget(widgetList[i], x, y, options, offctx);
+
+        if (subCanvas.animating) {
+            console.log('sc animating');
+            offctx.drawImage(subCanvas.curSubCanvasImg, x, y, w, h);
+        } else {
+            //paint
+            this.drawBgColor(x, y, w, h, subCanvas.backgroundColor, offctx);
+            this.drawBgImg(x, y, w, h, subCanvas.backgroundImage, offctx);
+            var widgetList = subCanvas.widgetList;
+            if (widgetList.length) {
+                for (var i = 0; i < widgetList.length; i++) {
+                    this.paintWidget(widgetList[i], x, y, options, offctx);
+                }
             }
         }
 
