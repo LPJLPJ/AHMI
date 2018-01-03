@@ -1576,9 +1576,14 @@ module.exports =   React.createClass({
         // console.log('anAttr',animationAttrs)
         // console.log('srcT',srcTransformObj,'dstT',dstTransformObj)
 
+
         AnimationManager.stepObj(srcTransformObj,dstTransformObj,duration,frames,easingFunc,function (deltas) {
 
             // offctx.translate(deltas.curX,deltas.curY);
+            if (!target.animating){
+                this.prepareTarget(target)
+            }
+
             var transformMatrix = {
 
             }
@@ -1588,13 +1593,21 @@ module.exports =   React.createClass({
                 }
             }
             target.transform = transformMatrix;
-            this.draw();
+            target.animating = true
+            // this.draw();
 
 
         }.bind(this),function () {
-
+            target.animating = false
         })
 
+    },
+    prepareTarget:function (target) {
+        console.log(target.type)
+        if (target.type === 'MyLayer'){
+            var sc = target.subCanvasList[target.curSubCanvasIdx]
+            sc.curSubCanvasImg = this.generateSubCanvasCopy(sc,target.w,target.h,{ratio:1})
+        }
     },
     matrixMultiply:function (matrixArray) {
         var length = matrixArray.length
@@ -1757,8 +1770,14 @@ module.exports =   React.createClass({
 
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
             var transition = canvasData.transition;
+            if (canvasData.animating&&subCanvas.curSubCanvasImg){
+                console.log('animating canvas',subCanvas.curSubCanvasImg)
+                offctx.drawImage(subCanvas.curSubCanvasImg,canvasData.x, canvasData.y, canvasData.w, canvasData.h)
+            }else{
+                this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+            }
 
-            this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+
             offctx.restore();
         } else {
 
@@ -2006,14 +2025,23 @@ module.exports =   React.createClass({
 
     },
     generateSubCanvasCopy:function (subcanvas, w, h, options) {
+        options = options||{}
+        options.resetTransform = true
+        var ratio = options.ratio||1
+        w = w*ratio
+        h = h*ratio
         var subcanvasCopy = document.createElement('canvas')
         // var subcanvasCopy = this.refs.pagecanvas
         subcanvasCopy.width = w
         subcanvasCopy.height = h
+        // subcanvasCopy.style.width = ratio*w
+        // subcanvasCopy.style.height = ratio*h
         var scCtx = subcanvasCopy.getContext('2d')
-        options = options||{}
-        options.resetTransform = true
+        scCtx.save()
+        scCtx.scale(ratio,ratio)
         this.paintSubCanvas(subcanvas,0,0,w,h,options,scCtx)
+
+        scCtx.restore()
         return subcanvasCopy
     },
     paintSubCanvas:function (subCanvas, x, y, w, h, options,ctx) {
@@ -5075,6 +5103,10 @@ module.exports =   React.createClass({
         this.mouseState.position.x = x;
         this.mouseState.position.y = y;
         this.mouseState.timeStamp = Date.now()
+        this.mouseState.pressedPosition = {
+            x:x,
+            y:y
+        }
 
         var targets = this.findClickTargets(x, y);
         this.state.currentPressedTargets = targets;
@@ -5417,6 +5449,7 @@ module.exports =   React.createClass({
         var mousePointY = mouseState.position.y || 0
         var offsetX = mousePointX - lastMousePointX
         var offsetY = mousePointY - lastMousePointY
+        var pressedPos = mouseState.pressedPosition||{x:0,y:0}
 
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
 
@@ -5452,8 +5485,8 @@ module.exports =   React.createClass({
         var topLimit = canvas.h-subCanvas.height
         var bottomLimit = 0
 
-        var mouseMovementX = mousePointX - canvas.innerX
-        var mouseMovementY = mousePointY - canvas.innerY
+        var mouseMovementX = mousePointX - pressedPos.x
+        var mouseMovementY = mousePointY - pressedPos.y
 
         subCanvas.contentOffsetX =  subCanvas.contentOffsetX || 0
         subCanvas.contentOffsetY  = subCanvas.contentOffsetY || 0
