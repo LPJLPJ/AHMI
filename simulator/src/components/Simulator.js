@@ -5436,6 +5436,9 @@ module.exports =   React.createClass({
             clearTimeout(subCanvas.hideScrollBarTimerId)
         }
         this.stopBounceAnimation(subCanvas,'bounceAnimeX','bounceAnimeY')
+
+        subCanvas.pressedOffsetX = subCanvas.contentOffsetX || 0
+        subCanvas.pressedOffsetY = subCanvas.contentOffsetY || 0
     },
 
     handleCanvasDrag:function (canvas,mouseState,lastMouseState) {
@@ -5493,22 +5496,44 @@ module.exports =   React.createClass({
         var lastContentOffsetX = subCanvas.contentOffsetX
         var lastContentOffsetY = subCanvas.contentOffsetY
 
+        var nextContentOffsetX = subCanvas.pressedOffsetX + mouseMovementX
+        var nextContentOffsetY = subCanvas.pressedOffsetY + mouseMovementY
+
+        console.log(nextContentOffsetX)
         //cal faction 阻尼
-        if (subCanvas.contentOffsetX>rightLimit && offsetX>0){
+        // if (subCanvas.contentOffsetX>rightLimit ){
+        //     // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
+        //     subCanvas.contentOffsetX = this.calMovementWithFaction(mouseMovementX-rightLimit,canvas.w)
+        // }else if (subCanvas.contentOffsetX<leftLimit ){
+        //     subCanvas.contentOffsetX = leftLimit- this.calMovementWithFaction(leftLimit-mouseMovementX,canvas.w)
+        // }else {
+        //     subCanvas.contentOffsetX += offsetX
+        // }
+        //
+        // if (subCanvas.contentOffsetY>bottomLimit){
+        //     subCanvas.contentOffsetY = this.calMovementWithFaction(mouseMovementY-bottomLimit,canvas.h)
+        // }else if (subCanvas.contentOffsetY<topLimit){
+        //     subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit-mouseMovementY,canvas.h)
+        // }else{
+        //     subCanvas.contentOffsetY += offsetY
+        // }
+
+        if (nextContentOffsetX>rightLimit ){
             // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
-            subCanvas.contentOffsetX = this.calMovementWithFaction(mouseMovementX-rightLimit,canvas.w)
-        }else if (subCanvas.contentOffsetX<leftLimit && offsetX<0){
-            subCanvas.contentOffsetX = leftLimit- this.calMovementWithFaction(leftLimit-mouseMovementX,canvas.w)
+            subCanvas.contentOffsetX = rightLimit+this.calMovementWithFaction(nextContentOffsetX-rightLimit,canvas.w)
+            console.log('rubber banding',subCanvas.contentOffsetX)
+        }else if (nextContentOffsetX<leftLimit ){
+            subCanvas.contentOffsetX = leftLimit- this.calMovementWithFaction(leftLimit-nextContentOffsetX,canvas.w)
         }else {
-            subCanvas.contentOffsetX += offsetX
+            subCanvas.contentOffsetX = nextContentOffsetX
         }
 
-        if (subCanvas.contentOffsetY>bottomLimit && offsetY>0){
-            subCanvas.contentOffsetY = this.calMovementWithFaction(mouseMovementY-bottomLimit,canvas.h)
-        }else if (subCanvas.contentOffsetY<topLimit && offsetY<0){
-            subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit-mouseMovementY,canvas.h)
+        if (nextContentOffsetY>bottomLimit){
+            subCanvas.contentOffsetY = bottomLimit+this.calMovementWithFaction(nextContentOffsetY-bottomLimit,canvas.h)
+        }else if (nextContentOffsetY<topLimit){
+            subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit-nextContentOffsetY,canvas.h)
         }else{
-            subCanvas.contentOffsetY += offsetY
+            subCanvas.contentOffsetY = nextContentOffsetY
         }
 
         var timeD = (mouseState.timeStamp - lastMouseState.timeStamp)/1000.0
