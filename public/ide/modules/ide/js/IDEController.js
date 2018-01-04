@@ -20,6 +20,7 @@ var MAX_DATA_LENGTH=100000;
 var ideScope;
 var isOffline;
 var mode = 'DEBUG';
+var timeStamp = Date.now();
 
 console.log = (function (console) {
     if (mode === 'DEBUG'){
@@ -33,13 +34,13 @@ console.log = (function (console) {
 
 var logs=[];
 ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService','NavModalCANConfigService',
-    'socketIOService',function ($scope,$timeout,$http,$interval,
+    'socketIOService','MiddleWareService',function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
                                     ResourceService,
                                     TagService,
-                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService,socketIOService) {
+                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService,socketIOService,MiddleWareService) {
 
     ideScope=$scope;
     $scope.ide={
@@ -49,32 +50,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     var loadStep=0;     //加载到了第几步,共8步
     var fs,path,__dirname;
 
-    // showIDE();
-
-    //var params=getUrlParams();
-    //PID=params.pid;
-    //
-    //TOKEN=window.localStorage.getItem('token');
-    //
-    //var offLine=params.offline;
-    //
-    //isOffline=offLine;
-    //if (offLine){
-    //    toastr.info('离线测试');
-    //}
-    //else if (!PID||!TOKEN){
-    //    console.log(getUrlParams());
-    //    $interval(function () {
-    //        toastr.warning('无法识别的项目');
-    //    },2000);
-    //    return;
-    //}
-
     initUI();
 
     loadProject();
 
-    //receiveGlobalProject();
     readUserType();
 
     listenChange();
@@ -281,11 +260,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
         }
         //change html title to name
-        var name = data&&data.name||''
-        document.title = '工程编辑-'+name
+        var name = data&&data.name||'';
+        document.title = '工程编辑-'+name;
         if (data.content){
-            //var globalProject = GlobalService.getBlankProject()
             var globalProject = JSON.parse(data.content);
+            console.log('globalProject',globalProject);
+            //add by lixiang in 12/12/21 如果是旧版本工程，则注入数据,数据进入中间件
+            timeStamp = Date.now();
+            MiddleWareService.useMiddleWare(globalProject);
+            console.log('time costs in inject Data:',Date.now()-timeStamp);
+
+
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
             });
@@ -318,18 +303,20 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     resourceObj.complete = true;
                 }
                 count = count - 1;
-
-                updateSpinner((rLen-count)/rLen)
+                updateSpinner((rLen-count)/rLen);
                 if (count<=0){
-                    // toastr.info('loaded');
+                    console.log('time cost in cache imge :',Date.now()-timeStamp);
                     TemplateProvider.saveProjectFromGlobal(globalProject);
                     syncServices(globalProject);
+                    timeStamp = Date.now();
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
                         $scope.$broadcast('GlobalProjectReceived');
+                        console.log('time cost in render',Date.now()-timeStamp)
                     });
                 }
             }.bind(this);
             if (count>0){
+                timeStamp = Date.now();
                 for (var i=0;i<resourceList.length;i++){
                     var curRes = resourceList[i];
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
@@ -360,11 +347,9 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 height :resolution[1]
             }
             globalProject.maxSize = data.maxSize;
-            console.log('globalProject new',_.cloneDeep(globalProject));
-
 
             TemplateProvider.saveProjectFromGlobal(globalProject);
-            syncServices(globalProject)
+            syncServices(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
 
                 $scope.$broadcast('GlobalProjectReceived');
@@ -853,10 +838,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 cb && cb();
             }
         };
-        //for(var i=0;i<templateList.length;i++){
-        //    var curRes = templateList[i];
-        //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-        //}
         if(totalNum>0){
             templateList.map(function(curRes,index){
                 ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);

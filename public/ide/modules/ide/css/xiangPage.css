@@ -62,7 +62,8 @@
 
 .my-stage .subCanvas{
     position:relative;
-    display:inline-block
+    display:inline-block;
+    margin:20px 0px;
 }
 .my-stage .subCanvas>canvas{
     position:absolute;left:0;top:0
