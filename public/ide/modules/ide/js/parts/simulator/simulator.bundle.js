@@ -52531,6 +52531,9 @@ module.exports = React.createClass({
                 console.log('trigger action: ', curInst[1]);
                 break;
             case 'print':
+                if (window.disablePrint) {
+                    return;
+                }
                 console.log('print value: ', this.evalParam(widget, curInst[1]), this.evalParam(widget, curInst[2] || ''));
                 break;
 
@@ -53392,8 +53395,11 @@ module.exports = React.createClass({
                 }
             }
 
+            canvasData.subCanvasUnloadIdx = subCanvasUnloadIdx;
+
             if (subCanvasUnloadIdx !== null) {
                 // console.log('handle unload sc')
+                subCanvasList[subCanvasUnloadIdx].curSubCanvasImg = this.generateSubCanvasCopy(subCanvasList[subCanvasUnloadIdx], canvasData.w, canvasData.h);
                 this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
             }
             var subCanvas = subCanvasList[nextSubCanvasIdx];
@@ -53449,6 +53455,18 @@ module.exports = React.createClass({
                 // console.log('animating canvas',subCanvas.curSubCanvasImg)
                 offctx.drawImage(subCanvas.curSubCanvasImg, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
             } else {
+                if (subCanvas.animating) {
+
+                    if (canvasData.subCanvasUnloadIdx !== null) {
+                        canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = true;
+                        this.paintSubCanvas(canvasData.subCanvasList[canvasData.subCanvasUnloadIdx], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
+                    }
+                } else {
+                    if (canvasData.subCanvasUnloadIdx !== null) {
+                        canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = false;
+                    }
+                }
+
                 this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
             }
 
@@ -53555,6 +53573,7 @@ module.exports = React.createClass({
             var easing = 'easeInOutCubic';
             var hWidth = w / 2 + x;
             var hHeight = h / 2 + y;
+            var newCopyFlag = false;
             if (!firstSubCanvas && (!options || options && !options.pageAnimate)) {
                 switch (method) {
                     case 'MOVE_LR':
@@ -53562,12 +53581,18 @@ module.exports = React.createClass({
                             x: -w,
                             y: 0
                         };
+
+                        subCanvas.animating = true;
                         AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
 
-                            if (!subCanvas.curSubCanvasImg) {
+
+                            if (!newCopyFlag) {
+
+                                subCanvas.animating = false;
                                 subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                newCopyFlag = true;
                             }
 
                             subCanvas.animating = true;
@@ -53596,11 +53621,13 @@ module.exports = React.createClass({
                             x: w,
                             y: 0
                         };
+                        subCanvas.animating = true;
                         AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
-                            if (!subCanvas.curSubCanvasImg) {
+                            if (!newCopyFlag) {
                                 subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                newCopyFlag = true;
                             }
 
                             subCanvas.animating = true;
@@ -53629,11 +53656,13 @@ module.exports = React.createClass({
                         var beforeScaleMatrix = [[0.1, 0, 0], [0, 0.1, 0], [0, 0, 1]];
                         var afterScaleMatrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
                         subCanvas.transform = math.multiply(math.multiply(afterTranslateMatrix, beforeScaleMatrix), beforeTranslateMatrix);
+                        subCanvas.animating = true;
                         AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
                             var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
                             // console.log(curScaleMatrix)
-                            if (!subCanvas.curSubCanvasImg) {
+                            if (!newCopyFlag) {
                                 subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                newCopyFlag = true;
                             }
 
                             subCanvas.animating = true;
@@ -53715,7 +53744,9 @@ module.exports = React.createClass({
 
         if (subCanvas.animating) {
             console.log('sc animating');
-            offctx.drawImage(subCanvas.curSubCanvasImg, x, y, w, h);
+            if (subCanvas.curSubCanvasImg) {
+                offctx.drawImage(subCanvas.curSubCanvasImg, x, y, w, h);
+            }
         } else {
             //paint
             this.drawBgColor(x, y, w, h, subCanvas.backgroundColor, offctx);
