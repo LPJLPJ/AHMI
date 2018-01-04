@@ -2553,6 +2553,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
     function enterDateTimeMode(e){
         var selectObj=ProjectService.getCurrentSelectObject();
         var selectDateTimeModeId=null;
+        var selectRTCModeId = null;
         if (selectObj.type==Type.MyDateTime){
             selectDateTimeModeId=$scope.component.dateTime.dateTimeModeId;
             selectRTCModeId=$scope.component.dateTime.RTCModeId;
