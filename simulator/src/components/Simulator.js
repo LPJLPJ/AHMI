@@ -1771,7 +1771,7 @@ module.exports =   React.createClass({
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
             var transition = canvasData.transition;
             if (canvasData.animating&&subCanvas.curSubCanvasImg){
-                console.log('animating canvas',subCanvas.curSubCanvasImg)
+                // console.log('animating canvas',subCanvas.curSubCanvasImg)
                 offctx.drawImage(subCanvas.curSubCanvasImg,canvasData.x, canvasData.y, canvasData.w, canvasData.h)
             }else{
                 this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
@@ -5426,12 +5426,12 @@ module.exports =   React.createClass({
         if (subCanvas.scrollYTimerId){
             clearInterval(subCanvas.scrollYTimerId)
         }
-        if (subCanvas.scrollBarHideAnime){
-            subCanvas.scrollBarHideAnime.stop()
-            subCanvas.scrollBarHideAnime = null
-            subCanvas.scrollBarAlpha = 1.0
-            console.log('cancel anime')
-        }
+        // if (subCanvas.scrollBarHideAnime){
+        //     subCanvas.scrollBarHideAnime.stop()
+        //     subCanvas.scrollBarHideAnime = null
+        //     subCanvas.scrollBarAlpha = 1.0
+        //     console.log('cancel anime')
+        // }
         if(subCanvas.hideScrollBarTimerId){
             clearTimeout(subCanvas.hideScrollBarTimerId)
         }
@@ -5465,7 +5465,9 @@ module.exports =   React.createClass({
         if (subCanvas.scrollBarHideAnime){
             subCanvas.scrollBarHideAnime.stop()
             subCanvas.scrollBarHideAnime = null
+            subCanvas.scrollBarAlpha = 1.0
         }
+        // console.log('dragging')
         subCanvas.shouldShowScrollBar = true
         subCanvas.scrollBarAlpha = 1.0
 
@@ -5499,7 +5501,7 @@ module.exports =   React.createClass({
         var nextContentOffsetX = subCanvas.pressedOffsetX + mouseMovementX
         var nextContentOffsetY = subCanvas.pressedOffsetY + mouseMovementY
 
-        console.log(nextContentOffsetX)
+        // console.log(nextContentOffsetX)
         //cal faction 阻尼
         // if (subCanvas.contentOffsetX>rightLimit ){
         //     // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
@@ -5521,7 +5523,7 @@ module.exports =   React.createClass({
         if (nextContentOffsetX>rightLimit ){
             // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
             subCanvas.contentOffsetX = rightLimit+this.calMovementWithFaction(nextContentOffsetX-rightLimit,canvas.w)
-            console.log('rubber banding',subCanvas.contentOffsetX)
+            // console.log('rubber banding',subCanvas.contentOffsetX)
         }else if (nextContentOffsetX<leftLimit ){
             subCanvas.contentOffsetX = leftLimit- this.calMovementWithFaction(leftLimit-nextContentOffsetX,canvas.w)
         }else {
