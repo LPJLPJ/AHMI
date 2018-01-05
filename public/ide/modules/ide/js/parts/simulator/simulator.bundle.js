@@ -53412,7 +53412,7 @@ module.exports = React.createClass({
             // }
             var transition = canvasData.transition;
             for (var i = 0; i < subCanvasList.length; i++) {
-                this.drawSubCanvas(subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, i != nextSubCanvasIdx);
+                this.drawSubCanvas(canvasData, subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, i != nextSubCanvasIdx);
             }
         }
     },
@@ -53548,7 +53548,7 @@ module.exports = React.createClass({
         ctx.closePath();
         ctx.clip();
     },
-    drawSubCanvas: function drawSubCanvas(subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
+    drawSubCanvas: function drawSubCanvas(canvas, subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         if (updateOnly) {
@@ -53575,6 +53575,11 @@ module.exports = React.createClass({
             var hHeight = h / 2 + y;
             var newCopyFlag = false;
             if (!firstSubCanvas && (!options || options && !options.pageAnimate)) {
+                //has animation
+                var unloadSC = null;
+                if (canvas.subCanvasUnloadIdx !== null) {
+                    unloadSC = canvas.subCanvasList[canvas.subCanvasUnloadIdx];
+                }
                 switch (method) {
                     case 'MOVE_LR':
                         subCanvas.translate = {
@@ -53601,6 +53606,7 @@ module.exports = React.createClass({
                                 x: deltas.curX,
                                 y: deltas.curY
                             };
+                            // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
                             // subCanvas.info.x += deltas.deltaX;
                             // subCanvas.info.y += deltas.deltaY;
                             // this.draw();
@@ -53608,6 +53614,7 @@ module.exports = React.createClass({
                         }.bind(this), function () {
                             // offctx.restore()
                             subCanvas.translate = null;
+                            // unloadSC.translate = null;
                             subCanvas.animating = false;
                             subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
                             subCanvas.curSubCanvasImg = null;
@@ -53682,6 +53689,50 @@ module.exports = React.createClass({
                         // this.dropCurrentDraw()
 
 
+                        break;
+                    case 'PUSH_LR':
+                    case 'PUSH_RL':
+                        var fromLeft = method == 'PUSH_LR' ? 1 : -1;
+                        subCanvas.translate = {
+                            x: -w * fromLeft,
+                            y: 0
+                        };
+
+                        subCanvas.animating = true;
+                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+
+
+                            if (!newCopyFlag) {
+
+                                subCanvas.animating = false;
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                newCopyFlag = true;
+                            }
+
+                            subCanvas.animating = true;
+
+                            subCanvas.translate = {
+                                x: deltas.curX,
+                                y: deltas.curY
+                            };
+                            unloadSC && (unloadSC.translate = { x: deltas.curX + w * fromLeft, y: deltas.curY });
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            // this.draw();
+                            // offctx.restore();
+                        }.bind(this), function () {
+                            // offctx.restore()
+                            subCanvas.translate = null;
+                            unloadSC.translate = null;
+                            subCanvas.animating = false;
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
+                            subCanvas.curSubCanvasImg = null;
+                            this.handleTargetAction(subCanvas, 'Load');
+                            this.draw();
+                        }.bind(this));
+                        // this.dropCurrentDraw()
                         break;
                     default:
                         this.handleTargetAction(subCanvas, 'Load');
