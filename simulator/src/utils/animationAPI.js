@@ -311,7 +311,6 @@
 
             C1 = (fp0 - r2*f0)/(r1-r2)
             C2 = (fp0 - r1*f0)/(r2 - r1)
-            console.log(r1,r2,C1,C2)
             return function (t) {
                 return C1 * Math.exp(r1 * t) + C2 * Math.exp(r2 * t) + 1
             }
@@ -320,7 +319,6 @@
             r1 = -c * 0.5
             C1 = f0
             C2 = fp0 - C1 * r1
-            console.log(r1,C1,C2)
             return function (t) {
                 return (C1 + C2 * t)*Math.exp(r1 * t) + 1
             }
@@ -333,7 +331,6 @@
 
             C1 = f0
             C2 = (fp0-alpha*f0)/beta
-            console.log(alpha,beta,C1,C2)
 
 
             return function (t) {

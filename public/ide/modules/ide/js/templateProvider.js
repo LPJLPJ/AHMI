@@ -371,10 +371,9 @@ ideServices
         this.getDefaultLayer = function () {
             var pageNode=CanvasService.getPageNode();
             var info = {
-                width:(pageNode.getWidth()/pageNode.getZoom()) / 2, height: (pageNode.getHeight()/pageNode.getZoom()) / 2,
+                width:Math.round((pageNode.getWidth()/pageNode.getZoom()) / 2),
+                height: Math.round((pageNode.getHeight()/pageNode.getZoom()) / 2),
 
-
-                //width: project.currentSize.width / 2, height: project.currentSize.height / 2,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center'
             };
@@ -395,20 +394,23 @@ ideServices
         };
 
         this.getDefaultSubLayer = function () {
-            // var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
+            var pageNode=CanvasService.getPageNode();
+            var info = {
+                width:Math.round(pageNode.getWidth()/2),
+                height:Math.round(pageNode.getHeight()/2),
+                scrollVEnabled:false,
+                scrollHEnabled:false
+            };
             return {
+                info:info,
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                // proJsonStr: jsonStr,
                 widgets: [],
                 name: 'NewSubCanvas',
                 type: Type.MySubLayer,
-                width: 0,
-                height: 0,
                 expand:true,
                 backgroundImage:'',
                 backgroundColor:"rgba(255,255,255,0.0)"
-
             }
         };
 

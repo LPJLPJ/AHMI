@@ -1444,8 +1444,6 @@
 
             var(tCurVal,0)                       //当前值
             getTag(tCurVal)
-            // set(tCurVal,9753102)
-            print('tCurVal',tCurVal)
 
             var(tMaxVal,0)                       //最大值
             set(tMaxVal,'this.maxValue')
@@ -1641,26 +1639,22 @@
 
                 while(i<allFontCnt){
                     if(i==decimalCnt){
-                        if(decimalCnt==0){
-                            minus(decimalCnt,1)
-                            minus(i,1)
-                        }else{
-                            //畫小數點
-                            set(index,1)
-                            
-                            //xCoordinate-=fontWidth/2;
-                            set(tempVal,fontWidth)
-                            divide(tempVal,2)
-                            minus(xCoordinate,tempVal)
-                            
-                           //draw(index,xCoordinate)
-                           set('this.layers.index.hidden',0)
-                           set('this.layers.index.x',xCoordinate)
-                           
-                           minus(i,1)
-                           minus(allFontCnt,1)
-                           set(decimalCnt,-1)
-                        }
+                        //畫小數點
+                        set(index,1)
+                        
+                        //xCoordinate-=fontWidth/2;
+                        set(tempVal,fontWidth)
+                        divide(tempVal,2)
+                        minus(xCoordinate,tempVal)
+                        
+                       //draw(index,xCoordinate)
+                       set('this.layers.index.hidden',0)
+                       set('this.layers.index.x',xCoordinate)
+                       
+                       minus(i,1)
+                       minus(allFontCnt,1)
+                       set(decimalCnt,0)
+                
                     }else{
                         //畫數字
                         if(i<curValCnt){
@@ -1709,246 +1703,6 @@
             }
         `
     };
-    WidgetCommands['Selector']={
-        onInitialize:`
-            var(offset,0)
-            set(offset,2)
-            var(len,0)
-            set(len,'this.layers.length')
-            var(tMaxHighLightNum,0)
-            set(tMaxHighLightNum,'this.maxHighLightNum')
-            if(tMaxHighLightNum>0){
-                minus(len,1)
-            }
-            while(offset<len){
-                set('this.layers.offset.hidden',0)
-                add(offset,1)
-            }
-        `,
-        onMouseUp:`
-        `,
-        onMouseDown:`
-        `,
-        onTagChange:`
-            var(curItem,0)                            //curValue当前元素 = tag值
-            getTag(curItem)
-                       
-            var(itemCount,0)                          //元素总个数
-            set(itemCount,'this.otherAttrs.2')
-            
-            var(itemShowCount,0)                      //待选元素展示个数（单边）
-            set(itemShowCount,'this.otherAttrs.3')
-           
-            var(w,0)                                  //控件宽度 = 选中元素宽度
-            set(w,'this.otherAttrs.4')
-            
-            var(h,0)                                  //控件高度
-            set(h,'this.otherAttrs.5')
-            
-            var(itemWidth,0)                          //待选元素宽度
-            set(itemWidth,'this.otherAttrs.6')
-            
-            var(itemHeight,0)                         //待选元素高度
-            set(itemHeight,'this.otherAttrs.7')
-            
-            var(selectorHeight,0)                     //选中元素高度
-            set(selectorHeight,'this.otherAttrs.9')
-            
-            var(temp1,0)                              //临时变量
-            var(temp2,0)
-           
-            //curItem取模
-            mod(curItem,itemCount)
-            //负数处理
-            if(curItem<0){
-                add(curItem,itemCount)
-            }
-            set('this.otherAttrs.1',curItem)
-           
-           
-            //标题层背景层不用动
-            
-            
-            //前景层
-            //前景层位置
-            //var startH=h/2-selectorHeight/2
-            var(startH,0)
-            set(temp1,h)
-            divide(temp1,2)
-            set(temp2,selectorHeight)
-            divide(temp2,2)
-            minus(temp1,temp2)
-            set(startH,temp1)
-         
-            //var temp2=startH-curValue*selectorHeight
-            set(temp1,curItem)
-            multiply(temp1,selectorHeight)
-            set(temp2,startH)
-            minus(temp2,temp1)
-            
-            //Layer(0,temp2,selectorWidth,selectorHeight*itemCount,true)
-            set('this.layers.3.y',temp2)
-            
-            //前景层roi
-            //temp1=curValue*selectorHeight;
-            set(temp1,curItem)
-            multiply(temp1,selectorHeight)
-            set(temp2,temp1)
-            add(temp2,selectorHeight)
-            
-            //ROISubLayer(0,0,temp1,w,temp1,w,temp1+selectorHeight,0,temp1+selectorHeight);
-            set('this.layers.3.subLayers.roi.p1y',temp1)
-            set('this.layers.3.subLayers.roi.p2y',temp1)
-            set('this.layers.3.subLayers.roi.p3y',temp2)
-            set('this.layers.3.subLayers.roi.p4y',temp2)
-            
-            
-            //后景层(上)
-            //后景层(上)位置
-            //temp1=-(curValue-itemShowCount)*itemHeight;
-            set(temp1,curItem)
-            minus(temp1,itemShowCount)
-            multiply(temp1,itemHeight)
-            multiply(temp1,-1)
-            
-            //Layer(selectorWidth/2-itemWidth/2,temp1,itemWidth,itemHeight*itemCount,true);
-            set('this.layers.1.y',temp1)
-            
-            //后景层(上)roi
-            //-tempH
-            multiply(temp1,-1)
-            //-tempH+itemShowCount*itemHeight
-            set(temp2,itemShowCount)
-            multiply(temp2,itemHeight)
-            add(temp2,temp1)
-            
-            //ROISubLayer(0,0,-tempH,itemWidth,-tempH,itemWidth,-tempH+itemShowCount*itemHeight,0,-tempH+itemShowCount*itemHeight)
-            set('this.layers.1.subLayers.roi.p1y',temp1)
-            set('this.layers.1.subLayers.roi.p2y',temp1)
-            set('this.layers.1.subLayers.roi.p3y',temp2)
-            set('this.layers.1.subLayers.roi.p4y',temp2)
-            
-            
-            //后景层(下)
-            //后景层(下)位置
-            //tempH=h/2+selectorHeight/2-(curValue+1)*itemHeight;
-            set(temp1,curItem)
-            add(temp1,1)
-            multiply(temp1,itemHeight)
-            multiply(temp1,-1)
-            set(temp2,h)
-            divide(temp2,2)
-            add(temp1,temp2)
-            set(temp2,selectorHeight)
-            divide(temp2,2)
-            add(temp1,temp2)
-
-            //Layer(selectorWidth/2-itemWidth/2,tempH,itemWidth,itemHeight*itemCount,true);
-            set('this.layers.0.y',temp1)
-            
-            
-            //后景层(下)roi
-            //(curValue+1)*itemHeight
-            set(temp1,curItem)
-            add(temp1,1)
-            multiply(temp1,itemHeight)
-            //(curValue+1)*itemHeight+itemShowCount*itemHeight
-            set(temp2,itemShowCount)
-            multiply(temp2,itemHeight)
-            add(temp2,temp1)
-            
-            //ROISubLayer(0,0,(curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight+itemShowCount*itemHeight,0,(curValue+1)*itemHeight+itemShowCount*itemHeight);
-            set('this.layers.0.subLayers.roi.p1y',temp1)
-            set('this.layers.0.subLayers.roi.p2y',temp1)
-            set('this.layers.0.subLayers.roi.p3y',temp2)
-            set('this.layers.0.subLayers.roi.p4y',temp2)
-            
-        `,
-        onKeyBoardLeft:`
-            var(tMaxHighLightNum,0)                          //控件内高亮块数
-            set(tMaxHighLightNum,'this.maxHighLightNum')
-            var(okFlag,0)                                    //高亮是否已选中
-            set(okFlag,'this.otherAttrs.10')
-            var(len,0)                                       //图层总数
-            set(len,'this.layers.length')
-            minus(len,1)
-            //判断是否启用高亮
-            if (tMaxHighLightNum>0) {
-                if(okFlag==0){//控件间高亮选择
-                    var(tHighLightNum,0)
-                    set(tHighLightNum,'this.highLightNum')
-                    if (tHighLightNum==1) {
-                        //hashighlight
-                        set('this.layers.len.hidden',0)
-                    }else{
-                        set('this.layers.len.hidden',1)
-                    }
-                }else{//高亮已选择，左移tag值减1
-                    var(curItem,0)
-                    set(curItem,'this.otherAttrs.1')
-                    minus(curItem,1)
-                    //curItem取模
-                    mod(curItem,itemCount)
-                    if(curItem<0){
-                        add(curItem,itemCount)
-                    }
-                    set('this.otherAttrs.1',curItem)
-                    setTag(curItem)
-                }
-            }
-          
-        `,
-        onKeyBoardRight:`
-            var(tMaxHighLightNum,0)                          //控件内高亮块数
-            set(tMaxHighLightNum,'this.maxHighLightNum')
-            var(okFlag,0)                                    //高亮是否已选中
-            set(okFlag,'this.otherAttrs.10')
-            var(len,0)                                       //图层总数
-            set(len,'this.layers.length')
-            minus(len,1)
-            //判断是否启用高亮
-            if (tMaxHighLightNum>0) {
-                if(okFlag==0){//控件间高亮选择
-                    var(tHighLightNum,0)
-                    set(tHighLightNum,'this.highLightNum')
-                    if (tHighLightNum==1) {
-                        //hashighlight
-                        set('this.layers.len.hidden',0)
-                    }else{
-                        set('this.layers.len.hidden',1)
-                    }
-                }else{//高亮已选择，右移tag值加1
-                    var(curItem,0)
-                    set(curItem,'this.otherAttrs.1')
-                    add(curItem,1)
-                    //curItem取模
-                    mod(curItem,itemCount)
-                    if(curItem<0){
-                        add(curItem,itemCount)
-                    }
-                    set('this.otherAttrs.1',curItem)
-                    setTag(curItem)
-                }
-            }
-        `,
-        onKeyBoardOK:`
-            var(okFlag,0)                                    //高亮是否已选中
-            set(okFlag,'this.otherAttrs.10')
-            if(okFlag==0){
-                setglobalvar(0,1)
-                set('this.otherAttrs.10',1)
-                set('this.layers.0.hidden',0)
-                set('this.layers.1.hidden',0)
-                
-            }else{
-                setglobalvar(0,0)
-                set('this.otherAttrs.10',0)
-                set('this.layers.0.hidden',1)
-                set('this.layers.1.hidden',1)
-            }
-        `
-    };
-
     WidgetCommands['DateTime'] = {
         onInitialize:`
             var(offset,0)
