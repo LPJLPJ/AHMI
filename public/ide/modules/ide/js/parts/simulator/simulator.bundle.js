@@ -52531,10 +52531,10 @@ module.exports = React.createClass({
                 console.log('trigger action: ', curInst[1]);
                 break;
             case 'print':
-                if (window.disablePrint) {
-                    return;
+                if (window.disablePrint) {} else {
+                    console.log('print value: ', this.evalParam(widget, curInst[1]), this.evalParam(widget, curInst[2] || ''));
                 }
-                console.log('print value: ', this.evalParam(widget, curInst[1]), this.evalParam(widget, curInst[2] || ''));
+
                 break;
 
             default:
@@ -53411,6 +53411,20 @@ module.exports = React.createClass({
             //
             // }
             var transition = canvasData.transition;
+            var method = transition && transition.name;
+            method = 'SWIPE_H';
+            if (method == 'SWIPE_H') {
+                if (!subCanvas.translate) {
+                    //init
+                    this.syncSubCanvasOffsetForSwipe(canvasData, canvasData.curSubCanvasIdx, true);
+                }
+            } else if (method == 'SWIPE_V') {
+                if (!subCanvas.translate) {
+                    //init
+                    this.syncSubCanvasOffsetForSwipe(canvasData, canvasData.curSubCanvasIdx, false, true);
+                }
+            }
+
             for (var i = 0; i < subCanvasList.length; i++) {
                 this.drawSubCanvas(canvasData, subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, i != nextSubCanvasIdx);
             }
@@ -53443,9 +53457,8 @@ module.exports = React.createClass({
             // this.showBorder(offctx,canvasData.x,canvasData.y,canvasData.w,canvasData.h)
 
             this.clipToRect(offctx, canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-            if (subCanvas.shouldShowScrollBar) {
-                this.showScrollBar(offctx, canvasData, subCanvas);
-            }
+
+            this.showScrollBar(offctx, canvasData, subCanvas, subCanvas.shouldShowScrollBarH, subCanvas.shouldShowScrollBarV);
 
             // offctx.translate(canvasData.contentOffsetX,canvasData.contentOffsetY)
 
@@ -53457,23 +53470,39 @@ module.exports = React.createClass({
             } else {
                 if (subCanvas.animating) {
 
-                    if (canvasData.subCanvasUnloadIdx !== null) {
-                        canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = true;
-                        this.paintSubCanvas(canvasData.subCanvasList[canvasData.subCanvasUnloadIdx], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
+                    var transitionMethod = canvasData.transition && canvasData.transition.name;
+                    transitionMethod = 'SWIPE_H';
+                    switch (transitionMethod) {
+                        case 'SWIPE_H':
+                            for (var i = 0; i < canvasData.subCanvasList.length; i++) {
+                                this.paintSubCanvas(canvasData.subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
+                            }
+                            break;
+                        case 'SWIPE_V':
+                            for (var i = 0; i < canvasData.subCanvasList.length; i++) {
+                                this.paintSubCanvas(canvasData.subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
+                            }
+                            break;
+                        default:
+                            //MOVE_LR, MOVE_RL,...
+                            if (canvasData.subCanvasUnloadIdx !== null) {
+                                canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = true;
+                                this.paintSubCanvas(canvasData.subCanvasList[canvasData.subCanvasUnloadIdx], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
+                            }
+                            this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
                     }
                 } else {
                     if (canvasData.subCanvasUnloadIdx !== null) {
                         canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = false;
                     }
+                    this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
                 }
-
-                this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
             }
 
             offctx.restore();
         } else {}
     },
-    showScrollBar: function showScrollBar(ctx, canvasData, subCanvas) {
+    showScrollBar: function showScrollBar(ctx, canvasData, subCanvas, h, v) {
         var ratioX = canvasData.w / (subCanvas.width || canvasData.w);
         var ratioY = canvasData.h / (subCanvas.height || canvasData.h);
         var scrollBarX = -(subCanvas.contentOffsetX || 0) * ratioX;
@@ -53516,8 +53545,12 @@ module.exports = React.createClass({
         var originX = canvasData.x;
         var originY = canvasData.y;
 
-        this.paintLine(ctx, originX + scrollBarX, originY + canvasData.h, originX + scrollBarX + canvasData.w * ratioX, originY + canvasData.h, alpha);
-        this.paintLine(ctx, originX + canvasData.w, originY + scrollBarY, originX + canvasData.w, originY + scrollBarY + canvasData.h * ratioY, alpha);
+        if (h) {
+            this.paintLine(ctx, originX + scrollBarX, originY + canvasData.h, originX + scrollBarX + canvasData.w * ratioX, originY + canvasData.h, alpha);
+        }
+        if (v) {
+            this.paintLine(ctx, originX + canvasData.w, originY + scrollBarY, originX + canvasData.w, originY + scrollBarY + canvasData.h * ratioY, alpha);
+        }
     },
     paintLine: function paintLine(ctx, sx, sy, tx, ty, alpha) {
         ctx.save();
@@ -53551,6 +53584,9 @@ module.exports = React.createClass({
     drawSubCanvas: function drawSubCanvas(canvas, subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
+        var method = transition && transition.name;
+
+        method = 'SWIPE_H';
         if (updateOnly) {
             return this.drawSingleSubCanvas(subCanvas, x, y, w, h, options, updateOnly);
         }
@@ -53567,7 +53603,7 @@ module.exports = React.createClass({
             //transition animation
             var moveX = w;
             var moveY = 0;
-            var method = transition && transition.name;
+
             var duration = transition && transition.duration || 1000;
             var frames = 30;
             var easing = 'easeInOutCubic';
@@ -53734,6 +53770,44 @@ module.exports = React.createClass({
                         }.bind(this));
                         // this.dropCurrentDraw()
                         break;
+                    case 'SWIPE_H':
+                        var fromLeft = method == 'PUSH_LR' ? 1 : -1;
+
+                        var startX = subCanvas.translate && subCanvas.translate.x || 0;
+
+                        subCanvas.animating = true;
+                        AnimationManager.step(startX, 0, 0, 0, duration, frames, easing, function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+
+
+                            if (!newCopyFlag) {
+
+                                subCanvas.animating = false;
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                newCopyFlag = true;
+                            }
+
+                            subCanvas.animating = true;
+
+                            subCanvas.translate = {
+                                x: deltas.curX,
+                                y: deltas.curY
+                            };
+
+                            this.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, true);
+                        }.bind(this), function () {
+                            // offctx.restore()
+                            for (var i = 0; i < canvas.subCanvasList.length; i++) {
+                                var curSC = canvas.subCanvasList[i];
+                                // curSC.translate = null
+                                curSC.animating = false;
+                            }
+                            this.handleTargetAction(subCanvas, 'Load');
+                            this.draw();
+                        }.bind(this));
+                        // this.dropCurrentDraw()
+                        break;
                     default:
                         this.handleTargetAction(subCanvas, 'Load');
                         this.drawSingleSubCanvas(subCanvas, x, y, w, h, options);
@@ -53745,6 +53819,25 @@ module.exports = React.createClass({
             }
         } else {
             this.drawSingleSubCanvas(subCanvas, x, y, w, h, options);
+        }
+    },
+    syncSubCanvasOffsetForSwipe: function syncSubCanvasOffsetForSwipe(canvas, base, xEnable, yEnable) {
+        var subCanvas = canvas.subCanvasList[base || 0];
+        subCanvas.translate = subCanvas.translate || { x: 0, y: 0 };
+        for (var i = 0; i < canvas.subCanvasList.length; i++) {
+            if (base == i) {
+                continue;
+            } else {
+                var curSC = canvas.subCanvasList[i];
+                curSC.translate = curSC.translate || { x: 0, y: 0 };
+                if (xEnable) {
+                    curSC.translate.x = subCanvas.translate.x + (i - base) * canvas.w;
+                }
+
+                if (yEnable) {
+                    curSC.translate.y = subCanvas.translate.y + (i - base) * canvas.h;
+                }
+            }
         }
     },
     generateSubCanvasCopy: function generateSubCanvasCopy(subcanvas, w, h, options) {
@@ -53794,7 +53887,7 @@ module.exports = React.createClass({
         }
 
         if (subCanvas.animating) {
-            console.log('sc animating');
+            // console.log('sc animating')
             if (subCanvas.curSubCanvasImg) {
                 offctx.drawImage(subCanvas.curSubCanvasImg, x, y, w, h);
             }
@@ -56939,10 +57032,20 @@ module.exports = React.createClass({
         if (subCanvas.hideScrollBarTimerId) {
             clearTimeout(subCanvas.hideScrollBarTimerId);
         }
+        if (subCanvas.swipeAnimation) {
+            subCanvas.swipeAnimation.stop();
+        }
         this.stopBounceAnimation(subCanvas, 'bounceAnimeX', 'bounceAnimeY');
 
         subCanvas.pressedOffsetX = subCanvas.contentOffsetX || 0;
         subCanvas.pressedOffsetY = subCanvas.contentOffsetY || 0;
+        //prepare img cache
+        this.prepareSubCanvasCaches(canvas);
+    },
+    prepareSubCanvasCaches: function prepareSubCanvasCaches(canvas) {
+        for (var i = 0; i < canvas.subCanvasList.length; i++) {
+            canvas.subCanvasList[i].curSubCanvasImg = this.generateSubCanvasCopy(canvas.subCanvasList[i], canvas.w, canvas.h);
+        }
     },
 
     handleCanvasDrag: function handleCanvasDrag(canvas, mouseState, lastMouseState) {
@@ -56970,9 +57073,6 @@ module.exports = React.createClass({
             subCanvas.scrollBarHideAnime = null;
             subCanvas.scrollBarAlpha = 1.0;
         }
-        // console.log('dragging')
-        subCanvas.shouldShowScrollBar = true;
-        subCanvas.scrollBarAlpha = 1.0;
 
         if (subCanvas.scrollXTimerId) {
             clearInterval(subCanvas.scrollXTimerId);
@@ -56985,6 +57085,13 @@ module.exports = React.createClass({
 
         subCanvas.width = subCanvas.width || canvas.w;
         subCanvas.height = subCanvas.height || canvas.h;
+
+        //transition
+        var curTransition = canvas.transition;
+        var method = curTransition && curTransition.name;
+        method = 'SWIPE_H';
+
+        //scroll
 
         var leftLimit = canvas.w - subCanvas.width;
         var rightLimit = 0;
@@ -57002,46 +57109,61 @@ module.exports = React.createClass({
         var nextContentOffsetX = subCanvas.pressedOffsetX + mouseMovementX;
         var nextContentOffsetY = subCanvas.pressedOffsetY + mouseMovementY;
 
-        // console.log(nextContentOffsetX)
-        //cal faction 阻尼
-        // if (subCanvas.contentOffsetX>rightLimit ){
-        //     // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
-        //     subCanvas.contentOffsetX = this.calMovementWithFaction(mouseMovementX-rightLimit,canvas.w)
-        // }else if (subCanvas.contentOffsetX<leftLimit ){
-        //     subCanvas.contentOffsetX = leftLimit- this.calMovementWithFaction(leftLimit-mouseMovementX,canvas.w)
-        // }else {
-        //     subCanvas.contentOffsetX += offsetX
-        // }
-        //
-        // if (subCanvas.contentOffsetY>bottomLimit){
-        //     subCanvas.contentOffsetY = this.calMovementWithFaction(mouseMovementY-bottomLimit,canvas.h)
-        // }else if (subCanvas.contentOffsetY<topLimit){
-        //     subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit-mouseMovementY,canvas.h)
-        // }else{
-        //     subCanvas.contentOffsetY += offsetY
-        // }
-
-        if (nextContentOffsetX > rightLimit) {
-            // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
-            subCanvas.contentOffsetX = rightLimit + this.calMovementWithFaction(nextContentOffsetX - rightLimit, canvas.w);
-            // console.log('rubber banding',subCanvas.contentOffsetX)
-        } else if (nextContentOffsetX < leftLimit) {
-            subCanvas.contentOffsetX = leftLimit - this.calMovementWithFaction(leftLimit - nextContentOffsetX, canvas.w);
-        } else {
-            subCanvas.contentOffsetX = nextContentOffsetX;
-        }
-
-        if (nextContentOffsetY > bottomLimit) {
-            subCanvas.contentOffsetY = bottomLimit + this.calMovementWithFaction(nextContentOffsetY - bottomLimit, canvas.h);
-        } else if (nextContentOffsetY < topLimit) {
-            subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit - nextContentOffsetY, canvas.h);
-        } else {
-            subCanvas.contentOffsetY = nextContentOffsetY;
-        }
-
         var timeD = (mouseState.timeStamp - lastMouseState.timeStamp) / 1000.0;
-        subCanvas.speedX = (subCanvas.contentOffsetX - lastContentOffsetX) / timeD || 0;
-        subCanvas.speedY = (subCanvas.contentOffsetY - lastContentOffsetY) / timeD || 0;
+
+        //horizontal scroll
+        if (subCanvas.scrollHEnabled) {
+            // console.log('dragging')
+            subCanvas.shouldShowScrollBarH = true;
+            subCanvas.scrollBarAlpha = 1.0;
+            if (nextContentOffsetX > rightLimit) {
+                // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
+                subCanvas.contentOffsetX = rightLimit + this.calMovementWithFaction(nextContentOffsetX - rightLimit, canvas.w);
+                // console.log('rubber banding',subCanvas.contentOffsetX)
+            } else if (nextContentOffsetX < leftLimit) {
+                subCanvas.contentOffsetX = leftLimit - this.calMovementWithFaction(leftLimit - nextContentOffsetX, canvas.w);
+            } else {
+                subCanvas.contentOffsetX = nextContentOffsetX;
+            }
+
+            subCanvas.speedX = (subCanvas.contentOffsetX - lastContentOffsetX) / timeD || 0;
+        } else {
+            //swipe transition
+            if (method == 'SWIPE_H') {
+                subCanvas.translate = subCanvas.translate || { x: 0, y: 0 };
+                subCanvas.translate.x += offsetX;
+                //rest sc
+                this.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, true);
+                subCanvas.animating = true;
+
+                subCanvas.speedX = offsetX / timeD || 0;
+            }
+        }
+
+        //vertical scroll
+        if (subCanvas.scrollVEnabled) {
+            // console.log('dragging')
+            subCanvas.shouldShowScrollBarV = true;
+            subCanvas.scrollBarAlpha = 1.0;
+            if (nextContentOffsetY > bottomLimit) {
+                subCanvas.contentOffsetY = bottomLimit + this.calMovementWithFaction(nextContentOffsetY - bottomLimit, canvas.h);
+            } else if (nextContentOffsetY < topLimit) {
+                subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit - nextContentOffsetY, canvas.h);
+            } else {
+                subCanvas.contentOffsetY += offsetY;
+            }
+
+            subCanvas.speedY = (subCanvas.contentOffsetY - lastContentOffsetY) / timeD || 0;
+        } else {
+            if (method == 'SWIPE_V') {
+                subCanvas.translate = subCanvas.translate || { x: 0, y: 0 };
+                subCanvas.translate.y += offsetY;
+                //rest sc
+                this.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, false, true);
+                subCanvas.animating = true;
+                subCanvas.speedX = offsetY / timeD || 0;
+            }
+        }
     },
     calMovementWithFaction: function calMovementWithFaction(x, d) {
         var c = 0.55;
@@ -57203,88 +57325,245 @@ module.exports = React.createClass({
         if (canvas.type !== 'MyLayer') {
             return;
         }
-        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
-        //canvas scroll effect
-        var elem = subCanvas;
 
+        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx];
         var stepX = subCanvas.speedX / (1000 / 30);
         var stepY = subCanvas.speedY / (1000 / 30);
         var factor = 2;
         var signX = stepX >= 0 ? 1 : -1;
         var signY = stepY > 0 ? 1 : -1;
-        // console.log(stepX,stepY)
-        elem.scrollXTimerId = setInterval(function () {
+        if (subCanvas.scrollHEnabled || subCanvas.scrollVEnabled) {
+            //canvas scroll effect
+            var elem = subCanvas;
 
-            var leftLimit = canvas.w - subCanvas.width;
-            var rightLimit = 0;
-            var topLimit = canvas.h - subCanvas.height;
-            var bottomLimit = 0;
+            // console.log(stepX,stepY)
+            elem.scrollXTimerId = setInterval(function () {
 
-            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
-            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
-            elem.contentOffsetX = elem.contentOffsetX + stepX;
-            this.addHideScrollBarTimeout(elem);
+                var leftLimit = canvas.w - subCanvas.width;
+                var rightLimit = 0;
+                var topLimit = canvas.h - subCanvas.height;
+                var bottomLimit = 0;
 
-            var bounceDuration = 2000;
-            var bounceLimit = 100;
-            //test x bounce
-            if (elem.contentOffsetX > 0) {
-                clearInterval(elem.scrollXTimerId);
+                // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+                // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+                elem.contentOffsetX = elem.contentOffsetX + stepX;
+                this.addHideScrollBarTimeout(elem);
 
-                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, -bounceLimit, 0, bounceDuration, elem.contentOffsetX / bounceLimit + 1);
-            } else if (elem.contentOffsetX < canvas.w - subCanvas.width) {
-                clearInterval(elem.scrollXTimerId);
-                //left
+                var bounceDuration = 2000;
+                var bounceLimit = 100;
+                //test x bounce
+                if (elem.contentOffsetX > 0) {
+                    clearInterval(elem.scrollXTimerId);
 
-                this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, leftLimit - bounceLimit, leftLimit, bounceDuration, (elem.contentOffsetX - leftLimit) / bounceLimit + 1);
+                    this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, -bounceLimit, 0, bounceDuration, elem.contentOffsetX / bounceLimit + 1);
+                } else if (elem.contentOffsetX < canvas.w - subCanvas.width) {
+                    clearInterval(elem.scrollXTimerId);
+                    //left
+
+                    this.startBounceAnimation(elem, 'bounceAnimeX', 'contentOffsetX', stepX, leftLimit - bounceLimit, leftLimit, bounceDuration, (elem.contentOffsetX - leftLimit) / bounceLimit + 1);
+                }
+
+                stepX -= factor * signX;
+                // stepY -= factor * signY
+                stepX = stepX * signX <= 0 ? 0 : stepX;
+
+                if (stepX == 0) {
+                    clearInterval(elem.scrollXTimerId);
+                }
+            }.bind(this), 30);
+
+            elem.scrollYTimerId = setInterval(function () {
+
+                var leftLimit = canvas.w - subCanvas.width;
+                var rightLimit = 0;
+                var topLimit = canvas.h - subCanvas.height;
+                var bottomLimit = 0;
+
+                // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+                // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+
+                elem.contentOffsetY = elem.contentOffsetY + stepY;
+
+                this.addHideScrollBarTimeout(elem);
+
+                var bounceDuration = 2000;
+                var bounceLimit = 100;
+                //test x bounce
+
+
+                if (elem.contentOffsetY > 0) {
+                    clearInterval(elem.scrollYTimerId);
+
+                    this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, -bounceLimit, 0, bounceDuration, elem.contentOffsetY / bounceLimit + 1);
+                } else if (elem.contentOffsetY < canvas.h - subCanvas.height) {
+                    clearInterval(elem.scrollYTimerId);
+                    //left
+                    this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, topLimit - bounceLimit, topLimit, bounceDuration, (elem.contentOffsetY - topLimit) / bounceLimit + 1);
+                }
+
+                // stepX -= factor * signX
+                stepY -= factor * signY;
+
+                stepY = stepY * signY <= 0 ? 0 : stepY;
+                if (stepY == 0) {
+                    clearInterval(elem.scrollYTimerId);
+                }
+            }.bind(this), 30);
+        } else {
+            var method = canvas.transition && canvas.transition.name;
+            method = 'SWIPE_H';
+            switch (method) {
+                case 'SWIPE_H':
+                    var elem = subCanvas;
+                    elem.swipeXTimerId = setInterval(function () {
+                        var leftTranslateX = canvas.subCanvasList[0].translate && canvas.subCanvasList[0].translate.x || 0;
+                        var rightTranslateX = canvas.subCanvasList[canvas.subCanvasList.length - 1].translate && canvas.subCanvasList[canvas.subCanvasList.length - 1].translate.x || 0;
+                        if (stepX == 0 || leftTranslateX > 0 || rightTranslateX < 0) {
+                            clearInterval(elem.swipeXTimerId);
+                            for (var i = 0; i < canvas.subCanvasList.length; i++) {
+                                canvas.subCanvasList[i].animating = false;
+                            }
+                            var pos = this.findClosetSubCanvas(canvas, 'x');
+                            var targetTag = this.findTagByName(canvas.tag);
+                            if (targetTag) {
+                                if (targetTag.value == pos) {
+                                    this.startSwipeAnimation(canvas, subCanvas);
+                                } else {
+                                    this.setTagByTag(targetTag, pos);
+                                    this.draw();
+                                }
+                            } else {
+                                this.startSwipeAnimation(canvas, subCanvas);
+                            }
+                        }
+                        elem.translate.x += stepX;
+
+                        this.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, true);
+
+                        stepX -= factor * signX;
+                        // stepY -= factor * signY
+                        stepX = stepX * signX <= 0 ? 0 : stepX;
+                        // console.log(stepX)
+
+                    }.bind(this), 30);
+
+                    break;
+                case 'SWIPE_V':
+                    for (var i = 0; i < canvas.subCanvasList.length; i++) {
+                        canvas.subCanvasList[i].animating = false;
+                    }
+                    var pos = this.findClosetSubCanvas(canvas, 'y');
+                    var targetTag = this.findTagByName(canvas.tag);
+                    if (targetTag) {
+                        if (targetTag.value == pos) {
+                            this.startSwipeAnimation(canvas, subCanvas);
+                        } else {
+                            this.setTagByTag(targetTag, pos);
+                            this.draw();
+                        }
+                    } else {
+                        this.startSwipeAnimation(canvas, subCanvas);
+                    }
+
+                    break;
             }
+        }
+    },
+    startSwipeAnimation: function startSwipeAnimation(canvas, subCanvas, vertical) {
+        vertical = !!vertical;
+        var startX = subCanvas.translate && subCanvas.translate.x || 0;
+        var startY = subCanvas.translate && subCanvas.translate.y || 0;
+        if (vertical) {
+            startX = 0;
+        } else {
+            startY = 0;
+        }
+        var frames = 30;
+        var duration = 1000;
+        var easing = 'linear';
 
-            stepX -= factor * signX;
-            // stepY -= factor * signY
-            stepX = stepX * signX <= 0 ? 0 : stepX;
+        window.swipingSC = subCanvas;
 
-            if (stepX == 0) {
-                clearInterval(elem.scrollXTimerId);
+        subCanvas.animating = true;
+        // subCanvas.swipeAnimationKey = AnimationManager.step(startX,startY,0,0,duration,frames,easing,function (deltas) {
+        //     // offctx.save();
+        //     // offctx.translate(deltas.curX,deltas.curY);
+        //
+        //
+        //     // if (!newCopyFlag){
+        //     //
+        //     //     subCanvas.animating = false
+        //     //     subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+        //     //     newCopyFlag = true
+        //     // }
+        //
+        //     subCanvas.animating = true
+        //
+        //     subCanvas.translate = {
+        //         x:deltas.curX,
+        //         y:deltas.curY
+        //     }
+        //
+        //     this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
+        //
+        //
+        // }.bind(this),function () {
+        //     // offctx.restore()
+        //     for(var i=0;i<canvas.subCanvasList.length;i++){
+        //         var curSC = canvas.subCanvasList[i]
+        //         // curSC.translate = null
+        //         curSC.animating = false
+        //     }
+        //
+        // }.bind(this))
+
+
+        var swipeAnime = new AnimationAPI.SpringAnimation(null, 'x', 0, 26, 170, { x: -100 }, { x: 0 }, duration, startX / 100);
+        var self = this;
+        swipeAnime.onFrameCB = function () {
+            subCanvas.animating = true;
+
+            subCanvas.translate = {
+                x: this.state.curValue.x,
+                y: 0
+            };
+            // console.log(this.state.curValue.x)
+
+            self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
+        };
+        swipeAnime.didStopCB = function () {
+            for (var i = 0; i < canvas.subCanvasList.length; i++) {
+                var curSC = canvas.subCanvasList[i];
+                // curSC.translate = null
+                curSC.animating = false;
             }
-        }.bind(this), 30);
-
-        elem.scrollYTimerId = setInterval(function () {
-
-            var leftLimit = canvas.w - subCanvas.width;
-            var rightLimit = 0;
-            var topLimit = canvas.h - subCanvas.height;
-            var bottomLimit = 0;
-
-            // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
-            // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
-
-            elem.contentOffsetY = elem.contentOffsetY + stepY;
-
-            this.addHideScrollBarTimeout(elem);
-
-            var bounceDuration = 2000;
-            var bounceLimit = 100;
-            //test x bounce
-
-
-            if (elem.contentOffsetY > 0) {
-                clearInterval(elem.scrollYTimerId);
-
-                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, -bounceLimit, 0, bounceDuration, elem.contentOffsetY / bounceLimit + 1);
-            } else if (elem.contentOffsetY < canvas.h - subCanvas.height) {
-                clearInterval(elem.scrollYTimerId);
-                //left
-                this.startBounceAnimation(elem, 'bounceAnimeY', 'contentOffsetY', stepY, topLimit - bounceLimit, topLimit, bounceDuration, (elem.contentOffsetY - topLimit) / bounceLimit + 1);
+            // self.draw()
+        };
+        if (subCanvas.swipeAnimation) {
+            subCanvas.swipeAnimation.stop();
+        }
+        subCanvas.swipeAnimation = swipeAnime;
+        swipeAnime.start();
+    },
+    findClosetSubCanvas: function findClosetSubCanvas(canvas, direction) {
+        var min;
+        var pos = 0;
+        direction = direction || 'x';
+        for (var i = 0; i < canvas.subCanvasList.length; i++) {
+            var curSC = canvas.subCanvasList[i];
+            var curD = curSC.translate && curSC.translate[direction];
+            curD = math.abs(curD);
+            if (min === undefined) {
+                min = curD;
+                pos = i;
+            } else {
+                if (curD < min) {
+                    min = curD;
+                    pos = i;
+                }
             }
-
-            // stepX -= factor * signX
-            stepY -= factor * signY;
-
-            stepY = stepY * signY <= 0 ? 0 : stepY;
-            if (stepY == 0) {
-                clearInterval(elem.scrollYTimerId);
-            }
-        }.bind(this), 30);
+        }
+        return pos;
     },
     addHideScrollBarTimeout: function addHideScrollBarTimeout(elem) {
 
