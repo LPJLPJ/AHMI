@@ -257,7 +257,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterItemCount:enterItemCount,
                 enterCurValue:enterCurValue,
                 enterItemShowCount:enterItemShowCount,
-                enterSelectorText:enterSelectorText,
+                enterSelectorTitle:enterSelectorTitle,
                 enterSelectorFontSize:enterSelectorFontSize,
                 enterSelectorFontFamily:enterSelectorFontFamily,
                 enterSelectorFontBold:enterSelectorFontBold,
@@ -382,6 +382,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
      */
     function onAttributeChanged(){
 		var selectObject=ProjectService.getCurrentSelectObject();
+        var flagChangeXY=false;
+        if(selectObject.type===Type.MySelector&&$scope.component.object.type===Type.MySelector){
+            flagChangeXY=true;
+            if($scope.component.object.level.info.left===selectObject.level.info.left&&$scope.component.object.level.info.top===selectObject.level.info.top){
+                flagChangeXY=false;
+            }
+        }
+
         $timeout(function () {
             $scope.component.object= _.cloneDeep(selectObject);
             initObject= _.cloneDeep(selectObject);
@@ -590,6 +598,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     }
                     break;
                 case Type.MySelector:
+                    if(flagChangeXY){
+                        flagChangeXY=false;
+                        changeX();
+                        changeY();
+                    }
                     break;
                 case Type.MySlideBlock:
                     $scope.component.slideBlock.arrangeModel=$scope.component.object.level.info.arrange;
@@ -944,6 +957,15 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             };
             _changeTextAttr(option);
         }
+        if(op.name=='component.object.level.info.titleFont.fontColor'){
+            if(initObject.level.info.titleFont.fontColor==op.value) {
+                return;
+            }
+            option = {
+                titleFontFontColor:op.value
+            };
+            _changeTextAttr(option);
+        }
 	}
 
     /**
@@ -1011,6 +1033,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     selectorFontFontSize:fontSize
                 };
                 var oldVal=initObject.level.info.selectorFont.fontSize;
+            }else if(mode=='titleFont'){
+                var fontSize = $scope.component.object.level.info.titleFont.fontSize;
+                var option = {
+                    titleFontFontSize:fontSize
+                };
+                var oldVal=initObject.level.info.titleFont.fontSize;
             }else{
                 //error
                 return;
@@ -1061,6 +1089,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 selectorFontFontFamily:fontFamily
             };
             var oldVal=initObject.level.info.selectorFont.fontFamily;
+        }else if(mode=='titleFont'){
+            var fontFamily = $scope.component.object.level.info.titleFont.fontFamily;
+            var option = {
+                titleFontFontFamily:fontFamily
+            };
+            var oldVal=initObject.level.info.titleFont.fontFamily;
         }else{
             //error
             return;
@@ -1110,6 +1144,16 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             var option = {
                 selectorFontFontBold:fontBold
             };
+        }else if(mode=='titleFont'){
+            var fontBold = $scope.component.object.level.info.titleFont.fontBold;
+            if(fontBold==="100"){
+                fontBold="bold";
+            }else if(fontBold==="bold"){
+                fontBold="100";
+            }
+            var option = {
+                titleFontFontBold:fontBold
+            };
         }else{
             //error
             return;
@@ -1146,13 +1190,23 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             };
         }else if(mode=='selectorFont'){
             var fontItalic = $scope.component.object.level.info.selectorFont.fontItalic;
+            if(fontItalic==="italic"){
+                fontItalic="";
+            }else{
+                fontItalic="italic";
+            }
+            var option = {
+                selectorFontFontItalic:fontItalic
+            };
+        }else if(mode=='titleFont'){
+            var fontItalic = $scope.component.object.level.info.titleFont.fontItalic;
             if(fontItalic===""){
                 fontItalic="italic";
             }else if(fontItalic==="italic"){
                 fontItalic="";
             }
             var option = {
-                selectorFontFontItalic:fontItalic
+                titleFontFontItalic:fontItalic
             };
         }else{
             //error
@@ -1187,7 +1241,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 });
                 break;
             case Type.MySelector:
-                ProjectService.ChangeTextOfSelector(option,function(oldOperate){
+                ProjectService.ChangeSelectorFontStyle(option,function(oldOperate){
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
@@ -2563,7 +2617,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 toastr.info('修改成功');
                 var eValue={
                     type:'selector',
-                    value:$scope.component.object.level.info.selectorHeight-$scope.component.object.level.info.itemShowCount*cur
+                    value:$scope.component.object.level.info.selectorTop-$scope.component.object.level.info.itemShowCount*cur
                 }
                 enterY(eValue);
                 var option={
@@ -2667,6 +2721,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
             }else if(e.type==="left"){
                 var xCoor = e.value;
+                $scope.component.object.level.info.selectorLeft=xCoor;
                 var option={
                     selectorLeft:xCoor
                 };
@@ -2712,8 +2767,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
             }else if(e.type==="top"){
                 var yCoor = e.value;
+                $scope.component.object.level.info.selectorTop=yCoor;
                 var option={
-                    selectorLeft:yCoor
+                    selectorTop:yCoor
                 };
                 ProjectService.ChangeAttrOfSelectorNoRender(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
@@ -2792,7 +2848,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     restore();
                     return;
                 }
-                if(cur<0||cur>$scope.component.object.level.info.itemCount){
+                if(cur<0||cur>=$scope.component.object.level.info.itemCount){
                     toastr.warning('超出范围');
                     restore();
                     return;
@@ -2819,14 +2875,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 //判断输入是否合法
                 var cur = Number($scope.component.object.level.info.itemShowCount);
                 var itemHeight=Number($scope.component.object.level.info.itemHeight);
-                var selectorHeight=Number($scope.component.object.level.info.selectorHeight);
+                var selectorTop=Number($scope.component.object.level.info.selectorTop);
                 var itemCount=Number($scope.component.object.level.info.itemCount);
                 if (!_.isInteger(cur)){
                     toastr.warning('输入不合法');
                     restore();
                     return;
                 }
-                if(cur<0||(cur-1)*itemHeight+selectorHeight>2000||cur>itemCount){
+                if(cur<0||(cur-1)*itemHeight+selectorTop>2000||cur>itemCount){
                     toastr.warning('超出范围');
                     restore();
                     return;
@@ -2838,7 +2894,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 toastr.info('修改成功');
                 var eValue={
                     type:'selector',
-                    value:$scope.component.object.level.info.selectorHeight-$scope.component.object.level.info.itemHeight*cur
+                    value:$scope.component.object.level.info.selectorTop-$scope.component.object.level.info.itemHeight*cur
                 }
                 enterY(eValue);
 
@@ -2853,21 +2909,20 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
             }
         }
-        function enterSelectorText(e){
+        function enterSelectorTitle(e){
             if (e.keyCode==13){
-                var cur = $scope.component.object.level.info.selectorText;
+                var cur = $scope.component.object.level.info.selectorTitle;
+                cur=cur.toString();
                 //判断是否和初始一样
-                if (cur==initObject.level.info.selectorText){
-                    return;
+                if(initObject.level.info.selectorTitle){
+                    if (cur==initObject.level.info.selectorTitle){
+                        return;
+                    }
                 }
-                var validation=ProjectService.inputValidate(cur);
-                if(!validation){
-                    restore();
-                    return;
-                }
+
                 toastr.info('修改成功');
                 var option={
-                    selectorText:cur
+                    selectorTitle:cur
                 };
 
                 ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {

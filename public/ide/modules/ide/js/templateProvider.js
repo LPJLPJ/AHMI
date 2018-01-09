@@ -244,9 +244,10 @@ ideServices
                     itemShowCount:1,
                     //item当前值
                     curValue:0,
-                    //标题
-                    text:'Selector',
 
+                    text:'Selector',
+                    //标题
+                    selectorTitle:'',
                     itemFont:{
                         fontFamily:"宋体",
                         fontSize:20,
@@ -255,6 +256,13 @@ ideServices
                         fontItalic:''
                     },
                     selectorFont:{
+                        fontFamily:"宋体",
+                        fontSize:20,
+                        fontColor:'rgba(0,0,0,1)',
+                        fontBold:"100",
+                        fontItalic:'',
+                    },
+                    titleFont:{
                         fontFamily:"宋体",
                         fontSize:20,
                         fontColor:'rgba(0,0,0,1)',
