@@ -396,7 +396,10 @@ module.exports =   React.createClass({
                 this.paintPage(page);
             }
             ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+
+            //paint with pixelRatio
+            this.pixelRatio = this.pixelRatio || 1.0
+            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height,0,0,offcanvas.width,offcanvas.height*this.pixelRatio);
         }
 
         if (shouldTestFPS) {
@@ -4620,6 +4623,8 @@ module.exports =   React.createClass({
             x = x*ratioW
             y = y*ratioH
         }
+        //pixelRatio
+        y = y / (this.pixelRatio||1.0)
 
         return {
             x:x,
@@ -5379,6 +5384,19 @@ module.exports =   React.createClass({
             offcanvas.style.width = (curScale * canvas.width) +'px'
         }
     },
+    setPixelRatio:function (e) {
+        if (e.keyCode == 13){
+            //enter
+            e.target.blur();
+            var curRatio = Number(e.target.value) || 1.0
+
+            this.pixelRatio = curRatio>0?curRatio:1.0
+            //set canvas height
+            var canvas = this.refs.canvas
+            var offcanvas = this.refs.offcanvas
+            canvas.height = offcanvas.height * this.pixelRatio
+        }
+    },
     render: function () {
         // console.log('registers',this.state.registers);
         return (
@@ -5419,16 +5437,24 @@ module.exports =   React.createClass({
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
-                <div className="phical-keyboard-wrapper">
-                    <button onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
-                    <button onMouseDown={this.handleOk.bind(null, 'press')}
-                            onMouseUp={this.handleOk.bind(null, 'release')}>OK
-                    </button>
-                    <button onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </button>
+                <div className='col-md-3'>
+                    <div className='setting-wrapper'>
+                        <div className='row'>
+                            <span>像素宽高比： 1：</span><input type='number' min='0' onKeyDown={this.setPixelRatio} />
+                        </div>
+                    </div>
+                    <div className="phical-keyboard-wrapper" style={{margin:'1em'}}>
+                        <button className='btn btn-default' onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
+                        <button className='btn btn-default' onMouseDown={this.handleOk.bind(null, 'press')}
+                                onMouseUp={this.handleOk.bind(null, 'release')}>OK
+                        </button>
+                        <button className='btn btn-default' onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </button>
 
+                    </div>
+                    < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
+                    <RegisterList registers={this.state.registers || {}} handleRegisterChange={this.handleRegisterChange}/>
                 </div>
-                < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
-                <RegisterList registers={this.state.registers || {}} handleRegisterChange={this.handleRegisterChange}/>
+
             </div >);
     }
 });
