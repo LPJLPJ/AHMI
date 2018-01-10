@@ -52056,6 +52056,10 @@ module.exports = React.createClass({
         //load widgets
         this.registerWidgets();
 
+        //set basic parameters
+        this.fps = 30;
+        this.defaultDuration = 1000;
+
         if (requiredResourceNum > 0) {
             requiredResourceList.map(function (resource) {
                 if (this.isIn(resource, imageList, 'id')) {
@@ -52803,7 +52807,7 @@ module.exports = React.createClass({
         var offctx = this.offctx;
         var canvas = this.refs.canvas;
         var ctx = this.ctx;
-        var frames = 30;
+        var frames = this.fps;
         var easing = 'easeInOutCubic';
         var method = page.transition && page.transition.name;
         var duration = page.transition && page.transition.duration || 1000;
@@ -53216,7 +53220,7 @@ module.exports = React.createClass({
         var type = target.type;
         var duration = animation && animation.duration || 1000;
         // console.log(scale,translate,duration)
-        var frames = 30;
+        var frames = this.fps;
         var srcTransformObj = {};
         var dstTransformObj = {};
         var srcRelativeTranslate = {};
@@ -53605,7 +53609,7 @@ module.exports = React.createClass({
             var moveY = 0;
 
             var duration = transition && transition.duration || 1000;
-            var frames = 30;
+            var frames = this.fps;
             var easing = 'easeInOutCubic';
             var hWidth = w / 2 + x;
             var hHeight = h / 2 + y;
@@ -53776,36 +53780,75 @@ module.exports = React.createClass({
                         var startX = subCanvas.translate && subCanvas.translate.x || 0;
 
                         subCanvas.animating = true;
-                        AnimationManager.step(startX, 0, 0, 0, duration, frames, easing, function (deltas) {
-                            // offctx.save();
-                            // offctx.translate(deltas.curX,deltas.curY);
-
+                        // AnimationManager.step(startX,0,0,0,duration,frames,easing,function (deltas) {
+                        //     // offctx.save();
+                        //     // offctx.translate(deltas.curX,deltas.curY);
+                        //
+                        //
+                        //     if (!newCopyFlag){
+                        //
+                        //         subCanvas.animating = false
+                        //         subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+                        //         newCopyFlag = true
+                        //     }
+                        //
+                        //     subCanvas.animating = true
+                        //
+                        //     subCanvas.translate = {
+                        //         x:deltas.curX,
+                        //         y:deltas.curY
+                        //     }
+                        //
+                        //     this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true)
+                        //
+                        //
+                        // }.bind(this),function () {
+                        //     // offctx.restore()
+                        //     for(var i=0;i<canvas.subCanvasList.length;i++){
+                        //         var curSC = canvas.subCanvasList[i]
+                        //         // curSC.translate = null
+                        //         curSC.animating = false
+                        //     }
+                        //     this.handleTargetAction(subCanvas, 'Load')
+                        //     this.draw()
+                        // }.bind(this))
+                        var self = this;
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null, 'x', 0, 26, 170, { x: -100 }, { x: 0 }, duration, (startX + 100) / 100);
+                        swipeAnime.onFrameCB = function () {
 
                             if (!newCopyFlag) {
 
                                 subCanvas.animating = false;
-                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                subCanvas.curSubCanvasImg = self.generateSubCanvasCopy(subCanvas, w, h, options);
                                 newCopyFlag = true;
                             }
 
                             subCanvas.animating = true;
 
                             subCanvas.translate = {
-                                x: deltas.curX,
-                                y: deltas.curY
+                                x: this.state.curValue.x,
+                                y: 0
                             };
+                            // console.log(this.state.curValue.x)
 
-                            this.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, true);
-                        }.bind(this), function () {
-                            // offctx.restore()
+                            self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, true, false);
+                        };
+                        swipeAnime.didStopCB = function () {
                             for (var i = 0; i < canvas.subCanvasList.length; i++) {
                                 var curSC = canvas.subCanvasList[i];
                                 // curSC.translate = null
                                 curSC.animating = false;
                             }
-                            this.handleTargetAction(subCanvas, 'Load');
-                            this.draw();
-                        }.bind(this));
+                            // self.draw()
+                            self.handleTargetAction(subCanvas, 'Load');
+                            self.draw();
+                        };
+                        if (subCanvas.swipeAnimation) {
+                            subCanvas.swipeAnimation.stop();
+                        }
+                        subCanvas.swipeAnimation = swipeAnime;
+                        swipeAnime.start();
+                        // this.startSwipeAnimation(canvas,subCanvas)
                         // this.dropCurrentDraw()
                         break;
                     default:
@@ -55289,7 +55332,7 @@ module.exports = React.createClass({
                 widget.oldValue = curValue;
 
                 if (enableAnimation) {
-                    var fps = 30;
+                    var fps = this.fps;
                     var duration = widget.transition && widget.transition.duration || 0;
                     var totalFrameNum = duration / 1000 * fps;
 
@@ -55484,7 +55527,7 @@ module.exports = React.createClass({
                 widget.oldValue = curValue;
 
                 if (enableAnimation) {
-                    var fps = 30;
+                    var fps = this.fps;
                     var duration = widget.transition && widget.transition.duration || 0;
                     var totalFrameNum = duration / 1000 * fps;
                     totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1;
@@ -57032,6 +57075,15 @@ module.exports = React.createClass({
         if (subCanvas.hideScrollBarTimerId) {
             clearTimeout(subCanvas.hideScrollBarTimerId);
         }
+
+        if (subCanvas.swipeXTimerId) {
+            clearInterval(subCanvas.swipeXTimerId);
+        }
+
+        if (subCanvas.swipeYTimerId) {
+            clearInterval(subCanvas.swipeYTimerId);
+        }
+
         if (subCanvas.swipeAnimation) {
             subCanvas.swipeAnimation.stop();
         }
@@ -57370,7 +57422,7 @@ module.exports = React.createClass({
                 if (stepX == 0) {
                     clearInterval(elem.scrollXTimerId);
                 }
-            }.bind(this), 30);
+            }.bind(this), 1000 / this.fps);
 
             elem.scrollYTimerId = setInterval(function () {
 
@@ -57408,18 +57460,22 @@ module.exports = React.createClass({
                 if (stepY == 0) {
                     clearInterval(elem.scrollYTimerId);
                 }
-            }.bind(this), 30);
+            }.bind(this), this.fps);
         } else {
             var method = canvas.transition && canvas.transition.name;
             method = 'SWIPE_H';
+            var elem = subCanvas;
             switch (method) {
                 case 'SWIPE_H':
-                    var elem = subCanvas;
+                    elem.stepX = 0;
+
                     elem.swipeXTimerId = setInterval(function () {
+                        var curTranslateXABS = math.abs(elem.translate && elem.translate.x || 0);
                         var leftTranslateX = canvas.subCanvasList[0].translate && canvas.subCanvasList[0].translate.x || 0;
                         var rightTranslateX = canvas.subCanvasList[canvas.subCanvasList.length - 1].translate && canvas.subCanvasList[canvas.subCanvasList.length - 1].translate.x || 0;
-                        if (stepX == 0 || leftTranslateX > 0 || rightTranslateX < 0) {
+                        if (stepX == 0 || curTranslateXABS > 0.5 * canvas.w || leftTranslateX > 0 || rightTranslateX < 0) {
                             clearInterval(elem.swipeXTimerId);
+                            elem.stepX = stepX;
                             for (var i = 0; i < canvas.subCanvasList.length; i++) {
                                 canvas.subCanvasList[i].animating = false;
                             }
@@ -57445,25 +57501,44 @@ module.exports = React.createClass({
                         stepX = stepX * signX <= 0 ? 0 : stepX;
                         // console.log(stepX)
 
-                    }.bind(this), 30);
+                    }.bind(this), 1000 / this.fps);
 
                     break;
                 case 'SWIPE_V':
-                    for (var i = 0; i < canvas.subCanvasList.length; i++) {
-                        canvas.subCanvasList[i].animating = false;
-                    }
-                    var pos = this.findClosetSubCanvas(canvas, 'y');
-                    var targetTag = this.findTagByName(canvas.tag);
-                    if (targetTag) {
-                        if (targetTag.value == pos) {
-                            this.startSwipeAnimation(canvas, subCanvas);
-                        } else {
-                            this.setTagByTag(targetTag, pos);
-                            this.draw();
+                    elem.stepY = 0;
+                    elem.swipeYTimerId = setInterval(function () {
+                        var curTranslateYABS = math.abs(elem.translate && elem.translate.y || 0);
+                        var leftTranslateY = canvas.subCanvasList[0].translate && canvas.subCanvasList[0].translate.y || 0;
+                        var rightTranslateY = canvas.subCanvasList[canvas.subCanvasList.length - 1].translate && canvas.subCanvasList[canvas.subCanvasList.length - 1].translate.y || 0;
+                        if (stepY == 0 || curTranslateYABS > 0.5 * canvas.w || leftTranslateY > 0 || rightTranslateY < 0) {
+                            clearInterval(elem.swipeYTimerId);
+                            elem.stepY = stepY;
+                            for (var i = 0; i < canvas.subCanvasList.length; i++) {
+                                canvas.subCanvasList[i].animating = false;
+                            }
+                            var pos = this.findClosetSubCanvas(canvas, 'y');
+                            var targetTag = this.findTagByName(canvas.tag);
+                            if (targetTag) {
+                                if (targetTag.value == pos) {
+                                    this.startSwipeAnimation(canvas, subCanvas, true);
+                                } else {
+                                    this.setTagByTag(targetTag, pos);
+                                    this.draw();
+                                }
+                            } else {
+                                this.startSwipeAnimation(canvas, subCanvas, true);
+                            }
                         }
-                    } else {
-                        this.startSwipeAnimation(canvas, subCanvas);
-                    }
+                        elem.translate.y += stepY;
+
+                        this.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, false, true);
+
+                        // stepX -= factor * signX
+                        stepY -= factor * signY;
+                        stepY = stepY * signY <= 0 ? 0 : stepY;
+                        // console.log(stepX)
+
+                    }.bind(this), 1000 / this.fps);
 
                     break;
             }
@@ -57478,8 +57553,8 @@ module.exports = React.createClass({
         } else {
             startY = 0;
         }
-        var frames = 30;
-        var duration = 1000;
+        var frames = this.fps;
+        var duration = this.defaultDuration;
         var easing = 'linear';
 
         window.swipingSC = subCanvas;
@@ -57517,20 +57592,41 @@ module.exports = React.createClass({
         //
         // }.bind(this))
 
+        var springLen;
 
-        var swipeAnime = new AnimationAPI.SpringAnimation(null, 'x', 0, 26, 170, { x: -100 }, { x: 0 }, duration, startX / 100);
+        var swipeAnime;
         var self = this;
-        swipeAnime.onFrameCB = function () {
-            subCanvas.animating = true;
+        if (!vertical) {
+            springLen = canvas.w;
+            console.log('stepX', subCanvas.stepX);
+            swipeAnime = new AnimationAPI.SpringAnimation(null, 'x', subCanvas.stepX * 1000 / self.fps || 0, 26, 170, { x: -springLen }, { x: 0 }, duration, (startX + springLen) / springLen);
+            swipeAnime.onFrameCB = function () {
+                subCanvas.animating = true;
 
-            subCanvas.translate = {
-                x: this.state.curValue.x,
-                y: 0
+                subCanvas.translate = {
+                    x: this.state.curValue.x,
+                    y: 0
+                };
+                // console.log(this.state.curValue.x)
+
+                self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
             };
-            // console.log(this.state.curValue.x)
+        } else {
+            springLen = canvas.h;
+            swipeAnime = new AnimationAPI.SpringAnimation(null, 'y', subCanvas.stepY * 1000 / self.fps || 0, 26, 170, { y: -springLen }, { y: 0 }, duration, (startX + springLen) / springLen);
+            swipeAnime.onFrameCB = function () {
+                subCanvas.animating = true;
 
-            self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
-        };
+                subCanvas.translate = {
+                    x: 0,
+                    y: this.state.curValue.y
+                };
+                // console.log(this.state.curValue.x)
+
+                self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
+            };
+        }
+
         swipeAnime.didStopCB = function () {
             for (var i = 0; i < canvas.subCanvasList.length; i++) {
                 var curSC = canvas.subCanvasList[i];
