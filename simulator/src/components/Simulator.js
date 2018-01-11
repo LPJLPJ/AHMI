@@ -2140,43 +2140,11 @@ module.exports =   React.createClass({
                         // this.dropCurrentDraw()
                         break;
                     case 'SWIPE_H':
-                        var fromLeft = (method == 'PUSH_LR'?1:-1)
 
                         var startX = subCanvas.translate && subCanvas.translate.x || 0
 
                         subCanvas.animating = true
-                        // AnimationManager.step(startX,0,0,0,duration,frames,easing,function (deltas) {
-                        //     // offctx.save();
-                        //     // offctx.translate(deltas.curX,deltas.curY);
-                        //
-                        //
-                        //     if (!newCopyFlag){
-                        //
-                        //         subCanvas.animating = false
-                        //         subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
-                        //         newCopyFlag = true
-                        //     }
-                        //
-                        //     subCanvas.animating = true
-                        //
-                        //     subCanvas.translate = {
-                        //         x:deltas.curX,
-                        //         y:deltas.curY
-                        //     }
-                        //
-                        //     this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true)
-                        //
-                        //
-                        // }.bind(this),function () {
-                        //     // offctx.restore()
-                        //     for(var i=0;i<canvas.subCanvasList.length;i++){
-                        //         var curSC = canvas.subCanvasList[i]
-                        //         // curSC.translate = null
-                        //         curSC.animating = false
-                        //     }
-                        //     this.handleTargetAction(subCanvas, 'Load')
-                        //     this.draw()
-                        // }.bind(this))
+
                         var self = this
                         var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{x:-100},{x:0},duration,(startX+100)/100)
                         swipeAnime.onFrameCB = function () {
@@ -2198,6 +2166,52 @@ module.exports =   React.createClass({
                             // console.log(this.state.curValue.x)
 
                             self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true,false)
+                        }
+                        swipeAnime.didStopCB = function () {
+                            for(var i=0;i<canvas.subCanvasList.length;i++){
+                                var curSC = canvas.subCanvasList[i]
+                                // curSC.translate = null
+                                curSC.animating = false
+                            }
+                            // self.draw()
+                            self.handleTargetAction(subCanvas, 'Load')
+                            self.draw()
+                        }
+                        if (subCanvas.swipeAnimation){
+                            subCanvas.swipeAnimation.stop()
+                        }
+                        subCanvas.swipeAnimation = swipeAnime
+                        swipeAnime.start()
+                        // this.startSwipeAnimation(canvas,subCanvas)
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'SWIPE_V':
+
+                        var startY = subCanvas.translate && subCanvas.translate.y || 0
+
+                        subCanvas.animating = true
+
+                        var self = this
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{y:-100},{y:0},duration,(startY+100)/100)
+                        swipeAnime.onFrameCB = function () {
+
+
+                            if (!newCopyFlag){
+
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = self.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+
+                            subCanvas.animating = true
+
+                            subCanvas.translate = {
+                                x:0,
+                                y:this.state.curValue.y
+                            }
+                            // console.log(this.state.curValue.x)
+
+                            self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,false,true)
                         }
                         swipeAnime.didStopCB = function () {
                             for(var i=0;i<canvas.subCanvasList.length;i++){
