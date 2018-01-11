@@ -224,6 +224,90 @@ ideServices
                     }]
                 }]
             },
+            defaultSelector={
+                info :{
+                    //宽高
+                    width:80,
+                    height: 40,
+                    selectorWidth:80,
+                    selectorHeight:40,
+                    itemWidth:80,
+                    itemHeight:40,
+                    //坐标
+                    left: 0,
+                    top: 0,
+                    selectorLeft:0,
+                    selectorTop:0,
+                    //item数
+                    itemCount:1,
+                    //能显示出的item数，item视窗大小
+                    itemShowCount:1,
+                    //item当前值
+                    curValue:0,
+
+                    text:'Selector',
+                    //标题
+                    selectorTitle:'',
+                    itemFont:{
+                        fontFamily:"宋体",
+                        fontSize:20,
+                        fontColor:'rgba(0,0,0,1)',
+                        fontBold:"100",
+                        fontItalic:''
+                    },
+                    selectorFont:{
+                        fontFamily:"宋体",
+                        fontSize:20,
+                        fontColor:'rgba(0,0,0,1)',
+                        fontBold:"100",
+                        fontItalic:'',
+                    },
+                    titleFont:{
+                        fontFamily:"宋体",
+                        fontSize:20,
+                        fontColor:'rgba(0,0,0,1)',
+                        fontBold:"100",
+                        fontItalic:'',
+                    },
+                    disableHighlight:false
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'选择器背景',
+                    slices:[{
+                        color:'rgba(0,0,0,1)',
+                        imgSrc:'',
+                        name:'选择器背景'
+                    }]
+                },{
+                    currentSliceIdx:1,
+                    name:'元素纹理',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        text:'',
+                        name:'0'
+                    }]
+                },{
+                    currentSliceIdx:2,
+                    name:'元素选中后纹理',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        text:'',
+                        name:'0'
+                    }]
+                },{
+                    currentSliceIdx:3,
+                    name:'高亮',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        text:'',
+                        name:'高亮'
+                    }]
+                }]
+            },
             defaultButtonGroup={};
 
         this.setDefaultWidget=function(widget){
@@ -287,10 +371,9 @@ ideServices
         this.getDefaultLayer = function () {
             var pageNode=CanvasService.getPageNode();
             var info = {
-                width:(pageNode.getWidth()/pageNode.getZoom()) / 2, height: (pageNode.getHeight()/pageNode.getZoom()) / 2,
+                width:Math.round((pageNode.getWidth()/pageNode.getZoom()) / 2),
+                height: Math.round((pageNode.getHeight()/pageNode.getZoom()) / 2),
 
-
-                //width: project.currentSize.width / 2, height: project.currentSize.height / 2,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center'
             };
@@ -311,20 +394,23 @@ ideServices
         };
 
         this.getDefaultSubLayer = function () {
-            // var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
+            var pageNode=CanvasService.getPageNode();
+            var info = {
+                width:Math.round(pageNode.getWidth()/2),
+                height:Math.round(pageNode.getHeight()/2),
+                scrollVEnabled:false,
+                scrollHEnabled:false
+            };
             return {
+                info:info,
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                // proJsonStr: jsonStr,
                 widgets: [],
                 name: 'NewSubCanvas',
                 type: Type.MySubLayer,
-                width: 0,
-                height: 0,
                 expand:true,
                 backgroundImage:'',
                 backgroundColor:"rgba(255,255,255,0.0)"
-
             }
         };
 
@@ -887,7 +973,7 @@ ideServices
                     name:'时间日期纹理',
                     slices:slices,
                 },{
-                    currentSliceIdx:0,
+                    currentSliceIdx:1,
                     name:'高亮纹理',
                     slices:[{
                         color:'rgba(244,244,244,0.3)',
@@ -986,7 +1072,21 @@ ideServices
                 }]
 
             }
-        }
+        };
+        this.getDefaultSelector= function () {
+            var info = _.cloneDeep(defaultSelector.info);
+            var texList = _.cloneDeep(defaultSelector.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewSelector',
+                type: Type.MySelector,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList,
+            };
+        };
 
 
         function _getRandomColor(){

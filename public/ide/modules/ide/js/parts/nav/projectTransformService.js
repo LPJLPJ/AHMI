@@ -2,6 +2,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
 
     this.transDataFile = transDataFile;
 
+    var idStart=0;
+
 
     function transCmds(cmds,changelt){
         // actionCompiler
@@ -471,7 +473,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                         generalWidget[attr] = info[attr]||0
                     })
                     generalWidget.arrange = (info.arrange=='horizontal')?0:1
-                    console.log(generalWidget,targetWidget)
+                    // console.log(generalWidget,targetWidget)
                     generalWidget.otherAttrs[0] = 0 //lastX
                     generalWidget.otherAttrs[1] = 0 //lastY
                     generalWidget.otherAttrs[2] = blockInfo.w
@@ -537,13 +539,10 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    console.log('generalNum',generalWidget);
                 break;
                 case 'MyTexNum':
                     generalWidget = new WidgetModel.models['TexNum'](x,y,w,h,info,targetWidget.texList[0].slices);
-                    console.log("generalWidget1",generalWidget)
                     generalWidget = generalWidget.toObject();
-                    console.log("generalWidget2",generalWidget)
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
@@ -572,12 +571,92 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                             generalWidget.otherAttrs[9] = 1
                     }
 
-                    console.log("generalWidget",generalWidget)
                     generalWidget.generalType = 'TexNum';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    console.log(generalWidget)
+                    break;
+                case 'MySelector':
+                    //纹理
+                    var tempSlices=targetWidget.texList[1].slices;
+                    var slicesItem = [];
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        slicesItem[i] = {};
+                        slicesItem[i].color = tempSlices[i].color;
+                        slicesItem[i].text = tempSlices[i].text;
+                        slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    tempSlices=targetWidget.texList[2].slices;
+                    var slicesSelected = [];
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        slicesSelected[i] = {};
+                        slicesSelected[i].color = tempSlices[i].color;
+                        slicesSelected[i].text = tempSlices[i].text;
+                        slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    var itemFontString=info.itemFont.fontItalic+" "+info.itemFont.fontBold+" "+info.itemFont.fontSize+"px"+" "+'"'+info.itemFont.fontFamily+'"';
+                    var selectorFontString=info.selectorFont.fontItalic+" "+info.selectorFont.fontBold+" "+info.selectorFont.fontSize+"px"+" "+'"'+info.selectorFont.fontFamily+'"';
+
+                    //生成前景item大图
+                    var selectedImg=jointImageText(info.selectorWidth,info.selectorHeight*info.itemCount,info.selectorHeight,slicesSelected,selectorFontString,info.selectorFont.fontColor);
+                    //生成后景item大图
+                    var unSelectedImg=jointImageText(info.itemWidth,info.itemHeight*info.itemCount,info.itemHeight,slicesItem,itemFontString,info.itemFont.fontColor);
+
+                    var id1='selector'+(++idStart).toString()+'.png';
+                    var id2='selector'+(++idStart).toString()+'.png';
+                    var file1={
+                        id:id1,
+                        name:'selectedImg',
+                        type:"image/png",
+                        src:selectedImg.src
+                    };
+                    var file2={
+                        id:id2,
+                        name:'unSelectedImg',
+                        type:"image/png",
+                        src:unSelectedImg.src
+                    };
+                    var fcb=function (e, resourceObj) {
+                        if (e.type === 'error'){
+                            toastr.warning('资源加载失败: ' + resourceObj.name);
+                            resourceObj.complete = false;
+                        } else {
+                            resourceObj.complete = true;
+                        }
+
+                    }.bind(this);
+                    if(!isFileInGlobalResources('selector001')){
+                        ResourceService.cacheFile(file1, globalResources, null, fcb);
+                    }
+                    if(!isFileInGlobalResources('selector002')){
+                        ResourceService.cacheFile(file2, globalResources, null, fcb);
+                    }
+                    var newSelectedImgSrc='/'+id1;
+                    changeSrcInGlobalResources(id1,newSelectedImgSrc);
+                    var newUnSelectedImgSrc='/'+id2;
+                    changeSrcInGlobalResources(id2,newUnSelectedImgSrc);
+                    //实例化一个选择器控件
+                    generalWidget = new WidgetModel.models['Selector'](x,y,w,h,info,targetWidget.texList[0].slices[0],newUnSelectedImgSrc,newSelectedImgSrc,targetWidget.texList[3].slices[0]);
+                    generalWidget = generalWidget.toObject();
+
+                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    //属性
+                    generalWidget.otherAttrs[1] = Number(info['curValue']);//当前item
+                    generalWidget.otherAttrs[2] = Number(info['itemCount']);//item总数
+                    generalWidget.otherAttrs[3] = Number(info['itemShowCount']);//item总数
+                    //宽高
+                    generalWidget.otherAttrs[4] = Number(info['width']);//控件宽
+                    generalWidget.otherAttrs[5] = Number(info['height']);//控件高
+                    generalWidget.otherAttrs[6] = Number(info['itemWidth']);//未选中元素宽
+                    generalWidget.otherAttrs[7] = Number(info['itemHeight']);//未选中元素高
+                    generalWidget.otherAttrs[8] = Number(info['selectorWidth']);//选中元素宽
+                    generalWidget.otherAttrs[9] = Number(info['selectorHeight']);//选中元素高
+                    generalWidget.otherAttrs[10] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+
+                    generalWidget.generalType = 'Selector';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
                     break;
                 case 'MyDateTime':
                     var fontStyle = {},
@@ -647,8 +726,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
 
         }
 
-
-        console.log("generalWidget4",generalWidget)
         return generalWidget;
     }
 
@@ -793,6 +870,64 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         var targetWidget = {};
         targetWidget = _.cloneDeep(rawWidget);
         return targetWidget;
+    }
+
+    /**
+     * joint image&Text by canvas; returns new image
+     * @param  {[type]} w             [生成图片的宽]
+     * @param  {[type]} h             [生成图片的高]
+     * @param  {[type]} imgH          [输入图片的高]
+     * @param  {[type]} slices        [纹理列表]
+     * @param  {[type]} fontString    [字体格式]
+     * @param  {[type]} fontColor     [文字颜色]
+     * @return {[type]}               [description]
+     * @author LH 2018/01/03
+     */
+    function jointImageText(w,h,imgH,slices,fontString,fontColor) {
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        var ctx=canvas.getContext("2d");
+
+        for(var i=0;i<slices.length;i++){
+            if(slices[i].color){
+                ctx.fillStyle=slices[i].color;
+                ctx.fillRect( 0,imgH*i,w,imgH);
+            }
+            if(slices[i].img){
+                ctx.drawImage(slices[i].img, 0,imgH*i,w,imgH);
+            }
+            if(slices[i].text){
+                ctx.font=fontString;
+                ctx.fillStyle=fontColor;
+                ctx.textAlign='center';
+                ctx.textBaseline='middle';
+                ctx.fillText(slices[i].text,w/2,imgH*i+imgH/2);
+            }
+        }
+
+        var image = new Image();
+        image.src = canvas.toDataURL("image/png");
+
+        return image;
+    }
+
+    function isFileInGlobalResources(id){
+        for(var i=0;i<globalResources.length;i++){
+            if(id===globalResources[i].id){
+                return true;
+            }
+        }
+        return false;
+    }
+    function changeSrcInGlobalResources(id,newSrc){
+        for(var i=0;i<globalResources.length;i++){
+            if(id===globalResources[i].id){
+                globalResources[i].src=newSrc;
+                return true;
+            }
+        }
+        return false;
     }
 
 }]);

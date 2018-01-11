@@ -154,6 +154,7 @@ function linkWidgets(widgetList) {
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
                 })
                 break;
+
             default:
                 // linkedWidget.type = curWidget.subType;
                 // linkedWidget.target = curWidget;
@@ -235,6 +236,7 @@ function isInteractiveWidget(widget) {
         case 'MyDateTime':
         case 'MyTexTime':
         case 'MyInputKeyboard':
+        case 'MySelector':
             is = true;
             break;
         default:

@@ -88,11 +88,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
             }
             this.callSuper('initialize', options);
-            this.loadAll(layerId);
             this.layerId = layerId;
+            this.layer = null;
             this.lockRotation=true;
             this.hasRotatingPoint=false;
-            // this.backgroundImg =
+            this.loadAll(layerId);
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
@@ -105,6 +105,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.on('OnScaleRelease', function (objId) {
                 if (objId==self.id){
+                    // this.syncSubLayer()
                     this.renderUrlInPage(self);
                 }
             });
@@ -143,13 +144,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 if(this.backgroundImg.element){
-                    // console.log('drawing background element',this.backgroundImg.element)
                     ctx.drawImage(this.backgroundImg.element,
-                        this.backgroundImg.left,
-                        this.backgroundImg.top,
+                        0,0,  //sx,sy
+                        this.backgroundImg.sw,this.backgroundImg.sh, //sw,sh
+                        this.backgroundImg.left, this.backgroundImg.top,    //dx,dy
+                        this.backgroundImg.width,this.backgroundImg.height);  //dw,dh
 
-                        this.backgroundImg.width,
-                        this.backgroundImg.height);
+                    // ctx.drawImage(this.backgroundImg.element,
+                    //     this.backgroundImg.left,
+                    //     this.backgroundImg.top,
+                    //
+                    //     this.backgroundImg.width,
+                    //     this.backgroundImg.height);
                 }
             }catch (err) {
                 console.log('错误描述',err);
@@ -168,6 +174,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }else{
             layer = layerId;
         }
+        this.layer = layer;
         var layerWidth=layer.info.width/this.initScale.X;
         var layerHeight=layer.info.height/this.initScale.Y;
 
@@ -192,7 +199,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             width:layerWidth,
             height:layerHeight,
             left:-layerWidth / 2,
-            top:-layerHeight/2
+            top:-layerHeight/2,
+            sw:layer.info.width,
+            sh:layer.info.height
         };
         this.backgroundColor=layer.showSubLayer.backgroundColor;
         this.initPosition.left = this.getLeft();
@@ -213,6 +222,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             self.backgroundImg.height = self.height;
             self.backgroundImg.left = -self.width / 2;
             self.backgroundImg.top = -self.height / 2;
+            self.backgroundImg.sw = self.layer.info.width;
+            self.backgroundImg.sh = self.layer.info.height;
             self.initPosition.left = self.getLeft();
             self.initPosition.top = self.getTop();
             var pageNode = CanvasService.getPageNode();
@@ -1768,35 +1779,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.align=level.info.align;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
-            // this.maxFontWidth=level.info.maxFontWidth;
-            this.widthBeforePadding=this.width;
-
-            if(level.info.paddingRatio===undefined){
-                //维护旧的时间控件
-                this.paddingRatio= level.info.paddingRatio=0.1;
-                this.spacing = level.info.spacing= Math.ceil(-this.fontSize/3);
-                var font = this.fontSize + "px" + " " + this.fontFamily;
-                // var maxWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));//-
-                var maxWidth = parseInt(this.fontSize);//+
-                this.fontSize = maxWidth;
-                level.info.fontSize = maxWidth;
-                if(this.dateTimeModeId=='0'){
-                    this.widthBeforePadding=8*this.fontSize+7*this.spacing;
-                }else if(this.dateTimeModeId=='1'){
-                    this.widthBeforePadding=5*this.fontSize+4*this.spacing;
-                }else {
-                    this.widthBeforePadding=10*this.fontSize+9*this.spacing;
-                }
-                var width=this.widthBeforePadding+2*this.paddingRatio*this.fontSize;
-                // this.setWidth(width);
-                var height = this.fontSize*(1+2*this.paddingRatio);
-                level.info.width = width;
-                level.info.height=height;
-                // this.setHeight(height);
-                this.set({width:width,height:height});
-            }
             this.spacing =level.info.spacing;
             this.paddingRatio=level.info.paddingRatio;
+            // this.maxFontWidth=level.info.maxFontWidth;
+            this.widthBeforePadding=this.width;
+            if(this.dateTimeModeId=='0'){
+                this.widthBeforePadding=8*this.fontSize+7*this.spacing;
+            }else if(this.dateTimeModeId=='1'){
+                this.widthBeforePadding=5*this.fontSize+4*this.spacing;
+            }else {
+                this.widthBeforePadding=10*this.fontSize+9*this.spacing;
+            }
+
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
                 self.dateTimeModeId=arg.dateTimeModeId;
@@ -2267,7 +2261,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(i=0;i<dateTimeStr.length;i++){
                     numStr=numStr+dateTimeStr[i];
                 }
-                // console.log("numStr:"+numStr);
 
                 // drawTexTime(this.dateTimeModeId,ctx,this.numObj,this.width,this.characterW,this.characterH);
                 drawTexTimeByCharacter(ctx,numStr,this.width,this.characterW,this.characterH,this.numObj);
@@ -2325,22 +2318,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         //计算整个数字图层控件的宽度
         widthOfNumStr=width;
         initXPos = (characterW-widthOfNumStr)/2;
-        //由对齐方式设置整个控件的起始位置
-        // switch(align){
-        //     case 'left':
-        //         initXPos=characterW/2-width/2;
-        //         break;
-        //     case 'right':
-        //         initXPos=width/2+characterW/2-widthOfNumStr;
-        //         break;
-        //     case 'center':
-        //     default:
-        //         initXPos = (characterW-widthOfNumStr)/2;
-        //         break;
-        // }
         //设置第一个数字的起始位置
         xCoordinate = initXPos;
-
         for(var i=0;i<numStr.length;i++){
             //根据数字字符绘制对应的数字图层
             switch (numStr[i]){
@@ -2423,10 +2402,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             }
 
-
         }
     }
-
 
 
     fabric.MyButton = fabric.util.createClass(fabric.Object, {
@@ -2447,11 +2424,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontItalic=level.info.fontItalic;
 
             this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-            if (this.normalImageElement) {
-                this.loaded = true;
-                this.setCoords();
-                this.fire('image:loaded');
-            }
+            // if (this.normalImageElement) {
+            //     this.loaded = true;
+            //     this.setCoords();
+            //     this.fire('image:loaded');
+            // }
 
             this.on('changeTex', function (arg) {
                 var level=arg.level;
@@ -2606,12 +2583,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontUnderline=level.info.fontUnderline;
 
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-            if (this.backgroundImageElement) {
-                this.loaded = true;
-                this.setCoords();
-                this.fire('image:loaded');
-            }
-
+            // if (this.backgroundImageElement) {
+            //     this.loaded = true;
+            //     this.setCoords();
+            //     this.fire('image:loaded');
+            // }
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -2780,29 +2756,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.symbolMode=level.info.symbolMode;
             this.frontZeroMode=level.info.frontZeroMode;
             this.maxFontWidth=level.info.maxFontWidth;
-            this.spacing = (level.info.spacing===undefined)?(level.info.spacing=Math.ceil(-this.fontSize/3)):level.info.spacing;//兼容旧的数字控件
+            this.spacing = level.info.spacing;
             this.paddingRatio = level.info.paddingRatio;
-            if(this.paddingRatio===undefined){
-                //维护旧的数字控件
-                level.info.paddingRatio = 0.1;
-                this.paddingRatio = 0.1;
-                var maxWidth = parseInt(this.fontSize);
-                var paddingX = Math.ceil(maxWidth*this.paddingRatio);
-                this.maxFontWidth = maxWidth;
-                level.info.paddingX = this.paddingX;
-                level.info.maxFontWidth = maxWidth;
-                if(this.numOfDigits&&this.fontSize){
-                    var width = this.symbolMode=='0'?(this.numOfDigits*(maxWidth+this.spacing)-this.spacing):((this.numOfDigits+1)*(maxWidth+this.spacing)-this.spacing);
-                    width+=paddingX*2;
-                    if(this.decimalCount!=0){
-                        width +=0.5*maxWidth+this.spacing;
-                    }
-                    var height = Math.ceil(self.fontSize*1.2);
-                    level.info.width = width;
-                    level.info.height = height;
-                    self.set({width:width,height:height});
-                };
-            }
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -3404,12 +3359,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 self.normalColors.push(level.texList[i].slices[0].color);
                 self.normalImageElements.push(ResourceService.getResourceFromCache(level.texList[i].slices[0].imgSrc));
             }
-            //_.forEach(level.texList, function (_tex) {
-            //    self.normalColors.push(_tex.slices[0].color);
-            //
-            //    self.normalImageElements.push(ResourceService.getResourceFromCache(_tex.slices[0].imgSrc));
-            //
-            //});
 
             this.on('changeArrange', function (arg) {
                 self.arrange=arg.arrange;
@@ -3536,203 +3485,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyButtonGroup(level, object));
     };
     fabric.MyButtonGroup.async = true;
-
-    fabric.MyNumber=fabric.util.createClass(fabric.Object,{
-        type:Type.MyNumber,
-        initialize: function (level, options) {
-
-            var self=this;
-            this.callSuper('initialize',options);
-            this.lockRotation=true;
-            this.hasRotatingPoint=false;
-            this.myNumber=level.info.initValue+'';
-            this.numberBackColors=[];
-            this.numberImageElements=[];
-
-            for (var i=0;i<13;i++){
-                if (level.texList[i]){
-
-                    var tex=level.texList[i];
-                    self.numberBackColors.push(tex.slices[0].color);
-
-                    var imageElement=new Image();
-                    if (tex.slices[0].imgSrc){
-                        imageElement.src=tex.slices[0].imgSrc;
-                    }else{
-                        imageElement.src=Preference.NUMBER_IMAGES[i];
-
-                    }
-                    imageElement.onload = (function () {}).bind(this);
-                    self.numberImageElements.push(imageElement);
-                }else {
-                    //填充默认的颜色和数字图片
-                    self.numberBackColors.push(Preference.WHITE_COLOR);
-                    var imageElement=new Image();
-                    imageElement.src=Preference.NUMBER_IMAGES[i];
-                    imageElement.onload = (function () {}).bind(this);
-                    self.numberImageElements.push(imageElement);
-                }
-            }
-
-            this.on('changeNumber', function (newLevel, _callback) {
-                self.myNumber=newLevel.info.initValue+'';
-                this.width=newLevel.info.width;
-                this.height=newLevel.info.height;
-                var subLayerNode=CanvasService.getSubLayerNode();
-                subLayerNode.renderAll();
-                _callback&&_callback();
-            });
-
-            this.on('changeTex', function (arg) {
-                //初始化列表
-                var level=arg.level;
-                var _callback=arg.callback;
-                self.numberBackColors=[];
-                self.numberImageElements=[];
-
-
-                for (var i=0;i<13;i++){
-                    if (level.texList[i]){
-
-                        var tex=level.texList[i];
-                        self.numberBackColors.push(tex.slices[0].color);
-
-                        var imageElement=new Image();
-                        if (tex.slices[0].imgSrc){
-                            imageElement.src=tex.slices[0].imgSrc;
-                        }else{
-                            imageElement.src=Preference.NUMBER_IMAGES[i];
-
-                        }
-                        imageElement.onload = (function () {}).bind(this);
-                        self.numberImageElements.push(imageElement);
-                    }else {
-                        //填充默认的颜色和数字图片
-                        self.numberBackColors.push(Preference.WHITE_COLOR);
-                        var imageElement=new Image();
-                        imageElement.src=Preference.NUMBER_IMAGES[i];
-                        imageElement.onload = (function () {}).bind(this);
-                        self.numberImageElements.push(imageElement);
-                    }
-                }
-
-                var subLayerNode=CanvasService.getSubLayerNode();
-                subLayerNode.renderAll();
-
-                _callback&&_callback();
-            });
-
-        },
-        toObject: function () {
-            return fabric.util.object.extend(this.callSuper('toObject'));
-        },
-        _render: function (ctx) {
-
-
-            //按数字画按钮
-            var charArray=this.myNumber.split('');
-            var count=charArray.length;
-            var width=this.width/count;
-            var height=this.height;
-
-            var colors=[];
-            var imageElements=[];
-            for (var i=0;i<charArray.length;i++) {
-                var _char=charArray[i];
-                switch (_char){
-                    case '0':
-                        colors.push(this.numberBackColors[0]);
-                        imageElements.push(this.numberImageElements[0]);
-                        break;
-                    case '1':
-                        colors.push(this.numberBackColors[1]);
-                        imageElements.push(this.numberImageElements[1]);
-                        break;
-                    case '2':
-                        colors.push(this.numberBackColors[2]);
-                        imageElements.push(this.numberImageElements[2]);
-                        break;
-                    case '3':
-                        colors.push(this.numberBackColors[3]);
-                        imageElements.push(this.numberImageElements[3]);
-                        break;
-                    case '4':
-                        colors.push(this.numberBackColors[4]);
-                        imageElements.push(this.numberImageElements[4]);
-                        break;
-                    case '5':
-                        colors.push(this.numberBackColors[5]);
-                        imageElements.push(this.numberImageElements[5]);
-                        break;
-                    case '6':
-                        colors.push(this.numberBackColors[6]);
-                        imageElements.push(this.numberImageElements[6]);
-                        break;
-                    case '7':
-                        colors.push(this.numberBackColors[7]);
-                        imageElements.push(this.numberImageElements[7]);
-                        break;
-                    case '8':
-                        colors.push(this.numberBackColors[8]);
-                        imageElements.push(this.numberImageElements[8]);
-                        break;
-                    case '9':
-                        colors.push(this.numberBackColors[9]);
-                        imageElements.push(this.numberImageElements[9]);
-                        break;
-                    case '+':
-                        colors.push(this.numberBackColors[10]);
-                        imageElements.push(this.numberImageElements[10]);
-                        break;
-                    case '-':
-                        colors.push(this.numberBackColors[11]);
-                        imageElements.push(this.numberImageElements[11]);
-                        break;
-                    case '.':
-                        colors.push(this.numberBackColors[12]);
-                        imageElements.push(this.numberImageElements[12]);
-                        break;
-
-                }
-            }
-            for (var i=0;i<colors.length;i++){
-                ctx.fillStyle=colors[i];
-                ctx.fillRect(
-                    -(this.width / 2)+width*i,
-                    -(this.height / 2) ,
-                    width ,
-                    height );
-            }
-            for (var i=0;i<imageElements.length;i++){
-                ctx.fillStyle=imageElements[i];
-                ctx.drawImage(
-                    imageElements[i],
-                    -(this.width / 2)+width*i,
-                    -(this.height / 2) ,
-                    width ,
-                    height );
-            }
-        }
-    });
-    fabric.MyNumber.fromLevel= function (level, callback,option) {
-        callback && callback(new fabric.MyNumber(level, option));
-    };
-    fabric.MyNumber.prototype.toObject = (function (toObject) {
-        return function () {
-            return fabric.util.object.extend(toObject.call(this), {
-                numberImageElements:this.numberImageElements,
-                numberBackColors:this.numberBackColors,
-                myNumber:this.myNumber
-            });
-        }
-    })(fabric.MyNumber.prototype.toObject);
-    fabric.MyNumber.fromObject= function (object, callback) {
-        var level=ProjectService.getLevelById(object.id);
-        callback&&callback(new fabric.MyNumber(level,object));
-    };
-    fabric.MyNumber.async = true;
-
-
 
     //myvideo
     fabric.MyVideo = fabric.util.createClass(fabric.Object, {
@@ -3913,36 +3665,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.callSuper('initialize',options);
             this.lockRotation=true;
             this.hasRotatingPoint=false;
-            // this.normalColor=level.texList[0].slices[0].color;
-            // this.arrange=level.info.arrange;
-            //
-            // this.text=level.info.text;
-            // this.fontFamily=level.info.fontFamily;
-            // this.fontSize=level.info.fontSize;
-            // this.fontColor=level.info.fontColor;
-            // this.fontBold=level.info.fontBold;
-            // this.fontItalic=level.info.fontItalic;
-            //
-            // this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-            // if (this.normalImageElement) {
-            //     this.loaded = true;
-            //     this.setCoords();
-            //     this.fire('image:loaded');
-            // }
             var x = level.info.left;
             var y = level.info.top;
             var w = level.info.width;
             var h = level.info.height;
 
-            console.log(level.type)
             this.curWidget = new WidgetModel.models['Button'](x,y,w,h,'button',null,level.texList[0].slices)
             this.curWidgetInfo = this.curWidget.toObject()
-            // console.log(this.curWidgetInfo)
-            // console.log(WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(this.curWidgetInfo.onInitialize)))
-            // var functionBody = WidgetModel.WidgetCommandParser.transFunction(this.curWidgetInfo,this.curWidgetInfo.onInitialize);
-            // console.log(functionBody)
-            // this.curWidgetInfo.onInitialize = new Function(functionBody)
-            // this.curWidgetInfo.onInitialize();
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3976,8 +3705,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.General.prototype.toObject = (function (toObject) {
         return function () {
             return fabric.util.object.extend(toObject.call(this), {
-                // normalImageElement:this.normalImageElement,
-                // normalColor:this.normalColor
             });
         }
     })(fabric.General.prototype.toObject);
@@ -4060,6 +3787,451 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyAnimation(level, object));
     };
     fabric.MyAnimation.async = true;
+
+
+    //mySelector
+    fabric.MySelector = fabric.util.createClass(fabric.Object,{
+        type: Type.MySelector,
+        initialize: function (level, options) {
+            var self = this;
+
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.hasRotatingPoint = false;
+
+            //宽高
+            this.width = level.info.width;
+            this.height = level.info.height;
+            this.selectorWidth = level.info.selectorWidth;
+            this.selectorHeight = level.info.selectorHeight;
+            this.itemWidth = level.info.itemWidth;
+            this.itemHeight = level.info.itemHeight;
+            //位置
+            this.left = level.info.left;
+            this.top = level.info.top;
+            this.selectorLeft = level.info.selectorLeft;
+            this.selectorTop = level.info.selectorTop;
+            //item数
+            this.itemCount = level.info.itemCount;
+            //能显示出的item数，item视窗大小
+            this.itemShowCount = level.info.itemShowCount;
+            //item当前值
+            this.curValue = level.info.curValue;
+            //标题
+            this.selectorTitle = level.info.selectorTitle;
+            //字体
+            this.itemFont = _.cloneDeep(level.info.itemFont);
+            this.itemFontString=this.itemFont.fontItalic+" "+this.itemFont.fontBold+" "+this.itemFont.fontSize+"px"+" "+'"'+this.itemFont.fontFamily+'"';
+            this.selectorFont = _.cloneDeep(level.info.selectorFont);
+            this.selectorFontString=this.selectorFont.fontItalic+" "+this.selectorFont.fontBold+" "+this.selectorFont.fontSize+"px"+" "+'"'+this.selectorFont.fontFamily+'"';
+            // level.info.titleFont={
+            //     fontFamily:"宋体",
+            //     fontSize:20,
+            //     fontColor:'rgba(0,0,0,1)',
+            //     fontBold:"100",
+            //     fontItalic:'',
+            // };
+            this.titleFont = _.cloneDeep(level.info.titleFont);
+            this.titleFontString=this.titleFont.fontItalic+" "+this.titleFont.fontBold+" "+this.titleFont.fontSize+"px"+" "+'"'+this.titleFont.fontFamily+'"';
+            //高亮
+            this.disableHighlight = level.info.disableHighlight;
+
+
+            //纹理
+            var tempSlices=level.texList[0].slices;
+            this.slicesBackground = [];
+            for(var i=0,il=tempSlices.length;i<il;i++){
+                this.slicesBackground[i] = {};
+                this.slicesBackground[i].color = tempSlices[i].color;
+                this.slicesBackground[i].text = tempSlices[i].text;
+                this.slicesBackground[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+            }
+            tempSlices=level.texList[1].slices;
+            this.slicesItem = [];
+            for(var i=0,il=tempSlices.length;i<il;i++){
+                this.slicesItem[i] = {};
+                this.slicesItem[i].color = tempSlices[i].color;
+                this.slicesItem[i].text = tempSlices[i].text;
+                this.slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+            }
+            tempSlices=level.texList[2].slices;
+            this.slicesSelected = [];
+            for(var i=0,il=tempSlices.length;i<il;i++){
+                this.slicesSelected[i] = {};
+                this.slicesSelected[i].color = tempSlices[i].color;
+                this.slicesSelected[i].text = tempSlices[i].text;
+                this.slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+            }
+
+
+            //修改纹理
+            this.on('changeTex', function (arg) {
+                var _callback=arg.callback;
+
+                var tempSlices= _.cloneDeep(arg.level.texList[0].slices);
+
+                self.slicesBackground = [];
+                for(var i=0,il=tempSlices.length;i<il;i++){
+                    self.slicesBackground[i] = {};
+                    self.slicesBackground[i].color = tempSlices[i].color;
+                    self.slicesBackground[i].text = tempSlices[i].text;
+                    self.slicesBackground[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                }
+                self.slicesItem = [];
+                tempSlices = _.cloneDeep(arg.level.texList[1].slices);
+                for(var i=0,il=tempSlices.length;i<il;i++){
+                    self.slicesItem[i] = {};
+                    self.slicesItem[i].color = tempSlices[i].color;
+                    self.slicesItem[i].text = tempSlices[i].text;
+                    self.slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                }
+                tempSlices = _.cloneDeep(arg.level.texList[2].slices);
+                self.slicesSelected = [];
+                for(var i=0,il=tempSlices.length;i<il;i++){
+                    self.slicesSelected[i] = {};
+                    self.slicesSelected[i].color = tempSlices[i].color;
+                    self.slicesSelected[i].text = tempSlices[i].text;
+                    self.slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+            //修改控件属性
+            this.on('changeSelectorAttr', function (arg) {
+                var _callback=arg.callback;
+                if(arg.hasOwnProperty('itemCount')){
+                    self.itemCount=arg.itemCount;
+                    self.slicesItem = [];
+                    var tempSlices = _.cloneDeep(arg.sliceList1);
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        self.slicesItem[i] = {};
+                        self.slicesItem[i].color = tempSlices[i].color;
+                        self.slicesItem[i].text = tempSlices[i].text;
+                        self.slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    tempSlices = _.cloneDeep(arg.sliceList2);
+                    self.slicesSelected = [];
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        self.slicesSelected[i] = {};
+                        self.slicesSelected[i].color = tempSlices[i].color;
+                        self.slicesSelected[i].text = tempSlices[i].text;
+                        self.slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                }
+                if(arg.hasOwnProperty('itemWidth')){
+                    self.itemWidth=arg.itemWidth;
+                }
+                if(arg.hasOwnProperty('itemHeight')){
+                    self.itemHeight=arg.itemHeight;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorWidth')){
+                    self.selectorWidth=arg.selectorWidth;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorHeight')){
+                    self.selectorHeight=arg.selectorHeight;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('curValue')){
+                    self.curValue=arg.curValue;
+                }
+                if(arg.hasOwnProperty('itemShowCount')){
+                    self.itemShowCount=arg.itemShowCount;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorTitle')){
+                    self.selectorTitle=arg.selectorTitle;
+                }
+                // console.log("arg",arg)
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            //修改控件字体
+            this.on('changeFontStyle', function (arg) {
+                var _callback=arg.callback;
+                if(arg.hasOwnProperty('itemFontFontFamily')){
+                    self.itemFont.fontFamily=arg.itemFontFontFamily;
+                }
+                if(arg.hasOwnProperty('itemFontFontSize')){
+                    self.itemFont.fontSize=arg.itemFontFontSize;
+                }
+                if(arg.hasOwnProperty('itemFontFontColor')){
+                    self.itemFont.fontColor=arg.itemFontFontColor;
+                }
+                if(arg.hasOwnProperty('itemFontFontBold')){
+                    self.itemFont.fontBold=arg.itemFontFontBold;
+                    if(self.itemFont.fontBold!=='bold'){
+                        self.itemFont.fontBold='';
+                    }
+                }
+                if(arg.hasOwnProperty('itemFontFontItalic')){
+                    self.itemFont.fontItalic=arg.itemFontFontItalic;
+                    if(self.itemFont.fontItalic!=='italic'){
+                        self.itemFont.fontItalic='';
+                    }
+                }
+                if(arg.hasOwnProperty('selectorFontFontFamily')){
+                    self.selectorFont.fontFamily=arg.selectorFontFontFamily;
+                }
+                if(arg.hasOwnProperty('selectorFontFontSize')){
+                    self.selectorFont.fontSize=arg.selectorFontFontSize;
+                }
+                if(arg.hasOwnProperty('selectorFontFontColor')){
+                    self.selectorFont.fontColor=arg.selectorFontFontColor;
+                }
+                if(arg.hasOwnProperty('selectorFontFontBold')){
+                    self.selectorFont.fontBold=arg.selectorFontFontBold;
+                    if(self.selectorFont.fontBold!=='bold'){
+                        self.selectorFont.fontBold='';
+                    }
+                }
+                if(arg.hasOwnProperty('selectorFontFontItalic')){
+                    self.selectorFont.fontItalic=arg.selectorFontFontItalic;
+                    if(self.selectorFont.fontItalic!=='italic'){
+                        self.selectorFont.fontItalic='';
+                    }
+                }
+                if(arg.hasOwnProperty('titleFontFontFamily')){
+                    self.titleFont.fontFamily=arg.titleFontFontFamily;
+                }
+                if(arg.hasOwnProperty('titleFontFontSize')){
+                    self.titleFont.fontSize=arg.titleFontFontSize;
+                }
+                if(arg.hasOwnProperty('titleFontFontColor')){
+                    self.titleFont.fontColor=arg.titleFontFontColor;
+                }
+                if(arg.hasOwnProperty('titleFontFontBold')){
+                    self.titleFont.fontBold=arg.titleFontFontBold;
+                    if(self.titleFont.fontBold!=='bold'){
+                        self.titleFont.fontBold='';
+                    }
+                }
+                if(arg.hasOwnProperty('titleFontFontItalic')){
+                    self.titleFont.fontItalic=arg.titleFontFontItalic;
+                    if(self.titleFont.fontItalic!=='italic'){
+                        self.titleFont.fontItalic='';
+                    }
+                }
+                self.itemFontString=self.itemFont.fontItalic+" "+self.itemFont.fontBold+" "+self.itemFont.fontSize+"px"+" "+'"'+self.itemFont.fontFamily+'"';
+                self.selectorFontString=self.selectorFont.fontItalic+" "+self.selectorFont.fontBold+" "+self.selectorFont.fontSize+"px"+" "+'"'+self.selectorFont.fontFamily+'"';
+                self.titleFontString=self.titleFont.fontItalic+" "+self.titleFont.fontBold+" "+self.titleFont.fontSize+"px"+" "+'"'+self.titleFont.fontFamily+'"';
+
+                console.log("self",self)
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            //修改控件宽高
+            function setWidthHeight(selectorW,selectorH,ItemH,itemShowCount){
+                var width=selectorW;
+                var height=selectorH+2*ItemH*itemShowCount;
+                self.set({width:width,height:height});
+            }
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                // console.log("this_render",this);
+
+                //(0,0)
+                var startX=-this.width/2;
+                var startY=-this.height/2;
+
+                //画item
+                var centerH=-this.selectorHeight/2;
+                var curval=this.curValue;
+                var curY=centerH-(curval)*this.itemHeight;
+                for(var i=0;i<curval;i++,curY+=this.itemHeight){
+                    // ctx.fillStyle=this.slicesItem[i].color;
+                    // ctx.fillRect(-this.itemWidth/2,curY,this.itemWidth,this.itemHeight);
+                    // console.log("this.slicesItem[i]",this.slicesItem[i])
+                    // console.log("this.slicesItem[i].imgSrc",this.slicesItem[i].imgSrc)
+                    drawStyleRect(ctx,
+                        -this.itemWidth/2,
+                        curY,
+                        this.itemWidth,
+                        this.itemHeight,
+                        this.slicesItem[i].color,
+                        this.slicesItem[i].img,
+                        this.slicesItem[i].text,
+                        this.itemFontString,
+                        this.itemFont.fontColor,
+                        "center",
+                        "middle");
+                }
+                i++;
+                curY+=this.selectorHeight;
+                for(;i<this.itemCount;i++,curY+=this.itemHeight){
+                    // ctx.fillStyle=this.slicesItem[i].color;
+                    // ctx.fillRect(-this.itemWidth/2,curY,this.itemWidth,this.itemHeight);
+                    drawStyleRect(ctx,
+                        -this.itemWidth/2,
+                        curY,
+                        this.itemWidth,
+                        this.itemHeight,
+                        this.slicesItem[i].color,
+                        this.slicesItem[i].img,
+                        this.slicesItem[i].text,
+                        this.itemFontString,
+                        this.itemFont.fontColor,
+                        "center",
+                        "middle");
+                }
+
+                //画背景
+                // ctx.fillStyle=this.slicesBackground[0].color;
+                // ctx.fillRect(-this.selectorWidth/2,-this.selectorHeight/2,this.selectorWidth,this.selectorHeight);
+                drawStyleRect(ctx,
+                    -this.selectorWidth/2,
+                    -this.selectorHeight/2,
+                    this.selectorWidth,
+                    this.selectorHeight,
+                    this.slicesBackground[0].color,
+                    this.slicesBackground[0].img,
+                    );
+
+                //画前景
+                var curSlice=this.slicesSelected[curval];
+                if(curSlice.color==='rgba(0,0,0,0)'&&curSlice.text===''&&curSlice.img===null){
+                    //如果slicesSelected为空，就使用对应的slicesItem里的纹理
+                    curSlice=this.slicesItem[curval];
+                }
+                drawStyleRect(ctx,
+                    -this.selectorWidth/2,
+                    -this.selectorHeight/2,
+                    this.selectorWidth,
+                    this.selectorHeight,
+                    curSlice.color,
+                    curSlice.img,
+                    curSlice.text,
+                    this.selectorFontString,
+                    this.selectorFont.fontColor,
+                    "center",
+                    "middle");
+
+                //画标题
+                if(this.selectorTitle){
+                    drawStyleRect(ctx,
+                        -this.selectorWidth/2,
+                        -this.selectorHeight/2,
+                        this.selectorWidth,
+                        this.selectorHeight,
+                        null,
+                        null,
+                        this.selectorTitle,
+                        this.titleFontString,
+                        this.titleFont.fontColor,
+                        "start",
+                        "top");
+                }
+
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();//此时的坐标在控件的正中，因为设置了originX: 'center', originY: 'center'
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染数字出错');
+            }
+
+        }
+    });
+    fabric.MySelector.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MySelector(level, option));
+    };
+    fabric.MySelector.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MySelector(level,object));
+    };
+    fabric.MySelector.async = true;
+    /**
+     * 画长方形，可填充 颜色、图片、文字
+     * @param  {[type]} ctx           [Canvas对象]
+     * @param  {[type]} x             [起始点x坐标]
+     * @param  {[type]} y             [起始点y坐标]
+     * @param  {[type]} w             [宽]
+     * @param  {[type]} h             [高]
+     * @param  {[type]} image         [图片纹理]
+     * @param  {[type]} color         [背景颜色]
+     * @param  {[type]} text          [文字]
+     * @param  {[type]} font          [文字格式]
+     * @param  {[type]} fontColor     [文字颜色]
+     * @param  {[type]} textAlign     [对齐方式]
+     * @param  {[type]} textBaseline  [文本基线]
+     * @return {[type]}               [description]
+     */
+    function drawStyleRect(ctx,x,y,w,h,color,image,text,font,fontColor,textAlign,textBaseline){
+        var x=x;
+        var y=y;
+        var w=w;
+        var h=h;
+        var image=image;
+        var color=color;
+        var text=text;
+        var font=font;
+        var fontColor=fontColor;
+        var textAlign=textAlign;
+        var textBaseline=textBaseline;
+        var ctx=ctx;
+
+        try{
+            ctx.beginPath();
+            //填充背景色
+            if(color){
+                ctx.fillStyle=color;
+                ctx.fillRect(x,y,w,h);
+            }
+            //插入图片
+            if(image){
+                ctx.drawImage(image,x,y,w,h);
+            }
+            //绘制文字
+            if(text!==''&&text!==undefined){
+                ctx.font=font;
+                ctx.fillStyle=fontColor;
+                ctx.textAlign=textAlign;
+                ctx.textBaseline=textBaseline;
+                if(textAlign==='start'){
+                    ctx.fillText(text,x+w/10,y+h/10);
+                }else if(textAlign==='center'){
+                    ctx.fillText(text,x+w/2,y+h/2);
+                }else if(textAlign==='end'){
+                    ctx.fillText(text,x+w,y+h);
+                }
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }catch(err){
+            console.log('error');
+        }
+
+    }
 
 
 }]);

@@ -589,6 +589,14 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth*widthProportion);
                                     }
+                                    if(type=="MySelector"||type=='MySelector'){
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorFont.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorFont.fontSize*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorWidth*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorHeight = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorHeight*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemWidth*widthProportion);
+                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemHeight = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemHeight*widthProportion);
+                                    }
                                     //改变仪表盘指针 取宽高中较小值为边长
                                     if(type=="MyDashboard"){
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*widthProportion);
@@ -621,6 +629,14 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                 if(type1=="MyDateTime"||type1=='MyNum'){
                                     content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize*widthProportion);
                                     content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth*widthProportion);
+                                }
+                                if(type=="MySelector"||type=='MySelector'){
+                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize*widthProportion);
+                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorFont.fontSize = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorFont.fontSize*widthProportion);
+                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorWidth = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorWidth*widthProportion);
+                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorHeight = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorHeight*widthProportion);
+                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemWidth = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemWidth*widthProportion);
+                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight*widthProportion);
                                 }
                                 if(type1=="MyDashboard"){
                                     content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength*widthProportion);
@@ -773,6 +789,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultTexNum();
             }else if(_index===15){
                 newWidget = TemplateProvider.getDefaultTexTime();
+            }else if(_index===16){
+                newWidget = TemplateProvider.getDefaultSelector();
             }
             else {
                 return;
@@ -1144,6 +1162,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     break;
                 case 'MyTexNum':
                     node.add(new fabric.MyTexNum(dataStructure,initiator));
+                    break;
+                case 'MyTexTime':
+                    node.add(new fabric.MyTexTime(dataStructure,initiator));
+                    break;
+                case 'MySelector':
+                    node.add(new fabric.MySelector(dataStructure,initiator));
                     break;
                 default :
                     console.error('not match widget in preprocess!');
