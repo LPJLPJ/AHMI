@@ -49,24 +49,13 @@
                     currentHeight:0,
                     holdOperate:null,
                 },
-                // scaleSlider:{
-                //     Slider:null,
-                //     scale:1,
-                //     reSetScale:reSetScale,
-                //     refreshScaleSlider:refreshScaleSlider
-                // },
+
                 menuOptions:{
                     contextMenu:null,
                     allMenuItems:[]
                 }
 
             };
-            // $scope.component.scaleSlider.Slider = new Slider("scale-slider", "scale-gauge", {
-            //     onMin: function(){  },
-            //     onMax: function(){  },
-            //     onMid: function(){  },
-            //     onMove: $scope.component.scaleSlider.refreshScaleSlider
-            // });
 
             $scope.status={
                 gesture:'release',
@@ -193,54 +182,16 @@
         /**
          * 同步缩放条
          */
-        // function refreshScaleSlider(){
-        //     $timeout(function() {
-        //         // anything you want can go here and will safely be run on the next digest.
-        //
-        //         $scope.component.scaleSlider.scale= Math.floor($scope.component.scaleSlider.Slider.GetValue())/50;
-        //
-        //         var pageNode=$scope.component.canvas.node;
-        //         if ($scope.component.scaleSlider.Slider.GetPercent()!=0){
-        //             var width=$scope.component.scaleSlider.Slider.GetPercent()*2*$scope.project.width;
-        //             var height=$scope.component.scaleSlider.Slider.GetPercent()*2*$scope.project.height;
-        //             pageNode.zoomToPoint(new fabric.Point(0, 0),
-        //                 $scope.component.scaleSlider.Slider.GetPercent()*2);
-        //
-        //             pageNode.setWidth(width);
-        //             pageNode.setHeight(height);
-        //
-        //             pageNode.renderAll();
-        //
-        //
-        //         }
-        //
-        //     });
-        //
-        //
-        //
-        //
-        //
-        // };
 
         function renderAllCanvases(oldOperate,callback){
             var canvasNode;
             if (ProjectService.isEditingPage()){
                 canvasNode=$scope.component.canvas.node;
-
-                // $timeout(function(){
-                //     $scope.status.editPage=true;
-                // });
-
                 $scope.status.editPage=true;
             }else {
                 canvasNode=$scope.component.subCanvas.node;
-                // $timeout(function(){
-                //     $scope.status.editPage=false;
-                // });
                 $scope.status.editPage=false;
             }
-
-            //canvasNode.renderAll.bind(canvasNode)();
 
             if (oldOperate){
                 var nowOperate=ProjectService.SaveCurrentOperate();
@@ -249,14 +200,10 @@
                     redoOperate:nowOperate
                 };
 
-
                 OperateQueService.pushNewOperate(operates)
             }
-            //ProjectService.UpdateCurrentThumb(function () {
-            //    ProjectService.setRendering(false);
-            //});
-            ProjectService.setRendering(false);
 
+            ProjectService.setRendering(false);
             callback&&callback();
         }
 
@@ -274,9 +221,7 @@
                 return;
             }
 
-
             ProjectService.layerClickPop=0;
-
 
             var pageIndex=-1;
 

@@ -3048,6 +3048,68 @@ ideServices
                 _successCallback&&_successCallback();
             };
 
+            /**
+             *改变sublayer的预览模式
+             */
+            var paintBoard = null;//画板实例，用来绘制sublayer在scroll模式下的预览图
+            this.ChangeSubLayerPreview = function(_option,successCallback){
+                var currentLayer = _self.getCurrentLayer();
+                var currentSubLayer=_self.getCurrentSubLayer();
+                var subLayerNode = CanvasService.getSubLayerNode();
+                var backCanvasNode = document.getElementById('backgroundCanvas');
+                if(_option.preview){
+                    currentSubLayer.info.preview = _option.preview;
+
+                    //修改subLayerNode和backCanvas的样式
+                    subLayerNode.wrapperEl.style.display = "none";
+                    backCanvasNode.style.position = 'relative';
+
+                    var backgroundImgUrl = backCanvasNode.toDataURL();
+                    var subLayerImaURL = subLayerNode.toDataURL();
+                    var backgroundImg = new Image();
+                    var subLayerImg = new Image();
+
+                    paintBoard = CanvasService.createPaintBoard({
+                        id:'backgroundCanvas',
+                        w:currentLayer.info.width,
+                        h:currentLayer.info.height,
+                        contentW:subLayerNode.width,
+                        contentH:subLayerNode.height,
+                        backgroundColor:'rgb(159,192,234)',
+                        drawScrollBar:true
+                    });
+
+                    backgroundImg.onload = function(){
+                        var opts = {
+                            imgObj:backgroundImg,
+                            sw:paintBoard.width,
+                            sh:paintBoard.height
+                        };
+                        paintBoard.drawBackground(opts);
+                        paintBoard.reRender();
+                        console.log(paintBoard.width,paintBoard.height);
+                        // console.log(backgroundImgUrl);
+                    };
+
+                    subLayerImg.onload = function(){
+                        // paintBoard.drawBackground({imgObj:backgroundImg});
+                        paintBoard.add({
+                            type:'image',
+                            imgObj:subLayerImg,
+                            w:paintBoard.contentW,
+                            h:paintBoard.contentH,
+                            x:0,
+                            y:0});
+                        paintBoard.reRender()
+                    };
+
+                    backgroundImg.src = backgroundImgUrl;
+                    subLayerImg.src = subLayerImaURL ;
+                }else{
+
+                }
+            };
+
             this.ChangeAttributePressImage=function (_option,_successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
                 if (!_option.image||_option.image==''){
@@ -3856,7 +3918,7 @@ ideServices
             //改变仪表盘的覆盖角度
             this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                arg={
+                var arg={
                     callback:_successCallback
                 };
                 if(_option.hasOwnProperty('minCoverAngle')){
@@ -4663,23 +4725,6 @@ ideServices
                 var currentSubLayer=getCurrentSubLayer();
                 var pageNode=CanvasService.getPageNode();
 
-                // if (currentSubLayer){
-                //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-                // }
-
-                //-
-                // pageNode.setBackgroundImage(null, function () {
-                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                //         if (currentPage.mode==1){
-                //             _leaveFromSubLayer(currentSubLayer,_successCallback);
-                //         }else {
-                //             _successCallback&&_successCallback();
-                //         }
-                //
-                //
-                //     });
-                //     //console.log('pageNode',pageNode);
-                // });
 
                 //+ 离开page之前，更新layer的backgroundImage
                 if(currentPage.mode===1){
@@ -4819,6 +4864,7 @@ ideServices
 
             /**
              * 进入sublayer后，背景为page的透视,在backgroundCanvas上画出page的透视。
+             * 私有函数
              * @param opts 参数列表
              */
             function _drawBackgroundCanvas(opts){
@@ -4848,7 +4894,7 @@ ideServices
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
                 backgroundCanvas.width = _subLayerW;
                 backgroundCanvas.height = _subLayerH;
-                var ctx=backgroundCanvas.getContext('2d');
+                var ctx = backgroundCanvas.getContext('2d');
 
                 //draw dash rect
                 ctx.strokeStyle = "#ff0000";
@@ -5068,7 +5114,7 @@ ideServices
                 }
                 return true;
 
-            }
+            };
 
             /**
              * resource内容有效性验证

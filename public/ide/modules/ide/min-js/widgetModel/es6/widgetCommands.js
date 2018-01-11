@@ -1444,6 +1444,8 @@
 
             var(tCurVal,0)                       //当前值
             getTag(tCurVal)
+            // set(tCurVal,9753102)
+            print('tCurVal',tCurVal)
 
             var(tMaxVal,0)                       //最大值
             set(tMaxVal,'this.maxValue')
@@ -1639,22 +1641,26 @@
 
                 while(i<allFontCnt){
                     if(i==decimalCnt){
-                        //畫小數點
-                        set(index,1)
-                        
-                        //xCoordinate-=fontWidth/2;
-                        set(tempVal,fontWidth)
-                        divide(tempVal,2)
-                        minus(xCoordinate,tempVal)
-                        
-                       //draw(index,xCoordinate)
-                       set('this.layers.index.hidden',0)
-                       set('this.layers.index.x',xCoordinate)
-                       
-                       minus(i,1)
-                       minus(allFontCnt,1)
-                       set(decimalCnt,0)
-                
+                        if(decimalCnt==0){
+                            minus(decimalCnt,1)
+                            minus(i,1)
+                        }else{
+                            //畫小數點
+                            set(index,1)
+                            
+                            //xCoordinate-=fontWidth/2;
+                            set(tempVal,fontWidth)
+                            divide(tempVal,2)
+                            minus(xCoordinate,tempVal)
+                            
+                           //draw(index,xCoordinate)
+                           set('this.layers.index.hidden',0)
+                           set('this.layers.index.x',xCoordinate)
+                           
+                           minus(i,1)
+                           minus(allFontCnt,1)
+                           set(decimalCnt,-1)
+                        }
                     }else{
                         //畫數字
                         if(i<curValCnt){
