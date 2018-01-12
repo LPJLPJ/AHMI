@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
+    <!--add-->
+    <script src="../../public/ide/modules/ide/js/ruler.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
 
@@ -45,6 +47,8 @@
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/tags.css"/>
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/dengPage.css"/>
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/xiangPage.css"/>
+    <!--add-->
+    <link rel="stylesheet" href="../../public/ide/modules/ide/css/ruler.css"/>
 
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
@@ -410,16 +414,17 @@
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61a;</span><span class="caption">字体颜色</span></a>-->
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61d;</span><span class="caption">上标</span></a>-->
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61c;</span><span class="caption">下标</span></a>-->
-                <a ng-click="component.tool.play()" class="my-cmd-item" ng-class=""><span
+                <a ng-click="component.tool.play()" class="my-cmd-item runProject" ng-class=""><span
                         class="iconfont icon">&#xe620;</span><span class="caption">运行</span></a>
             </div>
+
 
             <div id="simulator-wrapper" style="" ng-show="component.simulator.show">
                 <div class="navbar navbar-default" style="text-align:center">
                     <div class="nav">
                         <button id="play" type="button" class=" btn btn-default navbar-btn"
                                 ng-click="component.tool.runSimulator()">运行</button>
-                        <button id="close" type="button" class=" btn btn-default navbar-btn"
+                        <button id="close" type="button" class=" btn btn-default navbar-btn offProject"
                                 ng-click="component.tool.closeSimulator()">关闭
                         </button>
                     </div>
@@ -512,6 +517,9 @@
                         </span>
                     </div>
                 </a>
+                <a class="my-cmd-item" id="ruler">
+                    <span class="iconfont icon">&#xe60d;</span><span class="caption"></span>
+                </a>
             </div>
             <div class="my-tool-content-item" ng-show="component.nav.currentNav==5">
                 <a ng-click="" class="my-cmd-item" ng-class="" href="http://docs.graphichina.com"
@@ -547,8 +555,8 @@
             </ol>
         </div>
     </div>
-    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container">
-        <div class="my-stage" ng-show="status.editPage">
+    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage">
+        <div class="my-stage" ng-show="status.editPage" id="myStageTable">
             <table width="100%" height="100%">
                 <tr>
                     <td align="center" valign="middle">

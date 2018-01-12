@@ -1797,6 +1797,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }
             this.spacing =level.info.spacing;
             this.paddingRatio=level.info.paddingRatio;
+
+            self.widthBeforePadding=8*self.fontSize+7*self.spacing;
+            self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
+
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
                 self.dateTimeModeId=arg.dateTimeModeId;
@@ -1861,7 +1865,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else {
                     self.widthBeforePadding=10*self.fontSize+9*self.spacing;
                 }
-                self.setWidth(self.widthBeforePadding+0.2*self.fontSize);
+                self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -2009,6 +2013,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @return {[type]}            [description]
      */
     function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,fontSize,spacing){
+        console.log('mode:'+mode,'width:'+width,'fontSize:'+fontSize,'spacing:'+spacing);
         ctx.fillStyle=fontColor;
         ctx.font=fontString;
         ctx.textBaseline='middle';
@@ -2782,6 +2787,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxFontWidth=level.info.maxFontWidth;
             this.spacing = (level.info.spacing===undefined)?(level.info.spacing=Math.ceil(-this.fontSize/3)):level.info.spacing;//兼容旧的数字控件
             this.paddingRatio = level.info.paddingRatio;
+
+            var maxWidth = parseInt(self.fontSize);//+
+            self.maxFontWidth = maxWidth;
+            level.info.maxFontWidth = maxWidth;
+            var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
+            var paddingX = Math.ceil(maxWidth*self.paddingRatio);
+            width+=paddingX*2;
+            if(self.decimalCount!=0){
+                width +=0.5*maxWidth+self.spacing;
+            }
+            var height = self.fontSize*1.2;
+            self.set({width:width,height:height});
+
             if(this.paddingRatio===undefined){
                 //维护旧的数字控件
                 level.info.paddingRatio = 0.1;
