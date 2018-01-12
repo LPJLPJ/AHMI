@@ -144,6 +144,18 @@ body{
     -o-transition: height 0.2s; /* Opera */
 
 }
+/*主页面上preview按钮*/
+.preview{
+    position: absolute;
+    top:20px;
+    left:20px;
+    z-index: 1000;
+    cursor: pointer;
+}
+.preview>button{
+    border: none;
+    background: none;
+}
 
 .my-pages.my-tool-show,.my-stage-container.my-tool-show,.my-attribute.my-tool-show{
     height: calc(100% - 60px);

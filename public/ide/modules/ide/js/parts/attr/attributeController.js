@@ -2501,7 +2501,9 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         var oldOperate = ProjectService.SaveCurrentOperate();
         ProjectService.ChangeSubLayerPreview(options,function(oldOperate){
             $scope.$emit('ChangeCurrentPage',oldOperate);
-        })
+        });
     }
+
+
 
 }]);

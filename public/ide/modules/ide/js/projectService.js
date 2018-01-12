@@ -3069,7 +3069,7 @@ ideServices
                     var backgroundImg = new Image();
                     var subLayerImg = new Image();
 
-                    paintBoard = CanvasService.createPaintBoard({
+                    paintBoard = new SXRender({
                         id:'backgroundCanvas',
                         w:currentLayer.info.width,
                         h:currentLayer.info.height,

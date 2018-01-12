@@ -1,21 +1,19 @@
 
-    ide.controller('StageCtrl', ['$scope','$timeout','$interval',
-        'ProjectService',
-        'CanvasService',
-        'Preference',
-        'Type',
-        'KeydownService',
-        'OperateQueService',function ($scope,$timeout,$interval,
-                                          ProjectService,
-                                          CanvasService,
-                                          Preference,
-                                          Type,
-                                          KeydownService,
-                                          OperateQueService) {
-
+ide.controller('StageCtrl', ['$scope','$timeout','$interval',
+    'ProjectService',
+    'CanvasService',
+    'Preference',
+    'Type',
+    'KeydownService',
+    'OperateQueService',function ($scope,$timeout,$interval,
+                                      ProjectService,
+                                      CanvasService,
+                                      Preference,
+                                      Type,
+                                      KeydownService,
+                                      OperateQueService) {
 
         initUserInterface();
-
         //edit by lixiang 初始化offCanvas
         initOffCanvas();
 
@@ -25,10 +23,13 @@
 
         });
 
+        $scope.$on('AttributeChanged', function (event) {
+            onFocusObjChanged();
+        });
+
         function initOffCanvas(){
             CanvasService.setOffCanvas(document.getElementById('offCanvas'))
         }
-
 
         function initUserInterface(){
             //console.log('initing stage contrller')
@@ -49,12 +50,13 @@
                     currentHeight:0,
                     holdOperate:null,
                 },
-
                 menuOptions:{
                     contextMenu:null,
                     allMenuItems:[]
+                },
+                preview:{
+                    showPreviewBtn:false
                 }
-
             };
 
             $scope.status={
@@ -73,7 +75,6 @@
             CanvasService.setSubLayerNode(subLayerNode);
 
         }
-
 
         function initProject(){
 
@@ -162,6 +163,19 @@
         }
 
 
+        function onFocusObjChanged(){
+            var ob = ProjectService.getCurrentSelectObject()||{};
+            ob = ob.level;
+            $scope.component.preview.showPreviewBtn = false;
+            if(ob&&(ob.type===Type.MySubLayer)&&ob.info){
+                console.log(ob.info);
+                $scope.component.preview.showPreviewBtn = ob.info.scrollVEnabled||ob.info.scrollHEnabled;
+            }
+            console.log('haha',$scope.component.preview.showPreviewBtn)
+
+        }
+
+
         /**
          * 重置缩放条至初始位置
          */
@@ -214,6 +228,7 @@
             }
             return [];
         }
+
         function onSelectionLayerCleared(e){
 
             //如果按住Ctrl,则不能响应清空选择的Layer
@@ -239,14 +254,13 @@
                 $scope.$emit('ChangeCurrentPage')
             });
         }
-        function onSelectionWidgetCleared(){
 
+        function onSelectionWidgetCleared(){
             //如果按住Ctrl,则不能响应清空选择的Widget
             if(KeydownService.isCtrlPressed()){
                 return;
             }
             var currentPage=ProjectService.getCurrentPage();
-
             _.forEach(currentPage.layers, function (_layer, _layerIndex) {
                 if (_layer.current){
                     _.forEach(_layer.subLayers, function (_subLayer, _subLayerIndex) {
@@ -258,12 +272,7 @@
                     })
                 }
 
-            })
-            return;
-
-
-
-
+            });
         }
 
         var updateThumbInterval;
@@ -447,7 +456,7 @@
             ProjectService.OnLayerDoubleClicked(_target.id,function () {
                 $timeout(function () {
                     layerDoubleClicking=false;
-                
+
                 },0);
                 // layerDoubleClicking=false;
                 //更新缩略图
@@ -494,6 +503,7 @@
 
             });
         }
+
         function onSubLayerMouseDown(event){
             pageMouseLocation.x=event.e.x;
             pageMouseLocation.y=event.e.y;
@@ -502,6 +512,7 @@
                 pageMouseLocation.y=event.e.layerY;
             }
         }
+
         function holdWidget(){
 
             if ($scope.status.gesture=='release'){
@@ -514,7 +525,63 @@
                 ProjectService.HoldObject($scope.status);
             }
         }
+
         function releaseLayer(event){
+            /**
+             * 在Ctrl模式下的处理
+             */
+            var clickHandle = function(){
+                var clickedFabLayer=null;
+                var eventlocationX=null,
+                    eventlocationY=null;
+                if(event.e.x&&event.e.y){
+                    eventlocationX=event.e.x;
+                    eventlocationY=event.e.y;
+                }
+                else if(event.e.layerX&&event.e.layerY){
+                    eventlocationX=event.e.layerX;
+                    eventlocationY=event.e.layerY;
+                }
+                //如果点击了layer,在Ctrl模式下进行多选,否则单选
+                if (Math.abs(eventlocationX-pageMouseLocation.x)<=2&&Math.abs(eventlocationY-pageMouseLocation.y)<=2){
+
+                    //生成落点的Point对象
+                    var clickPoint=new fabric.Point(event.e.offsetX/$scope.component.canvas.node.getZoom(),
+                        event.e.offsetY/$scope.component.canvas.node.getZoom());
+                    //获得当前选中的Group,如果落点在group中,则需要坐标变换后判断落点是否选中了group中的object
+                    var activeGroup=$scope.component.canvas.node.getActiveGroup();
+
+                    var clickX=null,clickY=null;
+
+                    if (activeGroup&&activeGroup.containsPoint(clickPoint)) {
+                        clickX=event.e.offsetX/$scope.component.canvas.node.getZoom()-(activeGroup.left+activeGroup.width/2);
+                        clickY=event.e.offsetY/$scope.component.canvas.node.getZoom()-(activeGroup.top+activeGroup.height/2);
+
+
+                    }else {
+                        clickX=event.e.offsetX/$scope.component.canvas.node.getZoom();
+                        clickY=event.e.offsetY/$scope.component.canvas.node.getZoom();
+                    }
+                    _.forEach($scope.component.canvas.node.getObjects(), function (_fabLayer) {
+
+                        if (clickX<=(_fabLayer.getWidth()+_fabLayer.left)&&clickY<=(_fabLayer.getHeight()+_fabLayer.top)
+                            &&clickX>=_fabLayer.left&&clickY>=_fabLayer.top){
+                            clickedFabLayer=_fabLayer;
+                        }
+                    });
+                    if (KeydownService.isCtrlPressed()){
+                        //如果在Ctrl模式点击了Layer,交给ctrlClickLayer处理
+                        ctrlClickLayer(clickedFabLayer);
+
+                    }else if(isDbClick){
+                        clickedFabLayer&&doubleClickLayer(clickedFabLayer);
+                    }
+
+
+                }else{
+                    // console.log('偏移');
+                }
+            }
             if (layerDoubleClicking){
                 console.log('双击layer中');
                 return;
@@ -561,95 +628,16 @@
                 clickHandle();
             }
 
-            /**
-             * 在Ctrl模式下的处理
-             */
-            function clickHandle(){
-                var clickedFabLayer=null;
-                    var eventlocationX=null,
-                        eventlocationY=null;
-                    if(event.e.x&&event.e.y){
-                        eventlocationX=event.e.x;
-                        eventlocationY=event.e.y;
-                    }
-                    else if(event.e.layerX&&event.e.layerY){
-                        eventlocationX=event.e.layerX;
-                        eventlocationY=event.e.layerY;
-                    }
-                //如果点击了layer,在Ctrl模式下进行多选,否则单选
-                if (Math.abs(eventlocationX-pageMouseLocation.x)<=2&&Math.abs(eventlocationY-pageMouseLocation.y)<=2){
-
-                    //生成落点的Point对象
-                    var clickPoint=new fabric.Point(event.e.offsetX/$scope.component.canvas.node.getZoom(),
-                        event.e.offsetY/$scope.component.canvas.node.getZoom());
-                    //获得当前选中的Group,如果落点在group中,则需要坐标变换后判断落点是否选中了group中的object
-                    var activeGroup=$scope.component.canvas.node.getActiveGroup();
-
-                    var clickX=null,clickY=null;
-
-                    if (activeGroup&&activeGroup.containsPoint(clickPoint)) {
-                        clickX=event.e.offsetX/$scope.component.canvas.node.getZoom()-(activeGroup.left+activeGroup.width/2);
-                        clickY=event.e.offsetY/$scope.component.canvas.node.getZoom()-(activeGroup.top+activeGroup.height/2);
-
-
-                    }else {
-                        clickX=event.e.offsetX/$scope.component.canvas.node.getZoom();
-                        clickY=event.e.offsetY/$scope.component.canvas.node.getZoom();
-                    }
-                    _.forEach($scope.component.canvas.node.getObjects(), function (_fabLayer) {
-
-                        if (clickX<=(_fabLayer.getWidth()+_fabLayer.left)&&clickY<=(_fabLayer.getHeight()+_fabLayer.top)
-                            &&clickX>=_fabLayer.left&&clickY>=_fabLayer.top){
-                            clickedFabLayer=_fabLayer;
-                        }
-                    });
-                    if (KeydownService.isCtrlPressed()){
-                        //如果在Ctrl模式点击了Layer,交给ctrlClickLayer处理
-                        ctrlClickLayer(clickedFabLayer);
-
-                    }else if(isDbClick){
-                        clickedFabLayer&&doubleClickLayer(clickedFabLayer);
-                    }
-
-
-                }else{
-                    // console.log('偏移');
-                }
-            }
         }
 
         function releaseWidget(event){
 
 
             var widget=ProjectService.getCurrentWidget();
-            if (widget){
-                var fabWidget=ProjectService.getFabricObject(widget.id,true);
-                if (fabWidget){
-                    ProjectService.SyncLevelFromFab(widget,fabWidget);
-                }
-            }
-            if ($scope.status.gesture!='release'){
-                if (angular.isDefined(updateThumbInterval)) {
-                    $interval.cancel(updateThumbInterval);
-                    updateThumbInterval = undefined;
-                }
-                ProjectService.ReleaseObject($scope.status,
-                    function () {
-                        $scope.$emit('ChangeCurrentPage',$scope.status.holdOperate);
-                        $scope.status.gesture='release';
-                        ProjectService.updateCurrentThumbInPage();
-                        ctrlHandle();
-
-                    });
-            }else {
-                ctrlHandle();
-
-            }
-
             /**
              * 在Ctrl模式下的处理
              */
-            function ctrlHandle(){
+            var ctrlHandle = function (){
                 var clickedFabWidget=null;
 
                 //如果点击了Widget,在Ctrl模式下进行多选,否则单选
@@ -690,11 +678,29 @@
                     }
                 }
 
-
-
-
             }
+            if (widget){
+                var fabWidget=ProjectService.getFabricObject(widget.id,true);
+                if (fabWidget){
+                    ProjectService.SyncLevelFromFab(widget,fabWidget);
+                }
+            }
+            if ($scope.status.gesture!='release'){
+                if (angular.isDefined(updateThumbInterval)) {
+                    $interval.cancel(updateThumbInterval);
+                    updateThumbInterval = undefined;
+                }
+                ProjectService.ReleaseObject($scope.status,
+                    function () {
+                        $scope.$emit('ChangeCurrentPage',$scope.status.holdOperate);
+                        $scope.status.gesture='release';
+                        ProjectService.updateCurrentThumbInPage();
+                        ctrlHandle();
 
+                    });
+            }else {
+                ctrlHandle();
+            }
         }
 
         function changeZIndex(_op){
@@ -708,8 +714,9 @@
 
             });
         }
+
         function changeCanvasScale(scaleMode){
             ProjectService.ScaleCanvas(scaleMode);
         }
 
-    }]);
+}]);
