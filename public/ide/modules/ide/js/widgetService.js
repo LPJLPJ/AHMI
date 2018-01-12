@@ -2013,7 +2013,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @return {[type]}            [description]
      */
     function drawNewDateTime(mode,ctx,fontString,align,fontColor,width,fontSize,spacing){
-        console.log('mode:'+mode,'width:'+width,'fontSize:'+fontSize,'spacing:'+spacing);
         ctx.fillStyle=fontColor;
         ctx.font=fontString;
         ctx.textBaseline='middle';
