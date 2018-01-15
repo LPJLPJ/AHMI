@@ -563,10 +563,25 @@
         </div>
 
         <div ng-show="component.preview.showPreviewBtn" class="preview">
-            <button>
+            <button ng-click="component.preview.showPreviewModal()">
                 <span class="iconfont">&#xe65c;</span>
             </button>
         </div>
+
+        <!--预览模态框模板-->
+        <script type="text/ng-template" id="previewPanelModal.html">
+            <div class="modal-header">
+                <h3 class="modal-title">预览</h3>
+            </div>
+            <div class="modal-body" style="text-align: center" ng-init="init()">
+                <canvas id="previewCanvas" width="500" height="500" style="background: #5e5e5e;">
+                </canvas>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
+            </div>
+        </script>
+
         <div class="my-stage" ng-show="!status.editPage">
             <table width="100%" height="100%">
                 <tr>
@@ -761,17 +776,6 @@
                                    ng-blur="component.restore()"
                                    ng-model="component.object.level.name"
                                    ng-keypress="component.enterName($event)">
-                        </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">预览模式</span>
-                            <select style="margin-left: 0px"
-                                    class="my-attr-number-input form-control"
-                                    ng-model="component.subLayer.previewMode"
-                                    ng-change="component.subLayer.changePreviewMode()">
-                                <option ng-repeat="mode in component.subLayer.previewModes" value="{{mode.id}}">
-                                    {{mode.name}}
-                                </option>
-                            </select>
                         </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">水平拓展</span>

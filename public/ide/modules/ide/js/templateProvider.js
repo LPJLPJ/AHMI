@@ -316,7 +316,6 @@ ideServices
                 height:Math.round(pageNode.getHeight()/2),
                 scrollVEnabled:false,
                 scrollHEnabled:false,
-                preview:false
             };
             return {
                 info:info,

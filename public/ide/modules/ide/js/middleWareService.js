@@ -1,7 +1,6 @@
 /**
  * created by lixiang in 2017/12/21
  * 提供一些中间数据处理的接口 Inject
- * 提供了一套带动画的绘图系统 SXRender
  */
 ideServices.service('MiddleWareService',['AnimationService','Type',function(AnimationService,Type){
     var IDEVersion = window.ideVersion;
@@ -166,8 +165,7 @@ ideServices.service('MiddleWareService',['AnimationService','Type',function(Anim
                         width:opts.width||400,
                         height:opts.height||240,
                         scrollVEnabled:false,
-                        scrollHEnabled:false,
-                        preview:false
+                        scrollHEnabled:false
                     }
                 });
             }

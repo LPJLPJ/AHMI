@@ -5,13 +5,13 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
     'Preference',
     'Type',
     'KeydownService',
-    'OperateQueService',function ($scope,$timeout,$interval,
+    'OperateQueService','$uibModal',function ($scope,$timeout,$interval,
                                       ProjectService,
                                       CanvasService,
                                       Preference,
                                       Type,
                                       KeydownService,
-                                      OperateQueService) {
+                                      OperateQueService,$uibModal) {
 
         initUserInterface();
         //edit by lixiang 初始化offCanvas
@@ -55,7 +55,8 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
                     allMenuItems:[]
                 },
                 preview:{
-                    showPreviewBtn:false
+                    showPreviewBtn:false,
+                    showPreviewModal:showPreviewModal
                 }
             };
 
@@ -162,17 +163,46 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
 
         }
 
-
+        /**
+         * 监听当前选中对象
+         */
         function onFocusObjChanged(){
             var ob = ProjectService.getCurrentSelectObject()||{};
             ob = ob.level;
             $scope.component.preview.showPreviewBtn = false;
             if(ob&&(ob.type===Type.MySubLayer)&&ob.info){
-                console.log(ob.info);
                 $scope.component.preview.showPreviewBtn = ob.info.scrollVEnabled||ob.info.scrollHEnabled;
             }
-            console.log('haha',$scope.component.preview.showPreviewBtn)
+        }
 
+        function showPreviewModal(){
+            var currentLayer = ProjectService.getCurrentLayer();
+            var currentSubLayer=ProjectService.getCurrentSubLayer();
+            var subLayerNode = CanvasService.getSubLayerNode();
+            var modalInstance = $uibModal.open({
+                animation:false,
+                templateUrl:'previewPanelModal.html',
+                controller:'previewInstanceCtrl',
+                size:'lg',
+                backdrop:'static',
+                resolve:{
+                    currentLayer:function(){
+                        return currentLayer
+                    },
+                    currentSubLayer:function(){
+                        return currentSubLayer
+                    },
+                    subLayerNode:function(){
+                        return subLayerNode
+                    }
+                }
+            });
+
+            modalInstance.result.then(function(){
+
+            },function(){
+
+            });
         }
 
 
@@ -718,5 +748,56 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
         function changeCanvasScale(scaleMode){
             ProjectService.ScaleCanvas(scaleMode);
         }
+
+}]);
+
+ide.controller('previewInstanceCtrl',['$scope','$uibModalInstance','currentSubLayer','currentLayer','subLayerNode',
+    function($scope,$uibModalInstance,currentSubLayer,currentLayer,subLayerNode){
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss();
+    };
+
+    $scope.init = function(){
+        var backCanvasNode = document.getElementById('backgroundCanvas');
+        var backgroundImgUrl = backCanvasNode.toDataURL();
+        var subLayerImaURL = subLayerNode.toDataURL();
+        var backgroundImg = new Image();
+        var subLayerImg = new Image();
+
+        var paintBoard = new SXRender({
+            id:'previewCanvas',
+            w:currentLayer.info.width,
+            h:currentLayer.info.height,
+            contentW:subLayerNode.width,
+            contentH:subLayerNode.height,
+            backgroundColor:'rgb(159,192,234)',
+            drawScrollBar:true
+        });
+
+        backgroundImg.onload = function(){
+            var opts = {
+                imgObj:backgroundImg,
+                sw:paintBoard.width,
+                sh:paintBoard.height
+            };
+            paintBoard.drawBackground(opts);
+            paintBoard.reRender();
+        };
+
+        subLayerImg.onload = function(){
+            paintBoard.add({
+                type:'image',
+                imgObj:subLayerImg,
+                w:paintBoard.contentW,
+                h:paintBoard.contentH,
+                x:0,
+                y:0});
+            paintBoard.reRender()
+        };
+
+        backgroundImg.src = backgroundImgUrl;
+        subLayerImg.src = subLayerImaURL ;
+    };
 
 }]);

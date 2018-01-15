@@ -55,13 +55,7 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     {id:'0',name:'否'},
                     {id:'1',name:'是'}
                 ],
-                previewMode:'0',
-                previewModes:[
-                    {id:'0',name:'否'},
-                    {id:'1',name:'是'}
-                ],
-                changeScrollEnable:changeScrollEnable,
-                changePreviewMode:changePreviewMode
+                changeScrollEnable:changeScrollEnable
             },
             slide:{
                 addSubSlide:addSubSlide
@@ -396,7 +390,6 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     var preview = $scope.component.object.level.info.preview;
                     $scope.component.subLayer.scrollVEnabled = scrollVEnabled?'1':'0';
                     $scope.component.subLayer.scrollHEnabled = scrollHEnabled?'1':'0';
-                    $scope.component.subLayer.previewMode = preview?'1':'0';
                     break;
                 case Type.MyGroup:
                     //让Group无法旋转和放大
