@@ -3789,4 +3789,449 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyAnimation.async = true;
 
 
+    //mySelector
+    fabric.MySelector = fabric.util.createClass(fabric.Object,{
+        type: Type.MySelector,
+        initialize: function (level, options) {
+            var self = this;
+
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.hasRotatingPoint = false;
+
+            //宽高
+            this.width = level.info.width;
+            this.height = level.info.height;
+            this.selectorWidth = level.info.selectorWidth;
+            this.selectorHeight = level.info.selectorHeight;
+            this.itemWidth = level.info.itemWidth;
+            this.itemHeight = level.info.itemHeight;
+            //位置
+            this.left = level.info.left;
+            this.top = level.info.top;
+            this.selectorLeft = level.info.selectorLeft;
+            this.selectorTop = level.info.selectorTop;
+            //item数
+            this.itemCount = level.info.itemCount;
+            //能显示出的item数，item视窗大小
+            this.itemShowCount = level.info.itemShowCount;
+            //item当前值
+            this.curValue = level.info.curValue;
+            //标题
+            this.selectorTitle = level.info.selectorTitle;
+            //字体
+            this.itemFont = _.cloneDeep(level.info.itemFont);
+            this.itemFontString=this.itemFont.fontItalic+" "+this.itemFont.fontBold+" "+this.itemFont.fontSize+"px"+" "+'"'+this.itemFont.fontFamily+'"';
+            this.selectorFont = _.cloneDeep(level.info.selectorFont);
+            this.selectorFontString=this.selectorFont.fontItalic+" "+this.selectorFont.fontBold+" "+this.selectorFont.fontSize+"px"+" "+'"'+this.selectorFont.fontFamily+'"';
+            // level.info.titleFont={
+            //     fontFamily:"宋体",
+            //     fontSize:20,
+            //     fontColor:'rgba(0,0,0,1)',
+            //     fontBold:"100",
+            //     fontItalic:'',
+            // };
+            this.titleFont = _.cloneDeep(level.info.titleFont);
+            this.titleFontString=this.titleFont.fontItalic+" "+this.titleFont.fontBold+" "+this.titleFont.fontSize+"px"+" "+'"'+this.titleFont.fontFamily+'"';
+            //高亮
+            this.disableHighlight = level.info.disableHighlight;
+
+
+            //纹理
+            var tempSlices=level.texList[0].slices;
+            this.slicesBackground = [];
+            for(var i=0,il=tempSlices.length;i<il;i++){
+                this.slicesBackground[i] = {};
+                this.slicesBackground[i].color = tempSlices[i].color;
+                this.slicesBackground[i].text = tempSlices[i].text;
+                this.slicesBackground[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+            }
+            tempSlices=level.texList[1].slices;
+            this.slicesItem = [];
+            for(var i=0,il=tempSlices.length;i<il;i++){
+                this.slicesItem[i] = {};
+                this.slicesItem[i].color = tempSlices[i].color;
+                this.slicesItem[i].text = tempSlices[i].text;
+                this.slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+            }
+            tempSlices=level.texList[2].slices;
+            this.slicesSelected = [];
+            for(var i=0,il=tempSlices.length;i<il;i++){
+                this.slicesSelected[i] = {};
+                this.slicesSelected[i].color = tempSlices[i].color;
+                this.slicesSelected[i].text = tempSlices[i].text;
+                this.slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+            }
+
+
+            //修改纹理
+            this.on('changeTex', function (arg) {
+                var _callback=arg.callback;
+
+                var tempSlices= _.cloneDeep(arg.level.texList[0].slices);
+
+                self.slicesBackground = [];
+                for(var i=0,il=tempSlices.length;i<il;i++){
+                    self.slicesBackground[i] = {};
+                    self.slicesBackground[i].color = tempSlices[i].color;
+                    self.slicesBackground[i].text = tempSlices[i].text;
+                    self.slicesBackground[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                }
+                self.slicesItem = [];
+                tempSlices = _.cloneDeep(arg.level.texList[1].slices);
+                for(var i=0,il=tempSlices.length;i<il;i++){
+                    self.slicesItem[i] = {};
+                    self.slicesItem[i].color = tempSlices[i].color;
+                    self.slicesItem[i].text = tempSlices[i].text;
+                    self.slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                }
+                tempSlices = _.cloneDeep(arg.level.texList[2].slices);
+                self.slicesSelected = [];
+                for(var i=0,il=tempSlices.length;i<il;i++){
+                    self.slicesSelected[i] = {};
+                    self.slicesSelected[i].color = tempSlices[i].color;
+                    self.slicesSelected[i].text = tempSlices[i].text;
+                    self.slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+            //修改控件属性
+            this.on('changeSelectorAttr', function (arg) {
+                var _callback=arg.callback;
+                if(arg.hasOwnProperty('itemCount')){
+                    self.itemCount=arg.itemCount;
+                    self.slicesItem = [];
+                    var tempSlices = _.cloneDeep(arg.sliceList1);
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        self.slicesItem[i] = {};
+                        self.slicesItem[i].color = tempSlices[i].color;
+                        self.slicesItem[i].text = tempSlices[i].text;
+                        self.slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    tempSlices = _.cloneDeep(arg.sliceList2);
+                    self.slicesSelected = [];
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        self.slicesSelected[i] = {};
+                        self.slicesSelected[i].color = tempSlices[i].color;
+                        self.slicesSelected[i].text = tempSlices[i].text;
+                        self.slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                }
+                if(arg.hasOwnProperty('itemWidth')){
+                    self.itemWidth=arg.itemWidth;
+                }
+                if(arg.hasOwnProperty('itemHeight')){
+                    self.itemHeight=arg.itemHeight;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorWidth')){
+                    self.selectorWidth=arg.selectorWidth;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorHeight')){
+                    self.selectorHeight=arg.selectorHeight;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('curValue')){
+                    self.curValue=arg.curValue;
+                }
+                if(arg.hasOwnProperty('itemShowCount')){
+                    self.itemShowCount=arg.itemShowCount;
+                    setWidthHeight(self.selectorWidth,self.selectorHeight,self.itemHeight,self.itemShowCount);
+                }
+                if(arg.hasOwnProperty('selectorTitle')){
+                    self.selectorTitle=arg.selectorTitle;
+                }
+                // console.log("arg",arg)
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            //修改控件字体
+            this.on('changeFontStyle', function (arg) {
+                var _callback=arg.callback;
+                if(arg.hasOwnProperty('itemFontFontFamily')){
+                    self.itemFont.fontFamily=arg.itemFontFontFamily;
+                }
+                if(arg.hasOwnProperty('itemFontFontSize')){
+                    self.itemFont.fontSize=arg.itemFontFontSize;
+                }
+                if(arg.hasOwnProperty('itemFontFontColor')){
+                    self.itemFont.fontColor=arg.itemFontFontColor;
+                }
+                if(arg.hasOwnProperty('itemFontFontBold')){
+                    self.itemFont.fontBold=arg.itemFontFontBold;
+                    if(self.itemFont.fontBold!=='bold'){
+                        self.itemFont.fontBold='';
+                    }
+                }
+                if(arg.hasOwnProperty('itemFontFontItalic')){
+                    self.itemFont.fontItalic=arg.itemFontFontItalic;
+                    if(self.itemFont.fontItalic!=='italic'){
+                        self.itemFont.fontItalic='';
+                    }
+                }
+                if(arg.hasOwnProperty('selectorFontFontFamily')){
+                    self.selectorFont.fontFamily=arg.selectorFontFontFamily;
+                }
+                if(arg.hasOwnProperty('selectorFontFontSize')){
+                    self.selectorFont.fontSize=arg.selectorFontFontSize;
+                }
+                if(arg.hasOwnProperty('selectorFontFontColor')){
+                    self.selectorFont.fontColor=arg.selectorFontFontColor;
+                }
+                if(arg.hasOwnProperty('selectorFontFontBold')){
+                    self.selectorFont.fontBold=arg.selectorFontFontBold;
+                    if(self.selectorFont.fontBold!=='bold'){
+                        self.selectorFont.fontBold='';
+                    }
+                }
+                if(arg.hasOwnProperty('selectorFontFontItalic')){
+                    self.selectorFont.fontItalic=arg.selectorFontFontItalic;
+                    if(self.selectorFont.fontItalic!=='italic'){
+                        self.selectorFont.fontItalic='';
+                    }
+                }
+                if(arg.hasOwnProperty('titleFontFontFamily')){
+                    self.titleFont.fontFamily=arg.titleFontFontFamily;
+                }
+                if(arg.hasOwnProperty('titleFontFontSize')){
+                    self.titleFont.fontSize=arg.titleFontFontSize;
+                }
+                if(arg.hasOwnProperty('titleFontFontColor')){
+                    self.titleFont.fontColor=arg.titleFontFontColor;
+                }
+                if(arg.hasOwnProperty('titleFontFontBold')){
+                    self.titleFont.fontBold=arg.titleFontFontBold;
+                    if(self.titleFont.fontBold!=='bold'){
+                        self.titleFont.fontBold='';
+                    }
+                }
+                if(arg.hasOwnProperty('titleFontFontItalic')){
+                    self.titleFont.fontItalic=arg.titleFontFontItalic;
+                    if(self.titleFont.fontItalic!=='italic'){
+                        self.titleFont.fontItalic='';
+                    }
+                }
+                self.itemFontString=self.itemFont.fontItalic+" "+self.itemFont.fontBold+" "+self.itemFont.fontSize+"px"+" "+'"'+self.itemFont.fontFamily+'"';
+                self.selectorFontString=self.selectorFont.fontItalic+" "+self.selectorFont.fontBold+" "+self.selectorFont.fontSize+"px"+" "+'"'+self.selectorFont.fontFamily+'"';
+                self.titleFontString=self.titleFont.fontItalic+" "+self.titleFont.fontBold+" "+self.titleFont.fontSize+"px"+" "+'"'+self.titleFont.fontFamily+'"';
+
+                console.log("self",self)
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            //修改控件宽高
+            function setWidthHeight(selectorW,selectorH,ItemH,itemShowCount){
+                var width=selectorW;
+                var height=selectorH+2*ItemH*itemShowCount;
+                self.set({width:width,height:height});
+            }
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                // console.log("this_render",this);
+
+                //(0,0)
+                var startX=-this.width/2;
+                var startY=-this.height/2;
+
+                //画item
+                var centerH=-this.selectorHeight/2;
+                var curval=this.curValue;
+                var curY=centerH-(curval)*this.itemHeight;
+                for(var i=0;i<curval;i++,curY+=this.itemHeight){
+                    // ctx.fillStyle=this.slicesItem[i].color;
+                    // ctx.fillRect(-this.itemWidth/2,curY,this.itemWidth,this.itemHeight);
+                    // console.log("this.slicesItem[i]",this.slicesItem[i])
+                    // console.log("this.slicesItem[i].imgSrc",this.slicesItem[i].imgSrc)
+                    drawStyleRect(ctx,
+                        -this.itemWidth/2,
+                        curY,
+                        this.itemWidth,
+                        this.itemHeight,
+                        this.slicesItem[i].color,
+                        this.slicesItem[i].img,
+                        this.slicesItem[i].text,
+                        this.itemFontString,
+                        this.itemFont.fontColor,
+                        "center",
+                        "middle");
+                }
+                i++;
+                curY+=this.selectorHeight;
+                for(;i<this.itemCount;i++,curY+=this.itemHeight){
+                    // ctx.fillStyle=this.slicesItem[i].color;
+                    // ctx.fillRect(-this.itemWidth/2,curY,this.itemWidth,this.itemHeight);
+                    drawStyleRect(ctx,
+                        -this.itemWidth/2,
+                        curY,
+                        this.itemWidth,
+                        this.itemHeight,
+                        this.slicesItem[i].color,
+                        this.slicesItem[i].img,
+                        this.slicesItem[i].text,
+                        this.itemFontString,
+                        this.itemFont.fontColor,
+                        "center",
+                        "middle");
+                }
+
+                //画背景
+                // ctx.fillStyle=this.slicesBackground[0].color;
+                // ctx.fillRect(-this.selectorWidth/2,-this.selectorHeight/2,this.selectorWidth,this.selectorHeight);
+                drawStyleRect(ctx,
+                    -this.selectorWidth/2,
+                    -this.selectorHeight/2,
+                    this.selectorWidth,
+                    this.selectorHeight,
+                    this.slicesBackground[0].color,
+                    this.slicesBackground[0].img,
+                    );
+
+                //画前景
+                var curSlice=this.slicesSelected[curval];
+                if(curSlice.color==='rgba(0,0,0,0)'&&curSlice.text===''&&curSlice.img===null){
+                    //如果slicesSelected为空，就使用对应的slicesItem里的纹理
+                    curSlice=this.slicesItem[curval];
+                }
+                drawStyleRect(ctx,
+                    -this.selectorWidth/2,
+                    -this.selectorHeight/2,
+                    this.selectorWidth,
+                    this.selectorHeight,
+                    curSlice.color,
+                    curSlice.img,
+                    curSlice.text,
+                    this.selectorFontString,
+                    this.selectorFont.fontColor,
+                    "center",
+                    "middle");
+
+                //画标题
+                if(this.selectorTitle){
+                    drawStyleRect(ctx,
+                        -this.selectorWidth/2,
+                        -this.selectorHeight/2,
+                        this.selectorWidth,
+                        this.selectorHeight,
+                        null,
+                        null,
+                        this.selectorTitle,
+                        this.titleFontString,
+                        this.titleFont.fontColor,
+                        "start",
+                        "top");
+                }
+
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();//此时的坐标在控件的正中，因为设置了originX: 'center', originY: 'center'
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染数字出错');
+            }
+
+        }
+    });
+    fabric.MySelector.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MySelector(level, option));
+    };
+    fabric.MySelector.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MySelector(level,object));
+    };
+    fabric.MySelector.async = true;
+    /**
+     * 画长方形，可填充 颜色、图片、文字
+     * @param  {[type]} ctx           [Canvas对象]
+     * @param  {[type]} x             [起始点x坐标]
+     * @param  {[type]} y             [起始点y坐标]
+     * @param  {[type]} w             [宽]
+     * @param  {[type]} h             [高]
+     * @param  {[type]} image         [图片纹理]
+     * @param  {[type]} color         [背景颜色]
+     * @param  {[type]} text          [文字]
+     * @param  {[type]} font          [文字格式]
+     * @param  {[type]} fontColor     [文字颜色]
+     * @param  {[type]} textAlign     [对齐方式]
+     * @param  {[type]} textBaseline  [文本基线]
+     * @return {[type]}               [description]
+     */
+    function drawStyleRect(ctx,x,y,w,h,color,image,text,font,fontColor,textAlign,textBaseline){
+        var x=x;
+        var y=y;
+        var w=w;
+        var h=h;
+        var image=image;
+        var color=color;
+        var text=text;
+        var font=font;
+        var fontColor=fontColor;
+        var textAlign=textAlign;
+        var textBaseline=textBaseline;
+        var ctx=ctx;
+
+        try{
+            ctx.beginPath();
+            //填充背景色
+            if(color){
+                ctx.fillStyle=color;
+                ctx.fillRect(x,y,w,h);
+            }
+            //插入图片
+            if(image){
+                ctx.drawImage(image,x,y,w,h);
+            }
+            //绘制文字
+            if(text!==''&&text!==undefined){
+                ctx.font=font;
+                ctx.fillStyle=fontColor;
+                ctx.textAlign=textAlign;
+                ctx.textBaseline=textBaseline;
+                if(textAlign==='start'){
+                    ctx.fillText(text,x+w/10,y+h/10);
+                }else if(textAlign==='center'){
+                    ctx.fillText(text,x+w/2,y+h/2);
+                }else if(textAlign==='end'){
+                    ctx.fillText(text,x+w,y+h);
+                }
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }catch(err){
+            console.log('error');
+        }
+
+    }
+
+
 }]);

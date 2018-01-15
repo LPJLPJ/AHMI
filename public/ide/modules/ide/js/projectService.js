@@ -1068,6 +1068,17 @@ ideServices
                         subLayerNode.renderAll.bind(subLayerNode)();
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MySelector){
+                    console.log("_newWidget",_newWidget)
+                    console.log("fabric",fabric)
+                        fabric.MySelector.fromLevel(_newWidget,function (fabWidget) {
+                            _self.currentFabLayerIdList = [fabWidget.id];
+                            subLayerNode.add(fabWidget);
+                            subLayerNode.renderAll.bind(subLayerNode)();
+                            _newWidget.info.width=fabWidget.getWidth();
+                            _newWidget.info.height=fabWidget.getHeight();
+                            syncSublayer(fabWidget);
+                        },initiator);
                 }else if (_newWidget.type==Type.General){
 
                     fabric.General.fromLevel(_newWidget, function (fabWidget) {
@@ -3599,6 +3610,147 @@ ideServices
                 };
                 selectObj.target.fire('changeInitValue',arg);
             };
+            //改变选择器控件的属性值info，不需要render，added by LH 2017/12/25
+            this.ChangeAttrOfSelectorNoRender=function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                // if(_option.itemCount){
+                //     selectObj.level.info.itemCount=_option.itemCount;
+                //     selectObj.level.texList[1].slices=_option.sliceList1;
+                //     selectObj.level.texList[2].slices=_option.sliceList2;
+                // }
+                if(_option.hasOwnProperty('selectorLeft')){
+                    selectObj.level.info.selectorLeft= _option.selectorLeft;
+                }
+                if(_option.hasOwnProperty('selectorTop')){
+                    selectObj.level.info.selectorTop= _option.selectorTop;
+                }
+                _successCallback&&_successCallback();
+            };
+            //改变选择器控件的属性值info，需要render，added by LH 2017/12/25
+            this.ChangeAttributeOfSelector=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.hasOwnProperty('itemCount')){
+                    selectObj.level.info.itemCount=_option.itemCount;
+                    arg.itemCount=_option.itemCount;
+                    selectObj.level.texList[1].slices=_option.sliceList1;
+                    arg.sliceList1=_option.sliceList1;
+                    selectObj.level.texList[2].slices=_option.sliceList2;
+                    arg.sliceList2=_option.sliceList2;
+                }
+                if(_option.hasOwnProperty('itemWidth')){
+                    selectObj.level.info.itemWidth=_option.itemWidth;
+                    arg.itemWidth=_option.itemWidth;
+                }
+                if(_option.hasOwnProperty('itemHeight')){
+                    selectObj.level.info.itemHeight= _option.itemHeight;
+                    arg.itemHeight=_option.itemHeight;
+                }
+                if(_option.hasOwnProperty('selectorWidth')){
+                    selectObj.level.info.selectorWidth= _option.selectorWidth;
+                    arg.selectorWidth=_option.selectorWidth;
+                }
+                if(_option.hasOwnProperty('selectorHeight')){
+                    selectObj.level.info.selectorHeight= _option.selectorHeight;
+                    arg.selectorHeight=_option.selectorHeight;
+                }
+                if(_option.hasOwnProperty('curValue')){
+                    selectObj.level.info.curValue= _option.curValue;
+                    arg.curValue=_option.curValue;
+                }
+                if(_option.hasOwnProperty('itemShowCount')){
+                    selectObj.level.info.itemShowCount= _option.itemShowCount;
+                    arg.itemShowCount=_option.itemShowCount;
+                }
+                if(_option.hasOwnProperty('selectorTitle')){
+                    selectObj.level.info.selectorTitle= _option.selectorTitle;
+                    arg.selectorTitle=_option.selectorTitle;
+                }
+
+                selectObj.target.fire('changeSelectorAttr',arg);
+            };
+            //改变选择器控件的文本字体，added by LH 2017/12/25
+            this.ChangeSelectorFontStyle = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+                if(_option.hasOwnProperty('itemFontFontFamily')){
+                    selectObj.level.info.itemFont.fontFamily=_option.itemFontFontFamily;
+                    arg.itemFontFontFamily=_option.itemFontFontFamily;
+                }
+                if(_option.hasOwnProperty('itemFontFontSize')){
+                    selectObj.level.info.itemFont.fontSize=_option.itemFontFontSize;
+                    arg.itemFontFontSize=_option.itemFontFontSize;
+                }
+                if(_option.hasOwnProperty('itemFontFontColor')){
+                    selectObj.level.info.itemFont.fontColor=_option.itemFontFontColor;
+                    arg.itemFontFontColor=_option.itemFontFontColor;
+                }
+                if(_option.hasOwnProperty('itemFontFontBold')){
+                    selectObj.level.info.itemFont.fontBold=_option.itemFontFontBold;
+                    arg.itemFontFontBold=_option.itemFontFontBold;
+                }
+                if(_option.hasOwnProperty('itemFontFontItalic')){
+                    selectObj.level.info.itemFont.fontItalic=_option.itemFontFontItalic;
+                    arg.itemFontFontItalic=_option.itemFontFontItalic;
+                }
+                if(_option.hasOwnProperty('selectorFontFontFamily')){
+                    selectObj.level.info.selectorFont.fontFamily=_option.selectorFontFontFamily;
+                    arg.selectorFontFontFamily=_option.selectorFontFontFamily;
+                }
+                if(_option.hasOwnProperty('selectorFontFontSize')){
+                    selectObj.level.info.selectorFont.fontSize=_option.selectorFontFontSize;
+                    arg.selectorFontFontSize=_option.selectorFontFontSize;
+                }
+                if(_option.hasOwnProperty('selectorFontFontColor')){
+                    selectObj.level.info.selectorFont.fontColor=_option.selectorFontFontColor;
+                    arg.selectorFontFontColor=_option.selectorFontFontColor;
+                }
+                if(_option.hasOwnProperty('selectorFontFontBold')){
+                    selectObj.level.info.selectorFont.fontBold=_option.selectorFontFontBold;
+                    arg.selectorFontFontBold=_option.selectorFontFontBold;
+                }
+                if(_option.hasOwnProperty('selectorFontFontItalic')){
+                    selectObj.level.info.selectorFont.fontItalic=_option.selectorFontFontItalic;
+                    arg.selectorFontFontItalic=_option.selectorFontFontItalic;
+                }
+                if(_option.hasOwnProperty('titleFontFontFamily')){
+                    selectObj.level.info.titleFont.fontFamily=_option.titleFontFontFamily;
+                    arg.titleFontFontFamily=_option.titleFontFontFamily;
+                }
+                if(_option.hasOwnProperty('titleFontFontSize')){
+                    selectObj.level.info.titleFont.fontSize=_option.titleFontFontSize;
+                    arg.titleFontFontSize=_option.titleFontFontSize;
+                }
+                if(_option.hasOwnProperty('titleFontFontColor')){
+                    selectObj.level.info.titleFont.fontColor=_option.titleFontFontColor;
+                    arg.titleFontFontColor=_option.titleFontFontColor;
+                }
+                if(_option.hasOwnProperty('titleFontFontBold')){
+                    selectObj.level.info.titleFont.fontBold=_option.titleFontFontBold;
+                    arg.titleFontFontBold=_option.titleFontFontBold;
+                }
+                if(_option.hasOwnProperty('titleFontFontItalic')){
+                    selectObj.level.info.titleFont.fontItalic=_option.titleFontFontItalic;
+                    arg.titleFontFontItalic=_option.titleFontFontItalic;
+                }
+                selectObj.target.fire('changeFontStyle',arg);
+            };
+
             //改变时间控件的属性值，added by LH 2017/12/13
             this.ChangeAttributeOfDateTime=function(_option,_successCallback){
                 var currentOperate = SaveCurrentOperate();
@@ -3667,6 +3819,7 @@ ideServices
 
                 selectObj.target.fire('changeDateTimeText',arg);
             };
+
             //改变时间图层控件的显示模式
             this.ChangeAttributeTexTimeModeId = function(_option,_successCallback){
                 var dateTimeModeId = _option.dateTimeModeId;
@@ -5015,6 +5168,9 @@ ideServices
                         break;
                     case 'MyTexTime':
                         node.add(new fabric.MyTexTime(dataStructure,initiator));
+                        break;
+                    case 'MySelector':
+                        node.add(new fabric.MySelector(dataStructure,initiator));
                         break;
                     default :
                         console.error('not match widget in _addFabricObjInCanvasNode!');

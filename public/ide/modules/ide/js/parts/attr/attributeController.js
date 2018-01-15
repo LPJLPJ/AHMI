@@ -252,6 +252,26 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 enterCharacterW:enterCharacterW,
                 enterCharacterH:enterCharacterH
             },
+            //选择器
+            selector:{
+                highlightModeId:'0',
+                enterItemWidth:enterItemWidth,
+                enterItemHeight:enterItemHeight,
+                enterSelectorWidth:enterSelectorWidth,
+                enterSelectorHeight:enterSelectorHeight,
+                enterSelectorLeft:enterSelectorLeft,
+                enterSelectorTop:enterSelectorTop,
+                enterItemCount:enterItemCount,
+                enterCurValue:enterCurValue,
+                enterItemShowCount:enterItemShowCount,
+                enterSelectorTitle:enterSelectorTitle,
+                enterSelectorFontSize:enterSelectorFontSize,
+                enterSelectorFontFamily:enterSelectorFontFamily,
+                enterSelectorFontBold:enterSelectorFontBold,
+                enterSelectorFontItalic:enterSelectorFontItalic,
+                changeX:changeX,
+                changeY:changeY
+            },
             //滑块
             slideBlock:{
                 enterInitValue:enterInitValue,
@@ -369,6 +389,14 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
      */
     function onAttributeChanged(){
 		var selectObject=ProjectService.getCurrentSelectObject();
+        var flagChangeXY=false;
+        if(selectObject.type===Type.MySelector&&$scope.component.object.type===Type.MySelector){
+            flagChangeXY=true;
+            if($scope.component.object.level.info.left===selectObject.level.info.left&&$scope.component.object.level.info.top===selectObject.level.info.top){
+                flagChangeXY=false;
+            }
+        }
+
         $timeout(function () {
             $scope.component.object= _.cloneDeep(selectObject);
             initObject= _.cloneDeep(selectObject);
@@ -486,6 +514,13 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                         $scope.component.texTime.highlightModeId='0';
                     }else if($scope.component.object.level.info.disableHighlight==true){
                         $scope.component.texTime.highlightModeId='1';
+                    }
+                    break;
+                case Type.MySelector:
+                    if(flagChangeXY){
+                        flagChangeXY=false;
+                        changeX();
+                        changeY();
                     }
                     break;
                 case Type.MySlideBlock:
@@ -621,7 +656,27 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
 			})
 
-		}
+		}else if(e.type==="selector"){
+            //判断输入是否合法
+            var xCoor = e.value;
+            if(xCoor<-2000||xCoor>2000){
+                toastr.warning('超出画布范围');
+                return false;
+            }
+            //判断是否有变化
+            if (xCoor==initObject.level.info.left){
+                return true;
+            }
+            var option={
+                left:xCoor
+            };
+            $scope.component.object.level.info.left=xCoor;
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
+            return true;
+
+        }
 	}
 
 	function enterY(e){
@@ -652,7 +707,27 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
 			})
 
-		}
+		}else if(e.type==="selector"){
+            //判断输入是否合法
+            var yCoor = e.value;
+            if(yCoor<-2000||yCoor>2000){
+                toastr.warning('超出画布范围');
+                return false;
+            }
+            //判断是否有变化
+            if (yCoor==initObject.level.info.top){
+                return true;
+            }
+            var option={
+                top:yCoor
+            };
+            $scope.component.object.level.info.top=yCoor;
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
+            return true;
+
+        }
 	}
 	function enterWidth(e){
 		if (e.keyCode==13){
@@ -770,6 +845,33 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 $scope.$emit('ChangeCurrentPage',oldOperate);
             })
         }
+        if(op.name=='component.object.level.info.itemFont.fontColor'){
+            if(initObject.level.info.itemFont.ffontColor==op.value) {
+                return;
+            }
+            option = {
+                itemFontFontColor:op.value
+            };
+            _changeTextAttr(option);
+        }
+        if(op.name=='component.object.level.info.selectorFont.fontColor'){
+            if(initObject.level.info.selectorFont.fontColor==op.value) {
+                return;
+            }
+            option = {
+                selectorFontFontColor:op.value
+            };
+            _changeTextAttr(option);
+        }
+        if(op.name=='component.object.level.info.titleFont.fontColor'){
+            if(initObject.level.info.titleFont.fontColor==op.value) {
+                return;
+            }
+            option = {
+                titleFontFontColor:op.value
+            };
+            _changeTextAttr(option);
+        }
 	}
 
     /**
@@ -823,6 +925,48 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         }
     }
 
+    function enterSelectorFontSize(e,mode){
+        if(e.keyCode==13){
+            if(mode==='itemFont'){
+                var fontSize = $scope.component.object.level.info.itemFont.fontSize;
+                var option = {
+                    itemFontFontSize:fontSize
+                };
+                var oldVal=initObject.level.info.itemFont.fontSize;
+            }else if(mode=='selectorFont'){
+                var fontSize = $scope.component.object.level.info.selectorFont.fontSize;
+                var option = {
+                    selectorFontFontSize:fontSize
+                };
+                var oldVal=initObject.level.info.selectorFont.fontSize;
+            }else if(mode=='titleFont'){
+                var fontSize = $scope.component.object.level.info.titleFont.fontSize;
+                var option = {
+                    titleFontFontSize:fontSize
+                };
+                var oldVal=initObject.level.info.titleFont.fontSize;
+            }else{
+                //error
+                return;
+            }
+
+            if(!_.isInteger(Number(fontSize))){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if(fontSize<0||fontSize>150){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if(fontSize==oldVal) {
+                return;
+            }
+            _changeTextAttr(option);
+        }
+    }
+
     /**
      * 更改字体
      * @param e
@@ -838,10 +982,41 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         _changeTextAttr(option);
     }
 
+    function enterSelectorFontFamily(e,mode){
+        if(mode==='itemFont'){
+            var fontFamily = $scope.component.object.level.info.itemFont.fontFamily;
+            var option = {
+                itemFontFontFamily:fontFamily
+            };
+            var oldVal=initObject.level.info.itemFont.fontFamily;
+        }else if(mode=='selectorFont'){
+            var fontFamily = $scope.component.object.level.info.selectorFont.fontFamily;
+            var option = {
+                selectorFontFontFamily:fontFamily
+            };
+            var oldVal=initObject.level.info.selectorFont.fontFamily;
+        }else if(mode=='titleFont'){
+            var fontFamily = $scope.component.object.level.info.titleFont.fontFamily;
+            var option = {
+                titleFontFontFamily:fontFamily
+            };
+            var oldVal=initObject.level.info.titleFont.fontFamily;
+        }else{
+            //error
+            return;
+        }
+        if(fontFamily==oldVal) {
+            return;
+        }
+        _changeTextAttr(option);
+    }
+
     /**
      * 更改字体粗体
      * @param e
      */
+
+
     function enterFontBold(e){
         var fontBold = $scope.component.object.level.info.fontBold;
         if(fontBold==="100"){
@@ -854,7 +1029,43 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         };
         _changeTextAttr(option);
     }
-
+    function enterSelectorFontBold(e,mode){
+        if(mode==='itemFont'){
+            var fontBold = $scope.component.object.level.info.itemFont.fontBold;
+            if(fontBold==="100"){
+                fontBold="bold";
+            }else if(fontBold==="bold"){
+                fontBold="100";
+            }
+            var option = {
+                itemFontFontBold:fontBold
+            };
+        }else if(mode=='selectorFont'){
+            var fontBold = $scope.component.object.level.info.selectorFont.fontBold;
+            if(fontBold==="100"){
+                fontBold="bold";
+            }else if(fontBold==="bold"){
+                fontBold="100";
+            }
+            var option = {
+                selectorFontFontBold:fontBold
+            };
+        }else if(mode=='titleFont'){
+            var fontBold = $scope.component.object.level.info.titleFont.fontBold;
+            if(fontBold==="100"){
+                fontBold="bold";
+            }else if(fontBold==="bold"){
+                fontBold="100";
+            }
+            var option = {
+                titleFontFontBold:fontBold
+            };
+        }else{
+            //error
+            return;
+        }
+        _changeTextAttr(option);
+    }
     /**
      * 更改字体斜体
      * @param e
@@ -871,6 +1082,45 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         };
         _changeTextAttr(option);
     }
+
+    function enterSelectorFontItalic(e,mode){
+        if(mode==='itemFont'){
+            var fontItalic = $scope.component.object.level.info.itemFont.fontItalic;
+            if(fontItalic===""){
+                fontItalic="italic";
+            }else if(fontItalic==="italic"){
+                fontItalic="";
+            }
+            var option = {
+                itemFontFontItalic:fontItalic
+            };
+        }else if(mode=='selectorFont'){
+            var fontItalic = $scope.component.object.level.info.selectorFont.fontItalic;
+            if(fontItalic==="italic"){
+                fontItalic="";
+            }else{
+                fontItalic="italic";
+            }
+            var option = {
+                selectorFontFontItalic:fontItalic
+            };
+        }else if(mode=='titleFont'){
+            var fontItalic = $scope.component.object.level.info.titleFont.fontItalic;
+            if(fontItalic===""){
+                fontItalic="italic";
+            }else if(fontItalic==="italic"){
+                fontItalic="";
+            }
+            var option = {
+                titleFontFontItalic:fontItalic
+            };
+        }else{
+            //error
+            return;
+        }
+        _changeTextAttr(option);
+    }
+
 
     /**
      * 根据控件类型，更改控件字体属性
@@ -896,10 +1146,20 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
+            case Type.MySelector:
+                ProjectService.ChangeSelectorFontStyle(option,function(oldOperate){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
             case Type.MySwitch:
             case Type.MySlide:
             case Type.MyButton:
-                ProjectService.ChangeAttributeFontStyle(option,function(oldOperate){
+            ProjectService.ChangeAttributeFontStyle(option,function(oldOperate){
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
+            break;
+            case Type.MySelector:
+                ProjectService.ChangeSelectorFontStyle(option,function(oldOperate){
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
@@ -920,6 +1180,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             selectHighlightMode=$scope.component.dateTime.highlightModeId;
         }else if(selectObj.type==Type.MyTexTime){
             selectHighlightMode=$scope.component.texTime.highlightModeId;
+        }else if(selectObj.type==Type.MySelector){
+            selectHighlightMode=$scope.component.selector.highlightModeId;
         }
         var option = {
             highlightMode:selectHighlightMode
@@ -2196,6 +2458,386 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             }
         }
     }
+    function changeX(e){
+        var selectorX = $scope.component.object.level.info.left;
+        var eValue={
+            type:'left',
+            value:selectorX
+        }
+        enterSelectorLeft(eValue);
+    }
+    function changeY(e){
+        var selectorY = $scope.component.object.level.info.top+$scope.component.object.level.info.itemShowCount*$scope.component.object.level.info.itemHeight;
+        var eValue={
+            type:'top',
+            value:selectorY
+        }
+        enterSelectorTop(eValue);
+    }
+    function enterItemWidth(e){
+        if(e.keyCode===13){
+            var selectorWidth = $scope.component.object.level.info.selectorWidth;
+            //判断输入是否合法
+            var cur = Number($scope.component.object.level.info.itemWidth);
+            if (!_.isInteger(cur)){
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if(cur<0||cur>selectorWidth){
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if (cur==initObject.level.info.itemWidth){
+                return;
+            }
+            var option={
+                itemWidth:cur,
+            };
+            ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+            });
+
+        }
+    }
+    function enterItemHeight(e){
+            if(e.keyCode===13){
+                //判断输入是否合法
+                var cur = Number($scope.component.object.level.info.itemHeight);
+                if (!_.isInteger(cur)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(cur<0||cur>500){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (cur==initObject.level.info.itemHeight){
+                    return;
+                }
+                toastr.info('修改成功');
+                var eValue={
+                    type:'selector',
+                    value:$scope.component.object.level.info.selectorTop-$scope.component.object.level.info.itemShowCount*cur
+                }
+                enterY(eValue);
+                var option={
+                    itemHeight:cur,
+                };
+                ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+
+            }
+        }
+        function enterSelectorWidth(e){
+            if(e.keyCode===13){
+                //判断输入是否合法
+                var cur = Number($scope.component.object.level.info.selectorWidth);
+                if (!_.isInteger(cur)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(cur<0||cur>500){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (cur==initObject.level.info.selectorWidth){
+                    return;
+                }
+                toastr.info('修改成功');
+                var option={
+                    selectorWidth:cur,
+                };
+                ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+
+            }
+        }
+        function enterSelectorHeight(e){
+            if(e.keyCode===13){
+                //判断输入是否合法
+                var cur = Number($scope.component.object.level.info.selectorHeight);
+                if (!_.isInteger(cur)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(cur<0||cur>500){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (cur==initObject.level.info.selectorHeight){
+                    return;
+                }
+                var option={
+                    selectorHeight:cur,
+                };
+                toastr.info('修改成功');
+                ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+
+            }
+        }
+        function enterSelectorLeft(e){
+            if (e.keyCode==13){
+                //判断输入是否合法
+                var xCoor = Number($scope.component.object.level.info.selectorLeft);
+                if (!_.isInteger(xCoor)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(xCoor<-2000||xCoor>2000){
+                    toastr.warning('超出画布范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (xCoor==initObject.level.info.selectorLeft){
+                    return;
+                }
+                toastr.info('修改成功');
+                var eValue={
+                    type:'selector',
+                    value:xCoor
+                }
+                enterX(eValue);
+
+                var option={
+                    selectorLeft:xCoor
+                };
+
+                ProjectService.ChangeAttrOfSelectorNoRender(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
+
+            }else if(e.type==="left"){
+                var xCoor = e.value;
+                $scope.component.object.level.info.selectorLeft=xCoor;
+                var option={
+                    selectorLeft:xCoor
+                };
+                ProjectService.ChangeAttrOfSelectorNoRender(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
+
+            }
+        }
+        function enterSelectorTop(e){
+            if (e.keyCode==13){
+                //判断输入是否合法
+                var yCoor = Number($scope.component.object.level.info.selectorTop);
+                if (!_.isInteger(yCoor)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(yCoor<-2000||yCoor>2000){
+                    toastr.warning('超出画布范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (yCoor==initObject.level.info.selectorTop){
+                    return;
+                }
+                toastr.info('修改成功');
+                var eValue={
+                    type:'selector',
+                    value:yCoor-$scope.component.object.level.info.itemHeight*$scope.component.object.level.info.itemShowCount
+                }
+                enterY(eValue);
+                var option={
+                    selectorTop:yCoor
+                };
+
+                ProjectService.ChangeAttrOfSelectorNoRender(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
+
+            }else if(e.type==="top"){
+                var yCoor = e.value;
+                $scope.component.object.level.info.selectorTop=yCoor;
+                var option={
+                    selectorTop:yCoor
+                };
+                ProjectService.ChangeAttrOfSelectorNoRender(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                })
+
+            }
+        }
+        function enterItemCount(e){
+            if (e.keyCode==13){
+                //判断输入是否合法
+                var cur = Number($scope.component.object.level.info.itemCount);
+                if (!_.isInteger(cur)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(cur<0||cur>100){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (cur==initObject.level.info.itemCount){
+                    return;
+                }
+                var sliceList1=$scope.component.object.level.texList[1].slices;
+                var sliceList2=$scope.component.object.level.texList[2].slices;
+                var sliceLength=sliceList1.length;
+                if(cur<sliceLength){
+                    //弹框
+                    //减少item
+                    var i=sliceLength-cur;
+                    for(;i>0;i--){
+                        sliceList1.pop();
+                        sliceList2.pop();
+                    }
+                }else if(cur>sliceLength){
+                    //增加item
+                    var emptyObj={
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        text:'',
+                        name:'0'
+                    }
+                    for(var j=sliceLength;j<cur;j++){
+                        emptyObj.name=j.toString();
+                        var tempObj=_.cloneDeep(emptyObj)
+                        sliceList1.push(tempObj);
+                        sliceList2.push(tempObj);
+                    }
+                }else{
+                    toastr.info('error');
+                    return;
+                }
+                toastr.info('修改成功');
+                var option={
+                    itemCount:cur,
+                    sliceList1:sliceList1,
+                    sliceList2:sliceList2
+                };
+                // ProjectService.ChangeAttrOfSelectorNoRender(option, function (oldOperate) {
+                ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
+
+
+            }
+        }
+        function enterCurValue(e){
+            if (e.keyCode==13){
+                //判断输入是否合法
+                var cur = Number($scope.component.object.level.info.curValue);
+                if (!_.isInteger(cur)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(cur<0||cur>=$scope.component.object.level.info.itemCount){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (cur==initObject.level.info.curValue){
+                    return;
+                }
+
+                toastr.info('修改成功');
+                var option={
+                    curValue:cur
+                };
+
+                ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
+
+            }
+        }
+        function enterItemShowCount(e){
+            if (e.keyCode==13){
+                //判断输入是否合法
+                var cur = Number($scope.component.object.level.info.itemShowCount);
+                var itemHeight=Number($scope.component.object.level.info.itemHeight);
+                var selectorTop=Number($scope.component.object.level.info.selectorTop);
+                var itemCount=Number($scope.component.object.level.info.itemCount);
+                if (!_.isInteger(cur)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(cur<0||(cur-1)*itemHeight+selectorTop>2000||cur>itemCount){
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if (cur==initObject.level.info.itemShowCount){
+                    return;
+                }
+                toastr.info('修改成功');
+                var eValue={
+                    type:'selector',
+                    value:$scope.component.object.level.info.selectorTop-$scope.component.object.level.info.itemHeight*cur
+                }
+                enterY(eValue);
+
+                var option={
+                    itemShowCount:cur
+                };
+
+                ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
+
+            }
+        }
+        function enterSelectorTitle(e){
+            if (e.keyCode==13){
+                var cur = $scope.component.object.level.info.selectorTitle;
+                cur=cur.toString();
+                //判断是否和初始一样
+                if(initObject.level.info.selectorTitle){
+                    if (cur==initObject.level.info.selectorTitle){
+                        return;
+                    }
+                }
+
+                toastr.info('修改成功');
+                var option={
+                    selectorTitle:cur
+                };
+
+                ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+
+                })
+            }
+
+        }
 
 
     function enterKnobSize(e){
