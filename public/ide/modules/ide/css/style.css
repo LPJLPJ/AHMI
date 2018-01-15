@@ -168,8 +168,6 @@ body{
 
 .my-pages.my-tool-show,.my-stage-container.my-tool-show,.my-attribute.my-tool-show{
     height: calc(100% - 60px);
-
-
 }
 
 /*预览区*/

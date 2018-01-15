@@ -94,7 +94,3 @@ div.wrapper-custom{
 .jumbotron h2{
     text-align: center;
 }
-
-canvas {
-    cursor: url("../public/pointer16.ico"),pointer;
-}
