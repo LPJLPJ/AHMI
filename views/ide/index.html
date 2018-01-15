@@ -562,7 +562,7 @@
             </table>
         </div>
 
-        <div ng-show="component.preview.showPreviewBtn" class="preview">
+        <div ng-show="component.preview.showPreviewBtn" class="preview-btn">
             <button ng-click="component.preview.showPreviewModal()">
                 <span class="iconfont">&#xe65c;</span>
             </button>
@@ -573,8 +573,8 @@
             <div class="modal-header">
                 <h3 class="modal-title">预览</h3>
             </div>
-            <div class="modal-body" style="text-align: center" ng-init="init()">
-                <canvas id="previewCanvas" width="500" height="500" style="background: #5e5e5e;">
+            <div class="modal-body preview-modal-body" ng-init="init()">
+                <canvas id="previewCanvas" width="500" height="500" >
                 </canvas>
             </div>
             <div class="modal-footer">
