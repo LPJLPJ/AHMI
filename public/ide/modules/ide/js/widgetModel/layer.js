@@ -38,7 +38,7 @@
         this.y = y||0;
         this.width = w||0;
         this.height = h||0;
-        this.rotateAngle = 0;
+        this.rotateAngle = 0;  //旋转角
         this.hidden = hidden||false;
         this.validSubLayer = validSubLayer||7;//0111
         this.rotateCenterX = 0;//旋转中心
@@ -57,8 +57,8 @@
         this.mode = mode||0 // four points
 
         //mode=0时有效,是按顺时针方向的四点相对于layer的坐标
-        this.p1x = p1x||0;
-        this.p1y = p1y||0;
+        this.p1x = p1x||0;//mode=1时有效，表示旋转中心x坐标；mode=0时有效，四点模式第一个点的x坐标
+        this.p1y = p1y||0;//mode=1时有效，表示旋转中心y坐标；mode=0时有效，四点模式第一个点的y坐标
         this.p2x = p2x||0;
         this.p2y = p2y||0;
         this.p3x = p3x||0;
@@ -67,8 +67,8 @@
         this.p4y = p4y||0;
 
         //mode=1时有效
-        this.alpha = alpha ||0;
-        this.beta = beta || 0;
+        this.alpha = alpha ||0;//起始角，以 ‘以旋转中心点为起始点，水平向右的射线’ 为基线
+        this.beta = beta || 0;//偏转后角度
     }
 
 

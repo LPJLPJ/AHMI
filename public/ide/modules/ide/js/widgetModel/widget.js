@@ -1052,6 +1052,68 @@
     Selector.prototype = Object.create(Widget.prototype);
     Selector.prototype.constructor = Selector;
 
+    //RotaryKnob
+    function RotaryKnob(x,y,w,h,valueObj,texList){
+        //图层数组
+        var layers = [];
+
+        //位置，宽高
+        var x=x;
+        var y=y;
+        var w=w;
+        var h=h;
+
+        //高亮
+        this.disableHighlight=valueObj.disableHighlight;
+
+        //纹理
+        var sliceBackground =  texList[0].slices[0].imgSrc;
+        var sliceRotarySlit = texList[1].slices[0].imgSrc;
+        var slicecursor = texList[2].slices[0].imgSrc;
+        var sliceHighlight=texList[3].slices[0];
+
+        //背景层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(sliceBackground);
+        layers.push(curLayer);
+
+        //光带层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(sliceRotarySlit);
+        // curLayer.subLayers.roi = new ROISubLayer(1,0,0,0,0,0,0,0,0);
+        curLayer.subLayers.roi = new ROISubLayer(1);
+        layers.push(curLayer);
+
+        //光标层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(slicecursor);
+        layers.push(curLayer);
+
+        console.log("layers",layers)
+
+
+
+        //高亮层
+        // this.enableHighLight = !(valueObj.disableHighlight);
+        this.enableHighLight = true;
+        if(this.enableHighLight){
+            curLayer = new Layer(0,0,w,h,true);
+            if(sliceHighlight.imgSrc){
+                curLayer.subLayers.image = new TextureSubLayer(sliceHighlight.imgSrc);
+            }else{
+                var colorElems = parseColor(sliceHighlight.color);
+                curLayer.subLayers.color = new ColorSubLayer(colorElems);
+            }
+            layers.push(curLayer);
+            this.maxHighLightNum = 1;
+        }
+
+        this.subType = 'RotaryKnob';
+        Widget.call(this,x,y,w,h,layers);
+    };
+    RotaryKnob.prototype = Object.create(Widget.prototype);
+    RotaryKnob.prototype.constructor = RotaryKnob;
+
     var WidgetCommandParser = {};
     var scope = {};
     WidgetCommandParser.transCommand = function (ctx,command) {
@@ -1391,6 +1453,7 @@
     WidgetModel.models.DateTime = DateTime;
     WidgetModel.models.TexNum = TexNum;
     WidgetModel.models.Selector = Selector;
+    WidgetModel.models.RotaryKnob = RotaryKnob;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

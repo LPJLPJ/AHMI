@@ -269,6 +269,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 case Type.MyAnimation:
                 case Type.MyTexNum:
                 case Type.MySelector:
+                case Type.MyRotaryKnob:
                     $scope.showTagPanel = true;
                     break;
                 default:

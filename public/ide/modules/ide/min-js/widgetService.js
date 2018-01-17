@@ -1790,6 +1790,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }else {
                 this.widthBeforePadding=10*this.fontSize+9*this.spacing;
             }
+            this.setWidth(this.widthBeforePadding+2*this.paddingRatio*this.fontSize);
 
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
@@ -1855,7 +1856,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else {
                     self.widthBeforePadding=10*self.fontSize+9*self.spacing;
                 }
-                self.setWidth(self.widthBeforePadding+0.2*self.fontSize);
+                // self.setWidth(self.widthBeforePadding+0.2*self.fontSize);
+                self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -4233,5 +4235,144 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
     }
 
+    //myRotaryKnob
+    fabric.MyRotaryKnob = fabric.util.createClass(fabric.Object,{
+        type: Type.MyRotaryKnob,
+        initialize: function (level, options) {
+            var self = this;
 
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.hasRotatingPoint = false;
+
+            //宽高
+            this.width = level.info.width;
+            this.height = level.info.height;
+
+            //位置
+            this.left = level.info.left;
+            this.top = level.info.top;
+
+            //最大值
+            this.maxValue = level.info.maxValue;
+            //最小值
+            this.minValue = level.info.minValue;
+            //当前值
+            this.curValue = level.info.curValue;
+
+            //纹理
+            this.sliceBackground =  ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            this.sliceRotarySlit = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+            this.slicecursor = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+
+
+            //修改纹理
+            this.on('changeTex', function (arg) {
+                var _callback=arg.callback;
+
+                self.sliceBackground =  ResourceService.getResourceFromCache(arg.level.texList[0].slices[0].imgSrc);
+                self.sliceRotarySlit = ResourceService.getResourceFromCache(arg.level.texList[1].slices[0].imgSrc);
+                self.slicecursor = ResourceService.getResourceFromCache(arg.level.texList[2].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+            //修改控件属性
+            this.on('changeRotaryknobAttr', function (arg) {
+                var _callback=arg.callback;
+
+                if(arg.hasOwnProperty('curValue')){
+                    self.curValue=arg.curValue;
+                }
+                if(arg.hasOwnProperty('maxValue')){
+                    self.maxValue=arg.maxValue;
+                }
+                if(arg.hasOwnProperty('minValue')){
+                    self.minValue=arg.minValue;
+                }
+                // console.log("arg",arg)
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                //初始坐标
+                var x=-this.width/2;
+                var y=-this.height/2
+                //背景
+                if(this.sliceBackground){
+                    ctx.drawImage(this.sliceBackground,x,y,this.width,this.height);
+                }
+                //光带
+                var baseX=0;
+                var baseY=0;
+                var longR = Math.max(this.width,this.height)/2;
+                var alpha=(this.curValue-this.minValue)/(this.maxValue-this.minValue)*2;
+                ctx.save();
+                ctx.beginPath()
+                ctx.moveTo(baseX,baseY)
+                ctx.arc(baseX, baseY,longR,Math.PI * (0-0.5), Math.PI * (alpha-0.5));
+                ctx.closePath()
+                ctx.clip()
+                if(this.sliceRotarySlit){
+                    ctx.drawImage(this.sliceRotarySlit,x,y,this.width,this.height);
+                }
+                //光标
+                ctx.restore();
+                ctx.beginPath()
+                ctx.moveTo(x,y)
+                ctx.rect(x,y,this.width,this.height);
+                ctx.closePath()
+                ctx.clip()
+                ctx.rotate(alpha*Math.PI);
+                if(this.slicecursor){
+                    ctx.drawImage(this.slicecursor,x,y,this.width,this.height);
+                }
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();//此时的坐标在控件的正中，因为设置了originX: 'center', originY: 'center'
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染rotaryKnob出错');
+            }
+        }
+    });
+    fabric.MyRotaryKnob.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyRotaryKnob(level, option));
+    };
+    fabric.MyRotaryKnob.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MyRotaryKnob(level,object));
+    };
+    fabric.MyRotaryKnob.async = true;
 }]);

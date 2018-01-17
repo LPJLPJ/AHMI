@@ -791,6 +791,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultTexTime();
             }else if(_index===16){
                 newWidget = TemplateProvider.getDefaultSelector();
+            }else if(_index===17){
+                newWidget = TemplateProvider.getDefaultRotaryKnob();
             }
             else {
                 return;
@@ -1168,6 +1170,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     break;
                 case 'MySelector':
                     node.add(new fabric.MySelector(dataStructure,initiator));
+                    break;
+                case 'MyRotaryKnob':
+                    node.add(new fabric.MyRotaryKnob(dataStructure,initiator));
                     break;
                 default :
                     console.error('not match widget in preprocess!');

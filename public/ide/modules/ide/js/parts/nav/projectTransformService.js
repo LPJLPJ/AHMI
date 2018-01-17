@@ -576,6 +576,30 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     break;
+                case 'MyRotaryKnob':
+                    generalWidget = new WidgetModel.models['RotaryKnob'](x,y,w,h,info,targetWidget.texList);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'minValue,maxValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    });
+                    console.log('info',info)
+                    // generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[2] = w/2;//旋转中心x
+                    generalWidget.otherAttrs[3] = h/2;//旋转中心y
+                    generalWidget.otherAttrs[4] = 0;//isHited 此位置代表了是否在mouseDown状态
+                    generalWidget.otherAttrs[5] = 0 //lastArea
+                    generalWidget.otherAttrs[6] = 0 //over是否非法越过原点
+
+                    generalWidget.generalType = 'RotaryKnob';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+
+
+                    console.log('generalWidget',generalWidget)
+                    break;
                 case 'MySelector':
                     //纹理
                     var tempSlices=targetWidget.texList[1].slices;

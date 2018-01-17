@@ -272,6 +272,11 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
                 changeX:changeX,
                 changeY:changeY
             },
+            //旋钮new
+            rotaryKnob:{
+                highlightModeId:'0',
+                enterCurValue:enterRotaryKnobCurValue
+            },
             //滑块
             slideBlock:{
                 enterInitValue:enterInitValue,
@@ -2992,7 +2997,36 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             }
 
         }
+        function enterRotaryKnobCurValue(e){
+            if(e.keyCode==13){
+                var curValue = $scope.component.object.level.info.curValue;
+                var minValue = $scope.component.object.level.info.minValue;
+                var maxValue = $scope.component.object.level.info.maxValue;
+                if(curValue==initObject.level.info.curValue){
+                    return;
+                }
+                if (!_.isInteger(curValue)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if(curValue<minValue||curValue>maxValue||isNaN(curValue)){
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
 
+                var option={
+                    curValue:curValue,
+                };
+
+                ProjectService.ChangeAttributeOfRotaryKnob(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+
+
+            }
+        }
 
     function enterKnobSize(e){
         if (e.keyCode==13){
