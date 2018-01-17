@@ -1118,16 +1118,23 @@
 
     function ColorPicker(x,y,w,h,slices) {
         var layers = []
+        var d = 5
         //hue layer
-        var hLayer = new Layer(w*0.8+5,0,0.2*w-5,0.8*h)
+        var hLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.8*h)
         hLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc)
         //saturation volume layer
-        var svLayer = new Layer(0,0,0.8*w,0.8*h)
+        var svLayer = new Layer(d,d,0.8*w,0.8*h)
         svLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
         svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
         //preview layer
-        var pLayer = new Layer(0,0.8*w+5,w,0.2*h-5)
+        var pLayer = new Layer(d,0.8*w+d*2,w-d*2,0.2*h-d*3)
         pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
+
+        //backgroundLayer
+        var bgLayer = new Layer(0,0,w,h)
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255'))
+
+        layers.push(bgLayer)
         layers.push(hLayer)
         layers.push(svLayer)
         layers.push(pLayer)
