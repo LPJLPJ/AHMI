@@ -98,7 +98,6 @@
 
     WidgetCommands['ButtonGroup'] = {
         onInitialize:`
-            
         `,
         onMouseDown:`
             var(a,0)
@@ -148,45 +147,8 @@
         onMouseUp:`
         `,
         onTagChange:`
-            var(a,0)
-            var(b,0)
-            var(c,0)
-            var(tMaxHighLightNum,0)
-            set(tMaxHighLightNum,'this.maxHighLightNum')
-            var(tSingleButtonLayers,0)
-            if (tMaxHighLightNum>0) {
-              set(tSingleButtonLayers,3)
-            }else{
-              set(tSingleButtonLayers,2)
-            }
-            set(a,'this.layers.length')
-            set(c,a)
-            divide(c,tSingleButtonLayers)
-            while(a>0){
-                if (tMaxHighLightNum>0) {
-                  minus(a,1)
-                  minus(a,1)
-                  set('this.layers.a.hidden',0)
-                  minus(a,1)
-                  set('this.layers.a.hidden',1)
-                }else{
-                  minus(a,1)
-                  set('this.layers.a.hidden',0)
-                  minus(a,1)
-                  set('this.layers.a.hidden',1)
-                }
-                
-            }
-            getTag(a)
-            if(a>=0){
-                if(c>a){
-                    multiply(a,tSingleButtonLayers)
-                    set('this.layers.a.hidden',0)
-                    add(a,1)
-                    set('this.layers.a.hidden',1)
-                }
-            }
-
+          var(layslen,'this.layers.length')            //图层数目
+          var(tMaxHighLightNum,'this.maxHighLightNum') //高亮数目
         `,
         onKeyBoardLeft:`
           var(tMaxHighLightNum,0)
@@ -260,6 +222,7 @@
                 }
             }
           }
+          starthlanimation(0)
         `,
         onKeyBoardOK:`
           var(tHighLightNum,0)
@@ -275,10 +238,13 @@
               //reset 
               //set target tag
               setTag(tHighLightNum)
-              
             }
           }
-
+        `,
+        onHighlightFrame:`
+          var(tFactor,0)                            //动画进度
+          set(tFactor,'this.curHLAnimationFactor')
+          print('tFactor',tFactor)
         `
     };
 
@@ -2392,5 +2358,45 @@
 //
 // checkalarm(0)
 // set('this.oldValue',tTagValue)
+
+
+// var(a,0)
+// var(b,0)
+// var(c,0)
+// var(tMaxHighLightNum,0)
+// set(tMaxHighLightNum,'this.maxHighLightNum')
+// var(tSingleButtonLayers,0)
+// if (tMaxHighLightNum>0) {
+//     set(tSingleButtonLayers,3)
+// }else{
+//     set(tSingleButtonLayers,2)
+// }
+// set(a,'this.layers.length')
+// set(c,a)
+// divide(c,tSingleButtonLayers)
+// while(a>0){
+//     if (tMaxHighLightNum>0) {
+//         minus(a,1)
+//         minus(a,1)
+//         set('this.layers.a.hidden',0)
+//         minus(a,1)
+//         set('this.layers.a.hidden',1)
+//     }else{
+//         minus(a,1)
+//         set('this.layers.a.hidden',0)
+//         minus(a,1)
+//         set('this.layers.a.hidden',1)
+//     }
+//
+// }
+// getTag(a)
+// if(a>=0){
+//     if(c>a){
+//         multiply(a,tSingleButtonLayers)
+//         set('this.layers.a.hidden',0)
+//         add(a,1)
+//         set('this.layers.a.hidden',1)
+//     }
+// }
 
 

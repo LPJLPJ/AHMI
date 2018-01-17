@@ -463,10 +463,7 @@ module.exports =   React.createClass({
     },
     interpretGeneralCommand:function (widget,f) {
         // console.log(widget,f)
-
         this.processGeneralWidgetCommand(widget,f,0)
-
-
     },
     evalParam:function (widget,param) {
         var value = param.value;
@@ -561,8 +558,9 @@ module.exports =   React.createClass({
         }
     },
     processGeneralWidgetCommand:function (widget,f,index) {
-
-        var cmds = this.generalCommands[widget.generalType][f]
+        // console.log('widget hahaha',widget,f);
+        // console.log('generalCommands',this.generalCommands)
+        var cmds = this.generalCommands[widget.generalType][f];
 
         var totalLength = (cmds && cmds.length)||-1;
         if (index<0) {
@@ -574,9 +572,6 @@ module.exports =   React.createClass({
             // console.log(widget.generalType,'debugging',index)
             Debugger.pause(null,widget.scope,cmds,index)
         }
-        // if (index == 0){
-        //     console.log('start')
-        // }
         var step = 1;
         var curInst = cmds[index]
         // console.log(curInst)
@@ -593,7 +588,6 @@ module.exports =   React.createClass({
                 // console.log('set ',_.cloneDeep(curInst))
                 this.setByParam(widget,curInst[1],curInst[2])
                 // console.log(widget)
-
                 break;
             case 'get':
                 widget.scope[curInst[1]] = this.evalParam(widget,curInst[2])
@@ -605,7 +599,6 @@ module.exports =   React.createClass({
                 }else{
                     step = 1;
                 }
-
                 break;
             case 'gte':
                 if (this.evalParam(widget,curInst[1])>=this.evalParam(widget,curInst[2])) {
@@ -718,8 +711,26 @@ module.exports =   React.createClass({
                     widget.nowFrame = nowFrame||0
                     this.interpretGeneralCommand(widget,'onAnimationFrame')
                     nowFrame++;
-                }.bind(this),1000/30)
+                }.bind(this),1000/30);
 
+            break;
+            case 'starthlanimation':
+                console.log('starthlanimaton in simulator');
+                var nowHLFrame = 1;
+                var totalHLFrame = widget.totalHLFrame||0;
+                if (widget.curHLAnimationId) {
+                    clearInterval(widget.curHLAnimationId)
+                }
+                widget.curHLAnimationId = setInterval(function(){
+                    if (nowHLFrame>totalHLFrame) {
+                        clearInterval(widget.curHLAnimationId);
+                        widget.curHLAnimationId = null;
+                        return;
+                    }
+                    widget.curHLAnimationFactor = Math.round(nowHLFrame/totalHLFrame*1000);
+                    this.interpretGeneralCommand(widget,'onHighlightFrame');
+                    nowHLFrame++;
+                }.bind(this),33);
             break;
             case 'executeaction':
                 console.log('trigger action: ',curInst[1])
@@ -2936,12 +2947,11 @@ module.exports =   React.createClass({
 
 
             //newValue consider animation
-            var oldValue
+            var oldValue;
             if (widget.info.enableAnimation){
                 //using animation
 
                 var duration = (widget.transition && widget.transition.duration) || 0
-
 
                 //clear old animation
 
@@ -4769,7 +4779,6 @@ module.exports =   React.createClass({
         var _gridHeight = gridHeight;
         var vertGrids = Math.floor((width - _offsetX)/_gridWidth)+1;
         var horiGrids = Math.floor((height - _offsetY)/_gridHeight)+1;
-        //console.log('keke',width,height,gridWidth,gridHeight,_offsetX,_offsetY);
         offctx.save();
         offctx.translate(curX,curY);
         offctx.beginPath();

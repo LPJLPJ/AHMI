@@ -27,13 +27,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     WidgetCommands['ButtonGroup'] = {
-        onInitialize: '\n            \n        ',
+        onInitialize: '\n        ',
         onMouseDown: '\n            var(a,0)\n            var(b,0)\n            var(c,0)\n            set(c,\'this.layers.length\')\n            var(tMaxHighLightNum,0)\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(tSingleButtonLayers,0)\n            if (tMaxHighLightNum>0) {\n              set(tSingleButtonLayers,3)\n            }else{\n              set(tSingleButtonLayers,2)\n            }\n            minus(c,tSingleButtonLayers)\n            set(a,\'this.innerX\')\n            set(b,\'this.innerY\')\n            var(lx,0)\n            var(ly,0)\n            var(lw,0)\n            var(lh,0)\n            var(rx,0)\n            var(ry,0)\n            while(c>=0){\n                set(lx,\'this.layers.c.x\')\n                set(ly,\'this.layers.c.y\')\n                set(lw,\'this.layers.c.width\')\n                set(lh,\'this.layers.c.height\')\n                set(rx,lx)\n                set(ry,ly)\n                add(rx,lw)\n                add(ry,lh)\n                if(a>=lx){\n                    if(rx>a){\n                        if(b>=ly){\n                            if(ry>b){\n                                divide(c,tSingleButtonLayers)\n                                setTag(c)\n                                set(c,0)\n                            }\n                        }\n                    }\n                }\n                minus(c,tSingleButtonLayers)\n            }\n        ',
         onMouseUp: '\n        ',
-        onTagChange: '\n            var(a,0)\n            var(b,0)\n            var(c,0)\n            var(tMaxHighLightNum,0)\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(tSingleButtonLayers,0)\n            if (tMaxHighLightNum>0) {\n              set(tSingleButtonLayers,3)\n            }else{\n              set(tSingleButtonLayers,2)\n            }\n            set(a,\'this.layers.length\')\n            set(c,a)\n            divide(c,tSingleButtonLayers)\n            while(a>0){\n                if (tMaxHighLightNum>0) {\n                  minus(a,1)\n                  minus(a,1)\n                  set(\'this.layers.a.hidden\',0)\n                  minus(a,1)\n                  set(\'this.layers.a.hidden\',1)\n                }else{\n                  minus(a,1)\n                  set(\'this.layers.a.hidden\',0)\n                  minus(a,1)\n                  set(\'this.layers.a.hidden\',1)\n                }\n                \n            }\n            getTag(a)\n            if(a>=0){\n                if(c>a){\n                    multiply(a,tSingleButtonLayers)\n                    set(\'this.layers.a.hidden\',0)\n                    add(a,1)\n                    set(\'this.layers.a.hidden\',1)\n                }\n            }\n\n        ',
+        onTagChange: '\n          var(layslen,\'this.layers.length\')            //\u56FE\u5C42\u6570\u76EE\n          var(tMaxHighLightNum,\'this.maxHighLightNum\') //\u9AD8\u4EAE\u6570\u76EE\n        ',
         onKeyBoardLeft: '\n          var(tMaxHighLightNum,0)\n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          if (tMaxHighLightNum>0) {\n            var(tHighLightNum,0)\n            set(tHighLightNum,\'this.highLightNum\')\n\n            if (tHighLightNum>0) {\n              minus(tHighLightNum,1)\n              multiply(tHighLightNum,3)\n              add(tHighLightNum,2)\n\n              var(tTotalLayers,0)\n              set(tTotalLayers,\'this.layers.length\')\n              if (tHighLightNum < tTotalLayers) {\n                //valid\n                //reset \n                var(tCurLayer,0)\n                while(tMaxHighLightNum>0){\n                  minus(tMaxHighLightNum,1)\n                  set(tCurLayer,tMaxHighLightNum)\n                  multiply(tCurLayer,3)\n                  add(tCurLayer,2)\n                  set(\'this.layers.tCurLayer.hidden\',1)\n                }\n                //set target highlight \n                set(\'this.layers.tHighLightNum.hidden\',0)\n              }\n            }else{\n                if(tHighLightNum==0){\n                    add(tHighLightNum,2)\n                    set(\'this.layers.tHighLightNum.hidden\',1)\n                }\n            }\n          }\n        ',
-        onKeyBoardRight: '\n          var(tMaxHighLightNum,0)\n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          if (tMaxHighLightNum>0) {\n            var(tHighLightNum,0)\n            set(tHighLightNum,\'this.highLightNum\')\n            if (tHighLightNum>0) {\n              minus(tHighLightNum,1)\n              multiply(tHighLightNum,3)\n              add(tHighLightNum,2)\n\n              var(tTotalLayers,0)\n              set(tTotalLayers,\'this.layers.length\')\n              if (tHighLightNum  < tTotalLayers) {\n                //valid\n                //reset \n                var(tCurLayer,0)\n                while(tMaxHighLightNum>0){\n                  minus(tMaxHighLightNum,1)\n                  set(tCurLayer,tMaxHighLightNum)\n                  multiply(tCurLayer,3)\n                  add(tCurLayer,2)\n                  set(\'this.layers.tCurLayer.hidden\',1)\n                }\n                //set target highlight \n                set(\'this.layers.tHighLightNum.hidden\',0)\n              }\n            }else{\n                if(tHighLightNum==0){\n                    var(lastHighLight,0)\n                    set(lastHighLight,\'this.layers.length\')\n                    minus(lastHighLight,1)\n                    set(\'this.layers.lastHighLight.hidden\',1)\n                }\n            }\n          }\n        ',
-        onKeyBoardOK: '\n          var(tHighLightNum,0)\n          set(tHighLightNum,\'this.highLightNum\')\n          if (tHighLightNum>0) {\n            minus(tHighLightNum,1)\n            var(tTotalLayers,0)\n            set(tTotalLayers,\'this.layers.length\')\n\n            divide(tTotalLayers,3)\n            if (tHighLightNum<tTotalLayers) {\n              //valid\n              //reset \n              //set target tag\n              setTag(tHighLightNum)\n              \n            }\n          }\n\n        '
+        onKeyBoardRight: '\n          var(tMaxHighLightNum,0)\n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          if (tMaxHighLightNum>0) {\n            var(tHighLightNum,0)\n            set(tHighLightNum,\'this.highLightNum\')\n            if (tHighLightNum>0) {\n              minus(tHighLightNum,1)\n              multiply(tHighLightNum,3)\n              add(tHighLightNum,2)\n\n              var(tTotalLayers,0)\n              set(tTotalLayers,\'this.layers.length\')\n              if (tHighLightNum  < tTotalLayers) {\n                //valid\n                //reset \n                var(tCurLayer,0)\n                while(tMaxHighLightNum>0){\n                  minus(tMaxHighLightNum,1)\n                  set(tCurLayer,tMaxHighLightNum)\n                  multiply(tCurLayer,3)\n                  add(tCurLayer,2)\n                  set(\'this.layers.tCurLayer.hidden\',1)\n                }\n                //set target highlight \n                set(\'this.layers.tHighLightNum.hidden\',0)\n              }\n            }else{\n                if(tHighLightNum==0){\n                    var(lastHighLight,0)\n                    set(lastHighLight,\'this.layers.length\')\n                    minus(lastHighLight,1)\n                    set(\'this.layers.lastHighLight.hidden\',1)\n                }\n            }\n          }\n          starthlanimation(0)\n        ',
+        onKeyBoardOK: '\n          var(tHighLightNum,0)\n          set(tHighLightNum,\'this.highLightNum\')\n          if (tHighLightNum>0) {\n            minus(tHighLightNum,1)\n            var(tTotalLayers,0)\n            set(tTotalLayers,\'this.layers.length\')\n\n            divide(tTotalLayers,3)\n            if (tHighLightNum<tTotalLayers) {\n              //valid\n              //reset \n              //set target tag\n              setTag(tHighLightNum)\n            }\n          }\n        ',
+        onHighlightFrame: '\n          var(tFactor,0)                            //\u52A8\u753B\u8FDB\u5EA6\n          set(tFactor,\'this.curHLAnimationFactor\')\n          print(\'tFactor\',tFactor)\n        '
     };
 
     WidgetCommands['Dashboard'] = {
@@ -324,3 +325,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 // checkalarm(0)
 // set('this.oldValue',tTagValue)
+
+
+// var(a,0)
+// var(b,0)
+// var(c,0)
+// var(tMaxHighLightNum,0)
+// set(tMaxHighLightNum,'this.maxHighLightNum')
+// var(tSingleButtonLayers,0)
+// if (tMaxHighLightNum>0) {
+//     set(tSingleButtonLayers,3)
+// }else{
+//     set(tSingleButtonLayers,2)
+// }
+// set(a,'this.layers.length')
+// set(c,a)
+// divide(c,tSingleButtonLayers)
+// while(a>0){
+//     if (tMaxHighLightNum>0) {
+//         minus(a,1)
+//         minus(a,1)
+//         set('this.layers.a.hidden',0)
+//         minus(a,1)
+//         set('this.layers.a.hidden',1)
+//     }else{
+//         minus(a,1)
+//         set('this.layers.a.hidden',0)
+//         minus(a,1)
+//         set('this.layers.a.hidden',1)
+//     }
+//
+// }
+// getTag(a)
+// if(a>=0){
+//     if(c>a){
+//         multiply(a,tSingleButtonLayers)
+//         set('this.layers.a.hidden',0)
+//         add(a,1)
+//         set('this.layers.a.hidden',1)
+//     }
+// }
+// set(a,'this.layers.length')
+// minus(a,1)
+// set('this.layers.a.hidden',0)
+// var(thm,'this.highLightNum')
+// print('thm',thm)
