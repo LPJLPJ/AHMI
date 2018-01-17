@@ -59818,6 +59818,7 @@ function isInteractiveWidget(widget) {
         case 'MyTexTime':
         case 'MyInputKeyboard':
         case 'MySelector':
+        case 'MyRotaryKnob':
             is = true;
             break;
         default:
