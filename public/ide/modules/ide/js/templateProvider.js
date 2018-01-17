@@ -451,7 +451,7 @@ ideServices
                 width:Math.round(pageNode.getWidth()/2),
                 height:Math.round(pageNode.getHeight()/2),
                 scrollVEnabled:false,
-                scrollHEnabled:false
+                scrollHEnabled:false,
             };
             return {
                 info:info,

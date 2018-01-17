@@ -68,6 +68,10 @@
 .my-stage .subCanvas>canvas{
     position:absolute;left:0;top:0
 }
+#backgroundCanvas{
+    cursor: url("../img-web/pointer16.ico"),pointer;
+}
+
 
 
 /*遮盖，用于分享的工程，有人同时登录时展示*/

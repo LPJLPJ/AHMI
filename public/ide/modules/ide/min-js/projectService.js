@@ -4037,7 +4037,7 @@ ideServices
             //改变仪表盘的覆盖角度
             this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                arg={
+                var arg={
                     callback:_successCallback
                 };
                 if(_option.hasOwnProperty('minCoverAngle')){
@@ -4858,23 +4858,6 @@ ideServices
                 var currentSubLayer=getCurrentSubLayer();
                 var pageNode=CanvasService.getPageNode();
 
-                // if (currentSubLayer){
-                //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-                // }
-
-                //-
-                // pageNode.setBackgroundImage(null, function () {
-                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                //         if (currentPage.mode==1){
-                //             _leaveFromSubLayer(currentSubLayer,_successCallback);
-                //         }else {
-                //             _successCallback&&_successCallback();
-                //         }
-                //
-                //
-                //     });
-                //     //console.log('pageNode',pageNode);
-                // });
 
                 //+ 离开page之前，更新layer的backgroundImage
                 if(currentPage.mode===1){
@@ -5014,6 +4997,7 @@ ideServices
 
             /**
              * 进入sublayer后，背景为page的透视,在backgroundCanvas上画出page的透视。
+             * 私有函数
              * @param opts 参数列表
              */
             function _drawBackgroundCanvas(opts){
@@ -5043,7 +5027,7 @@ ideServices
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
                 backgroundCanvas.width = _subLayerW;
                 backgroundCanvas.height = _subLayerH;
-                var ctx=backgroundCanvas.getContext('2d');
+                var ctx = backgroundCanvas.getContext('2d');
 
                 //draw dash rect
                 ctx.strokeStyle = "#ff0000";
@@ -5269,7 +5253,7 @@ ideServices
                 }
                 return true;
 
-            }
+            };
 
             /**
              * resource内容有效性验证
