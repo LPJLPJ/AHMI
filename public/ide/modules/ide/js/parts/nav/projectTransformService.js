@@ -578,11 +578,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                         generalWidget[attr] = info[attr]||0
                     })
                     generalWidget.mode = Number(info.numModeId)
-                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    generalWidget.otherAttrs[0] = Number(info['numValue']);//初始化的数字值
                     generalWidget.otherAttrs[1] = Number(info['frontZeroMode']);//前导零模式
                     generalWidget.otherAttrs[2] = Number(info['symbolMode']);//符号模式
-                    generalWidget.otherAttrs[3] = info['decimalCount'];//小数位数
-                    generalWidget.otherAttrs[4] = info['numOfDigits'];//字符位数
+                    generalWidget.otherAttrs[3] = Number(info['decimalCount']);//小数位数
+                    generalWidget.otherAttrs[4] = Number(info['numOfDigits']);//字符位数
                     generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);//溢出显示
                     generalWidget.otherAttrs[6] = Number(info['characterW']);//字符宽度
                     generalWidget.otherAttrs[7] = Number(info['characterH']);//字符高度
@@ -605,6 +605,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
+                    console.log('generalWidget',generalWidget)
                     break;
                 case 'MyRotaryKnob':
                     generalWidget = new WidgetModel.models['RotaryKnob'](x,y,w,h,info,targetWidget.texList);
@@ -613,8 +614,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     });
-                    console.log('info',info)
-                    // generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
                     generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
                     generalWidget.otherAttrs[2] = w/2;//旋转中心x
                     generalWidget.otherAttrs[3] = h/2;//旋转中心y
@@ -626,9 +625,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-
-
-                    console.log('generalWidget',generalWidget)
                     break;
                 case 'MySelector':
                     //纹理
