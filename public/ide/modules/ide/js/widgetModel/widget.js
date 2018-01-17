@@ -894,57 +894,31 @@
 
     //TexNum
     function TexNum(x,y,w,h,valueObj,slices){
-        var layers = [];
+        var layers = [];                           //图层数组
+        var layerCount=valueObj.numOfDigits;       //数字位数
+        var symbol=valueObj.symbolMode;            //符号模式
+        var decimalCount = valueObj.decimalCount;  //小数位
+        var mH = valueObj.characterH;              //字符宽度
+        var mW = valueObj.characterW;              //字符宽度
 
-        //符号模式
-        var symbol,symbolLayer;
-        if (valueObj.symbolMode==0) {
-            symbol = false;
-        }else{
-            symbol = true;
+        //生成textureList
+        var textureList=[];
+        for(var i=0;i<slices.length;i++){
+            textureList.push(slices[i].imgSrc)
         }
-        //字符宽度
-        var mH = valueObj.characterH;
-        //字符宽度
-        var mW = valueObj.characterW;
-        if (!mW) {
-            return;
-        }
-        //小数位
-        var decimalCount = valueObj.decimalCount;
-        //字符位数
-        var numOfDigits = valueObj.numOfDigits;
-        //当前起始x坐标
-        var curX = 0;
-        //符号
 
-            symbolLayer = new Layer(0,0,mW,mH,true);
-            symbolLayer.subLayers.image = new TextureSubLayer(slices[12].imgSrc);
-            layers.push(symbolLayer);
-            curX +=mW;
+        //字符总数
+        if (symbol==1) {layerCount++;}
+        if(decimalCount>0){layerCount++;}
 
-        //小数点
-
-            var curDotLayer = new Layer(curX,0,0.5*mW,mH,true);
-            curDotLayer.subLayers.image = new TextureSubLayer(slices[10].imgSrc);
-            layers.push(curDotLayer);
-            curX = curX +0.5*mW;
-
-        //数字
+        //添加图层
         var curDigitLayer;
-        for (var i=0;i<(numOfDigits);i++){
-            //add decimal digits
-            for(var j=0;j<=9;j++){
-                curDigitLayer = new Layer(curX,0,mW,mH,true);
-                curDigitLayer.subLayers.image = new TextureSubLayer(slices[j].imgSrc);
+        for (i=0;i<layerCount;i++){
+                curDigitLayer = new Layer(0,0,mW,mH,true);
+                curDigitLayer.subLayers.image = new TextureSubLayer(textureList);
                 layers.push(curDigitLayer);
-                // console.log('layers',j,layers)
-            }
-            curX = curX+mW;
-
         }
 
-        // console.log('layers',layers)
         this.subType = 'TexNum';
         Widget.call(this,x,y,w,h,layers);
     };

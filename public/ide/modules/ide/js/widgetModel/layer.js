@@ -103,6 +103,8 @@
     FontSubLayer.prototype.constructor = FontSubLayer;
 
 //img
+    //参数textureList是包含所有图片的数组时，texture=imgSrc=默认的图片的index值
+    //参数textureList是图片时，将其放入textureList数组，texture=0=唯一的一张图片的index值
     function TextureSubLayer(textureList,imgSrc,type) {
         SubLayer.call(this)
         if(typeof textureList !== 'object'){
