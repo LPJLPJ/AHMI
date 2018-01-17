@@ -28,13 +28,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     WidgetCommands['ButtonGroup'] = {
         onInitialize: '\n        ',
-        onMouseDown: '\n            var(a,0)\n            var(b,0)\n            var(c,0)\n            set(c,\'this.layers.length\')\n            var(tMaxHighLightNum,0)\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(tSingleButtonLayers,0)\n            if (tMaxHighLightNum>0) {\n              set(tSingleButtonLayers,3)\n            }else{\n              set(tSingleButtonLayers,2)\n            }\n            minus(c,tSingleButtonLayers)\n            set(a,\'this.innerX\')\n            set(b,\'this.innerY\')\n            var(lx,0)\n            var(ly,0)\n            var(lw,0)\n            var(lh,0)\n            var(rx,0)\n            var(ry,0)\n            while(c>=0){\n                set(lx,\'this.layers.c.x\')\n                set(ly,\'this.layers.c.y\')\n                set(lw,\'this.layers.c.width\')\n                set(lh,\'this.layers.c.height\')\n                set(rx,lx)\n                set(ry,ly)\n                add(rx,lw)\n                add(ry,lh)\n                if(a>=lx){\n                    if(rx>a){\n                        if(b>=ly){\n                            if(ry>b){\n                                divide(c,tSingleButtonLayers)\n                                setTag(c)\n                                set(c,0)\n                            }\n                        }\n                    }\n                }\n                minus(c,tSingleButtonLayers)\n            }\n        ',
+        onMouseDown: '\n            var(a,0)\n            var(b,0)\n            var(c,0)\n            set(c,\'this.layers.length\')\n            var(tMaxHighLightNum,0)\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            set(tMaxHighLightNum,0)   //add by lx \u4E0D\u77E5\u9053\u4E3A\u4EC0\u4E48\u4EE5\u524D\u4F1A\u7528\u5230\uFF0C\u6240\u4EE5\u7F6E0\n            var(tSingleButtonLayers,0)\n            if (tMaxHighLightNum>0) {\n              set(tSingleButtonLayers,3)\n            }else{\n              set(tSingleButtonLayers,2)\n            }\n            minus(c,tSingleButtonLayers)\n            set(a,\'this.innerX\')\n            set(b,\'this.innerY\')\n            var(lx,0)\n            var(ly,0)\n            var(lw,0)\n            var(lh,0)\n            var(rx,0)\n            var(ry,0)\n            while(c>=0){\n                set(lx,\'this.layers.c.x\')\n                set(ly,\'this.layers.c.y\')\n                set(lw,\'this.layers.c.width\')\n                set(lh,\'this.layers.c.height\')\n                set(rx,lx)\n                set(ry,ly)\n                add(rx,lw)\n                add(ry,lh)\n                if(a>=lx){\n                    if(rx>a){\n                        if(b>=ly){\n                            if(ry>b){\n                                divide(c,tSingleButtonLayers)\n                                add(c,1)\n                                setTag(c)\n                                set(c,0)\n                            }\n                        }\n                    }\n                }\n                minus(c,tSingleButtonLayers)\n            }\n        ',
         onMouseUp: '\n        ',
-        onTagChange: '\n          var(layslen,\'this.layers.length\')            //\u56FE\u5C42\u6570\u76EE\n          var(tMaxHighLightNum,\'this.maxHighLightNum\') //\u9AD8\u4EAE\u6570\u76EE\n        ',
-        onKeyBoardLeft: '\n          var(tMaxHighLightNum,0)\n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          if (tMaxHighLightNum>0) {\n            var(tHighLightNum,0)\n            set(tHighLightNum,\'this.highLightNum\')\n\n            if (tHighLightNum>0) {\n              minus(tHighLightNum,1)\n              multiply(tHighLightNum,3)\n              add(tHighLightNum,2)\n\n              var(tTotalLayers,0)\n              set(tTotalLayers,\'this.layers.length\')\n              if (tHighLightNum < tTotalLayers) {\n                //valid\n                //reset \n                var(tCurLayer,0)\n                while(tMaxHighLightNum>0){\n                  minus(tMaxHighLightNum,1)\n                  set(tCurLayer,tMaxHighLightNum)\n                  multiply(tCurLayer,3)\n                  add(tCurLayer,2)\n                  set(\'this.layers.tCurLayer.hidden\',1)\n                }\n                //set target highlight \n                set(\'this.layers.tHighLightNum.hidden\',0)\n              }\n            }else{\n                if(tHighLightNum==0){\n                    add(tHighLightNum,2)\n                    set(\'this.layers.tHighLightNum.hidden\',1)\n                }\n            }\n          }\n        ',
-        onKeyBoardRight: '\n          var(tMaxHighLightNum,0)\n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          if (tMaxHighLightNum>0) {\n            var(tHighLightNum,0)\n            set(tHighLightNum,\'this.highLightNum\')\n            if (tHighLightNum>0) {\n              minus(tHighLightNum,1)\n              multiply(tHighLightNum,3)\n              add(tHighLightNum,2)\n\n              var(tTotalLayers,0)\n              set(tTotalLayers,\'this.layers.length\')\n              if (tHighLightNum  < tTotalLayers) {\n                //valid\n                //reset \n                var(tCurLayer,0)\n                while(tMaxHighLightNum>0){\n                  minus(tMaxHighLightNum,1)\n                  set(tCurLayer,tMaxHighLightNum)\n                  multiply(tCurLayer,3)\n                  add(tCurLayer,2)\n                  set(\'this.layers.tCurLayer.hidden\',1)\n                }\n                //set target highlight \n                set(\'this.layers.tHighLightNum.hidden\',0)\n              }\n            }else{\n                if(tHighLightNum==0){\n                    var(lastHighLight,0)\n                    set(lastHighLight,\'this.layers.length\')\n                    minus(lastHighLight,1)\n                    set(\'this.layers.lastHighLight.hidden\',1)\n                }\n            }\n          }\n          starthlanimation(0)\n        ',
+        onTagChange: '\n          var(laylen,0)                                //\u56FE\u5C42\u6570\u76EE\n          var(spacing,0)                               //\u6309\u94AE\u95F4\u8DDD\n          var(btnCnt,0)                                //\u6309\u94AE\u4E2A\u6570\n          var(tMaxHighLightNum,0)                      //\u9AD8\u4EAE\u6570\u76EE\n          var(highlightIndex,0)                        //\u9AD8\u4EAE\u5C42\u5750\u6807\n          var(tTag,0)                                  //\u8BB0\u5F55tag\u503C\n          var(t1,0)                                    //\u4E34\u65F6\u53D8\u91CF1\n          var(t2,0)                                    //\u4E34\u65F6\u53D8\u91CF2\n          \n          //set value\n          set(laylen,\'this.layers.length\')\n          set(spacing,\'this.otherAttrs.0\')\n          set(btnCnt,\'this.otherAttrs.1\')             \n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          getTag(tTag) \n          \n          if(tMaxHighLightNum>0){\n            minus(laylen,1)\n            set(highlightIndex,laylen)\n          }\n          \n          //\u6E05\u7A7A\u663E\u793A\n          while(t1<laylen){\n            set(\'this.layers.t1.hidden\',0)\n            add(t1,1)\n            set(\'this.layers.t1.hidden\',1)\n            add(t1,1)\n          }\n          \n          //\u663E\u793A\u5F53\u524D\u503C\n          if(tTag>0){\n            if(tTag<laylen){\n              multiply(tTag,2)\n              minus(tTag,1)\n              set(\'this.layers.tTag.hidden\',0)\n            }\n          }\n         \n        ',
+        onKeyBoardLeft: '\n           \n        ',
+        onKeyBoardRight: '\n          var(arrange,0)\n          var(laylen,0)                                //\u56FE\u5C42\u6570\u76EE\n          var(spacing,0)                               //\u6309\u94AE\u95F4\u8DDD\n          var(btnCnt,0)                                //\u6309\u94AE\u4E2A\u6570\n          var(tMaxHighLightNum,0)                      //\u9AD8\u4EAE\u6570\u76EE\n          var(highlightIndex,0)                        //\u9AD8\u4EAE\u5C42\u5750\u6807\n          var(startValue,0)                            //\u5F53\u524D\u4F4D\u7F6E,\u5373\u52A8\u753B\u8D77\u59CB\u4F4D\u7F6E\n          var(stopValue,0)                             //\u9AD8\u4EAE\u4F4D\u7F6E\u504F\u79FB\u91CF,\u5373\u52A8\u753B\u7EC8\u6B62\u4F4D\u7F6E\n          var(t1,0)                                    //\u4E34\u65F6\u53D8\u91CF\n          \n          //set value\n          set(arrange,\'this.arrange\')\n          set(laylen,\'this.layers.length\')\n          set(spacing,\'this.otherAttrs.0\')\n          set(btnCnt,\'this.otherAttrs.1\')             \n          set(tMaxHighLightNum,\'this.maxHighLightNum\')\n          \n          if(tMaxHighLightNum>0){\n            minus(laylen,1)\n            set(highlightIndex,laylen)\n            var(tHighLightNum,0)\n            set(tHighLightNum,\'this.highLightNum\')\n            \n            if(tHighLightNum>0){\n                if(arrange<=0){\n                  //\u6C34\u5E73\u65B9\u5411\n                  //stopValue = (tHightLightNum-1)*(width+spacing)\n                  set(stopValue,tHighLightNum)\n                  minus(stopValue,1)\n                  set(t1,\'this.layers.0.width\')\n                  add(t1,\'this.otherAttrs.0\')\n                  multiply(stopValue,t1)\n                  \n                  //\u8BBE\u7F6E\u52A8\u753B\u8D77\u59CB\u4E0E\u7EC8\u6B62\u503C\n                  set(t1,\'this.layers.highlightIndex.x\')\n                  set(\'this.otherAttrs.2\',t1)\n                  set(\'this.otherAttrs.3\',stopValue)\n                  print(\'this.otherAttrs.2\',\'this.otherAttrs.3\')\n                  \n                  //\u663E\u793A\u9AD8\u91CF\u5C42\n                  set(\'this.layers.highlightIndex.hidden\',0)\n                }else{\n                  //\u7AD6\u76F4\u65B9\u5411\n                  print(\'\u7AD6\u76F4\',\'ver\')\n                }\n                starthlanimation(0)\n                \n            }else{\n                set(\'this.layers.highlightIndex.hidden\',1)\n            } \n          }\n        ',
         onKeyBoardOK: '\n          var(tHighLightNum,0)\n          set(tHighLightNum,\'this.highLightNum\')\n          if (tHighLightNum>0) {\n            minus(tHighLightNum,1)\n            var(tTotalLayers,0)\n            set(tTotalLayers,\'this.layers.length\')\n\n            divide(tTotalLayers,3)\n            if (tHighLightNum<tTotalLayers) {\n              //valid\n              //reset \n              //set target tag\n              setTag(tHighLightNum)\n            }\n          }\n        ',
-        onHighlightFrame: '\n          var(tFactor,0)                            //\u52A8\u753B\u8FDB\u5EA6\n          set(tFactor,\'this.curHLAnimationFactor\')\n          print(\'tFactor\',tFactor)\n        '
+        onHighlightFrame: '\n          var(highlightIndex,0)                     //\u9AD8\u4EAE\u5C42\u5750\u6807\n          var(tFactor,0)                            //\u52A8\u753B\u8FDB\u5EA6\n          var(startValue,0)                         //\u8D77\u59CB\u503C\n          var(stopValue,0)                          //\u7ED3\u675F\u503C\n          var(offset,0)                             //\u504F\u79FB\u503C\n          \n          \n          set(highlightIndex,\'this.layers.length\')\n          minus(highlightIndex,1)\n          set(tFactor,\'this.curHLAnimationFactor\')\n          set(startValue,\'this.otherAttrs.2\')\n          set(stopValue,\'this.otherAttrs.3\')\n          set(offset,stopValue)\n          minus(offset,startValue)\n          multiply(offset,tFactor)\n          divide(offset,1000)\n          add(offset,startValue)\n          // print(offset,\'offset\')\n          \n          set(\'this.layers.highlightIndex.x\',offset)\n          \n        '
     };
 
     WidgetCommands['Dashboard'] = {
@@ -141,16 +141,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * set('this.layers.1.hidden',1)
  */
 
-// mod(ttTag,16)
-// print(ttTag,'ttTag')
-// //while(xr>0){
-// //    multiply(addNum,16)
-// //    minus(xr,1)
-// //}
-// add(tTag,addNum)
-
-
-// //old code
+// //old code num on tagchange
 // var(tTagValue,0)
 // getTag(tTagValue)
 // // print(tTagValue,'tTagValue')
@@ -327,6 +318,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 // set('this.oldValue',tTagValue)
 
 
+//buttongroup ontagchange
 // var(a,0)
 // var(b,0)
 // var(c,0)
@@ -365,8 +357,77 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //         set('this.layers.a.hidden',1)
 //     }
 // }
-// set(a,'this.layers.length')
-// minus(a,1)
-// set('this.layers.a.hidden',0)
-// var(thm,'this.highLightNum')
-// print('thm',thm)
+
+
+//button group onkeyboardleft
+// var(tMaxHighLightNum,0)
+// set(tMaxHighLightNum,'this.maxHighLightNum')
+// if (tMaxHighLightNum>0) {
+//     var(tHighLightNum,0)
+//     set(tHighLightNum,'this.highLightNum')
+//
+//     if (tHighLightNum>0) {
+//         minus(tHighLightNum,1)
+//         multiply(tHighLightNum,3)
+//         add(tHighLightNum,2)
+//
+//         var(tTotalLayers,0)
+//         set(tTotalLayers,'this.layers.length')
+//         if (tHighLightNum < tTotalLayers) {
+//             //valid
+//             //reset
+//             var(tCurLayer,0)
+//             while(tMaxHighLightNum>0){
+//                 minus(tMaxHighLightNum,1)
+//                 set(tCurLayer,tMaxHighLightNum)
+//                 multiply(tCurLayer,3)
+//                 add(tCurLayer,2)
+//                 set('this.layers.tCurLayer.hidden',1)
+//             }
+//             //set target highlight
+//             set('this.layers.tHighLightNum.hidden',0)
+//         }
+//     }else{
+//         if(tHighLightNum==0){
+//             add(tHighLightNum,2)
+//             set('this.layers.tHighLightNum.hidden',1)
+//         }
+//     }
+// }
+
+//buttongroup onkeyboard right
+// var(tMaxHighLightNum,0)
+// set(tMaxHighLightNum,'this.maxHighLightNum')
+// if (tMaxHighLightNum>0) {
+//     var(tHighLightNum,0)
+//     set(tHighLightNum,'this.highLightNum')
+//     if (tHighLightNum>0) {
+//         minus(tHighLightNum,1)
+//         multiply(tHighLightNum,3)
+//         add(tHighLightNum,2)
+//
+//         var(tTotalLayers,0)
+//         set(tTotalLayers,'this.layers.length')
+//         if (tHighLightNum  < tTotalLayers) {
+//             //valid
+//             //reset
+//             var(tCurLayer,0)
+//             while(tMaxHighLightNum>0){
+//                 minus(tMaxHighLightNum,1)
+//                 set(tCurLayer,tMaxHighLightNum)
+//                 multiply(tCurLayer,3)
+//                 add(tCurLayer,2)
+//                 set('this.layers.tCurLayer.hidden',1)
+//             }
+//             //set target highlight
+//             set('this.layers.tHighLightNum.hidden',0)
+//         }
+//     }else{
+//         if(tHighLightNum==0){
+//             var(lastHighLight,0)
+//             set(lastHighLight,'this.layers.length')
+//             minus(lastHighLight,1)
+//             set('this.layers.lastHighLight.hidden',1)
+//         }
+//     }
+// }

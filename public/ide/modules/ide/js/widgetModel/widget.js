@@ -239,6 +239,7 @@
         var sHeight = 0;
         var colorElems;
         var layers = [];
+        this.arrange = align;
         if (align==0) {
             //hori
             sWidth = (w-(num-1)*space)/num;

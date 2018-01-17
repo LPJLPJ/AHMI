@@ -249,10 +249,13 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
 
-                    generalWidget['totalHLFrame']=highLight?(500/1000 * fps):undefined;
+                    generalWidget['totalHLFrame']=highLight?(200/1000 * fps):undefined;
 
                     //other attrs
-                    generalWidget.otherAttrs[0] = info.interval;
+                    generalWidget.otherAttrs[0] = info.interval; //间距
+                    generalWidget.otherAttrs[1] = info.count;    //按钮个数
+                    generalWidget.otherAttrs[2] = 1;             //高亮动画起始值
+                    generalWidget.otherAttrs[3] = 1;             //高亮动画终止值
                     console.log('buttongroup',generalWidget);
                 break;
                 case 'MyDashboard':
