@@ -18,7 +18,7 @@
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
-
+    <!--lib-->
     <script src="../../public/ide/lib/angular.min.js"></script>
     <script src="../../public/ide/lib/angular-animate.min.js"></script>
     <script src="../../public/ide/lib/fabric/fabric.min.js"></script>
@@ -34,7 +34,7 @@
     <script src="../../public/libs/uuidv1.js"></script>
     <script src="../../public/ide/lib/socket.io/socket.io.slim.js"></script>
     <script src="../../public/ide/lib/Font.min.js"></script>
-    <!--<script src="../../public/ide/lib/sortable.js"></script>-->
+    <script src="../../public/ide/lib/sxrender/SXRender.min.js"></script>
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
@@ -86,7 +86,6 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/operationService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetService.js"></script>
-    <!--<script src="../../public/ide/modules/ide/min-js/closeBrowser.js"></script>-->
     <script src="../../public/ide/modules/ide/min-js/parts/font/fontMesureService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/font/fontGeneratorService.js"></script>
 
@@ -119,8 +118,6 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/texCtl.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>
-    <!--<script src="../../public/ide/modules/ide/js/parts/attr/SortableController.js"></script>-->
-
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
     <!--directive-->
 
@@ -560,14 +557,32 @@
                 <tr>
                     <td align="center" valign="middle">
                         <canvas id="c" context-menu="component.menuOptions.contextMenu()"></canvas>
-
                     </td>
                 </tr>
             </table>
         </div>
 
-        <div class="my-stage" ng-show="!status.editPage">
+        <div ng-show="component.preview.showPreviewBtn" class="preview-btn">
+            <button ng-click="component.preview.showPreviewModal()">
+                <span class="iconfont">&#xe65c;</span>
+            </button>
+        </div>
 
+        <!--预览模态框模板-->
+        <script type="text/ng-template" id="previewPanelModal.html">
+            <div class="modal-header">
+                <h3 class="modal-title">预览</h3>
+            </div>
+            <div class="modal-body preview-modal-body" ng-init="init()">
+                <canvas id="previewCanvas" width="500" height="500" >
+                </canvas>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
+            </div>
+        </script>
+
+        <div class="my-stage" ng-show="!status.editPage">
             <table width="100%" height="100%">
                 <tr>
                     <td align="center" valign="middle">
@@ -579,20 +594,7 @@
                 </tr>
             </table>
 
-
         </div>
-        <!--<div class="my-scale-bar">-->
-            <!--<div class="my-scale-op" style="display: none">-->
-                <!--&lt;!&ndash;显示百分比&ndash;&gt;-->
-                <!--&lt;!&ndash;<div style="width: 40px">{{component.scaleSlider.scale*100}}%</div>&ndash;&gt;-->
-                <!--<div class="my-scale-slider" id="scale-slider">-->
-                    <!--<div class="my-slider-gauge" id="scale-gauge"></div>-->
-                <!--</div>-->
-                <!--<div class="iconfont" ng-click="component.scaleSlider.reSetScale()" style="cursor: pointer">-->
-                    <!--&#xe603;</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
 
     </div>
     <div class="my-attribute" ng-controller="AttrCtrl"
@@ -2466,7 +2468,80 @@
                             <span class="my-attr-title">高亮</span>
                             <select class="form-control my-attr-number-input form-control"
                                     ng-model="component.object.highlightModeId"
-                                    ng-change="component.selector.enterHighlightMode($event)">
+                                    ng-change="component.enterHighlightMode($event)">
+                                <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-show="component.object.type=='MyRotaryKnob'">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">名称</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="text"
+                                   ng-model="component.object.level.name"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterName($event)">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.left"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">最小值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.minValue"
+                                   ng-keypress="component.enterMinValue($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">最大值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.maxValue"
+                                   ng-keypress="component.enterMaxValue($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">当前值</span>
+                            <input class="my-attr-number-input form-control"
+                                   ng-model="component.object.level.info.curValue"
+                                   ng-keypress="component.rotaryKnob.enterCurValue($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">高亮</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.object.highlightModeId"
+                                    ng-change="component.enterHighlightMode($event)">
                                 <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>

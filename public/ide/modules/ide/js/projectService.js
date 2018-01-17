@@ -1069,9 +1069,16 @@ ideServices
                         syncSublayer(fabWidget);
                     },initiator);
                 }else if(_newWidget.type===Type.MySelector){
-                    console.log("_newWidget",_newWidget)
-                    console.log("fabric",fabric)
                         fabric.MySelector.fromLevel(_newWidget,function (fabWidget) {
+                            _self.currentFabLayerIdList = [fabWidget.id];
+                            subLayerNode.add(fabWidget);
+                            subLayerNode.renderAll.bind(subLayerNode)();
+                            _newWidget.info.width=fabWidget.getWidth();
+                            _newWidget.info.height=fabWidget.getHeight();
+                            syncSublayer(fabWidget);
+                        },initiator);
+                }else if(_newWidget.type===Type.MyRotaryKnob){
+                        fabric.MyRotaryKnob.fromLevel(_newWidget,function (fabWidget) {
                             _self.currentFabLayerIdList = [fabWidget.id];
                             subLayerNode.add(fabWidget);
                             subLayerNode.renderAll.bind(subLayerNode)();
@@ -3751,6 +3758,27 @@ ideServices
                 selectObj.target.fire('changeFontStyle',arg);
             };
 
+            //改变旋钮new控件的属性值 added by LH 2018/01/11
+            this.ChangeAttributeOfRotaryKnob=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+
+                if(_option.hasOwnProperty('curValue')){
+                    selectObj.level.info.curValue= _option.curValue;
+                    arg.curValue=_option.curValue;
+                }
+                selectObj.target.fire('changeRotaryknobAttr',arg);
+            };
+
             //改变时间控件的属性值，added by LH 2017/12/13
             this.ChangeAttributeOfDateTime=function(_option,_successCallback){
                 var currentOperate = SaveCurrentOperate();
@@ -4009,7 +4037,7 @@ ideServices
             //改变仪表盘的覆盖角度
             this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                arg={
+                var arg={
                     callback:_successCallback
                 };
                 if(_option.hasOwnProperty('minCoverAngle')){
@@ -4298,6 +4326,13 @@ ideServices
                         };
                         selectObj.target.fire('changeInitValue',arg);
                     }
+                    if(selectObj.type==Type.MyRotaryKnob){
+                        arg={
+                            maxValue:_option.maxValue,
+                            callback:_successCallback
+                        };
+                        selectObj.target.fire('changeRotaryknobAttr',arg);
+                    }
 
                 }
                 if (_option.hasOwnProperty('minValue')){
@@ -4332,6 +4367,13 @@ ideServices
                             callback:_successCallback
                         }
                         selectObj.target.fire('changeInitValue',arg);
+                    }
+                    if(selectObj.type==Type.MyRotaryKnob){
+                        arg={
+                            minValue:_option.minValue,
+                            callback:_successCallback
+                        }
+                        selectObj.target.fire('changeRotaryknobAttr',arg);
                     }
                 }
                 if(_option.hasOwnProperty('minAngle')){
@@ -4816,23 +4858,6 @@ ideServices
                 var currentSubLayer=getCurrentSubLayer();
                 var pageNode=CanvasService.getPageNode();
 
-                // if (currentSubLayer){
-                //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-                // }
-
-                //-
-                // pageNode.setBackgroundImage(null, function () {
-                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                //         if (currentPage.mode==1){
-                //             _leaveFromSubLayer(currentSubLayer,_successCallback);
-                //         }else {
-                //             _successCallback&&_successCallback();
-                //         }
-                //
-                //
-                //     });
-                //     //console.log('pageNode',pageNode);
-                // });
 
                 //+ 离开page之前，更新layer的backgroundImage
                 if(currentPage.mode===1){
@@ -4972,6 +4997,7 @@ ideServices
 
             /**
              * 进入sublayer后，背景为page的透视,在backgroundCanvas上画出page的透视。
+             * 私有函数
              * @param opts 参数列表
              */
             function _drawBackgroundCanvas(opts){
@@ -5001,7 +5027,7 @@ ideServices
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
                 backgroundCanvas.width = _subLayerW;
                 backgroundCanvas.height = _subLayerH;
-                var ctx=backgroundCanvas.getContext('2d');
+                var ctx = backgroundCanvas.getContext('2d');
 
                 //draw dash rect
                 ctx.strokeStyle = "#ff0000";
@@ -5188,6 +5214,9 @@ ideServices
                     case 'MySelector':
                         node.add(new fabric.MySelector(dataStructure,initiator));
                         break;
+                    case 'MyRotaryKnob':
+                        node.add(new fabric.MyRotaryKnob(dataStructure,initiator));
+                        break;
                     default :
                         console.error('not match widget in _addFabricObjInCanvasNode!');
                         break;
@@ -5224,7 +5253,7 @@ ideServices
                 }
                 return true;
 
-            }
+            };
 
             /**
              * resource内容有效性验证

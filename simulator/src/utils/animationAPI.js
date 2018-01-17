@@ -238,7 +238,7 @@
 
     Animation.prototype.stop = function () {
         if (this.state.stateType !== stateTypes.idle) {
-            this.state.stateType = stateTypes.idle
+            this.state.stateType = stateTypes.idle;
             if (this.timerId) {
                 clearInterval(this.timerId)
             }

@@ -1948,6 +1948,475 @@
             }
         `
     };
+    WidgetCommands['RotaryKnob']={
+        onInitialize:`
+            var(offset,0)
+            set(offset,0)
+            var(len,0)
+            set(len,'this.layers.length')
+            var(tMaxHighLightNum,0)
+            set(tMaxHighLightNum,'this.maxHighLightNum')
+            if(tMaxHighLightNum>0){
+                minus(len,1)                                       //高亮层初始化时不显示
+            }
+            while(offset<len){
+                set('this.layers.offset.hidden',0)
+                add(offset,1)
+            }
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+            var(curValue,0)                                        //tag值
+            getTag(curValue)
+            
+            var(tMinValue,0)                                       //最小值
+            set(tMinValue,'this.minValue')
+            
+            var(tMaxValue,0)                                       //最大值
+            set(tMaxValue,'this.maxValue')
+            
+            if(curValue>= tMinValue){
+                if(tMaxValue>= curValue){
+                    var(tStartX,0)                                  //控件左上角坐标x
+                    set(tStartX,'this.layers.1.x')   
+                             
+                    var(tStartY,0)                                  //控件左上角坐标y
+                    set(tStartY,'this.layers.1.y')            
+                    
+                    var(tWidth,0)                                   //控件宽度
+                    set(tWidth,'this.layers.1.width')            
+                    
+                    var(tHeight,0)                                  //控件高度
+                    set(tHeight,'this.layers.1.height')  
+                    
+                    var(tEndX,0)                                    //控件右下角坐标x
+                    set(tEndX,tStartX)
+                    add(tEndX,tWidth)           
+                    
+                    var(tEndY,0)                                    //控件右下角坐标y
+                    set(tEndY,tStartY)
+                    add(tEndY,tHeight)
+                    
+                    var(tInnerX,0)                                  //鼠标坐标x
+                    set(tInnerX,'this.innerX')
+                    
+                    var(tInnerY,0)                                  //鼠标坐标y
+                    set(tInnerY,'this.innerY')
+                    
+                    var(tRotateX,0)                                 //旋转中心坐标X
+                    set(tRotateX,'this.otherAttrs.2')
+                    
+                    var(tRotateY,0)                                 //旋转中心坐标Y
+                    set(tRotateY,'this.otherAttrs.3')
+                    
+                    var(tX,0)                                       //鼠标相对于旋转中心坐标X
+                    set(tX,tInnerX)
+                    minus(tX,tRotateX)
+                    
+                    var(tY,0)                                       //鼠标相对于旋转中心坐标Y
+                    set(tY,tRotateY)
+                    minus(tY,tInnerY)
+                    
+                    var(temp1,0)                                    //临时变量
+                    var(temp2,0)
+                    
+                                                                    //鼠标点与旋转中心距离的平方
+                    set(temp1,tX)
+                    multiply(temp1,tX)
+                    set(temp2,tY)
+                    multiply(temp2,tY)
+                    add(temp1,temp2)
+                    
+                                                                    //半径
+                    if(tWidth>tHeight){
+                        set(temp2,tWidth)      
+                    }else{
+                        set(temp2,tHeight)      
+                    }
+                    
+                                                                   //半径的一半的平方
+                    divide(temp2,4)
+                    multiply(temp2,temp2)
+        
+                    set('this.otherAttrs.4',0)                     //isHited = 0
+        
+                    if(temp1>=temp2){
+                        if (tInnerX>=tStartX) {
+                            if(tInnerX < tEndX){
+                                if (tInnerY>=tStartY) {
+                                    if (tInnerY<tEndY) {
+                                                                               //在有效区域内
+                                        set('this.otherAttrs.4',1)             //isHited = 1
+                                        set('this.otherAttrs.5',4)             //lastArea不等于1或者8
+                                        set('this.otherAttrs.6',0)             //over=0
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                }
+            }
+        
+            
+            
+        `,
+        onMouseMove:`
+            var(tHit,0)                                 //isHited
+            set(tHit,'this.otherAttrs.4')
+        
+            if (tHit==1) {                              //isHited==1 此时鼠标被按下
+                var(tInnerX,0)                          //鼠标坐标x
+                set(tInnerX,'this.innerX')
+                
+                var(tInnerY,0)                          //鼠标坐标y
+                set(tInnerY,'this.innerY')
+
+                var(tLastArea,0)                        //鼠标上一个区域
+                set(tLastArea,'this.otherAttrs.5') 
+                                
+                var(tOver,0)                            //鼠标上一个区域
+                set(tOver,'this.otherAttrs.6')      
+                
+                var(tRotateX,0)                         //旋转中心坐标X
+                set(tRotateX,'this.otherAttrs.2')
+                
+                var(tRotateY,0)                         //旋转中心坐标Y
+                set(tRotateY,'this.otherAttrs.3')
+                
+                var(tX,0)                               //鼠标相对于旋转中心坐标X
+                set(tX,tInnerX)
+                minus(tX,tRotateX)
+                
+                var(tY,0)                               //鼠标相对于旋转中心坐标Y
+                set(tY,tRotateY)
+                minus(tY,tInnerY)
+                
+                var(tBaseAngle,0)                       //区域基角
+                var(tTanSymbol,0)                       //tan角的是否取余:不是真正取余角，取45-tTanAngle
+                var(tTan,0)                             //tan值
+                var(tTanAngle,0)                        //tan角
+                            
+                var(tRotateAngle,0)                     //旋转角
+                
+                var(temp1,0)                            //临时变量
+                var(temp2,0)
+                
+                                                        //划分区域
+                if(tX>0){
+                    if(tY>0){
+                        if(tY>=tX){
+                            if(tOver==1){
+                                if(tLastArea==8){
+                                     set(tOver,0)       //未溢出合法
+                                }
+                            }else{
+                                if(tLastArea==8){
+                                     set(tOver,1)       //溢出不合法
+                                }
+                            }
+                            set(tLastArea,1)            //1
+                            set(tBaseAngle,0)           //基角=0        
+                            set(tTan,tX)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tY)
+                            set(tTanSymbol,0)           //不取余
+                            
+                        }else{
+                            set(tLastArea,2)            //2
+                            set(tBaseAngle,45)          //基角=45
+                            set(tTan,tY)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tX)
+                            set(tTanSymbol,1)           //取余
+                        }
+                    }else{         
+                        set(temp1,tY)                   //取绝对值
+                        multiply(temp1,-1)
+                        
+                        if(tX>=temp1){
+                            set(tLastArea,3)            //3
+                            set(tBaseAngle,90)          //基角=90
+                            set(tTan,temp1)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tX)
+                            set(tTanSymbol,0)           //不取余
+                            
+                        }else{
+                            set(tLastArea,4)            //4
+                            set(tBaseAngle,135)         //基角=135
+                            set(tTan,tX)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp1)
+                            set(tTanSymbol,1)           //取余
+                        }
+                    }
+                }else{
+                    if(tY<0){
+                        set(temp1,tX)                   //取绝对值
+                        multiply(temp1,-1)
+                        set(temp2,tY)
+                        multiply(temp2,-1)
+                        
+                        if(temp2>=temp1){
+                            set(tLastArea,5)            //5
+                            set(tBaseAngle,180)         //基角=180
+                            set(tTan,temp1)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp2)
+                            set(tTanSymbol,0)           //不取余
+                            
+                        }else{
+                            set(tLastArea,6)            //6
+                            set(tBaseAngle,225)         //基角=225
+                            set(tTan,temp2)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp1)
+                            set(tTanSymbol,1)           //取余
+                        }
+                    }else{
+                        set(temp1,tX)                   //取绝对值
+                        multiply(temp1,-1)
+                        
+                        if(temp1>=tY){
+                            set(tLastArea,7)            //7
+                            set(tBaseAngle,270)         //基角=270
+                            set(tTan,tY)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp1)
+                            set(tTanSymbol,0)           //不取余
+                            
+                        }else{
+                            if(tOver==1){
+                                if(tLastArea==1){
+                                     set(tOver,0)       //未溢出合法
+                                }
+                            }else{
+                                if(tLastArea==1){
+                                     set(tOver,1)       //溢出不合法
+                                }
+                            }
+                            set(tLastArea,8)            //8
+                            set(tBaseAngle,315)         //基角=315
+                            set(tTan,temp1)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tY)
+                            set(tTanSymbol,1)           //取余
+                        } 
+                    }
+                }   
+                                                        //判断是否溢出
+                if(tOver==0){
+                                                        //tan值查表，计算tanAngle
+                    if(tTan==0){
+                        set(tTanAngle,0)
+                    }else{
+                        if(tTan==1){
+                            set(tTanAngle,6)  
+                        }else{
+                            if(tTan==2){
+                                set(tTanAngle,12)  
+                            }else{
+                                if(tTan==3){
+                                    set(tTanAngle,17)  
+                                }else{
+                                    if(tTan==4){
+                                        set(tTanAngle,22)  
+                                    }else{
+                                        if(tTan==5){
+                                            set(tTanAngle,27)  
+                                        }else{
+                                            if(tTan==6){
+                                                set(tTanAngle,31)  
+                                            }else{
+                                                if(tTan==7){
+                                                    set(tTanAngle,35)  
+                                                }else{
+                                                    if(tTan==8){
+                                                        set(tTanAngle,39)  
+                                                    }else{
+                                                        if(tTan==9){
+                                                            set(tTanAngle,42)  
+                                                        }else{
+                                                            if(tTan==10){
+                                                                set(tTanAngle,45)  
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+    
+                                                          //取余
+                    if(tTanSymbol==1){
+                        set(temp1,45)
+                        minus(temp1,tTanAngle)
+                        set(tTanAngle,temp1)
+                    }
+                    
+                                                          //计算旋转角
+                    set(tRotateAngle,tBaseAngle)
+                    add(tRotateAngle,tTanAngle)
+                    
+                    print('tRotateAngle',tRotateAngle)
+                    
+                                                          //计算tag值
+                    set(temp1,tMaxValue) 
+                    minus(temp1,tMinValue)
+                    multiply(temp1,tRotateAngle)
+                    divide(temp1,360)
+                    add(temp1,tMinValue)
+                    
+                    //setTag
+                    setTag(temp1)
+                }else{
+                                                          //溢出补满整圆，或清除整圆
+                    if(tLastArea==1){
+                        setTag(360)
+                    }
+                    if(tLastArea==8){
+                        setTag(0)
+                    }
+                }
+
+                set('this.otherAttrs.5',tLastArea)         //lastArea
+                set('this.otherAttrs.6',tOver)             //over
+                
+            }
+        `,
+        onTagChange:`
+            var(curValue,0)                                //tag值
+            getTag(curValue)
+            
+            var(tMinValue,0)                               //最小值
+            set(tMinValue,'this.minValue')
+            
+            var(tMaxValue,0)                               //最大值
+            set(tMaxValue,'this.maxValue')
+            
+            var(tRotateX,0)                                //旋转中心坐标X
+            set(tRotateX,'this.otherAttrs.2')
+            
+            var(tRotateY,0)                                //旋转中心坐标Y
+            set(tRotateY,'this.otherAttrs.3')
+            
+            var(tRotateAngle,0)                            //旋转角
+            
+            var(tAlpha,0)                                  //roi起始点角度
+            set(tAlpha,-90)
+
+            var(tBbeta,0)                                  //roi终点角度
+            set(tBbeta,tAlpha)
+            
+            var(temp1,0)                                   //临时变量
+            var(temp2,0)
+            
+                                                            //计算偏转角
+            if(curValue<tMinValue){
+                                                            //小于最小值，偏转角为0
+                set(tRotateAngle,0)
+            }else{
+                if(tMaxValue<curValue){
+                                                            //大于最大值，偏转角为360
+                    set(tRotateAngle,360)
+                }else{
+                                                            //tRotateAngle=(curValue-minValue)/(maxValue-minValue)*360;
+                    set(temp1,tMaxValue)     
+                    minus(temp1,tMinValue)
+                    set(temp2,curValue)
+                    minus(temp2,tMinValue)
+                    multiply(temp2,360)
+                    divide(temp2,temp1)
+                    set(tRotateAngle,temp2)
+                }
+            }
+                                                             //计算beta值
+            add(tBbeta,tRotateAngle)
+
+                                                             //光带层roi设置
+            set('this.layers.1.subLayers.roi.p1x',tRotateX)
+            set('this.layers.1.subLayers.roi.p1y',tRotateY)
+            set('this.layers.1.subLayers.roi.alpha',tAlpha)
+            set('this.layers.1.subLayers.roi.beta',tBbeta)
+            
+                                                             //光标层旋转设置
+            set('this.layers.2.rotateCenterX',tRotateX)
+            set('this.layers.2.rotateCenterY',tRotateY)
+            set('this.layers.2.rotateAngle',tRotateAngle)  
+            
+        `,
+        onKeyBoardLeft:`
+            var(tMaxHighLightNum,0)                          //控件内高亮块数
+            set(tMaxHighLightNum,'this.maxHighLightNum')
+            var(okFlag,0)                                    //高亮是否已选中
+            set(okFlag,'this.otherAttrs.1')
+            var(len,0)                                       //图层总数
+            set(len,'this.layers.length')
+            minus(len,1)
+                                                             //判断是否启用高亮
+            if (tMaxHighLightNum>0) {
+                if(okFlag==0){                               //控件间高亮选择
+                    var(tHighLightNum,0)
+                    set(tHighLightNum,'this.highLightNum')
+                    if (tHighLightNum==1) {
+                                                             //hashighlight
+                        set('this.layers.len.hidden',0)
+                    }else{
+                        set('this.layers.len.hidden',1)
+                    }
+                }else{                                       //高亮已选择，左移tag值减1
+                    var(curItem,0)
+                    getTag(curItem)
+                    minus(curItem,1)
+                    setTag(curItem)
+                }
+            }
+          
+        `,
+        onKeyBoardRight:`
+            var(tMaxHighLightNum,0)                          //控件内高亮块数
+            set(tMaxHighLightNum,'this.maxHighLightNum')
+            var(okFlag,0)                                    //高亮是否已选中
+            set(okFlag,'this.otherAttrs.1')
+            var(len,0)                                       //图层总数
+            set(len,'this.layers.length')
+            minus(len,1)
+                                                             //判断是否启用高亮
+            if (tMaxHighLightNum>0) {
+                if(okFlag==0){                               //控件间高亮选择
+                    var(tHighLightNum,0)
+                    set(tHighLightNum,'this.highLightNum')
+                    if (tHighLightNum==1) {
+                        //hashighlight
+                        set('this.layers.len.hidden',0)
+                    }else{
+                        set('this.layers.len.hidden',1)
+                    }
+                }else{                                       //高亮已选择，右移tag值加1
+                    var(curItem,0)
+                    getTag(curItem)
+                    add(curItem,1)
+                    setTag(curItem)
+                }
+            }
+        `,
+        onKeyBoardOK:`
+            var(okFlag,0)                                    //高亮是否已选中
+            set(okFlag,'this.otherAttrs.1')
+            if(okFlag==0){
+                setglobalvar(0,1)
+                set('this.otherAttrs.1',1)
+            }else{
+                setglobalvar(0,0)
+                set('this.otherAttrs.1',0)
+            }
+        `
+    };
 
     WidgetCommands['DateTime'] = {
         onInitialize:`

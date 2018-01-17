@@ -1,7 +1,6 @@
 /**
  * created by lixiang in 2017/12/21
- * 提供一些中间数据处理的接口
- *
+ * 提供一些中间数据处理的接口 Inject
  */
 ideServices.service('MiddleWareService',['AnimationService','Type',function(AnimationService,Type){
     var IDEVersion = window.ideVersion;
@@ -241,6 +240,7 @@ ideServices.service('MiddleWareService',['AnimationService','Type',function(Anim
         });
     }
 
+    //检查工程版本是否过时
     function checkProjectVerIsOld(project){
         var proVerNum = parseInt((project.version||'1.0.0').replace(/\./g,''));
         var nowVerNum = parseInt((IDEVersion||'').replace(/\./g,''));
@@ -249,13 +249,13 @@ ideServices.service('MiddleWareService',['AnimationService','Type',function(Anim
 
     }
 
-    function useMiddleWare(data){
+
+    //数据中间件对外接口
+    this.useMiddleWare = function(data){
         if(checkProjectVerIsOld(data)){
             injectDataToContent(data);
         }
-    }
+    };
 
-    // this.injectDataToContent = injectDataToContent;
-    // this.checkProjectVerIsOld = checkProjectVerIsOld;
-    this.useMiddleWare = useMiddleWare;
+
 }]);
