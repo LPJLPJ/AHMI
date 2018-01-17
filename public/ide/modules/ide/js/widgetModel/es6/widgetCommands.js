@@ -2056,10 +2056,7 @@
                         }
                     } 
                 }
-            }
-        
-            
-            
+            }        
         `,
         onMouseMove:`
             var(tHit,0)                                 //isHited
@@ -2262,25 +2259,24 @@
                                                           //计算旋转角
                     set(tRotateAngle,tBaseAngle)
                     add(tRotateAngle,tTanAngle)
-                    
-                                                          //计算tag值
-                    set(temp1,tMaxValue) 
-                    minus(temp1,tMinValue)
-                    multiply(temp1,tRotateAngle)
-                    divide(temp1,360)
-                    add(temp1,tMinValue)
-                    
-                    //setTag
-                    setTag(temp1)
-                }else{
+                }else{                                    //溢出
                                                           //溢出补满整圆，或清除整圆
                     if(tLastArea==1){
-                        setTag(360)
+                        set(tRotateAngle,360)
                     }
                     if(tLastArea==8){
-                        setTag(0)
+                        set(tRotateAngle,0)
                     }
                 }
+                                                          //计算tag值
+                set(temp1,tMaxValue) 
+                minus(temp1,tMinValue)
+                multiply(temp1,tRotateAngle)
+                divide(temp1,360)
+                add(temp1,tMinValue)
+                
+                                                           //setTag
+                setTag(temp1)
 
                 set('this.otherAttrs.5',tLastArea)         //lastArea
                 set('this.otherAttrs.6',tOver)             //over
