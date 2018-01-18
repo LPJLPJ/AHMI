@@ -3027,6 +3027,9 @@
                             //hit picker area
                             //otherAttr 4 hit area 0:none 1:hue 2:picker
                             set('this.otherAttrs.4',1)
+                            //move picker indicator
+                            set('this.layers.5.x',tInnerX)
+                            set('this.layers.5.y',tInnerY)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3066,6 +3069,9 @@
                         if(tInnerY<tHueBottomY){
                             set(tChangeFlag,1)
                             set('this.otherAttrs.4',2)
+                            //move hue indicator
+                            // set('this.layers.4.x',tInnerX)
+                            set('this.layers.4.y',tInnerY)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)
@@ -3304,7 +3310,9 @@
                             set(tChangeFlag,1)
                             //hit picker area
                             //otherAttr 4 hit area 0:none 1:hue 2:picker
-                            
+                            //move picker indicator
+                            set('this.layers.5.x',tInnerX)
+                            set('this.layers.5.y',tInnerY)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3343,7 +3351,7 @@
                     if(tInnerY>=tHueY){
                         if(tInnerY<tHueBottomY){
                             set(tChangeFlag,1)
-                           
+                            set('this.layers.4.y',tInnerY)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)

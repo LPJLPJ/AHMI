@@ -1105,11 +1105,21 @@
         var bgLayer = new Layer(0,0,w,h)
         bgLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255'))
 
+        //hue indicator
+        var hIndicatorLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.01*h)
+        hIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255)'))
+
+        //picker indicator
+        var minD = Math.min(w,h)
+        var pIndicatorLayer = new Layer(d,d,0.02*minD,0.02*minD)
+        pIndicatorLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc)
+
         layers.push(bgLayer)
         layers.push(hLayer)
         layers.push(svLayer)
         layers.push(pLayer)
-        console.log(layers)
+        layers.push(hIndicatorLayer)
+        layers.push(pIndicatorLayer)
         this.subType = 'ColorPicker'
         Widget.call(this,x,y,w,h,layers)
     }

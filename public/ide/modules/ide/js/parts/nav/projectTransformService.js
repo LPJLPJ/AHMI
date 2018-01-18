@@ -117,7 +117,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
 
-        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'}])
+        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
         colorPicker = colorPicker.toObject()
         colorPicker.generalType = 'ColorPicker'
         colorPicker.type = 'widget'
