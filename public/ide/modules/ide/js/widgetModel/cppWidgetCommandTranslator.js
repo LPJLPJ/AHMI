@@ -284,7 +284,7 @@
     var subLayerAttrMap = {
         'roi':'SubLayerClassROI',
         'font':'SubLayerClassFont',
-        'texture':'SubLayerClassImage',
+        'image':'SubLayerClassImage',
         'color':'SubLayerClassColor'
     }
 
@@ -317,7 +317,7 @@
     }
 
     var textureAttrTable = {
-        textureList:new Attr('texture',4,0),
+        textureList:new Attr('textureList',4,0),
         texture:new Attr('texture',4,1),
         type:new Attr('type',4,2)
     }
@@ -631,7 +631,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param2)
+                            // console.log(param2)
                             throw new Error('invalid exp',param2)
                         }
                     }
@@ -720,7 +720,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param1)
+                            // console.log(param1)
                             throw new Error('invalid exp')
                         }
                     }else if(param2.type == 'ID'){
@@ -796,7 +796,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param2)
+                            // console.log(param2)
                             throw new Error('invalid exp',param2)
                         }
                     }

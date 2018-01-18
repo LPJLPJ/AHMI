@@ -2468,7 +2468,80 @@
                             <span class="my-attr-title">高亮</span>
                             <select class="form-control my-attr-number-input form-control"
                                     ng-model="component.object.highlightModeId"
-                                    ng-change="component.selector.enterHighlightMode($event)">
+                                    ng-change="component.enterHighlightMode($event)">
+                                <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-show="component.object.type=='MyRotaryKnob'">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">名称</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="text"
+                                   ng-model="component.object.level.name"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterName($event)">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.left"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">最小值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.minValue"
+                                   ng-keypress="component.enterMinValue($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">最大值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.maxValue"
+                                   ng-keypress="component.enterMaxValue($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">当前值</span>
+                            <input class="my-attr-number-input form-control"
+                                   ng-model="component.object.level.info.curValue"
+                                   ng-keypress="component.rotaryKnob.enterCurValue($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">高亮</span>
+                            <select class="form-control my-attr-number-input form-control"
+                                    ng-model="component.object.highlightModeId"
+                                    ng-change="component.enterHighlightMode($event)">
                                 <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>

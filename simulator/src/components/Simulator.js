@@ -106,6 +106,7 @@ module.exports =   React.createClass({
         //initialize canvas context
         this.generalCommands = data.generalWidgetCommands||{}
 
+        this.originalPageNum = data.pageList.length
 
         //initialize inputkeyboard
         var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
@@ -116,6 +117,26 @@ module.exports =   React.createClass({
         this.inputKeyboard = {};
         this.inputKeyboard.page = keyboardData;
         this.inputKeyboard.widget = keyboardData.canvasList[0].subCanvasList[0].widgetList[0];
+
+
+        //handle system widgets
+        var systemWidgetResources = []
+        this.systemWidgetPages = (data.systemWidgets||[]).map(function (sw,i) {
+            var pageData = _.cloneDeep(keyboardData)
+            pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw
+            data.pageList.push(pageData)
+            var swRes = [];
+            (sw.layers||[]).forEach(function (layer) {
+                layer.subLayers.image && (swRes = swRes.concat(layer.subLayers.image.textureList))
+            })
+            systemWidgetResources = systemWidgetResources.concat(swRes)
+            return pageData
+        })
+        systemWidgetResources = systemWidgetResources.map(function (r) {
+            return {id:this.getImageName(r),name:this.getImageName(r), type:'image/png',src:r}
+        }.bind(this))
+        console.log('systemWidgetResources',systemWidgetResources)
+
 
 
         var ctx = canvas.getContext('2d');
@@ -199,6 +220,7 @@ module.exports =   React.createClass({
         var requiredResourceList = [];
         //handle required resources like key tex
         requiredResourceList = requiredResourceList.concat(InputKeyboard.texList);
+        requiredResourceList = requiredResourceList.concat(systemWidgetResources||[])
         // console.log(requiredResourceList)
 
         var requiredResourceNum = requiredResourceList.length;
@@ -6593,10 +6615,23 @@ module.exports =   React.createClass({
                         this.inputKeyboard.widget.returnPageId = curPageTag.value;
                         this.inputKeyboard.widget.targetTag = param1.tag;
                         this.inputKeyboard.widget.curValue = '' + this.getParamValue(param1);
-                        this.setTagByTag(curPageTag, project.pageList.length);
+                        this.setTagByTag(curPageTag, this.originalPageNum+1);
                         this.draw(null, {
                             updatedTagName: project.tag
                         });
+                    } else if (param2Value < -2){
+                        if (this.systemWidgetPages[param2Value+3]){
+                            var curWidget = this.systemWidgetPages[param2Value+3].canvasList[0].subCanvasList[0].widgetList[0]
+                            //otherAttrs 0 returnPageId
+                            //otherAttrs 1 initValue
+                            curWidget.otherAttrs[0] = curPageTag.value
+                            curWidget.otherAttrs[1] = Number(this.getParamValue(param1))||0
+                            curWidget.tag = param1.tag
+                            this.setTagByTag(curPageTag, this.originalPageNum-param2Value-1);
+                            this.draw(null, {
+                                updatedTagName: project.tag
+                            });
+                        }
                     }
                 }
                 //next

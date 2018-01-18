@@ -876,57 +876,32 @@
 
     //TexNum
     function TexNum(x,y,w,h,valueObj,slices){
-        var layers = [];
+        var layers = [];                           //图层数组
+        var layerCount=valueObj.numOfDigits;       //数字位数
+        var symbol=valueObj.symbolMode;            //符号模式
+        var decimalCount = valueObj.decimalCount;  //小数位
+        var mH = valueObj.characterH;              //字符宽度
+        var mW = valueObj.characterW;              //字符宽度
 
-        //符号模式
-        var symbol,symbolLayer;
-        if (valueObj.symbolMode==0) {
-            symbol = false;
-        }else{
-            symbol = true;
+        //生成textureList
+        var textureList=[];
+        for(var i=0;i<slices.length;i++){
+            textureList.push(slices[i].imgSrc)
         }
-        //字符宽度
-        var mH = valueObj.characterH;
-        //字符宽度
-        var mW = valueObj.characterW;
-        if (!mW) {
-            return;
-        }
-        //小数位
-        var decimalCount = valueObj.decimalCount;
-        //字符位数
-        var numOfDigits = valueObj.numOfDigits;
-        //当前起始x坐标
-        var curX = 0;
-        //符号
 
-            symbolLayer = new Layer(0,0,mW,mH,true);
-            symbolLayer.subLayers.image = new TextureSubLayer(slices[12].imgSrc);
-            layers.push(symbolLayer);
-            curX +=mW;
+        //字符总数
+        // if (symbol==1) {layerCount++;}
+        // if(decimalCount>0){layerCount++;}
+        layerCount+=2;//无论是否有符号和小数点，都按有算
 
-        //小数点
-
-            var curDotLayer = new Layer(curX,0,0.5*mW,mH,true);
-            curDotLayer.subLayers.image = new TextureSubLayer(slices[10].imgSrc);
-            layers.push(curDotLayer);
-            curX = curX +0.5*mW;
-
-        //数字
+        //添加图层
         var curDigitLayer;
-        for (var i=0;i<(numOfDigits);i++){
-            //add decimal digits
-            for(var j=0;j<=9;j++){
-                curDigitLayer = new Layer(curX,0,mW,mH,true);
-                curDigitLayer.subLayers.image = new TextureSubLayer(slices[j].imgSrc);
+        for (i=0;i<layerCount;i++){
+                curDigitLayer = new Layer(0,0,mW,mH,true);
+                curDigitLayer.subLayers.image = new TextureSubLayer(textureList);
                 layers.push(curDigitLayer);
-                // console.log('layers',j,layers)
-            }
-            curX = curX+mW;
-
         }
 
-        // console.log('layers',layers)
         this.subType = 'TexNum';
         Widget.call(this,x,y,w,h,layers);
     };
@@ -1033,6 +1008,96 @@
     };
     Selector.prototype = Object.create(Widget.prototype);
     Selector.prototype.constructor = Selector;
+
+    //RotaryKnob
+    function RotaryKnob(x,y,w,h,valueObj,texList){
+        //图层数组
+        var layers = [];
+
+        //位置，宽高
+        var x=x;
+        var y=y;
+        var w=w;
+        var h=h;
+
+        //高亮
+        this.disableHighlight=valueObj.disableHighlight;
+
+        //纹理
+        var sliceBackground =  texList[0].slices[0].imgSrc;
+        var sliceRotarySlit = texList[1].slices[0].imgSrc;
+        var slicecursor = texList[2].slices[0].imgSrc;
+        var sliceHighlight=texList[3].slices[0];
+
+        //背景层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(sliceBackground);
+        layers.push(curLayer);
+
+        //光带层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(sliceRotarySlit);
+        // curLayer.subLayers.roi = new ROISubLayer(1,0,0,0,0,0,0,0,0);
+        curLayer.subLayers.roi = new ROISubLayer(1);
+        layers.push(curLayer);
+
+        //光标层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(slicecursor);
+        layers.push(curLayer);
+
+        //高亮层
+        // this.enableHighLight = !(valueObj.disableHighlight);
+        this.enableHighLight = true;
+        if(this.enableHighLight){
+            curLayer = new Layer(0,0,w,h,true);
+            if(sliceHighlight.imgSrc){
+                curLayer.subLayers.image = new TextureSubLayer(sliceHighlight.imgSrc);
+            }else{
+                var colorElems = parseColor(sliceHighlight.color);
+                curLayer.subLayers.color = new ColorSubLayer(colorElems);
+            }
+            layers.push(curLayer);
+            this.maxHighLightNum = 1;
+        }
+
+        this.subType = 'RotaryKnob';
+        Widget.call(this,x,y,w,h,layers);
+    };
+    RotaryKnob.prototype = Object.create(Widget.prototype);
+    RotaryKnob.prototype.constructor = RotaryKnob;
+
+
+
+    function ColorPicker(x,y,w,h,slices) {
+        var layers = []
+        var d = 5
+        //hue layer
+        var hLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.8*h)
+        hLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc)
+        //saturation volume layer
+        var svLayer = new Layer(d,d,0.8*w,0.8*h)
+        svLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
+        svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
+        //preview layer
+        var pLayer = new Layer(d,0.8*h+d*2,w-d*2,0.2*h-d*3)
+        pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
+
+        //backgroundLayer
+        var bgLayer = new Layer(0,0,w,h)
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255'))
+
+        layers.push(bgLayer)
+        layers.push(hLayer)
+        layers.push(svLayer)
+        layers.push(pLayer)
+        console.log(layers)
+        this.subType = 'ColorPicker'
+        Widget.call(this,x,y,w,h,layers)
+    }
+
+    ColorPicker.prototype = Object.create(Widget.prototype)
+    ColorPicker.prototype.constructor = ColorPicker
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -1373,6 +1438,8 @@
     WidgetModel.models.DateTime = DateTime;
     WidgetModel.models.TexNum = TexNum;
     WidgetModel.models.Selector = Selector;
+    WidgetModel.models.RotaryKnob = RotaryKnob;
+    WidgetModel.models.ColorPicker = ColorPicker;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

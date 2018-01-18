@@ -27,6 +27,35 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
+        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'}])
+        colorPicker = colorPicker.toObject()
+        colorPicker.generalType = 'ColorPicker'
+        colorPicker.type = 'widget'
+        colorPicker.subType = 'general'
+        //
+        // targetProject.pageList.push({
+        //     type:Type.MyPage,
+        //     canvasList:[
+        //         {
+        //             x:0,
+        //             y:0,
+        //             w:200,
+        //             h:200,
+        //             type:Type.MyLayer,
+        //             subCanvasList:[{
+        //                 type:Type.MySubLayer,
+        //                 widgetList:[
+        //                     colorPicker
+        //                 ]
+        //             }]
+        //         }
+        //     ]
+        // })
+        targetProject.systemWidgets = []
+
+        //push system widgets
+        targetProject.systemWidgets.push(colorPicker)
+
         return targetProject;
     }
 
@@ -528,11 +557,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                         generalWidget[attr] = info[attr]||0
                     })
                     generalWidget.mode = Number(info.numModeId)
-                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    generalWidget.otherAttrs[0] = Number(info['numValue']);//初始化的数字值
                     generalWidget.otherAttrs[1] = Number(info['frontZeroMode']);//前导零模式
                     generalWidget.otherAttrs[2] = Number(info['symbolMode']);//符号模式
-                    generalWidget.otherAttrs[3] = info['decimalCount'];//小数位数
-                    generalWidget.otherAttrs[4] = info['numOfDigits'];//字符位数
+                    generalWidget.otherAttrs[3] = Number(info['decimalCount']);//小数位数
+                    generalWidget.otherAttrs[4] = Number(info['numOfDigits']);//字符位数
                     generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);//溢出显示
                     generalWidget.otherAttrs[6] = Number(info['characterW']);//字符宽度
                     generalWidget.otherAttrs[7] = Number(info['characterH']);//字符高度
@@ -552,6 +581,25 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     }
 
                     generalWidget.generalType = 'TexNum';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+                case 'MyRotaryKnob':
+                    generalWidget = new WidgetModel.models['RotaryKnob'](x,y,w,h,info,targetWidget.texList);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'minValue,maxValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    });
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[2] = w/2;//旋转中心x
+                    generalWidget.otherAttrs[3] = h/2;//旋转中心y
+                    generalWidget.otherAttrs[4] = 0;//isHited 此位置代表了是否在mouseDown状态
+                    generalWidget.otherAttrs[5] = 0 //lastArea
+                    generalWidget.otherAttrs[6] = 0 //over是否非法越过原点
+
+                    generalWidget.generalType = 'RotaryKnob';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
@@ -915,20 +963,3 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     }
 
 }]);
-
-//button group
-// if (highLight) {
-//    var highLightTex = targetWidget.texList[targetWidget.texList.length-1].slices[0];
-//    for(var i=0;i<targetWidget.info.count;i++){
-//         curTex = targetWidget.texList[i];
-//         slices.push(curTex.slices[0]);
-//         slices.push(curTex.slices[1]);
-//         slices.push(highLightTex)
-//     }
-// }else{
-//     for(var i=0;i<targetWidget.info.count;i++){
-//         curTex = targetWidget.texList[i];
-//         slices.push(curTex.slices[0]);
-//         slices.push(curTex.slices[1])
-//     }
-// }
