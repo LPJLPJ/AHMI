@@ -1101,7 +1101,7 @@
         svLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
         svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
         //preview layer
-        var pLayer = new Layer(d,0.8*w+d*2,w-d*2,0.2*h-d*3)
+        var pLayer = new Layer(d,0.8*h+d*2,w-d*2,0.2*h-d*3)
         pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
 
         //backgroundLayer
@@ -1112,6 +1112,7 @@
         layers.push(hLayer)
         layers.push(svLayer)
         layers.push(pLayer)
+        console.log(layers)
         this.subType = 'ColorPicker'
         Widget.call(this,x,y,w,h,layers)
     }

@@ -2893,8 +2893,7 @@
         "onInitialize":`
             var(tInitValue,0)
             set(tInitValue,'this.otherAttrs.0')
-            print('tInitValue','this.otherAttrs')
-            
+           
             var(tR,0)
             var(tG,0)
             var(tB,0)
@@ -3023,6 +3022,8 @@
                         if(tInnerY < tPickerBottomY){
                             set(tChangeFlag,1)
                             //hit picker area
+                            //otherAttr 4 hit area 0:none 1:hue 2:picker
+                            set('this.otherAttrs.4',1)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3061,6 +3062,7 @@
                     if(tInnerY>=tHueY){
                         if(tInnerY<tHueBottomY){
                             set(tChangeFlag,1)
+                            set('this.otherAttrs.4',2)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)
@@ -3237,6 +3239,14 @@
                 set('this.layers.3.subLayers.color.g',tG)
                 set('this.layers.3.subLayers.color.b',tB)
                 
+                var(tResult,0)
+                set(tResult,tR)
+                multiply(tResult,1000)
+                add(tResult,tG)
+                multiply(tResult,1000)
+                add(tResult,tB)
+                setTag(tResult)
+                
                 print('r',tR)
                 print('g',tG)
                 print('b',tB)
@@ -3247,6 +3257,281 @@
             
             
         `,
+        'onMouseMove':`
+            var(tTemp,0)
+            var(tH,0)
+            var(tS,0)
+            var(tV,0)
+            //get Last HSV
+            set(tH,'this.otherAttrs.1')
+            set(tS,'this.otherAttrs.2')
+            set(tV,'this.otherAttrs.3')
+            var(tR,0)
+            var(tG,0)
+            var(tB,0)
+            var(tI,0)
+            var(tF,0)
+            var(tP,0)
+            var(tQ,0)
+            var(tT,0)
+            var(tChangeFlag,0)
+            //get current h,s,v
+            var(tInnerX,0)
+            var(tInnerY,0)
+            set(tInnerX,'this.innerX')
+            set(tInnerY,'this.innerY')
+            var(tPickerX,0)
+            var(tPickerY,0)
+            var(tPickerW,0)
+            var(tPickerH,0)
+            var(tPickerRightX,0)
+            var(tPickerBottomY,0)
+            set(tPickerX,'this.layers.2.x')
+            set(tPickerY,'this.layers.2.y')
+            set(tPickerW,'this.layers.2.width')
+            set(tPickerH,'this.layers.2.height')
+            set(tPickerRightX,tPickerX)
+            add(tPickerRightX,tPickerW)
+            set(tPickerBottomY,tPickerY)
+            add(tPickerBottomY,tPickerH)
+            if(tInnerX >= tPickerX){
+                if(tInnerX < tPickerRightX){
+                    if(tInnerY >= tPickerY){
+                        if(tInnerY < tPickerBottomY){
+                            set(tChangeFlag,1)
+                            //hit picker area
+                            //otherAttr 4 hit area 0:none 1:hue 2:picker
+                            
+                            set(tS,tInnerX)
+                            minus(tS,tPickerX)
+                            multiply(tS,255)
+                            divide(tS,tPickerW)
+                            set(tV,tPickerH)
+                            minus(tV,tInnerY)
+                            add(tV,tPickerY)
+                            multiply(tV,255)
+                            divide(tV,tPickerH)
+                            set('this.otherAttrs.2',tS)
+                            set('this.otherAttrs.3',tV)
+                        }
+                    }
+                }
+            }
+            
+            //hue
+            var(tHueX,0)
+            var(tHuey,0)
+            var(tHueW,0)
+            var(tHueH,0)
+            var(tHueRightX,0)
+            var(tHueBottomY,0)
+            set(tHueX,'this.layers.1.x')
+            set(tHueY,'this.layers.1.y')
+            set(tHueW,'this.layers.1.width')
+            set(tHueH,'this.layers.1.height')
+            set(tHueRightX,tHueX)
+            add(tHueRightX,tHueW)
+            set(tHueBottomY,tHueY)
+            add(tHueBottomY,tHueH)
+            var(tSBack,0)
+            var(tVBack,0)
+            if(tInnerX>=tHueX){
+                if(tInnerX<tHueRightX){
+                    if(tInnerY>=tHueY){
+                        if(tInnerY<tHueBottomY){
+                            set(tChangeFlag,1)
+                           
+                            //set h
+                            set(tH,tInnerY)
+                            minus(tH,tHueY)
+                            multiply(tH,360)
+                            divide(tH,tHueH)
+                            set('this.otherAttrs.1',tH)
+                            
+                            //change picker bg color
+                            set(tSBack,tS)
+                            set(tVBack,tV)
+                            set(tS,255)
+                            set(tV,255)
+                            if(tS == 0){
+                                set(tR,tV)
+                                set(tG,tV)
+                                set(tB,tV)
+                            }else{
+                                set(tI,tH)
+                                divide(tI,60)
+                                set(tF,tH)
+                                set(tTemp,tI)
+                                multiply(tTemp,60)
+                                //tF = 60*f
+                                minus(tF,tTemp)
+                                
+                                //set p
+                                set(tP,255)
+                                minus(tP,tS)
+                                multiply(tP,tV)
+                                divide(tP,255)
+                                
+                                //set q
+                                set(tTemp,tS)
+                                multiply(tTemp,tF)
+                                set(tQ,15300)
+                                minus(tQ,tTemp)
+                                multiply(tQ,tV)
+                                divide(tQ,15300)
+                                
+                                //set t
+                                set(tTemp,60)
+                                minus(tTemp,tF)
+                                multiply(tTemp,tS)
+                                set(tT,15300)
+                                minus(tT,tTemp)
+                                multiply(tT,tV)
+                                divide(tT,15300)
+                               
+                                
+                                if(tI == 0){
+                                    set(tR,tV)
+                                    set(tG,tT)
+                                    set(tB,tP)
+                                }else{
+                                    if(tI == 1){
+                                        set(tR,tQ)
+                                        set(tG,tV)
+                                        set(tB,tP)
+                                    }else{
+                                        if(tI == 2){
+                                            set(tR,tP)
+                                            set(tG,tV)
+                                            set(tB,tT)
+                                        }else{
+                                            if(tI == 3){
+                                                set(tR,tP)
+                                                set(tG,tQ)
+                                                set(tB,tV)
+                                            }else{
+                                                if(tI == 4){
+                                                    set(tR,tT)
+                                                    set(tG,tP)
+                                                    set(tB,tV)
+                                                }else{
+                                                    set(tR,tV)
+                                                    set(tG,tP)
+                                                    set(tB,tQ)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }    
+                                
+                            }
+                            //set picker bg color
+                            set('this.layers.2.subLayers.color.r',tR)
+                            set('this.layers.2.subLayers.color.g',tG)
+                            set('this.layers.2.subLayers.color.b',tB)
+                            //restore tS,tV
+                            set(tS,tSBack)
+                            set(tV,tVBack)
+                        }
+                    }
+                }
+            }
+            
+            if(tChangeFlag == 1){
+            
+                
+                if(tS == 0){
+                    set(tR,tV)
+                    set(tG,tV)
+                    set(tB,tV)
+                }else{
+                    set(tI,tH)
+                    divide(tI,60)
+                    set(tF,tH)
+                    set(tTemp,tI)
+                    multiply(tTemp,60)
+                    //tF = 60*f
+                    minus(tF,tTemp)
+                    
+                    //set p
+                    set(tP,255)
+                    minus(tP,tS)
+                    multiply(tP,tV)
+                    divide(tP,255)
+                    
+                    //set q
+                    set(tTemp,tS)
+                    multiply(tTemp,tF)
+                    set(tQ,15300)
+                    minus(tQ,tTemp)
+                    multiply(tQ,tV)
+                    divide(tQ,15300)
+                    
+                    //set t
+                    set(tTemp,60)
+                    minus(tTemp,tF)
+                    multiply(tTemp,tS)
+                    set(tT,15300)
+                    minus(tT,tTemp)
+                    multiply(tT,tV)
+                    divide(tT,15300)
+                   
+                    
+                    if(tI == 0){
+                        set(tR,tV)
+                        set(tG,tT)
+                        set(tB,tP)
+                    }else{
+                        if(tI == 1){
+                            set(tR,tQ)
+                            set(tG,tV)
+                            set(tB,tP)
+                        }else{
+                            if(tI == 2){
+                                set(tR,tP)
+                                set(tG,tV)
+                                set(tB,tT)
+                            }else{
+                                if(tI == 3){
+                                    set(tR,tP)
+                                    set(tG,tQ)
+                                    set(tB,tV)
+                                }else{
+                                    if(tI == 4){
+                                        set(tR,tT)
+                                        set(tG,tP)
+                                        set(tB,tV)
+                                    }else{
+                                        set(tR,tV)
+                                        set(tG,tP)
+                                        set(tB,tQ)
+                                    }
+                                }
+                            }
+                        }
+                    }    
+                    
+                }
+               
+                set('this.layers.3.subLayers.color.r',tR)
+                set('this.layers.3.subLayers.color.g',tG)
+                set('this.layers.3.subLayers.color.b',tB)
+                
+                var(tResult,0)
+                set(tResult,tR)
+                multiply(tResult,1000)
+                add(tResult,tG)
+                multiply(tResult,1000)
+                add(tResult,tB)
+                setTag(tResult)
+                
+                print('r',tR)
+                print('g',tG)
+                print('b',tB)
+            
+            }
+            
+        `
     }
 
     return WidgetCommands;

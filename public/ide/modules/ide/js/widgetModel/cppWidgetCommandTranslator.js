@@ -187,7 +187,7 @@
         cppWidgetAttrsTable['a'+curIdx] = new Attr('a'+curIdx,4,curIdx) 
     }
 
-    console.log('cppWidgetAttrsTable',cppWidgetAttrsTable)
+    // console.log('cppWidgetAttrsTable',cppWidgetAttrsTable)
 
     var widgetAttrMap = {
         info:{
@@ -434,7 +434,7 @@
 
             if ((attrs[0] == 'this') && (attrs[1] =='layers')) {
                 if (attrs[2] == 'length'){
-                    console.log('layers length')
+                    // console.log('layers length')
                     return new AttrType('widget',widgetAttrMap['numOfLayers'])
                 }
             }
@@ -545,7 +545,7 @@
                     }else if (param2.type == 'EXP'){
                         // a = this.layers.1.hidden
                         curExp = expDepth(param2)
-                        console.log(curExp,'curExp')
+                        // console.log(curExp,'curExp')
                         if (curExp) {
                             switch(curExp.type){
                                 case 'widget':
@@ -626,7 +626,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param2)
+                            // console.log(param2)
                             throw new Error('invalid exp',param2)
                         }
                     }
@@ -715,7 +715,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param1)
+                            // console.log(param1)
                             throw new Error('invalid exp')
                         }
                     }else if(param2.type == 'ID'){
@@ -791,7 +791,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param2)
+                            // console.log(param2)
                             throw new Error('invalid exp',param2)
                         }
                     }
