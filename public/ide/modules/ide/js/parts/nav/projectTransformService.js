@@ -236,10 +236,10 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     highLight = !info.disableHighlight;
                     var slices = [];
                     texList.map(function (curTex) {
-                        slices.push(curTex.slices[0]);
-                        slices.push(curTex.slices[1]);
+                        curTex.slices.map(function(slice){
+                            slices.push(slice)
+                        })
                     });
-                    highLight?slices.push(texList[texList.length-1].slices[0]):null;
 
                     generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,info.count||1,(info.arrange==="horizontal"?0:1),info.interval||0,slices,highLight);
                     generalWidget = generalWidget.toObject();

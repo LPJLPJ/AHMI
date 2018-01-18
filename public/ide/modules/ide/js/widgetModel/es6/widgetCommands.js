@@ -165,6 +165,7 @@
           set(tMaxHighLightNum,'this.maxHighLightNum')
           getTag(tTag) 
           
+          print('tagchange',tTag)
           if(tMaxHighLightNum>0){
             minus(laylen,1)
             set(highlightIndex,laylen)
@@ -177,7 +178,7 @@
             set('this.layers.t1.hidden',1)
             add(t1,1)
           }
-          
+                    
           //显示当前值
           if(tTag>0){
             if(tTag<laylen){
@@ -226,7 +227,7 @@
                   set(t1,'this.layers.highlightIndex.x')
                   set('this.otherAttrs.2',t1)
                   set('this.otherAttrs.3',stopValue)
-                  print('this.otherAttrs.2','this.otherAttrs.3')
+                  // print('this.otherAttrs.2','this.otherAttrs.3')
                   
                   //显示高量层
                   set('this.layers.highlightIndex.hidden',0)
@@ -316,7 +317,6 @@
           set(tHighLightNum,'this.highLightNum')
           set(laylen,'this.layers.length')
           
-          print(tHighLightNum,laylen)
           if(tHighLightNum>0){
             minus(laylen,1)
             if(tHighLightNum<laylen){

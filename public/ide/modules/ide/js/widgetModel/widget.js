@@ -253,8 +253,8 @@
                 downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
                 colorElems = parseColor(slices[2*i+1].color);
                 downLayer.subLayers.color = new ColorSubLayer(colorElems);
-                layers.push(downLayer);
                 layers.push(upLayer);
+                layers.push(downLayer);
             }
             if(highLight){
                 var highLightLayer = new Layer(0,0,sWidth,sHeight,true);

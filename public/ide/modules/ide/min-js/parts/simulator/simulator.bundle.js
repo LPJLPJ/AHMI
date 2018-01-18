@@ -59196,6 +59196,8 @@ module.exports = React.createClass({
     },
     setTagByName: function setTagByName(name, value) {
         var tag = this.findTagByName(name);
+        console.log('haha,set tag', tag);
+        console.log('this.state', this.state);
         if (tag) {
             tag.value = value;
             this.setState({ tag: tag });
