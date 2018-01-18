@@ -3012,10 +3012,10 @@
             var(tPickerH,0)
             var(tPickerRightX,0)
             var(tPickerBottomY,0)
-            set(tPickerX,'this.layers.1.x')
-            set(tPickerY,'this.layers.1.y')
-            set(tPickerW,'this.layers.1.width')
-            set(tPickerH,'this.layers.1.height')
+            set(tPickerX,'this.layers.2.x')
+            set(tPickerY,'this.layers.2.y')
+            set(tPickerW,'this.layers.2.width')
+            set(tPickerH,'this.layers.2.height')
             set(tPickerRightX,tPickerX)
             add(tPickerRightX,tPickerW)
             set(tPickerBottomY,tPickerY)
@@ -3049,10 +3049,10 @@
             var(tHueH,0)
             var(tHueRightX,0)
             var(tHueBottomY,0)
-            set(tHueX,'this.layers.0.x')
-            set(tHueY,'this.layers.0.y')
-            set(tHueW,'this.layers.0.width')
-            set(tHueH,'this.layers.0.height')
+            set(tHueX,'this.layers.1.x')
+            set(tHueY,'this.layers.1.y')
+            set(tHueW,'this.layers.1.width')
+            set(tHueH,'this.layers.1.height')
             set(tHueRightX,tHueX)
             add(tHueRightX,tHueW)
             set(tHueBottomY,tHueY)
@@ -3149,9 +3149,9 @@
                                 
                             }
                             //set picker bg color
-                            set('this.layers.1.subLayers.color.r',tR)
-                            set('this.layers.1.subLayers.color.g',tG)
-                            set('this.layers.1.subLayers.color.b',tB)
+                            set('this.layers.2.subLayers.color.r',tR)
+                            set('this.layers.2.subLayers.color.g',tG)
+                            set('this.layers.2.subLayers.color.b',tB)
                             //restore tS,tV
                             set(tS,tSBack)
                             set(tV,tVBack)
@@ -3236,9 +3236,9 @@
                     
                 }
                
-                set('this.layers.2.subLayers.color.r',tR)
-                set('this.layers.2.subLayers.color.g',tG)
-                set('this.layers.2.subLayers.color.b',tB)
+                set('this.layers.3.subLayers.color.r',tR)
+                set('this.layers.3.subLayers.color.g',tG)
+                set('this.layers.3.subLayers.color.b',tB)
                 
                 print('r',tR)
                 print('g',tG)
