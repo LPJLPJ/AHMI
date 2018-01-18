@@ -165,7 +165,6 @@
           set(tMaxHighLightNum,'this.maxHighLightNum')
           getTag(tTag) 
           
-          print('tagchange',tTag)
           if(tMaxHighLightNum>0){
             minus(laylen,1)
             set(highlightIndex,laylen)
@@ -201,7 +200,7 @@
           var(t1,0)                                    //临时变量
           
           //set value
-          set(arrange,'this.arrange')
+          set(arrange,'this.otherAttrs.4')
           set(laylen,'this.layers.length')
           set(spacing,'this.otherAttrs.0')
           set(btnCnt,'this.otherAttrs.1')             
@@ -214,7 +213,7 @@
             set(tHighLightNum,'this.highLightNum')
             
             if(tHighLightNum>0){
-                if(arrange<=0){
+                if(arrange==0){
                   //水平方向
                   //stopValue = (tHightLightNum-1)*(width+spacing)
                   set(stopValue,tHighLightNum)
@@ -227,13 +226,26 @@
                   set(t1,'this.layers.highlightIndex.x')
                   set('this.otherAttrs.2',t1)
                   set('this.otherAttrs.3',stopValue)
-                  // print('this.otherAttrs.2','this.otherAttrs.3')
                   
                   //显示高量层
                   set('this.layers.highlightIndex.hidden',0)
                 }else{
                   //竖直方向
-                  print('竖直','ver')
+                  //stopValue = (tHightLightNum-1)*(height+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.height')
+                  add(t1,'this.otherAttrs.0') 
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.y')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  print('this.otherAttrs.2','this.otherAttrs.3')
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
                 }
                 starthlanimation(0)
                 
@@ -254,7 +266,7 @@
           var(t1,0)                                    //临时变量
           
           //set value
-          set(arrange,'this.arrange')
+          set(arrange,'this.otherAttrs.4')
           set(laylen,'this.layers.length')
           set(spacing,'this.otherAttrs.0')
           set(btnCnt,'this.otherAttrs.1')             
@@ -267,7 +279,7 @@
             set(tHighLightNum,'this.highLightNum')
             
             if(tHighLightNum>0){
-                if(arrange<=0){
+                if(arrange==0){
                   //水平方向
                   //计算公式:stopValue = (tHightLightNum-1)*(width+spacing)
                   set(stopValue,tHighLightNum)
@@ -280,37 +292,34 @@
                   set(t1,'this.layers.highlightIndex.x')
                   set('this.otherAttrs.2',t1)
                   set('this.otherAttrs.3',stopValue)
-                  // print('stopValue','this.otherAttrs.3')
                   
                   //显示高量层
                   set('this.layers.highlightIndex.hidden',0)
                 }else{
                   //竖直方向
-                  print('竖直','ver')
+                  //stopValue = (tHightLightNum-1)*(height+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.height')
+                  add(t1,'this.otherAttrs.0') 
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.y')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  print('this.otherAttrs.2','this.otherAttrs.3')
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
                 }
                 starthlanimation(0)
-                
             }else{
                 set('this.layers.highlightIndex.hidden',1)
             } 
           }
         `,
         onKeyBoardOK:`
-          // var(tHighLightNum,0)
-          // set(tHighLightNum,'this.highLightNum')
-          // if (tHighLightNum>0) {
-          //   minus(tHighLightNum,1)
-          //   var(tTotalLayers,0)
-          //   set(tTotalLayers,'this.layers.length')
-          //
-          //   divide(tTotalLayers,3)
-          //   if (tHighLightNum<tTotalLayers) {
-          //     //valid
-          //     //reset 
-          //     //set target tag
-          //     setTag(tHighLightNum)
-          //   }
-          // }
           var(tHighLightNum,0)
           var(laylen,0)
           
@@ -326,26 +335,35 @@
           }
         `,
         onHighlightFrame:`
+          //curHLAnimationFactor理论上为0~1的小数，为了指令的计算取curHLAnimationFactor理论上为0~1000的正数
+          
           var(highlightIndex,0)                     //高亮层坐标
           var(tFactor,0)                            //动画进度
           var(startValue,0)                         //起始值
           var(stopValue,0)                          //结束值
           var(offset,0)                             //偏移值
+          var(arrange,0)
           
-          
+          set(arrange,'this.otherAttrs.4')
           set(highlightIndex,'this.layers.length')
           minus(highlightIndex,1)
           set(tFactor,'this.curHLAnimationFactor')
           set(startValue,'this.otherAttrs.2')
           set(stopValue,'this.otherAttrs.3')
           set(offset,stopValue)
+          
+          //公式:offset = startValue + (stopValue-startValue)*curHLAnimationFactor/1000
           minus(offset,startValue)
           multiply(offset,tFactor)
           divide(offset,1000)
           add(offset,startValue)
           // print(tFactor,offset)
           
-          set('this.layers.highlightIndex.x',offset)
+          if(arrange==0){
+            set('this.layers.highlightIndex.x',offset)
+          }else{
+            set('this.layers.highlightIndex.y',offset)
+          }
           
         `
     };

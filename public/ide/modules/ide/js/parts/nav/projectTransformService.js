@@ -256,7 +256,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.otherAttrs[1] = info.count;    //按钮个数
                     generalWidget.otherAttrs[2] = 1;             //高亮动画起始值
                     generalWidget.otherAttrs[3] = 1;             //高亮动画终止值
-                    console.log('buttongroup',generalWidget);
+                    //Todo:默认属性中有arrange，但是在simulaor中无法解析错误，故使用otherAttrs
+                    generalWidget.otherAttrs[4] = (info.arrange==="horizontal"?0:1); //排列方向
                 break;
                 case 'MyDashboard':
                     generalWidget =  new WidgetModel.models['Dashboard'](x,y,w,h,targetWidget.dashboardModeId,targetWidget.texList,targetWidget.info)
