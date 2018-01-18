@@ -189,9 +189,6 @@
          
         `,
         onKeyBoardLeft:`
-           
-        `,
-        onKeyBoardRight:`
           var(arrange,0)
           var(laylen,0)                                //图层数目
           var(spacing,0)                               //按钮间距
@@ -244,20 +241,87 @@
             } 
           }
         `,
+        onKeyBoardRight:`
+          var(arrange,0)
+          var(laylen,0)                                //图层数目
+          var(spacing,0)                               //按钮间距
+          var(btnCnt,0)                                //按钮个数
+          var(tMaxHighLightNum,0)                      //高亮数目
+          var(highlightIndex,0)                        //高亮层坐标
+          var(startValue,0)                            //当前位置,即动画起始位置
+          var(stopValue,0)                             //高亮位置偏移量,即动画终止位置
+          var(t1,0)                                    //临时变量
+          
+          //set value
+          set(arrange,'this.arrange')
+          set(laylen,'this.layers.length')
+          set(spacing,'this.otherAttrs.0')
+          set(btnCnt,'this.otherAttrs.1')             
+          set(tMaxHighLightNum,'this.maxHighLightNum')
+          
+          if(tMaxHighLightNum>0){
+            minus(laylen,1)
+            set(highlightIndex,laylen)
+            var(tHighLightNum,0)
+            set(tHighLightNum,'this.highLightNum')
+            
+            if(tHighLightNum>0){
+                if(arrange<=0){
+                  //水平方向
+                  //计算公式:stopValue = (tHightLightNum-1)*(width+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.width')
+                  add(t1,'this.otherAttrs.0')
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.x')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  // print('stopValue','this.otherAttrs.3')
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
+                }else{
+                  //竖直方向
+                  print('竖直','ver')
+                }
+                starthlanimation(0)
+                
+            }else{
+                set('this.layers.highlightIndex.hidden',1)
+            } 
+          }
+        `,
         onKeyBoardOK:`
+          // var(tHighLightNum,0)
+          // set(tHighLightNum,'this.highLightNum')
+          // if (tHighLightNum>0) {
+          //   minus(tHighLightNum,1)
+          //   var(tTotalLayers,0)
+          //   set(tTotalLayers,'this.layers.length')
+          //
+          //   divide(tTotalLayers,3)
+          //   if (tHighLightNum<tTotalLayers) {
+          //     //valid
+          //     //reset 
+          //     //set target tag
+          //     setTag(tHighLightNum)
+          //   }
+          // }
           var(tHighLightNum,0)
+          var(laylen,0)
+          
           set(tHighLightNum,'this.highLightNum')
-          if (tHighLightNum>0) {
-            minus(tHighLightNum,1)
-            var(tTotalLayers,0)
-            set(tTotalLayers,'this.layers.length')
-
-            divide(tTotalLayers,3)
-            if (tHighLightNum<tTotalLayers) {
-              //valid
-              //reset 
-              //set target tag
-              setTag(tHighLightNum)
+          set(laylen,'this.layers.length')
+          
+          print(tHighLightNum,laylen)
+          if(tHighLightNum>0){
+            minus(laylen,1)
+            if(tHighLightNum<laylen){
+               print(tHighLightNum,'tHighLightNum')
+               setTag(tHighLightNum)
             }
           }
         `,
@@ -279,7 +343,7 @@
           multiply(offset,tFactor)
           divide(offset,1000)
           add(offset,startValue)
-          // print(offset,'offset')
+          // print(tFactor,offset)
           
           set('this.layers.highlightIndex.x',offset)
           
@@ -1943,7 +2007,7 @@
                 set('this.otherAttrs.10',1)
                 set('this.layers.0.hidden',0)
                 set('this.layers.1.hidden',0)
-                
+
             }else{
                 setglobalvar(0,0)
                 set('this.otherAttrs.10',0)

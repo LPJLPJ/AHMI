@@ -53900,7 +53900,7 @@ module.exports = React.createClass({
 
                 break;
             case 'starthlanimation':
-                console.log('starthlanimaton in simulator');
+                // console.log('starthlanimaton in simulator');
                 var nowHLFrame = 1;
                 var totalHLFrame = widget.totalHLFrame || 0;
                 if (widget.curHLAnimationId) {
