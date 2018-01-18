@@ -605,7 +605,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    console.log('generalWidget',generalWidget)
                     break;
                 case 'MyRotaryKnob':
                     generalWidget = new WidgetModel.models['RotaryKnob'](x,y,w,h,info,targetWidget.texList);

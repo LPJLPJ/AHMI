@@ -1768,11 +1768,13 @@
             //溢出处理
             if(tCurVal>tMaxVal){
                 //溢出最大值
+                print('溢出最大值',tMaxVal)
                 set(tCurVal,tMaxVal)
                 set(isOverflow,1)
             }else{
                 //溢出最小值
                 if(tCurVal<tMinVal){
+                    print('溢出最小值',tMinVal)
                     set(tCurVal,tMinVal)
                     set(isOverflow,1)
                 }
@@ -1867,10 +1869,11 @@
                 //绘制符号
                 if(symbolCnt==1){
                     //有负号
-                    set('this.layers.0.subLayers.image.texture',11)
+                    set('this.layers.0.subLayers.image.texture',12)
                     set('this.layers.0.x',initPosX)
                     set('this.layers.0.hidden',0)
                     minus(layersCount,1)
+                    minus(allFontCnt,1)
                 }
                 
                 
