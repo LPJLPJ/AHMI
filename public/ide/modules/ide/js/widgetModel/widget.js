@@ -908,8 +908,9 @@
         }
 
         //字符总数
-        if (symbol==1) {layerCount++;}
-        if(decimalCount>0){layerCount++;}
+        // if (symbol==1) {layerCount++;}
+        // if(decimalCount>0){layerCount++;}
+        layerCount+=2;//无论是否有符号和小数点，都按有算
 
         //添加图层
         var curDigitLayer;
@@ -1062,10 +1063,6 @@
         curLayer = new Layer(0,0,w,h,true);
         curLayer.subLayers.image = new TextureSubLayer(slicecursor);
         layers.push(curLayer);
-
-        console.log("layers",layers)
-
-
 
         //高亮层
         // this.enableHighLight = !(valueObj.disableHighlight);
