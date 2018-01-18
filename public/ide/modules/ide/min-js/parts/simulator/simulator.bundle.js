@@ -58225,6 +58225,7 @@ module.exports = React.createClass({
                 // this.interpretGeneralCommand(curLinkWidget,'onMouseDown')
             } else {
                 this.interpretGeneralCommand(curLinkWidget, 'onKeyBoardOK');
+                this.draw(null);
                 // this.interpretGeneralCommand(curLinkWidget,'onMouseUp')
             }
         }
@@ -59196,8 +59197,6 @@ module.exports = React.createClass({
     },
     setTagByName: function setTagByName(name, value) {
         var tag = this.findTagByName(name);
-        console.log('haha,set tag', tag);
-        console.log('this.state', this.state);
         if (tag) {
             tag.value = value;
             this.setState({ tag: tag });

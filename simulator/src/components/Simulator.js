@@ -5423,6 +5423,7 @@ module.exports =   React.createClass({
                 // this.interpretGeneralCommand(curLinkWidget,'onMouseDown')
             }else{
                 this.interpretGeneralCommand(curLinkWidget,'onKeyBoardOK')
+                this.draw(null)
                 // this.interpretGeneralCommand(curLinkWidget,'onMouseUp')
             }
 
@@ -7099,7 +7100,7 @@ module.exports =   React.createClass({
                         </select>
                     </div>
                 </div>
-                < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease} onMouseOut={this.handleRelease} >
+                <div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove} onMouseUp={this.handleRelease} onMouseOut={this.handleRelease} >
                     <canvas ref='canvas' className='simulator-canvas' />
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas' />
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
