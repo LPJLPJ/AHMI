@@ -59,6 +59,7 @@
             tag:this.tag,
             layers:this.layers,
             otherAttrs:this.otherAttrs
+            // arrange:this.arrange
             // onInitialize:this.onInitialize,
             // onMouseDown:this.onMouseDown,
             // onMouseUp:this.onMouseUp
@@ -235,82 +236,63 @@
 
     //button group
     function ButtonGroup(x,y,w,h,num,align,space,slices,highLight) {
-        // var layerUp = new Layer(w,h);
-        // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
-        // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
-        // var layerDown = new Layer(w,h);
-        // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
-        // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
-        // var layers = [layerUp,layerDown]
         var sWidth = 0;
         var sHeight = 0;
-        var colorElems
+        var colorElems;
         var layers = [];
-        // if (highLight) {
-        //     layerHighlight = new Layer(0,0,w,h);
-        //     layerHighlight.subLayers.image =new TextureSubLayer(slices[2].imgSrc);
-        //     colorElems = parseColor(slices[2].color)
-        //     layerHighlight.subLayers.color = new ColorSubLayer(colorElems);
-        //     layerHighlight.hidden = true;
-        //     layers.push(layerHighlight)
-        //     this.enableHighLight  = true;
-        //     this.maxHighLightNum = 1;
-        // }
+        // this.arrange = align;
         if (align==0) {
-                //hori
+            //hori
             sWidth = (w-(num-1)*space)/num;
             sHeight = h;
-            if (highLight) {
-                for (var i=0;i<num;i++){
-                    var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-                    upLayer.subLayers.image = new TextureSubLayer(slices[3*i].imgSrc)
-                    colorElems = parseColor(slices[3*i].color);
-                    upLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                    downLayer.subLayers.image = new TextureSubLayer(slices[3*i+1].imgSrc)
-                    colorElems = parseColor(slices[3*i+1].color);
-                    downLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    var highLightLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                    highLightLayer.subLayers.image = new TextureSubLayer(slices[3*i+2].imgSrc)
-                    colorElems = parseColor(slices[3*i+2].color);
-                    highLightLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    layers.push(downLayer)
-                    layers.push(upLayer)
-                    layers.push(highLightLayer)
-                }
-                this.enableHighLight = true
-                this.maxHighLightNum = num;
-            }else{
-                for (var i=0;i<num;i++){
-                    var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-                    upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
-                    colorElems = parseColor(slices[2*i].color);
-                    upLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                    downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
-                    colorElems = parseColor(slices[2*i+1].color);
-                    downLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    layers.push(downLayer)
-                    layers.push(upLayer)
-                }
+            for (var i=0;i<num;i++){
+                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight);
+                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc);
+                colorElems = parseColor(slices[2*i].color);
+                upLayer.subLayers.color = new ColorSubLayer(colorElems);
+                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true);
+                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
+                colorElems = parseColor(slices[2*i+1].color);
+                downLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(upLayer);
+                layers.push(downLayer);
             }
-
-            
+            if(highLight){
+                var highLightLayer = new Layer(0,0,sWidth,sHeight,true);
+                highLightLayer.subLayers.image = new TextureSubLayer(slices[slices.length-1].imgSrc);
+                colorElems = parseColor(slices[slices.length-1].color);
+                highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(highLightLayer);
+                this.enableHighLight = true;
+                this.maxHighLightNum = num;
+            }
         }else{
-            // sWidth = w;
-            // sHeight = (h-(num-1)*space)/num;
-
-            // for (var i=0;i<num;i++){
-            //     var curLayer = new Layer(x,y+i*(sHeight+space),sWidth,sWidth)
-            //     curLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[i].imgSrc)
-            //     curLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[i].color)
-            //     layers.push(curLayer)
-            // }
-
+            //ver
+            sWidth = w;
+            sHeight = (h-(num-1)*space)/num;
+            for (var i=0;i<num;i++){
+                var upLayer = new Layer(0,i*(sHeight+space),sWidth,sHeight);
+                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc);
+                colorElems = parseColor(slices[2*i].color);
+                upLayer.subLayers.color = new ColorSubLayer(colorElems);
+                var downLayer = new Layer(0,i*(sHeight+space),sWidth,sHeight,true);
+                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
+                colorElems = parseColor(slices[2*i+1].color);
+                downLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(upLayer);
+                layers.push(downLayer);
+            }
+            if(highLight){
+                var highLightLayer = new Layer(0,0,sWidth,sHeight,true);
+                highLightLayer.subLayers.image = new TextureSubLayer(slices[slices.length-1].imgSrc);
+                colorElems = parseColor(slices[slices.length-1].color);
+                highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(highLightLayer);
+                this.enableHighLight = true;
+                this.maxHighLightNum = num;
+            }
         }
-        this.subType = 'ButtonGroup'
+        this.subType = 'ButtonGroup';
         Widget.call(this,x,y,w,h,layers)
     }
     ButtonGroup.prototype = Object.create(Widget.prototype);
@@ -1475,3 +1457,54 @@
 
 
 }));
+
+// //button group
+// function ButtonGroup(x,y,w,h,num,align,space,slices,highLight) {
+//     var sWidth = 0;
+//     var sHeight = 0;
+//     var colorElems;
+//     var layers = [];
+//     if (align==0) {
+//         //hori
+//         sWidth = (w-(num-1)*space)/num;
+//         sHeight = h;
+//         if (highLight) {
+//             for (var i=0;i<num;i++){
+//                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
+//                 upLayer.subLayers.image = new TextureSubLayer(slices[3*i].imgSrc)
+//                 colorElems = parseColor(slices[3*i].color);
+//                 upLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+//                 downLayer.subLayers.image = new TextureSubLayer(slices[3*i+1].imgSrc)
+//                 colorElems = parseColor(slices[3*i+1].color);
+//                 downLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 var highLightLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+//                 highLightLayer.subLayers.image = new TextureSubLayer(slices[3*i+2].imgSrc)
+//                 colorElems = parseColor(slices[3*i+2].color);
+//                 highLightLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 layers.push(downLayer)
+//                 layers.push(upLayer)
+//                 layers.push(highLightLayer)
+//             }
+//             this.enableHighLight = true
+//             this.maxHighLightNum = num;
+//         }else{
+//             for (var i=0;i<num;i++){
+//                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
+//                 upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
+//                 colorElems = parseColor(slices[2*i].color);
+//                 upLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+//                 downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
+//                 colorElems = parseColor(slices[2*i+1].color);
+//                 downLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 layers.push(downLayer)
+//                 layers.push(upLayer)
+//             }
+//         }
+//     }else{
+//         //ver
+//     }
+//     this.subType = 'ButtonGroup';
+//     Widget.call(this,x,y,w,h,layers)
+// }

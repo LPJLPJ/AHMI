@@ -98,7 +98,6 @@
 
     WidgetCommands['ButtonGroup'] = {
         onInitialize:`
-            
         `,
         onMouseDown:`
             var(a,0)
@@ -107,6 +106,7 @@
             set(c,'this.layers.length')
             var(tMaxHighLightNum,0)
             set(tMaxHighLightNum,'this.maxHighLightNum')
+            set(tMaxHighLightNum,0)   //add by lx 不知道为什么以前会用到，所以置0
             var(tSingleButtonLayers,0)
             if (tMaxHighLightNum>0) {
               set(tSingleButtonLayers,3)
@@ -136,6 +136,7 @@
                         if(b>=ly){
                             if(ry>b){
                                 divide(c,tSingleButtonLayers)
+                                add(c,1)
                                 setTag(c)
                                 set(c,0)
                             }
@@ -148,137 +149,222 @@
         onMouseUp:`
         `,
         onTagChange:`
-            var(a,0)
-            var(b,0)
-            var(c,0)
-            var(tMaxHighLightNum,0)
-            set(tMaxHighLightNum,'this.maxHighLightNum')
-            var(tSingleButtonLayers,0)
-            if (tMaxHighLightNum>0) {
-              set(tSingleButtonLayers,3)
-            }else{
-              set(tSingleButtonLayers,2)
+          var(laylen,0)                                //图层数目
+          var(spacing,0)                               //按钮间距
+          var(btnCnt,0)                                //按钮个数
+          var(tMaxHighLightNum,0)                      //高亮数目
+          var(highlightIndex,0)                        //高亮层坐标
+          var(tTag,0)                                  //记录tag值
+          var(t1,0)                                    //临时变量1
+          var(t2,0)                                    //临时变量2
+          
+          //set value
+          set(laylen,'this.layers.length')
+          set(spacing,'this.otherAttrs.0')
+          set(btnCnt,'this.otherAttrs.1')             
+          set(tMaxHighLightNum,'this.maxHighLightNum')
+          getTag(tTag) 
+          
+          if(tMaxHighLightNum>0){
+            minus(laylen,1)
+            set(highlightIndex,laylen)
+          }
+          
+          //清空显示
+          while(t1<laylen){
+            set('this.layers.t1.hidden',0)
+            add(t1,1)
+            set('this.layers.t1.hidden',1)
+            add(t1,1)
+          }
+                    
+          //显示当前值
+          if(tTag>0){
+            if(tTag<laylen){
+              multiply(tTag,2)
+              minus(tTag,1)
+              set('this.layers.tTag.hidden',0)
             }
-            set(a,'this.layers.length')
-            set(c,a)
-            divide(c,tSingleButtonLayers)
-            while(a>0){
-                if (tMaxHighLightNum>0) {
-                  minus(a,1)
-                  minus(a,1)
-                  set('this.layers.a.hidden',0)
-                  minus(a,1)
-                  set('this.layers.a.hidden',1)
-                }else{
-                  minus(a,1)
-                  set('this.layers.a.hidden',0)
-                  minus(a,1)
-                  set('this.layers.a.hidden',1)
-                }
-                
-            }
-            getTag(a)
-            if(a>=0){
-                if(c>a){
-                    multiply(a,tSingleButtonLayers)
-                    set('this.layers.a.hidden',0)
-                    add(a,1)
-                    set('this.layers.a.hidden',1)
-                }
-            }
-
+          }
+         
         `,
         onKeyBoardLeft:`
-          var(tMaxHighLightNum,0)
+          var(arrange,0)
+          var(laylen,0)                                //图层数目
+          var(spacing,0)                               //按钮间距
+          var(btnCnt,0)                                //按钮个数
+          var(tMaxHighLightNum,0)                      //高亮数目
+          var(highlightIndex,0)                        //高亮层坐标
+          var(startValue,0)                            //当前位置,即动画起始位置
+          var(stopValue,0)                             //高亮位置偏移量,即动画终止位置
+          var(t1,0)                                    //临时变量
+          
+          //set value
+          set(arrange,'this.otherAttrs.4')
+          set(laylen,'this.layers.length')
+          set(spacing,'this.otherAttrs.0')
+          set(btnCnt,'this.otherAttrs.1')             
           set(tMaxHighLightNum,'this.maxHighLightNum')
-          if (tMaxHighLightNum>0) {
+          
+          if(tMaxHighLightNum>0){
+            minus(laylen,1)
+            set(highlightIndex,laylen)
             var(tHighLightNum,0)
             set(tHighLightNum,'this.highLightNum')
-
-            if (tHighLightNum>0) {
-              minus(tHighLightNum,1)
-              multiply(tHighLightNum,3)
-              add(tHighLightNum,2)
-
-              var(tTotalLayers,0)
-              set(tTotalLayers,'this.layers.length')
-              if (tHighLightNum < tTotalLayers) {
-                //valid
-                //reset 
-                var(tCurLayer,0)
-                while(tMaxHighLightNum>0){
-                  minus(tMaxHighLightNum,1)
-                  set(tCurLayer,tMaxHighLightNum)
-                  multiply(tCurLayer,3)
-                  add(tCurLayer,2)
-                  set('this.layers.tCurLayer.hidden',1)
+            
+            if(tHighLightNum>0){
+                if(arrange==0){
+                  //水平方向
+                  //stopValue = (tHightLightNum-1)*(width+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.width')
+                  add(t1,'this.otherAttrs.0')
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.x')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
+                }else{
+                  //竖直方向
+                  //stopValue = (tHightLightNum-1)*(height+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.height')
+                  add(t1,'this.otherAttrs.0') 
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.y')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  print('this.otherAttrs.2','this.otherAttrs.3')
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
                 }
-                //set target highlight 
-                set('this.layers.tHighLightNum.hidden',0)
-              }
+                starthlanimation(0)
+                
             }else{
-                if(tHighLightNum==0){
-                    add(tHighLightNum,2)
-                    set('this.layers.tHighLightNum.hidden',1)
-                }
-            }
+                set('this.layers.highlightIndex.hidden',1)
+            } 
           }
         `,
         onKeyBoardRight:`
-          var(tMaxHighLightNum,0)
+          var(arrange,0)
+          var(laylen,0)                                //图层数目
+          var(spacing,0)                               //按钮间距
+          var(btnCnt,0)                                //按钮个数
+          var(tMaxHighLightNum,0)                      //高亮数目
+          var(highlightIndex,0)                        //高亮层坐标
+          var(startValue,0)                            //当前位置,即动画起始位置
+          var(stopValue,0)                             //高亮位置偏移量,即动画终止位置
+          var(t1,0)                                    //临时变量
+          
+          //set value
+          set(arrange,'this.otherAttrs.4')
+          set(laylen,'this.layers.length')
+          set(spacing,'this.otherAttrs.0')
+          set(btnCnt,'this.otherAttrs.1')             
           set(tMaxHighLightNum,'this.maxHighLightNum')
-          if (tMaxHighLightNum>0) {
+          
+          if(tMaxHighLightNum>0){
+            minus(laylen,1)
+            set(highlightIndex,laylen)
             var(tHighLightNum,0)
             set(tHighLightNum,'this.highLightNum')
-            if (tHighLightNum>0) {
-              minus(tHighLightNum,1)
-              multiply(tHighLightNum,3)
-              add(tHighLightNum,2)
-
-              var(tTotalLayers,0)
-              set(tTotalLayers,'this.layers.length')
-              if (tHighLightNum  < tTotalLayers) {
-                //valid
-                //reset 
-                var(tCurLayer,0)
-                while(tMaxHighLightNum>0){
-                  minus(tMaxHighLightNum,1)
-                  set(tCurLayer,tMaxHighLightNum)
-                  multiply(tCurLayer,3)
-                  add(tCurLayer,2)
-                  set('this.layers.tCurLayer.hidden',1)
+            
+            if(tHighLightNum>0){
+                if(arrange==0){
+                  //水平方向
+                  //计算公式:stopValue = (tHightLightNum-1)*(width+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.width')
+                  add(t1,'this.otherAttrs.0')
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.x')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
+                }else{
+                  //竖直方向
+                  //stopValue = (tHightLightNum-1)*(height+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.height')
+                  add(t1,'this.otherAttrs.0') 
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.y')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  print('this.otherAttrs.2','this.otherAttrs.3')
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
                 }
-                //set target highlight 
-                set('this.layers.tHighLightNum.hidden',0)
-              }
+                starthlanimation(0)
             }else{
-                if(tHighLightNum==0){
-                    var(lastHighLight,0)
-                    set(lastHighLight,'this.layers.length')
-                    minus(lastHighLight,1)
-                    set('this.layers.lastHighLight.hidden',1)
-                }
-            }
+                set('this.layers.highlightIndex.hidden',1)
+            } 
           }
         `,
         onKeyBoardOK:`
           var(tHighLightNum,0)
+          var(laylen,0)
+          
           set(tHighLightNum,'this.highLightNum')
-          if (tHighLightNum>0) {
-            minus(tHighLightNum,1)
-            var(tTotalLayers,0)
-            set(tTotalLayers,'this.layers.length')
-
-            divide(tTotalLayers,3)
-            if (tHighLightNum<tTotalLayers) {
-              //valid
-              //reset 
-              //set target tag
-              setTag(tHighLightNum)
-              
+          set(laylen,'this.layers.length')
+          
+          if(tHighLightNum>0){
+            minus(laylen,1)
+            if(tHighLightNum<laylen){
+               print(tHighLightNum,'tHighLightNum')
+               setTag(tHighLightNum)
             }
           }
-
+        `,
+        onHighlightFrame:`
+          //curHLAnimationFactor理论上为0~1的小数，为了指令的计算取curHLAnimationFactor理论上为0~1000的正数
+          
+          var(highlightIndex,0)                     //高亮层坐标
+          var(tFactor,0)                            //动画进度
+          var(startValue,0)                         //起始值
+          var(stopValue,0)                          //结束值
+          var(offset,0)                             //偏移值
+          var(arrange,0)
+          
+          set(arrange,'this.otherAttrs.4')
+          set(highlightIndex,'this.layers.length')
+          minus(highlightIndex,1)
+          set(tFactor,'this.curHLAnimationFactor')
+          set(startValue,'this.otherAttrs.2')
+          set(stopValue,'this.otherAttrs.3')
+          set(offset,stopValue)
+          
+          //公式:offset = startValue + (stopValue-startValue)*curHLAnimationFactor/1000
+          minus(offset,startValue)
+          multiply(offset,tFactor)
+          divide(offset,1000)
+          add(offset,startValue)
+          // print(tFactor,offset)
+          
+          if(arrange==0){
+            set('this.layers.highlightIndex.x',offset)
+          }else{
+            set('this.layers.highlightIndex.y',offset)
+          }
+          
         `
     };
 
@@ -2179,7 +2265,7 @@
                 set('this.otherAttrs.10',1)
                 set('this.layers.0.hidden',0)
                 set('this.layers.1.hidden',0)
-                
+
             }else{
                 setglobalvar(0,0)
                 set('this.otherAttrs.10',0)
@@ -3564,16 +3650,8 @@
  * set('this.layers.1.hidden',1)
  */
 
-// mod(ttTag,16)
-// print(ttTag,'ttTag')
-// //while(xr>0){
-// //    multiply(addNum,16)
-// //    minus(xr,1)
-// //}
-// add(tTag,addNum)
 
-
-// //old code
+// //old code num on tagchange
 // var(tTagValue,0)
 // getTag(tTagValue)
 // // print(tTagValue,'tTagValue')
@@ -3749,4 +3827,118 @@
 // checkalarm(0)
 // set('this.oldValue',tTagValue)
 
+
+//buttongroup ontagchange
+// var(a,0)
+// var(b,0)
+// var(c,0)
+// var(tMaxHighLightNum,0)
+// set(tMaxHighLightNum,'this.maxHighLightNum')
+// var(tSingleButtonLayers,0)
+// if (tMaxHighLightNum>0) {
+//     set(tSingleButtonLayers,3)
+// }else{
+//     set(tSingleButtonLayers,2)
+// }
+// set(a,'this.layers.length')
+// set(c,a)
+// divide(c,tSingleButtonLayers)
+// while(a>0){
+//     if (tMaxHighLightNum>0) {
+//         minus(a,1)
+//         minus(a,1)
+//         set('this.layers.a.hidden',0)
+//         minus(a,1)
+//         set('this.layers.a.hidden',1)
+//     }else{
+//         minus(a,1)
+//         set('this.layers.a.hidden',0)
+//         minus(a,1)
+//         set('this.layers.a.hidden',1)
+//     }
+//
+// }
+// getTag(a)
+// if(a>=0){
+//     if(c>a){
+//         multiply(a,tSingleButtonLayers)
+//         set('this.layers.a.hidden',0)
+//         add(a,1)
+//         set('this.layers.a.hidden',1)
+//     }
+// }
+
+
+//button group onkeyboardleft
+// var(tMaxHighLightNum,0)
+// set(tMaxHighLightNum,'this.maxHighLightNum')
+// if (tMaxHighLightNum>0) {
+//     var(tHighLightNum,0)
+//     set(tHighLightNum,'this.highLightNum')
+//
+//     if (tHighLightNum>0) {
+//         minus(tHighLightNum,1)
+//         multiply(tHighLightNum,3)
+//         add(tHighLightNum,2)
+//
+//         var(tTotalLayers,0)
+//         set(tTotalLayers,'this.layers.length')
+//         if (tHighLightNum < tTotalLayers) {
+//             //valid
+//             //reset
+//             var(tCurLayer,0)
+//             while(tMaxHighLightNum>0){
+//                 minus(tMaxHighLightNum,1)
+//                 set(tCurLayer,tMaxHighLightNum)
+//                 multiply(tCurLayer,3)
+//                 add(tCurLayer,2)
+//                 set('this.layers.tCurLayer.hidden',1)
+//             }
+//             //set target highlight
+//             set('this.layers.tHighLightNum.hidden',0)
+//         }
+//     }else{
+//         if(tHighLightNum==0){
+//             add(tHighLightNum,2)
+//             set('this.layers.tHighLightNum.hidden',1)
+//         }
+//     }
+// }
+
+//buttongroup onkeyboard right
+// var(tMaxHighLightNum,0)
+// set(tMaxHighLightNum,'this.maxHighLightNum')
+// if (tMaxHighLightNum>0) {
+//     var(tHighLightNum,0)
+//     set(tHighLightNum,'this.highLightNum')
+//     if (tHighLightNum>0) {
+//         minus(tHighLightNum,1)
+//         multiply(tHighLightNum,3)
+//         add(tHighLightNum,2)
+//
+//         var(tTotalLayers,0)
+//         set(tTotalLayers,'this.layers.length')
+//         if (tHighLightNum  < tTotalLayers) {
+//             //valid
+//             //reset
+//             var(tCurLayer,0)
+//             while(tMaxHighLightNum>0){
+//                 minus(tMaxHighLightNum,1)
+//                 set(tCurLayer,tMaxHighLightNum)
+//                 multiply(tCurLayer,3)
+//                 add(tCurLayer,2)
+//                 set('this.layers.tCurLayer.hidden',1)
+//             }
+//             //set target highlight
+//             set('this.layers.tHighLightNum.hidden',0)
+//         }
+//     }else{
+//         if(tHighLightNum==0){
+//             var(lastHighLight,0)
+//             set(lastHighLight,'this.layers.length')
+//             minus(lastHighLight,1)
+//             set('this.layers.lastHighLight.hidden',1)
+//         }
+//     }
+// }
 

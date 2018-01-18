@@ -98,7 +98,6 @@
 
     WidgetCommands['ButtonGroup'] = {
         onInitialize:`
-            
         `,
         onMouseDown:`
             var(a,0)
@@ -154,11 +153,12 @@
             var(tMaxHighLightNum,0)
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(tSingleButtonLayers,0)
-            if (tMaxHighLightNum>0) {
-              set(tSingleButtonLayers,3)
-            }else{
-              set(tSingleButtonLayers,2)
-            }
+            // if (tMaxHighLightNum>0) {
+            //   set(tSingleButtonLayers,3)
+            // }else{
+            //   set(tSingleButtonLayers,2)
+            // }
+            set(tSingleButtonLayers,2)
             set(a,'this.layers.length')
             set(c,a)
             divide(c,tSingleButtonLayers)
@@ -260,6 +260,7 @@
                 }
             }
           }
+          starthlanimation(0)
         `,
         onKeyBoardOK:`
           var(tHighLightNum,0)
@@ -275,10 +276,13 @@
               //reset 
               //set target tag
               setTag(tHighLightNum)
-              
             }
           }
-
+        `,
+        onHighlightFrame:`
+          var(tFactor,0)                            //动画进度
+          set(tFactor,'this.curHLAnimationFactor')
+          print('tFactor',tFactor)
         `
     };
 

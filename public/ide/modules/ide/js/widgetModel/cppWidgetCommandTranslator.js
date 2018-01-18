@@ -172,7 +172,10 @@
         new Attr('mWDGMouseReleaseAction'),
         new Attr('mWDGOldValueInit'),
         new Attr('maxHighLightNum'),
-        new Attr('highLightNum')
+        new Attr('highLightNum'),
+
+        //add
+        new Attr('curHLAnimationFactor')
     ]
 
     var cppWidgetAttrsTable = {}
@@ -187,8 +190,7 @@
         cppWidgetAttrsTable['a'+curIdx] = new Attr('a'+curIdx,4,curIdx) 
     }
 
-    // console.log('cppWidgetAttrsTable',cppWidgetAttrsTable)
-
+    //TODO:加入curAnimationFactor，curHLAnimationFactor,totalHLFrame,nowHLFrame
     var widgetAttrMap = {
         info:{
             left:'x',
@@ -219,8 +221,11 @@
         innerY:'mWDGMouseInnerY',
         oldValueInit:'mWDGOldValueInit',
         maxHighLightNum:'maxHighLightNum',
-        highLightNum:'highLightNum'
-    }
+        highLightNum:'highLightNum',
+
+        //add
+        curHLAnimationFactor:'curHLAnimationFactor'
+    };
 
 
     //layer attrs
@@ -559,7 +564,7 @@
                                         default:
                                             // console.log('command',command,curExp)
                                             inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
-                                            console.log('command',command,curExp,inst)
+                                            // console.log('command',command,curExp,inst)
                                     }
                     
                                     
