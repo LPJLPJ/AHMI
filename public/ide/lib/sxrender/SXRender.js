@@ -10,6 +10,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+};
+
 /**
  * Created by lixiang on 2018/1/7.
  */
@@ -228,24 +261,33 @@ var valueTypes = {
 };
 
 //状态构造器
-function State(stateType, repeat, curFrame, curValue) {
+function State(stateType, repeat, curFrame, curValue, reversing) {
     this.stateType = stateType || stateTypes.idle;
     this.repeat = repeat || 0;
     this.curFrame = curFrame || 0;
     this.curValue = curValue;
+    this.reversing = reversing || false;
 }
 
 //插值
-function interpolateNumber(startValue, stopValue, progress) {
-    return Math.round(startValue + progress * (stopValue - startValue));
+function interpolateNumber(startValue, stopValue, progress, needReverse) {
+    if (needReverse) {
+        return Math.round(stopValue + progress * (startValue - stopValue));
+    } else {
+        return Math.round(startValue + progress * (stopValue - startValue));
+    }
 }
 
 //对象插值
-function interpolateObject(startObj, stopObj, progress) {
+function interpolateObject(startObj, stopObj, progress, needReverse) {
     var obj = Object.assign({}, startObj);
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
-            obj[key] = Math.round(startObj[key] + progress * (stopObj[key] - startObj[key]));
+            if (needReverse) {
+                obj[key] = Math.round(stopObj[key] + progress * (startObj[key] - stopObj[key]));
+            } else {
+                obj[key] = Math.round(startObj[key] + progress * (stopObj[key] - startObj[key]));
+            }
         }
     }
     return obj;
@@ -298,9 +340,9 @@ var coreAnimateHandler = function coreAnimateHandler() {
 
     this._p = this.timingFun(this.state.curFrame / this._totalFrames);
 
-    this.state.curValue = this._valueType !== valueTypes.object ? interpolateNumber(this.startValue, this.stopValue, this._p) : interpolateObject(this.startValue, this.stopValue, this._p);
+    this.state.curValue = this._valueType !== valueTypes.object ? interpolateNumber(this.startValue, this.stopValue, this._p, this.state.resveringeState) : interpolateObject(this.startValue, this.stopValue, this._p, this.state.resveringeState);
 
-    if (this.target.hasOwnProperty(this.key)) {
+    if (this.target && this.target.hasOwnProperty(this.key)) {
         this.target[this.key] = this.state.curValue;
     }
 
@@ -310,10 +352,21 @@ var coreAnimateHandler = function coreAnimateHandler() {
     this._lastTimeStamp = Date.now();
 
     if (this.state.curFrame < this._totalFrames) {
+        //执行动画
+        requestAnimationFrame(coreAnimateHandler.bind(this), this._timeStep);
+    } else if (this.autoReverse && !this.state.resveringeState) {
+        //自动回溯
+        this.state.resveringeState = true;
+        this.state.curFrame = 0;
+        requestAnimationFrame(coreAnimateHandler.bind(this), this._timeStep);
+    } else if (this.state.repeat < this.repeatCount - 1) {
+        //重复动画
+        this.state.repeat++;
+        this.state.curFrame = 0;
+        this.state.resveringeState = false;
         requestAnimationFrame(coreAnimateHandler.bind(this), this._timeStep);
     } else {
         this.state.curValue = this.stopValue;
-        this.didStopCB && this.didStopCB();
         this.stop();
     }
 
@@ -326,7 +379,7 @@ Animation.prototype = {
         //计算总帧数
         this._totalFrames = this.duration / 1000 * this.fps;
         //计算定时器间隔
-        this._timeStep = Math.round(1 / this.fps);
+        this._timeStep = Math.round(1000 / this.fps);
         //判断valueType
         switch (_typeof(this.startValue)) {
             case 'object':
@@ -356,10 +409,13 @@ Animation.prototype = {
         }.bind(this), this.startDelay);
     },
     stop: function stop() {
+        //reset
         this.state.stateType = stateTypes.idle;
         this.state.curValue = 0;
         this.state.curFrame = 0;
-        this._totalFrames = 0;
+        this.state.repeat = 0;
+        this.state.resveringeState = false;
+
         this.didStopCB && this.didStopCB();
     },
     pause: function pause() {
@@ -370,7 +426,7 @@ Animation.prototype = {
     },
     resume: function resume() {
         if (this.state.stateType === stateTypes.paused) {
-            this.state.stateTypes = stateTypes.running;
+            this.state.stateType = stateTypes.running;
             requestAnimationFrame(coreAnimateHandler.bind(this), this._timeStep);
         }
     }
@@ -585,6 +641,9 @@ Object.assign(InertialAnimation.prototype, {
  * Created by lixiang on 2018/1/7.
  */
 
+//私有方法名
+var drawprogress = Symbol('drawProgress');
+
 var SXRender = function SXRender(opts) {
     var canvas, ctx, opts, id, w, h, bgColor, contentW, contentH, drawScrollBar;
     opts = opts || {};
@@ -607,7 +666,7 @@ var SXRender = function SXRender(opts) {
     this.init(canvas, ctx, contentW, contentH, drawScrollBar);
 };
 
-SXRender.prototype = {
+SXRender.prototype = defineProperty({
     constructor: SXRender,
     init: function init(canvas, ctx, contentW, contentH, drawScrollBar) {
         //canvas
@@ -808,7 +867,7 @@ SXRender.prototype = {
         }
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         if (this.scrollHEnabled || this.scrollVEnabled && this.drawScrollBar) {
-            this._drawProgress();
+            this[drawprogress]();
         }
     },
     /**
@@ -834,44 +893,39 @@ SXRender.prototype = {
             id: genGUID()
         });
         this.objs.push(o);
-    },
-    /**
-     * 绘制进度条
-     * @private
-     */
-    _drawProgress: function _drawProgress() {
-        var top, left, width, height, offset;
-
-        if (this.scrollVEnabled) {
-            width = 4;
-            height = Math.round(this.height * this.height / this.contentH) - Math.abs(this.springOffset.y);
-            height = height < 10 ? 10 : height;
-            offset = this.springOffset.y < 0 ? this.springOffset.y : 0;
-            top = Math.round(-this.contentOffset.y * this.height / this.contentH) - offset;
-            top = top > this.height - 10 ? this.height - 10 : top;
-            left = this.width - width;
-
-            this.ctx.save();
-            this.ctx.fillStyle = '#888888';
-            this.ctx.fillRect(left, top, width, height);
-            this.ctx.restore();
-        }
-
-        if (this.scrollHEnabled) {
-            width = Math.round(this.width * this.width / this.contentW) - Math.abs(this.springOffset.x);
-            width = width < 10 ? 10 : width;
-            height = 4;
-
-            top = this.height - height;
-            offset = this.springOffset.x < 0 ? this.springOffset.x : 0;
-            left = Math.round(-this.contentOffset.x * this.width / this.contentW) - offset;
-            this.ctx.save();
-            this.ctx.fillStyle = '#888888';
-            this.ctx.fillRect(left, top, width, height);
-            this.ctx.restore();
-        }
     }
-};
+}, drawprogress, function () {
+    var top, left, width, height, offset;
+
+    if (this.scrollVEnabled) {
+        width = 4;
+        height = Math.round(this.height * this.height / this.contentH) - Math.abs(this.springOffset.y);
+        height = height < 10 ? 10 : height;
+        offset = this.springOffset.y < 0 ? this.springOffset.y : 0;
+        top = Math.round(-this.contentOffset.y * this.height / this.contentH) - offset;
+        top = top > this.height - 10 ? this.height - 10 : top;
+        left = this.width - width;
+
+        this.ctx.save();
+        this.ctx.fillStyle = '#888888';
+        this.ctx.fillRect(left, top, width, height);
+        this.ctx.restore();
+    }
+
+    if (this.scrollHEnabled) {
+        width = Math.round(this.width * this.width / this.contentW) - Math.abs(this.springOffset.x);
+        width = width < 10 ? 10 : width;
+        height = 4;
+
+        top = this.height - height;
+        offset = this.springOffset.x < 0 ? this.springOffset.x : 0;
+        left = Math.round(-this.contentOffset.x * this.width / this.contentW) - offset;
+        this.ctx.save();
+        this.ctx.fillStyle = '#888888';
+        this.ctx.fillRect(left, top, width, height);
+        this.ctx.restore();
+    }
+});
 
 /**
  * 鼠标按下事件。
@@ -968,15 +1022,16 @@ function mouseUpHandler(e) {
                         if (c.x > self.limitX.max || c.x < self.limitX.min) {
                             c.x = c.x > self.limitX.max ? self.limitX.max : self.limitX.min;
                             vx = (this.state.curValue.x - this.lastState.curValue.x) / (Date.now() - this._lastTimeStamp) * 1000;
-                            this.stop();
+                            // this.stop();
                         }
                         if (c.y > self.limitY.max || c.y < self.limitY.min) {
                             c.y = c.y > self.limitY.max ? self.limitY.max : self.limitY.min;
                             vy = (this.state.curValue.y - this.lastState.curValue.y) / (Date.now() - this._lastTimeStamp) * 1000;
-                            this.stop();
+                            // this.stop();
                         }
                         self.reRender();
                         if (Math.abs(vx) > 50 || Math.abs(vy) > 50 && !(vx && vy)) {
+                            this.stop();
                             //需要开启spring弹簧动画,只有在单方向是开启
                             if (Math.abs(vy) > 50) {
                                 self._animation = new SpringAnimation(null, '', vy, 20, 180, 0, 0, 2000, 1);
