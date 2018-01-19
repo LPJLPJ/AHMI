@@ -1768,11 +1768,13 @@
             //溢出处理
             if(tCurVal>tMaxVal){
                 //溢出最大值
+                print('溢出最大值',tMaxVal)
                 set(tCurVal,tMaxVal)
                 set(isOverflow,1)
             }else{
                 //溢出最小值
                 if(tCurVal<tMinVal){
+                    print('溢出最小值',tMinVal)
                     set(tCurVal,tMinVal)
                     set(isOverflow,1)
                 }
@@ -1867,10 +1869,11 @@
                 //绘制符号
                 if(symbolCnt==1){
                     //有负号
-                    set('this.layers.0.subLayers.image.texture',11)
+                    set('this.layers.0.subLayers.image.texture',12)
                     set('this.layers.0.x',initPosX)
                     set('this.layers.0.hidden',0)
                     minus(layersCount,1)
+                    minus(allFontCnt,1)
                 }
                 
                 
@@ -2101,6 +2104,283 @@
             set('this.layers.0.subLayers.roi.p4y',temp2)
             
         `,
+        onMouseUp:`
+            var(curValue,0)                                 //tag值
+            getTag(curValue) 
+
+            var(itemCount,0)                                //元素总个数
+            set(itemCount,'this.otherAttrs.2')
+
+            var(itemShowCount,0)                            //待选元素展示个数（单边）
+            set(itemShowCount,'this.otherAttrs.3')
+
+            var(itemHeight,0)                               //待选元素高度
+            set(itemHeight,'this.otherAttrs.7')
+
+            var(selectorHeight,0)                           //选中元素高度
+            set(selectorHeight,'this.otherAttrs.9')
+
+            var(tInnerX,0)                                  //鼠标坐标x
+            set(tInnerX,'this.innerX')
+
+            var(tInnerY,0)                                  //鼠标坐标y
+            set(tInnerY,'this.innerY')
+
+            var(tStartX,0)                                  //控件左上角坐标x
+            // set(tStartX,'this.otherAttrs.11')   
+
+            var(tStartY,0)                                  //控件左上角坐标y
+            // set(tStartY,'this.otherAttrs.12')
+
+            var(tSelectedStartY,0)                          //选择框左上角坐标y
+            set(tSelectedStartY,itemShowCount)            
+            multiply(tSelectedStartY,itemHeight)            
+            add(tSelectedStartY,tStartY)            
+
+            var(tWidth,0)                                   //控件宽度
+            set(tWidth,'this.otherAttrs.4')            
+
+            var(tHeight,0)                                  //控件高度
+            set(tHeight,'this.otherAttrs.5')  
+
+            var(tEndX,0)                                    //控件右下角坐标x
+            set(tEndX,tStartX)
+            add(tEndX,tWidth)           
+
+            var(tEndY,0)                                    //控件右下角坐标y
+            set(tEndY,tStartY)
+            add(tEndY,tHeight)
+
+            var(tSelectedEndY,0)                            //选择框左上角坐标y
+            set(tSelectedEndY,tSelectedStartY)                       
+            add(tSelectedEndY,selectorHeight)   
+
+            var(temp1,0)                                    //临时变量
+            var(temp2,0)
+
+            // print('tInnerX',tInnerX)
+            // print('tInnerY',tInnerY)
+            // print('tStartX',tStartX)
+            // print('tStartY',tStartY)
+            // print('tEndX',tEndX)
+            // print('tEndY',tEndY)
+            // print('tSelectedStartY',tSelectedStartY)
+            // print('tSelectedEndY',tSelectedEndY)
+
+            var(okFlag,0)                                                 //高亮是否已选中
+            set(okFlag,'this.otherAttrs.10')
+            var(isMoved,0)
+            set(isMoved,'this.otherAttrs.14')                             //isMoved 
+
+            if(isMoved==0){                                               //isMoved==0，没有被拖拽过
+                if(okFlag==1){
+                    if (tInnerX>=tStartX) {
+                        if(tInnerX < tEndX){
+                            if (tInnerY>=tStartY) {
+                                if (tInnerY<tEndY) {                      //在控件内
+                                    if (tInnerY<tSelectedStartY) {        //不在选择框里，在选择框上方
+                                        set(temp1,tSelectedStartY)
+                                        minus(temp1,tInnerY)
+                                        divide(temp1,itemHeight)
+                                        add(temp1,1)
+                                        set(temp2,curValue)
+                                        minus(temp2,temp1)
+                                        if(temp2>=0){
+                                            // set(temp2,0)
+                                            setTag(temp2)
+                                        }
+
+                                    }else{
+                                        if (tInnerY>tSelectedEndY) {      //不在选择框里，在选择框下方
+                                            set(temp1,tInnerY)
+                                            minus(temp1,tSelectedEndY)
+                                            divide(temp1,itemHeight)
+                                            add(temp1,1)
+                                            set(temp2,curValue)
+                                            add(temp2,temp1)
+                                            set(temp1,itemCount)
+                                            minus(temp1,1)
+                                            if(temp2<=temp1){
+                                                // set(temp2,temp1)
+                                                setTag(temp2)
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }else{
+
+                    var(isItemShow,0)                                     //选项是否已展开
+                    set(isItemShow,'this.otherAttrs.13')
+                    if(isItemShow==1){
+                        if (tInnerX>=tStartX) {
+                            if(tInnerX <=tEndX){
+                                if (tInnerY>=tStartY) {
+                                    if (tInnerY<=tEndY) {                 //在控件里
+                                        if (tInnerY<tSelectedStartY) {    //不在选择框里，在选择框上方
+                                            set(temp1,tSelectedStartY)
+                                            minus(temp1,tInnerY)
+                                            divide(temp1,itemHeight)
+                                            add(temp1,1)
+                                            set(temp2,curValue)
+                                            minus(temp2,temp1)
+                                            if(temp2>=0){
+                                                // set(temp2,0)
+                                                setTag(temp2)
+                                            }
+
+                                        }else{
+                                            if (tInnerY>tSelectedEndY) {  //不在选择框里，在选择框下方
+                                                set(temp1,tInnerY)
+                                                minus(temp1,tSelectedEndY)
+                                                divide(temp1,itemHeight)
+                                                add(temp1,1)
+                                                set(temp2,curValue)
+                                                add(temp2,temp1)
+                                                set(temp1,itemCount)
+                                                minus(temp1,1)
+                                                if(temp2<=temp1){
+                                                    // set(temp2,temp1)
+                                                    setTag(temp2)
+                                                }
+
+                                            }else{                         //在选择框里
+                                                                           //收起选项
+                                                set('this.layers.0.hidden',1)
+                                                set('this.layers.1.hidden',1)
+                                                set('this.otherAttrs.13',0)  
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        if (tInnerX>=tStartX) {
+                            if(tInnerX <=tEndX){
+                                if (tInnerY>=tSelectedStartY) {
+                                    if (tInnerY<=tSelectedEndY) {          //在选择框里
+                                        if('this.layers.len.hidden'==1){   //不能展开被高亮的选择器
+                                                                           //展开选项 
+                                            set('this.layers.0.hidden',0)
+                                            set('this.layers.1.hidden',0)
+                                            set('this.otherAttrs.13',1)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            set('this.otherAttrs.14',0)                     //isMoved = 0
+        `,
+        onMouseDown:`
+            var(tInnerY,0)
+            set(tInnerY,'this.innerY')
+            set('this.otherAttrs.15',tInnerY)               //记录鼠标上一坐标y       
+        `,
+        onMouseMove:`
+            var(curValue,0)                                 //tag值
+            getTag(curValue) 
+
+            var(itemCount,0)                                //元素总个数
+            set(itemCount,'this.otherAttrs.2')
+
+            var(itemShowCount,0)                            //待选元素展示个数（单边）
+            set(itemShowCount,'this.otherAttrs.3')
+
+            var(itemHeight,0)                               //待选元素高度
+            set(itemHeight,'this.otherAttrs.7')
+
+            var(selectorHeight,0)                           //选中元素高度
+            set(selectorHeight,'this.otherAttrs.9')
+
+            var(tInnerX,0)                                  //鼠标坐标x
+            set(tInnerX,'this.innerX')
+
+            var(tInnerY,0)                                  //鼠标坐标y
+            set(tInnerY,'this.innerY')
+
+            var(tLastInnerY,0)                              //鼠标上一有效坐标y
+            set(tLastInnerY,'this.otherAttrs.15')
+
+            var(tStartX,0)                                  //控件左上角坐标x
+            // set(tStartX,'this.otherAttrs.11')   
+
+            var(tStartY,0)                                  //控件左上角坐标y
+            // set(tStartY,'this.otherAttrs.12')
+
+            var(tSelectedStartY,0)                          //选择框左上角坐标y
+            set(tSelectedStartY,itemShowCount)            
+            multiply(tSelectedStartY,itemHeight)            
+            add(tSelectedStartY,tStartY)            
+
+            var(tWidth,0)                                   //控件宽度
+            set(tWidth,'this.otherAttrs.4')            
+
+            var(tHeight,0)                                  //控件高度
+            set(tHeight,'this.otherAttrs.5')  
+
+            var(tEndX,0)                                    //控件右下角坐标x
+            set(tEndX,tStartX)
+            add(tEndX,tWidth)           
+
+            var(tEndY,0)                                    //控件右下角坐标y
+            set(tEndY,tStartY)
+            add(tEndY,tHeight)
+
+            var(tSelectedEndY,0)                            //选择框左上角坐标y
+            set(tSelectedEndY,tSelectedStartY)                       
+            add(tSelectedEndY,selectorHeight)   
+
+            var(temp1,0)                                    //临时变量
+            var(temp2,0)
+
+            var(isItemShow,0)                                              //选项是否已展开
+            set(isItemShow,'this.otherAttrs.13')
+            if(isItemShow==1){
+                if (tInnerX>=tStartX) {
+                    if(tInnerX <=tEndX){
+                        if (tInnerY>=tStartY) {
+                            if (tInnerY<=tEndY) {                           //在控件里              
+                                set(temp1,tLastInnerY)                      //鼠标纵向移动距离
+                                minus(temp1,tInnerY)
+                                set(temp2,itemHeight)
+                                divide(temp2,2)                             //itemHeight的一半
+                                if(temp1>0){                                //移动方向向上
+                                    if(temp1>=temp2){                       //认为移动有效
+                                        set(temp2,curValue)
+                                        add(temp2,1)
+                                        set(temp1,itemCount)
+                                        minus(temp1,1)
+                                        if(temp2<=temp1){
+                                            setTag(temp2)
+                                        }
+                                        set('this.otherAttrs.15',tInnerY)
+                                        set('this.otherAttrs.14',1)         //isMoved = 1
+                                    }
+                                }else{                                      //移动方向向下
+                                    multiply(temp1,-1)
+                                    if(temp1>=temp2){                       //认为移动有效
+                                        set(temp2,curValue)
+                                        minus(temp2,1)
+                                        if(temp2>=0){
+                                            setTag(temp2)
+                                        }
+                                        set('this.otherAttrs.15',tInnerY)
+                                        set('this.otherAttrs.14',1)         //isMoved = 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `,
         onKeyBoardLeft:`
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
@@ -2176,12 +2456,16 @@
                 set('this.otherAttrs.10',1)
                 set('this.layers.0.hidden',0)
                 set('this.layers.1.hidden',0)
+                //选项已展开
+                set('this.otherAttrs.13',1)
                 
             }else{
                 setglobalvar(0,0)
                 set('this.otherAttrs.10',0)
                 set('this.layers.0.hidden',1)
                 set('this.layers.1.hidden',1)
+                //选项已收起
+                set('this.otherAttrs.13',0)
             }
         `
     };
@@ -2888,6 +3172,366 @@
             }
         `
     };
+
+    WidgetCommands['ColorPicker'] = {
+        "onInitialize":`
+            var(tInitValue,0)
+            set(tInitValue,'this.otherAttrs.0')
+            print('tInitValue','this.otherAttrs')
+            
+            var(tR,0)
+            var(tG,0)
+            var(tB,0)
+            set(tR,'this.otherAttrs.1')
+            set(tG,'this.otherAttrs.1')
+            set(tB,'this.otherAttrs.1')
+            mod(tB,1000)
+            divide(tG,1000)
+            mod(tG,1000)
+            divide(tR,1000000)
+            //rgbToHSV
+            var(tMin,0)
+            var(tMax,0)
+            var(tDelta,0)
+            var(tH,0)
+            var(tS,0)
+            var(tV,0)
+            if(tR > tG){
+                set(tMax,tR)
+                set(tMin,tG)
+            }else{
+                set(tMin,tR)
+                set(tMax,tG)
+            }
+            if(tB>tMax){
+                set(tMax,tB)
+            }else{
+                if(tB<tMin){
+                    set(tMin,tB)
+                }
+            }
+            
+            print('tMax',tMax)
+            print('tMin',tMin)
+            
+            //set v
+            set(tV,tMax)
+            //set delta
+            set(tDelta,tMax)
+            minus(tDelta,tMin)
+            if(tMax == 0 ){
+                set(tS,0)
+                set(tH,-1)
+               
+            }else{
+                //set s, x255
+                set(tS,255)
+                
+                multiply(tS,tDelta)
+                divide(tS,tMax)
+                //set h
+                if(tDelta == 0){
+                    set(tH,-1)
+                }else{
+                    if(tR==tMax){
+                        set(tH,tG)
+                        minus(tH,tB)
+                        multiply(tH,60)
+                        divide(tH,tDelta)
+                    }else{
+                        if(tG == tMax){
+                            set(tH,tB)
+                            minus(tH,tR)
+                            multiply(tH,60)
+                            divide(tH,tDelta)
+                            add(tH,120)
+                        }else{
+                            set(tH,tR)
+                            minus(tH,tG)
+                            multiply(tH,60)
+                            divide(tH,tDelta)
+                            add(tH,240)
+                        }
+                    }
+                    if(tH<0){
+                        add(tH,360) 
+                    }
+                }
+            }
+            
+            print('h',tH)
+            print('s',tS)
+            print('v',tV)
+            
+        `,
+        'onMouseDown':`
+            var(tTemp,0)
+            var(tH,0)
+            var(tS,0)
+            var(tV,0)
+            //get Last HSV
+            set(tH,'this.otherAttrs.1')
+            set(tS,'this.otherAttrs.2')
+            set(tV,'this.otherAttrs.3')
+            var(tR,0)
+            var(tG,0)
+            var(tB,0)
+            var(tI,0)
+            var(tF,0)
+            var(tP,0)
+            var(tQ,0)
+            var(tT,0)
+            var(tChangeFlag,0)
+            //get current h,s,v
+            var(tInnerX,0)
+            var(tInnerY,0)
+            set(tInnerX,'this.innerX')
+            set(tInnerY,'this.innerY')
+            var(tPickerX,0)
+            var(tPickerY,0)
+            var(tPickerW,0)
+            var(tPickerH,0)
+            var(tPickerRightX,0)
+            var(tPickerBottomY,0)
+            set(tPickerX,'this.layers.2.x')
+            set(tPickerY,'this.layers.2.y')
+            set(tPickerW,'this.layers.2.width')
+            set(tPickerH,'this.layers.2.height')
+            set(tPickerRightX,tPickerX)
+            add(tPickerRightX,tPickerW)
+            set(tPickerBottomY,tPickerY)
+            add(tPickerBottomY,tPickerH)
+            if(tInnerX >= tPickerX){
+                if(tInnerX < tPickerRightX){
+                    if(tInnerY >= tPickerY){
+                        if(tInnerY < tPickerBottomY){
+                            set(tChangeFlag,1)
+                            //hit picker area
+                            set(tS,tInnerX)
+                            minus(tS,tPickerX)
+                            multiply(tS,255)
+                            divide(tS,tPickerW)
+                            set(tV,tPickerH)
+                            minus(tV,tInnerY)
+                            add(tV,tPickerY)
+                            multiply(tV,255)
+                            divide(tV,tPickerH)
+                            set('this.otherAttrs.2',tS)
+                            set('this.otherAttrs.3',tV)
+                        }
+                    }
+                }
+            }
+            
+            //hue
+            var(tHueX,0)
+            var(tHuey,0)
+            var(tHueW,0)
+            var(tHueH,0)
+            var(tHueRightX,0)
+            var(tHueBottomY,0)
+            set(tHueX,'this.layers.1.x')
+            set(tHueY,'this.layers.1.y')
+            set(tHueW,'this.layers.1.width')
+            set(tHueH,'this.layers.1.height')
+            set(tHueRightX,tHueX)
+            add(tHueRightX,tHueW)
+            set(tHueBottomY,tHueY)
+            add(tHueBottomY,tHueH)
+            var(tSBack,0)
+            var(tVBack,0)
+            if(tInnerX>=tHueX){
+                if(tInnerX<tHueRightX){
+                    if(tInnerY>=tHueY){
+                        if(tInnerY<tHueBottomY){
+                            set(tChangeFlag,1)
+                            //set h
+                            set(tH,tInnerY)
+                            minus(tH,tHueY)
+                            multiply(tH,360)
+                            divide(tH,tHueH)
+                            set('this.otherAttrs.1',tH)
+                            
+                            //change picker bg color
+                            set(tSBack,tS)
+                            set(tVBack,tV)
+                            set(tS,255)
+                            set(tV,255)
+                            if(tS == 0){
+                                set(tR,tV)
+                                set(tG,tV)
+                                set(tB,tV)
+                            }else{
+                                set(tI,tH)
+                                divide(tI,60)
+                                set(tF,tH)
+                                set(tTemp,tI)
+                                multiply(tTemp,60)
+                                //tF = 60*f
+                                minus(tF,tTemp)
+                                
+                                //set p
+                                set(tP,255)
+                                minus(tP,tS)
+                                multiply(tP,tV)
+                                divide(tP,255)
+                                
+                                //set q
+                                set(tTemp,tS)
+                                multiply(tTemp,tF)
+                                set(tQ,15300)
+                                minus(tQ,tTemp)
+                                multiply(tQ,tV)
+                                divide(tQ,15300)
+                                
+                                //set t
+                                set(tTemp,60)
+                                minus(tTemp,tF)
+                                multiply(tTemp,tS)
+                                set(tT,15300)
+                                minus(tT,tTemp)
+                                multiply(tT,tV)
+                                divide(tT,15300)
+                               
+                                
+                                if(tI == 0){
+                                    set(tR,tV)
+                                    set(tG,tT)
+                                    set(tB,tP)
+                                }else{
+                                    if(tI == 1){
+                                        set(tR,tQ)
+                                        set(tG,tV)
+                                        set(tB,tP)
+                                    }else{
+                                        if(tI == 2){
+                                            set(tR,tP)
+                                            set(tG,tV)
+                                            set(tB,tT)
+                                        }else{
+                                            if(tI == 3){
+                                                set(tR,tP)
+                                                set(tG,tQ)
+                                                set(tB,tV)
+                                            }else{
+                                                if(tI == 4){
+                                                    set(tR,tT)
+                                                    set(tG,tP)
+                                                    set(tB,tV)
+                                                }else{
+                                                    set(tR,tV)
+                                                    set(tG,tP)
+                                                    set(tB,tQ)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }    
+                                
+                            }
+                            //set picker bg color
+                            set('this.layers.2.subLayers.color.r',tR)
+                            set('this.layers.2.subLayers.color.g',tG)
+                            set('this.layers.2.subLayers.color.b',tB)
+                            //restore tS,tV
+                            set(tS,tSBack)
+                            set(tV,tVBack)
+                        }
+                    }
+                }
+            }
+            
+            if(tChangeFlag == 1){
+            
+                
+                if(tS == 0){
+                    set(tR,tV)
+                    set(tG,tV)
+                    set(tB,tV)
+                }else{
+                    set(tI,tH)
+                    divide(tI,60)
+                    set(tF,tH)
+                    set(tTemp,tI)
+                    multiply(tTemp,60)
+                    //tF = 60*f
+                    minus(tF,tTemp)
+                    
+                    //set p
+                    set(tP,255)
+                    minus(tP,tS)
+                    multiply(tP,tV)
+                    divide(tP,255)
+                    
+                    //set q
+                    set(tTemp,tS)
+                    multiply(tTemp,tF)
+                    set(tQ,15300)
+                    minus(tQ,tTemp)
+                    multiply(tQ,tV)
+                    divide(tQ,15300)
+                    
+                    //set t
+                    set(tTemp,60)
+                    minus(tTemp,tF)
+                    multiply(tTemp,tS)
+                    set(tT,15300)
+                    minus(tT,tTemp)
+                    multiply(tT,tV)
+                    divide(tT,15300)
+                   
+                    
+                    if(tI == 0){
+                        set(tR,tV)
+                        set(tG,tT)
+                        set(tB,tP)
+                    }else{
+                        if(tI == 1){
+                            set(tR,tQ)
+                            set(tG,tV)
+                            set(tB,tP)
+                        }else{
+                            if(tI == 2){
+                                set(tR,tP)
+                                set(tG,tV)
+                                set(tB,tT)
+                            }else{
+                                if(tI == 3){
+                                    set(tR,tP)
+                                    set(tG,tQ)
+                                    set(tB,tV)
+                                }else{
+                                    if(tI == 4){
+                                        set(tR,tT)
+                                        set(tG,tP)
+                                        set(tB,tV)
+                                    }else{
+                                        set(tR,tV)
+                                        set(tG,tP)
+                                        set(tB,tQ)
+                                    }
+                                }
+                            }
+                        }
+                    }    
+                    
+                }
+               
+                set('this.layers.3.subLayers.color.r',tR)
+                set('this.layers.3.subLayers.color.g',tG)
+                set('this.layers.3.subLayers.color.b',tB)
+                
+                print('r',tR)
+                print('g',tG)
+                print('b',tB)
+            
+            }
+           
+            
+            
+            
+        `,
+    }
 
     return WidgetCommands;
 

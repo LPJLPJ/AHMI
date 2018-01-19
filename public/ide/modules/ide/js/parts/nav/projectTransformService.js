@@ -688,7 +688,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget = new WidgetModel.models['Selector'](x,y,w,h,info,targetWidget.texList[0].slices[0],newUnSelectedImgSrc,newSelectedImgSrc,targetWidget.texList[3].slices[0]);
                     generalWidget = generalWidget.toObject();
 
-                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    // generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
                     //属性
                     generalWidget.otherAttrs[1] = Number(info['curValue']);//当前item
                     generalWidget.otherAttrs[2] = Number(info['itemCount']);//item总数
@@ -701,6 +701,12 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.otherAttrs[8] = Number(info['selectorWidth']);//选中元素宽
                     generalWidget.otherAttrs[9] = Number(info['selectorHeight']);//选中元素高
                     generalWidget.otherAttrs[10] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[11] = x;//控件坐标x
+                    generalWidget.otherAttrs[12] = y;//控件坐标y
+                    generalWidget.otherAttrs[13] = 0;//选择框是否展开
+                    generalWidget.otherAttrs[14] = 0;//isMoved,是否已经被拖拽
+                    generalWidget.otherAttrs[15] = 0;//lastlastInnery
+
 
                     generalWidget.generalType = 'Selector';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
