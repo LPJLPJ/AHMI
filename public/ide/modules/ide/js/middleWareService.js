@@ -245,7 +245,7 @@ ideServices.service('MiddleWareService',['AnimationService','Type',function(Anim
         var proVerNum = parseInt((project.version||'1.0.0').replace(/\./g,''));
         var nowVerNum = parseInt((IDEVersion||'').replace(/\./g,''));
 
-        return proVerNum<nowVerNum;
+        return proVerNum<nowVerNum||true;
 
     }
 

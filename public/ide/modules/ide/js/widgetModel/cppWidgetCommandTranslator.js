@@ -172,7 +172,10 @@
         new Attr('mWDGMouseReleaseAction'),
         new Attr('mWDGOldValueInit'),
         new Attr('maxHighLightNum'),
-        new Attr('highLightNum')
+        new Attr('highLightNum'),
+
+        //add
+        new Attr('curHLAnimationFactor')
     ]
 
     var cppWidgetAttrsTable = {}
@@ -187,8 +190,7 @@
         cppWidgetAttrsTable['a'+curIdx] = new Attr('a'+curIdx,4,curIdx) 
     }
 
-    console.log('cppWidgetAttrsTable',cppWidgetAttrsTable)
-
+    //TODO:加入curAnimationFactor，curHLAnimationFactor,totalHLFrame,nowHLFrame
     var widgetAttrMap = {
         info:{
             left:'x',
@@ -219,8 +221,11 @@
         innerY:'mWDGMouseInnerY',
         oldValueInit:'mWDGOldValueInit',
         maxHighLightNum:'maxHighLightNum',
-        highLightNum:'highLightNum'
-    }
+        highLightNum:'highLightNum',
+
+        //add
+        curHLAnimationFactor:'curHLAnimationFactor'
+    };
 
 
     //layer attrs
@@ -434,7 +439,7 @@
 
             if ((attrs[0] == 'this') && (attrs[1] =='layers')) {
                 if (attrs[2] == 'length'){
-                    console.log('layers length')
+                    // console.log('layers length')
                     return new AttrType('widget',widgetAttrMap['numOfLayers'])
                 }
             }
@@ -545,7 +550,7 @@
                     }else if (param2.type == 'EXP'){
                         // a = this.layers.1.hidden
                         curExp = expDepth(param2)
-                        console.log(curExp,'curExp')
+                        // console.log(curExp,'curExp')
                         if (curExp) {
                             switch(curExp.type){
                                 case 'widget':
@@ -559,7 +564,7 @@
                                         default:
                                             // console.log('command',command,curExp)
                                             inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
-                                            console.log('command',command,curExp,inst)
+                                            // console.log('command',command,curExp,inst)
                                     }
                     
                                     
@@ -626,7 +631,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param2)
+                            // console.log(param2)
                             throw new Error('invalid exp',param2)
                         }
                     }
@@ -715,7 +720,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param1)
+                            // console.log(param1)
                             throw new Error('invalid exp')
                         }
                     }else if(param2.type == 'ID'){
@@ -791,7 +796,7 @@
                                 break;
                             }
                         }else{
-                            console.log(param2)
+                            // console.log(param2)
                             throw new Error('invalid exp',param2)
                         }
                     }
