@@ -1425,7 +1425,7 @@
             //清空所有数字内容
             //
             // var(tLaysLen,0)         //图层长度
-            // set(tLaysLen,'this.layers.length')
+            // set(tLaysL en,'this.layers.length')
             //
             // var(tIndex,0)            //用于循环
             // set(tIndex,0)
@@ -1868,6 +1868,7 @@
                         add(offset,1)
                     }
                     //set target highlight
+                    
                     set(offset,'this.otherAttrs.0')
                     set(tHighLightNum,'this.highLightNum')
                     add(offset,tHighLightNum)
@@ -1945,7 +1946,7 @@
 
     return WidgetCommands;
 
-}));
+        }));
 
 
 /**

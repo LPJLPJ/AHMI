@@ -579,7 +579,60 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.actions = targetWidget.actions;
                     console.log(generalWidget)
                     break;
-                case 'MyDateTime':
+
+              /*  case 'MyTexTime':
+                    var fontStyle = {},
+                        baseLayerNum = 0;
+                    for(var Key in info) {
+                        switch(Key) {
+                            case "fontItalic":
+                                fontStyle['font-style'] = info[Key];
+                                break;
+                            case "fontBold":
+                                fontStyle['font-Weight'] = info[Key];
+                                break;
+                            case "fontSize":
+                                fontStyle['font-size'] = info[Key];
+                                break;
+                            case "fontFamily":
+                                fontStyle['font-family'] = info[Key];
+                                break;
+                            case "fontColor":
+                                fontStyle['font-color'] = info[Key];
+                                break;
+                        }
+                    }
+                    generalWidget = new WidgetModel.models['TexTime'](x, y, w, h, targetWidget.info, fontStyle, targetWidget.texList[0].slices[0]);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'TexTime';
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    generalWidget.mode = targetWidget.info.TexTimeModeId;
+                    if(generalWidget.mode == '0' || generalWidget.mode == '1') {
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量时分秒';
+                    } else {
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量年月日';
+                    }
+                    switch(Number(targetWidget.info.TexTimeModeId)) {
+                        case 0:
+                            baseLayerNum = 8;
+                            break;
+                        case 1:
+                            baseLayerNum = 5;
+                            break;
+                        case 2:
+                        case 3:
+                            baseLayerNum = 10;
+                            break;
+                        default:
+                            baseLayerNum = 8;
+                            break;
+                    }
+                    generalWidget.otherAttrs[0] = baseLayerNum;
+                    generalWidget.otherAttrs[1] = 0;
+                    break;*/
+
+                      case 'MyDateTime':
                     var fontStyle = {},
                         baseLayerNum = 0;
                     for(var key in info){
