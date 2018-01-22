@@ -118,12 +118,43 @@ function linkWidgets(widgetList) {
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
                 }
                 break;
+            case 'MyTexTime':
+                var mode = curWidget.info.dateTimeModeId;
+                var charW=curWidget.info.characterW;
+                if(mode=='0'){
+                    delimiterWidth = measureMetrics(':',fontStr);
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width-2*charW)/3;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2,curWidget.info.absoluteTop))
+                }else if (mode == '1'){
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width-charW)/2;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
+
+                }else if (mode == '2'){
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width-2*charW)/4;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
+                }else if (mode == '3'){
+                    curWidget.delimiterWidth = charW;
+                    var eachWidth = (curWidget.info.width-2*charW)/4;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
+                }
+                break;
             case 'MyInputKeyboard':
                 var keys = curWidget.info.keys;
                 keys.forEach(function (key, index) {
                     linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
                 })
                 break;
+
             default:
                 // linkedWidget.type = curWidget.subType;
                 // linkedWidget.target = curWidget;
@@ -196,14 +227,17 @@ function getPageInteractiveWidgets(page) {
     // console.log(allInteractiveWidgets,allWidgets);
     return allInteractiveWidgets;
 }
-
+//判断是不是需要添加高亮
 function isInteractiveWidget(widget) {
     var is = false;
     switch (widget.subType) {
         case 'MyButton':
         case 'MyButtonGroup':
         case 'MyDateTime':
+        case 'MyTexTime':
         case 'MyInputKeyboard':
+        case 'MySelector':
+        case 'MyRotaryKnob':
             is = true;
             break;
         default:

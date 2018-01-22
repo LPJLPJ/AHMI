@@ -529,32 +529,12 @@ ideServices
                     }:null;
                     pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
                         pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
-                            //-
-                            // pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                            //     if (isInit){
-                            //         // console.log('init layer');
-                            //         updateLayerImage(0,function () {
-                            //             _self.ScaleCanvas('page');
-                            //             // console.log('currentPage',_.cloneDeep(currentPage))
-                            //             pageNode.deactivateAll();
-                            //             pageNode.renderAll();
-                            //             currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                            //             _self.OnPageSelected(_pageIndex,_successCallback,true);
-                            //         })
-                            //     }else{
-                            //         console.log('不更新layer');
-                            //         _self.ScaleCanvas('page');
-                            //         pageNode.renderAll();
-                            //         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                            //         _self.OnPageSelected(_pageIndex,_successCallback);
-                            //     }
-                            // })
-
                             //+
                             _drawCanvasNode(currentPage,pageNode,function(){
                                 if (isInit){
                                     updateLayerImage(0,function () {
-                                        _self.ScaleCanvas('page');
+                                        // _self.ScaleCanvas('page');
+                                        _self.ScaleCanvas({scaleMode:'page'});
                                         pageNode.deactivateAll();
                                         pageNode.renderAll();
                                         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
@@ -574,7 +554,8 @@ ideServices
                                             });
                                         }
                                     });
-                                    _self.ScaleCanvas('page');
+                                    // _self.ScaleCanvas('page');
+                                    _self.ScaleCanvas({scaleMode:'page'});
                                     pageNode.renderAll();
                                     _successCallback&&_successCallback();
 
@@ -1020,6 +1001,18 @@ ideServices
 
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type==Type.MyTexTime){
+                    fabric.MyTexTime.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;//?
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else if(_newWidget.type==Type.MyScriptTrigger){
                     fabric.MyScriptTrigger.fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
@@ -1075,6 +1068,24 @@ ideServices
                         subLayerNode.renderAll.bind(subLayerNode)();
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MySelector){
+                        fabric.MySelector.fromLevel(_newWidget,function (fabWidget) {
+                            _self.currentFabLayerIdList = [fabWidget.id];
+                            subLayerNode.add(fabWidget);
+                            subLayerNode.renderAll.bind(subLayerNode)();
+                            _newWidget.info.width=fabWidget.getWidth();
+                            _newWidget.info.height=fabWidget.getHeight();
+                            syncSublayer(fabWidget);
+                        },initiator);
+                }else if(_newWidget.type===Type.MyRotaryKnob){
+                        fabric.MyRotaryKnob.fromLevel(_newWidget,function (fabWidget) {
+                            _self.currentFabLayerIdList = [fabWidget.id];
+                            subLayerNode.add(fabWidget);
+                            subLayerNode.renderAll.bind(subLayerNode)();
+                            _newWidget.info.width=fabWidget.getWidth();
+                            _newWidget.info.height=fabWidget.getHeight();
+                            syncSublayer(fabWidget);
+                        },initiator);
                 }else if (_newWidget.type==Type.General){
 
                     fabric.General.fromLevel(_newWidget, function (fabWidget) {
@@ -1801,14 +1812,26 @@ ideServices
              */
             this.ReleaseObject = function (status, _successCallback) {
                 var selectObj=getCurrentSelectObject();
+                var layer,subLayers,showSubLayer;
 
                 //如果缩放了Layer,需要和subLayer同步
                 if (scalingOperate.scaling){
                     scalingOperate.scaling=false;
                     scalingOperate.objId='';
                     if (selectObj.type==Type.MyLayer){
+                        // layer缩放后，同步宽高至sublayer和showsublayer
+                        layer = selectObj.level;
+                        subLayers = selectObj.level.subLayers||[];
+                        showSubLayer = selectObj.level.showSubLayer;
+                        subLayers.forEach(function(subLayer){
+                            (!subLayer.info.scrollHEnabled)?(subLayer.info.width = layer.info.width):'';
+                            (!subLayer.info.scrollVEnabled)?(subLayer.info.height = layer.info.height):'';
+                        });
+                        (!showSubLayer.info.scrollHEnabled)?(showSubLayer.info.width = layer.info.width):'';
+                        (!showSubLayer.info.scrollVEnabled)?(showSubLayer.info.height = layer.info.height):'';
+
                         _self.SyncSubLayerImage(selectObj.level,selectObj.level.showSubLayer, function () {
-                            selectObj.target.fire('OnScaleRelease',selectObj.target.id);
+                            // selectObj.target.fire('OnScaleRelease',selectObj.target.id);
                         })
                     }
 
@@ -1825,11 +1848,6 @@ ideServices
                         layer.info.left = Math.round(baseLeft+item.left);
                         layer.info.top = Math.round(baseTop+item.top);
                     })
-
-                    // _.forEach(selectObj.target.getObjects(), function (_obj) {
-                    //     var fabLayer = getFabricObject(_obj.id);
-                    //     fabLayer.fire('OnRelease', fabLayer.id);
-                    // })
                 }
                 else if (Type.isWidget(selectObj.type)){
                     selectObj.target.fire('OnRelease',selectObj.target.id);
@@ -1838,10 +1856,7 @@ ideServices
                     var fabGroup = selectObj.target;
                     var baseLeft=selectObj.level.info.left+fabGroup.width/2;
                     var baseTop=selectObj.level.info.top+fabGroup.height/2;
-                    // _.forEach(selectObj.target.getObjects(), function (_obj) {
-                    //     var fabWidget=getFabricObject(_obj.id,true);
-                    //     fabWidget.fire('OnRelease',fabWidget.id);
-                    // })
+
                     fabGroup.forEachObject(function(item){
                         var widget = getLevelById(item.id,'widget');
                         widget.info.left = Math.round(baseLeft+item.left);
@@ -1855,12 +1870,6 @@ ideServices
                         alertErr();
                         return;
                     }
-                    // currentPage.proJsonStr = JSON.stringify(CanvasService.getPageNode().toJSON());
-
-                    // var currentSubLayer=_self.getCurrentSubLayer();
-                    // if (currentSubLayer){
-                    //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-                    // }
                     _successCallback && _successCallback();
                 }
             };
@@ -2093,22 +2102,6 @@ ideServices
                     });
                 }else{
                     //当前在page a状态，并且点击了page b
-                    //-
-                    // pageNode.setBackgroundImage(null, function () {
-                    //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                    //         _self.OnPageClicked(pageIndex,null,skipClean);
-                    //
-                    //         pageNode.deactivateAll();
-                    //         pageNode.renderAll();
-                    //         currentPage.proJsonStr=pageNode.toJSON();
-                    //
-                    //
-                    //         currentPage.mode=0;
-                    //         currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
-                    //
-                    //         _successCallback && _successCallback();
-                    //     });
-                    // });
 
                     //+
                     //切换到另一页，不需要更新这一页的缩率图
@@ -2510,7 +2503,6 @@ ideServices
                     alertErr();
                     return;
                 }
-                drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
                 var editInSameSubLayer=false;
                 if (getCurrentSubLayer()&&getCurrentSubLayer().id==currentSubLayer.id){
                     editInSameSubLayer=true;
@@ -2518,49 +2510,30 @@ ideServices
                 OnSubLayerClicked(layerIndex,subLayerIndex);
                 //如果当前在编辑SubLayer,需要使所有Widget失焦,如果在编辑Page,需要重新loadFromJSON
                 var subLayerNode = CanvasService.getSubLayerNode();
-                var fabLayer=getFabricObject(currentLayer.id);
+                // var fabLayer=getFabricObject(currentLayer.id);
+
+                // _drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top);
                 if (currentPage.mode==1&&editInSameSubLayer&&!forceReload){
-
-                    //subLayerNode.setWidth(currentLayer.info.width);
-                    //subLayerNode.setHeight(currentLayer.info.height);
-                    _self.ScaleCanvas('subCanvas',currentLayer);
-
+                    // _self.ScaleCanvas('subCanvas',currentLayer,currentSubLayer);
+                    _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                     subLayerNode.deactivateAll();
                     subLayerNode.renderAll();
-
-                    // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                     _successCallback && _successCallback();
-                }
-                else {
+                }else{
                     subLayerNode.clear();
-                    //-
-                    // subLayerNode.setBackgroundImage(null, function () {
-                    //     subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
-                    //         _self.ScaleCanvas('subCanvas',currentLayer);
-                    //         subLayerNode.deactivateAll();
-                    //         subLayerNode.renderAll();
-                    //         currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                    //         currentPage.mode=1;
-                    //         renderingSubLayer=false;
-                    //         _successCallback && _successCallback();
-                    //     });
-                    //
-                    // });
-
-                    //+
                     _drawCanvasNode(currentSubLayer, subLayerNode, function () {
-                        _self.ScaleCanvas('subCanvas', currentLayer);
+                        // _self.ScaleCanvas('subCanvas', currentLayer,currentSubLayer);
+                        _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                         subLayerNode.deactivateAll();
                         subLayerNode.renderAll();
-                        // currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                         currentPage.mode = 1;
                         renderingSubLayer = false;
                         _successCallback && _successCallback();
                     });
                 }
             };
-            var renderingSubLayer=false;
 
+            var renderingSubLayer=false;
 
             this.getFabLayerByLayer = function (layer) {
                 var fabLayer = null;
@@ -2590,31 +2563,9 @@ ideServices
 
                 if (currentLayer.showSubLayer.backgroundImage&&currentLayer.showSubLayer.backgroundImage!=''){
                     subLayerNode.clear();
-                    //-
-                    // subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
-                    //     _self.ScaleCanvas('subCanvas',currentLayer);
-                    //     subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
-                    //         subLayerNode.deactivateAll();
-                    //         subLayerNode.renderAll();
-                    //         currentSubLayer.proJsonStr=subLayerNode.toJSON();
-                    //         currentSubLayer.url=subLayerNode.toDataURL({format:'png'});
-                    //         layerFab = self.getFabLayerByLayer(currentLayer);
-                    //         if (layerFab) {
-                    //             layerFab.fire('OnRefresh',function () {
-                    //                 _successCallback && _successCallback();
-                    //             })
-                    //         }else{
-                    //             _successCallback && _successCallback();
-                    //         }
-                    //     },{
-                    //         width:currentLayer.info.width,
-                    //         height:currentLayer.info.height
-                    //     })
-                    // })
-
                     //+
                     _drawCanvasNode(currentLayer.showSubLayer,subLayerNode,function(){
-                        _self.ScaleCanvas('subCanvas',currentLayer);
+                        _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                         subLayerNode.setBackgroundImage(currentLayer.showSubLayer.backgroundImage, function () {
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
@@ -2638,31 +2589,15 @@ ideServices
                     //subLayerNode.clear();
                     subLayerNode.setBackgroundImage(null, function () {
                         subLayerNode.setBackgroundColor(currentLayer.showSubLayer.backgroundColor, function () {
-                            //-
-                            // subLayerNode.loadFromJSON(currentLayer.showSubLayer.proJsonStr, function () {
-                            //     _self.ScaleCanvas('subCanvas',currentLayer);
-                            //     subLayerNode.deactivateAll();
-                            //     subLayerNode.renderAll();
-                            //     currentSubLayer.proJsonStr= subLayerNode.toJSON();
-                            //     currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
-                            //     layerFab = self.getFabLayerByLayer(currentLayer);
-                            //     if (layerFab) {
-                            //         layerFab.fire('OnRefresh',function () {
-                            //             renderingSubLayer = false;
-                            //             _successCallback && _successCallback();
-                            //         })
-                            //     }else{
-                            //         _successCallback && _successCallback();
-                            //     }
-                            // });
-
                             //+
                             _drawCanvasNode(currentLayer.showSubLayer,subLayerNode,function(){
-                                _self.ScaleCanvas('subCanvas',currentLayer);
+                                //1 缩放subLayer的画布
+                                _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                                 subLayerNode.deactivateAll();
                                 subLayerNode.renderAll();
-                                // currentSubLayer.proJsonStr= subLayerNode.toJSON();
+                                //2 将画布转换为dataUrl图像
                                 currentSubLayer.url = subLayerNode.toDataURL({format:'png'});
+                                //3 触发myLayer的重绘
                                 layerFab = self.getFabLayerByLayer(currentLayer);
                                 if (layerFab) {
                                     layerFab.fire('OnRefresh',function () {
@@ -2776,7 +2711,8 @@ ideServices
 
                 if (currentPage.mode==1&&editInSameSubLayer&&!forceReload){
                     //console.log('----');
-                    _self.ScaleCanvas('subCanvas',currentLayer);
+                    // _self.ScaleCanvas('subCanvas',currentLayer,currentSubLayer);
+                    _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                     subLayerNode.deactivateAll();
 
                     subLayerNode.renderAll();
@@ -2795,21 +2731,9 @@ ideServices
                 }else {
                     subLayerNode.clear();
                     subLayerNode.setBackgroundImage(null, function () {
-                        // subLayerNode.loadFromJSON(currentSubLayer.proJsonStr, function () {
-                        //     _self.ScaleCanvas('subCanvas',currentLayer);
-                        //     subLayerNode.deactivateAll();
-                        //     subLayerNode.renderAll();
-                        //     currentSubLayer.currentFabWidget=getFabricObject(_widget.id,true);
-                        //     var currentFabWidget= currentSubLayer.currentFabWidget;
-                        //     subLayerNode.setActive(currentFabWidget);
-                        //     currentSubLayer.currentFabWidget=_.cloneDeep(currentFabWidget);
-                        //     currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
-                        //     subLayerNode.renderAll();
-                        //     currentPage.mode=1;
-                        //     _successCallback && _successCallback(currentFabWidget);
-                        // });
                         _drawCanvasNode(currentSubLayer,subLayerNode,function(){
-                            _self.ScaleCanvas('subCanvas',currentLayer);
+                            // _self.ScaleCanvas('subCanvas',currentLayer,currentSubLayer);
+                            _self.ScaleCanvas({scaleMode:'subCanvas',layer:currentLayer,subLayer:currentSubLayer});
                             subLayerNode.deactivateAll();
                             subLayerNode.renderAll();
                             currentSubLayer.currentFabWidget=getFabricObject(_widget.id,true);
@@ -2956,7 +2880,7 @@ ideServices
                 }
 
 
-            }
+            };
 
             /**
              *更新当前Page的预览图
@@ -3104,6 +3028,42 @@ ideServices
                             height:currentLayer.info.height
                         })
                 }
+            };
+
+            /**
+             * 改变sublayer的scroll性质
+             * @param _option
+             * @param _successCallback
+             */
+            this.ChangeSubLayerScroll = function(_option,_successCallback){
+                var currentLayer = null;
+                var currentSubLayer=_self.getCurrentSubLayer();
+                if(_option.hasOwnProperty('scrollVEnabled')){
+                    currentSubLayer.info.scrollVEnabled = _option.scrollVEnabled;
+                    if(!_option.scrollVEnabled){
+                        currentLayer = _self.getCurrentLayer();
+                        currentSubLayer.info.height = currentLayer.info.height;
+                        _self.ScaleCanvas({
+                            scaleMode:'subCanvas',
+                            layer:currentLayer,
+                            subLayer:currentSubLayer
+                        })
+                    }
+                }
+                if(_option.hasOwnProperty('scrollHEnabled')){
+                    currentSubLayer.info.scrollHEnabled = _option.scrollHEnabled;
+                    if(!_option.scrollHEnabled){
+                        currentLayer = _self.getCurrentLayer();
+                        currentSubLayer.info.width = currentLayer.info.width;
+                        _self.ScaleCanvas({
+                            scaleMode:'subCanvas',
+                            layer:currentLayer,
+                            subLayer:currentSubLayer
+                        })
+                    }
+                }
+
+                _successCallback&&_successCallback();
             };
 
             this.ChangeAttributePressImage=function (_option,_successCallback) {
@@ -3451,6 +3411,10 @@ ideServices
                     selectObj.level.info.frontZeroMode=tempFrontZeroMode;
                     arg.frontZeroMode=tempFrontZeroMode;
                 }
+                if(_option.hasOwnProperty('spacing')){
+                    selectObj.level.info.spacing=_option.spacing;
+                    arg.spacing=_option.spacing;
+                }
 
                 //下面是数字数值
                 if(_option.hasOwnProperty('numValue')){
@@ -3653,6 +3617,187 @@ ideServices
                 };
                 selectObj.target.fire('changeInitValue',arg);
             };
+            //改变选择器控件的属性值info，不需要render，added by LH 2017/12/25
+            this.ChangeAttrOfSelectorNoRender=function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                // if(_option.itemCount){
+                //     selectObj.level.info.itemCount=_option.itemCount;
+                //     selectObj.level.texList[1].slices=_option.sliceList1;
+                //     selectObj.level.texList[2].slices=_option.sliceList2;
+                // }
+                if(_option.hasOwnProperty('selectorLeft')){
+                    selectObj.level.info.selectorLeft= _option.selectorLeft;
+                }
+                if(_option.hasOwnProperty('selectorTop')){
+                    selectObj.level.info.selectorTop= _option.selectorTop;
+                }
+                _successCallback&&_successCallback();
+            };
+            //改变选择器控件的属性值info，需要render，added by LH 2017/12/25
+            this.ChangeAttributeOfSelector=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.hasOwnProperty('itemCount')){
+                    selectObj.level.info.itemCount=_option.itemCount;
+                    arg.itemCount=_option.itemCount;
+                    selectObj.level.texList[1].slices=_option.sliceList1;
+                    arg.sliceList1=_option.sliceList1;
+                    selectObj.level.texList[2].slices=_option.sliceList2;
+                    arg.sliceList2=_option.sliceList2;
+                }
+                if(_option.hasOwnProperty('itemWidth')){
+                    selectObj.level.info.itemWidth=_option.itemWidth;
+                    arg.itemWidth=_option.itemWidth;
+                }
+                if(_option.hasOwnProperty('itemHeight')){
+                    selectObj.level.info.itemHeight= _option.itemHeight;
+                    arg.itemHeight=_option.itemHeight;
+                }
+                if(_option.hasOwnProperty('selectorWidth')){
+                    selectObj.level.info.selectorWidth= _option.selectorWidth;
+                    arg.selectorWidth=_option.selectorWidth;
+                }
+                if(_option.hasOwnProperty('selectorHeight')){
+                    selectObj.level.info.selectorHeight= _option.selectorHeight;
+                    arg.selectorHeight=_option.selectorHeight;
+                }
+                if(_option.hasOwnProperty('curValue')){
+                    selectObj.level.info.curValue= _option.curValue;
+                    arg.curValue=_option.curValue;
+                }
+                if(_option.hasOwnProperty('itemShowCount')){
+                    selectObj.level.info.itemShowCount= _option.itemShowCount;
+                    arg.itemShowCount=_option.itemShowCount;
+                }
+                if(_option.hasOwnProperty('selectorTitle')){
+                    selectObj.level.info.selectorTitle= _option.selectorTitle;
+                    arg.selectorTitle=_option.selectorTitle;
+                }
+
+                selectObj.target.fire('changeSelectorAttr',arg);
+            };
+            //改变选择器控件的文本字体，added by LH 2017/12/25
+            this.ChangeSelectorFontStyle = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+                if(_option.hasOwnProperty('itemFontFontFamily')){
+                    selectObj.level.info.itemFont.fontFamily=_option.itemFontFontFamily;
+                    arg.itemFontFontFamily=_option.itemFontFontFamily;
+                }
+                if(_option.hasOwnProperty('itemFontFontSize')){
+                    selectObj.level.info.itemFont.fontSize=_option.itemFontFontSize;
+                    arg.itemFontFontSize=_option.itemFontFontSize;
+                }
+                if(_option.hasOwnProperty('itemFontFontColor')){
+                    selectObj.level.info.itemFont.fontColor=_option.itemFontFontColor;
+                    arg.itemFontFontColor=_option.itemFontFontColor;
+                }
+                if(_option.hasOwnProperty('itemFontFontBold')){
+                    selectObj.level.info.itemFont.fontBold=_option.itemFontFontBold;
+                    arg.itemFontFontBold=_option.itemFontFontBold;
+                }
+                if(_option.hasOwnProperty('itemFontFontItalic')){
+                    selectObj.level.info.itemFont.fontItalic=_option.itemFontFontItalic;
+                    arg.itemFontFontItalic=_option.itemFontFontItalic;
+                }
+                if(_option.hasOwnProperty('selectorFontFontFamily')){
+                    selectObj.level.info.selectorFont.fontFamily=_option.selectorFontFontFamily;
+                    arg.selectorFontFontFamily=_option.selectorFontFontFamily;
+                }
+                if(_option.hasOwnProperty('selectorFontFontSize')){
+                    selectObj.level.info.selectorFont.fontSize=_option.selectorFontFontSize;
+                    arg.selectorFontFontSize=_option.selectorFontFontSize;
+                }
+                if(_option.hasOwnProperty('selectorFontFontColor')){
+                    selectObj.level.info.selectorFont.fontColor=_option.selectorFontFontColor;
+                    arg.selectorFontFontColor=_option.selectorFontFontColor;
+                }
+                if(_option.hasOwnProperty('selectorFontFontBold')){
+                    selectObj.level.info.selectorFont.fontBold=_option.selectorFontFontBold;
+                    arg.selectorFontFontBold=_option.selectorFontFontBold;
+                }
+                if(_option.hasOwnProperty('selectorFontFontItalic')){
+                    selectObj.level.info.selectorFont.fontItalic=_option.selectorFontFontItalic;
+                    arg.selectorFontFontItalic=_option.selectorFontFontItalic;
+                }
+                if(_option.hasOwnProperty('titleFontFontFamily')){
+                    selectObj.level.info.titleFont.fontFamily=_option.titleFontFontFamily;
+                    arg.titleFontFontFamily=_option.titleFontFontFamily;
+                }
+                if(_option.hasOwnProperty('titleFontFontSize')){
+                    selectObj.level.info.titleFont.fontSize=_option.titleFontFontSize;
+                    arg.titleFontFontSize=_option.titleFontFontSize;
+                }
+                if(_option.hasOwnProperty('titleFontFontColor')){
+                    selectObj.level.info.titleFont.fontColor=_option.titleFontFontColor;
+                    arg.titleFontFontColor=_option.titleFontFontColor;
+                }
+                if(_option.hasOwnProperty('titleFontFontBold')){
+                    selectObj.level.info.titleFont.fontBold=_option.titleFontFontBold;
+                    arg.titleFontFontBold=_option.titleFontFontBold;
+                }
+                if(_option.hasOwnProperty('titleFontFontItalic')){
+                    selectObj.level.info.titleFont.fontItalic=_option.titleFontFontItalic;
+                    arg.titleFontFontItalic=_option.titleFontFontItalic;
+                }
+                selectObj.target.fire('changeFontStyle',arg);
+            };
+
+            //改变旋钮new控件的属性值 added by LH 2018/01/11
+            this.ChangeAttributeOfRotaryKnob=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+
+                if(_option.hasOwnProperty('curValue')){
+                    selectObj.level.info.curValue= _option.curValue;
+                    arg.curValue=_option.curValue;
+                }
+                selectObj.target.fire('changeRotaryknobAttr',arg);
+            };
+
+            //改变时间控件的属性值，added by LH 2017/12/13
+            this.ChangeAttributeOfDateTime=function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.hasOwnProperty('spacing')){
+                    selectObj.level.info.spacing=_option.spacing;
+                    arg.spacing=_option.spacing;
+                }
+                selectObj.target.fire('changeDateTimeAttr',arg);
+            };
             //改变时间控件的显示模式
             this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){
                 var dateTimeModeId = _option.dateTimeModeId;
@@ -3702,6 +3847,47 @@ ideServices
 
                 selectObj.target.fire('changeDateTimeText',arg);
             };
+
+            //改变时间图层控件的显示模式
+            this.ChangeAttributeTexTimeModeId = function(_option,_successCallback){
+                var dateTimeModeId = _option.dateTimeModeId;
+                var RTCModeId = _option.RTCModeId;
+                var selectObj= _self.getCurrentSelectObject();
+                selectObj.level.info.dateTimeModeId=dateTimeModeId;
+                selectObj.level.info.RTCModeId=RTCModeId;
+                var arg={
+                    dateTimeModeId:dateTimeModeId,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,_successCallback);
+                    }
+                };
+                selectObj.target.fire('changeTexTimeModeId',arg);
+            };
+            this.ChangeAttributeTexTimeContent = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+                if(_option.characterW){
+                    selectObj.level.info.characterW=_option.characterW;
+                    arg.characterW=_option.characterW;
+                }
+                if(_option.characterH){
+                    selectObj.level.info.characterH=_option.characterH;
+                    arg.characterH=_option.characterH;
+                }
+
+                selectObj.target.fire('changeTexTimeContent',arg);
+            };
+
             this.ChangeAttributeGroupAlign=function(_option,_successCallback){
                 var currentOperate=SaveCurrentOperate();
                 var pageNode=CanvasService.getPageNode();
@@ -3739,12 +3925,7 @@ ideServices
                         break;
                     default :break;
                 }
-                // if(getCurrentSubLayer()){
-                //     var currentSubLayer=getCurrentSubLayer();
-                //     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                // }else {
-                //     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                // }
+
                 _self.ReleaseObject({});
                 subLayerNode.renderAll();
                 pageNode.renderAll();
@@ -3856,7 +4037,7 @@ ideServices
             //改变仪表盘的覆盖角度
             this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                arg={
+                var arg={
                     callback:_successCallback
                 };
                 if(_option.hasOwnProperty('minCoverAngle')){
@@ -4145,6 +4326,13 @@ ideServices
                         };
                         selectObj.target.fire('changeInitValue',arg);
                     }
+                    if(selectObj.type==Type.MyRotaryKnob){
+                        arg={
+                            maxValue:_option.maxValue,
+                            callback:_successCallback
+                        };
+                        selectObj.target.fire('changeRotaryknobAttr',arg);
+                    }
 
                 }
                 if (_option.hasOwnProperty('minValue')){
@@ -4179,6 +4367,13 @@ ideServices
                             callback:_successCallback
                         }
                         selectObj.target.fire('changeInitValue',arg);
+                    }
+                    if(selectObj.type==Type.MyRotaryKnob){
+                        arg={
+                            minValue:_option.minValue,
+                            callback:_successCallback
+                        }
+                        selectObj.target.fire('changeRotaryknobAttr',arg);
                     }
                 }
                 if(_option.hasOwnProperty('minAngle')){
@@ -4359,7 +4554,7 @@ ideServices
                     });
                     if (!fabLayer) {
                         console.warn('找不到Layer');
-                        alertErr()
+                        alertErr();
                         return;
                     }
                     var currentPage = _self.getCurrentPage();
@@ -4418,8 +4613,17 @@ ideServices
                         _successCallback && _successCallback(currentOperate);
 
                     });
+                }else if(object.type===Type.MySubLayer){
+                    var currentSubLayer = getCurrentSubLayer();
+                    if(_option.hasOwnProperty('width')){
+                        currentSubLayer.info.width = _option.width;
+                    }
+                    if(_option.hasOwnProperty('height')){
+                        currentSubLayer.info.height = _option.height;
+                    }
+                    _self.ScaleCanvas({scaleMode:'subCanvas',subLayer:currentSubLayer});
+                    _successCallback&&_successCallback();
                 }
-
 
             };
 
@@ -4547,14 +4751,18 @@ ideServices
             };
 
             /**
-             * 缩放画布
+             * 缩放画布,作用于canvas对象，改变canvas画布的宽与高
              * @param _scaleMode 模式 'page' or 'subCanvas'
              * @constructor
              */
-            this.ScaleCanvas= function (_scaleMode,_level) {
-                var currentPage=_self.getCurrentPage();
+            this.ScaleCanvas= function (opts) {
+                var scaleMode,layer,subLayer;
+                scaleMode = opts.scaleMode;
+                layer = opts.layer;
+                subLayer = opts.subLayer;
+
                 var _scale=1;
-                if (_scaleMode=='page'){
+                if (scaleMode=='page'){
                     var pageNode=CanvasService.getPageNode();
                     _scale=ViewService.getScaleFloat('page');
                     pageNode.setZoom(_scale);
@@ -4562,21 +4770,32 @@ ideServices
                     pageNode.setWidth(project.currentSize.width*_scale);
                     pageNode.setHeight(project.currentSize.height*_scale);
 
-                }else if (_scaleMode=='subCanvas'){
-                    var currentLayer=_level?_level:_self.getCurrentLayer();
+                }else if (scaleMode=='subCanvas'){
+                    var currentLayer=layer?layer:_self.getCurrentLayer();
+                    var currentSubLayer = subLayer?subLayer:_self.getCurrentSubLayer();
                     var subLayerNode=CanvasService.getSubLayerNode();
                     _scale=ViewService.getScaleFloat('subCanvas');
 
-                    drawBackgroundCanvas(currentLayer.info.width,currentLayer.info.height,currentLayer.info.left,currentLayer.info.top,_scale);
-                    subLayerNode.setZoom(_scale);
+                    //绘制背景
+                    _drawBackgroundCanvas({
+                        width:currentLayer.info.width,
+                        height:currentLayer.info.height,
+                        x:currentLayer.info.left,
+                        y:currentLayer.info.top,
+                        scale:_scale,
+                        subLayerW:currentSubLayer.info.width,
+                        subLayerH:currentSubLayer.info.height
+                    });
 
-                    subLayerNode.setWidth(currentLayer.info.width*_scale);
-                    subLayerNode.setHeight(currentLayer.info.height*_scale);
+                    //设置sublayer的canvas大小
+                    subLayerNode.setZoom(_scale);
+                    subLayerNode.setWidth(currentSubLayer.info.width*_scale);
+                    subLayerNode.setHeight(currentSubLayer.info.height*_scale);
 
                 }else {
                     console.warn('传参有问题');
                 }
-            }
+            };
 
 
 
@@ -4639,23 +4858,6 @@ ideServices
                 var currentSubLayer=getCurrentSubLayer();
                 var pageNode=CanvasService.getPageNode();
 
-                // if (currentSubLayer){
-                //     currentSubLayer.proJsonStr=JSON.stringify(CanvasService.getSubLayerNode().toJSON());
-                // }
-
-                //-
-                // pageNode.setBackgroundImage(null, function () {
-                //     pageNode.loadFromJSON(currentPage.proJsonStr, function () {
-                //         if (currentPage.mode==1){
-                //             _leaveFromSubLayer(currentSubLayer,_successCallback);
-                //         }else {
-                //             _successCallback&&_successCallback();
-                //         }
-                //
-                //
-                //     });
-                //     //console.log('pageNode',pageNode);
-                // });
 
                 //+ 离开page之前，更新layer的backgroundImage
                 if(currentPage.mode===1){
@@ -4795,25 +4997,43 @@ ideServices
 
             /**
              * 进入sublayer后，背景为page的透视,在backgroundCanvas上画出page的透视。
-             * @param width
-             * @param height
+             * 私有函数
+             * @param opts 参数列表
              */
-            function drawBackgroundCanvas(width,height,x,y,scale){
+            function _drawBackgroundCanvas(opts){
+                var width,height,x,y,scale,subLayerW,subLayerH;
+                width = opts.width;
+                height = opts.height;
+                x = opts.x;
+                y = opts.y;
+                scale = opts.scale;
+                subLayerW = opts.subLayerW;
+                subLayerH = opts.subLayerH;
+
+
                 var _scale = scale||1;
                 var _width = parseInt(width*_scale);
                 var _height = parseInt(height*_scale);
+                var _subLayerW = parseInt(subLayerW*_scale);
+                var _subLayerH = parseInt(subLayerH*_scale);
                 var currentPage = _self.getCurrentPage();
 
                 var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
                 var pageBackgroundImgSrc = currentPage.backgroundImage||"";
+                var pageBackgroundImg = null;
                 var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
                 var pageHeight = (project.currentSize&&project.currentSize.height)||480;
 
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
-                backgroundCanvas.width=_width;
-                backgroundCanvas.height=_height;
-                var ctx=backgroundCanvas.getContext('2d');
+                backgroundCanvas.width = _subLayerW;
+                backgroundCanvas.height = _subLayerH;
+                var ctx = backgroundCanvas.getContext('2d');
 
+                //draw dash rect
+                ctx.strokeStyle = "#ff0000";
+                ctx.strokeRect(0,0,_subLayerW,_subLayerH);
+
+                //draw image or color
                 if(pageBackgroundImgSrc!=""&&pageBackgroundImgSrc!="/public/images/blank.png"){
                     pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
                     var sourceX = parseInt(pageBackgroundImg.width/pageWidth*x);
@@ -4981,7 +5201,6 @@ ideServices
                         break;
                     case 'MyLayer':
                         fabric.MyLayer.fromLevel(dataStructure,addFabWidget,initiator);
-                        // node.add(new fabric.MyLayer(dataStructure,initiator));
                         break;
                     case 'MyNum':
                         node.add(new fabric.MyNum(dataStructure,initiator));
@@ -4989,8 +5208,17 @@ ideServices
                     case 'MyTexNum':
                         node.add(new fabric.MyTexNum(dataStructure,initiator));
                         break;
+                    case 'MyTexTime':
+                        node.add(new fabric.MyTexTime(dataStructure,initiator));
+                        break;
+                    case 'MySelector':
+                        node.add(new fabric.MySelector(dataStructure,initiator));
+                        break;
+                    case 'MyRotaryKnob':
+                        node.add(new fabric.MyRotaryKnob(dataStructure,initiator));
+                        break;
                     default :
-                        console.error('not match widget in preprocess!');
+                        console.error('not match widget in _addFabricObjInCanvasNode!');
                         break;
                 };
                 _cb&&_cb();
@@ -5025,7 +5253,7 @@ ideServices
                 }
                 return true;
 
-            }
+            };
 
             /**
              * resource内容有效性验证

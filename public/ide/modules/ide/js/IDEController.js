@@ -20,6 +20,7 @@ var MAX_DATA_LENGTH=100000;
 var ideScope;
 var isOffline;
 var mode = 'DEBUG';
+var timeStamp = Date.now();
 
 console.log = (function (console) {
     if (mode === 'DEBUG'){
@@ -33,13 +34,13 @@ console.log = (function (console) {
 
 var logs=[];
 ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService','NavModalCANConfigService',
-    'socketIOService',function ($scope,$timeout,$http,$interval,
+    'socketIOService','MiddleWareService',function ($scope,$timeout,$http,$interval,
                                     ProjectService,
                                     GlobalService,
                                     Preference,
                                     ResourceService,
                                     TagService,
-                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService,socketIOService) {
+                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService,socketIOService,MiddleWareService) {
 
     ideScope=$scope;
     $scope.ide={
@@ -49,32 +50,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     var loadStep=0;     //加载到了第几步,共8步
     var fs,path,__dirname;
 
-    // showIDE();
-
-    //var params=getUrlParams();
-    //PID=params.pid;
-    //
-    //TOKEN=window.localStorage.getItem('token');
-    //
-    //var offLine=params.offline;
-    //
-    //isOffline=offLine;
-    //if (offLine){
-    //    toastr.info('离线测试');
-    //}
-    //else if (!PID||!TOKEN){
-    //    console.log(getUrlParams());
-    //    $interval(function () {
-    //        toastr.warning('无法识别的项目');
-    //    },2000);
-    //    return;
-    //}
-
     initUI();
 
     loadProject();
 
-    //receiveGlobalProject();
     readUserType();
 
     listenChange();
@@ -118,7 +97,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         }else{
             readProjectData();
         }
+    }
 
+    function updateSpinner(value) {
+        window.spinner && window.spinner.update(value*100)
     }
 
     function readUserType(){
@@ -142,10 +124,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
     function readLocalProjectData() {
         var url = window.location.href;
-        // var projectId = url.split('?')[1].split('=')[1];
-        // if (projectId[projectId.length - 1] === '#') {
-        //     projectId = projectId.slice(0, -1);
-        // }
         var query = window.location.search;
         if (query&&query.length){
             query = query.slice(1)
@@ -172,7 +150,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         console.log(path.relative(realDirPath, resourceUrl));
         var data = readSingleFile(path.join(projectBaseUrl,'project.json'));
 
-
         $timeout(function () {
             if (data){
                 data = JSON.parse(data);
@@ -189,18 +166,14 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 loadFromBlank({},projectId);
             }
         },0);
-       
 
         $scope.$on('LoadUp', function () {
-
             loadStep++;
             if (loadStep == 6) {
                 //到达第8步,加载完成
                 showIDE();
             }
         })
-        
-
     }
 
     function readSingleFile(filePath,check) {
@@ -215,8 +188,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }catch (e){
                 return null;
             }
-
-
         }else{
             return fs.readFileSync(filePath,'utf-8');
         }
@@ -225,9 +196,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
 
     function LoadWithTemplate(data, id){
-        // console.log('project data.content receive',data);
         var templateId = data.template;
-        //add templateId to template
         TemplateProvider.setTemplateId(templateId);
         if (templateId && templateId!==''){
             $http({
@@ -272,24 +241,36 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 loadFromContent(data,id);
             }
         }
-
-
     }
 
     function loadFromContent(data,id) {
         //若是分享的工程，则需要开启socket
-        console.log('data.shared',data.shared);
+        // console.log('data.shared',data);
         if(!!data.shared){
-            if(!socketIOService.getSocket()){
+            if(!!data.readOnlyState){
+                //在分享状态下，并且以只读方式打开，不用打开socket进行排队
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 0;
+                toastr.warning('注意：您无法执行保存工程操作','只读模式');
+                toastr.options.closeButton = close;
+                toastr.options.timeOut = 1000;
+            }else if(!socketIOService.getSocket()){
                 initSocketIO(data.userId);
             }
+
         }
         //change html title to name
-        var name = data&&data.name||''
-        document.title = '工程编辑-'+name
+        var name = data&&data.name||'';
+        document.title = '工程编辑-'+name;
         if (data.content){
-            //var globalProject = GlobalService.getBlankProject()
             var globalProject = JSON.parse(data.content);
+            console.log('globalProject',globalProject);
+            //add by lixiang in 12/12/21 如果是旧版本工程，则注入数据,数据进入中间件
+            timeStamp = Date.now();
+            MiddleWareService.useMiddleWare(globalProject);
+            console.log('time costs in inject Data:',Date.now()-timeStamp);
+
+
             var resolution = data.resolution.split('*').map(function (r) {
                 return Number(r)
             });
@@ -307,60 +288,49 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
             globalProject.projectId = id;
 
-
-            //console.log('globalProject',globalProject);
-
             var resourceList = globalProject.resourceList;
             // console.log('resourceList',resourceList);
             var count = resourceList.length;
+            var rLen = resourceList.length
             var globalResources = ResourceService.getGlobalResources();
             window.globalResources = globalResources;
 
             var coutDown = function (e, resourceObj) {
                 if (e.type === 'error'){
-                    // console.log(e)
                     toastr.warning('资源加载失败: ' + resourceObj.name);
                     resourceObj.complete = false;
                 } else {
                     resourceObj.complete = true;
                 }
                 count = count - 1;
+                updateSpinner((rLen-count)/rLen);
                 if (count<=0){
-                    // toastr.info('loaded');
+                    console.log('time cost in cache imge :',Date.now()-timeStamp);
                     TemplateProvider.saveProjectFromGlobal(globalProject);
                     syncServices(globalProject);
+                    timeStamp = Date.now();
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
-
                         $scope.$broadcast('GlobalProjectReceived');
-
+                        console.log('time cost in render',Date.now()-timeStamp)
                     });
                 }
             }.bind(this);
             if (count>0){
+                timeStamp = Date.now();
                 for (var i=0;i<resourceList.length;i++){
                     var curRes = resourceList[i];
-                    // console.log('caching ',i)
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 }
             }else{
                 // console.log(globalProject);
+                updateSpinner(100)
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
-
                     $scope.$broadcast('GlobalProjectReceived');
-
                 });
             }
-
-
-
-            //readCache();
         }else{
-            //console.log('获取信息失败');
-            //
-            //readCache();
-
             globalProject = GlobalService.getBlankProject();
             globalProject.projectId = id;
             //change resolution
@@ -377,11 +347,9 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 height :resolution[1]
             }
             globalProject.maxSize = data.maxSize;
-            console.log('globalProject new',_.cloneDeep(globalProject));
-
 
             TemplateProvider.saveProjectFromGlobal(globalProject);
-            syncServices(globalProject)
+            syncServices(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
 
                 $scope.$broadcast('GlobalProjectReceived');
@@ -447,6 +415,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         $scope.$on('LoadUp', function () {
 
             loadStep++;
+
             if (loadStep == 6) {
                 //到达第8步,加载完成
                 showIDE();
@@ -457,7 +426,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     function showIDE() {
         $timeout(function () {
             $scope.ide.loaded=true;
-            window.spinner && window.spinner.hide();
+            window.spinner && window.spinner.hide(true);
             // intervalSave();
         },200)
     }
@@ -869,10 +838,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 cb && cb();
             }
         };
-        //for(var i=0;i<templateList.length;i++){
-        //    var curRes = templateList[i];
-        //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-        //}
         if(totalNum>0){
             templateList.map(function(curRes,index){
                 ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
@@ -1154,6 +1119,9 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 break;
             case 'MyTexNum':
                 node.add(new fabric.MyTexNum(dataStructure,initiator));
+                break;
+            case 'MyTexTime':
+                node.add(new fabric.MyTexTime(dataStructure,initiator));
                 break;
             default :
                 console.error('not match widget in preprocess!');

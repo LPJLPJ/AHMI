@@ -94,7 +94,7 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
     }
 
     this.getDefaultTransition=function(){
-        return noTransition;
+        return new Transition('NO_TRANSITION','无动画',0);
     }
 
 }]);

@@ -144,11 +144,30 @@ body{
     -o-transition: height 0.2s; /* Opera */
 
 }
+/*主页面上preview按钮*/
+.preview-btn{
+    position: absolute;
+    top:20px;
+    left:20px;
+    z-index: 1000;
+    cursor: pointer;
+}
+.preview-btn>button{
+    border: none;
+    background: none;
+}
+
+/*预览模态框里的canvas*/
+.modal-body.preview-modal-body{
+    text-align: center;
+}
+#previewCanvas{
+    background-color: #5e5e5e;
+    cursor: url("../img-web/pointer16.ico"),pointer;
+}
 
 .my-pages.my-tool-show,.my-stage-container.my-tool-show,.my-attribute.my-tool-show{
     height: calc(100% - 60px);
-
-
 }
 
 /*预览区*/
@@ -263,13 +282,13 @@ body{
     -o-transition: width 0.2s;  /* Opera */
 }
 .container-fluid.my-left-hide.my-right-hide .my-stage-container{
-    width: calc(99% - 2px)
+    width: 99%;
 }
 .container-fluid.my-left-show.my-right-hide .my-stage-container{
-    width: calc(86% - 2px);
+    width: 86%;
 }
 .container-fluid.my-left-hide.my-right-show .my-stage-container{
-    width: calc(79% - 2px);
+    width: 79%;
 }
 
 .my-stage{
@@ -386,7 +405,7 @@ body{
 }
 .my-attribute{
     /*min-width: 280px;*/
-    width: calc(20% - 2px);
+    width: 20%;
     background-color: #fff;
     border-left: 1px solid #E9EBED;
     vertical-align:top;
@@ -650,6 +669,9 @@ body{
 /*icon hover turn big*/
 .icon:hover{transform:scale(1.2);}
 .dropdown-menu-item-widget:hover{transform:scale(1.2);}
+.dropdown-menu-item-widget{
+    margin-y:5px ;
+}
 
 .tag-table-wrapper{
     max-height: 400px;
@@ -661,7 +683,7 @@ body{
 }
 
 .my-widget-list{
-    min-width: 200px;
+    min-width: 240px;
     padding:10% 5% 15% 5%;
 }
 .my-sel{
@@ -724,4 +746,16 @@ body{
     /*早期浏览器*/
      user-select: text;
 
+}
+
+.my-Font-div{
+    border: 3px double #ccc;
+    border-radius: 4px;
+    padding:8px;
+    margin-bottom: 15px
+}
+.my-Font-title{
+    display: block;
+    padding:5px 0 5px 5px;
+    color: #777777;
 }

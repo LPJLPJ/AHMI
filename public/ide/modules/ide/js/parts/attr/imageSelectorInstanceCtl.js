@@ -87,6 +87,31 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         case Type.MyButtonGroup:
             initConfigure(false,false,1,widgetInfo.tex,true,false,false);
             break;
+        case Type.MyTexTime:
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            break;
+        case Type.MySelector:
+            if(widgetInfo.tex.name==='选择器背景'){
+                initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            }
+            if(widgetInfo.tex.name==='元素纹理'){
+                initConfigure(false,true,1,widgetInfo.tex,true,false,false);
+                console.log("widgetInfo",widgetInfo)
+            }
+            if(widgetInfo.tex.name==='元素选中后纹理'){
+                initConfigure(false,true,1,widgetInfo.tex,true,false,false);
+            }
+            if(widgetInfo.tex.name==='高亮'){
+                initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            }
+            break;
+        case Type.MyRotaryKnob:
+            if(widgetInfo.tex.name==='高亮'){
+                initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            }else{
+                initConfigure(false,false,1,widgetInfo.tex,true,false,true);
+            }
+            break;
         default:
             initConfigure(true,false,1,widgetInfo.tex,false,false,false);
             break;

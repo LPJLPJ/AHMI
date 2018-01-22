@@ -59,6 +59,7 @@
             tag:this.tag,
             layers:this.layers,
             otherAttrs:this.otherAttrs
+            // arrange:this.arrange
             // onInitialize:this.onInitialize,
             // onMouseDown:this.onMouseDown,
             // onMouseUp:this.onMouseUp
@@ -86,7 +87,7 @@
         }
     }
 
-    function Param(type,value) {         //param：指函数调用时，传递过来的所有参数的数组
+    function Param(type,value) {
         this.type = type
         this.value = value
     }
@@ -235,82 +236,63 @@
 
     //button group
     function ButtonGroup(x,y,w,h,num,align,space,slices,highLight) {
-        // var layerUp = new Layer(w,h);
-        // layerUp.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        // layerUp.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[0].imgSrc);
-        // layerUp.subLayers.color = new ColorSubLayer(0,0,w,h,slices[0].color);
-        // var layerDown = new Layer(w,h);
-        // layerDown.subLayers.font = new FontSubLayer(0,0,w,h,text,fontStyle);
-        // layerDown.subLayers.texture =new TextureSubLayer(0,0,w,h,slices[1].imgSrc);
-        // layerDown.subLayers.color = new ColorSubLayer(0,0,w,h,slices[1].color);
-        // var layers = [layerUp,layerDown]
         var sWidth = 0;
         var sHeight = 0;
-        var colorElems
+        var colorElems;
         var layers = [];
-        // if (highLight) {
-        //     layerHighlight = new Layer(0,0,w,h);
-        //     layerHighlight.subLayers.image =new TextureSubLayer(slices[2].imgSrc);
-        //     colorElems = parseColor(slices[2].color)
-        //     layerHighlight.subLayers.color = new ColorSubLayer(colorElems);
-        //     layerHighlight.hidden = true;
-        //     layers.push(layerHighlight)
-        //     this.enableHighLight  = true;
-        //     this.maxHighLightNum = 1;
-        // }
+        // this.arrange = align;
         if (align==0) {
-                //hori
+            //hori
             sWidth = (w-(num-1)*space)/num;
             sHeight = h;
-            if (highLight) {
-                for (var i=0;i<num;i++){
-                    var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-                    upLayer.subLayers.image = new TextureSubLayer(slices[3*i].imgSrc)
-                    colorElems = parseColor(slices[3*i].color);
-                    upLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                    downLayer.subLayers.image = new TextureSubLayer(slices[3*i+1].imgSrc)
-                    colorElems = parseColor(slices[3*i+1].color);
-                    downLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    var highLightLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                    highLightLayer.subLayers.image = new TextureSubLayer(slices[3*i+2].imgSrc)
-                    colorElems = parseColor(slices[3*i+2].color);
-                    highLightLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    layers.push(downLayer)
-                    layers.push(upLayer)
-                    layers.push(highLightLayer)
-                }
-                this.enableHighLight = true
-                this.maxHighLightNum = num;
-            }else{
-                for (var i=0;i<num;i++){
-                    var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-                    upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
-                    colorElems = parseColor(slices[2*i].color);
-                    upLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-                    downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
-                    colorElems = parseColor(slices[2*i+1].color);
-                    downLayer.subLayers.color = new ColorSubLayer(colorElems)
-                    layers.push(downLayer)
-                    layers.push(upLayer)
-                }
+            for (var i=0;i<num;i++){
+                var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight);
+                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc);
+                colorElems = parseColor(slices[2*i].color);
+                upLayer.subLayers.color = new ColorSubLayer(colorElems);
+                var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true);
+                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
+                colorElems = parseColor(slices[2*i+1].color);
+                downLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(upLayer);
+                layers.push(downLayer);
             }
-
-            
+            if(highLight){
+                var highLightLayer = new Layer(0,0,sWidth,sHeight,true);
+                highLightLayer.subLayers.image = new TextureSubLayer(slices[slices.length-1].imgSrc);
+                colorElems = parseColor(slices[slices.length-1].color);
+                highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(highLightLayer);
+                this.enableHighLight = true;
+                this.maxHighLightNum = num;
+            }
         }else{
-            // sWidth = w;
-            // sHeight = (h-(num-1)*space)/num;
-
-            // for (var i=0;i<num;i++){
-            //     var curLayer = new Layer(x,y+i*(sHeight+space),sWidth,sWidth)
-            //     curLayer.subLayers.texture = new TextureSubLayer(sWidth,sHeight,slices[i].imgSrc)
-            //     curLayer.subLayers.color = new ColorSubLayer(sWidth,sHeight,slices[i].color)
-            //     layers.push(curLayer)
-            // }
-
+            //ver
+            sWidth = w;
+            sHeight = (h-(num-1)*space)/num;
+            for (var i=0;i<num;i++){
+                var upLayer = new Layer(0,i*(sHeight+space),sWidth,sHeight);
+                upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc);
+                colorElems = parseColor(slices[2*i].color);
+                upLayer.subLayers.color = new ColorSubLayer(colorElems);
+                var downLayer = new Layer(0,i*(sHeight+space),sWidth,sHeight,true);
+                downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc);
+                colorElems = parseColor(slices[2*i+1].color);
+                downLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(upLayer);
+                layers.push(downLayer);
+            }
+            if(highLight){
+                var highLightLayer = new Layer(0,0,sWidth,sHeight,true);
+                highLightLayer.subLayers.image = new TextureSubLayer(slices[slices.length-1].imgSrc);
+                colorElems = parseColor(slices[slices.length-1].color);
+                highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
+                layers.push(highLightLayer);
+                this.enableHighLight = true;
+                this.maxHighLightNum = num;
+            }
         }
-        this.subType = 'ButtonGroup'
+        this.subType = 'ButtonGroup';
         Widget.call(this,x,y,w,h,layers)
     }
     ButtonGroup.prototype = Object.create(Widget.prototype);
@@ -893,59 +875,32 @@
     DateTime.prototype.constructor = DateTime;
 
     //TexNum
-    function TexNum(x,y,w, h,valueObj,slices){
-        var layers = [];
+    function TexNum(x,y,w,h,valueObj,slices){
+        var layers = [];                           //图层数组
+        var layerCount=valueObj.numOfDigits;       //数字位数
+        var symbol=valueObj.symbolMode;            //符号模式
+        var decimalCount = valueObj.decimalCount;  //小数位
+        var mH = valueObj.characterH;              //字符宽度
+        var mW = valueObj.characterW;              //字符宽度
 
-        //符号模式
-        var symbol,symbolLayer;
-        if (valueObj.symbolMode==0) {
-            symbol = false;
-        }else{
-            symbol = true;
-        }
-        //字符宽度
-        var mH = valueObj.characterH;
-        //字符宽度
-        var mW = valueObj.characterW;
-        if (!mW) {
-            return;
-        }
-        //小数位
-        var decimalCount = valueObj.decimalCount;
-        //字符位数
-        var numOfDigits = valueObj.numOfDigits;
-        //当前起始x坐标
-        var curX = 0;
-        //符号
-
-            symbolLayer = new Layer(0,0,mW,mH,true);
-            symbolLayer.subLayers.image = new TextureSubLayer(slices[12].imgSrc);
-            layers.push(symbolLayer);
-            curX +=mW;
-
-
-        //小数点
-        if(decimalCount>0){
-            var curDotLayer = new Layer(curX,0,0.5*mW,mH,true);
-            curDotLayer.subLayers.image = new TextureSubLayer(slices[10].imgSrc);
-            layers.push(curDotLayer);
-            curX = curX +0.5*mW;
+        //生成textureList
+        var textureList=[];
+        for(var i=0;i<slices.length;i++){
+            textureList.push(slices[i].imgSrc)
         }
 
-        //数字
+        //字符总数
+        // if (symbol==1) {layerCount++;}
+        // if(decimalCount>0){layerCount++;}
+        layerCount+=2;//无论是否有符号和小数点，都按有算
+
+        //添加图层
         var curDigitLayer;
-        for (var i=0;i<(numOfDigits);i++){
-            //add decimal digits
-            for(var j=0;j<=9;j++){
-                curDigitLayer = new Layer(curX,0,mW,mH,true);
-                curDigitLayer.subLayers.image = new TextureSubLayer(slices[j].imgSrc);
+        for (i=0;i<layerCount;i++){
+                curDigitLayer = new Layer(0,0,mW,mH,true);
+                curDigitLayer.subLayers.image = new TextureSubLayer(textureList);
                 layers.push(curDigitLayer);
-            }
-            layers.push(curDigitLayer);
-            curX = curX+mW;
-
         }
-
 
         this.subType = 'TexNum';
         Widget.call(this,x,y,w,h,layers);
@@ -953,195 +908,207 @@
     TexNum.prototype = Object.create(Widget.prototype);
     TexNum.prototype.constructor = TexNum;
 
-    /*function TexTime(x, y, w, h, info, fontStyle, slices) {
-        var TexTimeModeId = Number(info.TexTimeModeId),
-            maxFontWidth = info.maxFontWidth,
-            sWidth = maxFontWidth,
-            sHeight = h,
-            HighLight = !info.disableHighlight, //!逻辑运算符
-            dx = 0,
-            fontLayer = null,
-            highLightLayer = null,
-            fontLayersNum = 0,
-            highLightLayerNum = 0,
-            layers = [],
-            colorElems = '',
-            i = 0;
-        //字符高度
-        var mH = info.characterH;
-        //字符宽度
-        var mW = info.characterW;
-        if(!mW) {
-            return;
-        }
-        switch(TexTimeModeId) {
-            case 0:
-                //console.log('时分秒');
-                fontLayersNum = 8;
-                for(i = 0; i < fontLayersNum; i++) {
-                    dx = i * maxFontWidth;
-                    fontLayer = new Layer(dx, 0, sWidth, sHeight);
-                    if(i == 2 || i == 5) {
-                        fontLayer.subLayers.font = new FontSubLayer(':', fontStyle);
-                    } else {
-                        fontLayer.subLayers.font = new FontSubLayer('0', fontStyle);
-                    }
-                    layers.push(fontLayer);
-                    // dx = dx+maxFontWidth;
-                }
-                if(highLight) {
-                    highLightLayerNum = 3;
-                    sWidth = 2 * maxFontWidth;
-                    dx = 0;
-                    for(i = 0; i < highLightLayerNum; i++) {
-                        highLightLayer = new Layer(dx, 0, sWidth, sHeight);
-                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
-                        colorElems = parseColor(slices.color);
-                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
-                        layers.push(highLightLayer);
-                        dx += 3 * maxFontWidth;
-                    }
-                    this.enableHighLight = true;
-                    this.maxHighLightNum = highLightLayerNum;
-                }
-                break;
-            case 1:
-                //console.log('时分');
-                fontLayersNum = 5;
-                for(i = 0; i < fontLayersNum; i++) {
-                    dx = i * maxFontWidth;
-                    fontLayer = new Layer(dx, 0, sWidth, sHeight);
-                    if(i == 2) {
-                        fontLayer.subLayers.font = new FontSubLayer(':', fontStyle);
-                    } else {
-                        fontLayer.subLayers.font = new FontSubLayer('0', fontStyle);
-                    }
-                    layers.push(fontLayer);
-                }
-                if(highLight) {
-                    highLightLayerNum = 2;
-                    sWidth = 2 * maxFontWidth;
-                    dx = 0;
-                    for(i = 0; i < highLightLayerNum; i++) {
-                        highLightLayer = new Layer(dx, 0, sWidth, sHeight);
-                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
-                        colorElems = parseColor(slices.color);
-                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
-                        layers.push(highLightLayer);
-                        dx += 3 * maxFontWidth;
-                    }
-                    this.enableHighLight = true;
-                    this.maxHighLightNum = highLightLayerNum;
-                }
-                break;
-            case 2:
-                //console.log('斜杠日期');
-                fontLayersNum = 10;
-                for(i = 0; i < fontLayersNum; i++) {
-                    dx = i * maxFontWidth;
-                    fontLayer = new Layer(dx, 0, sWidth, sHeight);
-                    if(i == 4 || i == 7) {
-                        fontLayer.subLayers.font = new FontSubLayer('/', fontStyle);
-                    } else {
-                        fontLayer.subLayers.font = new FontSubLayer('0', fontStyle);
-                    }
-                    layers.push(fontLayer);
-                }
-                if(highLight) {
-                    highLightLayerNum = 3;
-                    sWidth = 4 * maxFontWidth;
-                    dx = 0;
-                    for(i = 0; i < highLightLayerNum; i++) {
-                        highLightLayer = new Layer(dx, 0, sWidth, sHeight);
-                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
-                        colorElems = parseColor(slices.color);
-                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
-                        layers.push(highLightLayer);
-                        if(i === 0) {
-                            dx += 5 * maxFontWidth;
-                            sWidth = 2 * maxFontWidth;
-                        } else {
-                            dx += 3 * maxFontWidth;
-                        }
-                    }
-                    this.enableHighLight = true;
-                    this.maxHighLightNum = highLightLayerNum;
-                }
-                break;
-            case 3:
-                //console.log('减号日期');
-                fontLayersNum = 10;
-                for(i = 0; i < fontLayersNum; i++) {
-                    dx = i * maxFontWidth;
-                    fontLayer = new Layer(dx, 0, sWidth, sHeight);
-                    if(i == 4 || i == 7) {
-                        fontLayer.subLayers.font = new FontSubLayer('-', fontStyle);
-                    } else {
-                        fontLayer.subLayers.font = new FontSubLayer('0', fontStyle);
-                    }
-                    layers.push(fontLayer);
-                    // dx =  dx+maxFontWidth;
-                }
-                if(highLight) {
-                    highLightLayerNum = 3;
-                    sWidth = 4 * maxFontWidth;
-                    dx = 0;
-                    for(i = 0; i < highLightLayerNum; i++) {
-                        highLightLayer = new Layer(dx, 0, sWidth, sHeight);
-                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
-                        colorElems = parseColor(slices.color);
-                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
-                        layers.push(highLightLayer);
-                        if(i === 0) {
-                            dx += 5 * maxFontWidth;
-                            sWidth = 2 * maxFontWidth;
-                        } else {
-                            dx += 3 * maxFontWidth;
-                        }
-                    }
-                    this.enableHighLight = true;
-                    this.maxHighLightNum = highLightLayerNum;
-                }
-                break;
-            default:
-                //console.log('时分秒');
-                fontLayersNum = 8;
-                for(i = 0; i < fontLayersNum; i++) {
-                    dx = i * maxFontWidth;
-                    fontLayer = new Layer(dx, 0, sWidth, sHeight);
-                    if(i == 2 || i == 5) {
-                        fontLayer.subLayers.font = new FontSubLayer(':', fontStyle);
-                    } else {
-                        fontLayer.subLayers.font = new FontSubLayer('0', fontStyle);
-                    }
-                    layers.push(fontLayer);
-                    // dx = dx+maxFontWidth;
-                }
-                if(highLight) {
-                    highLightLayerNum = 3;
-                    sWidth = 2 * maxFontWidth;
-                    dx = 0;
-                    for(i = 0; i < highLightLayerNum; i++) {
-                        highLightLayer = new Layer(dx, 0, sWidth, sHeight);
-                        highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
-                        colorElems = parseColor(slices.color);
-                        highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
-                        layers.push(highLightLayer);
-                        dx += 3 * maxFontWidth;
-                    }
-                    this.enableHighLight = true;
-                    this.maxHighLightNum = highLightLayerNum;
-                }
-                break;
+    //Selector
+    function Selector(x,y,w,h,valueObj,sliceBg,unSelectedImg,selectedImg,sliceHighlight){
+        //图层数组
+        var layers = [];
+
+        //位置，宽高
+        var x=x;
+        var y=y;
+        var w=w;
+        var h=h;
+        var itemHeight=valueObj.itemHeight;
+        var itemWidth=valueObj.itemWidth;
+        var selectorHeight=valueObj.selectorHeight;
+        var selectorWidth=valueObj.selectorWidth;
+
+        //属性
+        var itemCount=valueObj.itemCount;
+        var curValue=valueObj.curValue;
+        var itemShowCount=valueObj.itemShowCount;
+        //字体
+        var titleFont={
+            'font-family':valueObj.titleFont.fontFamily,
+            'font-color':valueObj.titleFont.fontColor,
+            'font-size':valueObj.titleFont.fontSize,
+            'font-italic':valueObj.titleFont.fontItalic,
+            'font-bold':valueObj.titleFont.fontBold,
+            'text-align':'start',
+            'text-baseline':'top'
         }
 
-        this.subType = 'Textime';
-        Widget.call(this, x, y, w, h, layers);
+        //标题
+        var selectorTitle=valueObj.selectorTitle;
+
+        //高亮
+        this.disableHighlight=valueObj.disableHighlight;
+
+        //纹理
+        var sliceBg=sliceBg;
+        var selectedImg=selectedImg;
+        var unSelectedImg=unSelectedImg;
+
+        //后景层（下）
+        tempH=h/2+selectorHeight/2-(curValue+1)*itemHeight;
+        curLayer = new Layer(selectorWidth/2-itemWidth/2,tempH,itemWidth,itemHeight*itemCount,true);
+        curLayer.subLayers.image = new TextureSubLayer(unSelectedImg);
+        curLayer.subLayers.roi = new ROISubLayer(0,0, (curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight+itemShowCount*itemHeight,0,(curValue+1)*itemHeight+itemShowCount*itemHeight);
+        layers.push(curLayer);
+
+        //后景层（上）
+        tempH=-(curValue-itemShowCount)*itemHeight;
+        curLayer = new Layer(selectorWidth/2-itemWidth/2,tempH,itemWidth,itemHeight*itemCount,true);
+        curLayer.subLayers.image = new TextureSubLayer(unSelectedImg);
+        curLayer.subLayers.roi = new ROISubLayer(0,0,-tempH,itemWidth,-tempH,itemWidth,-tempH+itemShowCount*itemHeight,0,-tempH+itemShowCount*itemHeight);
+        layers.push(curLayer);
+
+        //背景层
+        curLayer = new Layer(0,h/2-selectorHeight/2,selectorWidth,selectorHeight,true);
+        if(sliceBg.imgSrc){
+            curLayer.subLayers.image = new TextureSubLayer(sliceBg.imgSrc);
+        }else{
+            var colorElems = parseColor(sliceBg.color);
+            curLayer.subLayers.color = new ColorSubLayer(colorElems);
+        }
+        layers.push(curLayer);
+
+        //前景层
+        var startH=h/2-selectorHeight/2;
+        var tempH=startH-curValue*selectorHeight;
+        curLayer = new Layer(0,tempH,selectorWidth,selectorHeight*itemCount,true);
+        curLayer.subLayers.image = new TextureSubLayer(selectedImg);
+        tempH=curValue*selectorHeight;
+        curLayer.subLayers.roi = new ROISubLayer(0,0,tempH,w,tempH,w,tempH+selectorHeight,0,tempH+selectorHeight);
+        layers.push(curLayer);
+
+        //标题层
+        if(selectorTitle){
+            var curLayer = new Layer(0,h/2-selectorHeight/2,selectorWidth,selectorHeight,true);
+            curLayer.subLayers.font = new FontSubLayer(selectorTitle,titleFont);
+            layers.push(curLayer);
+        }
+
+        //高亮层
+        this.enableHighLight = !(valueObj.disableHighlight);
+        if(this.enableHighLight){
+            curLayer = new Layer(0,h/2-selectorHeight/2,selectorWidth,selectorHeight,true);
+            if(sliceHighlight.imgSrc){
+                curLayer.subLayers.image = new TextureSubLayer(sliceHighlight.imgSrc);
+            }else{
+                var colorElems = parseColor(sliceHighlight.color);
+                curLayer.subLayers.color = new ColorSubLayer(colorElems);
+            }
+            layers.push(curLayer);
+            this.maxHighLightNum = 1;
+        }
+
+        this.subType = 'Selector';
+        Widget.call(this,x,y,w,h,layers);
     };
-    TexTime.prototype = Object.create(Widget.prototype);
-    TexTime.prototype.constructor = TexTime;*/
+    Selector.prototype = Object.create(Widget.prototype);
+    Selector.prototype.constructor = Selector;
 
-    var WidgetCommandParser = {};
+    //RotaryKnob
+    function RotaryKnob(x,y,w,h,valueObj,texList){
+        //图层数组
+        var layers = [];
+
+        //位置，宽高
+        var x=x;
+        var y=y;
+        var w=w;
+        var h=h;
+
+        //高亮
+        this.disableHighlight=valueObj.disableHighlight;
+
+        //纹理
+        var sliceBackground =  texList[0].slices[0].imgSrc;
+        var sliceRotarySlit = texList[1].slices[0].imgSrc;
+        var slicecursor = texList[2].slices[0].imgSrc;
+        var sliceHighlight=texList[3].slices[0];
+
+        //背景层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(sliceBackground);
+        layers.push(curLayer);
+
+        //光带层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(sliceRotarySlit);
+        // curLayer.subLayers.roi = new ROISubLayer(1,0,0,0,0,0,0,0,0);
+        curLayer.subLayers.roi = new ROISubLayer(1);
+        layers.push(curLayer);
+
+        //光标层
+        curLayer = new Layer(0,0,w,h,true);
+        curLayer.subLayers.image = new TextureSubLayer(slicecursor);
+        layers.push(curLayer);
+
+        //高亮层
+        // this.enableHighLight = !(valueObj.disableHighlight);
+        this.enableHighLight = true;
+        if(this.enableHighLight){
+            curLayer = new Layer(0,0,w,h,true);
+            if(sliceHighlight.imgSrc){
+                curLayer.subLayers.image = new TextureSubLayer(sliceHighlight.imgSrc);
+            }else{
+                var colorElems = parseColor(sliceHighlight.color);
+                curLayer.subLayers.color = new ColorSubLayer(colorElems);
+            }
+            layers.push(curLayer);
+            this.maxHighLightNum = 1;
+        }
+
+        this.subType = 'RotaryKnob';
+        Widget.call(this,x,y,w,h,layers);
+    };
+    RotaryKnob.prototype = Object.create(Widget.prototype);
+    RotaryKnob.prototype.constructor = RotaryKnob;
+
+
+
+    function ColorPicker(x,y,w,h,slices) {
+        var layers = []
+        var d = 5
+        //hue layer
+        var hLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.8*h)
+        hLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc)
+        //saturation volume layer
+        var svLayer = new Layer(d,d,0.8*w,0.8*h)
+        svLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
+        svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
+        //preview layer
+        var pLayer = new Layer(d,0.8*h+d*2,w-d*2,0.2*h-d*3)
+        pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
+
+        //backgroundLayer
+        var bgLayer = new Layer(0,0,w,h)
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255'))
+
+        //hue indicator
+        var hIndicatorLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.01*h)
+        hIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255)'))
+
+        //picker indicator
+        var minD = Math.min(w,h)
+        var pIndicatorLayer = new Layer(d,d,0.02*minD,0.02*minD)
+        pIndicatorLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc)
+
+        layers.push(bgLayer)
+        layers.push(hLayer)
+        layers.push(svLayer)
+        layers.push(pLayer)
+        layers.push(hIndicatorLayer)
+        layers.push(pIndicatorLayer)
+        this.subType = 'ColorPicker'
+        Widget.call(this,x,y,w,h,layers)
+    }
+
+    ColorPicker.prototype = Object.create(Widget.prototype)
+    ColorPicker.prototype.constructor = ColorPicker
+
     var WidgetCommandParser = {};
     var scope = {};
     WidgetCommandParser.transCommand = function (ctx,command) {
@@ -1346,7 +1313,7 @@
 
 
 
-        function transSingleIf(ifBlock, changeCondition) {``
+        function transSingleIf(ifBlock, changeCondition) {
             var results = [];
             var args = ifBlock.args;
             if (args.length === 2) {
@@ -1480,7 +1447,9 @@
     WidgetModel.models.SlideBlock = SlideBlock;
     WidgetModel.models.DateTime = DateTime;
     WidgetModel.models.TexNum = TexNum;
-    WidgetModel.models.TexTime = TexTime;
+    WidgetModel.models.Selector = Selector;
+    WidgetModel.models.RotaryKnob = RotaryKnob;
+    WidgetModel.models.ColorPicker = ColorPicker;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 
@@ -1488,3 +1457,54 @@
 
 
 }));
+
+// //button group
+// function ButtonGroup(x,y,w,h,num,align,space,slices,highLight) {
+//     var sWidth = 0;
+//     var sHeight = 0;
+//     var colorElems;
+//     var layers = [];
+//     if (align==0) {
+//         //hori
+//         sWidth = (w-(num-1)*space)/num;
+//         sHeight = h;
+//         if (highLight) {
+//             for (var i=0;i<num;i++){
+//                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
+//                 upLayer.subLayers.image = new TextureSubLayer(slices[3*i].imgSrc)
+//                 colorElems = parseColor(slices[3*i].color);
+//                 upLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+//                 downLayer.subLayers.image = new TextureSubLayer(slices[3*i+1].imgSrc)
+//                 colorElems = parseColor(slices[3*i+1].color);
+//                 downLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 var highLightLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+//                 highLightLayer.subLayers.image = new TextureSubLayer(slices[3*i+2].imgSrc)
+//                 colorElems = parseColor(slices[3*i+2].color);
+//                 highLightLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 layers.push(downLayer)
+//                 layers.push(upLayer)
+//                 layers.push(highLightLayer)
+//             }
+//             this.enableHighLight = true
+//             this.maxHighLightNum = num;
+//         }else{
+//             for (var i=0;i<num;i++){
+//                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
+//                 upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
+//                 colorElems = parseColor(slices[2*i].color);
+//                 upLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
+//                 downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
+//                 colorElems = parseColor(slices[2*i+1].color);
+//                 downLayer.subLayers.color = new ColorSubLayer(colorElems)
+//                 layers.push(downLayer)
+//                 layers.push(upLayer)
+//             }
+//         }
+//     }else{
+//         //ver
+//     }
+//     this.subType = 'ButtonGroup';
+//     Widget.call(this,x,y,w,h,layers)
+// }

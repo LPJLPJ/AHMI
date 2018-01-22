@@ -1,102 +1,15 @@
 ideServices.service('ProjectTransformService',['Type','ResourceService',function(Type,ResourceService){
 
+    /**
+     * 暴露对外接口
+     */
     this.transDataFile = transDataFile;
 
+    var idStart=0;
 
-    function transCmds(cmds,changelt){
-        // actionCompiler
-        return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
-    }
-    
-    function transActions(object,changelt) {
-        changelt = changelt||true;
-        if (object&&object.actions&&object.actions.length){
-            for (var i=0;i<object.actions.length;i++){
-                var curAction = object.actions[i];
-                curAction.commands = transCmds(curAction.commands,changelt);
-            }
-        }
-    }
-    function registerGeneralCommands() {
-        // mWDGOnInitializeFunc
-        // mWDGOnDestroyFunc
-        // mWDGOnTagChangeFunc
-        // mWDGOnMouseUpFunc
-        // mWDGOnMouseDownFunc
-        // mWDGOnMouseMoveFunc
-        // mWDGOnKeyBoardLeft
-        // mWDGOnKeyBoardRight
-        // mWDGOnKeyBoardOK
-        // mWDGOnAnimationFrame
-        var generalWidgetFunctions = ['onInitialize','onDestroy','onMouseUp','onMouseDown','onTagChange','onMouseMove','onKeyBoardLeft','onKeyBoardRight','onKeyBoardOK','onAnimationFrame']
-        var commands = {}
-        var models = WidgetModel.models;
-        var testModels = _.cloneDeep(WidgetCommands);
-
-        console.log('models',models);
-        for (var model in models){
-            if (models.hasOwnProperty(model)) {
-                //Button
-
-                var modelCommands = _.cloneDeep(models[model].prototype.commands);
-
-                transGeneralWidgetMultiCommands(modelCommands,generalWidgetFunctions)
-                commands[model] = modelCommands;
-            }
-        }
-        console.log('registered commands',commands)
-        // testModels['Button'].onInitialize = ASTTransformer.transAST(widgetCompiler.parse(testModels['Button'].onInitialize))
-        // testModels.map(function (model) {
-        //     //Button
-        //     for(var i=0;i<generalWidgetFunctions.length;i++){
-        //         var curF = generalWidgetFunctions[i]
-        //         if (curF in model) {
-        //             //button.onInitialize
-        //             model[curF] = ASTTransformer.transAST(widgetCompiler.parse(model[curF]))
-        //             //trans to jump end
-        //             model[curF] = transGeneralWidgetCommands(model,curF)
-        //         }
-        //     }
-        //     return model;
-        // })
-        var cppModels = {}
-        for (var model in testModels){
-            cppModels[model] = {}
-            if (testModels.hasOwnProperty(model)) {
-                modelObj = testModels[model]
-                for(var i=0;i<generalWidgetFunctions.length;i++){
-                    var curF = generalWidgetFunctions[i]
-                    if (curF in modelObj) {
-                        //button.onInitialize
-                        var ast = widgetCompiler.parse(modelObj[curF])
-                        console.log(ast)
-                        modelObj[curF] = ASTTransformer.transAST(ast)
-                        //trans to jump end
-                        transGeneralWidgetCommands(modelObj,curF)
-
-                        cppModels[model][curF] = cppWidgetCommandTranslator.transJSWidgetCommands(modelObj[curF])
-
-                    }
-                }
-            }
-        }
-
-        console.log('testModels',testModels)
-        console.log('cppModels',cppModels)
-        // return commands;
-        return {
-            commands:testModels,
-            cppModels:cppModels
-        }
-
-        //new
-        // return testModels
-    }
-
-
-
-
-
+    /**
+     * 转换工程数据
+     */
     function transDataFile(rawProject){
         var targetProject = {};
         targetProject.version = rawProject.version;
@@ -104,8 +17,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         targetProject.author = rawProject.author || 'author';
         targetProject.size = rawProject.currentSize;
         //register general commands
-        var commandsObj = registerGeneralCommands()
-        targetProject.generalWidgetCommands = commandsObj.commands
+        var commandsObj = registerGeneralCommands();
+        targetProject.generalWidgetCommands = commandsObj.commands;
         targetProject.cppWidgetCommands = commandsObj.cppModels;
         //add last save info
         targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
@@ -114,9 +27,89 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         for (var i=0;i<rawProject.pages.length;i++){
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
+
+        //系统控件
+        transSysWidget(targetProject);
+
         return targetProject;
     }
 
+    /**
+     * 注册指令
+     * 敲黑板！WidgetModel,WidgetCommands，widgetCompiler,ASTTransformer,cppWidgetCommandTranslator是全局变量，
+     * 分别从widget.js、widgetCommands.js、widgetCompiler.js,ASTTransformer.js,cppWidgetCommandTranslator.js导出。
+     * 这里体现了es5没有声明式模块化的短板。
+     * 很尴尬，这里的局部变量commands也被弃用了,核心是第二个循环。
+     */
+    function registerGeneralCommands() {
+        var generalWidgetFunctions = ['onInitialize','onDestroy','onMouseUp','onMouseDown','onTagChange','onMouseMove','onKeyBoardLeft','onKeyBoardRight','onKeyBoardOK','onAnimationFrame','onHighlightFrame'];
+        var commands = {};
+        var models = WidgetModel.models;
+
+        var testModels = _.cloneDeep(WidgetCommands);
+
+        for (var model in models){
+            if (models.hasOwnProperty(model)) {
+                //Button
+                var modelCommands = _.cloneDeep(models[model].prototype.commands);
+                transGeneralWidgetMultiCommands(modelCommands,generalWidgetFunctions);
+                commands[model] = modelCommands;
+            }
+        }
+
+        var cppModels = {};
+        for (var model in testModels){
+            cppModels[model] = {};
+            if (testModels.hasOwnProperty(model)) {
+                var modelObj = testModels[model];
+                for(var i=0;i<generalWidgetFunctions.length;i++){
+                    var curF = generalWidgetFunctions[i];
+                    if (curF in modelObj) {
+                        /**for web**/
+                        var ast = widgetCompiler.parse(modelObj[curF]);
+                        // console.log('ast',ast)
+                        modelObj[curF] = ASTTransformer.transAST(ast);
+                        //trans to jump end
+                        transGeneralWidgetCommands(modelObj,curF);
+
+                        /**for embedded**/
+                        cppModels[model][curF] = cppWidgetCommandTranslator.transJSWidgetCommands(modelObj[curF])
+                    }
+                }
+            }
+        }
+
+        console.log('testModels',testModels);
+        console.log('cppModels',cppModels);
+        // return commands;
+        return {
+            commands:testModels,
+            cppModels:cppModels
+        }
+    }
+
+    /**
+     * 转换控件指令
+     */
+    function transGeneralWidgetMultiCommands(widget,mfs) {
+        for (var i=0;i<mfs.length;i++){
+            var curF = mfs[i];
+            transGeneralWidgetCommands(widget,curF)
+        }
+    }
+    function transGeneralWidgetCommands(widget,f) {
+        if (f in widget) {
+            widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f]),true).map(function (cmd) {
+                return cmd['cmd']
+            })
+        }
+
+    }
+
+
+    /**
+     * 转换page数据
+     */
     function transPage(rawPage, index){
         var targetPage = {};
         targetPage.id = ''+index;
@@ -132,6 +125,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         return targetPage;
     }
 
+    /**
+     * 转换图层数据
+     */
     function transLayer(rawLayer,layerIdx,pageIdx){
         var targetLayer = {};
         targetLayer.id = pageIdx+'.'+layerIdx;
@@ -155,6 +151,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         return targetLayer;
     }
 
+    /**
+     * 转换子图层数据
+     */
     function transSubLayer(rawSubLayer,subLayerIdx,layerIdx){
         var targetSubLayer = {};
         targetSubLayer.id = layerIdx+'.'+subLayerIdx;
@@ -171,24 +170,17 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         return targetSubLayer;
     }
 
+    /**
+     * 转换控件数据
+     */
     function transWidget(rawWidget,widgetIdx,subLayerIdx){
         var targetWidget = {};
         var generalWidget = {};
-        var fps = 30
+        var fps = 30;
         var defaultDuration = 1000;
-        //targetWidget.id = subLayerIdx+'.'+widgetIdx;
-        //targetWidget.type = 'widget';
-        //targetWidget.subType = rawWidget.type;
-        //deepCopyAttributes(rawWidget,targetWidget,['name','triggers','actions','tag','zIndex','texList']);
-        //targetWidget.w = rawWidget.info.width;
-        //targetWidget.h = rawWidget.info.height;
-        //targetWidget.x = rawWidget.info.left;
-        //targetWidget.y = rawWidget.info.top;
-        //targetWidget.info = rawWidget.info;
 
         targetWidget = _.cloneDeep(rawWidget);
         transActions(targetWidget);
-        // console.log(_.cloneDeep(targetWidget))
         if (targetWidget.type == 'general'){
             //default Button
             var info = targetWidget.info;
@@ -204,11 +196,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             generalWidget.type = 'widget';
             generalWidget.tag = rawWidget.tag;
             generalWidget.subType = 'general';
-            // transGeneralWidgetCommands(targetWidget,'onInitialize')
-            // console.log(targetWidget)
-
         }else{
             var info = targetWidget.info;
+            var texList = targetWidget.texList;
             var x = info.left;
             var y = info.top;
             var w = info.width;
@@ -247,34 +237,31 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.actions = targetWidget.actions
                 break;
                 case 'MyButtonGroup':
-                    //console.log(targetWidget)
-                    highLight = !targetWidget.info.disableHighlight;
+                    highLight = !info.disableHighlight;
                     var slices = [];
-                    var curTex;
-                    if (highLight) {
-                       var highLightTex = targetWidget.texList[targetWidget.texList.length-1].slices[0];
-                       for(var i=0;i<targetWidget.info.count;i++){
-                            curTex = targetWidget.texList[i]
-                            slices.push(curTex.slices[0])
-                            slices.push(curTex.slices[1])
-                            slices.push(highLightTex)
-                        }
-                    }else{
-                        for(var i=0;i<targetWidget.info.count;i++){
-                            curTex = targetWidget.texList[i]
-                            slices.push(curTex.slices[0])
-                            slices.push(curTex.slices[1])
-                        }
-                    }
+                    texList.map(function (curTex) {
+                        curTex.slices.map(function(slice){
+                            slices.push(slice)
+                        })
+                    });
 
-                    generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,targetWidget.info.count||1,(targetWidget.info.arrange=="horizontal"?0:1),targetWidget.info.interval||0,slices,highLight)
+                    generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,info.count||1,(info.arrange==="horizontal"?0:1),info.interval||0,slices,highLight);
                     generalWidget = generalWidget.toObject();
-                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
 
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.generalType = 'ButtonGroup';
-                    // targetWidget.mode = Number(rawWidget.buttonModeId);
                     generalWidget.subType = 'general';
-                    generalWidget.actions = targetWidget.actions
+                    generalWidget.actions = targetWidget.actions;
+
+                    generalWidget['totalHLFrame']=highLight?(200/1000 * fps):undefined;
+
+                    //other attrs
+                    generalWidget.otherAttrs[0] = info.interval; //间距
+                    generalWidget.otherAttrs[1] = info.count;    //按钮个数
+                    generalWidget.otherAttrs[2] = 1;             //高亮动画起始值
+                    generalWidget.otherAttrs[3] = 1;             //高亮动画终止值
+                    //Todo:默认属性中有arrange，但是在simulaor中无法解析错误，故使用otherAttrs
+                    generalWidget.otherAttrs[4] = (info.arrange==="horizontal"?0:1); //排列方向
                 break;
                 case 'MyDashboard':
                     generalWidget =  new WidgetModel.models['Dashboard'](x,y,w,h,targetWidget.dashboardModeId,targetWidget.texList,targetWidget.info)
@@ -284,12 +271,12 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     //additional attrs
-                    var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue'
+                    var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue';
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     })
                     //animation
-                    console.log('enableAnimation',info.enableAnimation)
+                    // console.log('enableAnimation',info.enableAnimation)
                     if (info.enableAnimation) {
                         generalWidget['totalFrame'] = defaultDuration/1000 * fps;
                     }
@@ -312,7 +299,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                         generalWidget[attr] = info[attr]||0
                     });
                     //animation
-                    console.log('progress',info.enableAnimation)
                     if (info.enableAnimation) {
                         generalWidget['totalFrame'] = defaultDuration/1000 * fps;
                     }
@@ -471,7 +457,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                         generalWidget[attr] = info[attr]||0
                     })
                     generalWidget.arrange = (info.arrange=='horizontal')?0:1
-                    console.log(generalWidget,targetWidget)
+                    // console.log(generalWidget,targetWidget)
                     generalWidget.otherAttrs[0] = 0 //lastX
                     generalWidget.otherAttrs[1] = 0 //lastY
                     generalWidget.otherAttrs[2] = blockInfo.w
@@ -537,23 +523,20 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    console.log('generalNum',generalWidget);
                 break;
                 case 'MyTexNum':
                     generalWidget = new WidgetModel.models['TexNum'](x,y,w,h,info,targetWidget.texList[0].slices);
-                    console.log("generalWidget1",generalWidget)
                     generalWidget = generalWidget.toObject();
-                    console.log("generalWidget2",generalWidget)
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr]||0
                     })
                     generalWidget.mode = Number(info.numModeId)
-                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    generalWidget.otherAttrs[0] = Number(info['numValue']);//初始化的数字值
                     generalWidget.otherAttrs[1] = Number(info['frontZeroMode']);//前导零模式
                     generalWidget.otherAttrs[2] = Number(info['symbolMode']);//符号模式
-                    generalWidget.otherAttrs[3] = info['decimalCount'];//小数位数
-                    generalWidget.otherAttrs[4] = info['numOfDigits'];//字符位数
+                    generalWidget.otherAttrs[3] = Number(info['decimalCount']);//小数位数
+                    generalWidget.otherAttrs[4] = Number(info['numOfDigits']);//字符位数
                     generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);//溢出显示
                     generalWidget.otherAttrs[6] = Number(info['characterW']);//字符宽度
                     generalWidget.otherAttrs[7] = Number(info['characterH']);//字符高度
@@ -572,12 +555,117 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                             generalWidget.otherAttrs[9] = 1
                     }
 
-                    console.log("generalWidget",generalWidget)
                     generalWidget.generalType = 'TexNum';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    console.log(generalWidget)
+                    break;
+                case 'MyRotaryKnob':
+                    generalWidget = new WidgetModel.models['RotaryKnob'](x,y,w,h,info,targetWidget.texList);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'minValue,maxValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr]||0
+                    });
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[2] = w/2;//旋转中心x
+                    generalWidget.otherAttrs[3] = h/2;//旋转中心y
+                    generalWidget.otherAttrs[4] = 0;//isHited 此位置代表了是否在mouseDown状态
+                    generalWidget.otherAttrs[5] = 0 //lastArea
+                    generalWidget.otherAttrs[6] = 0 //over是否非法越过原点
+
+                    generalWidget.generalType = 'RotaryKnob';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+                case 'MySelector':
+                    //纹理
+                    var tempSlices=targetWidget.texList[1].slices;
+                    var slicesItem = [];
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        slicesItem[i] = {};
+                        slicesItem[i].color = tempSlices[i].color;
+                        slicesItem[i].text = tempSlices[i].text;
+                        slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    tempSlices=targetWidget.texList[2].slices;
+                    var slicesSelected = [];
+                    for(var i=0,il=tempSlices.length;i<il;i++){
+                        slicesSelected[i] = {};
+                        slicesSelected[i].color = tempSlices[i].color;
+                        slicesSelected[i].text = tempSlices[i].text;
+                        slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    var itemFontString=info.itemFont.fontItalic+" "+info.itemFont.fontBold+" "+info.itemFont.fontSize+"px"+" "+'"'+info.itemFont.fontFamily+'"';
+                    var selectorFontString=info.selectorFont.fontItalic+" "+info.selectorFont.fontBold+" "+info.selectorFont.fontSize+"px"+" "+'"'+info.selectorFont.fontFamily+'"';
+
+                    //生成前景item大图
+                    var selectedImg=jointImageText(info.selectorWidth,info.selectorHeight*info.itemCount,info.selectorHeight,slicesSelected,selectorFontString,info.selectorFont.fontColor);
+                    //生成后景item大图
+                    var unSelectedImg=jointImageText(info.itemWidth,info.itemHeight*info.itemCount,info.itemHeight,slicesItem,itemFontString,info.itemFont.fontColor);
+
+                    var id1='selector'+(++idStart).toString()+'.png';
+                    var id2='selector'+(++idStart).toString()+'.png';
+                    var file1={
+                        id:id1,
+                        name:'selectedImg',
+                        type:"image/png",
+                        src:selectedImg.src
+                    };
+                    var file2={
+                        id:id2,
+                        name:'unSelectedImg',
+                        type:"image/png",
+                        src:unSelectedImg.src
+                    };
+                    var fcb=function (e, resourceObj) {
+                        if (e.type === 'error'){
+                            toastr.warning('资源加载失败: ' + resourceObj.name);
+                            resourceObj.complete = false;
+                        } else {
+                            resourceObj.complete = true;
+                        }
+
+                    }.bind(this);
+                    if(!isFileInGlobalResources('selector001')){
+                        ResourceService.cacheFile(file1, globalResources, null, fcb);
+                    }
+                    if(!isFileInGlobalResources('selector002')){
+                        ResourceService.cacheFile(file2, globalResources, null, fcb);
+                    }
+                    var newSelectedImgSrc='/'+id1;
+                    changeSrcInGlobalResources(id1,newSelectedImgSrc);
+                    var newUnSelectedImgSrc='/'+id2;
+                    changeSrcInGlobalResources(id2,newUnSelectedImgSrc);
+                    //实例化一个选择器控件
+                    generalWidget = new WidgetModel.models['Selector'](x,y,w,h,info,targetWidget.texList[0].slices[0],newUnSelectedImgSrc,newSelectedImgSrc,targetWidget.texList[3].slices[0]);
+                    generalWidget = generalWidget.toObject();
+
+                    // generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    //属性
+                    generalWidget.otherAttrs[1] = Number(info['curValue']);//当前item
+                    generalWidget.otherAttrs[2] = Number(info['itemCount']);//item总数
+                    generalWidget.otherAttrs[3] = Number(info['itemShowCount']);//item总数
+                    //宽高
+                    generalWidget.otherAttrs[4] = Number(info['width']);//控件宽
+                    generalWidget.otherAttrs[5] = Number(info['height']);//控件高
+                    generalWidget.otherAttrs[6] = Number(info['itemWidth']);//未选中元素宽
+                    generalWidget.otherAttrs[7] = Number(info['itemHeight']);//未选中元素高
+                    generalWidget.otherAttrs[8] = Number(info['selectorWidth']);//选中元素宽
+                    generalWidget.otherAttrs[9] = Number(info['selectorHeight']);//选中元素高
+                    generalWidget.otherAttrs[10] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[11] = x;//控件坐标x
+                    generalWidget.otherAttrs[12] = y;//控件坐标y
+                    generalWidget.otherAttrs[13] = 0;//选择框是否展开
+                    generalWidget.otherAttrs[14] = 0;//isMoved,是否已经被拖拽
+                    generalWidget.otherAttrs[15] = 0;//lastlastInnery
+
+
+                    generalWidget.generalType = 'Selector';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
                     break;
 
               /*  case 'MyTexTime':
@@ -688,39 +776,52 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget
             }
-
-
-
-
-
             generalWidget.id = subLayerIdx+'.'+widgetIdx;
             generalWidget.type = 'widget';
-
-
-
         }
-
-
-        console.log("generalWidget4",generalWidget)
         return generalWidget;
     }
 
-    function transGeneralWidgetMultiCommands(widget,mfs) {
-        for (var i=0;i<mfs.length;i++){
-            var curF = mfs[i];
-            transGeneralWidgetCommands(widget,curF)
+    /**
+     * 转换actions
+     */
+    function transActions(object,changelt) {
+        changelt = changelt||true;
+        if (object&&object.actions&&object.actions.length){
+            for (var i=0;i<object.actions.length;i++){
+                var curAction = object.actions[i];
+                curAction.commands = transCmds(curAction.commands,changelt);
+            }
         }
     }
 
-    function transGeneralWidgetCommands(widget,f) {
-        if (f in widget) {
-            widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f]),true).map(function (cmd) {
-                return cmd['cmd']
-            })
-        }
-
+    /**
+     * 转化actions中的指令（commands）
+     */
+    function transCmds(cmds,changelt){
+        // actionCompiler
+        return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
     }
 
+    /**
+     * 转换系统控件
+     */
+    function transSysWidget(targetProject){
+        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
+        colorPicker = colorPicker.toObject()
+        colorPicker.generalType = 'ColorPicker'
+        colorPicker.type = 'widget'
+        colorPicker.subType = 'general'
+        //
+        targetProject.systemWidgets = []
+
+        //push system widgets
+        targetProject.systemWidgets.push(colorPicker)
+    }
+
+    /**
+     * 工具函数，深拷贝属性
+     */
     function deepCopyAttributes(srcObj,dstObj,attrList){
         for (var i=0;i<attrList.length;i++){
             var curAttr = attrList[i];
@@ -732,6 +833,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         }
     }
 
+    /**
+     * 工具函数，把color字符串解析成对象
+     * @param color
+     * @returns {{r: number, g: number, b: number, a: number}}
+     */
     function parseColor(color) {
         var colorElems = []
         var result = {
@@ -764,7 +870,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         }
         return result
     }
-
 
 
     /**
@@ -846,6 +951,65 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         var targetWidget = {};
         targetWidget = _.cloneDeep(rawWidget);
         return targetWidget;
+    }
+
+    /**
+     * joint image&Text by canvas; returns new image
+     * @param  {[type]} w             [生成图片的宽]
+     * @param  {[type]} h             [生成图片的高]
+     * @param  {[type]} imgH          [输入图片的高]
+     * @param  {[type]} slices        [纹理列表]
+     * @param  {[type]} fontString    [字体格式]
+     * @param  {[type]} fontColor     [文字颜色]
+     * @return {[type]}               [description]
+     * @author LH 2018/01/03
+     */
+    function jointImageText(w,h,imgH,slices,fontString,fontColor) {
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        var ctx=canvas.getContext("2d");
+
+        for(var i=0;i<slices.length;i++){
+            if(slices[i].color){
+                ctx.fillStyle=slices[i].color;
+                ctx.fillRect( 0,imgH*i,w,imgH);
+            }
+            if(slices[i].img){
+                ctx.drawImage(slices[i].img, 0,imgH*i,w,imgH);
+            }
+            if(slices[i].text){
+                ctx.font=fontString;
+                ctx.fillStyle=fontColor;
+                ctx.textAlign='center';
+                ctx.textBaseline='middle';
+                ctx.fillText(slices[i].text,w/2,imgH*i+imgH/2);
+            }
+        }
+
+        var image = new Image();
+        image.src = canvas.toDataURL("image/png");
+
+        return image;
+    }
+
+    function isFileInGlobalResources(id){
+        for(var i=0;i<globalResources.length;i++){
+            if(id===globalResources[i].id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function changeSrcInGlobalResources(id,newSrc){
+        for(var i=0;i<globalResources.length;i++){
+            if(id===globalResources[i].id){
+                globalResources[i].src=newSrc;
+                return true;
+            }
+        }
+        return false;
     }
 
 }]);

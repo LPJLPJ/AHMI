@@ -224,6 +224,142 @@ ideServices
                     }]
                 }]
             },
+            defaultSelector={
+                info :{
+                    //宽高
+                    width:80,
+                    height: 40,
+                    selectorWidth:80,
+                    selectorHeight:40,
+                    itemWidth:80,
+                    itemHeight:40,
+                    //坐标
+                    left: 0,
+                    top: 0,
+                    selectorLeft:0,
+                    selectorTop:0,
+                    //item数
+                    itemCount:1,
+                    //能显示出的item数，item视窗大小
+                    itemShowCount:1,
+                    //item当前值
+                    curValue:0,
+
+                    text:'Selector',
+                    //标题
+                    selectorTitle:'',
+                    itemFont:{
+                        fontFamily:"宋体",
+                        fontSize:20,
+                        fontColor:'rgba(0,0,0,1)',
+                        fontBold:"100",
+                        fontItalic:''
+                    },
+                    selectorFont:{
+                        fontFamily:"宋体",
+                        fontSize:20,
+                        fontColor:'rgba(0,0,0,1)',
+                        fontBold:"100",
+                        fontItalic:'',
+                    },
+                    titleFont:{
+                        fontFamily:"宋体",
+                        fontSize:20,
+                        fontColor:'rgba(0,0,0,1)',
+                        fontBold:"100",
+                        fontItalic:'',
+                    },
+                    disableHighlight:false
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'选择器背景',
+                    slices:[{
+                        color:'rgba(0,0,0,1)',
+                        imgSrc:'',
+                        name:'选择器背景'
+                    }]
+                },{
+                    currentSliceIdx:1,
+                    name:'元素纹理',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        text:'',
+                        name:'0'
+                    }]
+                },{
+                    currentSliceIdx:2,
+                    name:'元素选中后纹理',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        text:'',
+                        name:'0'
+                    }]
+                },{
+                    currentSliceIdx:3,
+                    name:'高亮',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        text:'',
+                        name:'高亮'
+                    }]
+                }]
+            },
+            defaultRotaryKnob={
+                info :{
+                    //坐标
+                    left: 0,
+                    top: 0,
+                    //宽高
+                    width:80,
+                    height: 40,
+
+                    //最大值
+                    maxValue:100,
+                    //最小值
+                    minValue:0,
+                    //当前值
+                    curValue:0,
+
+                    disableHighlight:false
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'背景'
+                    }]
+                },{
+                    currentSliceIdx:1,
+                    name:'光圈',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'光圈'
+                    }]
+                },{
+                    currentSliceIdx:2,
+                    name:'光标',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'光标'
+                    }]
+                },{
+                    currentSliceIdx:3,
+                    name:'高亮',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'高亮'
+                    }]
+                }]
+            },
             defaultButtonGroup={};
 
         this.setDefaultWidget=function(widget){
@@ -287,10 +423,9 @@ ideServices
         this.getDefaultLayer = function () {
             var pageNode=CanvasService.getPageNode();
             var info = {
-                width:(pageNode.getWidth()/pageNode.getZoom()) / 2, height: (pageNode.getHeight()/pageNode.getZoom()) / 2,
+                width:Math.round((pageNode.getWidth()/pageNode.getZoom()) / 2),
+                height: Math.round((pageNode.getHeight()/pageNode.getZoom()) / 2),
 
-
-                //width: project.currentSize.width / 2, height: project.currentSize.height / 2,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center'
             };
@@ -311,20 +446,23 @@ ideServices
         };
 
         this.getDefaultSubLayer = function () {
-            // var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
+            var pageNode=CanvasService.getPageNode();
+            var info = {
+                width:Math.round(pageNode.getWidth()/2),
+                height:Math.round(pageNode.getHeight()/2),
+                scrollVEnabled:false,
+                scrollHEnabled:false,
+            };
             return {
+                info:info,
                 url: '',
                 id: Math.random().toString(36).substr(2),
-                // proJsonStr: jsonStr,
                 widgets: [],
                 name: 'NewSubCanvas',
                 type: Type.MySubLayer,
-                width: 0,
-                height: 0,
                 expand:true,
                 backgroundImage:'',
                 backgroundColor:"rgba(255,255,255,0.0)"
-
             }
         };
 
@@ -449,19 +587,20 @@ ideServices
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
+            var text='文本';
+            var fontSize=15;
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
+                width:fontSize*(text.length+1),height:fontSize*2,
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
 
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
 
-                text:'文本',
+                text:text,
                 fontName:'正文',
                 fontFamily:'宋体',
-                fontSize:15,
+                fontSize:fontSize,
                 fontColor:'rgba(0,0,0,1)',
                 fontBold:"100",
                 fontItalic:"",
@@ -602,10 +741,14 @@ ideServices
 
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font));
-            var width = 3*maxFontWidth;
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
+            var maxFontWidth = 30;//+
+            var paddingRatio = 0.1;
+            var spacing = -10;
+            var width = 3*(maxFontWidth+spacing)+Math.ceil(maxFontWidth*paddingRatio*2);
+            var height = maxFontWidth*(1+2*paddingRatio);
             var info={
-                width:width, height: 33,
+                width:width, height: height,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:100,
@@ -622,6 +765,7 @@ ideServices
 
                 align:'center',//数字对齐方式
                 arrange:'horizontal',//数字方向，垂直vertical，水平horizontal
+                spacing:spacing,//数字之间的间距，默认为-10
 
                 //arrange:true,         //true:横向 false:竖向
                 numValue:1,
@@ -631,7 +775,8 @@ ideServices
                 fontBold:"100",
                 fontItalic:"",
                 maxFontWidth:maxFontWidth,   //最大字体宽度
-                enableAnimation:false //显示模式标志，false:无动画 true:有动画
+                enableAnimation:false, //显示模式标志，false:无动画 true:有动画
+                paddingRatio:paddingRatio
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -784,26 +929,37 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
-            var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
-            var width = 8*maxFontWidth;
+            // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
+            // var maxFontWidth = 20;//+
+            // var width = 8*maxFontWidth;
+
+            //edit by lx in 17/12/18
+            var maxFontWidth = 30;//+
+            var paddingRatio = 0.1;
+            var spacing = -10;
+            var width = 8*(maxFontWidth+spacing)+Math.ceil(maxFontWidth*paddingRatio*2);
+            var height = maxFontWidth*(1+2*paddingRatio);
             var info={
-                width:width, height: 22,
+                width:width, height: height,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 initValue:0,
                 dateTimeModeId:'0',//0表示时间秒，1表示时分，2表示斜杠日期，3表示减号日期
                 RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
                 fontFamily:'宋体',
-                fontSize:20,
+                fontSize:maxFontWidth,
                 fontColor:'rgba(255,255,255,1)',
                 align:'center',
                 arrange:"horizontal",   //horizontal:水平   vertical:竖直
                 disableHighlight:false,
                 fontBold:"100",
                 fontItalic:"",
-                maxFontWidth:maxFontWidth   //最大字体宽度
+                maxFontWidth:maxFontWidth,   //最大字体宽度
+                spacing:spacing,//数字之间的间距，默认为-10
+                paddingRatio:paddingRatio//padding的值=paddingRatio*maxFontWidth
             };
             return {
                 id: Math.random().toString(36).substr(2),
@@ -816,6 +972,61 @@ ideServices
                 texList:[{
                     currentSliceIdx:0,
                     name:'时间日期',
+                    slices:[{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
+                    }]
+                }]
+
+            }
+        };
+        this.getDefaultTexTime=function(){
+            var info={
+                characterW:30,
+                characterH:30,
+                width:240, height: 30,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                initValue:0,
+                dateTimeModeId:'0',//0表示时间秒，1表示时分，2表示斜杠日期，3表示减号日期
+                RTCModeId:'0',//使用内部RTC，1表示使用外部RTC
+
+                align:'center',
+                arrange:"horizontal",   //horizontal:水平   vertical:竖直
+                disableHighlight:false,//
+                maxFontWidth:30  //最大字体宽度
+            };
+            var slices = [];
+            for(var i=0,il=13;i<il;i++){
+                slices[i] = {};
+                slices[i].imgSrc = '';
+                slices[i].color = 'rgba(120,120,120,1)';
+                if(i<=9){
+                    slices[i].name = '数字'+i;
+                }else if(i===10){
+                    slices[i].name = ':';
+                }else if(i===11){
+                    slices[i].name = '/';
+                }else if(i===12){
+                    slices[i].name = '-';
+                }
+            }
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTexTime',
+                type: Type.MyTexTime,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'时间日期纹理',
+                    slices:slices,
+                },{
+                    currentSliceIdx:1,
+                    name:'高亮纹理',
                     slices:[{
                         color:'rgba(244,244,244,0.3)',
                         imgSrc:'',
@@ -913,7 +1124,35 @@ ideServices
                 }]
 
             }
-        }
+        };
+        this.getDefaultSelector= function () {
+            var info = _.cloneDeep(defaultSelector.info);
+            var texList = _.cloneDeep(defaultSelector.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewSelector',
+                type: Type.MySelector,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList,
+            };
+        };
+        this.getDefaultRotaryKnob= function () {
+            var info = _.cloneDeep(defaultRotaryKnob.info);
+            var texList = _.cloneDeep(defaultRotaryKnob.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewRotaryKnob',
+                type: Type.MyRotaryKnob,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList,
+            };
+        };
 
 
         function _getRandomColor(){

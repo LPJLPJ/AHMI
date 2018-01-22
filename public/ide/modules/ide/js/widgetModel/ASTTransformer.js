@@ -134,7 +134,10 @@
 						insts.push(['executeaction',Param(judgeType(parameters[0]),parameters[0].value)])
 					break;
 					case 'startanimation':
-						insts.push(['startanimation'])
+						insts.push(['startanimation']);
+					break;
+					case 'starthlanimation':
+						insts.push(['starthlanimation']);
 					break;
 					case 'mod':
 						insts.push(['mod',Param(judgeType(parameters[0]),parameters[0].value),Param(judgeType(parameters[1]),parameters[1].value)])

@@ -25,11 +25,11 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 displayTagByIndex:displayTagByIndex,
                 displayTimerTagByIndex:displayTimerTagByIndex,
                 selectedTagFun:selectedTagFun,
-
                 setTimerNum:setTimerNum,
                 restoreTimerNum:restoreTimerNum,
-
-                readTags:readTags
+                readTags:readTags,
+                sortByName:sortByName,
+                sortByRegister:sortByRegister
             };
             readTagsInfo();
             //判断属性type，用于在选择了多组canvas或多个控件时，不显示tag和action
@@ -268,6 +268,8 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 case Type.MyVideo:
                 case Type.MyAnimation:
                 case Type.MyTexNum:
+                case Type.MySelector:
+                case Type.MyRotaryKnob:
                     $scope.showTagPanel = true;
                     break;
                 default:
@@ -384,6 +386,19 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
 
         function restoreTimerNum(){
             $scope.component.timerNum=TagService.getTimerNum();
+        }
+
+        //tag按名称排序
+        function sortByName(e){
+            TagService.sortByName(function(){
+                readTagsInfo();
+            })
+        }
+        //tag按寄存器号排序
+        function sortByRegister(){
+            TagService.sortByRegister(function(){
+                readTagsInfo();
+            })
         }
 
     }]);

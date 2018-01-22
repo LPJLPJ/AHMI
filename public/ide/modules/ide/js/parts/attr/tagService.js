@@ -62,7 +62,7 @@ ideServices
         //新增一个tag
         this.getNewTag = function(){
             return _.cloneDeep(defaultTag);
-        }
+        };
         this.setUniqueTags= function (tag,noDuplication,cb) {
             if((tags.length+timerTags.length)>255){
                 toastr.warning('超出tag数量限制');
@@ -91,18 +91,6 @@ ideServices
                     }
                 }
             }
-
-
-            // var hasCurPage = false;
-            // for (var i=0;i<_tags.length;i++){
-            //     if (_tags[i].name === '当前页面序号'){
-            //         hasCurPage = true;
-            //         break;
-            //     }
-            // }
-            // if (!hasCurPage){
-            //     _tags.push(curPageTag);
-            // }
             addSysTags(_tags);
             tags = _tags;
             timerTags = _timerTags
@@ -111,17 +99,7 @@ ideServices
 
 
         this.syncCustomTags = function (_customTags) {
-            // var hasCurPage = false;
-            // for (var i=0;i<_customTags.length;i++){
-            //     if (_customTags[i].name === '当前页面序号'){
-            //         hasCurPage = true;
-            //         break;
-            //     }
-            // }
-            // if (!hasCurPage){
-            //     _customTags.push(curPageTag);
-            // }
-            addSysTags(_customTags || [])
+            addSysTags(_customTags || []);
             tags = _customTags
         };
 
@@ -140,13 +118,9 @@ ideServices
             return timerTags;
         };
 
-        this.getAllTimerTags_Cur = function(){
-
-        }
 
         //返回所有的tags，包括自定义tags和timerTags
         this.getAllTags=function(){
-
             return tags.concat(timerTags);
         };
 
@@ -172,9 +146,6 @@ ideServices
 
         //通过index删除一个tag
         this.deleteTagByIndex=function(index,cb){
-            //if(tags[index].indexOfRegister!=(-1)){
-            //    index=index+2;
-            //}
             if((index>=0)&&(index<=tags.length-1)){
                 tags.splice(index,1);
                 cb && cb();
@@ -209,28 +180,8 @@ ideServices
             timerTags.length=0;//先清空timerTags
             console.log(timerTags);
             for(var i=0;i<num;i++){
-
-                // timerTags[0+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                // timerTags[0+(i*6)].name="SysTmr_"+i+"_Start";
-                //
-                // timerTags[1+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                // timerTags[1+(i*6)].name="SysTmr_"+i+"_Stop";
-                //
-                // timerTags[2+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                // timerTags[2+(i*6)].name="SysTmr_"+i+"_Step";
-                //
-                // timerTags[3+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                // timerTags[3+(i*6)].name="SysTmr_"+i+"_Interval";
-                //
-                // timerTags[4+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                // timerTags[4+(i*6)].name="SysTmr_"+i+"_CurVal";
-                //
-                // timerTags[5+(i*6)]={ name: "", register: false, indexOfRegister: null, writeOrRead:false, value: 0};
-                // timerTags[5+(i*6)].name="SysTmr_"+i+"_Mode";
                 timerTags[i]={ name: "", register: false, indexOfRegister: null, value: 0};
                 timerTags[i].name="SysTmr_"+i+"_t";
-
-
             }
         };
 
@@ -239,6 +190,30 @@ ideServices
         };
         this.getTimerNum=function(){
             return timerNum;
+        };
+
+        var sortNameOrder = true;
+        var sortRegisterOrder = true;
+        this.sortByName = function(cb){
+            var sort = function (a,b) {
+                    var nameA = a.name,
+                        nameB = b.name;
+                    return  sortNameOrder?nameA.localeCompare(nameB,"zh"):nameB.localeCompare(nameA,"zh");
+                };
+            sortNameOrder = !sortNameOrder;
+            tags.sort(sort);
+            cb&&cb()
+        };
+
+        this.sortByRegister = function(cb){
+            var sort = function (a,b) {
+                var A = a.indexOfRegister||-1,
+                    B = b.indexOfRegister||-1;
+                return  sortRegisterOrder?A-B:B-A;
+            };
+            sortRegisterOrder = !sortRegisterOrder;
+            tags.sort(sort);
+            cb&&cb()
         }
 
     }]);
