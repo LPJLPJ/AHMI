@@ -225,6 +225,7 @@
 
         //add
         curHLAnimationFactor:'curHLAnimationFactor'
+
     };
 
 

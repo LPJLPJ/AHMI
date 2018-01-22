@@ -28,34 +28,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
 
-        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
-        colorPicker = colorPicker.toObject()
-        colorPicker.generalType = 'ColorPicker'
-        colorPicker.type = 'widget'
-        colorPicker.subType = 'general'
-        //
-        // targetProject.pageList.push({
-        //     type:Type.MyPage,
-        //     canvasList:[
-        //         {
-        //             x:0,
-        //             y:0,
-        //             w:200,
-        //             h:200,
-        //             type:Type.MyLayer,
-        //             subCanvasList:[{
-        //                 type:Type.MySubLayer,
-        //                 widgetList:[
-        //                     colorPicker
-        //                 ]
-        //             }]
-        //         }
-        //     ]
-        // })
-        targetProject.systemWidgets = []
-
-        //push system widgets
-        targetProject.systemWidgets.push(colorPicker)
+        //系统控件
+        transSysWidget(targetProject);
 
         return targetProject;
     }
@@ -774,6 +748,22 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     function transCmds(cmds,changelt){
         // actionCompiler
         return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
+    }
+
+    /**
+     * 转换系统控件
+     */
+    function transSysWidget(targetProject){
+        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
+        colorPicker = colorPicker.toObject()
+        colorPicker.generalType = 'ColorPicker'
+        colorPicker.type = 'widget'
+        colorPicker.subType = 'general'
+        //
+        targetProject.systemWidgets = []
+
+        //push system widgets
+        targetProject.systemWidgets.push(colorPicker)
     }
 
     /**
