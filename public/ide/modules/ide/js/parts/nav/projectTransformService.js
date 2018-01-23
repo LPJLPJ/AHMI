@@ -28,34 +28,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
 
-        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
-        colorPicker = colorPicker.toObject()
-        colorPicker.generalType = 'ColorPicker'
-        colorPicker.type = 'widget'
-        colorPicker.subType = 'general'
-        //
-        // targetProject.pageList.push({
-        //     type:Type.MyPage,
-        //     canvasList:[
-        //         {
-        //             x:0,
-        //             y:0,
-        //             w:200,
-        //             h:200,
-        //             type:Type.MyLayer,
-        //             subCanvasList:[{
-        //                 type:Type.MySubLayer,
-        //                 widgetList:[
-        //                     colorPicker
-        //                 ]
-        //             }]
-        //         }
-        //     ]
-        // })
-        targetProject.systemWidgets = []
-
-        //push system widgets
-        targetProject.systemWidgets.push(colorPicker)
+        //系统控件
+        transSysWidget(targetProject);
 
         return targetProject;
     }
@@ -668,7 +642,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget = new WidgetModel.models['Selector'](x,y,w,h,info,targetWidget.texList[0].slices[0],newUnSelectedImgSrc,newSelectedImgSrc,targetWidget.texList[3].slices[0]);
                     generalWidget = generalWidget.toObject();
 
-                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    // generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
                     //属性
                     generalWidget.otherAttrs[1] = Number(info['curValue']);//当前item
                     generalWidget.otherAttrs[2] = Number(info['itemCount']);//item总数
@@ -681,6 +655,12 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
                     generalWidget.otherAttrs[8] = Number(info['selectorWidth']);//选中元素宽
                     generalWidget.otherAttrs[9] = Number(info['selectorHeight']);//选中元素高
                     generalWidget.otherAttrs[10] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[11] = x;//控件坐标x
+                    generalWidget.otherAttrs[12] = y;//控件坐标y
+                    generalWidget.otherAttrs[13] = 0;//选择框是否展开
+                    generalWidget.otherAttrs[14] = 0;//isMoved,是否已经被拖拽
+                    generalWidget.otherAttrs[15] = 0;//lastlastInnery
+
 
                     generalWidget.generalType = 'Selector';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
@@ -768,6 +748,22 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     function transCmds(cmds,changelt){
         // actionCompiler
         return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
+    }
+
+    /**
+     * 转换系统控件
+     */
+    function transSysWidget(targetProject){
+        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
+        colorPicker = colorPicker.toObject()
+        colorPicker.generalType = 'ColorPicker'
+        colorPicker.type = 'widget'
+        colorPicker.subType = 'general'
+        //
+        targetProject.systemWidgets = []
+
+        //push system widgets
+        targetProject.systemWidgets.push(colorPicker)
     }
 
     /**
