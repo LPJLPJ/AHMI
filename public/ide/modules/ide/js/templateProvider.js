@@ -375,15 +375,16 @@ ideServices
             }
         };
 
-        this.saveProjectFromGlobal= function (_project) {
-            project=_project;
-        };
+        // this.saveProjectFromGlobal= function (_project) {
+        //     project=_project;
+        // };
 
-        //
+        //获取默认页面
         this.getDefaultPage = function () {
             return this.getRandomPage();
         };
 
+        //获取随机页面
         this.getRandomPage = function () {
             var r = 54;
             var g = 71;
@@ -408,6 +409,7 @@ ideServices
 
         };
 
+        //图层
         this.getDefaultLayer = function () {
             var pageNode=CanvasService.getPageNode();
             var info = {
@@ -433,6 +435,7 @@ ideServices
             }
         };
 
+        //子图层
         this.getDefaultSubLayer = function () {
             var pageNode=CanvasService.getPageNode();
             var info = {
@@ -454,28 +457,12 @@ ideServices
             }
         };
 
-        this.getImageSubLayer = function () {
-            // var jsonStr = '{"objects":[],"background":"rgba(255,255,255,1.0)","backgroundImage":{"type":"image","originX":"left","originY":"top","left":0,"top":0,"width":500,"height":284,"fill":"rgb(0,0,0)","strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","src":"http://localhost:63342/AHMIDesigner/modules/ide/demo3.jpg","filters":[],"crossOrigin":"","alignX":"none","alignY":"none","meetOrSlice":"meet"}}';
-            var backgroundImage=Preference.getRandomImageURL();
-            return {
-                url: backgroundImage,
-                id: Math.random().toString(36).substr(2),
-                // proJsonStr: jsonStr,
-                widgets: [],
-                name: 'NewSubCanvas',
-                type: Type.MySubLayer,
-                width: 0,
-                height: 0,
-                expand:true,
-                backgroundImage:backgroundImage
-
-            }
-        };
-
+        //控件
         this.getDefaultWidget = function () {
             return this.getDefaultSlide();
         };
 
+        //图层控件
         this.getDefaultSlide = function () {
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
@@ -511,6 +498,7 @@ ideServices
             }
         };
 
+        //按钮控件
         this.getDefaultButton= function () {
             var info = _.cloneDeep(defaultButton.info);
             var texList = _.cloneDeep(defaultButton.texList);
@@ -529,6 +517,7 @@ ideServices
             }
         };
 
+        //通用控件
         this.getDefaultGeneral= function () {
             var info = _.cloneDeep(defaultGeneral.info);
             var texList = _.cloneDeep(defaultGeneral.texList);
@@ -547,6 +536,7 @@ ideServices
             }
         };
 
+        //旋钮控件
         this.getDefaultKnob=function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -573,6 +563,7 @@ ideServices
             }
         };
 
+        //文本控件
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -615,6 +606,7 @@ ideServices
             }
         };
 
+        //按钮组控件
         this.getDefaultButtonGroup= function () {
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -675,6 +667,7 @@ ideServices
             }
         };
 
+        //按钮纹理，用于按钮组
         this.getDefaultButtonTex= function () {
             return{
                 name:'按钮纹理',
@@ -691,6 +684,7 @@ ideServices
             }
         };
 
+        //进度条控件
         this.getDefaultProgress= function () {
             var info = _.cloneDeep(defaultProgress.info);
             var texList = _.cloneDeep(defaultProgress.texList);
@@ -710,6 +704,7 @@ ideServices
             }
         };
 
+        //仪表盘控件
         this.getDefaultDashboard= function () {
             var info = _.cloneDeep(defaultDashboard.info);
             var texList = _.cloneDeep(defaultDashboard.texList);
@@ -727,6 +722,7 @@ ideServices
             }
         };
 
+        //数字控件
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
@@ -787,6 +783,7 @@ ideServices
             }
         };
 
+        //图层数字控件
         this.getDefaultTexNum = function () {
             var info={
                 width:90, height: 30,
@@ -837,6 +834,7 @@ ideServices
             }
         };
 
+        //示波器控件
         this.getDefaultOscilloscope = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -889,6 +887,7 @@ ideServices
             }
         };
 
+        //开关控件
         this.getDefaultSwitch=function(){
             var info=_.cloneDeep(defaultSwitch.info);
             var texList=_.cloneDeep(defaultSwitch.texList);
@@ -904,6 +903,7 @@ ideServices
             }
         };
 
+        //旋转图控件
         this.getDefaultRotateImg=function(){
             var info = _.cloneDeep(defaultRotateImage.info);
             var texList=_.cloneDeep(defaultRotateImage.texList);
@@ -919,6 +919,7 @@ ideServices
             }
         };
 
+        //时间日期控件
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
@@ -971,6 +972,7 @@ ideServices
             }
         };
 
+        //图层时间日期控件
         this.getDefaultTexTime=function(){
             var info={
                 characterW:30,
@@ -1027,6 +1029,7 @@ ideServices
             }
         };
 
+        //触发器控件
         this.getDefaultScriptTrigger = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -1047,6 +1050,7 @@ ideServices
             }
         };
 
+        //滑块控件
         this.getDefaultSlideBlock = function(){
             var info = _.cloneDeep(defaultSlideBlock.info);
             var texList = _.cloneDeep(defaultSlideBlock.texList);
@@ -1062,6 +1066,7 @@ ideServices
             }
         };
 
+        //视频控件
         this.getDefaultVideo = function(){
             var info = {
                 width:215,height:110,
@@ -1090,6 +1095,7 @@ ideServices
             }
         };
 
+        //动画控件
         this.getDefaultAnimation = function(){
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
@@ -1119,6 +1125,7 @@ ideServices
             }
         };
 
+        //选择器控件
         this.getDefaultSelector= function () {
             var info = _.cloneDeep(defaultSelector.info);
             var texList = _.cloneDeep(defaultSelector.texList);
@@ -1134,6 +1141,7 @@ ideServices
             };
         };
 
+        //旋钮控件（新）
         this.getDefaultRotaryKnob= function () {
             var info = _.cloneDeep(defaultRotaryKnob.info);
             var texList = _.cloneDeep(defaultRotaryKnob.texList);
@@ -1158,6 +1166,8 @@ ideServices
             return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
         }
 
+
+        //模板ID
         var templateId=null;
         this.setTemplateId = function(id){
             templateId=id;
