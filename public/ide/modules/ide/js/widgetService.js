@@ -1798,7 +1798,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.spacing =level.info.spacing;
             this.paddingRatio=level.info.paddingRatio;
 
-            self.widthBeforePadding=8*self.fontSize+7*self.spacing;
+            if(self.dateTimeModeId=='0'){
+                self.widthBeforePadding=8*self.fontSize+7*self.spacing;
+            }else if(self.dateTimeModeId=='1'){
+                self.widthBeforePadding=5*self.fontSize+4*self.spacing;
+            }else {
+                self.widthBeforePadding=10*self.fontSize+9*self.spacing;
+            }
             self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
 
             this.on('changeDateTimeModeId',function(arg){

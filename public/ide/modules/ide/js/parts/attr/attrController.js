@@ -99,6 +99,10 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
     }
 
     function selectWidget(_layer,_subLayer,_widget){
+        //add by tang
+        ProjectService.getLayerInfo=false;
+        ProjectService.setAbsolutePosition(_widget.info,_layer.info);
+
         var currentPage=ProjectService.getCurrentPage();
         var layerIndex= _.indexOf(currentPage.layers,_layer);
         var subLayerIndex= _.indexOf(_layer.subLayers,_subLayer);
