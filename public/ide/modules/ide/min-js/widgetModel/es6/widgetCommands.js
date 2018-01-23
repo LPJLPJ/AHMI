@@ -106,6 +106,7 @@
             set(c,'this.layers.length')
             var(tMaxHighLightNum,0)
             set(tMaxHighLightNum,'this.maxHighLightNum')
+            set(tMaxHighLightNum,0)   //add by lx 不知道为什么以前会用到，所以置0
             var(tSingleButtonLayers,0)
             if (tMaxHighLightNum>0) {
               set(tSingleButtonLayers,3)
@@ -135,6 +136,7 @@
                         if(b>=ly){
                             if(ry>b){
                                 divide(c,tSingleButtonLayers)
+                                add(c,1)
                                 setTag(c)
                                 set(c,0)
                             }
@@ -147,142 +149,222 @@
         onMouseUp:`
         `,
         onTagChange:`
-            var(a,0)
-            var(b,0)
-            var(c,0)
-            var(tMaxHighLightNum,0)
-            set(tMaxHighLightNum,'this.maxHighLightNum')
-            var(tSingleButtonLayers,0)
-            // if (tMaxHighLightNum>0) {
-            //   set(tSingleButtonLayers,3)
-            // }else{
-            //   set(tSingleButtonLayers,2)
-            // }
-            set(tSingleButtonLayers,2)
-            set(a,'this.layers.length')
-            set(c,a)
-            divide(c,tSingleButtonLayers)
-            while(a>0){
-                if (tMaxHighLightNum>0) {
-                  minus(a,1)
-                  minus(a,1)
-                  set('this.layers.a.hidden',0)
-                  minus(a,1)
-                  set('this.layers.a.hidden',1)
-                }else{
-                  minus(a,1)
-                  set('this.layers.a.hidden',0)
-                  minus(a,1)
-                  set('this.layers.a.hidden',1)
-                }
-                
+          var(laylen,0)                                //图层数目
+          var(spacing,0)                               //按钮间距
+          var(btnCnt,0)                                //按钮个数
+          var(tMaxHighLightNum,0)                      //高亮数目
+          var(highlightIndex,0)                        //高亮层坐标
+          var(tTag,0)                                  //记录tag值
+          var(t1,0)                                    //临时变量1
+          var(t2,0)                                    //临时变量2
+          
+          //set value
+          set(laylen,'this.layers.length')
+          set(spacing,'this.otherAttrs.0')
+          set(btnCnt,'this.otherAttrs.1')             
+          set(tMaxHighLightNum,'this.maxHighLightNum')
+          getTag(tTag) 
+          
+          if(tMaxHighLightNum>0){
+            minus(laylen,1)
+            set(highlightIndex,laylen)
+          }
+          
+          //清空显示
+          while(t1<laylen){
+            set('this.layers.t1.hidden',0)
+            add(t1,1)
+            set('this.layers.t1.hidden',1)
+            add(t1,1)
+          }
+                    
+          //显示当前值
+          if(tTag>0){
+            if(tTag<laylen){
+              multiply(tTag,2)
+              minus(tTag,1)
+              set('this.layers.tTag.hidden',0)
             }
-            getTag(a)
-            if(a>=0){
-                if(c>a){
-                    multiply(a,tSingleButtonLayers)
-                    set('this.layers.a.hidden',0)
-                    add(a,1)
-                    set('this.layers.a.hidden',1)
-                }
-            }
-
+          }
+         
         `,
         onKeyBoardLeft:`
-          var(tMaxHighLightNum,0)
+          var(arrange,0)
+          var(laylen,0)                                //图层数目
+          var(spacing,0)                               //按钮间距
+          var(btnCnt,0)                                //按钮个数
+          var(tMaxHighLightNum,0)                      //高亮数目
+          var(highlightIndex,0)                        //高亮层坐标
+          var(startValue,0)                            //当前位置,即动画起始位置
+          var(stopValue,0)                             //高亮位置偏移量,即动画终止位置
+          var(t1,0)                                    //临时变量
+          
+          //set value
+          set(arrange,'this.otherAttrs.4')
+          set(laylen,'this.layers.length')
+          set(spacing,'this.otherAttrs.0')
+          set(btnCnt,'this.otherAttrs.1')             
           set(tMaxHighLightNum,'this.maxHighLightNum')
-          if (tMaxHighLightNum>0) {
+          
+          if(tMaxHighLightNum>0){
+            minus(laylen,1)
+            set(highlightIndex,laylen)
             var(tHighLightNum,0)
             set(tHighLightNum,'this.highLightNum')
-
-            if (tHighLightNum>0) {
-              minus(tHighLightNum,1)
-              multiply(tHighLightNum,3)
-              add(tHighLightNum,2)
-
-              var(tTotalLayers,0)
-              set(tTotalLayers,'this.layers.length')
-              if (tHighLightNum < tTotalLayers) {
-                //valid
-                //reset 
-                var(tCurLayer,0)
-                while(tMaxHighLightNum>0){
-                  minus(tMaxHighLightNum,1)
-                  set(tCurLayer,tMaxHighLightNum)
-                  multiply(tCurLayer,3)
-                  add(tCurLayer,2)
-                  set('this.layers.tCurLayer.hidden',1)
+            
+            if(tHighLightNum>0){
+                if(arrange==0){
+                  //水平方向
+                  //stopValue = (tHightLightNum-1)*(width+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.width')
+                  add(t1,'this.otherAttrs.0')
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.x')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
+                }else{
+                  //竖直方向
+                  //stopValue = (tHightLightNum-1)*(height+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.height')
+                  add(t1,'this.otherAttrs.0') 
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.y')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  print('this.otherAttrs.2','this.otherAttrs.3')
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
                 }
-                //set target highlight 
-                set('this.layers.tHighLightNum.hidden',0)
-              }
+                starthlanimation(0)
+                
             }else{
-                if(tHighLightNum==0){
-                    add(tHighLightNum,2)
-                    set('this.layers.tHighLightNum.hidden',1)
-                }
-            }
+                set('this.layers.highlightIndex.hidden',1)
+            } 
           }
         `,
         onKeyBoardRight:`
-          var(tMaxHighLightNum,0)
+          var(arrange,0)
+          var(laylen,0)                                //图层数目
+          var(spacing,0)                               //按钮间距
+          var(btnCnt,0)                                //按钮个数
+          var(tMaxHighLightNum,0)                      //高亮数目
+          var(highlightIndex,0)                        //高亮层坐标
+          var(startValue,0)                            //当前位置,即动画起始位置
+          var(stopValue,0)                             //高亮位置偏移量,即动画终止位置
+          var(t1,0)                                    //临时变量
+          
+          //set value
+          set(arrange,'this.otherAttrs.4')
+          set(laylen,'this.layers.length')
+          set(spacing,'this.otherAttrs.0')
+          set(btnCnt,'this.otherAttrs.1')             
           set(tMaxHighLightNum,'this.maxHighLightNum')
-          if (tMaxHighLightNum>0) {
+          
+          if(tMaxHighLightNum>0){
+            minus(laylen,1)
+            set(highlightIndex,laylen)
             var(tHighLightNum,0)
             set(tHighLightNum,'this.highLightNum')
-            if (tHighLightNum>0) {
-              minus(tHighLightNum,1)
-              multiply(tHighLightNum,3)
-              add(tHighLightNum,2)
-
-              var(tTotalLayers,0)
-              set(tTotalLayers,'this.layers.length')
-              if (tHighLightNum  < tTotalLayers) {
-                //valid
-                //reset 
-                var(tCurLayer,0)
-                while(tMaxHighLightNum>0){
-                  minus(tMaxHighLightNum,1)
-                  set(tCurLayer,tMaxHighLightNum)
-                  multiply(tCurLayer,3)
-                  add(tCurLayer,2)
-                  set('this.layers.tCurLayer.hidden',1)
+            
+            if(tHighLightNum>0){
+                if(arrange==0){
+                  //水平方向
+                  //计算公式:stopValue = (tHightLightNum-1)*(width+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.width')
+                  add(t1,'this.otherAttrs.0')
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.x')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
+                }else{
+                  //竖直方向
+                  //stopValue = (tHightLightNum-1)*(height+spacing)
+                  set(stopValue,tHighLightNum)
+                  minus(stopValue,1)
+                  set(t1,'this.layers.0.height')
+                  add(t1,'this.otherAttrs.0') 
+                  multiply(stopValue,t1)
+                  
+                  //设置动画起始与终止值
+                  set(t1,'this.layers.highlightIndex.y')
+                  set('this.otherAttrs.2',t1)
+                  set('this.otherAttrs.3',stopValue)
+                  print('this.otherAttrs.2','this.otherAttrs.3')
+                  
+                  //显示高量层
+                  set('this.layers.highlightIndex.hidden',0)
                 }
-                //set target highlight 
-                set('this.layers.tHighLightNum.hidden',0)
-              }
+                starthlanimation(0)
             }else{
-                if(tHighLightNum==0){
-                    var(lastHighLight,0)
-                    set(lastHighLight,'this.layers.length')
-                    minus(lastHighLight,1)
-                    set('this.layers.lastHighLight.hidden',1)
-                }
-            }
+                set('this.layers.highlightIndex.hidden',1)
+            } 
           }
-          starthlanimation(0)
         `,
         onKeyBoardOK:`
           var(tHighLightNum,0)
+          var(laylen,0)
+          
           set(tHighLightNum,'this.highLightNum')
-          if (tHighLightNum>0) {
-            minus(tHighLightNum,1)
-            var(tTotalLayers,0)
-            set(tTotalLayers,'this.layers.length')
-
-            divide(tTotalLayers,3)
-            if (tHighLightNum<tTotalLayers) {
-              //valid
-              //reset 
-              //set target tag
-              setTag(tHighLightNum)
+          set(laylen,'this.layers.length')
+          
+          if(tHighLightNum>0){
+            minus(laylen,1)
+            if(tHighLightNum<laylen){
+               print(tHighLightNum,'tHighLightNum')
+               setTag(tHighLightNum)
             }
           }
         `,
         onHighlightFrame:`
+          //curHLAnimationFactor理论上为0~1的小数，为了指令的计算取curHLAnimationFactor理论上为0~1000的正数
+          
+          var(highlightIndex,0)                     //高亮层坐标
           var(tFactor,0)                            //动画进度
+          var(startValue,0)                         //起始值
+          var(stopValue,0)                          //结束值
+          var(offset,0)                             //偏移值
+          var(arrange,0)
+          
+          set(arrange,'this.otherAttrs.4')
+          set(highlightIndex,'this.layers.length')
+          minus(highlightIndex,1)
           set(tFactor,'this.curHLAnimationFactor')
-          print('tFactor',tFactor)
+          set(startValue,'this.otherAttrs.2')
+          set(stopValue,'this.otherAttrs.3')
+          set(offset,stopValue)
+          
+          //公式:offset = startValue + (stopValue-startValue)*curHLAnimationFactor/1000
+          minus(offset,startValue)
+          multiply(offset,tFactor)
+          divide(offset,1000)
+          add(offset,startValue)
+          // print(tFactor,offset)
+          
+          if(arrange==0){
+            set('this.layers.highlightIndex.x',offset)
+          }else{
+            set('this.layers.highlightIndex.y',offset)
+          }
+          
         `
     };
 
@@ -3181,8 +3263,7 @@
         "onInitialize":`
             var(tInitValue,0)
             set(tInitValue,'this.otherAttrs.0')
-            print('tInitValue','this.otherAttrs')
-            
+           
             var(tR,0)
             var(tG,0)
             var(tB,0)
@@ -3311,6 +3392,11 @@
                         if(tInnerY < tPickerBottomY){
                             set(tChangeFlag,1)
                             //hit picker area
+                            //otherAttr 4 hit area 0:none 1:hue 2:picker
+                            set('this.otherAttrs.4',1)
+                            //move picker indicator
+                            set('this.layers.5.x',tInnerX)
+                            set('this.layers.5.y',tInnerY)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3349,6 +3435,10 @@
                     if(tInnerY>=tHueY){
                         if(tInnerY<tHueBottomY){
                             set(tChangeFlag,1)
+                            set('this.otherAttrs.4',2)
+                            //move hue indicator
+                            // set('this.layers.4.x',tInnerX)
+                            set('this.layers.4.y',tInnerY)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)
@@ -3525,6 +3615,14 @@
                 set('this.layers.3.subLayers.color.g',tG)
                 set('this.layers.3.subLayers.color.b',tB)
                 
+                var(tResult,0)
+                set(tResult,tR)
+                multiply(tResult,1000)
+                add(tResult,tG)
+                multiply(tResult,1000)
+                add(tResult,tB)
+                setTag(tResult)
+                
                 print('r',tR)
                 print('g',tG)
                 print('b',tB)
@@ -3535,6 +3633,283 @@
             
             
         `,
+        'onMouseMove':`
+            var(tTemp,0)
+            var(tH,0)
+            var(tS,0)
+            var(tV,0)
+            //get Last HSV
+            set(tH,'this.otherAttrs.1')
+            set(tS,'this.otherAttrs.2')
+            set(tV,'this.otherAttrs.3')
+            var(tR,0)
+            var(tG,0)
+            var(tB,0)
+            var(tI,0)
+            var(tF,0)
+            var(tP,0)
+            var(tQ,0)
+            var(tT,0)
+            var(tChangeFlag,0)
+            //get current h,s,v
+            var(tInnerX,0)
+            var(tInnerY,0)
+            set(tInnerX,'this.innerX')
+            set(tInnerY,'this.innerY')
+            var(tPickerX,0)
+            var(tPickerY,0)
+            var(tPickerW,0)
+            var(tPickerH,0)
+            var(tPickerRightX,0)
+            var(tPickerBottomY,0)
+            set(tPickerX,'this.layers.2.x')
+            set(tPickerY,'this.layers.2.y')
+            set(tPickerW,'this.layers.2.width')
+            set(tPickerH,'this.layers.2.height')
+            set(tPickerRightX,tPickerX)
+            add(tPickerRightX,tPickerW)
+            set(tPickerBottomY,tPickerY)
+            add(tPickerBottomY,tPickerH)
+            if(tInnerX >= tPickerX){
+                if(tInnerX < tPickerRightX){
+                    if(tInnerY >= tPickerY){
+                        if(tInnerY < tPickerBottomY){
+                            set(tChangeFlag,1)
+                            //hit picker area
+                            //otherAttr 4 hit area 0:none 1:hue 2:picker
+                            //move picker indicator
+                            set('this.layers.5.x',tInnerX)
+                            set('this.layers.5.y',tInnerY)
+                            set(tS,tInnerX)
+                            minus(tS,tPickerX)
+                            multiply(tS,255)
+                            divide(tS,tPickerW)
+                            set(tV,tPickerH)
+                            minus(tV,tInnerY)
+                            add(tV,tPickerY)
+                            multiply(tV,255)
+                            divide(tV,tPickerH)
+                            set('this.otherAttrs.2',tS)
+                            set('this.otherAttrs.3',tV)
+                        }
+                    }
+                }
+            }
+            
+            //hue
+            var(tHueX,0)
+            var(tHuey,0)
+            var(tHueW,0)
+            var(tHueH,0)
+            var(tHueRightX,0)
+            var(tHueBottomY,0)
+            set(tHueX,'this.layers.1.x')
+            set(tHueY,'this.layers.1.y')
+            set(tHueW,'this.layers.1.width')
+            set(tHueH,'this.layers.1.height')
+            set(tHueRightX,tHueX)
+            add(tHueRightX,tHueW)
+            set(tHueBottomY,tHueY)
+            add(tHueBottomY,tHueH)
+            var(tSBack,0)
+            var(tVBack,0)
+            if(tInnerX>=tHueX){
+                if(tInnerX<tHueRightX){
+                    if(tInnerY>=tHueY){
+                        if(tInnerY<tHueBottomY){
+                            set(tChangeFlag,1)
+                            set('this.layers.4.y',tInnerY)
+                            //set h
+                            set(tH,tInnerY)
+                            minus(tH,tHueY)
+                            multiply(tH,360)
+                            divide(tH,tHueH)
+                            set('this.otherAttrs.1',tH)
+                            
+                            //change picker bg color
+                            set(tSBack,tS)
+                            set(tVBack,tV)
+                            set(tS,255)
+                            set(tV,255)
+                            if(tS == 0){
+                                set(tR,tV)
+                                set(tG,tV)
+                                set(tB,tV)
+                            }else{
+                                set(tI,tH)
+                                divide(tI,60)
+                                set(tF,tH)
+                                set(tTemp,tI)
+                                multiply(tTemp,60)
+                                //tF = 60*f
+                                minus(tF,tTemp)
+                                
+                                //set p
+                                set(tP,255)
+                                minus(tP,tS)
+                                multiply(tP,tV)
+                                divide(tP,255)
+                                
+                                //set q
+                                set(tTemp,tS)
+                                multiply(tTemp,tF)
+                                set(tQ,15300)
+                                minus(tQ,tTemp)
+                                multiply(tQ,tV)
+                                divide(tQ,15300)
+                                
+                                //set t
+                                set(tTemp,60)
+                                minus(tTemp,tF)
+                                multiply(tTemp,tS)
+                                set(tT,15300)
+                                minus(tT,tTemp)
+                                multiply(tT,tV)
+                                divide(tT,15300)
+                               
+                                
+                                if(tI == 0){
+                                    set(tR,tV)
+                                    set(tG,tT)
+                                    set(tB,tP)
+                                }else{
+                                    if(tI == 1){
+                                        set(tR,tQ)
+                                        set(tG,tV)
+                                        set(tB,tP)
+                                    }else{
+                                        if(tI == 2){
+                                            set(tR,tP)
+                                            set(tG,tV)
+                                            set(tB,tT)
+                                        }else{
+                                            if(tI == 3){
+                                                set(tR,tP)
+                                                set(tG,tQ)
+                                                set(tB,tV)
+                                            }else{
+                                                if(tI == 4){
+                                                    set(tR,tT)
+                                                    set(tG,tP)
+                                                    set(tB,tV)
+                                                }else{
+                                                    set(tR,tV)
+                                                    set(tG,tP)
+                                                    set(tB,tQ)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }    
+                                
+                            }
+                            //set picker bg color
+                            set('this.layers.2.subLayers.color.r',tR)
+                            set('this.layers.2.subLayers.color.g',tG)
+                            set('this.layers.2.subLayers.color.b',tB)
+                            //restore tS,tV
+                            set(tS,tSBack)
+                            set(tV,tVBack)
+                        }
+                    }
+                }
+            }
+            
+            if(tChangeFlag == 1){
+            
+                
+                if(tS == 0){
+                    set(tR,tV)
+                    set(tG,tV)
+                    set(tB,tV)
+                }else{
+                    set(tI,tH)
+                    divide(tI,60)
+                    set(tF,tH)
+                    set(tTemp,tI)
+                    multiply(tTemp,60)
+                    //tF = 60*f
+                    minus(tF,tTemp)
+                    
+                    //set p
+                    set(tP,255)
+                    minus(tP,tS)
+                    multiply(tP,tV)
+                    divide(tP,255)
+                    
+                    //set q
+                    set(tTemp,tS)
+                    multiply(tTemp,tF)
+                    set(tQ,15300)
+                    minus(tQ,tTemp)
+                    multiply(tQ,tV)
+                    divide(tQ,15300)
+                    
+                    //set t
+                    set(tTemp,60)
+                    minus(tTemp,tF)
+                    multiply(tTemp,tS)
+                    set(tT,15300)
+                    minus(tT,tTemp)
+                    multiply(tT,tV)
+                    divide(tT,15300)
+                   
+                    
+                    if(tI == 0){
+                        set(tR,tV)
+                        set(tG,tT)
+                        set(tB,tP)
+                    }else{
+                        if(tI == 1){
+                            set(tR,tQ)
+                            set(tG,tV)
+                            set(tB,tP)
+                        }else{
+                            if(tI == 2){
+                                set(tR,tP)
+                                set(tG,tV)
+                                set(tB,tT)
+                            }else{
+                                if(tI == 3){
+                                    set(tR,tP)
+                                    set(tG,tQ)
+                                    set(tB,tV)
+                                }else{
+                                    if(tI == 4){
+                                        set(tR,tT)
+                                        set(tG,tP)
+                                        set(tB,tV)
+                                    }else{
+                                        set(tR,tV)
+                                        set(tG,tP)
+                                        set(tB,tQ)
+                                    }
+                                }
+                            }
+                        }
+                    }    
+                    
+                }
+               
+                set('this.layers.3.subLayers.color.r',tR)
+                set('this.layers.3.subLayers.color.g',tG)
+                set('this.layers.3.subLayers.color.b',tB)
+                
+                var(tResult,0)
+                set(tResult,tR)
+                multiply(tResult,1000)
+                add(tResult,tG)
+                multiply(tResult,1000)
+                add(tResult,tB)
+                setTag(tResult)
+                
+                print('r',tR)
+                print('g',tG)
+                print('b',tB)
+            
+            }
+            
+        `
     }
 
     return WidgetCommands;
@@ -3555,190 +3930,3 @@
  * mod(a,2)
  * set('this.layers.1.hidden',1)
  */
-
-// mod(ttTag,16)
-// print(ttTag,'ttTag')
-// //while(xr>0){
-// //    multiply(addNum,16)
-// //    minus(xr,1)
-// //}
-// add(tTag,addNum)
-
-
-// //old code
-// var(tTagValue,0)
-// getTag(tTagValue)
-// // print(tTagValue,'tTagValue')
-// var(tMinValue,0)
-// set(tMinValue,'this.minValue')
-// var(tMaxValue,0)
-// set(tMaxValue,'this.maxValue')
-// var(tFacCount,0)
-// var(tNumOfDigits,0)
-// var(tDecimalCount,0)
-// var(tMaxWidth,0)
-// set(tMaxWidth,'this.otherAttrs.6')
-// set(tFacCount,'this.otherAttrs.3')
-// var(tHasDot,0)
-// if (tFacCount>0) {
-//     set(tHasDot,1)
-// }
-// set(tNumOfDigits,'this.otherAttrs.4')
-// set(tDecimalCount,tNumOfDigits)
-// minus(tDecimalCount,tFacCount)
-// var(tAlign,0)
-// set(tAlign,'this.otherAttrs.7')
-// var(tFrontZero,0)
-// set(tFrontZero,'this.otherAttrs.1')
-// var(tSymbol,0)
-// set(tSymbol,'this.otherAttrs.2')
-// var(tTotalLayers,0)
-// set(tTotalLayers,'this.layers.length')
-// var(tHasNeg,0)
-// if (tTagValue<0) {
-//     if (tSymbol==1) {
-//         set(tHasNeg,1)
-//     }
-// }
-// var(tCurValue,0)
-// set(tCurValue,tTagValue)
-// if (tCurValue<0) {
-//     multiply(tCurValue,-1)
-// }
-// var(tCurValue2,0)
-// set(tCurValue2,tCurValue)
-// var(tRealNum,0)
-// set(tRealNum,1)
-// while(tCurValue>0){
-//     print(tCurValue,'tCurValue')
-//     divide(tCurValue,10)
-//     add(tRealNum,1)
-// }
-// var(tFrontNum,0)
-// var(tDecimalNum,0)
-// var(tOverflowNum,0)
-// if (tRealNum<=tFacCount) {
-//     set(tDecimalNum,0)
-//     if (tFrontZero==1) {
-//         set(tFrontNum,tDecimalCount)
-//     }else{
-//         set(tFrontNum,1)
-//     }
-// }else{
-//     if (tRealNum>tNumOfDigits) {
-//         set(tDecimalNum,tDecimalCount)
-//         set(tOverflowNum,tRealNum)
-//         minus(tOverflowNum,tNumOfDigits)
-//     }else{
-//         set(tDecimalNum,tRealNum)
-//         minus(tDecimalNum,tFacCount)
-//         if (tFrontZero==1) {
-//             set(tFrontNum,tDecimalCount)
-//             minus(tFrontNum,tDecimalNum)
-//         }else{
-//             set(tFrontNum,0)
-//         }
-//     }
-// }
-// // print(tFront,'tFront')
-// // print(tDecimalNum,'tDecimalNum')
-// // print(tOverflowNum,'tOverflowNum')
-// var(tCurTotalNum,0)
-// add(tCurTotalNum,tHasNeg)
-// add(tCurTotalNum,tFrontNum)
-// add(tCurTotalNum,tDecimalNum)
-// add(tCurTotalNum,tHasDot)
-// add(tCurTotalNum,tFacCount)
-// var(tLeftPadding,0)
-// set(tLeftPadding,tTotalLayers)
-// minus(tLeftPadding,tCurTotalNum)
-// var(tLeftPaddingPixel,0)
-// if (tLeftPadding>0) {
-//     if (tAlign==1) {
-//         set(tLeftPaddingPixel,tLeftPadding)
-//         multiply(tLeftPaddingPixel,tMaxWidth)
-//         divide(tLeftPaddingPixel,2)
-//     }else{
-//         if (tAlign==2) {
-//             set(tLeftPaddingPixel,tLeftPadding)
-//             multiply(tLeftPaddingPixel,tMaxWidth)
-//         }
-//     }
-// }
-// var(tCurX,0)
-// var(tLayerIdx,0)
-// var(tDotWidth,0)
-// set(tDotWidth,tMaxWidth)
-// divide(tDotWidth,2)
-// if (tDotWidth==0) {
-//     set(tDotWidth,1)
-// }
-// set(tCurX,tLeftPaddingPixel)
-// if (tHasNeg==1) {
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tMaxWidth)
-//     print(tLayerIde,'in tHasNeg')
-//     set('this.layers.tLayerIdx.subLayers.font.text',45)
-//     add(tLayerIdx,1)
-//     add(tCurX,tMaxWidth)
-// }
-// while(a>0){
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tMaxWidth)
-//     print(tLayerIdx,'in while a>0')
-//     set('this.layers.tLayerIdx.subLayers.font.text',48)
-//     add(tLayerIdx,1)
-//     add(tCurX,tMaxWidth)
-//     minus(tFrontNum,1)
-// }
-// var(tDivider,0)
-// set(tDivider,1)
-// set(tRealNum,tDecimalNum)
-// add(tRealNum,tFacCount)
-// while(tRealNum>0){
-//     multiply(tDivider,10)
-//     minus(tRealNum,1)
-// }
-// mod(tCurValue2,tDivider)
-// var(tCurValue3,0)
-// while(tDecimalNum>0){
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tMaxWidth)
-//     set(tCurValue3,tCurValue2)
-//     divide(tDivider,10)
-//     mod(tCurValue2,tDivider)
-//     divide(tCurValue3,tDivider)
-//     add(tCurValue3,48)
-//     print(tLayerIdx,'in while tDecimalNum>0')
-//     print(tCurValue,'tCurValue')
-//     set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
-//     add(tLayerIdx,1)
-//     add(tCurX,tMaxWidth)
-//     minus(tDecimalNum,1)
-// }
-// if (tHasDot==1) {
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tDotWidth)
-//     set('this.layers.tLayerIdx.subLayers.font.text',46)
-//     add(tLayerIdx,1)
-//     add(tCurX,tDotWidth)
-//     while(tFacCount>0){
-//         set('this.layers.tLayerIdx.x',tCurX)
-//         set('this.layers.tLayerIdx.width',tMaxWidth)
-//         set(tCurValue3,tCurValue2)
-//         divide(tDivider,10)
-//         mod(tCurValue2,tDivider)
-//         divide(tCurValue3,tDivider)
-//         add(tCurValue3,48)
-//         print(tLayerIdx,'in hasDot')
-//         set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
-//         add(tLayerIdx,1)
-//         add(tCurX,tMaxWidth)
-//         minus(tFacCount,1)
-//     }
-// }
-//
-// checkalarm(0)
-// set('this.oldValue',tTagValue)
-
-

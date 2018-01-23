@@ -122,7 +122,8 @@ module.exports =   React.createClass({
         //handle system widgets
         var systemWidgetResources = []
         this.systemWidgetPages = (data.systemWidgets||[]).map(function (sw,i) {
-            var pageData = _.cloneDeep(keyboardData)
+            var pageData = _.cloneDeep(keyboardData);
+            console.log('pageData',pageData);
             pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw
             data.pageList.push(pageData)
             var swRes = [];
@@ -6592,16 +6593,6 @@ module.exports =   React.createClass({
 
                 var project = this.state.project;
                 var curPageTag = this.findTagByName(project.tag);
-
-                // if (curPageTag && curPageTag.value > 0 && curPageTag.value <= project.pageList.length) {
-                //     //param2 valid
-                //     var lastPage = project.pageList[curPageTag.value - 1];
-                //     lastPage.loaded = false;
-                //     //handle UnLoad
-                //     this.handleTargetAction(lastPage, 'UnLoad');
-
-
-                // }
                 var param2Value = this.getParamValue(param2);
                 if (curPageTag) {
                     if (param2Value > 0 && param2Value <= project.pageList.length) {
@@ -6636,7 +6627,6 @@ module.exports =   React.createClass({
                 }
                 //next
                 nextStep.process = false;
-
                 break;
             case 'INC':
 

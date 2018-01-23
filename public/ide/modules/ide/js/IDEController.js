@@ -306,7 +306,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 updateSpinner((rLen-count)/rLen);
                 if (count<=0){
                     console.log('time cost in cache imge :',Date.now()-timeStamp);
-                    TemplateProvider.saveProjectFromGlobal(globalProject);
+                    // TemplateProvider.saveProjectFromGlobal(globalProject);
                     syncServices(globalProject);
                     timeStamp = Date.now();
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -324,7 +324,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }else{
                 // console.log(globalProject);
                 updateSpinner(100)
-                TemplateProvider.saveProjectFromGlobal(globalProject);
+                // TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     $scope.$broadcast('GlobalProjectReceived');
@@ -348,7 +348,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }
             globalProject.maxSize = data.maxSize;
 
-            TemplateProvider.saveProjectFromGlobal(globalProject);
+            // TemplateProvider.saveProjectFromGlobal(globalProject);
             syncServices(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
 
@@ -377,7 +377,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         console.log('globalProject',globalProject)
 
 
-        TemplateProvider.saveProjectFromGlobal(globalProject);
+        // TemplateProvider.saveProjectFromGlobal(globalProject);
         ProjectService.saveProjectFromGlobal(globalProject, function () {
             syncServices(globalProject)
             $scope.$broadcast('GlobalProjectReceived');
@@ -495,7 +495,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             $timeout(function () {
                 toastr.info('加载离线项目');
                 globalProject=GlobalService.getBlankProject();
-                TemplateProvider.saveProjectFromGlobal(globalProject);
+                // TemplateProvider.saveProjectFromGlobal(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     PID=pid;
 
@@ -539,7 +539,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
                     if (globalProject){
 
-                        TemplateProvider.saveProjectFromGlobal(globalProject);
+                        // TemplateProvider.saveProjectFromGlobal(globalProject);
                         ProjectService.saveProjectFromGlobal(globalProject, function () {
                             PID = pid;
 
@@ -758,7 +758,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             var project=JSON.parse(window.localStorage.getItem('projectCache'+pid));
             var globalProject=project;
             console.log(globalProject);
-            TemplateProvider.saveProjectFromGlobal(globalProject);
+            // TemplateProvider.saveProjectFromGlobal(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
                 syncServices(globalProject)
                 $scope.$broadcast('GlobalProjectReceived');

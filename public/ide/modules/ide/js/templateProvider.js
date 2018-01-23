@@ -2,16 +2,7 @@
  * Created by shenaolin on 16/3/12.
  */
 ideServices
-    .service('TemplateProvider', ['Type','CanvasService','Preference','FontMesureService',function (Type,CanvasService,Preference,FontMesureService) {
-
-
-        function Transition(name,show,duration){
-            this.name=name||'';
-            this.show=show||'';
-            this.duration=duration;
-        }
-
-        var defaultTransition=new Transition('NO_TRANSITION','无动画',0);
+    .service('TemplateProvider', ['Type','CanvasService','Preference','FontMesureService','AnimationService',function (Type,CanvasService,Preference,FontMesureService,AnimationService) {
 
         var project,
             defaultButton={
@@ -362,6 +353,7 @@ ideServices
             },
             defaultButtonGroup={};
 
+        //设置控件的默认模板，在使用模板模式时使用
         this.setDefaultWidget=function(widget){
             if(widget.defaultButton){
                 defaultButton=widget.defaultButton;
@@ -385,16 +377,13 @@ ideServices
 
         this.saveProjectFromGlobal= function (_project) {
             project=_project;
-            
-        }
+        };
 
+        //
         this.getDefaultPage = function () {
             return this.getRandomPage();
         };
-        /**
-         * 获得随机页面
-         * @returns {{url, id, proJsonStr, layers}}
-         */
+
         this.getRandomPage = function () {
             var r = 54;
             var g = 71;
@@ -414,11 +403,10 @@ ideServices
                 backgroundColor:'rgb(' + r + ',' + g + ',' + b + ')',
                 backgroundImage:'',
                 currentFabLayer:null,
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
 
         };
-
 
         this.getDefaultLayer = function () {
             var pageNode=CanvasService.getPageNode();
@@ -441,7 +429,7 @@ ideServices
                 expand:true,
                 showSubLayer:subLayer,
                 zIndex:0,
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
@@ -521,8 +509,7 @@ ideServices
                 }]
 
             }
-        }
-
+        };
 
         this.getDefaultButton= function () {
             var info = _.cloneDeep(defaultButton.info);
@@ -559,6 +546,7 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultKnob=function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -584,6 +572,7 @@ ideServices
 
             }
         };
+
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -684,7 +673,7 @@ ideServices
                     }]
                 }]
             }
-        }
+        };
 
         this.getDefaultButtonTex= function () {
             return{
@@ -700,7 +689,7 @@ ideServices
                     name:'按下后'
                 }]
             }
-        }
+        };
 
         this.getDefaultProgress= function () {
             var info = _.cloneDeep(defaultProgress.info);
@@ -720,7 +709,6 @@ ideServices
 
             }
         };
-
 
         this.getDefaultDashboard= function () {
             var info = _.cloneDeep(defaultDashboard.info);
@@ -795,7 +783,7 @@ ideServices
                         name:'数字背景'
                     }]
                 }],
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
@@ -845,7 +833,7 @@ ideServices
                     currentSliceIdx:0,
                     slices:slices
                 }],
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
@@ -915,6 +903,7 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultRotateImg=function(){
             var info = _.cloneDeep(defaultRotateImage.info);
             var texList=_.cloneDeep(defaultRotateImage.texList);
@@ -981,6 +970,7 @@ ideServices
 
             }
         };
+
         this.getDefaultTexTime=function(){
             var info={
                 characterW:30,
@@ -1056,6 +1046,7 @@ ideServices
                 zIndex:0
             }
         };
+
         this.getDefaultSlideBlock = function(){
             var info = _.cloneDeep(defaultSlideBlock.info);
             var texList = _.cloneDeep(defaultSlideBlock.texList);
@@ -1070,6 +1061,7 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultVideo = function(){
             var info = {
                 width:215,height:110,
@@ -1097,6 +1089,7 @@ ideServices
 
             }
         };
+
         this.getDefaultAnimation = function(){
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
@@ -1125,6 +1118,7 @@ ideServices
 
             }
         };
+
         this.getDefaultSelector= function () {
             var info = _.cloneDeep(defaultSelector.info);
             var texList = _.cloneDeep(defaultSelector.texList);
@@ -1139,6 +1133,7 @@ ideServices
                 texList:texList,
             };
         };
+
         this.getDefaultRotaryKnob= function () {
             var info = _.cloneDeep(defaultRotaryKnob.info);
             var texList = _.cloneDeep(defaultRotaryKnob.texList);
@@ -1155,6 +1150,7 @@ ideServices
         };
 
 
+        //工具函数，获取随机颜色
         function _getRandomColor(){
             var r = _.random(64, 255);
             var g = _.random(64, 255);
@@ -1162,11 +1158,10 @@ ideServices
             return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
         }
 
-
         var templateId=null;
         this.setTemplateId = function(id){
             templateId=id;
-        }
+        };
         this.getTemplateId = function(){
             return templateId;
         }

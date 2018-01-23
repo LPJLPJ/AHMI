@@ -348,13 +348,12 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
         //edit by lixiang
         $scope.maxWidth = $scope.project.initSize.width||1280;
         $scope.maxHeight = $scope.project.initSize.height||1080;
-        $scope.defaultTransition = AnimationService.getDefaultTransition();
+        // $scope.defaultTransition = AnimationService.getDefaultTransition();
 
 		onAttributeChanged();
 		updateImageList();
 		$scope.$on('ResourceChanged', function () {
 			updateImageList();
-
 		});
 
 		$scope.$on('AttributeChanged', function (event) {

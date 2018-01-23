@@ -29,7 +29,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         }
 
         //系统控件
-        transSysWidget(targetProject);
+        transSysWidgets(targetProject);
 
         return targetProject;
     }
@@ -753,17 +753,24 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     /**
      * 转换系统控件
      */
-    function transSysWidget(targetProject){
-        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
-        colorPicker = colorPicker.toObject()
-        colorPicker.generalType = 'ColorPicker'
-        colorPicker.type = 'widget'
-        colorPicker.subType = 'general'
-        //
-        targetProject.systemWidgets = []
+    function transSysWidgets(targetProject){
+        var colorPicker = GenColorPicker(targetProject.size.width,targetProject.size.height);
 
+        targetProject.systemWidgets = [];
         //push system widgets
         targetProject.systemWidgets.push(colorPicker)
+    }
+
+    /**
+     * 生成颜色选择器
+     */
+    function GenColorPicker(width,height){
+        var colorPicker = new WidgetModel.models.ColorPicker(0,0,width,height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
+        colorPicker = colorPicker.toObject();
+        colorPicker.generalType = 'ColorPicker';
+        colorPicker.type = 'widget';
+        colorPicker.subType = 'general';
+        return colorPicker;
     }
 
     /**

@@ -2,6 +2,7 @@
  * Created by lixiang on 2016/10/19.
  */
 ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','AnimationService','UserTypeService',function($scope,ProjectService,Type,$uibModal,AnimationService,UserTypeService){
+    //工程接收完毕，初始化动画控制器
     $scope.$on('GlobalProjectReceived',function(){
         initUserInterface();
         initProject();
@@ -23,19 +24,16 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         var animationBtn=document.getElementById('addAnimationBtn');
         animationBtn.disabled=animationsDisabled;
     }
+
+    //读取当前选中对象的动画信息
     function readAnimationInfo(){
         if(!ProjectService.getCurrentSelectObject()){
             console.warn('空');
             return;
         }
         var curLevel = ProjectService.getCurrentSelectObject().level;
-        var _animation = _.cloneDeep(curLevel.animations);
-        AnimationService.setAnimations(_animation);
-
-        $scope.animations=AnimationService.getAllAnimations();
-
-        var currentObject = ProjectService.getCurrentSelectObject().level;
-        switch (currentObject.type){
+        $scope.animations = _.cloneDeep(curLevel.animations)||[];
+        switch (curLevel.type){
             case 'MyLayer':
                 $scope.showAnimationPanel=true;
                 break;
@@ -51,10 +49,10 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         });
 
         $scope.deleteAnimation=function(index){
-            AnimationService.deleteAnimationByIndex(index,function(){
-                $scope.animations=AnimationService.getAllAnimations();
-            }.bind(this));
-
+            if(index>=0&&index<$scope.animations.length){
+                $scope.animations.splice(index,1);
+                ProjectService.ChangeAttributeAnimation(_.cloneDeep($scope.animations));
+            }
         };
 
         $scope.openPanel=function(index){
@@ -90,18 +88,17 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
             modalInstance.result.then(function(newAnimation){
                 if($scope.selectIdx==-1){
-                    AnimationService.appendAnimation(newAnimation,function(){
-                        $scope.animations=AnimationService.getAllAnimations();
-                    }.bind(this));
+                    $scope.animations.push(newAnimation);
+                    ProjectService.ChangeAttributeAnimation(_.cloneDeep($scope.animations));
                 }else if($scope.selectIdx>=0&&$scope.selectIdx<$scope.animations.length){
-                    AnimationService.updateAnimationByIndex(newAnimation,$scope.selectIdx,function(){
-                        $scope.animations=AnimationService.getAllAnimations();
-                    }.bind(this));
+                    if(index>=0&&index<$scope.animations.length){
+                        $scope.animations[index]=newAnimation;
+                        ProjectService.ChangeAttributeAnimation(_.cloneDeep($scope.animations));
+                    }
                 }
             });
         }
     }
-
 
 }])
 
