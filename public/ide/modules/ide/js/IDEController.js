@@ -323,8 +323,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 }
             }else{
                 // console.log(globalProject);
-                updateSpinner(100)
-                // TemplateProvider.saveProjectFromGlobal(globalProject);
+                updateSpinner(100);
+                TemplateProvider.setProjectSize(globalProject.currentSize);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     $scope.$broadcast('GlobalProjectReceived');
@@ -348,7 +348,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }
             globalProject.maxSize = data.maxSize;
 
-            // TemplateProvider.saveProjectFromGlobal(globalProject);
+            TemplateProvider.setProjectSize(globalProject.currentSize);
             syncServices(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
 
@@ -374,10 +374,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             height :resolution[1]
         }
         globalProject.maxSize = options.maxSize||100*1024*1024;
-        console.log('globalProject',globalProject)
+        console.log('globalProject',globalProject);
 
 
-        // TemplateProvider.saveProjectFromGlobal(globalProject);
+        TemplateProvider.setProjectSize(globalProject.currentSize);
         ProjectService.saveProjectFromGlobal(globalProject, function () {
             syncServices(globalProject)
             $scope.$broadcast('GlobalProjectReceived');
@@ -758,7 +758,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             var project=JSON.parse(window.localStorage.getItem('projectCache'+pid));
             var globalProject=project;
             console.log(globalProject);
-            // TemplateProvider.saveProjectFromGlobal(globalProject);
+            TemplateProvider.setProjectSize(globalProject.currentSize);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
                 syncServices(globalProject)
                 $scope.$broadcast('GlobalProjectReceived');

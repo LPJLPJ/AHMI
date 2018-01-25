@@ -3910,7 +3910,31 @@
             }
             
         `
-    }
+    };
+
+    WidgetCommands['DatePicker'] = {
+        onInitialize:`
+
+        `,
+        onMouseDown:`
+        
+        `,
+        onMouseUp:`
+
+        `,
+        onTagChange:`
+
+        `,
+        onKeyBoardLeft:`
+
+        `,
+        onKeyBoardRight:`
+
+        `,
+        onKeyBoardOK:`
+
+        `
+    };
 
     return WidgetCommands;
 

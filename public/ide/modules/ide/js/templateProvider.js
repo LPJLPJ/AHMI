@@ -2,9 +2,13 @@
  * Created by shenaolin on 16/3/12.
  */
 ideServices
-    .service('TemplateProvider', ['Type','CanvasService','Preference','FontMesureService','AnimationService',function (Type,CanvasService,Preference,FontMesureService,AnimationService) {
+    .service('TemplateProvider', ['Type','Preference','FontMesureService','AnimationService',function (Type,Preference,FontMesureService,AnimationService) {
 
         var project,
+            projectSize = {
+                width:800,
+                height:480
+            },
             defaultButton={
                 info :{
                     width:100,
@@ -353,6 +357,14 @@ ideServices
             },
             defaultButtonGroup={};
 
+        //设置当前工程尺寸
+        this.setProjectSize = function(currentSize){
+            if(currentSize&&currentSize.height&&currentSize.width){
+                projectSize.width = currentSize.width;
+                projectSize.height = currentSize.height;
+            }
+        };
+
         //设置控件的默认模板，在使用模板模式时使用
         this.setDefaultWidget=function(widget){
             if(widget.defaultButton){
@@ -411,10 +423,12 @@ ideServices
 
         //图层
         this.getDefaultLayer = function () {
-            var pageNode=CanvasService.getPageNode();
+            // var pageNode=CanvasService.getPageNode();
             var info = {
-                width:Math.round((pageNode.getWidth()/pageNode.getZoom()) / 2),
-                height: Math.round((pageNode.getHeight()/pageNode.getZoom()) / 2),
+                // width:Math.round((pageNode.getWidth()/pageNode.getZoom()) / 2),
+                // height: Math.round((pageNode.getHeight()/pageNode.getZoom()) / 2),
+                width:Math.round(projectSize.width/2),
+                height:Math.round(projectSize.height/2),
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center'
@@ -437,10 +451,10 @@ ideServices
 
         //子图层
         this.getDefaultSubLayer = function () {
-            var pageNode=CanvasService.getPageNode();
+            // var pageNode=CanvasService.getPageNode();
             var info = {
-                width:Math.round(pageNode.getWidth()/2),
-                height:Math.round(pageNode.getHeight()/2),
+                width:Math.round(projectSize.width/2),
+                height:Math.round(projectSize.height/2),
                 scrollVEnabled:false,
                 scrollHEnabled:false,
             };
@@ -464,7 +478,6 @@ ideServices
 
         //图层控件
         this.getDefaultSlide = function () {
-            var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
                 width:200, height: 150,
                 left: 0, top: 0,
@@ -538,10 +551,11 @@ ideServices
 
         //旋钮控件
         this.getDefaultKnob=function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:100,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:360,
@@ -565,8 +579,6 @@ ideServices
 
         //文本控件
         this.getDefaultTextArea = function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
-
             var text='文本';
             var fontSize=15;
             var info={
@@ -608,10 +620,11 @@ ideServices
 
         //按钮组控件
         this.getDefaultButtonGroup= function () {
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:160,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 interval:0,//间距
@@ -836,12 +849,11 @@ ideServices
 
         //示波器控件
         this.getDefaultOscilloscope = function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:300,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:50,
@@ -1031,10 +1043,11 @@ ideServices
 
         //触发器控件
         this.getDefaultScriptTrigger = function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:100,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 lowAlarmValue:0,highAlarmValue:100
@@ -1097,7 +1110,6 @@ ideServices
 
         //动画控件
         this.getDefaultAnimation = function(){
-            var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
                 width:200, height: 150,
                 left: 0, top: 0,
@@ -1157,6 +1169,108 @@ ideServices
             };
         };
 
+
+        //系统控件,日期选择器
+        this.getSystemDatePicker = function(){
+            var defaultW = 800,                //控件默认宽度
+                defaultH = 480,                //控件默认高度
+                pWidth = projectSize.width,    //工程宽度
+                pHeight = projectSize.height,  //工程高度
+                x,y,w,h,scaleX,scaleY,scale;   //控件坐标，实际宽高，横向、纵向缩放比
+
+            //根据页面尺寸计算实际宽高
+            scaleX = (pWidth>=defaultW)?1:pWidth/defaultW;
+            scaleY = (pHeight>=defaultH)?1:pHeight/defaultH;
+            scale = (scaleX<=scaleY)?scaleX:scaleY;
+            w = Math.floor(scaleX*defaultW);
+            h = Math.floor(scaleY*defaultH);
+            x = Math.floor((pWidth-w)/2);
+            y = Math.floor((pHeight-h)/2);
+            var info = {
+                top:y,
+                left:x,
+                width:w,    //控件默认宽度
+                height:h,
+
+                dayW:Math.floor(scale*100),//单位数字格子宽度
+                dayH:Math.floor(scale*65),//数字格子的高度
+                paddingX:Math.floor(scale*50),  //数字格子的起始X偏移
+                paddingY:Math.floor(scale*145), //数字格子的起始Y偏移
+
+                yearX:Math.floor(scale*200),    //'年'图层X坐标
+                yearY:0,
+                yearW:Math.floor(scale*180),
+                yearH:Math.floor(scale*80),
+
+                monthX:Math.floor(scale*450),   //'月'图层X坐标
+                monthY:0,
+                monthW:Math.floor(scale*90),
+                monthH:Math.floor(scale*80),
+
+                buttonSize:Math.floor(scale*80),//左右按钮的大小
+
+                titleFontSize:32,               //年月字体
+                titleFontFamily:'Arial',
+                titleFontColor:'#5E5E5E',
+
+                itemFontSize:20,                //日字体
+                itemFontFamily:'Arial',
+                itemFontColor:'#797979',
+            };
+            var texList = [
+                {
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/datePicker/background.png',
+                        name:'背景'
+                    }]
+                },
+                {
+                    currentSliceIdx:1,
+                    name:'年',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'年'
+                    }]
+                },
+                {
+                    currentSliceIdx:2,
+                    name:'月',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'月'
+                    }]
+                },
+                {
+                    currentSliceIdx:3,
+                    name:'日',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/colorPicker/itemBack.png',
+                        name:'日'
+                    }]
+                },
+                {
+                    currentSliceIdx:4,
+                    name:'高亮',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/colorPicker/highlight.png'
+                    }]
+                }
+            ];
+            return {
+                id:Math.random().toString(36).substr(2),
+                type:Type.SysDatePicker,
+                name:'SysDatePicker',
+                info:info,
+                texList:texList
+            }
+        };
 
         //工具函数，获取随机颜色
         function _getRandomColor(){

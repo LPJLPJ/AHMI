@@ -1068,46 +1068,94 @@
     RotaryKnob.prototype.constructor = RotaryKnob;
 
 
-
+    //颜色选择器
     function ColorPicker(x,y,w,h,slices) {
-        var layers = []
-        var d = 5
+        var layers = [];
+        var d = 5;
         //hue layer
-        var hLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.8*h)
-        hLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc)
+        var hLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.8*h);
+        hLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
         //saturation volume layer
-        var svLayer = new Layer(d,d,0.8*w,0.8*h)
-        svLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
-        svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
+        var svLayer = new Layer(d,d,0.8*w,0.8*h);
+        svLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc);
+        svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color));
         //preview layer
-        var pLayer = new Layer(d,0.8*h+d*2,w-d*2,0.2*h-d*3)
-        pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
+        var pLayer = new Layer(d,0.8*h+d*2,w-d*2,0.2*h-d*3);
+        pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'));
 
         //backgroundLayer
-        var bgLayer = new Layer(0,0,w,h)
-        bgLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255'))
+        var bgLayer = new Layer(0,0,w,h);
+        bgLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255'));
 
         //hue indicator
-        var hIndicatorLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.01*h)
-        hIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255)'))
+        var hIndicatorLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.01*h);
+        hIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255)'));
 
         //picker indicator
-        var minD = Math.min(w,h)
-        var pIndicatorLayer = new Layer(d,d,0.02*minD,0.02*minD)
-        pIndicatorLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc)
+        var minD = Math.min(w,h);
+        var pIndicatorLayer = new Layer(d,d,0.02*minD,0.02*minD);
+        pIndicatorLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc);
 
-        layers.push(bgLayer)
-        layers.push(hLayer)
-        layers.push(svLayer)
-        layers.push(pLayer)
-        layers.push(hIndicatorLayer)
-        layers.push(pIndicatorLayer)
-        this.subType = 'ColorPicker'
+        layers.push(bgLayer);
+        layers.push(hLayer);
+        layers.push(svLayer);
+        layers.push(pLayer);
+        layers.push(hIndicatorLayer);
+        layers.push(pIndicatorLayer);
+        this.subType = 'ColorPicker';
         Widget.call(this,x,y,w,h,layers)
     }
 
-    ColorPicker.prototype = Object.create(Widget.prototype)
-    ColorPicker.prototype.constructor = ColorPicker
+    ColorPicker.prototype = Object.create(Widget.prototype);
+    ColorPicker.prototype.constructor = ColorPicker;
+
+    //日期选择器
+    function DatePicker(x,y,w,h,opts,slices){
+        var layers = [];
+        var fontStyle={};
+        var bgLayer,yLayer,mLayer,dLayer,highLight;
+
+        //background image
+        bgLayer = new Layer(0,0,w,h);
+        bgLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+        layers.push(bgLayer);
+
+        //year text
+        yLayer = new Layer(opts.yearX,opts.yearY,opts.yearW,opts.yearH);
+        fontStyle['font-size'] = opts.titleFontSize;
+        fontStyle['font-family'] = opts.titleFontFamily;
+        fontStyle['font-color'] = opts.titleFontColor;
+        yLayer.subLayers.font = new FontSubLayer('2018',fontStyle);
+        layers.push(yLayer);
+
+        //month text
+        mLayer = new Layer(opts.monthX,opts.monthY,opts.monthW,opts.monthH);
+        mLayer.subLayers.font = new FontSubLayer('1',fontStyle);
+        layers.push(mLayer);
+
+        //day image and text
+        var initX = opts.paddingX,
+            initY = opts.paddingY;
+        for(var j=0;j<5;j++){
+            for(var i=0;i<7;i++){
+                dLayer = new Layer(initX,initY,opts.dayW,opts.dayH);
+                fontStyle = {};
+                fontStyle['font-size'] = opts.itemFontSize;
+                fontStyle['font-family'] = opts.itemFontFamily;
+                fontStyle['font-color'] = opts.itemFontColor;
+                dLayer.subLayers.image = new TextureSubLayer(slices[3].imgSrc);
+                dLayer.subLayers.font = new FontSubLayer(String(i+1),fontStyle);
+                layers.push(dLayer);
+                initX+=opts.dayW;
+            }
+            initX = opts.paddingX;
+            initY += opts.dayH;
+        }
+
+        Widget.call(this,x,y,w,h,layers)
+    }
+    DatePicker.prototype = Object.create(Widget.prototype);
+    DatePicker.prototype.constructor = DatePicker;
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -1450,6 +1498,7 @@
     WidgetModel.models.Selector = Selector;
     WidgetModel.models.RotaryKnob = RotaryKnob;
     WidgetModel.models.ColorPicker = ColorPicker;
+    WidgetModel.models.DatePicker = DatePicker;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

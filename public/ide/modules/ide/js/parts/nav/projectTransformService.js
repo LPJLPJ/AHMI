@@ -1,4 +1,4 @@
-ideServices.service('ProjectTransformService',['Type','ResourceService',function(Type,ResourceService){
+ideServices.service('ProjectTransformService',['Type','ResourceService','TemplateProvider',function(Type,ResourceService,TemplateProvider){
 
     /**
      * 暴露对外接口
@@ -28,7 +28,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
 
-        //系统控件
+        //添加系统控件
         transSysWidgets(targetProject);
 
         return targetProject;
@@ -755,6 +755,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
      */
     function transSysWidgets(targetProject){
         var colorPicker = GenColorPicker(targetProject.size.width,targetProject.size.height);
+        var datePicker = GenDatePicker();
 
         targetProject.systemWidgets = [];
         //push system widgets
@@ -771,6 +772,25 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         colorPicker.type = 'widget';
         colorPicker.subType = 'general';
         return colorPicker;
+    }
+
+    /**
+     *生成日期选择器
+     */
+    function GenDatePicker(width,height){
+        var datePickerDate = TemplateProvider.getSystemDatePicker();
+        var info = datePickerDate.info;
+        var texList = datePickerDate.texList||[];
+
+        var slices = [];
+        texList.map(function (curTex) {
+            curTex.slices.map(function(slice){
+                slices.push(slice)
+            })
+        });
+
+        var datePicker = new WidgetModel.models.DatePicker(info.left,info.top,info.width,info.height,info,slices);
+        console.log(datePicker,'datePicker');
     }
 
     /**
