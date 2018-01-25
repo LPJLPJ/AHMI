@@ -1481,7 +1481,7 @@ module.exports =   React.createClass({
         // offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 
         if (page.animating){
-            console.log('page animating',page.curPageImg)
+            // console.log('page animating',page.curPageImg)
             if (page.alpha!==undefined){
                 offctx.globalAlpha = page.alpha
             }
@@ -2422,12 +2422,37 @@ module.exports =   React.createClass({
                         break;
                     default:
                         this.handleTargetAction(subCanvas, 'Load')
-                        this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
+                        // this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
 
                 }
                 this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
             }else {
+                var unloadSC = null
+                if (canvas.subCanvasUnloadIdx!==null){
+                    unloadSC = canvas.subCanvasList[canvas.subCanvasUnloadIdx]
+                }
+                if (unloadSC){
+                    //sync
+                    switch (method){
+                        case 'SWIPE_H':
+                            subCanvas.translate = {
+                                x:0,
+                                y:0
+                            }
+                            this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true)
+                            break
+                        case 'SWIPE_V':
+                            subCanvas.translate = {
+                                x:0,
+                                y:0
+                            }
+                            this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,false,true)
+                            break
+                    }
+
+                }
                 this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
+
             }
 
 

@@ -2,6 +2,8 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 ;(function (factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -15,6 +17,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         window.WidgetCommands = factory();
     }
 })(function () {
+    var _WidgetCommands$Selec;
+
     var WidgetCommands = {};
     WidgetCommands['Button'] = {
         onInitialize: '\n\n            var(a,0)\n            set(a,\'this.mode\')\n            set(a,3)\n            if(a>=100){\n                set(\'this.layers.1.hidden\',1)\n            }else{\n                set(\'this.layers.1.hidden\',0)\n            }\n        ',
@@ -104,15 +108,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onMouseDown: '\n        ',
         onTagChange: '\n            //\u9690\u85CF\u6240\u6709\u56FE\u5C42\n            var(offset,0)\n            var(len,0)\n            set(len,\'this.layers.length\')\n            while(offset<len){\n                set(\'this.layers.offset.hidden\',1)\n                add(offset,1)\n            }\n\n            // draw num\n            //\u521D\u59CB\u5316\u53D8\u91CF\n\n            var(tCurVal,0)                       //\u5F53\u524D\u503C\n            getTag(tCurVal)\n\n            var(tMaxVal,0)                       //\u6700\u5927\u503C\n            set(tMaxVal,\'this.maxValue\')\n            \n            var(tMinVal,0)                       //\u6700\u5C0F\u503C\n            set(tMinVal,\'this.minValue\')\n\n            var(hasFrontZero,0)                  //\u662F\u5426\u6709\u524D\u5BFC\u96F6\n            set(hasFrontZero,\'this.otherAttrs.1\')\n\n            var(hasSymbol,0)                     //\u662F\u5426\u6709\u7B26\u53F7\n            set(hasSymbol,\'this.otherAttrs.2\')\n\n            var(decimalCnt,0)                    //\u5C0F\u6570\u4F4D\u6570\n            set(decimalCnt,\'this.otherAttrs.3\')\n\n            var(numOfDigits,0)                   //\u5B57\u7B26\u6570\n            set(numOfDigits,\'this.otherAttrs.4\')\n\n            var(overflow,0)                      //\u6EA2\u51FA\u6A21\u5F0F\uFF0C0\u4E0D\u663E\u793A\uFF0C1\u663E\u793A\n            set(overflow,\'this.otherAttrs.5\')\n\n            var(fontWidth,0)                     //\u5B57\u7B26\u56FE\u5C42\u5BBD\u5EA6\n            set(fontWidth,\'this.otherAttrs.6\')\n\n            var(align,0)                         //\u5BF9\u9F50\u65B9\u5F0F\uFF0C0\u5DE6\uFF0C1\u4E2D\uFF0C2\u53F3\n            set(align,\'this.otherAttrs.9\')\n\n            var(widgetWidth,0)                   //\u63A7\u4EF6\u5BBD\u5EA6\n            set(widgetWidth,\'this.otherAttrs.8\')\n\n            var(symbolCnt,0)                     //\u8981\u7ED8\u5236\u7684\u7B26\u53F7\u7684\u4E2A\u6570\n            set(symbolCnt,0)\n\n            var(curValCnt,0)                     //\u8981\u7ED8\u5236\u7684\u5F53\u524D\u503C\u6570\u5B57\u7684\u4E2A\u6570\n\n            var(allFontCnt,0)                    //\u8981\u7ED8\u5236\u7684\u603B\u5B57\u7B26\u7684\u4E2A\u6570\n\n            var(initPosX,0)                      //\u7ED8\u5236\u8D77\u59CB\u5750\u6807\n\n            var(decimalIndex,0)                  //\u5C0F\u6570\u70B9\u7684\u6807\u8BC6\u5750\u6807\uFF0C\u5373\u5728\u7B2C\u51E0\u4E2A\u56FE\u5C42\u4F4D\u7F6E\u7ED8\u5236\u5C0F\u6570\u70B9\n\n            var(decimalZeroCnt,0)                //\u8981\u8865\u9F50\u7684\u5C0F\u6570\u70B9\u540E\u76840\u7684\u4E2A\u6570\n\n            var(frontZeroCnt,0)                  //\u8981\u7ED8\u5236\u7684\u524D\u5BFC\u96F6\u7684\u4E2A\u6570\n\n            var(needDraw,0)                      //\u662F\u5426\u9700\u8981\u7ED8\u5236\uFF0C\u5728\u6EA2\u51FA\u4E0D\u663E\u793A\u7684\u60C5\u51B5\u4E0B\uFF0C\u4E0D\u9700\u8981\u7ED8\u5236\u30020\u4E0D\u9700\u8981\uFF0C1\u9700\u8981\n            set(needDraw,1)\n\n            var(isOverflow,0)                    //\u6570\u5B57\u503C\u662F\u5426\u6EA2\u51FA\n\n            var(tempValW,0)                      //\u603B\u5B57\u7B26\u6240\u5360\u5BBD\u5EA6\n\n            var(fontWidthHalf,0)                 //\u534A\u4E2A\u5B57\u7B26\u6240\u5360\u5BBD\u5EA6\n\n            var(tempVal,0)                       //\u4E34\u65F6\u53D8\u91CF\n            \n            var(layersCount,0)                   //layer\u6570\n            \n            var(index,0)                         //layer index\n            \n            var(curl,0)                          //\u5F53\u524D\u5B57\u7B26\n            \n            var(i,0)                             //\u5FAA\u73AF\u53D8\u91CF\n            \n      \n            \n\n            //\u6EA2\u51FA\u5904\u7406\n            if(tCurVal>tMaxVal){\n                //\u6EA2\u51FA\u6700\u5927\u503C\n                print(\'\u6EA2\u51FA\u6700\u5927\u503C\',tMaxVal)\n                set(tCurVal,tMaxVal)\n                set(isOverflow,1)\n            }else{\n                //\u6EA2\u51FA\u6700\u5C0F\u503C\n                if(tCurVal<tMinVal){\n                    print(\'\u6EA2\u51FA\u6700\u5C0F\u503C\',tMinVal)\n                    set(tCurVal,tMinVal)\n                    set(isOverflow,1)\n                }\n            }\n            if(isOverflow==1){\n                //\u6EA2\u51FA\n                if(overflow==0){\n                    //\u6EA2\u51FA\u4E0D\u663E\u793A\n                    set(needDraw,0)\n                }\n            }\n\n            //\u5224\u65AD\u662F\u5426\u9700\u8981\u7ED8\u5236\n            if(needDraw==1){\n                //\u7B26\u53F7&\u53D6\u7EDD\u5BF9\u503C\n                if(tCurVal<0){\n                    if(hasSymbol==1){\n                        set(symbolCnt,1)\n                    }\n                    multiply(tCurVal,-1)//\u53D6\u7EDD\u5BF9\u503C\n                }\n\n                //\u5F53\u524D\u503C\u4F4D\u6570\n                set(tempVal,tCurVal)\n                while(tempVal>0){\n                    add(curValCnt,1)\n                    divide(tempVal,10)\n                }\n                if(curValCnt==0){\n                    set(curValCnt,1) \n                }\n\n                //\u524D\u5BFC\u96F6\n                if(hasFrontZero==1){\n                    set(tempVal,numOfDigits)\n                    minus(tempVal,curValCnt)\n                    set(frontZeroCnt,tempVal)\n                }\n\n                //\u603B\u5B57\u7B26\u6570=\u524D\u5BFC0/\u81EA\u52A8\u88650+\u6570\u5B57\u4F4D\n                add(allFontCnt,symbolCnt)\n                add(allFontCnt,frontZeroCnt)\n                add(allFontCnt,curValCnt)\n\n                //\u5C0F\u6570\u70B9\u4F4D\u7F6E\n                if(decimalCnt>0){\n                    add(allFontCnt,1)\n                    if(decimalCnt>=curValCnt){\n                        //\u5C0F\u6570\u4F4D\u6570\u5927\u4E8E\u7B49\u4E8E\u5B57\u7B26\u4F4D\u6570\uFF0C\u5728\u975E\u524D\u5BFC\u96F6\u6A21\u5F0F\u4E0B\u9700\u8981\u8865\u96F6\n                        if(hasFrontZero==0){\n                            set(decimalZeroCnt,decimalCnt)//decimalZeroCnt\uFF1A\u8981\u8865\u9F50\u7684\u5C0F\u6570\u70B9\u540E\u76840\u7684\u4E2A\u6570=\u5C0F\u6570\u4F4D\u6570-\u6570\u5B57\u4F4D\u6570\n                            minus(decimalZeroCnt,curValCnt)\n                            add(decimalZeroCnt,1)//\u5C0F\u6570\u70B9\u524D\u9762\u76840\n                            add(allFontCnt,decimalZeroCnt)\n                        }\n                    }\n                }\n                //\u8BA1\u7B97\u5B57\u7B26\u6240\u5360\u603B\u5BBD\u5EA6\n                set(tempVal,allFontCnt)\n                multiply(tempVal,fontWidth)\n                set(tempValW,tempVal)//tempValW:\u603B\u5B57\u7B26\u6240\u5360\u5BBD\u5EA6\n                set(fontWidthHalf,fontWidth)//fontWidthHalf:\u534A\u4E2A\u5B57\u7B26\u6240\u5360\u5BBD\u5EA6\n                divide(fontWidthHalf,2)\n                if(decimalCnt>0){\n                    minus(tempValW,fontWidthHalf)\n                }\n\n                //\u8BA1\u7B97\u8D77\u59CB\u5750\u6807\n                if(widgetWidth>tempValW){\n                    if(align==0){\n                        //\u5DE6\u5BF9\u9F50\n                        set(initPosX,0)\n                    }else{\n                        if(align==2){\n                            //\u53F3\u5BF9\u9F50\n                            set(initPosX,widgetWidth)\n                            minus(initPosX,tempValW)\n                        }else{\n                            //\u5C45\u4E2D\u5BF9\u9F50\n                            set(initPosX,widgetWidth)\n                            minus(initPosX,tempValW)\n                            divide(initPosX,2)\n                        }\n                    }\n                }else{\n                    set(initPosX,0)\n                }                \n                \n                //layer\u6570\n                set(layersCount,allFontCnt)\n\n                //\u7ED8\u5236\u7B26\u53F7\n                if(symbolCnt==1){\n                    //\u6709\u8D1F\u53F7\n                    set(\'this.layers.0.subLayers.image.texture\',12)\n                    set(\'this.layers.0.x\',initPosX)\n                    set(\'this.layers.0.hidden\',0)\n                    minus(layersCount,1)\n                    minus(allFontCnt,1)\n                }\n                \n                \n                //\u8BBE\u7F6E\u6BCF\u4E00\u4E2A\u5B57\u7B26\u7684\u521D\u59CB\u4F4D\u7F6E\n                set(xCoordinate,initPosX)\n                add(xCoordinate,tempValW)\n\n                \n                //\u7ED8\u5236\u903B\u8F91              \n                while(i<layersCount){\n                    if(i==decimalCnt){\n                        if(decimalCnt==0){\n                        }else{\n                           //\u756B\u5C0F\u6578\u9EDE\n                            \n                           //xCoordinate-=fontWidth/2;\n                           set(tempVal,fontWidth)\n                           divide(tempVal,2)\n                           minus(xCoordinate,tempVal)\n                            \n                           //draw(index,xCoordinate)\n                           set(\'this.layers.1.hidden\',0)\n                           set(\'this.layers.1.x\',xCoordinate)\n                           set(\'this.layers.1.subLayers.image.texture\',10)\n                           \n                           minus(layersCount,1)\n                        }\n                        set(decimalCnt,-1)\n                        minus(i,1)\n                    }else{\n                        //\u756B\u6578\u5B57\n                        if(i<curValCnt){\n                            //\u756Breal\u6578\u5B57\n                            //curl=tCurVal-tCurVal/10*10\n                            set(tempVal,tCurVal)\n                            divide(tempVal,10)\n                            multiply(tempVal,10)\n                            set(curl,tCurVal)\n                            minus(curl,tempVal)\n                            \n                            //tCurVal=tCurVal/10\n                            divide(tCurVal,10)\n                            \n                            //index=allFontCnt-i\n                            set(index,allFontCnt)\n                            minus(index,i)\n                            \n                            //xCoordinate-=fontWidth\n                            minus(xCoordinate,fontWidth)\n                            \n                            //draw(index,xCoordinate)\n                            set(\'this.layers.index.hidden\',0)\n                            set(\'this.layers.index.x\',xCoordinate)\n                            set(\'this.layers.index.subLayers.image.texture\',curl)\n                        }else{\n                            //\u756B\u96F6\n                            //xCoordinate-=fontWidth;\n                            minus(xCoordinate,fontWidth)\n                            \n                            //index=allFontCnt-i\n                            set(index,allFontCnt)\n                            minus(index,i)\n                            \n                            //draw(index,xCoordinate)\n                            set(\'this.layers.index.hidden\',0)\n                            set(\'this.layers.index.x\',xCoordinate)\n                            set(\'this.layers.index.subLayers.image.texture\',0)\n                        }\n                    }\n                    //i++\n                    add(i,1)\n                }\n            }\n        '
     };
-    WidgetCommands['Selector'] = {
+    WidgetCommands['Selector'] = (_WidgetCommands$Selec = {
         onInitialize: '\n            var(offset,0)\n            set(offset,2)\n            var(len,0)\n            set(len,\'this.layers.length\')\n            var(tMaxHighLightNum,0)\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            if(tMaxHighLightNum>0){\n                minus(len,1)\n            }\n            while(offset<len){\n                set(\'this.layers.offset.hidden\',0)\n                add(offset,1)\n            }\n        ',
         onMouseUp: '\n        ',
         onMouseDown: '\n        ',
-        onTagChange: '\n            var(curItem,0)                            //curValue\u5F53\u524D\u5143\u7D20 = tag\u503C\n            getTag(curItem)\n                       \n            var(itemCount,0)                          //\u5143\u7D20\u603B\u4E2A\u6570\n            set(itemCount,\'this.otherAttrs.2\')\n            \n            var(itemShowCount,0)                      //\u5F85\u9009\u5143\u7D20\u5C55\u793A\u4E2A\u6570\uFF08\u5355\u8FB9\uFF09\n            set(itemShowCount,\'this.otherAttrs.3\')\n           \n            var(w,0)                                  //\u63A7\u4EF6\u5BBD\u5EA6 = \u9009\u4E2D\u5143\u7D20\u5BBD\u5EA6\n            set(w,\'this.otherAttrs.4\')\n            \n            var(h,0)                                  //\u63A7\u4EF6\u9AD8\u5EA6\n            set(h,\'this.otherAttrs.5\')\n            \n            var(itemWidth,0)                          //\u5F85\u9009\u5143\u7D20\u5BBD\u5EA6\n            set(itemWidth,\'this.otherAttrs.6\')\n            \n            var(itemHeight,0)                         //\u5F85\u9009\u5143\u7D20\u9AD8\u5EA6\n            set(itemHeight,\'this.otherAttrs.7\')\n            \n            var(selectorHeight,0)                     //\u9009\u4E2D\u5143\u7D20\u9AD8\u5EA6\n            set(selectorHeight,\'this.otherAttrs.9\')\n            \n            var(temp1,0)                              //\u4E34\u65F6\u53D8\u91CF\n            var(temp2,0)\n           \n            //curItem\u53D6\u6A21\n            mod(curItem,itemCount)\n            //\u8D1F\u6570\u5904\u7406\n            if(curItem<0){\n                add(curItem,itemCount)\n            }\n            set(\'this.otherAttrs.1\',curItem)\n           \n           \n            //\u6807\u9898\u5C42\u80CC\u666F\u5C42\u4E0D\u7528\u52A8\n            \n            \n            //\u524D\u666F\u5C42\n            //\u524D\u666F\u5C42\u4F4D\u7F6E\n            //var startH=h/2-selectorHeight/2\n            var(startH,0)\n            set(temp1,h)\n            divide(temp1,2)\n            set(temp2,selectorHeight)\n            divide(temp2,2)\n            minus(temp1,temp2)\n            set(startH,temp1)\n         \n            //var temp2=startH-curValue*selectorHeight\n            set(temp1,curItem)\n            multiply(temp1,selectorHeight)\n            set(temp2,startH)\n            minus(temp2,temp1)\n            \n            //Layer(0,temp2,selectorWidth,selectorHeight*itemCount,true)\n            set(\'this.layers.3.y\',temp2)\n            \n            //\u524D\u666F\u5C42roi\n            //temp1=curValue*selectorHeight;\n            set(temp1,curItem)\n            multiply(temp1,selectorHeight)\n            set(temp2,temp1)\n            add(temp2,selectorHeight)\n            \n            //ROISubLayer(0,0,temp1,w,temp1,w,temp1+selectorHeight,0,temp1+selectorHeight);\n            set(\'this.layers.3.subLayers.roi.p1y\',temp1)\n            set(\'this.layers.3.subLayers.roi.p2y\',temp1)\n            set(\'this.layers.3.subLayers.roi.p3y\',temp2)\n            set(\'this.layers.3.subLayers.roi.p4y\',temp2)\n            \n            \n            //\u540E\u666F\u5C42(\u4E0A)\n            //\u540E\u666F\u5C42(\u4E0A)\u4F4D\u7F6E\n            //temp1=-(curValue-itemShowCount)*itemHeight;\n            set(temp1,curItem)\n            minus(temp1,itemShowCount)\n            multiply(temp1,itemHeight)\n            multiply(temp1,-1)\n            \n            //Layer(selectorWidth/2-itemWidth/2,temp1,itemWidth,itemHeight*itemCount,true);\n            set(\'this.layers.1.y\',temp1)\n            \n            //\u540E\u666F\u5C42(\u4E0A)roi\n            //-tempH\n            multiply(temp1,-1)\n            //-tempH+itemShowCount*itemHeight\n            set(temp2,itemShowCount)\n            multiply(temp2,itemHeight)\n            add(temp2,temp1)\n            \n            //ROISubLayer(0,0,-tempH,itemWidth,-tempH,itemWidth,-tempH+itemShowCount*itemHeight,0,-tempH+itemShowCount*itemHeight)\n            set(\'this.layers.1.subLayers.roi.p1y\',temp1)\n            set(\'this.layers.1.subLayers.roi.p2y\',temp1)\n            set(\'this.layers.1.subLayers.roi.p3y\',temp2)\n            set(\'this.layers.1.subLayers.roi.p4y\',temp2)\n            \n            \n            //\u540E\u666F\u5C42(\u4E0B)\n            //\u540E\u666F\u5C42(\u4E0B)\u4F4D\u7F6E\n            //tempH=h/2+selectorHeight/2-(curValue+1)*itemHeight;\n            set(temp1,curItem)\n            add(temp1,1)\n            multiply(temp1,itemHeight)\n            multiply(temp1,-1)\n            set(temp2,h)\n            divide(temp2,2)\n            add(temp1,temp2)\n            set(temp2,selectorHeight)\n            divide(temp2,2)\n            add(temp1,temp2)\n\n            //Layer(selectorWidth/2-itemWidth/2,tempH,itemWidth,itemHeight*itemCount,true);\n            set(\'this.layers.0.y\',temp1)\n            \n            \n            //\u540E\u666F\u5C42(\u4E0B)roi\n            //(curValue+1)*itemHeight\n            set(temp1,curItem)\n            add(temp1,1)\n            multiply(temp1,itemHeight)\n            //(curValue+1)*itemHeight+itemShowCount*itemHeight\n            set(temp2,itemShowCount)\n            multiply(temp2,itemHeight)\n            add(temp2,temp1)\n            \n            //ROISubLayer(0,0,(curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight+itemShowCount*itemHeight,0,(curValue+1)*itemHeight+itemShowCount*itemHeight);\n            set(\'this.layers.0.subLayers.roi.p1y\',temp1)\n            set(\'this.layers.0.subLayers.roi.p2y\',temp1)\n            set(\'this.layers.0.subLayers.roi.p3y\',temp2)\n            set(\'this.layers.0.subLayers.roi.p4y\',temp2)\n            \n        ',
-        onKeyBoardLeft: '\n            var(tMaxHighLightNum,0)                          //\u63A7\u4EF6\u5185\u9AD8\u4EAE\u5757\u6570\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(okFlag,0)                                    //\u9AD8\u4EAE\u662F\u5426\u5DF2\u9009\u4E2D\n            set(okFlag,\'this.otherAttrs.10\')\n            var(len,0)                                       //\u56FE\u5C42\u603B\u6570\n            set(len,\'this.layers.length\')\n            minus(len,1)\n            //\u5224\u65AD\u662F\u5426\u542F\u7528\u9AD8\u4EAE\n            if (tMaxHighLightNum>0) {\n                if(okFlag==0){//\u63A7\u4EF6\u95F4\u9AD8\u4EAE\u9009\u62E9\n                    var(tHighLightNum,0)\n                    set(tHighLightNum,\'this.highLightNum\')\n                    if (tHighLightNum==1) {\n                        //hashighlight\n                        set(\'this.layers.len.hidden\',0)\n                    }else{\n                        set(\'this.layers.len.hidden\',1)\n                    }\n                }else{//\u9AD8\u4EAE\u5DF2\u9009\u62E9\uFF0C\u5DE6\u79FBtag\u503C\u51CF1\n                    var(curItem,0)\n                    set(curItem,\'this.otherAttrs.1\')\n                    minus(curItem,1)\n                    //curItem\u53D6\u6A21\n                    mod(curItem,itemCount)\n                    if(curItem<0){\n                        add(curItem,itemCount)\n                    }\n                    set(\'this.otherAttrs.1\',curItem)\n                    setTag(curItem)\n                }\n            }\n          \n        ',
-        onKeyBoardRight: '\n            var(tMaxHighLightNum,0)                          //\u63A7\u4EF6\u5185\u9AD8\u4EAE\u5757\u6570\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(okFlag,0)                                    //\u9AD8\u4EAE\u662F\u5426\u5DF2\u9009\u4E2D\n            set(okFlag,\'this.otherAttrs.10\')\n            var(len,0)                                       //\u56FE\u5C42\u603B\u6570\n            set(len,\'this.layers.length\')\n            minus(len,1)\n            //\u5224\u65AD\u662F\u5426\u542F\u7528\u9AD8\u4EAE\n            if (tMaxHighLightNum>0) {\n                if(okFlag==0){//\u63A7\u4EF6\u95F4\u9AD8\u4EAE\u9009\u62E9\n                    var(tHighLightNum,0)\n                    set(tHighLightNum,\'this.highLightNum\')\n                    if (tHighLightNum==1) {\n                        //hashighlight\n                        set(\'this.layers.len.hidden\',0)\n                    }else{\n                        set(\'this.layers.len.hidden\',1)\n                    }\n                }else{//\u9AD8\u4EAE\u5DF2\u9009\u62E9\uFF0C\u53F3\u79FBtag\u503C\u52A01\n                    var(curItem,0)\n                    set(curItem,\'this.otherAttrs.1\')\n                    add(curItem,1)\n                    //curItem\u53D6\u6A21\n                    mod(curItem,itemCount)\n                    if(curItem<0){\n                        add(curItem,itemCount)\n                    }\n                    set(\'this.otherAttrs.1\',curItem)\n                    setTag(curItem)\n                }\n            }\n        ',
-        onKeyBoardOK: '\n            var(okFlag,0)                                    //\u9AD8\u4EAE\u662F\u5426\u5DF2\u9009\u4E2D\n            set(okFlag,\'this.otherAttrs.10\')\n            if(okFlag==0){\n                setglobalvar(0,1)\n                set(\'this.otherAttrs.10\',1)\n                set(\'this.layers.0.hidden\',0)\n                set(\'this.layers.1.hidden\',0)\n\n            }else{\n                setglobalvar(0,0)\n                set(\'this.otherAttrs.10\',0)\n                set(\'this.layers.0.hidden\',1)\n                set(\'this.layers.1.hidden\',1)\n            }\n        '
-    };
+        onTagChange: '\n            var(curItem,0)                            //curValue\u5F53\u524D\u5143\u7D20 = tag\u503C\n            getTag(curItem)\n                       \n            var(itemCount,0)                          //\u5143\u7D20\u603B\u4E2A\u6570\n            set(itemCount,\'this.otherAttrs.2\')\n            \n            var(itemShowCount,0)                      //\u5F85\u9009\u5143\u7D20\u5C55\u793A\u4E2A\u6570\uFF08\u5355\u8FB9\uFF09\n            set(itemShowCount,\'this.otherAttrs.3\')\n           \n            var(w,0)                                  //\u63A7\u4EF6\u5BBD\u5EA6 = \u9009\u4E2D\u5143\u7D20\u5BBD\u5EA6\n            set(w,\'this.otherAttrs.4\')\n            \n            var(h,0)                                  //\u63A7\u4EF6\u9AD8\u5EA6\n            set(h,\'this.otherAttrs.5\')\n            \n            var(itemWidth,0)                          //\u5F85\u9009\u5143\u7D20\u5BBD\u5EA6\n            set(itemWidth,\'this.otherAttrs.6\')\n            \n            var(itemHeight,0)                         //\u5F85\u9009\u5143\u7D20\u9AD8\u5EA6\n            set(itemHeight,\'this.otherAttrs.7\')\n            \n            var(selectorHeight,0)                     //\u9009\u4E2D\u5143\u7D20\u9AD8\u5EA6\n            set(selectorHeight,\'this.otherAttrs.9\')\n            \n            var(temp1,0)                              //\u4E34\u65F6\u53D8\u91CF\n            var(temp2,0)\n           \n            //curItem\u53D6\u6A21\n            mod(curItem,itemCount)\n            //\u8D1F\u6570\u5904\u7406\n            if(curItem<0){\n                add(curItem,itemCount)\n            }\n            set(\'this.otherAttrs.1\',curItem)\n           \n           \n            //\u6807\u9898\u5C42\u80CC\u666F\u5C42\u4E0D\u7528\u52A8\n            \n            \n            //\u524D\u666F\u5C42\n            //\u524D\u666F\u5C42\u4F4D\u7F6E\n            //var startH=h/2-selectorHeight/2\n            var(startH,0)\n            set(temp1,h)\n            divide(temp1,2)\n            set(temp2,selectorHeight)\n            divide(temp2,2)\n            minus(temp1,temp2)\n            set(startH,temp1)\n         \n            //var temp2=startH-curValue*selectorHeight\n            set(temp1,curItem)\n            multiply(temp1,selectorHeight)\n            set(temp2,startH)\n            minus(temp2,temp1)\n            \n            //Layer(0,temp2,selectorWidth,selectorHeight*itemCount,true)\n            set(\'this.layers.3.y\',temp2)\n            \n            //\u524D\u666F\u5C42roi\n            //temp1=curValue*selectorHeight;\n            set(temp1,curItem)\n            multiply(temp1,selectorHeight)\n            set(temp2,temp1)\n            add(temp2,selectorHeight)\n            \n            //ROISubLayer(0,0,temp1,w,temp1,w,temp1+selectorHeight,0,temp1+selectorHeight);\n            set(\'this.layers.3.subLayers.roi.p1y\',temp1)\n            set(\'this.layers.3.subLayers.roi.p2y\',temp1)\n            set(\'this.layers.3.subLayers.roi.p3y\',temp2)\n            set(\'this.layers.3.subLayers.roi.p4y\',temp2)\n            \n            \n            //\u540E\u666F\u5C42(\u4E0A)\n            //\u540E\u666F\u5C42(\u4E0A)\u4F4D\u7F6E\n            //temp1=-(curValue-itemShowCount)*itemHeight;\n            set(temp1,curItem)\n            minus(temp1,itemShowCount)\n            multiply(temp1,itemHeight)\n            multiply(temp1,-1)\n            \n            //Layer(selectorWidth/2-itemWidth/2,temp1,itemWidth,itemHeight*itemCount,true);\n            set(\'this.layers.1.y\',temp1)\n            \n            //\u540E\u666F\u5C42(\u4E0A)roi\n            //-tempH\n            multiply(temp1,-1)\n            //-tempH+itemShowCount*itemHeight\n            set(temp2,itemShowCount)\n            multiply(temp2,itemHeight)\n            add(temp2,temp1)\n            \n            //ROISubLayer(0,0,-tempH,itemWidth,-tempH,itemWidth,-tempH+itemShowCount*itemHeight,0,-tempH+itemShowCount*itemHeight)\n            set(\'this.layers.1.subLayers.roi.p1y\',temp1)\n            set(\'this.layers.1.subLayers.roi.p2y\',temp1)\n            set(\'this.layers.1.subLayers.roi.p3y\',temp2)\n            set(\'this.layers.1.subLayers.roi.p4y\',temp2)\n            \n            \n            //\u540E\u666F\u5C42(\u4E0B)\n            //\u540E\u666F\u5C42(\u4E0B)\u4F4D\u7F6E\n            //tempH=h/2+selectorHeight/2-(curValue+1)*itemHeight;\n            set(temp1,curItem)\n            add(temp1,1)\n            multiply(temp1,itemHeight)\n            multiply(temp1,-1)\n            set(temp2,h)\n            divide(temp2,2)\n            add(temp1,temp2)\n            set(temp2,selectorHeight)\n            divide(temp2,2)\n            add(temp1,temp2)\n\n            //Layer(selectorWidth/2-itemWidth/2,tempH,itemWidth,itemHeight*itemCount,true);\n            set(\'this.layers.0.y\',temp1)\n            \n            \n            //\u540E\u666F\u5C42(\u4E0B)roi\n            //(curValue+1)*itemHeight\n            set(temp1,curItem)\n            add(temp1,1)\n            multiply(temp1,itemHeight)\n            //(curValue+1)*itemHeight+itemShowCount*itemHeight\n            set(temp2,itemShowCount)\n            multiply(temp2,itemHeight)\n            add(temp2,temp1)\n            \n            //ROISubLayer(0,0,(curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight,itemWidth,(curValue+1)*itemHeight+itemShowCount*itemHeight,0,(curValue+1)*itemHeight+itemShowCount*itemHeight);\n            set(\'this.layers.0.subLayers.roi.p1y\',temp1)\n            set(\'this.layers.0.subLayers.roi.p2y\',temp1)\n            set(\'this.layers.0.subLayers.roi.p3y\',temp2)\n            set(\'this.layers.0.subLayers.roi.p4y\',temp2)\n            \n        '
+    }, _defineProperty(_WidgetCommands$Selec, 'onMouseUp', '\n            var(curValue,0)                                 //tag\u503C\n            getTag(curValue) \n\n            var(itemCount,0)                                //\u5143\u7D20\u603B\u4E2A\u6570\n            set(itemCount,\'this.otherAttrs.2\')\n\n            var(itemShowCount,0)                            //\u5F85\u9009\u5143\u7D20\u5C55\u793A\u4E2A\u6570\uFF08\u5355\u8FB9\uFF09\n            set(itemShowCount,\'this.otherAttrs.3\')\n\n            var(itemHeight,0)                               //\u5F85\u9009\u5143\u7D20\u9AD8\u5EA6\n            set(itemHeight,\'this.otherAttrs.7\')\n\n            var(selectorHeight,0)                           //\u9009\u4E2D\u5143\u7D20\u9AD8\u5EA6\n            set(selectorHeight,\'this.otherAttrs.9\')\n\n            var(tInnerX,0)                                  //\u9F20\u6807\u5750\u6807x\n            set(tInnerX,\'this.innerX\')\n\n            var(tInnerY,0)                                  //\u9F20\u6807\u5750\u6807y\n            set(tInnerY,\'this.innerY\')\n\n            var(tStartX,0)                                  //\u63A7\u4EF6\u5DE6\u4E0A\u89D2\u5750\u6807x\n            // set(tStartX,\'this.otherAttrs.11\')   \n\n            var(tStartY,0)                                  //\u63A7\u4EF6\u5DE6\u4E0A\u89D2\u5750\u6807y\n            // set(tStartY,\'this.otherAttrs.12\')\n\n            var(tSelectedStartY,0)                          //\u9009\u62E9\u6846\u5DE6\u4E0A\u89D2\u5750\u6807y\n            set(tSelectedStartY,itemShowCount)            \n            multiply(tSelectedStartY,itemHeight)            \n            add(tSelectedStartY,tStartY)            \n\n            var(tWidth,0)                                   //\u63A7\u4EF6\u5BBD\u5EA6\n            set(tWidth,\'this.otherAttrs.4\')            \n\n            var(tHeight,0)                                  //\u63A7\u4EF6\u9AD8\u5EA6\n            set(tHeight,\'this.otherAttrs.5\')  \n\n            var(tEndX,0)                                    //\u63A7\u4EF6\u53F3\u4E0B\u89D2\u5750\u6807x\n            set(tEndX,tStartX)\n            add(tEndX,tWidth)           \n\n            var(tEndY,0)                                    //\u63A7\u4EF6\u53F3\u4E0B\u89D2\u5750\u6807y\n            set(tEndY,tStartY)\n            add(tEndY,tHeight)\n\n            var(tSelectedEndY,0)                            //\u9009\u62E9\u6846\u5DE6\u4E0A\u89D2\u5750\u6807y\n            set(tSelectedEndY,tSelectedStartY)                       \n            add(tSelectedEndY,selectorHeight)   \n\n            var(temp1,0)                                    //\u4E34\u65F6\u53D8\u91CF\n            var(temp2,0)\n\n            // print(\'tInnerX\',tInnerX)\n            // print(\'tInnerY\',tInnerY)\n            // print(\'tStartX\',tStartX)\n            // print(\'tStartY\',tStartY)\n            // print(\'tEndX\',tEndX)\n            // print(\'tEndY\',tEndY)\n            // print(\'tSelectedStartY\',tSelectedStartY)\n            // print(\'tSelectedEndY\',tSelectedEndY)\n\n            var(okFlag,0)                                                 //\u9AD8\u4EAE\u662F\u5426\u5DF2\u9009\u4E2D\n            set(okFlag,\'this.otherAttrs.10\')\n            var(isMoved,0)\n            set(isMoved,\'this.otherAttrs.14\')                             //isMoved \n\n            if(isMoved==0){                                               //isMoved==0\uFF0C\u6CA1\u6709\u88AB\u62D6\u62FD\u8FC7\n                if(okFlag==1){\n                    if (tInnerX>=tStartX) {\n                        if(tInnerX < tEndX){\n                            if (tInnerY>=tStartY) {\n                                if (tInnerY<tEndY) {                      //\u5728\u63A7\u4EF6\u5185\n                                    if (tInnerY<tSelectedStartY) {        //\u4E0D\u5728\u9009\u62E9\u6846\u91CC\uFF0C\u5728\u9009\u62E9\u6846\u4E0A\u65B9\n                                        set(temp1,tSelectedStartY)\n                                        minus(temp1,tInnerY)\n                                        divide(temp1,itemHeight)\n                                        add(temp1,1)\n                                        set(temp2,curValue)\n                                        minus(temp2,temp1)\n                                        if(temp2>=0){\n                                            // set(temp2,0)\n                                            setTag(temp2)\n                                        }\n\n                                    }else{\n                                        if (tInnerY>tSelectedEndY) {      //\u4E0D\u5728\u9009\u62E9\u6846\u91CC\uFF0C\u5728\u9009\u62E9\u6846\u4E0B\u65B9\n                                            set(temp1,tInnerY)\n                                            minus(temp1,tSelectedEndY)\n                                            divide(temp1,itemHeight)\n                                            add(temp1,1)\n                                            set(temp2,curValue)\n                                            add(temp2,temp1)\n                                            set(temp1,itemCount)\n                                            minus(temp1,1)\n                                            if(temp2<=temp1){\n                                                // set(temp2,temp1)\n                                                setTag(temp2)\n                                            }\n\n                                        }\n                                    }\n                                }\n                            }\n                        }\n                    }\n                }else{\n\n                    var(isItemShow,0)                                     //\u9009\u9879\u662F\u5426\u5DF2\u5C55\u5F00\n                    set(isItemShow,\'this.otherAttrs.13\')\n                    if(isItemShow==1){\n                        if (tInnerX>=tStartX) {\n                            if(tInnerX <=tEndX){\n                                if (tInnerY>=tStartY) {\n                                    if (tInnerY<=tEndY) {                 //\u5728\u63A7\u4EF6\u91CC\n                                        if (tInnerY<tSelectedStartY) {    //\u4E0D\u5728\u9009\u62E9\u6846\u91CC\uFF0C\u5728\u9009\u62E9\u6846\u4E0A\u65B9\n                                            set(temp1,tSelectedStartY)\n                                            minus(temp1,tInnerY)\n                                            divide(temp1,itemHeight)\n                                            add(temp1,1)\n                                            set(temp2,curValue)\n                                            minus(temp2,temp1)\n                                            if(temp2>=0){\n                                                // set(temp2,0)\n                                                setTag(temp2)\n                                            }\n\n                                        }else{\n                                            if (tInnerY>tSelectedEndY) {  //\u4E0D\u5728\u9009\u62E9\u6846\u91CC\uFF0C\u5728\u9009\u62E9\u6846\u4E0B\u65B9\n                                                set(temp1,tInnerY)\n                                                minus(temp1,tSelectedEndY)\n                                                divide(temp1,itemHeight)\n                                                add(temp1,1)\n                                                set(temp2,curValue)\n                                                add(temp2,temp1)\n                                                set(temp1,itemCount)\n                                                minus(temp1,1)\n                                                if(temp2<=temp1){\n                                                    // set(temp2,temp1)\n                                                    setTag(temp2)\n                                                }\n\n                                            }else{                         //\u5728\u9009\u62E9\u6846\u91CC\n                                                                           //\u6536\u8D77\u9009\u9879\n                                                set(\'this.layers.0.hidden\',1)\n                                                set(\'this.layers.1.hidden\',1)\n                                                set(\'this.otherAttrs.13\',0)  \n                                            }\n                                        }\n                                    }\n                                }\n                            }\n                        }\n                    }else{\n                        if (tInnerX>=tStartX) {\n                            if(tInnerX <=tEndX){\n                                if (tInnerY>=tSelectedStartY) {\n                                    if (tInnerY<=tSelectedEndY) {          //\u5728\u9009\u62E9\u6846\u91CC\n                                        if(\'this.layers.len.hidden\'==1){   //\u4E0D\u80FD\u5C55\u5F00\u88AB\u9AD8\u4EAE\u7684\u9009\u62E9\u5668\n                                                                           //\u5C55\u5F00\u9009\u9879 \n                                            set(\'this.layers.0.hidden\',0)\n                                            set(\'this.layers.1.hidden\',0)\n                                            set(\'this.otherAttrs.13\',1)\n                                        }\n                                    }\n                                }\n                            }\n                        }\n                    }\n                }\n            }\n            set(\'this.otherAttrs.14\',0)                     //isMoved = 0\n        '), _defineProperty(_WidgetCommands$Selec, 'onMouseDown', '\n            var(tInnerY,0)\n            set(tInnerY,\'this.innerY\')\n            set(\'this.otherAttrs.15\',tInnerY)               //\u8BB0\u5F55\u9F20\u6807\u4E0A\u4E00\u5750\u6807y       \n        '), _defineProperty(_WidgetCommands$Selec, 'onMouseMove', '\n            var(curValue,0)                                 //tag\u503C\n            getTag(curValue) \n\n            var(itemCount,0)                                //\u5143\u7D20\u603B\u4E2A\u6570\n            set(itemCount,\'this.otherAttrs.2\')\n\n            var(itemShowCount,0)                            //\u5F85\u9009\u5143\u7D20\u5C55\u793A\u4E2A\u6570\uFF08\u5355\u8FB9\uFF09\n            set(itemShowCount,\'this.otherAttrs.3\')\n\n            var(itemHeight,0)                               //\u5F85\u9009\u5143\u7D20\u9AD8\u5EA6\n            set(itemHeight,\'this.otherAttrs.7\')\n\n            var(selectorHeight,0)                           //\u9009\u4E2D\u5143\u7D20\u9AD8\u5EA6\n            set(selectorHeight,\'this.otherAttrs.9\')\n\n            var(tInnerX,0)                                  //\u9F20\u6807\u5750\u6807x\n            set(tInnerX,\'this.innerX\')\n\n            var(tInnerY,0)                                  //\u9F20\u6807\u5750\u6807y\n            set(tInnerY,\'this.innerY\')\n\n            var(tLastInnerY,0)                              //\u9F20\u6807\u4E0A\u4E00\u6709\u6548\u5750\u6807y\n            set(tLastInnerY,\'this.otherAttrs.15\')\n\n            var(tStartX,0)                                  //\u63A7\u4EF6\u5DE6\u4E0A\u89D2\u5750\u6807x\n            // set(tStartX,\'this.otherAttrs.11\')   \n\n            var(tStartY,0)                                  //\u63A7\u4EF6\u5DE6\u4E0A\u89D2\u5750\u6807y\n            // set(tStartY,\'this.otherAttrs.12\')\n\n            var(tSelectedStartY,0)                          //\u9009\u62E9\u6846\u5DE6\u4E0A\u89D2\u5750\u6807y\n            set(tSelectedStartY,itemShowCount)            \n            multiply(tSelectedStartY,itemHeight)            \n            add(tSelectedStartY,tStartY)            \n\n            var(tWidth,0)                                   //\u63A7\u4EF6\u5BBD\u5EA6\n            set(tWidth,\'this.otherAttrs.4\')            \n\n            var(tHeight,0)                                  //\u63A7\u4EF6\u9AD8\u5EA6\n            set(tHeight,\'this.otherAttrs.5\')  \n\n            var(tEndX,0)                                    //\u63A7\u4EF6\u53F3\u4E0B\u89D2\u5750\u6807x\n            set(tEndX,tStartX)\n            add(tEndX,tWidth)           \n\n            var(tEndY,0)                                    //\u63A7\u4EF6\u53F3\u4E0B\u89D2\u5750\u6807y\n            set(tEndY,tStartY)\n            add(tEndY,tHeight)\n\n            var(tSelectedEndY,0)                            //\u9009\u62E9\u6846\u5DE6\u4E0A\u89D2\u5750\u6807y\n            set(tSelectedEndY,tSelectedStartY)                       \n            add(tSelectedEndY,selectorHeight)   \n\n            var(temp1,0)                                    //\u4E34\u65F6\u53D8\u91CF\n            var(temp2,0)\n\n            var(isItemShow,0)                                              //\u9009\u9879\u662F\u5426\u5DF2\u5C55\u5F00\n            set(isItemShow,\'this.otherAttrs.13\')\n            if(isItemShow==1){\n                if (tInnerX>=tStartX) {\n                    if(tInnerX <=tEndX){\n                        if (tInnerY>=tStartY) {\n                            if (tInnerY<=tEndY) {                           //\u5728\u63A7\u4EF6\u91CC              \n                                set(temp1,tLastInnerY)                      //\u9F20\u6807\u7EB5\u5411\u79FB\u52A8\u8DDD\u79BB\n                                minus(temp1,tInnerY)\n                                set(temp2,itemHeight)\n                                divide(temp2,2)                             //itemHeight\u7684\u4E00\u534A\n                                if(temp1>0){                                //\u79FB\u52A8\u65B9\u5411\u5411\u4E0A\n                                    if(temp1>=temp2){                       //\u8BA4\u4E3A\u79FB\u52A8\u6709\u6548\n                                        set(temp2,curValue)\n                                        add(temp2,1)\n                                        set(temp1,itemCount)\n                                        minus(temp1,1)\n                                        if(temp2<=temp1){\n                                            setTag(temp2)\n                                        }\n                                        set(\'this.otherAttrs.15\',tInnerY)\n                                        set(\'this.otherAttrs.14\',1)         //isMoved = 1\n                                    }\n                                }else{                                      //\u79FB\u52A8\u65B9\u5411\u5411\u4E0B\n                                    multiply(temp1,-1)\n                                    if(temp1>=temp2){                       //\u8BA4\u4E3A\u79FB\u52A8\u6709\u6548\n                                        set(temp2,curValue)\n                                        minus(temp2,1)\n                                        if(temp2>=0){\n                                            setTag(temp2)\n                                        }\n                                        set(\'this.otherAttrs.15\',tInnerY)\n                                        set(\'this.otherAttrs.14\',1)         //isMoved = 1\n                                    }\n                                }\n                            }\n                        }\n                    }\n                }\n            }\n        '), _defineProperty(_WidgetCommands$Selec, 'onKeyBoardLeft', '\n            var(tMaxHighLightNum,0)                          //\u63A7\u4EF6\u5185\u9AD8\u4EAE\u5757\u6570\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(okFlag,0)                                    //\u9AD8\u4EAE\u662F\u5426\u5DF2\u9009\u4E2D\n            set(okFlag,\'this.otherAttrs.10\')\n            var(len,0)                                       //\u56FE\u5C42\u603B\u6570\n            set(len,\'this.layers.length\')\n            minus(len,1)\n            //\u5224\u65AD\u662F\u5426\u542F\u7528\u9AD8\u4EAE\n            if (tMaxHighLightNum>0) {\n                if(okFlag==0){//\u63A7\u4EF6\u95F4\u9AD8\u4EAE\u9009\u62E9\n                    var(tHighLightNum,0)\n                    set(tHighLightNum,\'this.highLightNum\')\n                    if (tHighLightNum==1) {\n                        //hashighlight\n                        set(\'this.layers.len.hidden\',0)\n                    }else{\n                        set(\'this.layers.len.hidden\',1)\n                    }\n                }else{//\u9AD8\u4EAE\u5DF2\u9009\u62E9\uFF0C\u5DE6\u79FBtag\u503C\u51CF1\n                    var(curItem,0)\n                    set(curItem,\'this.otherAttrs.1\')\n                    minus(curItem,1)\n                    //curItem\u53D6\u6A21\n                    mod(curItem,itemCount)\n                    if(curItem<0){\n                        add(curItem,itemCount)\n                    }\n                    set(\'this.otherAttrs.1\',curItem)\n                    setTag(curItem)\n                }\n            }\n          \n        '), _defineProperty(_WidgetCommands$Selec, 'onKeyBoardRight', '\n            var(tMaxHighLightNum,0)                          //\u63A7\u4EF6\u5185\u9AD8\u4EAE\u5757\u6570\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            var(okFlag,0)                                    //\u9AD8\u4EAE\u662F\u5426\u5DF2\u9009\u4E2D\n            set(okFlag,\'this.otherAttrs.10\')\n            var(len,0)                                       //\u56FE\u5C42\u603B\u6570\n            set(len,\'this.layers.length\')\n            minus(len,1)\n            //\u5224\u65AD\u662F\u5426\u542F\u7528\u9AD8\u4EAE\n            if (tMaxHighLightNum>0) {\n                if(okFlag==0){//\u63A7\u4EF6\u95F4\u9AD8\u4EAE\u9009\u62E9\n                    var(tHighLightNum,0)\n                    set(tHighLightNum,\'this.highLightNum\')\n                    if (tHighLightNum==1) {\n                        //hashighlight\n                        set(\'this.layers.len.hidden\',0)\n                    }else{\n                        set(\'this.layers.len.hidden\',1)\n                    }\n                }else{//\u9AD8\u4EAE\u5DF2\u9009\u62E9\uFF0C\u53F3\u79FBtag\u503C\u52A01\n                    var(curItem,0)\n                    set(curItem,\'this.otherAttrs.1\')\n                    add(curItem,1)\n                    //curItem\u53D6\u6A21\n                    mod(curItem,itemCount)\n                    if(curItem<0){\n                        add(curItem,itemCount)\n                    }\n                    set(\'this.otherAttrs.1\',curItem)\n                    setTag(curItem)\n                }\n            }\n        '), _defineProperty(_WidgetCommands$Selec, 'onKeyBoardOK', '\n            var(okFlag,0)                                    //\u9AD8\u4EAE\u662F\u5426\u5DF2\u9009\u4E2D\n            set(okFlag,\'this.otherAttrs.10\')\n            if(okFlag==0){\n                setglobalvar(0,1)\n                set(\'this.otherAttrs.10\',1)\n                set(\'this.layers.0.hidden\',0)\n                set(\'this.layers.1.hidden\',0)\n                //\u9009\u9879\u5DF2\u5C55\u5F00\n                set(\'this.otherAttrs.13\',1)\n                \n            }else{\n                setglobalvar(0,0)\n                set(\'this.otherAttrs.10\',0)\n                set(\'this.layers.0.hidden\',1)\n                set(\'this.layers.1.hidden\',1)\n                //\u9009\u9879\u5DF2\u6536\u8D77\n                set(\'this.otherAttrs.13\',0)\n            }\n        '), _WidgetCommands$Selec);
     WidgetCommands['RotaryKnob'] = {
         onInitialize: '\n            var(offset,0)\n            set(offset,0)\n            var(len,0)\n            set(len,\'this.layers.length\')\n            var(tMaxHighLightNum,0)\n            set(tMaxHighLightNum,\'this.maxHighLightNum\')\n            if(tMaxHighLightNum>0){\n                minus(len,1)                                       //\u9AD8\u4EAE\u5C42\u521D\u59CB\u5316\u65F6\u4E0D\u663E\u793A\n            }\n            while(offset<len){\n                set(\'this.layers.offset.hidden\',0)\n                add(offset,1)\n            }\n        ',
         onMouseUp: '\n        ',
@@ -156,294 +157,3 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * mod(a,2)
  * set('this.layers.1.hidden',1)
  */
-
-// //old code num on tagchange
-// var(tTagValue,0)
-// getTag(tTagValue)
-// // print(tTagValue,'tTagValue')
-// var(tMinValue,0)
-// set(tMinValue,'this.minValue')
-// var(tMaxValue,0)
-// set(tMaxValue,'this.maxValue')
-// var(tFacCount,0)
-// var(tNumOfDigits,0)
-// var(tDecimalCount,0)
-// var(tMaxWidth,0)
-// set(tMaxWidth,'this.otherAttrs.6')
-// set(tFacCount,'this.otherAttrs.3')
-// var(tHasDot,0)
-// if (tFacCount>0) {
-//     set(tHasDot,1)
-// }
-// set(tNumOfDigits,'this.otherAttrs.4')
-// set(tDecimalCount,tNumOfDigits)
-// minus(tDecimalCount,tFacCount)
-// var(tAlign,0)
-// set(tAlign,'this.otherAttrs.7')
-// var(tFrontZero,0)
-// set(tFrontZero,'this.otherAttrs.1')
-// var(tSymbol,0)
-// set(tSymbol,'this.otherAttrs.2')
-// var(tTotalLayers,0)
-// set(tTotalLayers,'this.layers.length')
-// var(tHasNeg,0)
-// if (tTagValue<0) {
-//     if (tSymbol==1) {
-//         set(tHasNeg,1)
-//     }
-// }
-// var(tCurValue,0)
-// set(tCurValue,tTagValue)
-// if (tCurValue<0) {
-//     multiply(tCurValue,-1)
-// }
-// var(tCurValue2,0)
-// set(tCurValue2,tCurValue)
-// var(tRealNum,0)
-// set(tRealNum,1)
-// while(tCurValue>0){
-//     print(tCurValue,'tCurValue')
-//     divide(tCurValue,10)
-//     add(tRealNum,1)
-// }
-// var(tFrontNum,0)
-// var(tDecimalNum,0)
-// var(tOverflowNum,0)
-// if (tRealNum<=tFacCount) {
-//     set(tDecimalNum,0)
-//     if (tFrontZero==1) {
-//         set(tFrontNum,tDecimalCount)
-//     }else{
-//         set(tFrontNum,1)
-//     }
-// }else{
-//     if (tRealNum>tNumOfDigits) {
-//         set(tDecimalNum,tDecimalCount)
-//         set(tOverflowNum,tRealNum)
-//         minus(tOverflowNum,tNumOfDigits)
-//     }else{
-//         set(tDecimalNum,tRealNum)
-//         minus(tDecimalNum,tFacCount)
-//         if (tFrontZero==1) {
-//             set(tFrontNum,tDecimalCount)
-//             minus(tFrontNum,tDecimalNum)
-//         }else{
-//             set(tFrontNum,0)
-//         }
-//     }
-// }
-// // print(tFront,'tFront')
-// // print(tDecimalNum,'tDecimalNum')
-// // print(tOverflowNum,'tOverflowNum')
-// var(tCurTotalNum,0)
-// add(tCurTotalNum,tHasNeg)
-// add(tCurTotalNum,tFrontNum)
-// add(tCurTotalNum,tDecimalNum)
-// add(tCurTotalNum,tHasDot)
-// add(tCurTotalNum,tFacCount)
-// var(tLeftPadding,0)
-// set(tLeftPadding,tTotalLayers)
-// minus(tLeftPadding,tCurTotalNum)
-// var(tLeftPaddingPixel,0)
-// if (tLeftPadding>0) {
-//     if (tAlign==1) {
-//         set(tLeftPaddingPixel,tLeftPadding)
-//         multiply(tLeftPaddingPixel,tMaxWidth)
-//         divide(tLeftPaddingPixel,2)
-//     }else{
-//         if (tAlign==2) {
-//             set(tLeftPaddingPixel,tLeftPadding)
-//             multiply(tLeftPaddingPixel,tMaxWidth)
-//         }
-//     }
-// }
-// var(tCurX,0)
-// var(tLayerIdx,0)
-// var(tDotWidth,0)
-// set(tDotWidth,tMaxWidth)
-// divide(tDotWidth,2)
-// if (tDotWidth==0) {
-//     set(tDotWidth,1)
-// }
-// set(tCurX,tLeftPaddingPixel)
-// if (tHasNeg==1) {
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tMaxWidth)
-//     print(tLayerIde,'in tHasNeg')
-//     set('this.layers.tLayerIdx.subLayers.font.text',45)
-//     add(tLayerIdx,1)
-//     add(tCurX,tMaxWidth)
-// }
-// while(a>0){
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tMaxWidth)
-//     print(tLayerIdx,'in while a>0')
-//     set('this.layers.tLayerIdx.subLayers.font.text',48)
-//     add(tLayerIdx,1)
-//     add(tCurX,tMaxWidth)
-//     minus(tFrontNum,1)
-// }
-// var(tDivider,0)
-// set(tDivider,1)
-// set(tRealNum,tDecimalNum)
-// add(tRealNum,tFacCount)
-// while(tRealNum>0){
-//     multiply(tDivider,10)
-//     minus(tRealNum,1)
-// }
-// mod(tCurValue2,tDivider)
-// var(tCurValue3,0)
-// while(tDecimalNum>0){
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tMaxWidth)
-//     set(tCurValue3,tCurValue2)
-//     divide(tDivider,10)
-//     mod(tCurValue2,tDivider)
-//     divide(tCurValue3,tDivider)
-//     add(tCurValue3,48)
-//     print(tLayerIdx,'in while tDecimalNum>0')
-//     print(tCurValue,'tCurValue')
-//     set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
-//     add(tLayerIdx,1)
-//     add(tCurX,tMaxWidth)
-//     minus(tDecimalNum,1)
-// }
-// if (tHasDot==1) {
-//     set('this.layers.tLayerIdx.x',tCurX)
-//     set('this.layers.tLayerIdx.width',tDotWidth)
-//     set('this.layers.tLayerIdx.subLayers.font.text',46)
-//     add(tLayerIdx,1)
-//     add(tCurX,tDotWidth)
-//     while(tFacCount>0){
-//         set('this.layers.tLayerIdx.x',tCurX)
-//         set('this.layers.tLayerIdx.width',tMaxWidth)
-//         set(tCurValue3,tCurValue2)
-//         divide(tDivider,10)
-//         mod(tCurValue2,tDivider)
-//         divide(tCurValue3,tDivider)
-//         add(tCurValue3,48)
-//         print(tLayerIdx,'in hasDot')
-//         set('this.layers.tLayerIdx.subLayers.font.text',tCurValue3)
-//         add(tLayerIdx,1)
-//         add(tCurX,tMaxWidth)
-//         minus(tFacCount,1)
-//     }
-// }
-//
-// checkalarm(0)
-// set('this.oldValue',tTagValue)
-
-
-//buttongroup ontagchange
-// var(a,0)
-// var(b,0)
-// var(c,0)
-// var(tMaxHighLightNum,0)
-// set(tMaxHighLightNum,'this.maxHighLightNum')
-// var(tSingleButtonLayers,0)
-// if (tMaxHighLightNum>0) {
-//     set(tSingleButtonLayers,3)
-// }else{
-//     set(tSingleButtonLayers,2)
-// }
-// set(a,'this.layers.length')
-// set(c,a)
-// divide(c,tSingleButtonLayers)
-// while(a>0){
-//     if (tMaxHighLightNum>0) {
-//         minus(a,1)
-//         minus(a,1)
-//         set('this.layers.a.hidden',0)
-//         minus(a,1)
-//         set('this.layers.a.hidden',1)
-//     }else{
-//         minus(a,1)
-//         set('this.layers.a.hidden',0)
-//         minus(a,1)
-//         set('this.layers.a.hidden',1)
-//     }
-//
-// }
-// getTag(a)
-// if(a>=0){
-//     if(c>a){
-//         multiply(a,tSingleButtonLayers)
-//         set('this.layers.a.hidden',0)
-//         add(a,1)
-//         set('this.layers.a.hidden',1)
-//     }
-// }
-
-
-//button group onkeyboardleft
-// var(tMaxHighLightNum,0)
-// set(tMaxHighLightNum,'this.maxHighLightNum')
-// if (tMaxHighLightNum>0) {
-//     var(tHighLightNum,0)
-//     set(tHighLightNum,'this.highLightNum')
-//
-//     if (tHighLightNum>0) {
-//         minus(tHighLightNum,1)
-//         multiply(tHighLightNum,3)
-//         add(tHighLightNum,2)
-//
-//         var(tTotalLayers,0)
-//         set(tTotalLayers,'this.layers.length')
-//         if (tHighLightNum < tTotalLayers) {
-//             //valid
-//             //reset
-//             var(tCurLayer,0)
-//             while(tMaxHighLightNum>0){
-//                 minus(tMaxHighLightNum,1)
-//                 set(tCurLayer,tMaxHighLightNum)
-//                 multiply(tCurLayer,3)
-//                 add(tCurLayer,2)
-//                 set('this.layers.tCurLayer.hidden',1)
-//             }
-//             //set target highlight
-//             set('this.layers.tHighLightNum.hidden',0)
-//         }
-//     }else{
-//         if(tHighLightNum==0){
-//             add(tHighLightNum,2)
-//             set('this.layers.tHighLightNum.hidden',1)
-//         }
-//     }
-// }
-
-//buttongroup onkeyboard right
-// var(tMaxHighLightNum,0)
-// set(tMaxHighLightNum,'this.maxHighLightNum')
-// if (tMaxHighLightNum>0) {
-//     var(tHighLightNum,0)
-//     set(tHighLightNum,'this.highLightNum')
-//     if (tHighLightNum>0) {
-//         minus(tHighLightNum,1)
-//         multiply(tHighLightNum,3)
-//         add(tHighLightNum,2)
-//
-//         var(tTotalLayers,0)
-//         set(tTotalLayers,'this.layers.length')
-//         if (tHighLightNum  < tTotalLayers) {
-//             //valid
-//             //reset
-//             var(tCurLayer,0)
-//             while(tMaxHighLightNum>0){
-//                 minus(tMaxHighLightNum,1)
-//                 set(tCurLayer,tMaxHighLightNum)
-//                 multiply(tCurLayer,3)
-//                 add(tCurLayer,2)
-//                 set('this.layers.tCurLayer.hidden',1)
-//             }
-//             //set target highlight
-//             set('this.layers.tHighLightNum.hidden',0)
-//         }
-//     }else{
-//         if(tHighLightNum==0){
-//             var(lastHighLight,0)
-//             set(lastHighLight,'this.layers.length')
-//             minus(lastHighLight,1)
-//             set('this.layers.lastHighLight.hidden',1)
-//         }
-//     }
-// }
