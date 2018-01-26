@@ -1073,12 +1073,15 @@
         var layers = []
         var d = 5
         //hue layer
-        var hLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.8*h)
+        var hLayer = new Layer(w*0.8+d*2,d,0.1*w-d*2,0.8*h)
         hLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc)
+        //alpha layer
+        var alphaLayer = new Layer(0.9*w+d,d,0.1*w-d*2,0.8*h)
+        alphaLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
         //saturation volume layer
         var svLayer = new Layer(d,d,0.8*w,0.8*h)
-        svLayer.subLayers.image = new TextureSubLayer(slices[1].imgSrc)
-        svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[1].color))
+        svLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc)
+        svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[2].color))
         //preview layer
         var pLayer = new Layer(d,0.8*h+d*2,w-d*2,0.2*h-d*3)
         pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
@@ -1088,19 +1091,25 @@
         bgLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255'))
 
         //hue indicator
-        var hIndicatorLayer = new Layer(w*0.8+d*2,d,0.2*w-d*3,0.01*h)
+        var hIndicatorLayer = new Layer(w*0.8+d*2,d,0.1*w-2*d,0.01*h)
         hIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255)'))
+
+        //alpha indicator
+        var alphaIndicatorLayer = new Layer(0.9*w+d,d,0.1*w-2*d,0.01*h)
+        alphaIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255)'))
 
         //picker indicator
         var minD = Math.min(w,h)
         var pIndicatorLayer = new Layer(d,d,0.02*minD,0.02*minD)
-        pIndicatorLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc)
+        pIndicatorLayer.subLayers.image = new TextureSubLayer(slices[3].imgSrc)
 
         layers.push(bgLayer)
         layers.push(hLayer)
+        layers.push(alphaLayer)
         layers.push(svLayer)
         layers.push(pLayer)
         layers.push(hIndicatorLayer)
+        layers.push(alphaIndicatorLayer)
         layers.push(pIndicatorLayer)
         this.subType = 'ColorPicker'
         Widget.call(this,x,y,w,h,layers)

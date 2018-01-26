@@ -118,12 +118,56 @@ module.exports =   React.createClass({
         this.inputKeyboard.page = keyboardData;
         this.inputKeyboard.widget = keyboardData.canvasList[0].subCanvasList[0].widgetList[0];
 
+        //initialize return button
+        var sysCanvas = keyboardData.canvasList[0]
+        var minReturnButtonSize = Math.ceil(0.05*Math.min(sysCanvas.w,sysCanvas.h))
+
+        var returnButtonImgSrc = '/public/images/returnButton/returnIcon.png'
+        var returnButtonData = {
+                type:'widget',
+                subType:'MyReturnButton',
+                buttonModeId:'0',
+                info :{
+                    width:minReturnButtonSize,
+                    height: minReturnButtonSize,
+                    left: sysCanvas.w-minReturnButtonSize, top: 0,
+                    originX: 'center', originY: 'center',
+                    arrange:true,
+
+                    text:'',
+                    fontFamily:"宋体",
+                    fontSize:20,
+                    fontColor:'rgba(0,0,0,1)',
+                    fontBold:"100",
+                    fontItalic:'',
+                },
+                texList:[{
+                    name:'按钮纹理',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(255,0,0,0)',
+                        imgSrc:returnButtonImgSrc,
+                        name:'按下前'
+                    },{
+                        color:'rgba(0,255,0,0)',
+                        imgSrc:returnButtonImgSrc,
+                        name:'按下后'
+                    },{
+                        color:'rgba(244,244,244,0.3)',
+                        imgSrc:'',
+                        name:'高亮'
+                    }]
+                }]
+            }
+
 
         //handle system widgets
         var systemWidgetResources = []
         this.systemWidgetPages = (data.systemWidgets||[]).map(function (sw,i) {
             var pageData = _.cloneDeep(keyboardData)
             pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw
+            //push return button
+            pageData.canvasList[0].subCanvasList[0].widgetList[1] = _.cloneDeep(returnButtonData)
             data.pageList.push(pageData)
             var swRes = [];
             (sw.layers||[]).forEach(function (layer) {
@@ -135,6 +179,7 @@ module.exports =   React.createClass({
         systemWidgetResources = systemWidgetResources.map(function (r) {
             return {id:this.getImageName(r),name:this.getImageName(r), type:'image/png',src:r}
         }.bind(this))
+        systemWidgetResources.push({id:this.getImageName(returnButtonImgSrc),name:this.getImageName(returnButtonImgSrc), type:'image/png',src:returnButtonImgSrc})
         console.log('systemWidgetResources',systemWidgetResources)
 
 
@@ -2783,6 +2828,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyInputKeyboard':
                 this.paintInputKeyboard(curX, curY, widget, options,cb,offctx);
+                break;
+            case 'MyReturnButton':
+                this.paintButton(curX, curY, widget, options,cb,offctx);
                 break;
             case 'MyAnimation':
                 this.paintAnimation(curX, curY, widget, options,cb,offctx);
@@ -6113,6 +6161,7 @@ module.exports =   React.createClass({
         var needRedraw = false;
         switch (widget.subType) {
             case 'MyButton':
+            case 'MyReturnButton':
                 if (widget.buttonModeId == '0') {
                     //normal
                 } else if (widget.buttonModeId == '1') {
@@ -6579,6 +6628,7 @@ module.exports =   React.createClass({
             case 'widget':
                 switch (elem.subType) {
                     case 'MyButton':
+                    case 'MyReturnButton':
                         elem.mouseState = mouseState;
                         needRedraw = true;
                         break;
@@ -6803,11 +6853,24 @@ module.exports =   React.createClass({
                     } else if (param2Value < -2){
                         if (this.systemWidgetPages[param2Value+3]){
                             var curWidget = this.systemWidgetPages[param2Value+3].canvasList[0].subCanvasList[0].widgetList[0]
+                            var returnButton = this.systemWidgetPages[param2Value+3].canvasList[0].subCanvasList[0].widgetList[1]
                             //otherAttrs 0 returnPageId
                             //otherAttrs 1 initValue
-                            curWidget.otherAttrs[0] = curPageTag.value
-                            curWidget.otherAttrs[1] = Number(this.getParamValue(param1))||0
+                            // curWidget.otherAttrs[0] = curPageTag.value
+                            // curWidget.otherAttrs[1] = Number(this.getParamValue(param1))||0
                             curWidget.tag = param1.tag
+                            //set returnButton
+                            returnButton.actions = [
+                                {
+                                    title:'return',
+                                    trigger:'Release',
+                                    commands:[
+                                        {
+                                            cmd:[{name:'GOTO',symbol:'->'},{tag:'',value:''},{tag:'',value:curPageTag.value||1}]
+                                        }
+                                    ]
+                                }
+                            ]
                             this.setTagByTag(curPageTag, this.originalPageNum-param2Value-1);
                             this.draw(null, {
                                 updatedTagName: project.tag

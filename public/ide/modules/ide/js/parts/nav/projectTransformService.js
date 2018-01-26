@@ -754,7 +754,14 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
      * 转换系统控件
      */
     function transSysWidget(targetProject){
-        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
+        var minSize = Math.min(targetProject.size.width,targetProject.size.height)
+        minSize = Math.ceil(0.05*minSize)
+        var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,targetProject.size.width-2*minSize,targetProject.size.height-2*minSize,[
+            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},
+            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
+            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
+            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}
+            ])
         colorPicker = colorPicker.toObject()
         colorPicker.generalType = 'ColorPicker'
         colorPicker.type = 'widget'

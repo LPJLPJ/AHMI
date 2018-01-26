@@ -3354,6 +3354,7 @@
             var(tH,0)
             var(tS,0)
             var(tV,0)
+            
             //get Last HSV
             set(tH,'this.otherAttrs.1')
             set(tS,'this.otherAttrs.2')
@@ -3361,6 +3362,7 @@
             var(tR,0)
             var(tG,0)
             var(tB,0)
+            var(tA,0)
             var(tI,0)
             var(tF,0)
             var(tP,0)
@@ -3378,10 +3380,10 @@
             var(tPickerH,0)
             var(tPickerRightX,0)
             var(tPickerBottomY,0)
-            set(tPickerX,'this.layers.2.x')
-            set(tPickerY,'this.layers.2.y')
-            set(tPickerW,'this.layers.2.width')
-            set(tPickerH,'this.layers.2.height')
+            set(tPickerX,'this.layers.3.x')
+            set(tPickerY,'this.layers.3.y')
+            set(tPickerW,'this.layers.3.width')
+            set(tPickerH,'this.layers.3.height')
             set(tPickerRightX,tPickerX)
             add(tPickerRightX,tPickerW)
             set(tPickerBottomY,tPickerY)
@@ -3395,8 +3397,8 @@
                             //otherAttr 4 hit area 0:none 1:hue 2:picker
                             set('this.otherAttrs.4',1)
                             //move picker indicator
-                            set('this.layers.5.x',tInnerX)
-                            set('this.layers.5.y',tInnerY)
+                            set('this.layers.7.x',tInnerX)
+                            set('this.layers.7.y',tInnerY)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3438,7 +3440,7 @@
                             set('this.otherAttrs.4',2)
                             //move hue indicator
                             // set('this.layers.4.x',tInnerX)
-                            set('this.layers.4.y',tInnerY)
+                            set('this.layers.5.y',tInnerY)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)
@@ -3524,12 +3526,47 @@
                                 
                             }
                             //set picker bg color
-                            set('this.layers.2.subLayers.color.r',tR)
-                            set('this.layers.2.subLayers.color.g',tG)
-                            set('this.layers.2.subLayers.color.b',tB)
+                            set('this.layers.3.subLayers.color.r',tR)
+                            set('this.layers.3.subLayers.color.g',tG)
+                            set('this.layers.3.subLayers.color.b',tB)
                             //restore tS,tV
                             set(tS,tSBack)
                             set(tV,tVBack)
+                        }
+                    }
+                }
+            }
+            
+            //alpha
+            var(tAlphaX,0)
+            var(tAlphaY,0)
+            var(tAlphaRightX,0)
+            var(tAlphaBottomY,0)
+            var(tAlphaW,0)
+            var(tAlphaH,0)
+            set(tAlphaX,'this.layers.2.x')
+            set(tAlphaY,'this.layers.2.y')
+            set(tAlphaW,'this.layers.2.width')
+            set(tAlphaH,'this.layers.2.height')
+            set(tAlphaRightX,tAlphaX)
+            add(tAlphaRightX,tAlphaW)
+            set(tAlphaBottomY,tAlphaY)
+            add(tAlphaBottomY,tAlphaH)
+            if(tInnerX > tAlphaX){
+                if(tInnerX < tAlphaRightX){
+                    if(tInnerY > tAlphaY){
+                        if(tInnerY < tAlphaBottomY){
+                            // hit alpha
+                            set(tChangeFlag,1)
+                            set('this.otherAttrs.4',3)
+                            //change alpha
+                            set('this.layers.6.y',tInnerY)
+                            set(tA,tInnerY)
+                            minus(tA,tAlphaY)
+                            multiply(tA,255)
+                            divide(tA,tAlphaH)
+                            set('this.layers.4.subLayers.color.a',tA)
+                            
                         }
                     }
                 }
@@ -3611,9 +3648,9 @@
                     
                 }
                
-                set('this.layers.3.subLayers.color.r',tR)
-                set('this.layers.3.subLayers.color.g',tG)
-                set('this.layers.3.subLayers.color.b',tB)
+                set('this.layers.4.subLayers.color.r',tR)
+                set('this.layers.4.subLayers.color.g',tG)
+                set('this.layers.4.subLayers.color.b',tB)
                 
                 var(tResult,0)
                 set(tResult,tR)
@@ -3621,6 +3658,8 @@
                 add(tResult,tG)
                 multiply(tResult,1000)
                 add(tResult,tB)
+                multiply(tResult,1000)
+                add(tResult,tA)
                 setTag(tResult)
                 
                 print('r',tR)
@@ -3638,6 +3677,7 @@
             var(tH,0)
             var(tS,0)
             var(tV,0)
+            
             //get Last HSV
             set(tH,'this.otherAttrs.1')
             set(tS,'this.otherAttrs.2')
@@ -3645,6 +3685,7 @@
             var(tR,0)
             var(tG,0)
             var(tB,0)
+            var(tA,0)
             var(tI,0)
             var(tF,0)
             var(tP,0)
@@ -3662,10 +3703,10 @@
             var(tPickerH,0)
             var(tPickerRightX,0)
             var(tPickerBottomY,0)
-            set(tPickerX,'this.layers.2.x')
-            set(tPickerY,'this.layers.2.y')
-            set(tPickerW,'this.layers.2.width')
-            set(tPickerH,'this.layers.2.height')
+            set(tPickerX,'this.layers.3.x')
+            set(tPickerY,'this.layers.3.y')
+            set(tPickerW,'this.layers.3.width')
+            set(tPickerH,'this.layers.3.height')
             set(tPickerRightX,tPickerX)
             add(tPickerRightX,tPickerW)
             set(tPickerBottomY,tPickerY)
@@ -3677,9 +3718,10 @@
                             set(tChangeFlag,1)
                             //hit picker area
                             //otherAttr 4 hit area 0:none 1:hue 2:picker
+                            set('this.otherAttrs.4',1)
                             //move picker indicator
-                            set('this.layers.5.x',tInnerX)
-                            set('this.layers.5.y',tInnerY)
+                            set('this.layers.7.x',tInnerX)
+                            set('this.layers.7.y',tInnerY)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3718,7 +3760,10 @@
                     if(tInnerY>=tHueY){
                         if(tInnerY<tHueBottomY){
                             set(tChangeFlag,1)
-                            set('this.layers.4.y',tInnerY)
+                            set('this.otherAttrs.4',2)
+                            //move hue indicator
+                            // set('this.layers.4.x',tInnerX)
+                            set('this.layers.5.y',tInnerY)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)
@@ -3804,12 +3849,47 @@
                                 
                             }
                             //set picker bg color
-                            set('this.layers.2.subLayers.color.r',tR)
-                            set('this.layers.2.subLayers.color.g',tG)
-                            set('this.layers.2.subLayers.color.b',tB)
+                            set('this.layers.3.subLayers.color.r',tR)
+                            set('this.layers.3.subLayers.color.g',tG)
+                            set('this.layers.3.subLayers.color.b',tB)
                             //restore tS,tV
                             set(tS,tSBack)
                             set(tV,tVBack)
+                        }
+                    }
+                }
+            }
+            
+            //alpha
+            var(tAlphaX,0)
+            var(tAlphaY,0)
+            var(tAlphaRightX,0)
+            var(tAlphaBottomY,0)
+            var(tAlphaW,0)
+            var(tAlphaH,0)
+            set(tAlphaX,'this.layers.2.x')
+            set(tAlphaY,'this.layers.2.y')
+            set(tAlphaW,'this.layers.2.width')
+            set(tAlphaH,'this.layers.2.height')
+            set(tAlphaRightX,tAlphaX)
+            add(tAlphaRightX,tAlphaW)
+            set(tAlphaBottomY,tAlphaY)
+            add(tAlphaBottomY,tAlphaH)
+            if(tInnerX > tAlphaX){
+                if(tInnerX < tAlphaRightX){
+                    if(tInnerY > tAlphaY){
+                        if(tInnerY < tAlphaBottomY){
+                            // hit alpha
+                            set(tChangeFlag,1)
+                            set('this.otherAttrs.4',3)
+                            //change alpha
+                            set('this.layers.6.y',tInnerY)
+                            set(tA,tInnerY)
+                            minus(tA,tAlphaY)
+                            multiply(tA,255)
+                            divide(tA,tAlphaH)
+                            set('this.layers.4.subLayers.color.a',tA)
+                            
                         }
                     }
                 }
@@ -3891,9 +3971,9 @@
                     
                 }
                
-                set('this.layers.3.subLayers.color.r',tR)
-                set('this.layers.3.subLayers.color.g',tG)
-                set('this.layers.3.subLayers.color.b',tB)
+                set('this.layers.4.subLayers.color.r',tR)
+                set('this.layers.4.subLayers.color.g',tG)
+                set('this.layers.4.subLayers.color.b',tB)
                 
                 var(tResult,0)
                 set(tResult,tR)
@@ -3901,6 +3981,8 @@
                 add(tResult,tG)
                 multiply(tResult,1000)
                 add(tResult,tB)
+                multiply(tResult,1000)
+                add(tResult,tA)
                 setTag(tResult)
                 
                 print('r',tR)
