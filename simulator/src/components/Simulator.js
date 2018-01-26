@@ -135,7 +135,7 @@ module.exports =   React.createClass({
         })
         systemWidgetResources = systemWidgetResources.map(function (r) {
             return {id:this.getImageName(r),name:this.getImageName(r), type:'image/png',src:r}
-        }.bind(this))
+        }.bind(this));
         console.log('systemWidgetResources',systemWidgetResources)
 
 

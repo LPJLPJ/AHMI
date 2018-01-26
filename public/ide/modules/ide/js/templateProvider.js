@@ -1209,11 +1209,11 @@ ideServices
 
                 buttonSize:Math.floor(scale*80),//左右按钮的大小
 
-                titleFontSize:32,               //年月字体
+                titleFontSize:Math.floor(scale*32),               //年月字体
                 titleFontFamily:'Arial',
                 titleFontColor:'#5E5E5E',
 
-                itemFontSize:20,                //日字体
+                itemFontSize:Math.floor(scale*20),                //日字体
                 itemFontFamily:'Arial',
                 itemFontColor:'#797979',
             };
@@ -1250,7 +1250,7 @@ ideServices
                     name:'日',
                     slices:[{
                         color:'rgba(0,0,0,0)',
-                        imgSrc:'/public/images/colorPicker/itemBack.png',
+                        imgSrc:'/public/images/datePicker/itemBack.png',
                         name:'日'
                     }]
                 },

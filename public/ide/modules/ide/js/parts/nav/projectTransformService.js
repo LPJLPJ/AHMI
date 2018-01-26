@@ -758,8 +758,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         var datePicker = GenDatePicker();
 
         targetProject.systemWidgets = [];
+        console.log('colorPicker',colorPicker);
+        console.log('datePicker',datePicker);
         //push system widgets
-        targetProject.systemWidgets.push(colorPicker)
+        targetProject.systemWidgets.push(colorPicker);
+        targetProject.systemWidgets.push(datePicker);
     }
 
     /**
@@ -777,7 +780,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
     /**
      *生成日期选择器
      */
-    function GenDatePicker(width,height){
+    function GenDatePicker(){
         var datePickerDate = TemplateProvider.getSystemDatePicker();
         var info = datePickerDate.info;
         var texList = datePickerDate.texList||[];
@@ -790,7 +793,19 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         });
 
         var datePicker = new WidgetModel.models.DatePicker(info.left,info.top,info.width,info.height,info,slices);
-        console.log(datePicker,'datePicker');
+
+        datePicker = datePicker.toObject();
+        datePicker.generalType = 'DatePicker';
+        datePicker.type = 'widget';
+        datePicker.subType = 'general';
+
+        //other attrs
+        datePicker.otherAttrs[0] = 2018;  //year
+        datePicker.otherAttrs[1] = 1;     //month
+        datePicker.otherAttrs[2] = 3 ;     //日图层在所有图层中的起始坐标
+        datePicker.otherAttrs[3] = 35;    //所有的日图层个数。
+        datePicker.otherAttrs[4] = info.buttonSize;  //按钮大小
+        return datePicker;
     }
 
     /**
