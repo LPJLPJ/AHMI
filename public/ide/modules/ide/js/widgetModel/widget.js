@@ -1115,8 +1115,56 @@
         Widget.call(this,x,y,w,h,layers)
     }
 
-    ColorPicker.prototype = Object.create(Widget.prototype)
-    ColorPicker.prototype.constructor = ColorPicker
+    ColorPicker.prototype = Object.create(Widget.prototype);
+    ColorPicker.prototype.constructor = ColorPicker;
+
+    //日期选择器
+    function DatePicker(x,y,w,h,opts,slices){
+        var layers = [];
+        var fontStyle={};
+        var bgLayer,yLayer,mLayer,dLayer,highLight;
+
+        //background image
+        bgLayer = new Layer(0,0,w,h);
+        bgLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+        layers.push(bgLayer);
+
+        //year text
+        yLayer = new Layer(opts.yearX,opts.yearY,opts.yearW,opts.yearH);
+        fontStyle['font-size'] = opts.titleFontSize;
+        fontStyle['font-family'] = opts.titleFontFamily;
+        fontStyle['font-color'] = opts.titleFontColor;
+        yLayer.subLayers.font = new FontSubLayer('2018',fontStyle);
+        layers.push(yLayer);
+
+        //month text
+        mLayer = new Layer(opts.monthX,opts.monthY,opts.monthW,opts.monthH);
+        mLayer.subLayers.font = new FontSubLayer('1',fontStyle);
+        layers.push(mLayer);
+
+        //day image and text
+        var initX = opts.paddingX,
+            initY = opts.paddingY;
+        for(var j=0;j<5;j++){
+            for(var i=0;i<7;i++){
+                dLayer = new Layer(initX,initY,opts.dayW,opts.dayH);
+                fontStyle = {};
+                fontStyle['font-size'] = opts.itemFontSize;
+                fontStyle['font-family'] = opts.itemFontFamily;
+                fontStyle['font-color'] = opts.itemFontColor;
+                dLayer.subLayers.image = new TextureSubLayer(slices[3].imgSrc);
+                dLayer.subLayers.font = new FontSubLayer(String(i+1),fontStyle);
+                layers.push(dLayer);
+                initX+=opts.dayW;
+            }
+            initX = opts.paddingX;
+            initY += opts.dayH;
+        }
+
+        Widget.call(this,x,y,w,h,layers)
+    }
+    DatePicker.prototype = Object.create(Widget.prototype);
+    DatePicker.prototype.constructor = DatePicker;
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -1459,6 +1507,7 @@
     WidgetModel.models.Selector = Selector;
     WidgetModel.models.RotaryKnob = RotaryKnob;
     WidgetModel.models.ColorPicker = ColorPicker;
+    WidgetModel.models.DatePicker = DatePicker;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

@@ -2,18 +2,13 @@
  * Created by shenaolin on 16/3/12.
  */
 ideServices
-    .service('TemplateProvider', ['Type','CanvasService','Preference','FontMesureService',function (Type,CanvasService,Preference,FontMesureService) {
-
-
-        function Transition(name,show,duration){
-            this.name=name||'';
-            this.show=show||'';
-            this.duration=duration;
-        }
-
-        var defaultTransition=new Transition('NO_TRANSITION','无动画',0);
+    .service('TemplateProvider', ['Type','Preference','FontMesureService','AnimationService',function (Type,Preference,FontMesureService,AnimationService) {
 
         var project,
+            projectSize = {
+                width:800,
+                height:480
+            },
             defaultButton={
                 info :{
                     width:100,
@@ -362,6 +357,15 @@ ideServices
             },
             defaultButtonGroup={};
 
+        //设置当前工程尺寸
+        this.setProjectSize = function(currentSize){
+            if(currentSize&&currentSize.height&&currentSize.width){
+                projectSize.width = currentSize.width;
+                projectSize.height = currentSize.height;
+            }
+        };
+
+        //设置控件的默认模板，在使用模板模式时使用
         this.setDefaultWidget=function(widget){
             if(widget.defaultButton){
                 defaultButton=widget.defaultButton;
@@ -383,18 +387,16 @@ ideServices
             }
         };
 
-        this.saveProjectFromGlobal= function (_project) {
-            project=_project;
-            
-        }
+        // this.saveProjectFromGlobal= function (_project) {
+        //     project=_project;
+        // };
 
+        //获取默认页面
         this.getDefaultPage = function () {
             return this.getRandomPage();
         };
-        /**
-         * 获得随机页面
-         * @returns {{url, id, proJsonStr, layers}}
-         */
+
+        //获取随机页面
         this.getRandomPage = function () {
             var r = 54;
             var g = 71;
@@ -414,17 +416,19 @@ ideServices
                 backgroundColor:'rgb(' + r + ',' + g + ',' + b + ')',
                 backgroundImage:'',
                 currentFabLayer:null,
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
 
         };
 
-
+        //图层
         this.getDefaultLayer = function () {
-            var pageNode=CanvasService.getPageNode();
+            // var pageNode=CanvasService.getPageNode();
             var info = {
-                width:Math.round((pageNode.getWidth()/pageNode.getZoom()) / 2),
-                height: Math.round((pageNode.getHeight()/pageNode.getZoom()) / 2),
+                // width:Math.round((pageNode.getWidth()/pageNode.getZoom()) / 2),
+                // height: Math.round((pageNode.getHeight()/pageNode.getZoom()) / 2),
+                width:Math.round(projectSize.width/2),
+                height:Math.round(projectSize.height/2),
 
                 left: 0, top: 0,
                 originX: 'center', originY: 'center'
@@ -441,15 +445,16 @@ ideServices
                 expand:true,
                 showSubLayer:subLayer,
                 zIndex:0,
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
+        //子图层
         this.getDefaultSubLayer = function () {
-            var pageNode=CanvasService.getPageNode();
+            // var pageNode=CanvasService.getPageNode();
             var info = {
-                width:Math.round(pageNode.getWidth()/2),
-                height:Math.round(pageNode.getHeight()/2),
+                width:Math.round(projectSize.width/2),
+                height:Math.round(projectSize.height/2),
                 scrollVEnabled:false,
                 scrollHEnabled:false,
             };
@@ -466,30 +471,13 @@ ideServices
             }
         };
 
-        this.getImageSubLayer = function () {
-            // var jsonStr = '{"objects":[],"background":"rgba(255,255,255,1.0)","backgroundImage":{"type":"image","originX":"left","originY":"top","left":0,"top":0,"width":500,"height":284,"fill":"rgb(0,0,0)","strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","globalCompositeOperation":"source-over","src":"http://localhost:63342/AHMIDesigner/modules/ide/demo3.jpg","filters":[],"crossOrigin":"","alignX":"none","alignY":"none","meetOrSlice":"meet"}}';
-            var backgroundImage=Preference.getRandomImageURL();
-            return {
-                url: backgroundImage,
-                id: Math.random().toString(36).substr(2),
-                // proJsonStr: jsonStr,
-                widgets: [],
-                name: 'NewSubCanvas',
-                type: Type.MySubLayer,
-                width: 0,
-                height: 0,
-                expand:true,
-                backgroundImage:backgroundImage
-
-            }
-        };
-
+        //控件
         this.getDefaultWidget = function () {
             return this.getDefaultSlide();
         };
 
+        //图层控件
         this.getDefaultSlide = function () {
-            var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
                 width:200, height: 150,
                 left: 0, top: 0,
@@ -521,9 +509,9 @@ ideServices
                 }]
 
             }
-        }
+        };
 
-
+        //按钮控件
         this.getDefaultButton= function () {
             var info = _.cloneDeep(defaultButton.info);
             var texList = _.cloneDeep(defaultButton.texList);
@@ -542,6 +530,7 @@ ideServices
             }
         };
 
+        //通用控件
         this.getDefaultGeneral= function () {
             var info = _.cloneDeep(defaultGeneral.info);
             var texList = _.cloneDeep(defaultGeneral.texList);
@@ -559,11 +548,14 @@ ideServices
                 texList:texList
             }
         };
+
+        //旋钮控件
         this.getDefaultKnob=function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:100,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:360,
@@ -584,9 +576,9 @@ ideServices
 
             }
         };
-        this.getDefaultTextArea = function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
 
+        //文本控件
+        this.getDefaultTextArea = function(){
             var text='文本';
             var fontSize=15;
             var info={
@@ -626,11 +618,13 @@ ideServices
             }
         };
 
+        //按钮组控件
         this.getDefaultButtonGroup= function () {
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:160,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 interval:0,//间距
@@ -684,8 +678,9 @@ ideServices
                     }]
                 }]
             }
-        }
+        };
 
+        //按钮纹理，用于按钮组
         this.getDefaultButtonTex= function () {
             return{
                 name:'按钮纹理',
@@ -700,8 +695,9 @@ ideServices
                     name:'按下后'
                 }]
             }
-        }
+        };
 
+        //进度条控件
         this.getDefaultProgress= function () {
             var info = _.cloneDeep(defaultProgress.info);
             var texList = _.cloneDeep(defaultProgress.texList);
@@ -721,7 +717,7 @@ ideServices
             }
         };
 
-
+        //仪表盘控件
         this.getDefaultDashboard= function () {
             var info = _.cloneDeep(defaultDashboard.info);
             var texList = _.cloneDeep(defaultDashboard.texList);
@@ -739,6 +735,7 @@ ideServices
             }
         };
 
+        //数字控件
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
@@ -795,10 +792,11 @@ ideServices
                         name:'数字背景'
                     }]
                 }],
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
+        //图层数字控件
         this.getDefaultTexNum = function () {
             var info={
                 width:90, height: 30,
@@ -845,17 +843,17 @@ ideServices
                     currentSliceIdx:0,
                     slices:slices
                 }],
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
+        //示波器控件
         this.getDefaultOscilloscope = function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
-
-
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:300,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 minValue:0,maxValue:50,
@@ -901,6 +899,7 @@ ideServices
             }
         };
 
+        //开关控件
         this.getDefaultSwitch=function(){
             var info=_.cloneDeep(defaultSwitch.info);
             var texList=_.cloneDeep(defaultSwitch.texList);
@@ -915,6 +914,8 @@ ideServices
                 texList:texList
             }
         };
+
+        //旋转图控件
         this.getDefaultRotateImg=function(){
             var info = _.cloneDeep(defaultRotateImage.info);
             var texList=_.cloneDeep(defaultRotateImage.texList);
@@ -930,6 +931,7 @@ ideServices
             }
         };
 
+        //时间日期控件
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
@@ -981,6 +983,8 @@ ideServices
 
             }
         };
+
+        //图层时间日期控件
         this.getDefaultTexTime=function(){
             var info={
                 characterW:30,
@@ -1037,11 +1041,13 @@ ideServices
             }
         };
 
+        //触发器控件
         this.getDefaultScriptTrigger = function(){
-            var subLayerNode=CanvasService.getSubLayerNode();
+            // var subLayerNode=CanvasService.getSubLayerNode();
 
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                // width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:100,height:100,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 lowAlarmValue:0,highAlarmValue:100
@@ -1056,6 +1062,8 @@ ideServices
                 zIndex:0
             }
         };
+
+        //滑块控件
         this.getDefaultSlideBlock = function(){
             var info = _.cloneDeep(defaultSlideBlock.info);
             var texList = _.cloneDeep(defaultSlideBlock.texList);
@@ -1070,6 +1078,8 @@ ideServices
                 texList:texList
             }
         };
+
+        //视频控件
         this.getDefaultVideo = function(){
             var info = {
                 width:215,height:110,
@@ -1097,8 +1107,9 @@ ideServices
 
             }
         };
+
+        //动画控件
         this.getDefaultAnimation = function(){
-            var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
                 width:200, height: 150,
                 left: 0, top: 0,
@@ -1125,6 +1136,8 @@ ideServices
 
             }
         };
+
+        //选择器控件
         this.getDefaultSelector= function () {
             var info = _.cloneDeep(defaultSelector.info);
             var texList = _.cloneDeep(defaultSelector.texList);
@@ -1139,6 +1152,8 @@ ideServices
                 texList:texList,
             };
         };
+
+        //旋钮控件（新）
         this.getDefaultRotaryKnob= function () {
             var info = _.cloneDeep(defaultRotaryKnob.info);
             var texList = _.cloneDeep(defaultRotaryKnob.texList);
@@ -1155,6 +1170,109 @@ ideServices
         };
 
 
+        //系统控件,日期选择器
+        this.getSystemDatePicker = function(){
+            var defaultW = 800,                //控件默认宽度
+                defaultH = 480,                //控件默认高度
+                pWidth = projectSize.width,    //工程宽度
+                pHeight = projectSize.height,  //工程高度
+                x,y,w,h,scaleX,scaleY,scale;   //控件坐标，实际宽高，横向、纵向缩放比
+
+            //根据页面尺寸计算实际宽高
+            scaleX = (pWidth>=defaultW)?1:pWidth/defaultW;
+            scaleY = (pHeight>=defaultH)?1:pHeight/defaultH;
+            scale = (scaleX<=scaleY)?scaleX:scaleY;
+            w = Math.floor(scaleX*defaultW);
+            h = Math.floor(scaleY*defaultH);
+            x = Math.floor((pWidth-w)/2);
+            y = Math.floor((pHeight-h)/2);
+            var info = {
+                top:y,
+                left:x,
+                width:w,    //控件默认宽度
+                height:h,
+
+                dayW:Math.floor(scale*100),//单位数字格子宽度
+                dayH:Math.floor(scale*65),//数字格子的高度
+                paddingX:Math.floor(scale*50),  //数字格子的起始X偏移
+                paddingY:Math.floor(scale*145), //数字格子的起始Y偏移
+
+                yearX:Math.floor(scale*200),    //'年'图层X坐标
+                yearY:0,
+                yearW:Math.floor(scale*180),
+                yearH:Math.floor(scale*80),
+
+                monthX:Math.floor(scale*450),   //'月'图层X坐标
+                monthY:0,
+                monthW:Math.floor(scale*90),
+                monthH:Math.floor(scale*80),
+
+                buttonSize:Math.floor(scale*80),//左右按钮的大小
+
+                titleFontSize:Math.floor(scale*32),               //年月字体
+                titleFontFamily:'Arial',
+                titleFontColor:'#5E5E5E',
+
+                itemFontSize:Math.floor(scale*20),                //日字体
+                itemFontFamily:'Arial',
+                itemFontColor:'#797979',
+            };
+            var texList = [
+                {
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/datePicker/background.png',
+                        name:'背景'
+                    }]
+                },
+                {
+                    currentSliceIdx:1,
+                    name:'年',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'年'
+                    }]
+                },
+                {
+                    currentSliceIdx:2,
+                    name:'月',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'月'
+                    }]
+                },
+                {
+                    currentSliceIdx:3,
+                    name:'日',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/datePicker/itemBack.png',
+                        name:'日'
+                    }]
+                },
+                {
+                    currentSliceIdx:4,
+                    name:'高亮',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/colorPicker/highlight.png'
+                    }]
+                }
+            ];
+            return {
+                id:Math.random().toString(36).substr(2),
+                type:Type.SysDatePicker,
+                name:'SysDatePicker',
+                info:info,
+                texList:texList
+            }
+        };
+
+        //工具函数，获取随机颜色
         function _getRandomColor(){
             var r = _.random(64, 255);
             var g = _.random(64, 255);
@@ -1163,10 +1281,11 @@ ideServices
         }
 
 
+        //模板ID
         var templateId=null;
         this.setTemplateId = function(id){
             templateId=id;
-        }
+        };
         this.getTemplateId = function(){
             return templateId;
         }

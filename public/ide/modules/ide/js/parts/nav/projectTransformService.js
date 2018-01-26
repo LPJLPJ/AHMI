@@ -1,4 +1,4 @@
-ideServices.service('ProjectTransformService',['Type','ResourceService',function(Type,ResourceService){
+ideServices.service('ProjectTransformService',['Type','ResourceService','TemplateProvider',function(Type,ResourceService,TemplateProvider){
 
     /**
      * 暴露对外接口
@@ -28,8 +28,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
 
-        //系统控件
-        transSysWidget(targetProject);
+        //添加系统控件
+        transSysWidgets(targetProject);
 
         return targetProject;
     }
@@ -753,7 +753,22 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     /**
      * 转换系统控件
      */
-    function transSysWidget(targetProject){
+    function transSysWidgets(targetProject){
+        var colorPicker = GenColorPicker(targetProject.size.width,targetProject.size.height);
+        var datePicker = GenDatePicker();
+
+        targetProject.systemWidgets = [];
+        console.log('colorPicker',colorPicker);
+        console.log('datePicker',datePicker);
+        //push system widgets
+        targetProject.systemWidgets.push(colorPicker);
+        targetProject.systemWidgets.push(datePicker);
+    }
+
+    /**
+     * 生成颜色选择器
+     */
+    function GenColorPicker(width,height){
         var minSize = Math.min(targetProject.size.width,targetProject.size.height)
         minSize = Math.ceil(0.05*minSize)
         var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,targetProject.size.width-2*minSize,targetProject.size.height-2*minSize,[
@@ -761,16 +776,43 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}
-            ])
+        ])
         colorPicker = colorPicker.toObject()
         colorPicker.generalType = 'ColorPicker'
         colorPicker.type = 'widget'
         colorPicker.subType = 'general'
-        //
-        targetProject.systemWidgets = []
+        return colorPicker;
+    }
 
-        //push system widgets
-        targetProject.systemWidgets.push(colorPicker)
+    /**
+     *生成日期选择器
+     */
+    function GenDatePicker(){
+        var datePickerDate = TemplateProvider.getSystemDatePicker();
+        var info = datePickerDate.info;
+        var texList = datePickerDate.texList||[];
+
+        var slices = [];
+        texList.map(function (curTex) {
+            curTex.slices.map(function(slice){
+                slices.push(slice)
+            })
+        });
+
+        var datePicker = new WidgetModel.models.DatePicker(info.left,info.top,info.width,info.height,info,slices);
+
+        datePicker = datePicker.toObject();
+        datePicker.generalType = 'DatePicker';
+        datePicker.type = 'widget';
+        datePicker.subType = 'general';
+
+        //other attrs
+        datePicker.otherAttrs[0] = 2018;  //year
+        datePicker.otherAttrs[1] = 1;     //month
+        datePicker.otherAttrs[2] = 3 ;     //日图层在所有图层中的起始坐标
+        datePicker.otherAttrs[3] = 35;    //所有的日图层个数。
+        datePicker.otherAttrs[4] = info.buttonSize;  //按钮大小
+        return datePicker;
     }
 
     /**
