@@ -1174,18 +1174,20 @@ ideServices
         this.getSystemDatePicker = function(){
             var defaultW = 800,                //控件默认宽度
                 defaultH = 480,                //控件默认高度
-                pWidth = projectSize.width,    //工程宽度
-                pHeight = projectSize.height,  //工程高度
+                pWidth = Math.ceil(0.9*projectSize.width),    //工程宽度
+                pHeight = Math.ceil(0.9*projectSize.height),  //工程高度
+                offsetX = Math.floor(0.05*projectSize.width),
+                offsetY = Math.floor(0.05*projectSize.height),
                 x,y,w,h,scaleX,scaleY,scale;   //控件坐标，实际宽高，横向、纵向缩放比
 
             //根据页面尺寸计算实际宽高
             scaleX = (pWidth>=defaultW)?1:pWidth/defaultW;
             scaleY = (pHeight>=defaultH)?1:pHeight/defaultH;
             scale = (scaleX<=scaleY)?scaleX:scaleY;
-            w = Math.floor(scaleX*defaultW);
-            h = Math.floor(scaleY*defaultH);
-            x = Math.floor((pWidth-w)/2);
-            y = Math.floor((pHeight-h)/2);
+            w = Math.floor(scale*defaultW);
+            h = Math.floor(scale*defaultH);
+            x = Math.floor(Math.abs(pWidth-w)/2)+offsetX;
+            y = Math.floor(Math.abs(pHeight-h)/2)+offsetY;
             var info = {
                 top:y,
                 left:x,

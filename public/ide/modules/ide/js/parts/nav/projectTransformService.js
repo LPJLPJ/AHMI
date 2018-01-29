@@ -789,6 +789,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      */
     function GenDatePicker(){
         var datePickerDate = TemplateProvider.getSystemDatePicker();
+        console.log('datePicker info',datePickerDate);
         var info = datePickerDate.info;
         var texList = datePickerDate.texList||[];
 
