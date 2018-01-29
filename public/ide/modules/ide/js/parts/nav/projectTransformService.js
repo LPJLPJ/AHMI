@@ -769,9 +769,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      * 生成颜色选择器
      */
     function GenColorPicker(width,height){
-        var minSize = Math.min(targetProject.size.width,targetProject.size.height)
+        var minSize = Math.min(width,height);
         minSize = Math.ceil(0.05*minSize)
-        var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,targetProject.size.width-2*minSize,targetProject.size.height-2*minSize,[
+        var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,width-2*minSize,height-2*minSize,[
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
@@ -789,6 +789,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      */
     function GenDatePicker(){
         var datePickerDate = TemplateProvider.getSystemDatePicker();
+        console.log('datePicker info',datePickerDate);
         var info = datePickerDate.info;
         var texList = datePickerDate.texList||[];
 
