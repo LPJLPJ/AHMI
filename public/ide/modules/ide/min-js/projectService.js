@@ -368,11 +368,11 @@ ideServices
                     }
                 }
                 $rootScope.position={
-                    absoluteX:absoluteX,
-                    absoluteY:absoluteY,
+                    absoluteX:Math.round(absoluteX),
+                    absoluteY:Math.round(absoluteY),
                     currentLayerInfo:currentLayerInfo,
-                    initAbsoluteX:absoluteX,
-                    initAbsoluteY:absoluteY
+                    initAbsoluteX:Math.round(absoluteX),
+                    initAbsoluteY:Math.round(absoluteY)
                 };
             };
 
