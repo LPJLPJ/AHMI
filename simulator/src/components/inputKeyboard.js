@@ -9,7 +9,7 @@ var kOffsetY = 0;
 var InputKeyboard = {};
 var _ = require('lodash');
 var inputKeybaordStruct = {
-    backgroundColor: 'rbga(255,255,255,1)',
+    backgroundColor: 'rgba(212,212,212,1)',
     backgroundImage: '',
     actions: undefined,
     tag: '',
