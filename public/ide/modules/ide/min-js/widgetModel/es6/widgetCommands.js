@@ -4102,6 +4102,8 @@
                     }
                 }
             }
+            //保存daysCnt
+            set('this.otherAttrs.11',daysCnt)
             
             //开始绘制日图层上的数字
             set(initIndex,'this.otherAttrs.2')
@@ -4136,15 +4138,19 @@
             var(mouseX,0)             //鼠标x位置
             var(mouseY,0)             //鼠标y位置
             var(btnSize,0)            //按键大小
-            var(lSide,0)              //左边界
+            var(lSide,0)              //左边界，左右按钮的边界
             var(rSide,0)              //右边界
             var(tSide,0)              //上边界
             var(bSide,0)              //下边界
-            var(btnFlag,0)            //按键标志位,代表是否按下按键。0,1
+            var(btnFlag,0)            //左、右按键标志位,代表是否按下按键。0,1
+            var(highLightIndex,0)
+             
             
             set(mouseX,'this.innerX')
             set(mouseY,'this.innerY')
             set(btnSize,'this.otherAttrs.4')
+            set(highLightIndex,'this.layers.length')
+            minus(highLightIndex,1)
             
             //***********绘制数字变量，与onInitialize事件相同***********
             var(tTag,0)
@@ -4201,8 +4207,11 @@
                 }
             }
             
-            //******开始绘制，逻辑与onInitialize一致
+            //******开始重新绘制日图层，逻辑与onInitialize一致
             if(btnFlag==1){
+                //隐藏高亮
+                set('this.layers.highLightIndex.hidden',0)
+                
                 var(zM,0)        //月份[3,14]，用于蔡勒公式
                 var(zY,0)        //年的后两位，用于蔡勒公式
                 var(zC,0)        //世纪-1  用于蔡勒公式
@@ -4246,6 +4255,9 @@
                 divide(temp1,5)
                 add(zW,temp1)
                 mod(zW,7)
+                
+                //保存zW
+                set('this.otherAttrs.12',zW)
                 
                 //根据月份设置天数
                 if(tM==4){
@@ -4293,6 +4305,8 @@
                         }
                     }
                 }
+                //保存daysCnt
+                set('this.otherAttrs.11',daysCnt)
                 
                 //开始绘制日图层上的数字
                 set(initIndex,'this.otherAttrs.2')
@@ -4321,6 +4335,70 @@
                 }
             
             }
+            
+            //********开始绘制高亮选中层**********
+            var(daysLayerMinX,0)      
+            var(daysLayerMaxX,0)
+            var(daysLayerMinY,0)
+            var(daysLayerMaxY,0)
+            var(highLightX,0)
+            var(highLightY,0)
+            var(dayW,0)
+            var(dayH,0)
+            var(selectedDayIndex,0)
+            var(daysCnt,0)
+            
+            set(daysLayerMinX,'this.otherAttrs.5')
+            set(daysLayerMaxX,'this.otherAttrs.6')
+            set(daysLayerMinY,'this.otherAttrs.7')
+            set(daysLayerMaxY,'this.otherAttrs.8')
+            set(dayW,'this.otherAttrs.9')
+            set(dayH,'this.otherAttrs.10')
+            set(daysCnt,'this.otherAttrs.11')
+            set(zw,'this.otherAttrs.12')
+
+            
+            if(mouseX>=daysLayerMinX){
+                if(mouseX<=daysLayerMaxX){
+                    if(mouseY>=daysLayerMinY){
+                        if(mouseY<=daysLayerMaxY){
+                            //计算第几层被选中,首先是第几行，然后是此行第几列
+                            set(temp1,mouseY)
+                            minus(temp1,daysLayerMinY)
+                            divide(temp1,dayH)
+                            set(selectedDayIndex,7)
+                            multiply(selectedDayIndex,temp1)
+                            
+                            set(temp2,mouseX)
+                            minus(temp2,daysLayerMinX)
+                            divide(temp2,dayW)
+                            add(selectedDayIndex,temp2)
+                            
+                            set(initIndex,'this.otherAttrs.2') //获取日图层起始坐标
+                            add(selectedDayIndex,initIndex)
+                            
+                            set(temp1,zW)
+                            add(temp1,initIndex)
+                            set(temp2,daysCnt)
+                            add(temp2,temp1)
+                            minus(temp2,1)
+                            print('temp2',temp2)
+                            
+                            if(selectedDayIndex>=temp1){
+                                if(selectedDayIndex<=temp2){
+                                    set(highLightX,'this.layers.selectedDayIndex.x')
+                                    set(highLightY,'this.layers.selectedDayIndex.y')
+                                    set('this.layers.highLightIndex.x',highLightX)
+                                    set('this.layers.highLightIndex.y',highLightY)
+                                    set('this.layers.highLightIndex.hidden',0)
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            
             
         `,
         onMouseUp:`
