@@ -119,6 +119,7 @@ module.exports =   React.createClass({
         this.inputKeyboard.widget = keyboardData.canvasList[0].subCanvasList[0].widgetList[0];
 
         //initialize return button
+        var defaultMargin = this.defaultMargin || 5
         var sysCanvas = keyboardData.canvasList[0]
         var minReturnButtonSize = Math.ceil(0.05*Math.min(sysCanvas.w,sysCanvas.h))
 
@@ -130,7 +131,7 @@ module.exports =   React.createClass({
                 info :{
                     width:minReturnButtonSize,
                     height: minReturnButtonSize,
-                    left: sysCanvas.w-minReturnButtonSize, top: 0,
+                    left: sysCanvas.w-minReturnButtonSize-defaultMargin, top: defaultMargin,
                     originX: 'center', originY: 'center',
                     arrange:true,
 

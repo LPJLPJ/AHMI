@@ -1096,7 +1096,7 @@
 
         //alpha indicator
         var alphaIndicatorLayer = new Layer(0.9*w+d,d,0.1*w-2*d,0.01*h)
-        alphaIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,255,255)'))
+        alphaIndicatorLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
 
         //picker indicator
         var minD = Math.min(w,h)
