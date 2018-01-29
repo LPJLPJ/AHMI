@@ -769,11 +769,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      * 生成颜色选择器
      */
     function GenColorPicker(width,height){
-        var minSize = Math.min(width,height);
+        var minSize = Math.min(width,height)
         minSize = Math.ceil(0.05*minSize)
         var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,width-2*minSize,height-2*minSize,[
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},
-            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
+            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/colorpickerAlphaBg.png'},
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
             {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}
         ])
