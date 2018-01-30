@@ -1847,6 +1847,16 @@ module.exports =   React.createClass({
         })
 
     },
+    getAnimationAtrr:function (attr) {
+        var values = {}
+        for(var key in attr){
+            if (attr.hasOwnProperty(key)){
+                //own key
+                values[key] = this.getParamValue(values[key])
+            }
+        }
+        return values
+    },
     prepareTarget:function (target) {
         console.log(target.type)
         if (target.type === 'MyLayer'){
