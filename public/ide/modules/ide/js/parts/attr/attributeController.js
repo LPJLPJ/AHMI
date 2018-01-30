@@ -757,25 +757,25 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 
     //add by tang 2018/01/15
     function enterAbsoluteX(e){
-        var xCoor = Number($rootScope.position.absoluteX);
+        var absoluteX = Number($rootScope.position.absoluteX);
+        var xCoor=$rootScope.position.absoluteX-$rootScope.position.currentLayerInfo.left;
         if (e.keyCode==13){
             //判断输入是否合法
-            if (!_.isInteger(xCoor)){
+            if (!_.isInteger(absoluteX)){
                 toastr.warning('输入不合法');
-                restore();
+                $rootScope.position.absoluteX=$rootScope.position.initAbsoluteX;
                 return;
             }
             if(xCoor<-2000||xCoor>2000){
                 toastr.warning('超出画布范围');
-                restore();
+                $rootScope.position.absoluteX=$rootScope.position.initAbsoluteX;
                 return;
             }
             //判断是否有变化
-            if (xCoor==$rootScope.position.initAbsoluteX){
+            if (absoluteX==$rootScope.position.initAbsoluteX){
                 toastr.warning('未改变值'+$rootScope.position.absoluteX);
                 return;
             }
-            xCoor=$rootScope.position.absoluteX-$rootScope.position.currentLayerInfo.left;
             var option={
                 left:xCoor
             };
@@ -791,23 +791,23 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
     function enterAbsoluteY(e){
         if (e.keyCode==13){
             //判断输入是否合法
-            var yCoor = Number($rootScope.position.absoluteY);
-            if (!_.isInteger(yCoor)){
+            var absoluteY = Number($rootScope.position.absoluteY);
+            var yCoor=$rootScope.position.absoluteY-$rootScope.position.currentLayerInfo.top;
+            if (!_.isInteger(absoluteY)){
                 toastr.warning('输入不合法');
-                restore();
+                $rootScope.position.absoluteY=$rootScope.position.initAbsoluteY;
                 return;
             }
             if(yCoor<-2000||yCoor>2000){
-                toastr.warning('超出范围');
-                restore();
+                toastr.warning('超出画布范围');
+                $rootScope.position.absoluteY=$rootScope.position.initAbsoluteY;
                 return;
             }
             //判断是否有变化
-            if (yCoor==$rootScope.position.initAbsoluteY){
+            if (absoluteY==$rootScope.position.initAbsoluteY){
                 toastr.warning('未改变值'+$rootScope.position.absoluteY);
                 return;
             }
-            yCoor=$rootScope.position.absoluteY-$rootScope.position.currentLayerInfo.top;
             var option={
                 top:yCoor
             };
