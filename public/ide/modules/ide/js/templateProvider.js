@@ -1274,6 +1274,145 @@ ideServices
             }
         };
 
+        /**
+         * 系统控件，图层日期选择器。
+         * 注：采用了新的texList结构，加入了每个slice的数据信息，不再
+         */
+        this.getSystemTexDatePicker = function(){
+            var defaultW = 800,                                  //控件默认宽度
+                defaultH = 480,                                  //控件默认高度
+                pWidth = Math.ceil(0.9*projectSize.width),       //工程宽度
+                pHeight = Math.ceil(0.9*projectSize.height),     //工程高度
+                offsetX = Math.floor(0.05*projectSize.width),
+                offsetY = Math.floor(0.05*projectSize.height),
+                x,y,w,h,scaleX,scaleY,scale,                     //控件坐标，实际宽高，横向、纵向缩放比
+                info;
+
+            //根据页面尺寸计算实际宽高
+            scaleX = (pWidth>=defaultW)?1:pWidth/defaultW;
+            scaleY = (pHeight>=defaultH)?1:pHeight/defaultH;
+            scale = (scaleX<=scaleY)?scaleX:scaleY;
+            w = Math.floor(scale*defaultW);
+            h = Math.floor(scale*defaultH);
+            x = Math.floor(Math.abs(pWidth-w)/2)+offsetX;
+            y = Math.floor(Math.abs(pHeight-h)/2)+offsetY;
+            info = {
+                top:y,
+                left:x,
+                width:w,                                          //控件默认宽度
+                height:h,
+
+                dayW:Math.floor(scale*100),                       //单位数字格子宽度
+                dayH:Math.floor(scale*65),                        //数字格子的高度
+                paddingX:Math.floor(scale*50),                    //数字格子的起始X偏移
+                paddingY:Math.floor(scale*145),                   //数字格子的起始Y偏移
+
+                year:{                                            //年图层信息
+                    w:Math.floor(scale*20),
+                    h:Math.floor(scale*80),
+                    pos:[{
+                        x:Math.floor(scale*300),
+                        y:0,
+                    },{
+                        x:Math.floor(scale*320),
+                        y:0,
+                    },{
+                        x:Math.floor(scale*340),
+                        y:0,
+                    },{
+                        x:Math.floor(scale*360),
+                        y:0
+                    }]
+                },
+
+                month:{                                          //月图层信息
+                    w:Math.floor(scale*20),
+                    h:Math.floor(scale*80),
+                    pos:[{
+                        x:Math.floor(scale*500),
+                        y:0,
+                    },{
+                        x:Math.floor(scale*520),
+                        y:0
+                    }]
+                },
+
+                buttonSize:Math.floor(scale*80),                  //左右按钮的大小
+
+                titleFontSize:Math.floor(scale*32),               //年月字体
+                titleFontFamily:'Arial',
+                titleFontColor:'#5E5E5E',
+
+            };
+
+
+            var i,
+                year_slices = [],
+                month_slices = [],
+                day_slices = [],
+                texList;
+            for(i=0;i<4;i++){
+                year_slices[i] = {};
+                year_slices[i].color = 'rgba(0,0,0,0)';
+                year_slices[i].name = 'year'+(i+1);
+                year_slices[i].imgSrc = '';
+            }
+            for(i=0;i<2;i++){
+                month_slices[i] = {};
+                month_slices[i].color = 'rgba(0,0,0,0)';
+                month_slices[i].name = 'month'+(i+1);
+                month_slices[i].imgSrc = '';
+            }
+            for(i=0;i<31;i++){
+                day_slices[i] = {};
+                day_slices[i].color = 'rgba(0,0,0,0)';
+                day_slices[i].name = 'day'+(i+1);
+                day_slices[i].imgSrc = '/public/images/texDatePicker/day'+(i+1)+'.png';
+            }
+            texList = [
+                {
+                    currentSliceIdx:0,
+                    name:'background',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/texDatePicker/background.png',
+                        name:'background'
+                    }]
+                },
+                {
+                    currentSliceIdx:1,
+                    name:'year',
+                    slices:year_slices,
+                },
+                {
+                    currentSliceIdx:2,
+                    name:'month',
+                    slices:month_slices,
+                },
+                {
+                    currentSliceIdx:3,
+                    name:'days',
+                    slices:day_slices
+                },
+                {
+                    currentSliceIdx:4,
+                    name:'highlight',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/texDatePicker/highlight.png',
+                        name:'highlight'
+                    }]
+                }
+            ];
+            return {
+                id:Math.random().toString(36).substr(2),
+                type:Type.SysDatePicker,
+                name:'SysTexDatePicker',
+                info:info,
+                texList:texList
+            }
+        };
+
         //工具函数，获取随机颜色
         function _getRandomColor(){
             var r = _.random(64, 255);

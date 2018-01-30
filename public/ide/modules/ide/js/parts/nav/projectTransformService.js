@@ -756,13 +756,13 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
     function transSysWidgets(targetProject){
         var colorPicker = GenColorPicker(targetProject.size.width,targetProject.size.height);
         var datePicker = GenDatePicker();
+        var texDatePicker = GenTexDatePicker();
 
         targetProject.systemWidgets = [];
-        console.log('colorPicker',colorPicker);
-        console.log('datePicker',datePicker);
         //push system widgets
         targetProject.systemWidgets.push(colorPicker);
         targetProject.systemWidgets.push(datePicker);
+        targetProject.systemWidgets.push(texDatePicker);
     }
 
     /**
@@ -786,7 +786,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
     /**
      * 生成日期选择器
-     * Todo:重构日期选择器，采用方案二，统一使用图片layer，排列图片位置
      */
     function GenDatePicker(){
         var datePickerDate = TemplateProvider.getSystemDatePicker();
@@ -803,7 +802,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         var datePicker = new WidgetModel.models.DatePicker(info.left,info.top,info.width,info.height,info,slices);
 
         datePicker = datePicker.toObject();
-        datePicker.generalType = 'DatePicker';
+        datePicker.generalType = Type.SysDatePicker;
         datePicker.type = 'widget';
         datePicker.subType = 'general';
 
@@ -824,6 +823,23 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
         console.log('datePicker',datePicker);
         return datePicker;
+    }
+
+    /**
+     * 生成图层日期选择器
+     */
+    function GenTexDatePicker(){
+        var texDatePickerDate = TemplateProvider.getSystemTexDatePicker();
+        var info = texDatePickerDate.info;
+        var texList = texDatePickerDate.texList||[];
+
+        var texDatePicker = new WidgetModel.models.TexDatePicker(info.left,info.top,info.width,info.height,info,texList);
+        texDatePicker = texDatePicker.toObject();
+        texDatePicker.generalType = Type.SysTexDatePicker;
+        texDatePicker.type = 'widget';
+        texDatePicker.subType = 'general';
+
+        return texDatePicker;
     }
 
     /**

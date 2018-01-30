@@ -3994,7 +3994,7 @@
         `
     };
 
-    WidgetCommands['DatePicker'] = {
+    WidgetCommands['SysDatePicker'] = {
         onInitialize:`
             var(tTag,0)
             var(tY,0)        //年
@@ -4399,6 +4399,30 @@
             }
             
             
+        `,
+        onMouseUp:`
+
+        `,
+        onTagChange:`
+
+        `,
+        onKeyBoardLeft:`
+
+        `,
+        onKeyBoardRight:`
+
+        `,
+        onKeyBoardOK:`
+
+        `
+    };
+
+    WidgetCommands['SysTexDatePicker'] = {
+        onInitialize:`
+
+        `,
+        onMouseDown:`
+
         `,
         onMouseUp:`
 

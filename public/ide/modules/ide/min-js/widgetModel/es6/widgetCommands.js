@@ -4382,7 +4382,6 @@
                             set(temp2,daysCnt)
                             add(temp2,temp1)
                             minus(temp2,1)
-                            print('temp2',temp2)
                             
                             if(selectedDayIndex>=temp1){
                                 if(selectedDayIndex<=temp2){
@@ -4400,6 +4399,30 @@
             }
             
             
+        `,
+        onMouseUp:`
+
+        `,
+        onTagChange:`
+
+        `,
+        onKeyBoardLeft:`
+
+        `,
+        onKeyBoardRight:`
+
+        `,
+        onKeyBoardOK:`
+
+        `
+    };
+
+    WidgetCommands['TexDatePicker'] = {
+        onInitialize:`
+
+        `,
+        onMouseDown:`
+
         `,
         onMouseUp:`
 
