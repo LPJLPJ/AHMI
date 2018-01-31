@@ -6051,7 +6051,10 @@ module.exports =   React.createClass({
         var nextContentOffsetY = subCanvas.pressedOffsetY + mouseMovementY
 
 
-        var timeD = (mouseState.timeStamp - lastMouseState.timeStamp)/1000.0
+        var timeD = (mouseState.timeStamp - lastMouseState.timeStamp)
+        timeD = timeD < 1 ? 1:timeD
+        timeD = timeD/1000.0
+
 
 
         //horizontal scroll
@@ -6070,7 +6073,7 @@ module.exports =   React.createClass({
                 subCanvas.contentOffsetX = nextContentOffsetX
             }
 
-            subCanvas.speedX = ((subCanvas.contentOffsetX - lastContentOffsetX)/timeD) || 0
+            subCanvas.speedX =  ((subCanvas.contentOffsetX - lastContentOffsetX)/timeD) || 0
         }else{
             //swipe transition
             if (method == 'SWIPE_H'){

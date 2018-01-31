@@ -57441,7 +57441,9 @@ module.exports = React.createClass({
         var nextContentOffsetX = subCanvas.pressedOffsetX + mouseMovementX;
         var nextContentOffsetY = subCanvas.pressedOffsetY + mouseMovementY;
 
-        var timeD = (mouseState.timeStamp - lastMouseState.timeStamp) / 1000.0;
+        var timeD = mouseState.timeStamp - lastMouseState.timeStamp;
+        timeD = timeD < 1 ? 1 : timeD;
+        timeD = timeD / 1000.0;
 
         //horizontal scroll
         if (subCanvas.info && subCanvas.info.scrollHEnabled) {
