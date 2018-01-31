@@ -50,6 +50,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     var loadStep=0;     //加载到了第几步,共8步
     var fs,path,__dirname;
 
+    var systemResourceList = []
+
     initUI();
 
     loadProject();
@@ -288,48 +290,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
             globalProject.projectId = id;
 
-            var resourceList = globalProject.resourceList;
-            // console.log('resourceList',resourceList);
-            var count = resourceList.length;
-            var rLen = resourceList.length
-            var globalResources = ResourceService.getGlobalResources();
-            window.globalResources = globalResources;
+            window.globalResources = ResourceService.getGlobalResources()
 
-            var coutDown = function (e, resourceObj) {
-                if (e.type === 'error'){
-                    toastr.warning('资源加载失败: ' + resourceObj.name);
-                    resourceObj.complete = false;
-                } else {
-                    resourceObj.complete = true;
-                }
-                count = count - 1;
-                updateSpinner((rLen-count)/rLen);
-                if (count<=0){
-                    console.log('time cost in cache imge :',Date.now()-timeStamp);
-                    // TemplateProvider.saveProjectFromGlobal(globalProject);
-                    syncServices(globalProject);
-                    timeStamp = Date.now();
-                    ProjectService.saveProjectFromGlobal(globalProject, function () {
-                        $scope.$broadcast('GlobalProjectReceived');
-                        console.log('time cost in render',Date.now()-timeStamp)
-                    });
-                }
-            }.bind(this);
-            if (count>0){
-                timeStamp = Date.now();
-                for (var i=0;i<resourceList.length;i++){
-                    var curRes = resourceList[i];
-                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-                }
-            }else{
-                // console.log(globalProject);
-                updateSpinner(100);
+            cacheResources(globalProject.resourceList,function () {
                 TemplateProvider.setProjectSize(globalProject.currentSize);
-                syncServices(globalProject)
+                syncServices(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     $scope.$broadcast('GlobalProjectReceived');
                 });
-            }
+            })
+
+
         }else{
             globalProject = GlobalService.getBlankProject();
             globalProject.projectId = id;
@@ -355,6 +326,40 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 $scope.$broadcast('GlobalProjectReceived');
 
             });
+        }
+    }
+
+    function cacheResources(resourceList,cb) {
+
+        // console.log('resourceList',resourceList);
+        var count = resourceList.length;
+        var rLen = resourceList.length
+        // var globalResources = ResourceService.getGlobalResources();
+        // window.globalResources = globalResources;
+
+        var coutDown = function (e, resourceObj) {
+            if (e.type === 'error'){
+                toastr.warning('资源加载失败: ' + resourceObj.name);
+                resourceObj.complete = false;
+            } else {
+                resourceObj.complete = true;
+            }
+            count = count - 1;
+            updateSpinner((rLen-count)/rLen);
+            if (count===0){
+                cb && cb()
+            }
+        }.bind(this);
+        if (count>0){
+            // timeStamp = Date.now();
+            for (var i=0;i<resourceList.length;i++){
+                var curRes = resourceList[i];
+                ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+            }
+        }else{
+            // console.log(globalProject);
+            updateSpinner(100);
+            cb && cb()
         }
     }
 
