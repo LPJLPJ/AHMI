@@ -158,7 +158,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         var targetSubLayer = {};
         targetSubLayer.id = layerIdx+'.'+subLayerIdx;
         targetSubLayer.type = Type.MySubLayer;
-        deepCopyAttributes(rawSubLayer,targetSubLayer,['name','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['name','info','tag','actions','zIndex','backgroundImage','backgroundColor']);
         transActions(targetSubLayer);
 
         targetSubLayer.widgetList = [];
@@ -943,7 +943,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
     function transSubLayerBase(rawSubLayer){
         var targetSubLayer = {};
-        deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        console.log(rawSubLayer)
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','info','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
         var widgets = rawSubLayer.widgets;
         targetSubLayer.widgets = [];
         for (var i=0;i<widgets.length;i++){

@@ -2092,8 +2092,8 @@ module.exports =   React.createClass({
         }
     },
     showScrollBar:function (ctx,canvasData,subCanvas,h,v) {
-        var ratioX = canvasData.w / (subCanvas.width||canvasData.w)
-        var ratioY = canvasData.h / (subCanvas.height||canvasData.h)
+        var ratioX = canvasData.w / (subCanvas.info && subCanvas.info.width||canvasData.w)
+        var ratioY = canvasData.h / (subCanvas.info&&subCanvas.info.height||canvasData.h)
         var scrollBarX = - (subCanvas.contentOffsetX||0) * ratioX
         var scrollBarY = - (subCanvas.contentOffsetY||0) * ratioY
 
@@ -2101,8 +2101,8 @@ module.exports =   React.createClass({
         var scoy = subCanvas.contentOffsetY || 0
         var cw = canvasData.w
         var ch = canvasData.h
-        var scw = subCanvas.width || canvasData.w
-        var sch = subCanvas.height || canvasData.h
+        var scw = subCanvas.info && subCanvas.info.width || canvasData.w
+        var sch = subCanvas.info && subCanvas.info.height || canvasData.h
 
         var alpha = subCanvas.scrollBarAlpha
 
@@ -6023,8 +6023,8 @@ module.exports =   React.createClass({
         this.stopBounceAnimation(subCanvas,'bounceAnimeX','bounceAnimeY')
 
 
-        subCanvas.width = subCanvas.width || canvas.w
-        subCanvas.height = subCanvas.height || canvas.h
+        subCanvas.width = subCanvas.info && subCanvas.info.width || canvas.w
+        subCanvas.height = subCanvas.info && subCanvas.info.height || canvas.h
 
         //transition
         var curTransition = canvas.transition
@@ -6055,8 +6055,9 @@ module.exports =   React.createClass({
 
 
         //horizontal scroll
-        if (subCanvas.scrollHEnabled){
+        if (subCanvas.info &&subCanvas.info.scrollHEnabled){
             // console.log('dragging')
+
             subCanvas.shouldShowScrollBarH = true
             subCanvas.scrollBarAlpha = 1.0
             if (nextContentOffsetX>rightLimit ){
@@ -6085,7 +6086,7 @@ module.exports =   React.createClass({
 
 
         //vertical scroll
-        if (subCanvas.scrollVEnabled){
+        if (subCanvas.info && subCanvas.info.scrollVEnabled){
             // console.log('dragging')
             subCanvas.shouldShowScrollBarV = true
             subCanvas.scrollBarAlpha = 1.0
@@ -6287,12 +6288,12 @@ module.exports =   React.createClass({
         }
 
         var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
-        var stepX = subCanvas.speedX/(1000/30)
-        var stepY = subCanvas.speedY/(1000/30)
+        var stepX = subCanvas.speedX/(1000/30) ||0
+        var stepY = subCanvas.speedY/(1000/30) ||0
         var factor = 2
         var signX  = (stepX>=0)?1:-1
         var signY = (stepY>0)?1:-1
-        if (subCanvas.scrollHEnabled || subCanvas.scrollVEnabled){
+        if ((subCanvas.info&&subCanvas.info.scrollHEnabled) || (subCanvas.info&&subCanvas.info.scrollVEnabled)){
             //canvas scroll effect
             var elem = subCanvas
 
@@ -6374,6 +6375,7 @@ module.exports =   React.createClass({
 
                 // stepX -= factor * signX
                 stepY -= factor * signY
+                // console.log('stepY',stepY)
 
                 stepY = (stepY * signY) <= 0 ? 0 : stepY
                 if (stepY == 0){
@@ -6603,6 +6605,8 @@ module.exports =   React.createClass({
     },
     addHideScrollBarTimeout:function (elem) {
 
+        console.log('add scrollbar timeout')
+
         if (elem.scrollBarHideAnime){
             elem.scrollBarHideAnime.stop()
             elem.scrollBarHideAnime = null
@@ -6624,9 +6628,10 @@ module.exports =   React.createClass({
         elem.scrollBarHideAnime =  new AnimationAPI.Animation(null,'alpha',1.0,0.0,500)
         elem.scrollBarHideAnime.onFrameCB = function () {
             elem.scrollBarAlpha = this.state.curValue
+            console.log('alpha',this.state.curValue)
 
         }
-        elem.scrollBarHideAnime.timingFunction = AnimationAPI.timingFunctions.easeOutCubic
+        // elem.scrollBarHideAnime.timingFunction = AnimationAPI.timingFunctions.easeOutCubic
         elem.scrollBarHideAnime.start()
         if (!window.animes){
             window.animes = []
@@ -6862,9 +6867,10 @@ module.exports =   React.createClass({
                             updatedTagName: project.tag
                         });
                     } else if (param2Value < -2){
-                        if (this.systemWidgetPages[param2Value+3]){
-                            var curWidget = this.systemWidgetPages[param2Value+3].canvasList[0].subCanvasList[0].widgetList[0]
-                            var returnButton = this.systemWidgetPages[param2Value+3].canvasList[0].subCanvasList[0].widgetList[1]
+                        var sysIdx = -param2Value-3
+                        if (this.systemWidgetPages[sysIdx]){
+                            var curWidget = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[0]
+                            var returnButton = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[1]
                             //otherAttrs 0 returnPageId
                             //otherAttrs 1 initValue
                             // curWidget.otherAttrs[0] = curPageTag.value
