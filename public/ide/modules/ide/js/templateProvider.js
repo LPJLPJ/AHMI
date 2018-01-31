@@ -1261,7 +1261,7 @@ ideServices
                     name:'高亮',
                     slices:[{
                         color:'rgba(0,0,0,0)',
-                        imgSrc:'/public/images/colorPicker/highlight.png'
+                        imgSrc:'/public/images/datePicker/highlight.png'
                     }]
                 }
             ];

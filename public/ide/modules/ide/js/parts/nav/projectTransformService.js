@@ -785,11 +785,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
     }
 
     /**
-     *生成日期选择器
+     * 生成日期选择器
+     * Todo:重构日期选择器，采用方案二，统一使用图片layer，排列图片位置
      */
     function GenDatePicker(){
         var datePickerDate = TemplateProvider.getSystemDatePicker();
-        console.log('datePicker info',datePickerDate);
         var info = datePickerDate.info;
         var texList = datePickerDate.texList||[];
 
@@ -813,6 +813,16 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         datePicker.otherAttrs[2] = 3 ;     //日图层在所有图层中的起始坐标
         datePicker.otherAttrs[3] = 35;    //所有的日图层个数。
         datePicker.otherAttrs[4] = info.buttonSize;  //按钮大小
+        datePicker.otherAttrs[5] = info.paddingX;             //日图层区域的起始x坐标,用于计算日图层区域范围
+        datePicker.otherAttrs[6] = info.paddingX+info.dayW*7; //日图层区域的终止x坐标
+        datePicker.otherAttrs[7] = info.paddingY;             //日图层区域的起始y坐标
+        datePicker.otherAttrs[8] = info.paddingY+info.dayH*5; //日图层区域的终止y坐标
+        datePicker.otherAttrs[9] = info.dayW;
+        datePicker.otherAttrs[10] = info.dayH;
+        datePicker.otherAttrs[11] = 31;                       //此月日数，默认一月31
+        datePicker.otherAttrs[12] = 1;                        //此月一号是星期几，默认2018一月一号星期一
+
+        console.log('datePicker',datePicker);
         return datePicker;
     }
 

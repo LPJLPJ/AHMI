@@ -1122,7 +1122,7 @@
     function DatePicker(x,y,w,h,opts,slices){
         var layers = [];
         var fontStyle={};
-        var bgLayer,yLayer,mLayer,dLayer,highLight;
+        var bgLayer,yLayer,mLayer,dLayer,hlLayer;
 
         //background image
         bgLayer = new Layer(0,0,w,h);
@@ -1160,6 +1160,11 @@
             initX = opts.paddingX;
             initY += opts.dayH;
         }
+
+        //highlight image
+        hlLayer = new Layer(0,0,opts.dayW,opts.dayH);
+        hlLayer.subLayers.image = new TextureSubLayer(slices[slices.length-1].imgSrc);
+        layers.push(hlLayer);
 
         Widget.call(this,x,y,w,h,layers)
     }
