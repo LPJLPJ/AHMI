@@ -1280,7 +1280,7 @@ ideServices
          */
         this.getSystemTexDatePicker = function(){
             var defaultW = 800,                                  //控件默认宽度
-                defaultH = 480,                                  //控件默认高度
+                defaultH = 550,                                  //控件默认高度
                 pWidth = Math.ceil(0.9*projectSize.width),       //工程宽度
                 pHeight = Math.ceil(0.9*projectSize.height),     //工程高度
                 offsetX = Math.floor(0.05*projectSize.width),
@@ -1375,7 +1375,7 @@ ideServices
                     name:'background',
                     slices:[{
                         color:'rgba(0,0,0,0)',
-                        imgSrc:'/public/images/texDatePicker/background.png',
+                        imgSrc:'/public/images/texDatePicker/background1.png',
                         name:'background'
                     }]
                 },

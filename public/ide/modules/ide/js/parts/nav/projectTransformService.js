@@ -755,13 +755,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      */
     function transSysWidgets(targetProject){
         var colorPicker = GenColorPicker(targetProject.size.width,targetProject.size.height);
-        var datePicker = GenDatePicker();
         var texDatePicker = GenTexDatePicker();
 
         targetProject.systemWidgets = [];
         //push system widgets
         targetProject.systemWidgets.push(colorPicker);
-        targetProject.systemWidgets.push(datePicker);
         targetProject.systemWidgets.push(texDatePicker);
     }
 
@@ -821,12 +819,12 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         datePicker.otherAttrs[11] = 31;                       //此月日数，默认一月31
         datePicker.otherAttrs[12] = 1;                        //此月一号是星期几，默认2018一月一号星期一
 
-        console.log('datePicker',datePicker);
         return datePicker;
     }
 
     /**
      * 生成图层日期选择器
+     * Todo:commands
      */
     function GenTexDatePicker(){
         var texDatePickerDate = TemplateProvider.getSystemTexDatePicker();
@@ -838,6 +836,21 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         texDatePicker.generalType = Type.SysTexDatePicker;
         texDatePicker.type = 'widget';
         texDatePicker.subType = 'general';
+
+        //other attrs
+        texDatePicker.otherAttrs[0] = 2018;  //year
+        texDatePicker.otherAttrs[1] = 1;     //month
+        texDatePicker.otherAttrs[2] = 7 ;     //日图层在所有图层中的起始坐标
+        texDatePicker.otherAttrs[3] = 31;    //所有的日图层个数。
+        texDatePicker.otherAttrs[4] = info.buttonSize;  //按钮大小
+        texDatePicker.otherAttrs[5] = info.paddingX;             //日图层区域的起始x坐标,用于计算日图层区域范围
+        texDatePicker.otherAttrs[6] = info.paddingX+info.dayW*7; //日图层区域的终止x坐标
+        texDatePicker.otherAttrs[7] = info.paddingY;             //日图层区域的起始y坐标
+        texDatePicker.otherAttrs[8] = info.paddingY+info.dayH*6; //日图层区域的终止y坐标
+        texDatePicker.otherAttrs[9] = info.dayW;
+        texDatePicker.otherAttrs[10] = info.dayH;
+        texDatePicker.otherAttrs[11] = 31;                       //此月日数，默认一月31
+        texDatePicker.otherAttrs[12] = 1;                        //此月一号是星期几，默认2018一月一号星期一
 
         return texDatePicker;
     }
