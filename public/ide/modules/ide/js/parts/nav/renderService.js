@@ -89,7 +89,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         this.style = style
 
     }
-    function ResTrack(img,color,text,outFile,w,h,slice) {
+    function ResTrack(img,color,text,outFile,w,h,slice,generalImageTextureList,generalImageTextureIdx) {
         this.img = img;
         this.color = color;
         this.text = text;
@@ -97,6 +97,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         this.w = w;
         this.h = h;
         this.slice = slice;
+        this.generalImageTextureList = generalImageTextureList
+        this.generalImageTextureIdx = generalImageTextureIdx
     }
 
     ResTrack.prototype.equal = function (nextResTrack) {
@@ -110,6 +112,23 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         return true;
     };
 
+    ResTrack.prototype.getImgSrc = function () {
+        if (this.slice){
+            //normal widget
+            return this.slice.imgSrc
+        }else if(this.generalImageTextureList){
+            return this.generalImageTextureList[this.generalImageTextureIdx]
+        }
+    }
+
+    ResTrack.prototype.setImgSrc = function (newSrc) {
+        if (this.slice){
+            //normal widget
+            this.slice.imgSrc = newSrc
+        }else if(this.generalImageTextureList){
+            this.generalImageTextureList[this.generalImageTextureIdx] = newSrc
+        }
+    }
 
 
     //define canvas object
@@ -923,6 +942,122 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
     };
 
+
+    renderer.prototype.renderGeneral = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+
+
+            var layerCount = widget.layers.length
+            var layerErr
+
+            var layerHandler = function (err) {
+                layerCount--
+                if (err){
+                    layerErr = err
+                    console.log('layerHandler',err)
+                }
+                if (layerCount == 0){
+                    cb && cb(layerErr)
+                }
+            }.bind(this)
+
+            if (layerCount){
+                widget.layers.forEach(function (layer,i) {
+
+
+                    // //render color
+                    // if (layer.subLayers && layer.subLayers.color){
+                    //     var color = layer.subLayers.color
+                    //     renderingX.renderColor(ctx,new Size(width,height),new Pos(),'rgba('+color.r+','+color.g+','+color.b+','+(color.a/255.0)+')');
+                    // }
+                    var width = layer.width
+                    var height =layer.height
+
+
+                    if(layer.subLayers && layer.subLayers.image&&layer.subLayers.image.textureList.length){
+                        var imageCount = layer.subLayers.image.textureList.length
+                        var texErr
+                        var texHandler = function (err) {
+                            imageCount--
+                            if (err){
+                                texErr = err
+                                console.log('texErr',err)
+                            }
+                            if (imageCount==0){
+                                layerHandler && layerHandler(texErr)
+                            }
+
+                        }
+                        layer.subLayers.image.textureList.forEach(function (imgSrc,j) {
+                            var canvas = new Canvas(width,height);
+                            var ctx = canvas.getContext('2d');
+
+                            ctx.clearRect(0,0,width,height);
+                            ctx.save();
+                            var imgUrl = path.join(srcRootDir,imgSrc);
+                            var targetImageObj = this.getTargetImage(imgUrl);
+                            if (!targetImageObj){
+                                //not added to images
+                                var imgObj = new Image();
+                                try{
+                                    imgObj.src = loadImageSync(imgUrl);
+                                    this.addImage(imgUrl,imgObj);
+                                    targetImageObj = imgObj;
+                                }catch (err){
+                                    targetImageObj = null;
+                                }
+
+                            }
+                            renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                            //output
+                            var imgName
+                            if (widget.id!==undefined){
+                                imgName = widget.id.split('.').join('-');
+                            }else{
+                                //system widgets
+                                imgName = widget.generalType
+                            }
+                            var outputFilename = imgName +'-'+ i+'.png';
+                            var outpath = path.join(dstDir,outputFilename);
+                            canvas.output(outpath,function (err) {
+                                if (err){
+                                    texHandler && texHandler(err);
+                                }else{
+                                    this.trackedRes.push(new ResTrack(imgSrc,null,null,outputFilename,width,height,null,layer.subLayers.image.textureList,j))
+
+                                    // console.log(_.cloneDeep(this.trackedRes))
+                                    //write widget
+                                    // curSlice.originSrc = curSlice.imgSrc;
+                                    layer.subLayers.image.textureList[j] = path.join(imgUrlPrefix||'',outputFilename);
+                                    //if last trigger cb
+                                    texHandler && texHandler()
+                                }
+                            }.bind(this));
+
+                            ctx.restore();
+                        }.bind(this))
+                    }else{
+                        layerHandler && layerHandler()
+                    }
+
+
+
+
+                }.bind(this))
+            }else{
+                cb && cb()
+            }
+
+
+
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
     renderer.prototype.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         switch (widget.subType){
             case 'MyButton':
@@ -956,6 +1091,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             case 'MyTexTime':
                 this.renderTexTime(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
+            case 'general':
+                this.renderGeneral(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
             default:
                 cb&&cb();
         }
@@ -970,8 +1108,18 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 // console.log(this.trackedRes[j])
                 if (this.trackedRes[j].equal(curJudgeTrack)){
                     //same;
-                    needRemoveFiles.push(curJudgeTrack.slice.imgSrc)
-                    curJudgeTrack.slice.imgSrc = this.trackedRes[j].slice.imgSrc;
+                    // needRemoveFiles.push(curJudgeTrack.slice.imgSrc)
+
+                    // if (curJudgeTrack.slice){
+                    //     curJudgeTrack.slice.imgSrc = this.trackedRes[j].slice.imgSrc;
+                    //
+                    // }else if (curJudgeTrack.generalImageTextureList){
+                    //
+                    // }
+                    var sameImgSrc = this.trackedRes[j].getImgSrc()
+                    needRemoveFiles.push(sameImgSrc)
+                    curJudgeTrack.setImgSrc(sameImgSrc)
+
 
                     break;
                 }
@@ -1058,6 +1206,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
             }
         }
+        //system widgets
+        allWidgets = allWidgets.concat(dataStructure.systemWidgets||[])
         var fontList =  FontGeneratorService.getFontCollections(allWidgets),
             totalNum = allWidgets.length+fontList.length,
             m = 0,

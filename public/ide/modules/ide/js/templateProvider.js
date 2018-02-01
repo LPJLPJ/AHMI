@@ -1169,6 +1169,86 @@ ideServices
             };
         };
 
+        //colorpicker
+
+        this.getSysColorPicker = function(){
+            var defaultW = 800,                //控件默认宽度
+                defaultH = 480,                //控件默认高度
+                pWidth = Math.ceil(0.9*projectSize.width),    //工程宽度
+                pHeight = Math.ceil(0.9*projectSize.height),  //工程高度
+                offsetX = Math.floor(0.05*projectSize.width),
+                offsetY = Math.floor(0.05*projectSize.height),
+                x,y,w,h,scaleX,scaleY,scale;   //控件坐标，实际宽高，横向、纵向缩放比
+
+            //根据页面尺寸计算实际宽高
+            scaleX = (pWidth>=defaultW)?1:pWidth/defaultW;
+            scaleY = (pHeight>=defaultH)?1:pHeight/defaultH;
+            scale = (scaleX<=scaleY)?scaleX:scaleY;
+            w = Math.floor(scale*defaultW);
+            h = Math.floor(scale*defaultH);
+            x = Math.floor(Math.abs(pWidth-w)/2)+offsetX;
+            y = Math.floor(Math.abs(pHeight-h)/2)+offsetY;
+            var info = {
+                top:y,
+                left:x,
+                width:w,    //控件默认宽度
+                height:h
+            };
+            var texList = [
+                {
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/colorPicker/slide.png',
+                        name:'slide'
+                    }]
+                },
+                {
+                    currentSliceIdx:1,
+                    name:'年',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/colorPicker/colorpickerAlphaBg.png',
+                        name:'colorPickerAlpha'
+                    }]
+                },
+                {
+                    currentSliceIdx:2,
+                    name:'月',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/colorPicker/bg.png',
+                        name:'bg'
+                    }]
+                },
+                {
+                    currentSliceIdx:3,
+                    name:'日',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/colorPicker/pickerIndicator.png',
+                        name:'pickerIndicator'
+                    }]
+                },
+                {
+                    currentSliceIdx:4,
+                    name:'高亮',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'/public/images/datePicker/highlight.png'
+                    }]
+                }
+            ];
+            return {
+                id:Math.random().toString(36).substr(2),
+                generalType:'ColorPicker',
+                name:'ColorPicker',
+                info:info,
+                texList:texList
+            }
+        };
+
 
         //系统控件,日期选择器
         this.getSystemDatePicker = function(){
