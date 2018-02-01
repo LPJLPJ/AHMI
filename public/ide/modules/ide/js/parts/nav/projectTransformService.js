@@ -769,16 +769,26 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      * 生成颜色选择器
      */
     function GenColorPicker(width,height){
-        var minSize = Math.min(width,height)
-        minSize = Math.ceil(0.05*minSize)
-        var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,width-2*minSize,height-2*minSize,[
-            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},
-            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/colorpickerAlphaBg.png'},
-            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
-            {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}
-        ])
+        // var minSize = Math.min(width,height)
+        // minSize = Math.ceil(0.05*minSize)
+        // var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,width-2*minSize,height-2*minSize,[
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/colorpickerAlphaBg.png'},
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}
+        // ])
+
+        var colorPickerData = TemplateProvider.getSysColorPicker()
+        var info = colorPickerData.info
+        var slices = [];
+        colorPickerData.texList.map(function (curTex) {
+            curTex.slices.map(function(slice){
+                slices.push(slice)
+            })
+        });
+        var colorPicker = new WidgetModel.models.ColorPicker(info.left,info.top,info.width,info.height,slices)
         colorPicker = colorPicker.toObject()
-        colorPicker.generalType = 'ColorPicker'
+        colorPicker.generalType = colorPickerData.generalType
         colorPicker.type = 'widget'
         colorPicker.subType = 'general'
         return colorPicker;
