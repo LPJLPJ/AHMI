@@ -1,1 +1,1282 @@
-ideServices.service("RenderSerive",["ResourceService","Upload","$http","FontGeneratorService",function(e,t,n,r){function i(e){var t;t=e.split(",")[0].indexOf("base64")>=0?atob(e.split(",")[1]):unescape(e.split(",")[1]);for(var n=e.split(",")[0].split(":")[1].split(";")[0],r=new Uint8Array(t.length),i=0;i<t.length;i++)r[i]=t.charCodeAt(i);return new Blob([r],{type:n})}function o(e,n,r,o,a){var s=i(e),c=function(){console.log("save tex ok"),o&&o()},l=function(e){console.log(e),a&&a()};t.upload({url:r,data:{file:s,name:n}}).then(c,l)}function a(){for(var t=e.getGlobalResources(),n={},r=0;r<t.length;r++){var i=t[r];n[i.id]=i.content}return n}function s(e,t){this.text=e,this.style=t}function c(e,t,n,r,i,o,a){this.img=e,this.color=t,this.text=n,this.outFile=r,this.w=i,this.h=o,this.slice=a}function l(e,t){this.width=e,this.height=t;var n=document.createElement("canvas");n.width=this.width,n.height=this.height,n.hidden=!0,this.canvasObj=n}function g(e){switch(e){case"jpg":case"jpeg":return"image/jpeg";case"png":return"image/png";case"bmp":return"image/bmp";default:return"image/png"}}function f(e){if(w){return"data:"+g(p.extname(e))+";base64,"+m.readFileSync(e).toString("base64")}return e}function h(e){var t=e.split("/");return t[t.length-1]}function d(e,t){this.images=e||{},window.images=this.images,this.customFonts=t||{},this.trackedRes=[]}function u(){var e,t="win32"===require("os").platform()?"win":"other",n="zip";"win"===t?(n=".\\utils\\7z\\7z.exe",e=["a"]):e=["-rj"];var r,i,o,a=function(){"win"===t&&"\\"!==i[i.length-1]&&(i+="\\*");var a=e.concat(r).concat(i),s=y(n,a);console.log("command",n,a),s.stdout.on("data",function(e){}),s.stderr.on("data",function(e){}),s.on("error",function(e){console.log(e),o(e)}),s.on("exit",function(e){0===e?o():o(new Error(e))})};this.compress=function(e,t,n){r=e,i=t,o=n,m.stat(e,function(t,n){n&&n.isFile()?m.unlink(e,function(e){e?o(e):a()}):a()})}}var p,w=!1;try{p=require("path");var m=require("fs");w=!0}catch(e){p={},p.sep="/",p.join=function(e,t){return e[e.length-1]==p.sep&&(e=e.slice(0,e.length-1)),t[0]==p.sep&&(t=t.slice(1)),e+p.sep+t}}c.prototype.equal=function(e){for(var t=["img","color","text","w","h"],n=0;n<t.length;n++){var r=t[n];if(this[r]!=e[r])return!1}return!0},l.prototype.getContext=function(e){if("2d"===e)return this.canvasObj.getContext("2d")},l.prototype.pngStream=function(){var e=this.canvasObj.toDataURL();if(w){return new Buffer(e.split(",")[1],"base64")}return e},l.prototype.toBuffer=function(){var e=this.canvasObj.toDataURL();return new Buffer(e.split(",")[1],"base64")},l.prototype.output=function(t,n){var r=this.pngStream(),i=h(t);if(w)try{m.writeFileSync(t,r),n&&n()}catch(e){n&&n(e)}else o(r,i,"/project/"+e.getResourceUrl().split("/")[2]+"/generatetex",n,n)};var v=renderingX.Size,S=renderingX.Pos;if(d.prototype.compareTrackedRes=function(e){for(var t=0;t<this.trackedRes.length;t++){if(this.trackedRes[t].eq(e))return!0}return!1},d.prototype.getTargetImage=function(e){return w?"undefined"!==this.images[e]?this.images[e]:null:this.images[h(e)]},d.prototype.addImage=function(e,t){this.images[e]=t},d.prototype.renderButton=function(e,t,n,r,i){var o=e.info;if(o){var a={},g={};g["font-style"]=e.info.fontItalic,g["font-weight"]=e.info.fontBold,g["font-size"]=e.info.fontSize,g["font-family"]=e.info.fontFamily,g["font-color"]=e.info.fontColor,a.color=g["font-color"],a.font=(g["font-style"]||"")+" "+(g["font-variant"]||"")+" "+(g["font-weight"]||"")+" "+(g["font-size"]||24)+"px "+(g["font-family"]||"arial"),a.textAlign="center",a.textBaseline="middle";var h=e.texList[0].slices,d=h.length;h.map(function(g,h){var u=new l(o.width,o.height),w=u.getContext("2d"),m=g.imgSrc;w.clearRect(0,0,o.width,o.height),w.save(),renderingX.renderColor(w,new v(o.width,o.height),new S,g.color);var y;if(""!==m){y=p.join(t,m);var x=this.getTargetImage(y);if(!x){var j=new Image;try{j.src=f(y),this.addImage(y,j),x=j}catch(e){x=null}}renderingX.renderImage(w,new v(o.width,o.height),new S,x,new S,new v(o.width,o.height))}h<2&&void 0!==o.text&&o.text&&renderingX.renderText(w,new v(o.width,o.height),new S,o.text,a,!0,null,this.customFonts);var b=e.id.split(".").join("-"),I=b+"-"+h+".png",R=p.join(n,I);u.output(R,function(t){t?(d-=1)<=0&&i&&i(t):(this.trackedRes.push(new c(m,g.color,new s(o.text,a),I,o.width,o.height,g)),e.texList[0].slices[h].originSrc=e.texList[0].slices[h].imgSrc,e.texList[0].slices[h].imgSrc=p.join(r||"",I),(d-=1)<=0&&i&&i())}.bind(this)),w.restore()}.bind(this))}else i&&i()},d.prototype.renderButtonGroup=function(e,t,n,r,i){var o=e.info;if(o){var a=o.width,s=o.height,g=o.interval,h=o.count;"horizontal"===o.arrange?a=(a-(h-1)*g)/h:s=(s-(h-1)*g)/h;for(var d=e.texList,u=2*h,w=[],m=0;m<h;m++)for(var y=0;y<2;y++)w.push(d[m].slices[y]);d[h]&&(w.push(d[h].slices[0]),u++),w.map(function(o,g){var h=new l(a,s),d=h.getContext("2d"),w=o;d.clearRect(0,0,a,s),d.save(),renderingX.renderColor(d,new v(a,s),new S,w.color);var m=w.imgSrc;if(""!==m){var y=p.join(t,m),x=this.getTargetImage(y);if(!x){var j=new Image;try{j.src=f(y),this.addImage(y,j),x=j}catch(e){x=null}}renderingX.renderImage(d,new v(a,s),new S,x,new S,new v(a,s))}var b=e.id.split(".").join("-"),I=b+"-"+g+".png",R=p.join(n,I);h.output(R,function(e){e?(u-=1)<=0&&i&&i(e):(this.trackedRes.push(new c(m,w.color,null,I,a,s,o)),w.originSrc=w.imgSrc,w.imgSrc=p.join(r||"",I),(u-=1)<=0&&i&&i())}.bind(this)),d.restore()}.bind(this))}else i&&i()},d.prototype.renderDashboard=function(e,t,n,r,i){var o=e.info;if(o){var a=e.texList,s=a.length;a.map(function(g,h){var d=o.width,u=o.height;1===h&&(d=u=o.pointerLength/Math.sqrt(2));var w=new l(d,u),m=w.getContext("2d"),y=a[h].slices[0];m.clearRect(0,0,d,u),m.save(),renderingX.renderColor(m,new v(d,u),new S,y.color);var x=y.imgSrc;if(""!==x){var j=p.join(t,x),b=this.getTargetImage(j);if(!b){var I=new Image;try{I.src=f(j),this.addImage(j,I),b=I}catch(e){b=null}}renderingX.renderImage(m,new v(d,u),new S,b,new S,new v(d,u))}var R=e.id.split(".").join("-"),k=R+"-"+h+".png",T=p.join(n,k);w.output(T,function(e){e?(s-=1)<=0&&i&&i(e):(this.trackedRes.push(new c(x,y.color,null,k,d,u,y)),y.originSrc=y.imgSrc,y.imgSrc=p.join(r||"",k),(s-=1)<=0&&i&&i())}.bind(this)),m.restore()}.bind(this))}else i&&i()},d.prototype.renderSlide=function(e,t,n,r,i){var o=e.info;if(o){var a="",s={},g={};g["font-style"]=e.info.fontItalic,g["font-weight"]=e.info.fontBold,g["font-size"]=e.info.fontSize,g["font-family"]=e.info.fontFamily,g["font-color"]=e.info.fontColor,s.color=g["font-color"],s.font=(g["font-style"]||"")+" "+(g["font-variant"]||"")+" "+(g["font-weight"]||"")+" "+(g["font-size"]||24)+"px "+(g["font-family"]||"arial"),s.textAlign="center",s.textBaseline="middle";var h=o.width,d=o.height,u=e.texList[0],w=u.slices.length;u.slices.map(function(g,m){var y=new l(h,d),x=y.getContext("2d"),j=u.slices[m];x.clearRect(0,0,h,d),x.save(),renderingX.renderColor(x,new v(h,d),new S,j.color);var b=j.imgSrc;if(""!==b){var I=p.join(t,b),R=this.getTargetImage(I);if(!R){var k=new Image;try{k.src=f(I),this.addImage(I,k),R=k}catch(e){R=null}}renderingX.renderImage(x,new v(h,d),new S,R,new S,new v(h,d))}(a=j.text)&&renderingX.renderText(x,new v(o.width,o.height),new S,a,s,!0,null,this.customFonts);var T=e.id.split(".").join("-"),C=T+"-"+m+".png",F=p.join(n,C);y.output(F,function(e){e?i&&i(e):(this.trackedRes.push(new c(b,j.color,null,C,h,d,j)),j.originSrc=j.imgSrc,j.imgSrc=p.join(r||"",C),(w-=1)<=0&&i&&i())}.bind(this)),x.restore()}.bind(this))}else i&&i()},d.prototype.renderTexNum=function(e,t,n,r,i){var o=e.info;if(o){var a=o.characterW,s=o.characterH,g=e.texList[0],h=g.slices.length;g.slices.map(function(o,d){var u=new l(a,s),w=u.getContext("2d"),m=g.slices[d];w.clearRect(0,0,a,s),w.save(),renderingX.renderColor(w,new v(a,s),new S,m.color);var y=m.imgSrc;if(""!==y){var x=p.join(t,y),j=this.getTargetImage(x);if(!j){var b=new Image;try{b.src=f(x),this.addImage(x,b),j=b}catch(e){j=null}}renderingX.renderImage(w,new v(a,s),new S,j,new S,new v(a,s))}var I=e.id.split(".").join("-"),R=I+"-"+d+".png",k=p.join(n,R);u.output(k,function(e){e?i&&i(e):(this.trackedRes.push(new c(y,m.color,null,R,a,s,m)),m.originSrc=m.imgSrc,m.imgSrc=p.join(r||"",R),(h-=1)<=0&&i&&i())}.bind(this)),w.restore()}.bind(this))}else i&&i()},d.prototype.renderTexTime=function(e,t,n,r,i){var o=e.info;if(o){var a=o.characterW,s=o.characterH,g=_.cloneDeep(e.texList[0]);g.slices.push(e.texList[1].slices[0]);var h=g.slices.length;g.slices.map(function(o,d){var u=new l(a,s),w=u.getContext("2d"),m=g.slices[d];w.clearRect(0,0,a,s),w.save(),renderingX.renderColor(w,new v(a,s),new S,m.color);var y=m.imgSrc;if(""!==y){var x=p.join(t,y),j=this.getTargetImage(x);if(!j){var b=new Image;try{b.src=f(x),this.addImage(x,b),j=b}catch(e){j=null}}renderingX.renderImage(w,new v(a,s),new S,j,new S,new v(a,s))}var I=e.id.split(".").join(""),R=I+"-"+d+".png",k=p.join(n,R);u.output(k,function(e){e?i&&i(e):(this.trackedRes.push(new c(y,m.color,null,R,a,s,m)),m.originSrc=m.imgSrc,m.imgSrc=p.join(r||"",R),(h-=1)<=0&&i&&i())}.bind(this));for(var T=[],C=0;C<13;C++)T.push(g.slices[C]);e.texList[0].slices=T,w.restore()}.bind(this))}else i&&i()},d.prototype.renderRotateImg=function(e,t,n,r,i){var o=e.info;if(o){var a=o.width,s=o.height,g=e.texList[0],h=g.slices.length;g.slices.map(function(o,d){var u=new l(a,s),w=u.getContext("2d"),m=g.slices[d];w.clearRect(0,0,a,s),w.save(),renderingX.renderColor(w,new v(a,s),new S,m.color);var y=m.imgSrc;if(""!==y){var x=p.join(t,y),j=this.getTargetImage(x);if(!j){var b=new Image;try{b.src=f(x),this.addImage(x,b),j=b}catch(e){j=null}}renderingX.renderImage(w,new v(a,s),new S,j,new S,new v(a,s))}var I=e.id.split(".").join("-"),R=I+"-"+d+".png",k=p.join(n,R);u.output(k,function(e){e?i&&i(e):(this.trackedRes.push(new c(y,m.color,null,R,a,s,m)),m.originSrc=m.imgSrc,m.imgSrc=p.join(r||"",R),(h-=1)<=0&&i&&i())}.bind(this)),w.restore()}.bind(this))}else i&&i()},d.prototype.renderOscilloscope=function(e,t,n,r,i){var o=e.info,a=o.width,s=o.height;if(o){var c=new l(a,s),g=c.getContext("2d");g.clearRect(0,0,a,s);var h=e.texList[0].slices[0];if(renderingX.renderColor(g,new v(a,s),new S,h.color),""!==h.imgSrc){var d=p.join(t,h.imgSrc),u=this.getTargetImage(d);if(!u){var w=new Image;try{w.src=f(d),this.addImage(d,w),u=w}catch(e){u=null}}renderingX.renderImage(g,new v(a,s),new S,u,new S,new v(a,s))}renderingX.renderGrid(g,new v(a,s),new S,new v(o.spacing,o.spacing),new S);var m=e.id.split(".").join("-"),y=m+"-1.png",x=p.join(n,y);c.output(x,function(e){e?i&&i(e):(h.originSrc=h.imgSrc,h.imgSrc=p.join(r||"",y),i&&i())}.bind(this))}else i&&i()},d.prototype.renderTextArea=function(e,t,n,r,i){var o=e.info,a=o.width,g=o.height;if(o){var h={},d={};d["font-style"]=e.info.fontItalic,d["font-weight"]=e.info.fontBold,d["font-size"]=e.info.fontSize,d["font-family"]=e.info.fontFamily,d["font-color"]=e.info.fontColor,h.color=d["font-color"],h.font=(d["font-style"]||"")+" "+(d["font-variant"]||"")+" "+(d["font-weight"]||"")+" "+(d["font-size"]||24)+"px "+(d["font-family"]||"arial"),h.textAlign="center",h.textBaseline="middle",h.arrange=e.info.arrange;var u=new l(a,g),w=u.getContext("2d");w.clearRect(0,0,a,g);var m=e.texList[0].slices[0];if(renderingX.renderColor(w,new v(a,g),new S,m.color),""!==m.imgSrc){var y=p.join(t,m.imgSrc),x=this.getTargetImage(y);if(!x){var j=new Image;try{j.src=f(y),this.addImage(y,j),x=j}catch(e){x=null}}renderingX.renderImage(w,new v(a,g),new S,x,new S,new v(a,g))}o.text&&""!==o.text&&renderingX.renderText(w,new v(a,g),new S,o.text,h,!0,new S(.5*a,.5*g),this.customFonts);var b=e.id.split(".").join("-"),I=b+"-1.png",R=new Date,k=p.join(n,I);u.output(k,function(e){if(e)i&&i(e);else{this.trackedRes.push(new c(m.imgSrc,m.color,new s(o.text,h),I,a,g,m)),m.originSrc=m.imgSrc,m.imgSrc=p.join(r||"",I);var t=new Date;console.log("Output stream costs: ",(t-R)/1e3+"s"),i&&i()}}.bind(this))}else i&&i()},d.prototype.renderWidget=function(e,t,n,r,i){switch(e.subType){case"MyButton":case"MySwitch":this.renderButton(e,t,n,r,i);break;case"MyButtonGroup":this.renderButtonGroup(e,t,n,r,i);break;case"MySlide":case"MyAnimation":this.renderSlide(e,t,n,r,i);break;case"MyOscilloscope":this.renderOscilloscope(e,t,n,r,i);break;case"MyTextArea":this.renderTextArea(e,t,n,r,i);break;case"MyDashboard":this.renderDashboard(e,t,n,r,i);break;case"MyRotateImg":this.renderRotateImg(e,t,n,r,i);break;case"MyTexNum":this.renderTexNum(e,t,n,r,i);break;case"MyTexTime":this.renderTexTime(e,t,n,r,i);break;default:i&&i()}},d.prototype.removeSameOutputFiles=function(){for(var e=[],t=0;t<this.trackedRes.length;t++)for(var n=this.trackedRes[t],r=0;r<t;r++)if(this.trackedRes[r].equal(n)){e.push(n.slice.imgSrc),n.slice.imgSrc=this.trackedRes[r].slice.imgSrc;break}return e},d.prototype.renderFontPng=function(t,n,i,a,s){var c=t["font-family"];if(new RegExp("[\\u4E00-\\u9FFF]+","g").test(c)){for(var l="",g=0;g<c.length;g++)l+=c.charCodeAt(g).toString(32);c=l}var f=c+"-"+t["font-size"]+"-"+t["font-bold"]+"-"+(t["font-italic"]||"null")+".png",h={},d="",u=p.join(i,f);if(h.paddingRatio=1.2,d=r.generateSingleFont(t,h),d=r.pngStream(d,w),w)try{m.writeFileSync(u,d),s&&s()}catch(e){s&&s(e)}else o(d,f,"/project/"+e.getResourceUrl().split("/")[2]+"/generatetex",s,s)},this.renderProject=function(t,i,o){function s(e){console.log(e),f||(o&&o(),f=!0)}function c(){console.log("zip ok"),i&&i()}function l(e,t){x.compress(e,t,function(e){e?s(e):c()}.bind(this))}for(var g,f=!1,h=e.getProjectUrl(),u=e.getResourceUrl(),v=p.join(u,"data.json"),S=[],y=0;y<t.pageList.length;y++)for(var j=t.pageList[y],b=0;b<j.canvasList.length;b++)for(var I=j.canvasList[b],R=0;R<I.subCanvasList.length;R++)for(var k=I.subCanvasList[R],T=0;T<k.widgetList.length;T++)S.push(k.widgetList[T]);var C=r.getFontCollections(S),F=S.length+C.length,L=0,X=null;if(F>0){var z=!0,B=function(r){if(r)z=!1,s("generate error");else if((F-=1)<=0&&z){console.log("trans finished");g.removeSameOutputFiles();w?m.writeFile(v,JSON.stringify(t,null,4),function(e){if(e)s(e);else{console.log("write ok");var t=p.join(h,"resources");l(p.join(h,"file.zip"),t)}}):n({method:"POST",url:"/project/"+e.getResourceUrl().split("/")[2]+"/savedatacompress",data:{dataStructure:t}}).success(function(t){"ok"==t?window.location.href="/project/"+e.getResourceUrl().split("/")[2]+"/download":(console.log(t),toastr.info("生成失败")),i&&i()}).error(function(e){s(e),o&&o()})}}.bind(this);if(w){g=new d;var O=p.join(global.__dirname,p.dirname(window.location.pathname));if(0!==C.length)for(L=0;L<C.length;L++)C[L],g.renderFontPng(C[L],O,u,u,B);for(L=0;L<S.length;L++)X=S[L],g.renderWidget(X,O,u,u,B)}else{if(g=new d(a()),0!==C.length)for(L=0;L<C.length;L++)C[L],g.renderFontPng(C[L],"/",u,u,B);for(L=0;L<S.length;L++)X=S[L],g.renderWidget(X,"/",u,u,B)}}else w?m.writeFile(v,JSON.stringify(t,null,4),function(e){if(e)s(res,500,e);else{var t=p.join(h,"resources");l(p.join(h,"file.zip"),t)}}):n({method:"POST",url:"/project/"+e.getResourceUrl().split("/")[2]+"/savedatacompress",data:{dataStructure:t}}).success(function(t){"ok"==t?window.location.href="/project/"+e.getResourceUrl().split("/")[2]+"/download":(console.log(t),toastr.info("生成失败")),i&&i()}).error(function(e){s(e),o&&o()})},w)var y=require("child_process").spawn,x=new u}]);
+/**
+ * Created by zzen1ss on 16/7/11.
+ */
+ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGeneratorService',function (ResourceService,Upload,$http,FontGeneratorService) {
+
+    var local=false;
+    var path;
+    try {
+        path = require('path');
+        var fs = require('fs');
+        local = true;
+    }catch (e){
+        path = {};
+
+        path.sep = "/";
+        path.join = function (srcA, srcB) {
+            if (srcA[srcA.length-1] == path.sep){
+                srcA = srcA.slice(0,srcA.length-1)
+            }
+
+            if (srcB[0] == path.sep){
+                srcB = srcB.slice(1)
+            }
+
+            return srcA+path.sep+srcB
+        }
+    }
+
+    function dataURItoBlob(dataURI) {
+        // convert base64/URLEncoded data component to raw binary data held in a string
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+            byteString = atob(dataURI.split(',')[1]);
+        else
+            byteString = unescape(dataURI.split(',')[1]);
+
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        // write the bytes of the string to a typed array
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], {type:mimeString});
+    }
+
+
+    function uploadDataURI(dataURI,name, url,scb,fcb) {
+        var blob = dataURItoBlob(dataURI);
+
+        var successHandler = function () {
+            console.log('save tex ok')
+            scb && scb()
+        }
+
+        var errHandler = function (err) {
+            console.log(err)
+            fcb && fcb()
+        }
+        Upload.upload({
+            //url:baseUrl+'/resource',
+            //url:'/api/upload',
+            url:url,
+            data:{file:blob,name:name}
+
+        }).then(
+            successHandler,
+            errHandler
+
+        )
+    }
+
+
+    function prepareCachedRes() {
+        var curRes = ResourceService.getGlobalResources();
+        var resRepo = {}
+        for (var i=0;i<curRes.length;i++){
+            var res = curRes[i]
+            resRepo[res['id']] = res['content']
+        }
+        return resRepo
+    }
+
+    //track resources usage
+    function TextInfo(text,style) {
+        this.text = text;
+        this.style = style
+
+    }
+    function ResTrack(img,color,text,outFile,w,h,slice) {
+        this.img = img;
+        this.color = color;
+        this.text = text;
+        this.outFile = outFile;
+        this.w = w;
+        this.h = h;
+        this.slice = slice;
+    }
+
+    ResTrack.prototype.equal = function (nextResTrack) {
+        var comparedKeys = ['img','color','text','w','h'];
+        for (var i=0;i<comparedKeys.length;i++){
+            var curKey = comparedKeys[i];
+            if (this[curKey] != nextResTrack[curKey]){
+                return false
+            }
+        }
+        return true;
+    };
+
+
+
+    //define canvas object
+
+    function Canvas(width, height) {
+        this.width = width;
+        this.height = height;
+        var canavasObj = document.createElement('canvas');
+        canavasObj.width = this.width;
+        canavasObj.height = this.height;
+        canavasObj.hidden = true;
+        this.canvasObj = canavasObj;
+    }
+
+    Canvas.prototype.getContext = function (type) {
+        if (type === '2d'){
+            return this.canvasObj.getContext('2d');
+        }
+    };
+
+    Canvas.prototype.pngStream =function () {
+        var data = this.canvasObj.toDataURL();
+        if (local){
+            var dataBuffer = new Buffer(data.split(',')[1],'base64');
+            return dataBuffer;
+        }else{
+            return data
+        }
+
+
+    };
+
+    Canvas.prototype.toBuffer =function () {
+        var data = this.canvasObj.toDataURL();
+        var dataBuffer = new Buffer(data.split(',')[1],'base64');
+        return dataBuffer;
+
+    };
+
+    Canvas.prototype.output = function (outpath, cb ) {
+        var stream = this.pngStream();
+        var fileName = getLastName(outpath)
+        if (local){
+            try {
+                fs.writeFileSync(outpath,stream);
+                cb && cb();
+            }catch (e) {
+                cb && cb(e);
+            }
+        }else{
+            uploadDataURI(stream,fileName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
+        }
+
+    };
+
+
+    function checkFileType(fileExt) {
+        switch (fileExt){
+            case 'jpg':
+            case 'jpeg':
+                return 'image/jpeg';
+                break;
+            case 'png':
+                return 'image/png';
+                break;
+            case 'bmp':
+                return 'image/bmp';
+                break;
+            default:
+                return 'image/png';
+        }
+    }
+
+
+    function loadImageSync(imgUrl) {
+        if (local){
+            var ext = path.extname(imgUrl);
+            var type = checkFileType(ext);
+            var prefix = 'data:'+type+';base64,';
+
+            return prefix+fs.readFileSync(imgUrl).toString('base64');
+        }else{
+            return imgUrl
+        }
+
+    }
+
+    var Size = renderingX.Size;
+    var Pos = renderingX.Pos;
+
+
+
+    function getLastName(path) {
+        var array = path.split('/');
+        return array[array.length-1];
+    }
+
+
+    function renderer(images,customFonts) {
+        this.images = images||{};
+        window.images = this.images;
+        this.customFonts = customFonts || {};
+        this.trackedRes = [];
+    }
+
+
+    //compare tracked resources
+    renderer.prototype.compareTrackedRes = function (nextTrackedRes) {
+        for (var i=0;i<this.trackedRes.length;i++){
+            var curTrackedRes = this.trackedRes[i];
+            if (curTrackedRes.eq(nextTrackedRes)){
+                //hit
+                return true;
+            }
+        }
+        return false;
+    };
+
+    renderer.prototype.getTargetImage = function (url) {
+        if (local){
+            if (this.images[url]!=='undefined'){
+                return this.images[url];
+            }else{
+                return null;
+            }
+        }else{
+            return this.images[getLastName(url)]
+        }
+    };
+
+    renderer.prototype.addImage = function (imageUrl, image) {
+        this.images[imageUrl] = image;
+    };
+
+    renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (info ){
+            //font style
+            var style = {};
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            style.color = font['font-color'];
+            style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+            style.textAlign = 'center';
+            style.textBaseline = 'middle';
+            // var beforePressSlice = widget.texList[0].slices[0];
+            // var afterPressSlice = widget.texList[0].slices[1];
+            var slices = widget.texList[0].slices;
+            var totalSlices = slices.length;
+            slices.map(function (slice,index) {
+                var _canvas = new Canvas(info.width,info.height);
+                var ctx = _canvas.getContext('2d');
+                var img =slice.imgSrc;
+                ctx.clearRect(0,0,info.width,info.height);
+                ctx.save();
+                //color
+                renderingX.renderColor(ctx,new Size(info.width,info.height),new Pos(),slice.color);
+                var imgUrl;
+                if (img !== ''){
+                    //draw image
+                    imgUrl = path.join(srcRootDir,img);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(info.width,info.height),new Pos(),targetImageObj,new Pos(),new Size(info.width,info.height));
+                }
+                //draw text
+                if (index<2){
+                    if(info.text!==undefined&&!!info.text){
+                        renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),info.text,style,true,null,this.customFonts);
+                    }
+                }
+
+                //generate file
+                var imgName = widget.id.split('.').join('-');
+                var outputFilename = imgName +'-'+ index+'.png';
+
+                // console.log('dstDir',dstDir,'outputFilename',outputFilename);
+                var outpath = path.join(dstDir,outputFilename);
+                _canvas.output(outpath,function (err) {
+                    if (err){
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb(err);
+                        }
+                    }else{
+                        //track res
+                        this.trackedRes.push(new ResTrack(img,slice.color,new TextInfo(info.text,style),outputFilename,info.width,info.height,slice))
+                        //
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        widget.texList[0].slices[index].originSrc = widget.texList[0].slices[index].imgSrc;
+                        widget.texList[0].slices[index].imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+
+                }.bind(this));
+
+                ctx.restore();
+
+            }.bind(this));
+        }else{
+            cb&&cb();
+        }
+    };
+
+
+    renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var interval = info.interval;
+            var count = info.count;
+            var arrange = (info.arrange === 'horizontal');
+            if (arrange){
+                width = (width-(count-1)*interval)/count;
+            }else{
+                height = (height-(count-1)*interval)/count;
+            }
+
+            var texList = widget.texList;
+            var totalSlices = 2*count;
+
+            var slices = [];
+            for (var i=0;i<count;i++){
+                for (var j=0;j<2;j++){
+                    slices.push(texList[i].slices[j]);
+                }
+            }
+            if (texList[count]){
+                slices.push((texList[count].slices[0]));
+                totalSlices++;
+            }
+            slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+
+                var curSlice = slice;
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+                //output
+                var imgName = widget.id.split('.').join('-');
+                var outputFilename = imgName +'-'+ i+'.png';
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb(err);
+                        }
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,slice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+
+                }.bind(this));
+
+
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
+    renderer.prototype.renderDashboard = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+
+
+            var texList = widget.texList;
+            var totalSlices = texList.length;
+            texList.map(function (tex,i) {
+                var width = info.width;
+                var height = info.height;
+                if (i===1){
+                    //pointer
+                    width = height = info.pointerLength/Math.sqrt(2);
+                }
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = texList[i].slices[0];
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+                //output
+                var imgName = widget.id.split('.').join('-');
+                var outputFilename = imgName +'-'+ i+'.png';
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb(err);
+                        }
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+
+                }.bind(this));
+
+
+
+                ctx.restore();
+            }.bind(this));
+
+
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
+    renderer.prototype.renderSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            //font
+            var text = '';
+            var style = {};
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            style.color = font['font-color'];
+            style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+            style.textAlign = 'center';
+            style.textBaseline = 'middle';
+
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slideTex.slices[i];
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+
+                //render font --20170705
+                text = curSlice.text;
+                if(!!text){
+                    renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),text,style,true,null,this.customFonts);
+                }
+
+                //output
+                var imgName = widget.id.split('.').join('-');
+                var outputFilename = imgName +'-'+ i+'.png';
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
+    renderer.prototype.renderTexNum = function(widget,srcRootDir,dstDir,imgUrlPrefix,cb){
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.characterW;
+            var height = info.characterH;
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slideTex.slices[i];
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+
+                //output
+                var imgName = widget.id.split('.').join('-');
+                var outputFilename = imgName +'-'+ i+'.png';
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice));
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    };
+
+    renderer.prototype.renderTexTime = function(widget,srcRootDir,dstDir,imgUrlPrefix,cb){
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.characterW;
+            var height = info.characterH;
+
+            // var slideTex = widget.texList[0];
+            var slideTex = _.cloneDeep(widget.texList[0]);
+            slideTex.slices.push(widget.texList[1].slices[0]);
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slideTex.slices[i];
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+
+                //output
+                var imgName = widget.id.split('.').join('');
+                var outputFilename = imgName +'-'+ i+'.png';
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice));
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+                var numberSlice=[];
+                for(var j=0;j<13;j++){
+                    numberSlice.push(slideTex.slices[j]);
+                }
+                widget.texList[0].slices=numberSlice;
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    };
+
+    renderer.prototype.renderRotateImg = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slideTex.slices[i];
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+                //output
+                var imgName = widget.id.split('.').join('-');
+                var outputFilename = imgName +'-'+ i+'.png';
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
+    renderer.prototype.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        var width = info.width;
+        var height = info.height;
+        if (info){
+            //draw bg
+            //draw grid
+            var canvas = new Canvas(width,height);
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,width,height);
+            var bgSlice = widget.texList[0].slices[0];
+            renderingX.renderColor(ctx,new Size(width,height),new Pos(),bgSlice.color);
+            if (bgSlice.imgSrc!==''){
+                var imgUrl = path.join(srcRootDir,bgSlice.imgSrc);
+                var targetImageObj = this.getTargetImage(imgUrl);
+                if (!targetImageObj){
+                    //not added to images
+                    var imgObj = new Image;
+                    try{
+                        imgObj.src = loadImageSync(imgUrl);
+                        this.addImage(imgUrl,imgObj);
+                        targetImageObj = imgObj;
+                    }catch (err){
+                        targetImageObj = null;
+                    }
+
+                }
+                renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+            }
+            renderingX.renderGrid(ctx,new Size(width,height),new Pos(),new Size(info.spacing,info.spacing),new Pos());
+            //output
+            var imgName = widget.id.split('.').join('-');
+            var outputFilename = imgName +'-'+ 1+'.png';
+
+
+            var outpath = path.join(dstDir,outputFilename);
+
+            canvas.output(outpath,function (err) {
+                if (err){
+                    cb && cb(err);
+                }else{
+                    bgSlice.originSrc = bgSlice.imgSrc;
+                    bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                    cb && cb();
+                }
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    };
+
+
+    renderer.prototype.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        var width = info.width;
+        var height = info.height;
+        if (info){
+            var style = {};
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            style.color = font['font-color'];
+            style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+            style.textAlign = 'center';
+            style.textBaseline = 'middle';
+            style.arrange = widget.info.arrange;
+            var canvas = new Canvas(width,height);
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,width,height);
+            var bgSlice = widget.texList[0].slices[0];
+            renderingX.renderColor(ctx,new Size(width,height),new Pos(),bgSlice.color);
+
+            if (bgSlice.imgSrc!==''){
+                var imgUrl = path.join(srcRootDir,bgSlice.imgSrc);
+                var targetImageObj = this.getTargetImage(imgUrl);
+                if (!targetImageObj){
+                    //not added to images
+                    var imgObj = new Image;
+                    try{
+                        imgObj.src = loadImageSync(imgUrl);
+                        this.addImage(imgUrl,imgObj);
+                        targetImageObj = imgObj;
+                    }catch (err){
+                        targetImageObj = null;
+                    }
+
+                }
+                renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+            }
+            if (info.text&&info.text!==''){
+                //draw text
+                renderingX.renderText(ctx,new Size(width,height),new Pos(),info.text,style,true,new Pos(0.5*width,0.5*height),this.customFonts);
+            }
+            //output
+            var imgName = widget.id.split('.').join('-');
+            var outputFilename = imgName +'-'+ 1+'.png';
+
+            var startTime = new Date();
+
+            var outpath = path.join(dstDir,outputFilename);
+
+            canvas.output(outpath,function (err) {
+                if (err){
+                    cb && cb(err);
+                }else{
+                    this.trackedRes.push(new ResTrack(bgSlice.imgSrc,bgSlice.color,new TextInfo(info.text,style),outputFilename,width,height,bgSlice))
+                    // console.log(_.cloneDeep(this.trackedRes))
+                    bgSlice.originSrc = bgSlice.imgSrc;
+                    bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                    var stopTime = new Date();
+                    console.log('Output stream costs: ',(stopTime-startTime)/1000.0+'s');
+                    cb && cb();
+                }
+            }.bind(this))
+
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
+    renderer.prototype.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        switch (widget.subType){
+            case 'MyButton':
+            case 'MySwitch':
+                this.renderButton(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyButtonGroup':
+                this.renderButtonGroup(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MySlide':
+                this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyAnimation':
+                this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyOscilloscope':
+                this.renderOscilloscope(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyTextArea':
+                this.renderTextArea(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyDashboard':
+                this.renderDashboard(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyRotateImg':
+                this.renderRotateImg(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyTexNum':
+                this.renderTexNum(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyTexTime':
+                this.renderTexTime(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            default:
+                cb&&cb();
+        }
+    };
+
+    renderer.prototype.removeSameOutputFiles = function () {
+        var needRemoveFiles = [];
+        for (var i=0;i<this.trackedRes.length;i++){
+            var curJudgeTrack = this.trackedRes[i];
+            for (var j=0;j<i;j++){
+                //compare with former restracks
+                // console.log(this.trackedRes[j])
+                if (this.trackedRes[j].equal(curJudgeTrack)){
+                    //same;
+                    needRemoveFiles.push(curJudgeTrack.slice.imgSrc)
+                    curJudgeTrack.slice.imgSrc = this.trackedRes[j].slice.imgSrc;
+
+                    break;
+                }
+            }
+        }
+        return needRemoveFiles;
+    };
+
+    // add by lixiang in 2017/12/7
+    renderer.prototype.renderFontPng = function(font,srcRootDir,dstDir,imgUrlPrefix,cb){
+        var fontFamily = font['font-family'];
+        var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+        if(reg.test(fontFamily)){
+            var str = '';
+            for(var i=0;i<fontFamily.length;i++){
+                str += fontFamily.charCodeAt(i).toString(32);
+            }
+            fontFamily = str;
+        }
+
+        var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
+        var options = {};
+        var stream = '';
+        var outpath = path.join(dstDir,imgName);
+        options.paddingRatio = 1.2;
+        stream = FontGeneratorService.generateSingleFont(font,options);
+        stream = FontGeneratorService.pngStream(stream,local);
+        if(local){
+            try {
+                fs.writeFileSync(outpath,stream);
+                cb && cb();
+            }catch (e) {
+                cb && cb(e);
+            }
+        }else{
+            uploadDataURI(stream,imgName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
+        }
+    };
+
+    this.renderProject = function (dataStructure,sCb, fCb) {
+        var Renderer;
+        var errReported = false;
+        function errHandler(err) {
+            console.log(err);
+            if (!errReported){
+
+                fCb && fCb();
+                errReported = true;
+            }
+        }
+
+        function successHandler() {
+            console.log('zip ok');
+            sCb && sCb();
+        }
+
+        function zipResources(dst,src) {
+            // var SrcUrl = path.join(ProjectBaseUrl,'resources');
+            // var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+
+            MyZip.compress(dst,src,function (err) {
+                if (err) {
+                    errHandler(err);
+                } else {
+                    successHandler();
+                }
+            }.bind(this));
+        }
+
+
+        var ProjectBaseUrl = ResourceService.getProjectUrl();
+        var ResourceUrl = ResourceService.getResourceUrl();
+        var DataFileUrl = path.join(ResourceUrl,'data.json');
+        var allWidgets = [];
+        for (var i=0;i<dataStructure.pageList.length;i++){
+            var curPage = dataStructure.pageList[i];
+            for (var j=0;j<curPage.canvasList.length;j++){
+                var curCanvas = curPage.canvasList[j];
+                for (var k=0;k<curCanvas.subCanvasList.length;k++){
+                    var curSubCanvas = curCanvas.subCanvasList[k];
+                    for (var l=0;l<curSubCanvas.widgetList.length;l++){
+                        allWidgets.push(curSubCanvas.widgetList[l]);
+                    }
+                }
+            }
+        }
+        var fontList =  FontGeneratorService.getFontCollections(allWidgets),
+            totalNum = allWidgets.length+fontList.length,
+            m = 0,
+            curWidget = null,
+            curFont = null;
+
+        if (totalNum>0){
+            var okFlag = true;
+            var cb = function (err) {
+                if (err){
+                    okFlag = false;
+                    errHandler('generate error');
+                }else{
+                    totalNum-=1;
+                    if (totalNum<=0){
+                        if (okFlag){
+                            //ok
+                            console.log('trans finished');
+                            var shouldRemoveFiles = Renderer.removeSameOutputFiles();
+                            // console.log('trackedRes',Renderer.trackedRes,shouldRemoveFiles)
+                            if (local){
+                                fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                                    if (err){
+                                        errHandler(err);
+                                    }else{
+                                        //write ok
+                                        console.log('write ok');
+                                        // successHandler();
+                                        var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                                        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                                        zipResources(DistUrl,SrcUrl);
+                                    }
+                                })
+                            }else{
+                                //browser
+                                $http({
+                                    method:'POST',
+                                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
+                                    data:{
+                                        dataStructure:dataStructure
+                                    }
+                                })
+                                    .success(function (data) {
+                                        if (data == 'ok'){
+                                            //download
+                                            window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download'
+
+                                        }else{
+                                            console.log(data);
+                                            toastr.info('生成失败')
+                                        }
+                                        sCb && sCb()
+                                    })
+                                    .error(function (err) {
+                                        errHandler(err);
+                                        fCb && fCb()
+                                    })
+                            }
+
+                        }else{
+                            //fail
+                        }
+                    }
+                }
+            }.bind(this);
+
+            if (local){
+                Renderer = new renderer();
+                var ViewUrl = path.join(global.__dirname,path.dirname(window.location.pathname));
+                if(fontList.length!==0){
+                    for(m=0;m<fontList.length;m++){
+                        curFont = fontList[m];
+                        Renderer.renderFontPng(fontList[m],ViewUrl,ResourceUrl,ResourceUrl,cb);
+                    }
+                }
+                for (m=0;m<allWidgets.length;m++){
+                    curWidget = allWidgets[m];
+                    Renderer.renderWidget(curWidget,ViewUrl,ResourceUrl,ResourceUrl,cb);
+                }
+            }else{
+                Renderer = new renderer(prepareCachedRes());
+                //生成不同种类的字符列表
+                if(fontList.length!==0){
+                    for(m=0;m<fontList.length;m++){
+                        curFont = fontList[m];
+                        Renderer.renderFontPng(fontList[m],'/',ResourceUrl,ResourceUrl,cb);
+                    }
+                }
+                for (m=0;m<allWidgets.length;m++){
+                    curWidget = allWidgets[m];
+                    Renderer.renderWidget(curWidget,'/',ResourceUrl,ResourceUrl,cb);
+                }
+            }
+        }else{
+            if (local){
+                fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                    if (err){
+                        errHandler(res,500,err);
+                    }else{
+                        //write ok
+                        // successHandler();
+                        var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                        zipResources(DistUrl,SrcUrl);
+                    }
+                })
+            }else{
+                $http({
+                    method:'POST',
+                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
+                    data:{
+                        dataStructure:dataStructure
+                    }
+                })
+                    .success(function (data) {
+                        if (data == 'ok'){
+                            //download
+                            window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download'
+
+                        }else{
+                            console.log(data);
+                            toastr.info('生成失败')
+                        }
+                        sCb && sCb()
+                    })
+                    .error(function (err) {
+                        errHandler(err);
+                        fCb && fCb()
+                    })
+            }
+
+        }
+    };
+
+    if (local){
+
+        // my zip
+        var spawn = require('child_process').spawn;
+
+        function MyZipClass() {
+            var _arguments;
+            var platform = require('os').platform()==='win32'?'win':'other';
+            var zipCommand = 'zip';
+            if (platform === 'win'){
+                zipCommand = '.\\utils\\7z\\7z.exe';
+                _arguments = ['a']
+            }else{
+                _arguments = ['-rj'];
+            }
+
+            var _file,
+                _fileList,
+                _callback;
+
+            var zip = function() {
+                if (platform === 'win') {
+                    if (_fileList[_fileList.length-1]!=='\\') {
+                        _fileList = _fileList + '\\*';
+                    }
+                }
+                var params = _arguments.concat(_file).concat(_fileList);
+                var command = spawn(zipCommand, params);
+                console.log('command',zipCommand,params);
+
+                command.stdout.on('data', function(data) {
+                    // TODO: stdout
+
+                });
+
+                command.stderr.on('data', function(data) {
+                    // TODO: stderr
+
+                });
+                command.on('error',function (err) {
+                    console.log(err);
+                    _callback(err);
+                });
+                command.on('exit', function(code) {
+                    if(code === 0) {
+                        _callback();
+                    } else {
+                        _callback(new Error(code));
+                    }
+                });
+            };
+
+
+            this.compress = function(file, fileList, callback) {
+                // TODO: extract method fs.exists
+                // TODO: extract method fs.unlink
+
+                _file = file;
+                _fileList = fileList;
+                _callback = callback;
+
+
+                fs.stat(file, function (err, stats) {
+                    if (stats&&stats.isFile()){
+                        fs.unlink(file, function (err) {
+                            if (err){
+                                _callback(err);
+                            }else{
+                                zip();
+                            }
+                        });
+                        // zip();
+                    }else{
+                        zip();
+                    }
+                })
+            }
+
+        };
+
+        var MyZip = new MyZipClass();
+
+    }
+
+
+
+
+}]);

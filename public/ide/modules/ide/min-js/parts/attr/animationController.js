@@ -1,1 +1,184 @@
-ide.controller("animationCtl",["$scope","ProjectService","Type","$uibModal","AnimationService","UserTypeService",function(n,t,i,e,a,o){function l(){s(),r(),n.status={collapsed:!1},n.collapse=function(t){n.status.collapsed=!n.status.collapsed}}function r(){var n=o.getAnimationAuthor();document.getElementById("addAnimationBtn").disabled=n}function s(){if(!t.getCurrentSelectObject())return void console.warn("空");var i=t.getCurrentSelectObject().level,e=_.cloneDeep(i.animations);switch(a.setAnimations(e),n.animations=a.getAllAnimations(),t.getCurrentSelectObject().level.type){case"MyLayer":n.showAnimationPanel=!0;break;default:n.showAnimationPanel=!1}}function c(){n.$on("AttributeChanged",function(){s()}),n.deleteAnimation=function(t){a.deleteAnimationByIndex(t,function(){n.animations=a.getAllAnimations()}.bind(this))},n.openPanel=function(t){n.selectIdx=t;var i;-1==t?(i=a.getNewAnimation(),i.newAnimation=!0):t>=0&&t<n.animations.length&&(i=_.cloneDeep(n.animations[t]),i.newAnimation=!1);for(var o=[],l=0;l<n.animations.length;l++)o.push(n.animations[l].title);e.open({animation:!0,templateUrl:"animationPanelModal.html",controller:"AnimationInstanceCtrl",size:"middle",resolve:{animation:function(){return i},animationNames:function(){return o}}}).result.then(function(t){-1==n.selectIdx?a.appendAnimation(t,function(){n.animations=a.getAllAnimations()}.bind(this)):n.selectIdx>=0&&n.selectIdx<n.animations.length&&a.updateAnimationByIndex(t,n.selectIdx,function(){n.animations=a.getAllAnimations()}.bind(this))})}}n.$on("GlobalProjectReceived",function(){l(),c()})}]).controller("AnimationInstanceCtrl",["$scope","$uibModalInstance","ProjectService","animation","animationNames",function(n,t,i,e,a){function o(t){for(var i=n.animationNames,e=0;e<i.length;e++)if(t.animation.title===i[e])return toastr.info("重复的动画名"),!1;return!0}n.animation=e,n.animationNames=a,n.checkDuration=function(t){n.animation.duration<0?(toastr.error("持续时间必须大于0s"),n.animation.duration=0):n.animation.duration>5e3&&(toastr.error("持续时间不能大于5s"),n.animation.duration=5e3)},n.confirm=function(i){if(!1===i.animation.newAnimation&&i.animation.title===l)return void t.close(n.animation);r&&o(i)&&t.close(n.animation)},n.cancel=function(){t.dismiss()};var l=n.animation.title,r=!0;n.store=function(n){l=n.animation.title},n.restore=function(n){n.animation.title=l},n.enterName=function(t){if(t.animation.title!==l){if(!(r=i.inputValidate(t.animation.title))||!o(t))return void n.restore(t);toastr.info("修改成功"),l=t.animation.title}},n.enterPress=function(t,i){13==t.keyCode&&n.enterName(i)}}]);
+/**
+ * Created by lixiang on 2016/10/19.
+ */
+ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','AnimationService','UserTypeService',function($scope,ProjectService,Type,$uibModal,AnimationService,UserTypeService){
+    $scope.$on('GlobalProjectReceived',function(){
+        initUserInterface();
+        initProject();
+    });
+
+    function initUserInterface(){
+        readAnimationInfo();
+        setAnimationAuthor();
+        $scope.status={
+            collapsed:false,
+        };
+        $scope.collapse=function(event){
+            $scope.status.collapsed=!$scope.status.collapsed;
+        }
+    }
+
+    function setAnimationAuthor(){
+        var animationsDisabled=UserTypeService.getAnimationAuthor();
+        var animationBtn=document.getElementById('addAnimationBtn');
+        animationBtn.disabled=animationsDisabled;
+    }
+    function readAnimationInfo(){
+        if(!ProjectService.getCurrentSelectObject()){
+            console.warn('空');
+            return;
+        }
+        var curLevel = ProjectService.getCurrentSelectObject().level;
+        var _animation = _.cloneDeep(curLevel.animations);
+        AnimationService.setAnimations(_animation);
+
+        $scope.animations=AnimationService.getAllAnimations();
+
+        var currentObject = ProjectService.getCurrentSelectObject().level;
+        switch (currentObject.type){
+            case 'MyLayer':
+                $scope.showAnimationPanel=true;
+                break;
+            default:
+                $scope.showAnimationPanel=false;
+                break;
+        }
+    }
+
+    function initProject(){
+        $scope.$on('AttributeChanged',function(){
+            readAnimationInfo();
+        });
+
+        $scope.deleteAnimation=function(index){
+            AnimationService.deleteAnimationByIndex(index,function(){
+                $scope.animations=AnimationService.getAllAnimations();
+            }.bind(this));
+
+        };
+
+        $scope.openPanel=function(index){
+            $scope.selectIdx=index;
+            var targetAnimation;
+            if(index==-1){
+                targetAnimation = AnimationService.getNewAnimation();
+                targetAnimation.newAnimation=true;
+            }else if(index>=0&&index<$scope.animations.length){
+                targetAnimation=_.cloneDeep($scope.animations[index]);
+                targetAnimation.newAnimation=false;
+            }
+
+            var animationNames=[];
+            for(var i=0;i<$scope.animations.length;i++){
+                animationNames.push($scope.animations[i].title);
+            }
+
+            var modalInstance = $uibModal.open({
+                animation:true,
+                templateUrl:'animationPanelModal.html',
+                controller:'AnimationInstanceCtrl',
+                size:'middle',
+                resolve:{
+                    animation:function(){
+                        return targetAnimation;
+                    },
+                    animationNames: function(){
+                        return animationNames;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function(newAnimation){
+                if($scope.selectIdx==-1){
+                    AnimationService.appendAnimation(newAnimation,function(){
+                        $scope.animations=AnimationService.getAllAnimations();
+                    }.bind(this));
+                }else if($scope.selectIdx>=0&&$scope.selectIdx<$scope.animations.length){
+                    AnimationService.updateAnimationByIndex(newAnimation,$scope.selectIdx,function(){
+                        $scope.animations=AnimationService.getAllAnimations();
+                    }.bind(this));
+                }
+            });
+        }
+    }
+
+
+}])
+
+    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','ProjectService','animation','animationNames',function($scope,$uibModalInstance,ProjectService,animation,animationNames){
+        $scope.animation=animation;
+        $scope.animationNames=animationNames;
+        $scope.checkDuration = function (e) {
+            if($scope.animation.duration<0){
+                toastr.error('持续时间必须大于0s');
+                $scope.animation.duration=0;
+            }else if($scope.animation.duration>5000){
+                toastr.error('持续时间不能大于5s');
+                $scope.animation.duration=5000;
+            }
+        };
+        $scope.confirm = function (th) {
+            if(th.animation.newAnimation===false){
+                if (th.animation.title===restoreValue){
+                    $uibModalInstance.close($scope.animation);
+                    return;
+                }
+            }
+            if(validation&&duplicate(th)){
+                $uibModalInstance.close($scope.animation);
+            }
+
+
+        };
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss();
+        };
+
+        var restoreValue=$scope.animation.title;
+        var validation=true;
+        //保存旧值
+        $scope.store=function(th){
+            restoreValue=th.animation.title;
+
+        };
+
+        //恢复旧值
+        $scope.restore = function (th) {
+            th.animation.title=restoreValue;
+        };
+
+        //验证新值
+        $scope.enterName=function(th){
+            //判断是否和初始一样
+            if (th.animation.title===restoreValue){
+                return;
+            }
+            //输入有效性检测
+            validation=ProjectService.inputValidate(th.animation.title);
+            if(!validation||!duplicate(th)){
+                $scope.restore(th);
+                return;
+            }
+            toastr.info('修改成功');
+            restoreValue=th.animation.title;
+        };
+        //验证重名
+        function duplicate(th){
+            var tempArray=$scope.animationNames;
+            for(var i=0;i<tempArray.length;i++){
+                if(th.animation.title===tempArray[i]){
+                    toastr.info('重复的动画名');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //验证enter键
+        $scope.enterPress=function(e,th){
+            if (e.keyCode==13){
+                $scope.enterName(th);
+            }
+        };
+
+}]);

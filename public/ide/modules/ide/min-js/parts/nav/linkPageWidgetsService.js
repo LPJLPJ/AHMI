@@ -1,1 +1,270 @@
-ideServices.service("LinkPageWidgetsService",[function(){function e(e){e.linkedAllWidgets=i(s(e))}function t(e,t){if(!f){var o=document.createElement("canvas");f=o.getContext("2d")}f.save(),t&&(f.font=t);var i=f.measureText(e);return f.restore(),i.width}function o(e,t,o,i,s){this.type=e,this.target=t,this.value=o,this.left=i||0,this.top=s||0}function i(e){var i,s,n=[];for(i=0;i<e.length;i++)if(s=e[i],1!=s.info.disableHighlight)switch(s.subType){case"MyButtonGroup":var f=s.info.interval,u=s.info.count,a=s.info.width,l=s.info.height,b=0,p=0,r=!1;"horizontal"==s.info.arrange?(b=(a-f*(u-1))/u,r=!0):p=(l-f*(u-1))/u;for(var h=0;h<s.info.count;h++)n.push(new o(s.subType,s,h,s.info.absoluteLeft+(r?h*(b+f):0),s.info.absoluteTop+(r?0:h*(p+f))));break;case"MyDateTime":var T,d=s.info.dateTimeModeId,y=s.info.fontSize,w=s.info.fontFamily,c=y+"px "+w;if("0"==d){T=t(":",c),s.delimiterWidth=T;var L=(s.info.width-2*T)/3;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+L+T,s.info.absoluteTop)),n.push(new o(s.subType,s,2,s.info.absoluteLeft+2*(L+T),s.info.absoluteTop))}else if("1"==d){T=t(":",c),s.delimiterWidth=T;var L=(s.info.width-T)/2;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+L+T,s.info.absoluteTop))}else if("2"==d){T=t("/",c),s.delimiterWidth=T;var L=(s.info.width-2*T)/4;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+2*L+T,s.info.absoluteTop)),n.push(new o(s.subType,s,2,s.info.absoluteLeft+2*(L+T)+L,s.info.absoluteTop))}else if("3"==d){T=t("-",c),s.delimiterWidth=T;var L=(s.info.width-2*T)/4;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+2*L+T,s.info.absoluteTop)),n.push(new o(s.subType,s,2,s.info.absoluteLeft+2*(L+T)+L,s.info.absoluteTop))}break;case"MyTexTime":var d=s.info.dateTimeModeId,v=s.info.characterW;if("0"==d){T=t(":",c),s.delimiterWidth=v;var L=(s.info.width-2*v)/3;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+L+v,s.info.absoluteTop)),n.push(new o(s.subType,s,2,s.info.absoluteLeft+2*(L+v),s.info.absoluteTop))}else if("1"==d){s.delimiterWidth=v;var L=(s.info.width-v)/2;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+L+v,s.info.absoluteTop))}else if("2"==d){s.delimiterWidth=v;var L=(s.info.width-2*v)/4;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+2*L+v,s.info.absoluteTop)),n.push(new o(s.subType,s,2,s.info.absoluteLeft+2*(L+v)+L,s.info.absoluteTop))}else if("3"==d){s.delimiterWidth=v;var L=(s.info.width-2*v)/4;n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop)),n.push(new o(s.subType,s,1,s.info.absoluteLeft+2*L+v,s.info.absoluteTop)),n.push(new o(s.subType,s,2,s.info.absoluteLeft+2*(L+v)+L,s.info.absoluteTop))}break;case"MyInputKeyboard":var g=s.info.keys;g.forEach(function(e,t){n.push(new o(s.subType,s,t,e.x,e.y))});break;case"general":for(var h=0;h<s.maxHighLightNum;h++)n.push(new o(s.subType,s,h,s.info.absoluteLeft,s.info.absoluteTop));break;default:n.push(new o(s.subType,s,0,s.info.absoluteLeft,s.info.absoluteTop))}return n.sort(function(e,t){return e.left-t.left}),n.sort(function(e,t){return e.top-t.top}),n}function s(e){for(var t,o,i,s=[],f=0,u=0;u<e.canvasList.length;u++){o=e.canvasList[u];for(var a=0;a<o.subCanvasList.length;a++){t=o.subCanvasList[a];for(var l=0;l<t.widgetList.length;l++){i=t.widgetList[l],i.wId=f++,i.info.absoluteLeft=i.info.left+o.x,i.info.absoluteTop=i.info.top+o.y;for(var b=i.texList||[],p=0;p<b.length;p++)for(var r=0;r<i.texList[p].slices.length;r++)delete i.texList[p].slices[r].$$hashKey}s=s.concat(t.widgetList)}}return s.filter(n)}function n(e){var t=!1;switch(e.subType){case"MyButton":case"MyButtonGroup":case"MyDateTime":case"MyTexTime":case"MyInputKeyboard":t=!0;break;case"general":t=!!e.enableHighLight;break;default:t=!1}return t}var f;this.linkPageAllWidgets=e}]);
+/**
+ * Created by ChangeCheng on 16/8/30.
+ */
+
+ideServices.service('LinkPageWidgetsService', [function () {
+    var ctx;
+    this.linkPageAllWidgets = linkPageAllWidgets;
+
+    function linkPageAllWidgets(page) {
+        page.linkedAllWidgets = linkWidgets(getPageAllInteractiveWidgets(page));
+    }
+
+
+    function linkPageWidgets(page) {
+        page.linkedWidgets = linkWidgets(getPageInteractiveWidgets(page));
+    }
+
+
+    function measureMetrics(text,font) {
+        if (!ctx){
+            var curCanvas = document.createElement('canvas');
+            ctx = curCanvas.getContext('2d');
+        }
+        ctx.save();
+        if (font){
+            ctx.font = font;
+        }
+
+        var metrics = ctx.measureText(text);
+        ctx.restore();
+        return  metrics.width;
+    }
+
+    function LinkedWidget(type, target, value, left, top) {
+        this.type = type;
+        this.target = target;
+        this.value = value;
+        this.left = left || 0;
+        this.top = top || 0;
+    }
+
+    function Seq(childs,left,top) {
+        this.childs = childs
+        this.left = left
+        this.top = top;
+    }
+
+    function linkWidgets(widgetList) {
+        var i;
+        var curWidget;
+        var linkedWidgetList = [];
+        var sequence = [];
+        for (i = 0; i < widgetList.length; i++) {
+            curWidget = widgetList[i];
+            if (curWidget.info.disableHighlight==true){
+                continue
+            }
+            switch (curWidget.subType) {
+                case 'MyButtonGroup':
+                    var interval = curWidget.info.interval;
+                    var count = curWidget.info.count;
+                    var width = curWidget.info.width;
+                    var height = curWidget.info.height;
+                    var singleWidth = 0;
+                    var singleHeight = 0;
+                    var hori = false;
+                    if (curWidget.info.arrange == 'horizontal') {
+                        singleWidth = (width - interval * (count - 1)) / count;
+                        hori = true;
+                    } else {
+
+                        singleHeight = (height - interval * (count - 1)) / count;
+
+                    }
+                    for (var j = 0; j < curWidget.info.count; j++) {
+
+                        // linkedWidget.type = 'MyButtonGroup';
+                        // linkedWidget.target = curWidget;
+                        // linkedWidget.value = j;
+                        // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
+                        // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? (j * (singleWidth + interval)) : 0), curWidget.info.absoluteTop + (hori ? 0 : (j * (singleHeight + interval)))));
+                    }
+
+                    break;
+                case 'MyDateTime':
+                    var mode = curWidget.info.dateTimeModeId;
+                    var fontSize = curWidget.info.fontSize;
+                    var fontFamily = curWidget.info.fontFamily;
+                    var fontStr = fontSize+'px '+fontFamily;
+                    var delimiterWidth;
+                    if(mode=='0'){
+                        delimiterWidth = measureMetrics(':',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-2*delimiterWidth)/3;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2,curWidget.info.absoluteTop))
+                    }else if (mode == '1'){
+                        delimiterWidth = measureMetrics(':',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-delimiterWidth)/2;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+
+                    }else if (mode == '2'){
+                        delimiterWidth = measureMetrics('/',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
+                    }else if (mode == '3'){
+                        delimiterWidth = measureMetrics('-',fontStr);
+                        curWidget.delimiterWidth = delimiterWidth;
+                        var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
+                    }
+                    break;
+                case 'MyTexTime':
+                    var mode = curWidget.info.dateTimeModeId;
+                    var charW=curWidget.info.characterW;
+                    if(mode=='0'){
+                        delimiterWidth = measureMetrics(':',fontStr);
+                        curWidget.delimiterWidth = charW;
+                        var eachWidth = (curWidget.info.width-2*charW)/3;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2,curWidget.info.absoluteTop))
+                    }else if (mode == '1'){
+                        curWidget.delimiterWidth = charW;
+                        var eachWidth = (curWidget.info.width-charW)/2;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
+
+                    }else if (mode == '2'){
+                        curWidget.delimiterWidth = charW;
+                        var eachWidth = (curWidget.info.width-2*charW)/4;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
+                    }else if (mode == '3'){
+                        curWidget.delimiterWidth = charW;
+                        var eachWidth = (curWidget.info.width-2*charW)/4;
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
+                    }
+                    break;
+                case 'MyInputKeyboard':
+                    var keys = curWidget.info.keys;
+                    keys.forEach(function (key, index) {
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
+                    })
+                    break;
+                case 'general':
+                    for(var j=0;j<curWidget.maxHighLightNum;j++){
+                        linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,j,curWidget.info.absoluteLeft,curWidget.info.absoluteTop))
+                    }
+                break;
+                default:
+                    // linkedWidget.type = curWidget.subType;
+                    // linkedWidget.target = curWidget;
+                    // linkedWidget.value = 0;
+                    // linkedWidget.left=curWidget.info.left;
+                    // linkedWidget.top=curWidget.info.top;
+                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+
+            }
+        }
+
+        linkedWidgetList.sort(function (a, b) {
+            return (a.left - b.left);
+        });
+        linkedWidgetList.sort(function (a, b) {
+            return (a.top - b.top);
+        });
+
+        return linkedWidgetList;
+    }
+
+
+    function getPageAllInteractiveWidgets(page) {
+        var allInteractiveWidgets = [];
+        var allWidgets = [];
+        var curSubCanvas;
+        var curCanvas;
+        var count = 0;
+        var widget;
+        for (var i = 0; i < page.canvasList.length; i++) {//get all widgets
+            curCanvas = page.canvasList[i];
+            for (var j = 0; j < curCanvas.subCanvasList.length; j++) {
+                curSubCanvas = curCanvas.subCanvasList[j];
+                // curSubCanvas.widgetList.map(function (widget) {
+                //     widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+                //     widget.info.absoluteTop = widget.info.top + curCanvas.y;
+                // });
+                for (var k=0;k<curSubCanvas.widgetList.length;k++){
+                    widget = curSubCanvas.widgetList[k];
+                    widget.wId = count++;
+                    widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+                    widget.info.absoluteTop = widget.info.top + curCanvas.y;
+
+                    var texList = widget.texList||[];
+
+                    for (var l=0;l<texList.length;l++){
+                        for (var m=0;m<widget.texList[l].slices.length;m++){
+                            delete widget.texList[l].slices[m].$$hashKey;
+                            // console.log("widget.texList[l].slices[m]",widget.texList[l].slices[m])
+                        }
+                    }
+
+
+                }
+                allWidgets = allWidgets.concat(curSubCanvas.widgetList);
+            }
+
+        }
+
+        allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
+        // console.log(allInteractiveWidgets,allWidgets);
+        return allInteractiveWidgets;
+    }
+
+    function getPageInteractiveWidgets(page) {
+        var allInteractiveWidgets = [];
+        var allWidgets = [];
+        var curSubCanvas;
+        var curCanvas;
+        for (var i = 0; i < page.canvasList.length; i++) {//get all widgets
+            curCanvas = page.canvasList[i];
+            curSubCanvas = curCanvas.subCanvasList[curCanvas.curSubCanvasIdx || 0];
+            curSubCanvas.widgetList.filter(isInteractiveWidget).map(function (widget) {
+                widget.info.absoluteLeft = widget.info.left + curCanvas.x;
+                widget.info.absoluteTop = widget.info.top + curCanvas.y;
+            });
+            allWidgets = allWidgets.concat(curSubCanvas.widgetList);
+        }
+
+        // allInteractiveWidgets = allWidgets.filter(isInteractiveWidget);
+        // console.log(allInteractiveWidgets,allWidgets);
+        return allWidgets;
+    }
+
+    function isInteractiveWidget(widget) {
+        var is = false;
+        switch (widget.subType) {
+            case 'MyButton':
+            case 'MyButtonGroup':
+            case 'MyDateTime':
+            case 'MyTexTime':
+            case 'MyInputKeyboard':
+                is = true;
+                break;
+            case 'general':
+                if (widget.enableHighLight) {
+                    is = true
+                }else{
+                    is = false
+                }
+            break;
+            default:
+                is = false;
+        }
+        return is;
+    }
+
+}]);

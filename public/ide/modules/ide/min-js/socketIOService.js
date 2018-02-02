@@ -1,1 +1,57 @@
-ideServices.service("socketIOService",[function(){var t,e={};this.createSocket=function(e,n){t=io(e||""),t.on("connect",function(){n&&n()})},this.closeSocket=function(e){t.close(),e&&e()},this.on=function(e,n){t.on(e,n)},this.emit=function(e,n){t.emit(e,n)},this.setRoomUsers=function(t){e=t},this.getRoomUsers=function(){return e},this.addUserInRoom=function(t){return e.push(t),e},this.deleteUserInRoom=function(t){for(var n=0,i=e.length;n<i;n++)if(e[n].id===t.id){e.splice(n,1);break}return e},this.getSocket=function(){return t}}]);
+/**
+ * socket io 服务，用于创建socketIO 监听 事件
+ * create by lixiang in  10/22/2017
+ */
+
+ideServices.service('socketIOService',[function(){
+    var socket;
+    var roomUsers={};
+
+    this.createSocket = function(path,cb){
+        socket = io(path||'');
+        socket.on('connect',function(){
+            cb&&cb();
+        })
+    };
+
+    this.closeSocket = function(cb){
+        socket.close();
+        cb&&cb();
+    };
+
+    this.on = function(evtName,cb){
+        socket.on(evtName,cb);
+    };
+
+    this.emit = function(evtName,data){
+        socket.emit(evtName,data);
+    };
+
+    this.setRoomUsers = function(users){
+        roomUsers = users;
+    };
+
+    this.getRoomUsers = function () {
+        return roomUsers;
+    };
+
+    this.addUserInRoom = function (user) {
+        roomUsers.push(user);
+        return roomUsers
+    };
+
+    this.deleteUserInRoom = function (user) {
+        for(var i=0,il=roomUsers.length;i<il;i++){
+            if(roomUsers[i].id===user.id){
+                roomUsers.splice(i,1);
+                break;
+            }
+        }
+        return roomUsers;
+    };
+
+    this.getSocket = function(){
+        return socket;
+    }
+
+}]);

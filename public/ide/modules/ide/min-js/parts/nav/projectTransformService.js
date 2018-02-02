@@ -1,1 +1,1000 @@
-ideServices.service("ProjectTransformService",["Type","ResourceService",function(e,t){function r(e){var t={};t.version=e.version,t.name=e.name||"default project",t.author=e.author||"author",t.size=e.currentSize;var r=o();t.generalWidgetCommands=r.commands,t.cppWidgetCommands=r.cppModels,t.lastSaveTimeStamp=e.lastSaveTimeStamp,t.lastSaveUUID=e.lastSaveUUID,t.pageList=[];for(var a=0;a<e.pages.length;a++)t.pageList.push(s(e.pages[a],a));return h(t),t}function o(){var e=["onInitialize","onDestroy","onMouseUp","onMouseDown","onTagChange","onMouseMove","onKeyBoardLeft","onKeyBoardRight","onKeyBoardOK","onAnimationFrame","onHighlightFrame"],t={},r=WidgetModel.models,o=_.cloneDeep(WidgetCommands);for(var s in r)if(r.hasOwnProperty(s)){var i=_.cloneDeep(r[s].prototype.commands);a(i,e),t[s]=i}var l={};for(var s in o)if(l[s]={},o.hasOwnProperty(s))for(var c=o[s],g=0;g<e.length;g++){var u=e[g];if(u in c){var h=widgetCompiler.parse(c[u]);c[u]=ASTTransformer.transAST(h),n(c,u),l[s][u]=cppWidgetCommandTranslator.transJSWidgetCommands(c[u])}}return console.log("testModels",o),console.log("cppModels",l),{commands:o,cppModels:l}}function a(e,t){for(var r=0;r<t.length;r++){n(e,t[r])}}function n(e,t){t in e&&(e[t]=WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(e[t]),!0).map(function(e){return e.cmd}))}function s(t,r){var o={};o.id=""+r,o.type=e.MyPage,m(t,o,["name","backgroundImage","backgroundColor","triggers","actions","tag","transition"]),g(o),o.canvasList=[];for(var a=0;a<t.layers.length;a++)o.canvasList.push(i(t.layers[a],a,o.id));return o}function i(t,r,o){var a={};a.id=o+"."+r,a.type=e.MyLayer,m(t,a,["name","triggers","actions","tag","zIndex","animations","transition"]),g(a),a.w=t.info.width,a.h=t.info.height,a.x=t.info.left,a.y=t.info.top,a.subCanvasList=[];for(var n=0;n<t.subLayers.length;n++){var s=t.subLayers[n];t.showSubLayer.id==s&&(a.curSubCanvasIdx=n),a.subCanvasList.push(l(s,n,a.id))}return a}function l(t,r,o){var a={};a.id=o+"."+r,a.type=e.MySubLayer,m(t,a,["name","tag","actions","zIndex","backgroundImage","backgroundColor"]),g(a),a.widgetList=[];for(var n=0;n<t.widgets.length;n++){var s=t.widgets[n];a.widgetList.push(c(s,n,a.id))}return a}function c(e,r,o){var a={},n={};if(a=_.cloneDeep(e),g(a),"general"==a.type){var s=a.info,i=s.left,l=s.top,c=s.width,u=s.height;n=new WidgetModel.models.Button(i,l,c,u,"button",null,a.texList[0].slices),n=n.toObject(),n.generalType="Button",n.id=o+"."+r,n.type="widget",n.tag=e.tag,n.subType="general"}else{var s=a.info,h=a.texList,i=s.left,l=s.top,c=s.width,u=s.height,m=!1;switch(a.type){case"MyButton":m=!a.info.disableHighlight;var f={};for(var p in s)switch(p){case"fontItalic":f["font-style"]=s[p];break;case"fontBold":f["font-weight"]=s[p];break;case"fontSize":f["font-size"]=s[p];break;case"fontFamily":f["font-family"]=s[p];break;case"fontColor":f["font-color"]=s[p]}n=new WidgetModel.models.Button(i,l,c,u,"button",f,a.texList[0].slices,m),n=n.toObject(),n.generalType="Button",n.mode=Number(e.buttonModeId),n.tag=_.cloneDeep(e.tag),n.subType="general",n.actions=a.actions;break;case"MyButtonGroup":m=!s.disableHighlight;var b=[];h.map(function(e){e.slices.map(function(e){b.push(e)})}),n=new WidgetModel.models.ButtonGroup(i,l,c,u,s.count||1,"horizontal"===s.arrange?0:1,s.interval||0,b,m),n=n.toObject(),n.tag=_.cloneDeep(e.tag),n.generalType="ButtonGroup",n.subType="general",n.actions=a.actions,n.totalHLFrame=m?6:void 0,n.otherAttrs[0]=s.interval,n.otherAttrs[1]=s.count,n.otherAttrs[2]=1,n.otherAttrs[3]=1,n.otherAttrs[4]="horizontal"===s.arrange?0:1;break;case"MyDashboard":n=new WidgetModel.models.Dashboard(i,l,c,u,a.dashboardModeId,a.texList,a.info),n=n.toObject(),n.generalType="Dashboard",n.mode=Number(e.dashboardModeId),n.tag=_.cloneDeep(e.tag),n.subType="general";var y="minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue";y.split(",").forEach(function(e){n[e]=s[e]||0}),s.enableAnimation&&(n.totalFrame=30),n.otherAttrs[0]=s.offsetValue||0,n.otherAttrs[1]=Number(s.clockwise),n.actions=a.actions;break;case"MyProgress":var b=[];a.texList.map(function(e){b.push(e.slices[0])}),n=new WidgetModel.models.Progress(i,l,c,u,a.info,b),n=n.toObject(),n.tag=_.cloneDeep(e.tag),n.mode=Number(e.info.progressModeId);var y="minValue,maxValue,lowAlarmValue,highAlarmValue";y.split(",").forEach(function(e){n[e]=s[e]||0}),s.enableAnimation&&(n.totalFrame=30),n.actions=a.actions,n.generalType="Progress",n.subType="general";var A;if(1==n.mode?(A=d(b[1].color),n.otherAttrs[0]=A.r,n.otherAttrs[1]=A.g,n.otherAttrs[2]=A.b,n.otherAttrs[3]=A.a,A=d(b[2].color),n.otherAttrs[4]=A.r,n.otherAttrs[5]=A.g,n.otherAttrs[6]=A.b,n.otherAttrs[7]=A.a):3==n.mode&&(n.otherAttrs[0]=a.info.thresholdModeId,n.otherAttrs[1]=a.info.threshold1,n.otherAttrs[2]=a.info.threshold2,A=d(b[1].color),n.otherAttrs[3]=A.r,n.otherAttrs[4]=A.g,n.otherAttrs[5]=A.b,n.otherAttrs[6]=A.a,A=d(b[2].color),n.otherAttrs[7]=A.a,n.otherAttrs[8]=A.g,n.otherAttrs[9]=A.b,n.otherAttrs[10]=A.a,2==a.info.thresholdModeId&&(A=d(b[3].color),n.otherAttrs[11]=A.a,n.otherAttrs[12]=A.g,n.otherAttrs[13]=A.b,n.otherAttrs[14]=A.a)),n.otherAttrs[19]=Number(e.info.cursor),"1"==e.info.cursor){var x=b[b.length-1].imgSrc;if(x){var S=t.getResourceFromCache(x);n.layers[2].width=S.width,n.layers[2].height=S.height,rawH=n.layers[0].height,yTemp=parseInt((rawH-S.height)/2),n.layers[2].y=yTemp}}break;case"MyRotateImg":n=new WidgetModel.models.RotateImg(i,l,c,u,a.texList[0].slices[0]),n=n.toObject(),n.generalType="RotateImg",n.tag=_.cloneDeep(e.tag),n.subType="general";var y="minValue,maxValue";y.split(",").forEach(function(e){n[e]=s[e]||0}),n.actions=a.actions;break;case"MyTextArea":var f={};"fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline".split(",").forEach(function(e){f[e]=s[e]}),n=new WidgetModel.models.TextArea(i,l,c,u,s.text,f,a.texList[0].slices[0]),n=n.toObject(),n.generalType="TextArea",n.tag=_.cloneDeep(e.tag),n.subType="general";break;case"MySwitch":var b=[];a.texList.map(function(e){b.push(e.slices[0])}),n=new WidgetModel.models.Switch(i,l,c,u,a.info,b),n=n.toObject(),n.tag=_.cloneDeep(e.tag),n.generalType="Switch",n.subType="general",n.otherAttrs[0]=Number(a.info.bindBit);break;case"MyScriptTrigger":n=new WidgetModel.models.ScriptTrigger(i,l,c,u),n=n.toObject(),n.generalType="ScriptTrigger",n.tag=_.cloneDeep(e.tag),n.subType="general";var y="lowAlarmValue,highAlarmValue";y.split(",").forEach(function(e){n[e]=s[e]||0}),n.minValue=n.lowAlarmValue-1,n.maxValue=n.highAlarmValue+1,n.actions=a.actions;break;case"MyVideo":n=new WidgetModel.models.Video(i,l,c,u,a.texList[0].slices[0]),n=n.toObject(),n.generalType="Video","HDMI"==s.scource?n.mode=0:n.mode=1,n.tag=_.cloneDeep(e.tag),n.subType="general";break;case"MySlide":n=new WidgetModel.models.Slide(i,l,c,u,a.info,_.cloneDeep(a.texList[0].slices)),n=n.toObject(),n.generalType="Slide",n.tag=_.cloneDeep(e.tag),n.subType="general",n.actions=a.actions;break;case"MySlideBlock":var x=a.texList[1].slices[0].imgSrc,k={w:0,h:0};if(x){var I=t.getResourceFromCache(x);I&&(k.w=I.width,k.h=I.height)}n=new WidgetModel.models.SlideBlock(i,l,c,u,s.arrange,k,[a.texList[0].slices[0],a.texList[1].slices[0]]),n=n.toObject(),n.generalType="SlideBlock",n.tag=_.cloneDeep(e.tag);var y="minValue,maxValue,lowAlarmValue,highAlarmValue";y.split(",").forEach(function(e){n[e]=s[e]||0}),n.arrange="horizontal"==s.arrange?0:1,n.otherAttrs[0]=0,n.otherAttrs[1]=0,n.otherAttrs[2]=k.w,n.otherAttrs[3]=k.h,n.otherAttrs[4]=0,n.otherAttrs[5]=0,n.otherAttrs[6]=0,n.subType="general",n.actions=a.actions;break;case"MyNum":var f={};for(var p in s)switch(p){case"fontItalic":f["font-style"]=s[p];break;case"fontBold":f["font-weight"]=s[p];break;case"fontSize":f["font-size"]=s[p];break;case"fontFamily":f["font-family"]=s[p];break;case"fontColor":f["font-color"]=s[p]}n=new WidgetModel.models.Num(i,l,c,u,s,f),n=n.toObject();var y="minValue,maxValue,lowAlarmValue,highAlarmValue";switch(y.split(",").forEach(function(e){n[e]=s[e]||0}),n.mode=Number(s.numModeId),n.otherAttrs[0]=Number("NO"!=s.noInit),n.otherAttrs[1]=Number(s.frontZeroMode),n.otherAttrs[2]=Number(s.symbolMode),n.otherAttrs[3]=s.decimalCount,n.otherAttrs[4]=s.numOfDigits,n.otherAttrs[5]=Number(s.overFlowStyle),n.otherAttrs[6]=Number(s.maxFontWidth),s.align){case"left":n.otherAttrs[7]=0;break;case"center":n.otherAttrs[7]=1;break;case"right":n.otherAttrs[7]=2;break;default:n.otherAttrs[7]=1}n.otherAttrs[8]=Number(s.width),n.generalType="Num",n.tag=_.cloneDeep(e.tag),n.subType="general",n.actions=a.actions;break;case"MyTexNum":n=new WidgetModel.models.TexNum(i,l,c,u,s,a.texList[0].slices),n=n.toObject();var y="minValue,maxValue,lowAlarmValue,highAlarmValue";switch(y.split(",").forEach(function(e){n[e]=s[e]||0}),n.mode=Number(s.numModeId),n.otherAttrs[0]=Number(s.numValue),n.otherAttrs[1]=Number(s.frontZeroMode),n.otherAttrs[2]=Number(s.symbolMode),n.otherAttrs[3]=Number(s.decimalCount),n.otherAttrs[4]=Number(s.numOfDigits),n.otherAttrs[5]=Number(s.overFlowStyle),n.otherAttrs[6]=Number(s.characterW),n.otherAttrs[7]=Number(s.characterH),n.otherAttrs[8]=Number(s.width),s.align){case"left":n.otherAttrs[9]=0;break;case"center":n.otherAttrs[9]=1;break;case"right":n.otherAttrs[9]=2;break;default:n.otherAttrs[9]=1}n.generalType="TexNum",n.tag=_.cloneDeep(e.tag),n.subType="general",n.actions=a.actions;break;case"MyRotaryKnob":n=new WidgetModel.models.RotaryKnob(i,l,c,u,s,a.texList),n=n.toObject();var y="minValue,maxValue";y.split(",").forEach(function(e){n[e]=s[e]||0}),n.otherAttrs[1]=0,n.otherAttrs[2]=c/2,n.otherAttrs[3]=u/2,n.otherAttrs[4]=0,n.otherAttrs[5]=0,n.otherAttrs[6]=0,n.generalType="RotaryKnob",n.tag=_.cloneDeep(e.tag),n.subType="general",n.actions=a.actions;break;case"MySelector":for(var N=a.texList[1].slices,D=[],C=0,L=N.length;C<L;C++)D[C]={},D[C].color=N[C].color,D[C].text=N[C].text,D[C].img=t.getResourceFromCache(N[C].imgSrc);N=a.texList[2].slices;for(var V=[],C=0,L=N.length;C<L;C++)V[C]={},V[C].color=N[C].color,V[C].text=N[C].text,V[C].img=t.getResourceFromCache(N[C].imgSrc);var W=s.itemFont.fontItalic+" "+s.itemFont.fontBold+" "+s.itemFont.fontSize+'px "'+s.itemFont.fontFamily+'"',F=s.selectorFont.fontItalic+" "+s.selectorFont.fontBold+" "+s.selectorFont.fontSize+'px "'+s.selectorFont.fontFamily+'"',O=v(s.selectorWidth,s.selectorHeight*s.itemCount,s.selectorHeight,V,F,s.selectorFont.fontColor),j=v(s.itemWidth,s.itemHeight*s.itemCount,s.itemHeight,D,W,s.itemFont.fontColor),z="selector"+(++M).toString()+".png",B="selector"+(++M).toString()+".png",R={id:z,name:"selectedImg",type:"image/png",src:O.src},H={id:B,name:"unSelectedImg",type:"image/png",src:j.src},P=function(e,t){"error"===e.type?(toastr.warning("资源加载失败: "+t.name),t.complete=!1):t.complete=!0}.bind(this);w("selector001")||t.cacheFile(R,globalResources,null,P),w("selector002")||t.cacheFile(H,globalResources,null,P);var E="/"+z;T(z,E);var U="/"+B;T(B,U),n=new WidgetModel.models.Selector(i,l,c,u,s,a.texList[0].slices[0],U,E,a.texList[3].slices[0]),n=n.toObject(),n.otherAttrs[1]=Number(s.curValue),n.otherAttrs[2]=Number(s.itemCount),n.otherAttrs[3]=Number(s.itemShowCount),n.otherAttrs[4]=Number(s.width),n.otherAttrs[5]=Number(s.height),n.otherAttrs[6]=Number(s.itemWidth),n.otherAttrs[7]=Number(s.itemHeight),n.otherAttrs[8]=Number(s.selectorWidth),n.otherAttrs[9]=Number(s.selectorHeight),n.otherAttrs[10]=0,n.otherAttrs[11]=i,n.otherAttrs[12]=l,n.otherAttrs[13]=0,n.otherAttrs[14]=0,n.otherAttrs[15]=0,n.generalType="Selector",n.tag=_.cloneDeep(e.tag),n.subType="general",n.actions=a.actions;break;case"MyDateTime":var f={},K=0;for(var p in s)switch(p){case"fontItalic":f["font-style"]=s[p];break;case"fontBold":f["font-weight"]=s[p];break;case"fontSize":f["font-size"]=s[p];break;case"fontFamily":f["font-family"]=s[p];break;case"fontColor":f["font-color"]=s[p]}switch(n=new WidgetModel.models.DateTime(i,l,c,u,a.info,f,a.texList[0].slices[0]),n=n.toObject(),n.generalType="DateTime",n.subType="general",n.actions=a.actions,n.mode=a.info.dateTimeModeId,"0"==n.mode||"1"==n.mode?n.tag=_.cloneDeep(e.tag)||"时钟变量时分秒":n.tag=_.cloneDeep(e.tag)||"时钟变量年月日",Number(a.info.dateTimeModeId)){case 0:K=8;break;case 1:K=5;break;case 2:case 3:K=10;break;default:K=8}n.otherAttrs[0]=K,n.otherAttrs[1]=0;break;default:a.subType=e.type,n=a}n.id=o+"."+r,n.type="widget"}return n}function g(e,t){if(t=t||!0,e&&e.actions&&e.actions.length)for(var r=0;r<e.actions.length;r++){var o=e.actions[r];o.commands=u(o.commands,t)}}function u(e,t){return actionCompiler.transformer.trans(actionCompiler.parser.parse(e),t)}function h(e){var t=new WidgetModel.models.ColorPicker(0,0,e.size.width,e.size.height,[{color:"rgba(255,0,0,255)",imgSrc:"/public/images/colorPicker/slide.png"},{color:"rgba(255,0,0,255)",imgSrc:"/public/images/colorPicker/bg.png"},{color:"rgba(255,0,0,255)",imgSrc:"/public/images/colorPicker/pickerIndicator.png"}]);t=t.toObject(),t.generalType="ColorPicker",t.type="widget",t.subType="general",e.systemWidgets=[],e.systemWidgets.push(t)}function m(e,t,r){for(var o=0;o<r.length;o++){var a=r[o];"object"==typeof e[a]?t[a]=_.cloneDeep(e[a]):t[a]=e[a]}}function d(e){var t=[],r={r:0,g:0,b:0,a:0};if(-1!==e.indexOf("rgba"))t=e.split(/[\(|\)]/)[1].split(",").map(function(e){return Number(e)}),r={r:t[0],g:t[1],b:t[2],a:255*t[3]};else{if(-1===e.indexOf("rgb"))throw new Error("parsing color error: "+e);t=e.split(/[\(|\)]/)[1].split(","),r={r:t[0],g:t[1],b:t[2],a:255}}return r}function f(e){var t={};t.DSFlag="base",t.projectId=e.projectId,t.version=e.version,t.name=e.name||"default project",t.author=e.author||"author",t.CANId=e.CANId,t.lastSaveTimeStamp=e.lastSaveTimeStamp,t.lastSaveUUID=e.lastSaveUUID,t.size=e.currentSize;var r=e.pages;t.pages=[];for(var o=0;o<r.length;o++)t.pages.push(p(r[o]));return t}function p(e){var t={};m(e,t,["id","name","url","type","mode","selected","expand","current","currentFablayer","backgroundImage","backgroundColor","triggers","actions","tag","transition"]),g(t);var r=e.layers;t.layers=[];for(var o=0;o<r.length;o++)t.layers.push(b(r[o]));return t}function b(e){var t={};m(e,t,["id","name","url","type","zIndex","info","selected","current","expand","actions","animations","transition"]),t.w=e.info.width,t.h=e.info.height,t.x=e.info.left,t.y=e.info.top;var r=e.subLayers;t.subLayers=[];for(var o=0;o<r.length;o++){var a=r[o];e.showSubLayer.id==a&&(t.curSubCanvasIdx=o),t.subLayers.push(y(a))}return t}function y(e){var t={};m(e,t,["id","name","url","type","selected","expand","current","tag","actions","zIndex","backgroundImage","backgroundColor"]);var r=e.widgets;t.widgets=[];for(var o=0;o<r.length;o++){var a=r[o];t.widgets.push(A(a))}return t}function A(e){return _.cloneDeep(e)}function v(e,t,r,o,a,n){var s=document.createElement("canvas");s.width=e,s.height=t;for(var i=s.getContext("2d"),l=0;l<o.length;l++)o[l].color&&(i.fillStyle=o[l].color,i.fillRect(0,r*l,e,r)),o[l].img&&i.drawImage(o[l].img,0,r*l,e,r),o[l].text&&(i.font=a,i.fillStyle=n,i.textAlign="center",i.textBaseline="middle",i.fillText(o[l].text,e/2,r*l+r/2));var c=new Image;return c.src=s.toDataURL("image/png"),c}function w(e){for(var t=0;t<globalResources.length;t++)if(e===globalResources[t].id)return!0;return!1}function T(e,t){for(var r=0;r<globalResources.length;r++)if(e===globalResources[r].id)return globalResources[r].src=t,!0;return!1}this.transDataFile=r;var M=0;this.transDateFileBase=f}]);
+ideServices.service('ProjectTransformService',['Type','ResourceService',function(Type,ResourceService){
+
+    /**
+     * 暴露对外接口
+     */
+    this.transDataFile = transDataFile;
+
+    var idStart=0;
+
+    /**
+     * 转换工程数据
+     */
+    function transDataFile(rawProject){
+        var targetProject = {};
+        targetProject.version = rawProject.version;
+        targetProject.name = rawProject.name || 'default project';
+        targetProject.author = rawProject.author || 'author';
+        targetProject.size = rawProject.currentSize;
+        //register general commands
+        var commandsObj = registerGeneralCommands();
+        targetProject.generalWidgetCommands = commandsObj.commands;
+        targetProject.cppWidgetCommands = commandsObj.cppModels;
+        //add last save info
+        targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
+        targetProject.lastSaveUUID = rawProject.lastSaveUUID;
+        targetProject.pageList = [];
+        for (var i=0;i<rawProject.pages.length;i++){
+            targetProject.pageList.push(transPage(rawProject.pages[i],i));
+        }
+
+        //系统控件
+        transSysWidget(targetProject);
+
+        return targetProject;
+    }
+
+    /**
+     * 注册指令
+     * 敲黑板！WidgetModel,WidgetCommands，widgetCompiler,ASTTransformer,cppWidgetCommandTranslator是全局变量，
+     * 分别从widget.js、widgetCommands.js、widgetCompiler.js,ASTTransformer.js,cppWidgetCommandTranslator.js导出。
+     * 这里体现了es5没有声明式模块化的短板。
+     * 很尴尬，这里的局部变量commands也被弃用了,核心是第二个循环。
+     */
+    function registerGeneralCommands() {
+        var generalWidgetFunctions = ['onInitialize','onDestroy','onMouseUp','onMouseDown','onTagChange','onMouseMove','onKeyBoardLeft','onKeyBoardRight','onKeyBoardOK','onAnimationFrame','onHighlightFrame'];
+        var commands = {};
+        var models = WidgetModel.models;
+
+        var testModels = _.cloneDeep(WidgetCommands);
+
+        for (var model in models){
+            if (models.hasOwnProperty(model)) {
+                //Button
+                var modelCommands = _.cloneDeep(models[model].prototype.commands);
+                transGeneralWidgetMultiCommands(modelCommands,generalWidgetFunctions);
+                commands[model] = modelCommands;
+            }
+        }
+
+        var cppModels = {};
+        for (var model in testModels){
+            cppModels[model] = {};
+            if (testModels.hasOwnProperty(model)) {
+                var modelObj = testModels[model];
+                for(var i=0;i<generalWidgetFunctions.length;i++){
+                    var curF = generalWidgetFunctions[i];
+                    if (curF in modelObj) {
+                        /**for web**/
+                        var ast = widgetCompiler.parse(modelObj[curF]);
+                        // console.log('ast',ast)
+                        modelObj[curF] = ASTTransformer.transAST(ast);
+                        //trans to jump end
+                        transGeneralWidgetCommands(modelObj,curF);
+
+                        /**for embedded**/
+                        cppModels[model][curF] = cppWidgetCommandTranslator.transJSWidgetCommands(modelObj[curF])
+                    }
+                }
+            }
+        }
+
+        console.log('testModels',testModels);
+        console.log('cppModels',cppModels);
+        // return commands;
+        return {
+            commands:testModels,
+            cppModels:cppModels
+        }
+    }
+
+    /**
+     * 转换控件指令
+     */
+    function transGeneralWidgetMultiCommands(widget,mfs) {
+        for (var i=0;i<mfs.length;i++){
+            var curF = mfs[i];
+            transGeneralWidgetCommands(widget,curF)
+        }
+    }
+    function transGeneralWidgetCommands(widget,f) {
+        if (f in widget) {
+            widget[f] = WidgetModel.WidgetCommandParser.complier.transformer.trans(WidgetModel.WidgetCommandParser.complier.parser.parse(widget[f]),true).map(function (cmd) {
+                return cmd['cmd']
+            })
+        }
+
+    }
+
+
+    /**
+     * 转换page数据
+     */
+    function transPage(rawPage, index){
+        var targetPage = {};
+        targetPage.id = ''+index;
+        targetPage.type = Type.MyPage;
+        // console.log(rawPage);
+        deepCopyAttributes(rawPage,targetPage,['name','backgroundImage','backgroundColor','triggers','actions','tag','transition']);
+        transActions(targetPage);
+        //CanvasList
+        targetPage.canvasList = [];
+        for (var i=0;i<rawPage.layers.length;i++){
+            targetPage.canvasList.push(transLayer(rawPage.layers[i],i,targetPage.id));
+        }
+        return targetPage;
+    }
+
+    /**
+     * 转换图层数据
+     */
+    function transLayer(rawLayer,layerIdx,pageIdx){
+        var targetLayer = {};
+        targetLayer.id = pageIdx+'.'+layerIdx;
+        targetLayer.type = Type.MyLayer;
+        deepCopyAttributes(rawLayer,targetLayer,['name','triggers','actions','tag','zIndex','animations','transition']);
+        transActions(targetLayer);
+        targetLayer.w = rawLayer.info.width;
+        targetLayer.h = rawLayer.info.height;
+        targetLayer.x = rawLayer.info.left;
+        targetLayer.y = rawLayer.info.top;
+
+        targetLayer.subCanvasList = [];
+        //curSubCanvasIdx
+        for (var i=0;i<rawLayer.subLayers.length;i++){
+            var curSubLayer = rawLayer.subLayers[i];
+            if (rawLayer.showSubLayer.id == curSubLayer){
+                targetLayer.curSubCanvasIdx = i;
+            }
+            targetLayer.subCanvasList.push(transSubLayer(curSubLayer,i,targetLayer.id));
+        }
+        return targetLayer;
+    }
+
+    /**
+     * 转换子图层数据
+     */
+    function transSubLayer(rawSubLayer,subLayerIdx,layerIdx){
+        var targetSubLayer = {};
+        targetSubLayer.id = layerIdx+'.'+subLayerIdx;
+        targetSubLayer.type = Type.MySubLayer;
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['name','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        transActions(targetSubLayer);
+
+        targetSubLayer.widgetList = [];
+        for (var i=0;i<rawSubLayer.widgets.length;i++){
+            var curWidget = rawSubLayer.widgets[i];
+            targetSubLayer.widgetList.push(transWidget(curWidget,i,targetSubLayer.id));
+        }
+
+        return targetSubLayer;
+    }
+
+    /**
+     * 转换控件数据
+     */
+    function transWidget(rawWidget,widgetIdx,subLayerIdx){
+        var targetWidget = {};
+        var generalWidget = {};
+        var fps = 30;
+        var defaultDuration = 1000;
+
+        targetWidget = _.cloneDeep(rawWidget);
+        transActions(targetWidget);
+        if (targetWidget.type != 'general') {
+            var info = targetWidget.info;
+            var texList = targetWidget.texList;
+            var x = info.left;
+            var y = info.top;
+            var w = info.width;
+            var h = info.height;
+            var highLight = false;
+            switch (targetWidget.type) {
+                case 'MyButton':
+                    highLight = !targetWidget.info.disableHighlight;
+                    var fontStyle = {};
+                    for (var key in info) {
+                        switch (key) {
+                            case "fontItalic":
+                                fontStyle['font-style'] = info[key];
+                                break;
+                            case "fontBold":
+                                fontStyle['font-weight'] = info[key];
+                                break;
+                            case "fontSize":
+                                fontStyle['font-size'] = info[key];
+                                break;
+                            case "fontFamily":
+                                fontStyle['font-family'] = info[key];
+                                break;
+                            case "fontColor":
+                                fontStyle['font-color'] = info[key];
+                                break;
+                        }
+                    }
+                    generalWidget = new WidgetModel.models['Button'](x, y, w, h, 'button', fontStyle, targetWidget.texList[0].slices, highLight);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Button';
+                    generalWidget.mode = Number(rawWidget.buttonModeId);
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions
+                    break;
+                case 'MyButtonGroup':
+                    highLight = !info.disableHighlight;
+                    var slices = [];
+                    texList.map(function (curTex) {
+                        curTex.slices.map(function (slice) {
+                            slices.push(slice)
+                        })
+                    });
+
+                    generalWidget = new WidgetModel.models['ButtonGroup'](x, y, w, h, info.count || 1, (info.arrange === "horizontal" ? 0 : 1), info.interval || 0, slices, highLight);
+                    generalWidget = generalWidget.toObject();
+
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.generalType = 'ButtonGroup';
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+
+                    generalWidget['totalHLFrame'] = highLight ? (200 / 1000 * fps) : undefined;
+
+                    //other attrs
+                    generalWidget.otherAttrs[0] = info.interval; //间距
+                    generalWidget.otherAttrs[1] = info.count;    //按钮个数
+                    generalWidget.otherAttrs[2] = 1;             //高亮动画起始值
+                    generalWidget.otherAttrs[3] = 1;             //高亮动画终止值
+                    //Todo:默认属性中有arrange，但是在simulaor中无法解析错误，故使用otherAttrs
+                    generalWidget.otherAttrs[4] = (info.arrange === "horizontal" ? 0 : 1); //排列方向
+                    break;
+                case 'MyDashboard':
+                    generalWidget = new WidgetModel.models['Dashboard'](x, y, w, h, targetWidget.dashboardModeId, targetWidget.texList, targetWidget.info)
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Dashboard';
+                    generalWidget.mode = Number(rawWidget.dashboardModeId);
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    })
+                    //animation
+                    // console.log('enableAnimation',info.enableAnimation)
+                    if (info.enableAnimation) {
+                        generalWidget['totalFrame'] = defaultDuration / 1000 * fps;
+                    }
+                    //otherAttrs
+                    generalWidget.otherAttrs[0] = info['offsetValue'] || 0
+                    generalWidget.otherAttrs[1] = Number(info['clockwise'])
+                    generalWidget.actions = targetWidget.actions
+                    break;
+                case 'MyProgress':
+                    var slices = [];
+                    targetWidget.texList.map(function (tex) {
+                        slices.push(tex.slices[0]);
+                    });
+                    generalWidget = new WidgetModel.models['Progress'](x, y, w, h, targetWidget.info, slices);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.mode = Number(rawWidget.info.progressModeId);
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    });
+                    //animation
+                    if (info.enableAnimation) {
+                        generalWidget['totalFrame'] = defaultDuration / 1000 * fps;
+                    }
+                    generalWidget.actions = targetWidget.actions;
+                    generalWidget.generalType = 'Progress';
+                    generalWidget.subType = 'general';
+                    //otherAttrs
+                    var colorElems
+                    if (generalWidget.mode == 1) {
+                        colorElems = parseColor(slices[1].color);
+                        generalWidget.otherAttrs[0] = colorElems.r;
+                        generalWidget.otherAttrs[1] = colorElems.g;
+                        generalWidget.otherAttrs[2] = colorElems.b;
+                        generalWidget.otherAttrs[3] = colorElems.a;
+                        colorElems = parseColor(slices[2].color);
+                        generalWidget.otherAttrs[4] = colorElems.r;
+                        generalWidget.otherAttrs[5] = colorElems.g;
+                        generalWidget.otherAttrs[6] = colorElems.b;
+                        generalWidget.otherAttrs[7] = colorElems.a;
+                    } else if (generalWidget.mode == 3) {
+                        generalWidget.otherAttrs[0] = targetWidget.info.thresholdModeId;
+                        generalWidget.otherAttrs[1] = targetWidget.info.threshold1;
+                        generalWidget.otherAttrs[2] = targetWidget.info.threshold2;
+                        colorElems = parseColor(slices[1].color);
+                        generalWidget.otherAttrs[3] = colorElems.r;
+                        generalWidget.otherAttrs[4] = colorElems.g;
+                        generalWidget.otherAttrs[5] = colorElems.b;
+                        generalWidget.otherAttrs[6] = colorElems.a;
+                        colorElems = parseColor(slices[2].color);
+                        generalWidget.otherAttrs[7] = colorElems.a;
+                        generalWidget.otherAttrs[8] = colorElems.g;
+                        generalWidget.otherAttrs[9] = colorElems.b;
+                        generalWidget.otherAttrs[10] = colorElems.a;
+                        if (targetWidget.info.thresholdModeId == 2) {
+                            colorElems = parseColor(slices[3].color);
+                            generalWidget.otherAttrs[11] = colorElems.a;
+                            generalWidget.otherAttrs[12] = colorElems.g;
+                            generalWidget.otherAttrs[13] = colorElems.b;
+                            generalWidget.otherAttrs[14] = colorElems.a;
+                        }
+                    }
+                    generalWidget.otherAttrs[19] = Number(rawWidget.info.cursor);
+                    if (rawWidget.info.cursor == '1') {
+                        var imgSrc = slices[slices.length - 1].imgSrc;
+                        if (imgSrc) {
+                            var cursorImg = ResourceService.getResourceFromCache(imgSrc);
+                            generalWidget.layers[2].width = cursorImg.width;
+                            generalWidget.layers[2].height = cursorImg.height;
+                            rawH = generalWidget.layers[0].height;
+                            yTemp = parseInt((rawH - cursorImg.height) / 2);
+                            generalWidget.layers[2].y = yTemp;
+                        }
+                    }
+
+
+                    break;
+                case 'MyRotateImg':
+                    generalWidget = new WidgetModel.models['RotateImg'](x, y, w, h, targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'RotateImg';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'minValue,maxValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    })
+                    //otherAttrs
+                    generalWidget.actions = targetWidget.actions
+                    break;
+                case 'MyTextArea':
+                    // "fontFamily": "宋体",
+                    // "fontSize": 15,
+                    // "fontColor": "rgba(0,0,0,1)",
+                    // "fontBold": "100",
+                    // "fontItalic": "",
+                    // "fontUnderline": null,
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+                    var fontStyle = {}
+                    styleElems.split(',').forEach(function (elem) {
+                        fontStyle[elem] = info[elem]
+                    });
+                    generalWidget = new WidgetModel.models['TextArea'](x, y, w, h, info.text, fontStyle, targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'TextArea';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    break;
+                case 'MySwitch':
+                    var slices = [];
+                    targetWidget.texList.map(function (tex) {
+                        slices.push(tex.slices[0]);
+                    });
+                    generalWidget = new WidgetModel.models['Switch'](x, y, w, h, targetWidget.info, slices);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.generalType = 'Switch';
+                    generalWidget.subType = 'general';
+                    generalWidget.otherAttrs[0] = Number(targetWidget.info.bindBit);
+                    break;
+                case 'MyScriptTrigger':
+                    generalWidget = new WidgetModel.models['ScriptTrigger'](x, y, w, h)
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'ScriptTrigger';
+
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    //additional attrs
+                    var attrs = 'lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    });
+                    //add minValue, maxValue
+                    generalWidget['minValue'] = generalWidget['lowAlarmValue'] - 1
+                    generalWidget['maxValue'] = generalWidget['highAlarmValue'] + 1
+                    generalWidget.actions = targetWidget.actions;
+
+                    break;
+                case 'MyVideo':
+                    generalWidget = new WidgetModel.models['Video'](x, y, w, h, targetWidget.texList[0].slices[0])
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Video';
+                    if (info.scource == 'HDMI') {
+                        generalWidget.mode = 0
+                    } else {
+                        generalWidget.mode = 1
+                    }
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    break;
+                case 'MySlide':
+                    generalWidget = new WidgetModel.models['Slide'](x, y, w, h, targetWidget.info, _.cloneDeep(targetWidget.texList[0].slices));
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Slide';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+                case 'MySlideBlock':
+                    var imgSrc = targetWidget.texList[1].slices[0].imgSrc;
+                    var blockInfo = {w: 0, h: 0}
+                    if (imgSrc) {
+                        var blockImg = ResourceService.getResourceFromCache(imgSrc);
+                        if (blockImg) {
+                            blockInfo.w = blockImg.width;
+                            blockInfo.h = blockImg.height;
+                        }
+
+                    }
+                    generalWidget = new WidgetModel.models['SlideBlock'](x, y, w, h, info.arrange, blockInfo, [targetWidget.texList[0].slices[0], targetWidget.texList[1].slices[0]]);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'SlideBlock';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    })
+                    generalWidget.arrange = (info.arrange == 'horizontal') ? 0 : 1
+                    // console.log(generalWidget,targetWidget)
+                    generalWidget.otherAttrs[0] = 0 //lastX
+                    generalWidget.otherAttrs[1] = 0 //lastY
+                    generalWidget.otherAttrs[2] = blockInfo.w
+                    generalWidget.otherAttrs[3] = blockInfo.h
+                    generalWidget.otherAttrs[4] = 0 //hit block
+                    generalWidget.otherAttrs[5] = 0 // last block x
+                    generalWidget.otherAttrs[6] = 0 //last block y
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+                case 'MyNum':
+                    var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+                    var fontStyle = {}
+                    for (var key in info) {
+                        switch (key) {
+                            case "fontItalic":
+                                fontStyle['font-style'] = info[key];
+                                break;
+                            case "fontBold":
+                                fontStyle['font-weight'] = info[key];
+                                break;
+                            case "fontSize":
+                                fontStyle['font-size'] = info[key];
+                                break;
+                            case "fontFamily":
+                                fontStyle['font-family'] = info[key];
+                                break;
+                            case "fontColor":
+                                fontStyle['font-color'] = info[key];
+                                break;
+                        }
+                    }
+                    generalWidget = new WidgetModel.models['Num'](x, y, w, h, info, fontStyle);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    })
+                    generalWidget.mode = Number(info.numModeId);
+                    generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');
+                    generalWidget.otherAttrs[1] = Number(info['frontZeroMode']);
+                    generalWidget.otherAttrs[2] = Number(info['symbolMode']);
+                    generalWidget.otherAttrs[3] = info['decimalCount'];
+                    generalWidget.otherAttrs[4] = info['numOfDigits'];
+                    generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);
+                    generalWidget.otherAttrs[6] = Number(info['maxFontWidth']);
+                    switch (info['align']) {
+                        case 'left':
+                            generalWidget.otherAttrs[7] = 0
+                            break;
+                        case 'center':
+                            generalWidget.otherAttrs[7] = 1
+                            break;
+                        case 'right':
+                            generalWidget.otherAttrs[7] = 2
+                            break;
+                        default:
+                            generalWidget.otherAttrs[7] = 1
+                    }
+                    generalWidget.otherAttrs[8] = Number(info['width']);
+
+                    generalWidget.generalType = 'Num';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+                case 'MyTexNum':
+                    generalWidget = new WidgetModel.models['TexNum'](x, y, w, h, info, targetWidget.texList[0].slices);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    })
+                    generalWidget.mode = Number(info.numModeId)
+                    generalWidget.otherAttrs[0] = Number(info['numValue']);//初始化的数字值
+                    generalWidget.otherAttrs[1] = Number(info['frontZeroMode']);//前导零模式
+                    generalWidget.otherAttrs[2] = Number(info['symbolMode']);//符号模式
+                    generalWidget.otherAttrs[3] = Number(info['decimalCount']);//小数位数
+                    generalWidget.otherAttrs[4] = Number(info['numOfDigits']);//字符位数
+                    generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);//溢出显示
+                    generalWidget.otherAttrs[6] = Number(info['characterW']);//字符宽度
+                    generalWidget.otherAttrs[7] = Number(info['characterH']);//字符高度
+                    generalWidget.otherAttrs[8] = Number(info['width']);//控件宽度
+                    switch (info['align']) {
+                        case 'left':
+                            generalWidget.otherAttrs[9] = 0
+                            break;
+                        case 'center':
+                            generalWidget.otherAttrs[9] = 1
+                            break;
+                        case 'right':
+                            generalWidget.otherAttrs[9] = 2
+                            break;
+                        default:
+                            generalWidget.otherAttrs[9] = 1
+                    }
+
+                    generalWidget.generalType = 'TexNum';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    console.log('texnum', generalWidget);
+                    break;
+                case 'MyRotaryKnob':
+                    generalWidget = new WidgetModel.models['RotaryKnob'](x, y, w, h, info, targetWidget.texList);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'minValue,maxValue';
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    });
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[2] = w / 2;//旋转中心x
+                    generalWidget.otherAttrs[3] = h / 2;//旋转中心y
+                    generalWidget.otherAttrs[4] = 0;//isHited 此位置代表了是否在mouseDown状态
+                    generalWidget.otherAttrs[5] = 0 //lastArea
+                    generalWidget.otherAttrs[6] = 0 //over是否非法越过原点
+
+                    generalWidget.generalType = 'RotaryKnob';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+                case 'MySelector':
+                    //纹理
+                    var tempSlices = targetWidget.texList[1].slices;
+                    var slicesItem = [];
+                    for (var i = 0, il = tempSlices.length; i < il; i++) {
+                        slicesItem[i] = {};
+                        slicesItem[i].color = tempSlices[i].color;
+                        slicesItem[i].text = tempSlices[i].text;
+                        slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    tempSlices = targetWidget.texList[2].slices;
+                    var slicesSelected = [];
+                    for (var i = 0, il = tempSlices.length; i < il; i++) {
+                        slicesSelected[i] = {};
+                        slicesSelected[i].color = tempSlices[i].color;
+                        slicesSelected[i].text = tempSlices[i].text;
+                        slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
+                    }
+                    var itemFontString = info.itemFont.fontItalic + " " + info.itemFont.fontBold + " " + info.itemFont.fontSize + "px" + " " + '"' + info.itemFont.fontFamily + '"';
+                    var selectorFontString = info.selectorFont.fontItalic + " " + info.selectorFont.fontBold + " " + info.selectorFont.fontSize + "px" + " " + '"' + info.selectorFont.fontFamily + '"';
+
+                    //生成前景item大图
+                    var selectedImg = jointImageText(info.selectorWidth, info.selectorHeight * info.itemCount, info.selectorHeight, slicesSelected, selectorFontString, info.selectorFont.fontColor);
+                    //生成后景item大图
+                    var unSelectedImg = jointImageText(info.itemWidth, info.itemHeight * info.itemCount, info.itemHeight, slicesItem, itemFontString, info.itemFont.fontColor);
+
+                    var id1 = 'selector' + (++idStart).toString() + '.png';
+                    var id2 = 'selector' + (++idStart).toString() + '.png';
+                    var file1 = {
+                        id: id1,
+                        name: 'selectedImg',
+                        type: "image/png",
+                        src: selectedImg.src
+                    };
+                    var file2 = {
+                        id: id2,
+                        name: 'unSelectedImg',
+                        type: "image/png",
+                        src: unSelectedImg.src
+                    };
+                    var fcb = function (e, resourceObj) {
+                        if (e.type === 'error') {
+                            toastr.warning('资源加载失败: ' + resourceObj.name);
+                            resourceObj.complete = false;
+                        } else {
+                            resourceObj.complete = true;
+                        }
+
+                    }.bind(this);
+                    if (!isFileInGlobalResources('selector001')) {
+                        ResourceService.cacheFile(file1, globalResources, null, fcb);
+                    }
+                    if (!isFileInGlobalResources('selector002')) {
+                        ResourceService.cacheFile(file2, globalResources, null, fcb);
+                    }
+                    var newSelectedImgSrc = '/' + id1;
+                    changeSrcInGlobalResources(id1, newSelectedImgSrc);
+                    var newUnSelectedImgSrc = '/' + id2;
+                    changeSrcInGlobalResources(id2, newUnSelectedImgSrc);
+                    //实例化一个选择器控件
+                    generalWidget = new WidgetModel.models['Selector'](x, y, w, h, info, targetWidget.texList[0].slices[0], newUnSelectedImgSrc, newSelectedImgSrc, targetWidget.texList[3].slices[0]);
+                    generalWidget = generalWidget.toObject();
+
+                    // generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
+                    //属性
+                    generalWidget.otherAttrs[1] = Number(info['curValue']);//当前item
+                    generalWidget.otherAttrs[2] = Number(info['itemCount']);//item总数
+                    generalWidget.otherAttrs[3] = Number(info['itemShowCount']);//item总数
+                    //宽高
+                    generalWidget.otherAttrs[4] = Number(info['width']);//控件宽
+                    generalWidget.otherAttrs[5] = Number(info['height']);//控件高
+                    generalWidget.otherAttrs[6] = Number(info['itemWidth']);//未选中元素宽
+                    generalWidget.otherAttrs[7] = Number(info['itemHeight']);//未选中元素高
+                    generalWidget.otherAttrs[8] = Number(info['selectorWidth']);//选中元素宽
+                    generalWidget.otherAttrs[9] = Number(info['selectorHeight']);//选中元素高
+                    generalWidget.otherAttrs[10] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[11] = x;//控件坐标x
+                    generalWidget.otherAttrs[12] = y;//控件坐标y
+                    generalWidget.otherAttrs[13] = 0;//选择框是否展开
+                    generalWidget.otherAttrs[14] = 0;//isMoved,是否已经被拖拽
+                    generalWidget.otherAttrs[15] = 0;//lastlastInnery
+
+
+                    generalWidget.generalType = 'Selector';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+
+                case 'MyTexTime':
+                    generalWidget = new WidgetModel.models['TexTime'](x,y,w,h,info,texList[0].slices,info);
+                    console.log('generalWidget',generalWidget);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'characterW,characterH'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    })
+                    switch (info['dateTimeModeId']) {
+                        //时分模式
+                        case '0':
+                            LayerNum = 5;
+                            break;
+                            //时分秒模式
+                        case '1':
+                            LayerNum = 8;
+                            break;
+                            //减号日期
+                        case '2':
+                            LayerNum = 10;
+                            break;
+                            //斜杠日期
+                        case '3':
+                            LayerNum = 10;
+                            break;
+                            //时分秒模式
+                        default:
+                            LayerNum = 8;
+                    }
+                    generalWidget.generalType = 'TexTime';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);         //clonedeep函数封装了深拷贝的逻辑 raw(未处理的控件)
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    //console.log('TexTime', generalWidget);
+                    break;
+
+                case 'MyDateTime':
+                    var fontStyle = {},
+                        baseLayerNum = 0;
+                    for (var key in info) {
+                        switch (key) {
+                            case "fontItalic":
+                                fontStyle['font-style'] = info[key];
+                                break;
+                            case "fontBold":
+                                fontStyle['font-weight'] = info[key];
+                                break;
+                            case "fontSize":
+                                fontStyle['font-size'] = info[key];
+                                break;
+                            case "fontFamily":
+                                fontStyle['font-family'] = info[key];
+                                break;
+                            case "fontColor":
+                                fontStyle['font-color'] = info[key];
+                                break;
+                        }
+                    }
+                    generalWidget = new WidgetModel.models['DateTime'](x, y, w, h, targetWidget.info, fontStyle, targetWidget.texList[0].slices[0]);
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'DateTime';
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    generalWidget.mode = targetWidget.info.dateTimeModeId;
+                    if (generalWidget.mode == '0' || generalWidget.mode == '1') {
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量时分秒';
+                    } else {
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量年月日';
+                    }
+                    switch (Number(targetWidget.info.dateTimeModeId)) {
+                        case 0:
+                            baseLayerNum = 8;
+                            break;
+                        case 1:
+                            baseLayerNum = 5;
+                            break;
+                        case 2:
+                        case 3:
+                            baseLayerNum = 10;
+                            break;
+                        default:
+                            baseLayerNum = 8;
+                            break;
+                    }
+                    generalWidget.otherAttrs[0] = baseLayerNum;//除去高亮，font layer的数量
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    break;
+
+                default:
+                    targetWidget.subType = rawWidget.type;
+                    generalWidget = targetWidget
+            }
+            generalWidget.id = subLayerIdx + '.' + widgetIdx;
+            generalWidget.type = 'widget';
+        } else {
+            //default Button
+            var info = targetWidget.info;
+            var x = info.left;
+            var y = info.top;
+            var w = info.width;
+            var h = info.height;
+            generalWidget = new WidgetModel.models['Button'](x, y, w, h, 'button', null, targetWidget.texList[0].slices)
+            generalWidget = generalWidget.toObject();
+
+            generalWidget.generalType = 'Button'
+            generalWidget.id = subLayerIdx + '.' + widgetIdx;
+            generalWidget.type = 'widget';
+            generalWidget.tag = rawWidget.tag;
+            generalWidget.subType = 'general';
+        }
+        return generalWidget;
+    }
+
+    /**
+     * 转换actions
+     */
+    function transActions(object,changelt) {
+        changelt = changelt||true;
+        if (object&&object.actions&&object.actions.length){
+            for (var i=0;i<object.actions.length;i++){
+                var curAction = object.actions[i];
+                curAction.commands = transCmds(curAction.commands,changelt);
+            }
+        }
+    }
+
+    /**
+     * 转化actions中的指令（commands）
+     */
+    function transCmds(cmds,changelt){
+        // actionCompiler
+        return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
+    }
+
+    /**
+     * 转换系统控件
+     */
+    function transSysWidget(targetProject){
+        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
+        colorPicker = colorPicker.toObject()
+        colorPicker.generalType = 'ColorPicker'
+        colorPicker.type = 'widget'
+        colorPicker.subType = 'general'
+        //
+        targetProject.systemWidgets = []
+
+        //push system widgets
+        targetProject.systemWidgets.push(colorPicker)
+    }
+
+    /**
+     * 工具函数，深拷贝属性
+     */
+    function deepCopyAttributes(srcObj,dstObj,attrList){
+        for (var i=0;i<attrList.length;i++){
+            var curAttr = attrList[i];
+            if ((typeof srcObj[curAttr])=='object'){
+                dstObj[curAttr] = _.cloneDeep(srcObj[curAttr]);
+            }else{
+                dstObj[curAttr] = srcObj[curAttr];
+            }
+        }
+    }
+
+    /**
+     * 工具函数，把color字符串解析成对象
+     * @param color
+     * @returns {{r: number, g: number, b: number, a: number}}
+     */
+    function parseColor(color) {
+        var colorElems = []
+        var result = {
+            r:0,
+            g:0,
+            b:0,
+            a:0
+        }
+        if (color.indexOf('rgba')!==-1) {
+            //rgba(r,g,b,a)
+            colorElems = color.split(/[\(|\)]/)[1].split(',').map(function (c) {
+                return Number(c)
+            })
+            result = {
+                r:colorElems[0],
+                g:colorElems[1],
+                b:colorElems[2],
+                a:colorElems[3]*255
+            }
+        }else if (color.indexOf('rgb')!==-1){
+            colorElems = color.split(/[\(|\)]/)[1].split(',')
+            result = {
+                r:colorElems[0],
+                g:colorElems[1],
+                b:colorElems[2],
+                a:255
+            }
+        }else{
+            throw new Error('parsing color error: '+color)
+        }
+        return result
+    }
+
+
+    /**
+     * edit in 2017/09/15
+     * use for save simple project date
+     */
+    this.transDateFileBase = transDataFileBase;
+
+    function transDataFileBase(rawProject){
+        var targetProject = {};
+        targetProject.DSFlag = 'base';
+        targetProject.projectId = rawProject.projectId;
+        targetProject.version = rawProject.version;
+        targetProject.name = rawProject.name || 'default project';
+        targetProject.author = rawProject.author || 'author';
+
+        targetProject.CANId = rawProject.CANId;
+        targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
+        targetProject.lastSaveUUID = rawProject.lastSaveUUID;
+
+        targetProject.size = rawProject.currentSize;
+        var pages = rawProject.pages;
+        targetProject.pages = [];
+        for (var i=0;i<pages.length;i++){
+            targetProject.pages.push(transPageBase(pages[i]));
+        }
+        return targetProject;
+    }
+
+    function transPageBase(rawPage){
+        // console.log(rawPage);
+        var targetPage = {};
+        deepCopyAttributes(rawPage,targetPage,['id','name','url','type','mode','selected','expand','current','currentFablayer','backgroundImage','backgroundColor','triggers','actions','tag','transition']);
+        transActions(targetPage);
+        //CanvasList
+        var layers = rawPage.layers;
+        targetPage.layers = [];
+        for (var i=0;i<layers.length;i++){
+            targetPage.layers.push(transLayerBase(layers[i]));
+        }
+        return targetPage;
+    }
+
+    function transLayerBase(rawLayer){
+        var targetLayer = {};
+        deepCopyAttributes(rawLayer,targetLayer,['id','name','url','type','zIndex','info','selected','current','expand','actions','animations','transition']);
+        targetLayer.w = rawLayer.info.width;
+        targetLayer.h = rawLayer.info.height;
+        targetLayer.x = rawLayer.info.left;
+        targetLayer.y = rawLayer.info.top;
+
+        var subLayers = rawLayer.subLayers
+        targetLayer.subLayers = [];
+        //curSubCanvasIdx
+        for (var i=0;i<subLayers.length;i++){
+            var curSubLayer = subLayers[i];
+            if (rawLayer.showSubLayer.id == curSubLayer){
+                targetLayer.curSubCanvasIdx = i;
+            }
+            targetLayer.subLayers.push(transSubLayerBase(curSubLayer));
+        }
+        return targetLayer;
+    }
+
+    function transSubLayerBase(rawSubLayer){
+        var targetSubLayer = {};
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        var widgets = rawSubLayer.widgets;
+        targetSubLayer.widgets = [];
+        for (var i=0;i<widgets.length;i++){
+            var curWidget = widgets[i];
+            targetSubLayer.widgets.push(transWidgetBase(curWidget));
+        }
+
+        return targetSubLayer;
+    }
+
+    function transWidgetBase(rawWidget){
+        var targetWidget = {};
+        targetWidget = _.cloneDeep(rawWidget);
+        return targetWidget;
+    }
+
+    /**
+     * joint image&Text by canvas; returns new image
+     * @param  {[type]} w             [生成图片的宽]
+     * @param  {[type]} h             [生成图片的高]
+     * @param  {[type]} imgH          [输入图片的高]
+     * @param  {[type]} slices        [纹理列表]
+     * @param  {[type]} fontString    [字体格式]
+     * @param  {[type]} fontColor     [文字颜色]
+     * @return {[type]}               [description]
+     * @author LH 2018/01/03
+     */
+    function jointImageText(w,h,imgH,slices,fontString,fontColor) {
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        var ctx=canvas.getContext("2d");
+
+        for(var i=0;i<slices.length;i++){
+            if(slices[i].color){
+                ctx.fillStyle=slices[i].color;
+                ctx.fillRect( 0,imgH*i,w,imgH);
+            }
+            if(slices[i].img){
+                ctx.drawImage(slices[i].img, 0,imgH*i,w,imgH);
+            }
+            if(slices[i].text){
+                ctx.font=fontString;
+                ctx.fillStyle=fontColor;
+                ctx.textAlign='center';
+                ctx.textBaseline='middle';
+                ctx.fillText(slices[i].text,w/2,imgH*i+imgH/2);
+            }
+        }
+
+        var image = new Image();
+        image.src = canvas.toDataURL("image/png");
+
+        return image;
+    }
+
+    function isFileInGlobalResources(id){
+        for(var i=0;i<globalResources.length;i++){
+            if(id===globalResources[i].id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function changeSrcInGlobalResources(id,newSrc){
+        for(var i=0;i<globalResources.length;i++){
+            if(id===globalResources[i].id){
+                globalResources[i].src=newSrc;
+                return true;
+            }
+        }
+        return false;
+    }
+
+}]);

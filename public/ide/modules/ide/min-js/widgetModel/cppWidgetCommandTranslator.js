@@ -1,1 +1,1198 @@
-!function(e){"function"==typeof define&&define.amd?define("cppWidgetCommandTranslator",[],e):"object"==typeof module&&module.exports?module.exports=e():window.cppWidgetCommandTranslator=e()}(function(){function e(e,n,a){this.name=e||"",this.bytes=n||4,this.index=a||0}function n(e,n){this.bytes=e,this.reserve=n||!1}function a(e){this.op=e,this.operands=[].slice.call(arguments,1),this.index=0}function w(e,n){this.type=e,this.value=n,this.aVals=[].slice.call(arguments,2)}function O(e){return/^[0-9]+$/.test(e)}function T(e){var n=e.value.split(".");if(2==n.length&&"this"==n[0])return new w("widget",g[n[1]]);if(3==n.length){if("this"==n[0]&&"info"==n[1])return new w("widget",g.info[n[2]]);if("this"==n[0]&&"layers"==n[1]&&"length"==n[2])return new w("widget",g.numOfLayers);if("this"==n[0]&&"otherAttrs"==n[1]&&O(n[2]))return new w("widget","a"+(v.length+Number(n[2])))}if(4==n.length&&"this"==n[0]&&"layers"==n[1])return O(n[2])?new w("layer",F[n[3]],Number(n[2]),"IMM"):new w("layer",F[n[3]],n[2],"ID");if(6==n.length&&"this"==n[0]&&"layers"==n[1]&&"subLayers"==n[3])return O(n[2])?new w("subLayer",f[n[4]],n[5],Number(n[2]),"IMM"):new w("subLayer",f[n[4]],n[5],n[2],"ID");throw new Error("unsupported exp "+e.value)}function t(e){return m[e]}function l(e){return L[e]||console.log("unsupported attr",e),L[e].index}function r(e){return h[e].index}function E(e){return p[e].index}function P(e,n){switch(e){case"SubLayerClassROI":return Y[n].index;case"SubLayerClassImage":return N[n].index;case"SubLayerClassFont":return b[n].index;case"SubLayerClassColor":return U[n].index}}function u(e){var n,a,w=e[0];switch(w){case"temp":n=["OPSETTEMP",t(e[1]),e[2].value];break;case"set":var O=e[1],u=e[2];if("ID"==O.type){if("Int"==u.type)n=["OPSETTEMP",t(e[1].value),e[2].value];else if("ID"==u.type)n=["OPGETTEMP",t(e[1].value),t(e[2].value)];else if("EXP"==u.type){if(!(a=T(u)))throw new Error("invalid exp",u);switch(a.type){case"widget":switch(a.value){case"x":n=["OPGETWIDOFFSET",t(O.value),0];break;case"y":n=["OPGETWIDOFFSET",t(O.value),1];break;default:n=["OPGETWIDTE",l(a.value),t(O.value)]}break;case"layer":switch(a.value){case"x":n="IMM"==a.aVals[1]?["OPGETLAYOFFSET",a.aVals[0],0,t(O.value),0]:["OPGETLAYOFFSET",t(a.aVals[0]),0,t(O.value),1];break;case"y":n="IMM"==a.aVals[1]?["OPGETLAYOFFSET",a.aVals[0],1,t(O.value),0]:["OPGETLAYOFFSET",t(a.aVals[0]),1,t(O.value),1];break;default:n="IMM"==a.aVals[1]?["OPGETLAY",a.aVals[0],r(a.value),t(O.value)]:["OPGETLAYTE",t(a.aVals[0]),r(a.value),t(O.value)]}break;case"subLayer":n="IMM"==a.aVals[2]?["OPGETSUBLAY",a.aVals[1],E(a.value),P(a.value,a.aVals[0]),t(O.value)]:["OPGETSUBLAYTE",t(a.aVals[1]),E(a.value),P(a.value,a.aVals[0]),t(O.value)]}}}else if("EXP"==O.type)if("Int"==u.type){if(!(a=T(O)))throw new Error("invalid exp");switch(a.type){case"widget":switch(a.value){case"x":n=["OPSETWIDOFFSETIM",0,O.value];break;case"y":n=["OPSETWIDOFFSETIM",1,O.value];break;default:n=["OPSETWIDIM",l(a.value),u.value]}break;case"layer":switch(a.value){case"x":n="IMM"==a.aVals[1]?["OPSETLAYOFFSETIM",a.aVals[0],0,0,u.value]:["OPSETLAYOFFSETIM",t(a.aVals[0]),0,1,u.value];break;case"y":n="IMM"==a.aVals[1]?["OPSETLAYOFFSETIM",a.aVals[0],1,0,u.value]:["OPSETLAYOFFSETIM",t(a.aVals[0]),1,1,u.value];break;default:n="IMM"==a.aVals[1]?["OPSETLAY",a.aVals[0],r(a.value),0,u.value]:["OPSETLAY",t(a.aVals[0]),r(a.value),1,u.value]}break;case"subLayer":n="IMM"==a.aVals[2]?["OPSETSUBLAY",a.aVals[1],E(a.value),P(a.value,a.aVals[0]),u.value]:["OPSETSUBLAYTE",t(a.aVals[1]),E(a.value),P(a.value,a.aVals[0]),u.value]}}else if("ID"==u.type){if(!(a=T(O)))throw new Error("invalid exp",u);switch(a.type){case"widget":n=["OPSETWIDTE",l(a.value),u.value];break;case"layer":switch(a.value){case"x":n="IMM"==a.aVals[1]?["OPSETLAYOFFSETTE",a.aVals[0],0,t(u.value),0]:["OPSETLAYOFFSETTE",t(a.aVals[0]),0,t(u.value),1];break;case"y":n="IMM"==a.aVals[1]?["OPSETLAYOFFSETTE",a.aVals[0],1,t(u.value),0]:["OPSETLAYOFFSETTE",t(a.aVals[0]),1,t(u.value),1];break;default:n="IMM"==a.aVals[1]?["OPSETLAYTE",a.aVals[0],r(a.value),0,t(u.value)]:["OPSETLAYTE",t(a.aVals[0]),r(a.value),1,t(u.value)]}break;case"subLayer":n="IMM"==a.aVals[2]?["OPSETSUBLAYT",a.aVals[1],E(a.value),P(a.value,a.aVals[0]),t(u.value)]:["OPSETSUBLAYTET",t(a.aVals[1]),E(a.value),P(a.value,a.aVals[0]),t(u.value)]}}break;case"jump":n=["OPJUMP",e[2]];break;case"end":n=["OPNOP"];break;case"getTag":n=["OPGETTAG",t(e[1].value)];break;case"setTag":n="ID"==e[1].type?["OPSETTAGTE",t(e[1].value)]:["OPSETTAGIM",e[1].value];break;case"eq":n="ID"==e[2].type?["OPEQTE",t(e[1].value),t(e[2].value)]:["OPEQIM",t(e[1].value),e[2].value];break;case"lt":n="ID"==e[2].type?["OPLTTE",t(e[1].value),t(e[2].value)]:["OPLTIM",t(e[1].value),e[2].value];break;case"lte":n="ID"==e[2].type?["OPLTETE",t(e[1].value),t(e[2].value)]:["OPLTIM",t(e[1].value),e[2].value];break;case"gt":n="ID"==e[2].type?["OPGTTE",t(e[1].value),t(e[2].value)]:["OPGTIM",t(e[1].value),e[2].value];break;case"gte":n="ID"==e[2].type?["OPGTETE",t(e[1].value),t(e[2].value)]:["OPGTEIM",t(e[1].value),e[2].value];break;case"add":n="ID"==e[2].type?["OPADDTE",t(e[1].value),t(e[2].value)]:["OPADDIM",t(e[1].value),e[2].value];break;case"minus":n="ID"==e[2].type?["OPMINUSTE",t(e[1].value),t(e[2].value)]:["OPMINUSIM",t(e[1].value),e[2].value];break;case"multiply":n="ID"==e[2].type?["OPMULTE",t(e[1].value),t(e[2].value)]:["OPMULIM",t(e[1].value),e[2].value];break;case"divide":n="ID"==e[2].type?["OPDIVTE",t(e[1].value),t(e[2].value)]:["OPDIVIM",t(e[1].value),e[2].value];break;case"mod":n="ID"==e[2].type?["OPMODTE",t(e[1].value),t(e[2].value)]:["OPMODIM",t(e[1].value),e[2].value];break;case"and":n="ID"==e[2].type?["OPANDTE",t(e[1].value),cTempID(ommand[2].value)]:["OPANDIM",t(e[1].value),e[2].value];break;case"or":n="ID"==e[2].type?["OPORTE",t(e[1].value),t(e[2].value)]:["OPORIM",t(e[1].value),e[2].value];break;case"xor":n="ID"==e[2].type?["OPXORTE",t(e[1].value),t(e[2].value)]:["OPXORIM",t(e[1].value),e[2].value];break;case"not":n=e[2]&&"ID"==e[2].type?["OPNOTTE",t(e[1].value),t(e[2].value)]:["OPNOTIM",t(e[1].value)];break;case"checkalarm":n=["OPCHKVALALARM"];break;case"startanimation":n=["OPSTARTANIMATION"];break;case"setglobalvar":n=["OPSETGLOBALVAR",e[1].value,e[2].value];break;case"executeaction":n=["OPEXECUTEACTION",e[1].value];break;default:console.log("warning: ",w),n=["OPNOP"]}return n}function s(e){return Array.prototype.map.call(new Uint8Array(e),function(e){return("00"+e.toString(16)).slice(-2)}).join("")}function i(e){var n=new ArrayBuffer(8),a=new DataView(n),w=1,O=0,T=e[0],t=x[T];t||console.log("unsupported op",T);var l=0;a.setUint8(O,t.index,!0),O+=1;for(var r=0;r<t.operands.length;r++){if(l=t.operands[r].bytes,!t.operands[r].reserve){switch(l){case 1:a.setUint8(O,e[w],!0);break;case 2:a.setUint16(O,e[w],!0);break;case 4:a.setUint32(O,e[w],!0);break;default:console.log("writing to buffer error",e)}w+=1}O+=l}return s(n)}function o(e){return e.map(function(e){return i(e)})}function A(e){var n=[],a=e.filter(function(e){return"temp"==e[0]}),w=0;m={};for(var O=0;O<a.length;O++){var T=a[O][1];T in m||(m[T]=w,w++)}n.push(["OPSTART",w,e.length]);for(var t=0;t<e.length;t++)n.push(u(e[t]));return n.push(["OPEND"]),o(n)}for(var I={},m={},S=["OPEND","OPSTART","OPSETLAY","OPSETLAYTE","OPGETLAY","OPGETLAYTE","OPSETSUBLAY","OPSETSUBLAYT","OPSETSUBLAYTE","OPSETSUBLAYTET","OPGETSUBLAY","OPGETSUBLAYTE","OPSETTEMP","OPGETTEMP","OPGETTAG","OPSETTAGIM","OPSETTAGTE","OPEQIM","OPEQTE","OPGTIM","OPGTTE","OPGTEIM","OPGTETE","OPLTIM","OPLTTE","OPLTEIM","OPLTETE","OPJUMP","OPADDIM","OPADDTE","OPMINUSIM","OPMINUSTE","OPMULIM","OPMULTE","OPDIVIM","OPDIVTE","OPMODIM","OPMODTE","OPANDIM","OPANDTE","OPORIM","OPORTE","OPXORIM","OPXORTE","OPNOTIM","OPNOTTE","OPSETWIDIM","OPSETWIDTE","OPGETWIDTE","OPSETWIDOFFSETIM","OPSETWIDOFFSETTE","OPGETWIDOFFSET","OPSETLAYOFFSETIM","OPSETLAYOFFSETTE","OPGETLAYOFFSET","OPCHKVALALARM","OPNOP","OPSTARTANIMATION","OPEXECUTEACTION","OPSETGLOBALVAR"],D={},M=0;M<S.length;M++)D[S[M]]=M;for(var v=[new e("mWDGStartTag",4),new e("mWDGStopTag",4),new e("mWDGMinValue",4),new e("mWDGMaxValue",4),new e("mWDGLowAlarmValue",4),new e("mWDGHighAlarmValue",4),new e("mWDGMinAngle",4),new e("mWDGMaxAngle",4),new e("mWDGOldValue",4),new e("mWDGAnTag",4),new e("mWDGNumOfLayers",4),new e("mWDGStartAddrOfLayers",4),new e("mWDGWidgetWidth",4),new e("mWDGWidgetHeight",4),new e("mWDGWidgetOffsetX",4),new e("mWDGWidgetOffsetY",4),new e("mWDGBindTagID",4),new e("mWDGAttatchCanvasID",4),new e("mWDGPreWidgetID",4),new e("mWDGNextWidgetID",4),new e("mWDGTotalFrame",4),new e("mWDGNowFrame",4),new e("mWDGInteractionMode",4),new e("mWDGMode",4),new e("mWDGArrange",4),new e("mWDGType"),new e("mWDGAnimationSclerX"),new e("mWDGAnimationSclerY"),new e("mWDGAnimationMovingX"),new e("mWDGAnimationMovingY"),new e("mWDGAnimationRotateAngle"),new e("mWDGAnimationShearAngleX"),new e("mWDGAnimationShearAngleY"),new e("mWDGAnimationProjectionAngleX"),new e("mWDGAnimationProjectionAngleY"),new e("mWDGOnInitializeFunc"),new e("mWDGOnDestroyFunc"),new e("mWDGOnTagChangeFunc"),new e("mWDGOnMouseUpFunc"),new e("mWDGOnMouseDownFunc"),new e("mWDGOnMouseMove"),new e("mWDGOnKeyBoardLeft"),new e("mWDGOnKeyBoardRight"),new e("mWDGOnKeyBoardOK"),new e("mWDGMouseInnerX"),new e("mWDGMouseInnerY"),new e("mWDGOnAnimationFrame"),new e("mWDGEnterLowAlarmAction"),new e("mWDGLeaveLowAlarmAction"),new e("mWDGEnterHighAlarmAction"),new e("mWDGLeaveHighAlarmAction"),new e("mWDGMouseReleaseAction"),new e("mWDGOldValueInit"),new e("maxHighLightNum"),new e("highLightNum"),new e("curHLAnimationFactor")],L={},M=0;M<v.length;M++){var G=v[M];G.index=M,L[G.name]=G}for(var c=0;c<20;c++){var W=M+c;L["a"+W]=new e("a"+W,4,W)}for(var g={info:{left:"x",top:"y",width:"mWDGWidgetWidth",height:"mWDGWidgetHeight"},startAnimationTag:"mWDGStartTag",stopAnimationTag:"mWDGStopTag",curAnimationTag:"mWDGAnTag",totalFrame:"mWDGTotalFrame",nowFrame:"mWDGNowFrame",arrange:"mWDGArrange",mode:"mWDGMode",oldValue:"mWDGOldValue",minValue:"mWDGMinValue",maxValue:"mWDGMaxValue",lowAlarmValue:"mWDGLowAlarmValue",highAlarmValue:"mWDGHighAlarmValue",minAngle:"mWDGMinAngle",maxAngle:"mWDGMaxAngle",numOfLayers:"mWDGNumOfLayers",interaction:"mWDGInteractionMode",tag:"mWDGBindTagID",generalType:"mWDGType",otherAttrs:"otherAttrs",innerX:"mWDGMouseInnerX",innerY:"mWDGMouseInnerY",oldValueInit:"mWDGOldValueInit",maxHighLightNum:"maxHighLightNum",highLightNum:"highLightNum",curHLAnimationFactor:"curHLAnimationFactor"},d=[new e("mLayerOffsetX",4),new e("mLayerOffsetY",4),new e("scalerX",4),new e("scalerY",4),new e("MovingX",4),new e("MovingY",4),new e("rotateAngle",4),new e("shearAngleX",4),new e("shearAngleY",4),new e("projectX",4),new e("projectY",4),new e("mWidth",4),new e("mHeight",4),new e("mValidSubLayer",4),new e("mHidden",4),new e("tileBoxClass",4),new e("mRotaCenterX",4),new e("mRotaCenterY",4)],h={},M=0;M<d.length;M++){var y=d[M];y.index=M,h[y.name]=y}for(var F={x:"x",y:"y",width:"mWidth",height:"mHeight",hidden:"mHidden",rotateAngle:"rotateAngle",rotateCenterX:"mRotaCenterX",rotateCenterY:"mRotaCenterY"},f={roi:"SubLayerClassROI",font:"SubLayerClassFont",image:"SubLayerClassImage",color:"SubLayerClassColor"},p={SubLayerClassROI:new e("SubLayerClassROI",16,0),SubLayerClassFont:new e("SubLayerClassFOnt",8,1),SubLayerClassImage:new e("SubLayerClassImage",4,2),SubLayerClassColor:new e("SubLayerClassColor",4,3)},V=["p1x","p1y","p2x","p2y","p3x","p3y","p4x","p4y","alpha","beta","mode"],Y={},M=0;M<V.length;M++)Y[V[M]]=new e(V[M],1,M);for(var b={fontStyle:new e("fontStyle",4,0),text:new e("text",1,1)},N={textureList:new e("textureList",4,0),texture:new e("texture",4,1),type:new e("type",4,2)},U={r:new e("r",1,0),g:new e("g",1,1),b:new e("b",1,2),a:new e("a",1,3)},x={OPEND:new a("OPEND",new n(7,!0)),OPSTART:new a("OPSTART",new n(1),new n(2),new n(4,!0)),OPSETLAY:new a("OPSETLAY",new n(1),new n(1),new n(1),new n(4)),OPSETLAYTE:new a("OPSETLAYTE",new n(1),new n(1),new n(1),new n(1),new n(3,!0)),OPGETLAY:new a("OPGETLAY",new n(1),new n(1),new n(1),new n(4,!0)),OPGETLAYTE:new a("OPGETLAYTE",new n(1),new n(1),new n(1),new n(4,!0)),OPSETSUBLAY:new a("OPSETSUBLAY",new n(1),new n(1),new n(1),new n(4)),OPSETSUBLAYTE:new a("OPSETSUBLAYTE",new n(1),new n(1),new n(1),new n(4)),OPSETSUBLAYT:new a("OPSETSUBLAY",new n(1),new n(1),new n(1),new n(1),new n(3,!0)),OPSETSUBLAYTET:new a("OPSETSUBLAYTE",new n(1),new n(1),new n(1),new n(1),new n(3,!0)),OPGETSUBLAY:new a("OPGETSUBLAY",new n(1),new n(1),new n(1),new n(1),new n(3,!0)),OPGETSUBLAYTE:new a("OPGETSUBLAYTE",new n(1),new n(1),new n(1),new n(1),new n(3,!0)),OPSETTEMP:new a("OPSETTEMP",new n(1),new n(2,!0),new n(4)),OPGETTEMP:new a("OPGETTEMP",new n(1),new n(1),new n(5,!0)),OPGETTAG:new a("OPGETTAG",new n(1),new n(6,!0)),OPSETTAGIM:new a("OPSETTAGIM",new n(3,!0),new n(4)),OPSETTAGTE:new a("OPSETTAGTE",new n(1),new n(6,!0)),OPEQIM:new a("OPEQIM",new n(1),new n(2,!0),new n(4)),OPEQTE:new a("OPEQTE",new n(1),new n(1),new n(5,!0)),OPGTIM:new a("OPGTIM",new n(1),new n(2,!0),new n(4)),OPGTTE:new a("OPGTTE",new n(1),new n(1),new n(5,!0)),OPGTEIM:new a("OPGTEIM",new n(1),new n(2,!0),new n(4)),OPGTETE:new a("OPGTETE",new n(1),new n(1),new n(5,!0)),OPLTIM:new a("OPLTIM",new n(1),new n(2,!0),new n(4)),OPLTTE:new a("OPLTTE",new n(1),new n(1),new n(5,!0)),OPLTEIM:new a("OPLTEIM",new n(1),new n(2,!0),new n(4)),OPLTETE:new a("OPLTETE",new n(1),new n(1),new n(5,!0)),OPJUMP:new a("OPJUMP",new n(1,!0),new n(2),new n(4,!0)),OPADDIM:new a("OPADDIM",new n(1),new n(2,!0),new n(4)),OPMINUSIM:new a("OPMINUSIM",new n(1),new n(2,!0),new n(4)),OPMULIM:new a("OPMULIM",new n(1),new n(2,!0),new n(4)),OPDIVIM:new a("OPDIVIM",new n(1),new n(2,!0),new n(4)),OPMODIM:new a("OPMODIM",new n(1),new n(2,!0),new n(4)),OPADDTE:new a("OPADDTE",new n(1),new n(1),new n(5,!0)),OPMINUSTE:new a("OPMINUSTE",new n(1),new n(1),new n(5,!0)),OPMULTE:new a("OPMULTE",new n(1),new n(1),new n(5,!0)),OPDIVTE:new a("OPDIVTE",new n(1),new n(1),new n(5,!0)),OPMODTE:new a("OPMODTE",new n(1),new n(1),new n(5,!0)),OPANDIM:new a("OPANDIM",new n(1),new n(2,!0),new n(4)),OPORIM:new a("OPORIM",new n(1),new n(2,!0),new n(4)),OPXORIM:new a("OPXORIM",new n(1),new n(2,!0),new n(4)),OPNOTIM:new a("OPNOTIM",new n(1),new n(6,!0)),OPANDTE:new a("OPANDTE",new n(1),new n(1),new n(5,!0)),OPORTE:new a("OPORTE",new n(1),new n(1),new n(5,!0)),OPXORTE:new a("OPXORTE",new n(1),new n(1),new n(5,!0)),OPNOTTE:new a("OPNOTTE",new n(1),new n(1),new n(5,!0)),OPSETWIDIM:new a("OPSETWIDIM",new n(1),new n(2,!0),new n(4)),OPSETWIDTE:new a("OPSETWIDTE",new n(1),new n(1),new n(5,!0)),OPGETWIDTE:new a("OPGETWIDTE",new n(1),new n(1),new n(5,!0)),OPSETWIDOFFSETIM:new a("OPSETWIDOFFSETIM",new n(1),new n(2,!0),new n(4)),OPSETWIDOFFSETTE:new a("OPSETWIDOFFSETTE",new n(1),new n(1),new n(5,!0)),OPGETWIDOFFSET:new a("OPGETWIDOFFSET",new n(1),new n(1),new n(5)),OPSETLAYOFFSETIM:new a("OPSETLAYOFFSETIM",new n(1),new n(1),new n(1,!0),new n(4)),OPSETLAYOFFSETTE:new a("OPSETLAYOFFSETTE",new n(1),new n(1),new n(1),new n(4,!0)),OPGETLAYOFFSET:new a("OPGETLAYOFFSET",new n(1),new n(1),new n(1),new n(4,!0)),OPCHKVALALARM:new a("OPCHKVALALARM",new n(7,!0)),OPNOP:new a("OPNOP",new n(7,!0)),OPSTARTANIMATION:new a("OPSTARTANIMATION",new n(7,!0)),OPEXECUTEACTION:new a("OPEXECUTEACTION",new n(7,!0)),OPSETGLOBALVAR:new a("OPSETGLOBALVAR",new n(1),new n(4),new n(3,!0))},M=0;M<S.length;M++)x[S[M]].index=M;return I.transJSWidgetCommandToCPPForm=u,I.transJSWidgetCommands=A,I});
+/**
+ * Created by changecheng on 2017/4/6.
+ */
+
+
+;(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+
+        define('cppWidgetCommandTranslator',[], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node/CommonJS
+        module.exports = factory()
+    } else {
+        // Browser globals
+        window.cppWidgetCommandTranslator = factory();
+    }
+}(function () {
+    // trans general widget commands to c++ insts
+    var translator = {}
+    var temps = {}
+
+    function Attr(name,bytes,index) {
+        this.name = name||''
+        this.bytes = bytes||4
+        this.index = index||0
+    }
+
+    var opCodes = [
+        'OPEND' ,	//end;
+        'OPSTART',
+        'OPSETLAY',	//set layer attribute;
+        'OPSETLAYTE',
+        'OPGETLAY',
+        'OPGETLAYTE',
+        'OPSETSUBLAY',//set sublayer attribute;
+        'OPSETSUBLAYT',
+        'OPSETSUBLAYTE',
+        
+        'OPSETSUBLAYTET',
+        'OPGETSUBLAY',
+        'OPGETSUBLAYTE',
+        'OPSETTEMP',	//set temp value;
+        'OPGETTEMP',
+        'OPGETTAG',	//set tag value;
+        'OPSETTAGIM',	//get the value of tag;
+        'OPSETTAGTE',
+        
+        'OPEQIM',		//if a EQ (int)Imm jump 1;
+        'OPEQTE',
+        'OPGTIM',
+        'OPGTTE',
+        'OPGTEIM',
+        'OPGTETE',
+        'OPLTIM',
+        'OPLTTE',
+        'OPLTEIM',
+        'OPLTETE',
+
+        'OPJUMP',		//jump Imm codes;
+
+        'OPADDIM',		//a = a + Imm;
+        'OPADDTE',
+        'OPMINUSIM',	//a = a - Imm;   
+        'OPMINUSTE',
+        'OPMULIM',		//a = a * Imm;  
+        'OPMULTE',   
+        'OPDIVIM',		//a = a / Imm;
+        'OPDIVTE',
+        'OPMODIM',
+        'OPMODTE',
+
+        'OPANDIM',		//a = a & Imm;    
+        'OPANDTE', 
+        'OPORIM',		//a = a | Imm;   
+        'OPORTE', 
+        'OPXORIM',		//a = a ^ Imm;
+        'OPXORTE',
+        'OPNOTIM',		//a = !a;
+        'OPNOTTE',
+
+        'OPSETWIDIM',
+        'OPSETWIDTE',
+        'OPGETWIDTE',
+        'OPSETWIDOFFSETIM',
+        'OPSETWIDOFFSETTE',
+        'OPGETWIDOFFSET',
+        'OPSETLAYOFFSETIM',
+        'OPSETLAYOFFSETTE',
+        'OPGETLAYOFFSET',
+        'OPCHKVALALARM',
+        'OPNOP',
+        'OPSTARTANIMATION',
+        'OPEXECUTEACTION',
+        'OPSETGLOBALVAR'
+
+    ]
+    var cppOPTable = {}
+    for (var i=0;i<opCodes.length;i++){
+        cppOPTable[opCodes[i]] = i
+    }
+
+    var ideOpCodes = {
+        temp:'temp',
+        set:'set',
+        get:'get',
+        setTag:'setTag',
+        getTag:'getTag',
+        if:'if',
+        else:'else',
+        end:'end',
+        gt:'gt',
+        lt:'lt',
+        eq:'eq',
+        gte:'gte',
+        lte:'lte'
+    }
+
+    //widget attr
+    var cppWidgetAttrs = [
+        new Attr('mWDGStartTag',4),
+        new Attr('mWDGStopTag',4),
+        new Attr('mWDGMinValue',4),
+        new Attr('mWDGMaxValue',4),
+        new Attr('mWDGLowAlarmValue',4),
+        new Attr('mWDGHighAlarmValue',4),
+        new Attr('mWDGMinAngle',4),
+        new Attr('mWDGMaxAngle',4),
+        new Attr('mWDGOldValue',4),
+        new Attr('mWDGAnTag',4),
+        new Attr('mWDGNumOfLayers',4),
+        new Attr('mWDGStartAddrOfLayers',4),
+        new Attr('mWDGWidgetWidth',4),
+        new Attr('mWDGWidgetHeight',4),
+        new Attr('mWDGWidgetOffsetX',4),
+        new Attr('mWDGWidgetOffsetY',4),
+        new Attr('mWDGBindTagID',4),
+        new Attr('mWDGAttatchCanvasID',4),
+        new Attr('mWDGPreWidgetID',4),
+        new Attr('mWDGNextWidgetID',4),
+        new Attr('mWDGTotalFrame',4),
+        new Attr('mWDGNowFrame',4),
+        new Attr('mWDGInteractionMode',4),
+        new Attr('mWDGMode',4),
+        new Attr('mWDGArrange',4),
+        new Attr('mWDGType'),
+        new Attr('mWDGAnimationSclerX'),   
+        new Attr('mWDGAnimationSclerY'),
+        new Attr('mWDGAnimationMovingX'),
+        new Attr('mWDGAnimationMovingY'),
+        new Attr('mWDGAnimationRotateAngle'),
+        new Attr('mWDGAnimationShearAngleX'), 
+        new Attr('mWDGAnimationShearAngleY'), 
+        new Attr('mWDGAnimationProjectionAngleX'),
+        new Attr('mWDGAnimationProjectionAngleY'),
+        new Attr('mWDGOnInitializeFunc'),
+        new Attr('mWDGOnDestroyFunc'),
+        new Attr('mWDGOnTagChangeFunc'),
+        new Attr('mWDGOnMouseUpFunc'),
+        new Attr('mWDGOnMouseDownFunc'),
+        new Attr('mWDGOnMouseMove'),
+        new Attr('mWDGOnKeyBoardLeft'),
+        new Attr('mWDGOnKeyBoardRight'),
+        new Attr('mWDGOnKeyBoardOK'),
+        new Attr('mWDGMouseInnerX'),
+        new Attr('mWDGMouseInnerY'),
+        new Attr('mWDGOnAnimationFrame'),
+        new Attr('mWDGEnterLowAlarmAction'),
+        new Attr('mWDGLeaveLowAlarmAction'),
+        new Attr('mWDGEnterHighAlarmAction'),
+        new Attr('mWDGLeaveHighAlarmAction'),
+        new Attr('mWDGMouseReleaseAction'),
+        new Attr('mWDGOldValueInit'),
+        new Attr('maxHighLightNum'),
+        new Attr('highLightNum'),
+
+        //add
+        new Attr('curHLAnimationFactor')
+    ]
+
+    var cppWidgetAttrsTable = {}
+    for (var i=0;i<cppWidgetAttrs.length;i++){
+        var curWidgetAttr = cppWidgetAttrs[i]
+        curWidgetAttr.index = i;
+        cppWidgetAttrsTable[curWidgetAttr.name] = curWidgetAttr
+    }
+    for(var j=0;j<20;j++){
+        //20 reserve attrs
+        var curIdx = i +j;
+        cppWidgetAttrsTable['a'+curIdx] = new Attr('a'+curIdx,4,curIdx) 
+    }
+
+    //TODO:加入curAnimationFactor，curHLAnimationFactor,totalHLFrame,nowHLFrame
+    var widgetAttrMap = {
+        info:{
+            left:'x',
+            top:'y',
+            width:'mWDGWidgetWidth',
+            height:'mWDGWidgetHeight'
+        },
+        startAnimationTag:'mWDGStartTag',
+        stopAnimationTag:'mWDGStopTag',
+        curAnimationTag:'mWDGAnTag',
+        totalFrame:'mWDGTotalFrame',
+        nowFrame:'mWDGNowFrame',
+        arrange:'mWDGArrange',
+        mode:'mWDGMode',
+        oldValue:'mWDGOldValue',
+        minValue:'mWDGMinValue',
+        maxValue:'mWDGMaxValue',
+        lowAlarmValue:'mWDGLowAlarmValue',
+        highAlarmValue:'mWDGHighAlarmValue',
+        minAngle:'mWDGMinAngle',
+        maxAngle:'mWDGMaxAngle',
+        numOfLayers:'mWDGNumOfLayers',
+        interaction:'mWDGInteractionMode',
+        tag:'mWDGBindTagID',
+        generalType:'mWDGType',
+        otherAttrs:'otherAttrs',
+        innerX:'mWDGMouseInnerX',
+        innerY:'mWDGMouseInnerY',
+        oldValueInit:'mWDGOldValueInit',
+        maxHighLightNum:'maxHighLightNum',
+        highLightNum:'highLightNum',
+
+        //add
+        curHLAnimationFactor:'curHLAnimationFactor'
+
+    };
+
+
+    //layer attrs
+    var cppLayerAttrs = [
+        new Attr('mLayerOffsetX',4),
+        new Attr('mLayerOffsetY',4),
+        
+        new Attr('scalerX',4),
+        new Attr('scalerY',4),
+        new Attr('MovingX',4),
+        new Attr('MovingY',4),
+        new Attr('rotateAngle',4),
+        new Attr('shearAngleX',4),
+        new Attr('shearAngleY',4),
+        new Attr('projectX',4),
+        new Attr('projectY',4),
+        new Attr('mWidth',4),
+        new Attr('mHeight',4),
+        new Attr('mValidSubLayer',4),
+        new Attr('mHidden',4),
+        new Attr('tileBoxClass',4),
+        new Attr('mRotaCenterX',4),
+        new Attr('mRotaCenterY',4)
+    ]
+
+    var layerAttrTable = {
+
+    }
+
+    for (var i=0;i<cppLayerAttrs.length;i++){
+        var curLayerAttr = cppLayerAttrs[i]
+        curLayerAttr.index = i;
+        layerAttrTable[curLayerAttr.name] = curLayerAttr
+    }
+
+    // console.log('layerAttrTable',layerAttrTable)
+
+    var layerAttrMap = {
+        x:'x',
+        y:'y',
+        width:'mWidth',
+        height:'mHeight',
+        hidden:'mHidden',
+        rotateAngle:'rotateAngle',
+        rotateCenterX:'mRotaCenterX',
+        rotateCenterY:'mRotaCenterY'
+    }
+
+    var cppSublayerAttrs = [
+        'SubLayerClassROI',
+        'SubLayerClassFont',
+        'SubLayerClassImage',
+        'SubLayerClassColor'   
+    ]
+
+    var subLayerAttrMap = {
+        'roi':'SubLayerClassROI',
+        'font':'SubLayerClassFont',
+        'image':'SubLayerClassImage',
+        'color':'SubLayerClassColor'
+    }
+
+    var subLayerAttrTable = {
+        'SubLayerClassROI':new Attr('SubLayerClassROI',16,0),
+        'SubLayerClassFont':new Attr('SubLayerClassFOnt',8,1),
+        'SubLayerClassImage':new Attr('SubLayerClassImage',4,2),
+        'SubLayerClassColor':new Attr('SubLayerClassColor',4,3)
+    }
+
+    var roiAttrs = ['p1x','p1y','p2x','p2y','p3x','p3y','p4x','p4y','alpha','beta','mode']
+
+    var roiAttrTable = {
+        // p1x:new Attr('p1x',1,0),
+        // p1y:new Attr('p1y',1,0),
+        // p2x:new Attr('p1x',1,0),
+        // p2y:new Attr('p1x',1,0),
+        // p3x:new Attr('p1x',1,0),
+        // p3y:new Attr('p1x',1,0),
+        // p1x:new Attr('p1x',1,0),
+        // p1x:new Attr('p1x',1,0),
+    }
+    for (var i=0;i<roiAttrs.length;i++){
+        roiAttrTable[roiAttrs[i]] = new Attr(roiAttrs[i],1,i);
+    }
+
+    var fontAttrTable = {
+        fontStyle:new Attr('fontStyle',4,0),
+        text:new Attr('text',1,1)
+    }
+
+    var textureAttrTable = {
+        textureList:new Attr('textureList',4,0),
+        texture:new Attr('texture',4,1),
+        type:new Attr('type',4,2)
+    }
+
+
+    var colorAttrTable = {
+        r:new Attr('r',1,0),
+        g:new Attr('g',1,1),
+        b:new Attr('b',1,2),
+        a:new Attr('a',1,3)
+    }
+
+    function InstOperand(bytes,reserve) {
+        this.bytes = bytes
+        this.reserve = reserve || false;
+    }
+    function Instruction(op) {
+        this.op = op;
+        this.operands = [].slice.call(arguments,1)
+        this.index = 0
+    }
+
+    var cppWidgetInsts = {
+        OPEND :new Instruction('OPEND',new InstOperand(7,true)),
+        OPSTART:new Instruction('OPSTART',new InstOperand(1),new InstOperand(2),new InstOperand(4,true)),
+        //lay
+        OPSETLAY:new Instruction('OPSETLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4)),
+        OPSETLAYTE:new Instruction('OPSETLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        OPGETLAY:new Instruction('OPGETLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
+        OPGETLAYTE:new Instruction('OPGETLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
+        //sublay
+        OPSETSUBLAY:new Instruction('OPSETSUBLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4)),
+        OPSETSUBLAYTE:new Instruction('OPSETSUBLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4)),
+        OPSETSUBLAYT:new Instruction('OPSETSUBLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        OPSETSUBLAYTET:new Instruction('OPSETSUBLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        OPGETSUBLAY:new Instruction('OPGETSUBLAY',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        OPGETSUBLAYTE:new Instruction('OPGETSUBLAYTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
+        //temp
+        OPSETTEMP:new Instruction('OPSETTEMP',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPGETTEMP:new Instruction('OPGETTEMP',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPGETTAG:new Instruction('OPGETTAG',new InstOperand(1),new InstOperand(6,true)),
+        OPSETTAGIM:new Instruction('OPSETTAGIM',new InstOperand(3,true),new InstOperand(4)),
+        OPSETTAGTE:new Instruction('OPSETTAGTE',new InstOperand(1),new InstOperand(6,true)),
+        OPEQIM:new Instruction('OPEQIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPEQTE:new Instruction('OPEQTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPGTIM:new Instruction('OPGTIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPGTTE:new Instruction('OPGTTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPGTEIM:new Instruction('OPGTEIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPGTETE:new Instruction('OPGTETE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPLTIM:new Instruction('OPLTIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPLTTE:new Instruction('OPLTTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPLTEIM:new Instruction('OPLTEIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPLTETE:new Instruction('OPLTETE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPJUMP:new Instruction('OPJUMP',new InstOperand(1,true),new InstOperand(2),new InstOperand(4,true)),
+        OPADDIM:new Instruction('OPADDIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPMINUSIM:new Instruction('OPMINUSIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPMULIM:new Instruction('OPMULIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPDIVIM:new Instruction('OPDIVIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPMODIM:new Instruction('OPMODIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPADDTE:new Instruction('OPADDTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPMINUSTE:new Instruction('OPMINUSTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPMULTE:new Instruction('OPMULTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPDIVTE:new Instruction('OPDIVTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPMODTE:new Instruction('OPMODTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPANDIM:new Instruction('OPANDIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPORIM:new Instruction('OPORIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPXORIM:new Instruction('OPXORIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPNOTIM:new Instruction('OPNOTIM',new InstOperand(1),new InstOperand(6,true)),
+        OPANDTE:new Instruction('OPANDTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPORTE:new Instruction('OPORTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPXORTE:new Instruction('OPXORTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPNOTTE:new Instruction('OPNOTTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPSETWIDIM:new Instruction('OPSETWIDIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPSETWIDTE:new Instruction('OPSETWIDTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPGETWIDTE:new Instruction('OPGETWIDTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        //widget offset
+        OPSETWIDOFFSETIM:new Instruction('OPSETWIDOFFSETIM',new InstOperand(1),new InstOperand(2,true),new InstOperand(4)),
+        OPSETWIDOFFSETTE:new Instruction('OPSETWIDOFFSETTE',new InstOperand(1),new InstOperand(1),new InstOperand(5,true)),
+        OPGETWIDOFFSET:new Instruction('OPGETWIDOFFSET',new InstOperand(1),new InstOperand(1),new InstOperand(5)),
+        //layer offset
+        OPSETLAYOFFSETIM:new Instruction('OPSETLAYOFFSETIM',new InstOperand(1),new InstOperand(1),new InstOperand(1,true),new InstOperand(4)),
+        OPSETLAYOFFSETTE:new Instruction('OPSETLAYOFFSETTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
+        OPGETLAYOFFSET:new Instruction('OPGETLAYOFFSET',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
+        OPCHKVALALARM:new Instruction('OPCHKVALALARM',new InstOperand(7,true)),
+        OPNOP:new Instruction('OPNOP',new InstOperand(7,true)),
+        OPSTARTANIMATION:new Instruction('OPSTARTANIMATION',new InstOperand(7,true)),
+        OPEXECUTEACTION:new Instruction('OPEXECUTEACTION',new InstOperand(7,true)),
+        OPSETGLOBALVAR:new Instruction('OPSETGLOBALVAR',new InstOperand(1),new InstOperand(4),new InstOperand(3,true))
+
+    }
+    for (var i=0;i<opCodes.length;i++){
+        cppWidgetInsts[opCodes[i]].index = i;
+    }
+
+    // console.log('cppWidgetInsts',cppWidgetInsts)
+
+    function AttrType(type,value) {
+        this.type = type
+        this.value = value
+        this.aVals = [].slice.call(arguments,2)
+    }
+
+    function isNum(param) {
+        var numReg = /^[0-9]+$/;
+        return numReg.test(param);
+    }
+
+    function expDepth(param) {
+        var attrs = param.value.split('.')
+        if ((attrs.length == 2) && (attrs[0] == 'this')){
+            return new AttrType('widget',widgetAttrMap[attrs[1]])
+        }
+
+        if (attrs.length == 3){
+            //info
+            if ((attrs[0] == 'this') && (attrs[1] =='info')) {
+                return new AttrType('widget',widgetAttrMap.info[attrs[2]])
+            }
+
+            if ((attrs[0] == 'this') && (attrs[1] =='layers')) {
+                if (attrs[2] == 'length'){
+                    // console.log('layers length')
+                    return new AttrType('widget',widgetAttrMap['numOfLayers'])
+                }
+            }
+
+            //otherAttrs
+            //this.otherAttrs.1 = 2
+            if ((attrs[0] == 'this' )&& (attrs[1] == 'otherAttrs')&&isNum(attrs[2])){
+                return new AttrType('widget','a'+(cppWidgetAttrs.length+Number(attrs[2])))
+            }
+
+            
+        }
+
+        if (attrs.length == 4){
+            //this.layers.0.hidden
+            if ((attrs[0] == 'this') && (attrs[1] == 'layers') ) {
+                if (isNum(attrs[2])){
+                    return new AttrType('layer',layerAttrMap[attrs[3]],Number(attrs[2]),'IMM')
+                }else{
+                    return new AttrType('layer',layerAttrMap[attrs[3]],attrs[2],'ID')
+                }
+            }
+
+
+
+        }
+
+        if (attrs.length==6){
+            //this.layers.0.subLayers.texture.texture
+            if ((attrs[0] == 'this') && (attrs[1] == 'layers') && (attrs[3]=='subLayers')) {
+                // var subLayer = attrs[4]
+                // var subLayerAttr = attrs[5]
+                if (isNum(attrs[2])){
+                    return new AttrType('subLayer',subLayerAttrMap[attrs[4]],attrs[5],Number(attrs[2]),'IMM')
+                }else{
+                    return new AttrType('subLayer',subLayerAttrMap[attrs[4]],attrs[5],attrs[2],'ID')
+                }
+
+            }
+        }
+        throw new Error('unsupported exp '+param.value)
+        return null;
+    }
+
+    function TempID(attr) {
+        return temps[attr]
+    }
+
+    function WidgetAttrID(attr) {
+        // return attr;
+        if (!cppWidgetAttrsTable[attr]) {
+            console.log('unsupported attr',attr)
+        }
+        return cppWidgetAttrsTable[attr].index
+    }
+
+    function LayerAttrID(attr) {
+        // return attr
+        return layerAttrTable[attr].index
+    }
+    function SubLayerID(attr) {
+        // return attr
+        return subLayerAttrTable[attr].index
+    }
+    function SubLayerAttrID(subLayer,attr) {
+        // return attr
+        switch(subLayer){
+            case 'SubLayerClassROI':
+                return roiAttrTable[attr].index
+            case 'SubLayerClassImage':
+                return textureAttrTable[attr].index
+            case 'SubLayerClassFont':
+                return fontAttrTable[attr].index
+            case 'SubLayerClassColor':
+                return colorAttrTable[attr].index
+        }
+    }
+
+    function transJSWidgetCommandToCPPForm(command) {
+        var op = command[0]
+        var inst
+        var curExp
+        switch (op){
+            case 'temp':
+                // inst = {
+                //     type:'OPSETTEMP',
+                //     tempID:command[1],
+                //     imm:command[2].value
+                // }
+                inst = ['OPSETTEMP',TempID(command[1]),command[2].value]
+                break;
+            case 'set':
+                var param1 = command[1]
+                var param2 = command[2]
+                if (param1.type == 'ID') {
+                    if (param2.type == 'Int') {
+                        //a = 2
+                        // inst = {
+                        //     type:'OPSETTEMP',
+                        //     tempID:command[1].value,
+                        //     imm:command[2].value
+                        // }
+                        inst = ['OPSETTEMP',TempID(command[1].value),command[2].value]
+                    }else if (param2.type == 'ID'){
+                        // a = b
+                        
+                        inst = ['OPGETTEMP',TempID(command[1].value),TempID(command[2].value)];
+                    }else if (param2.type == 'EXP'){
+                        // a = this.layers.1.hidden
+                        curExp = expDepth(param2)
+                        // console.log(curExp,'curExp')
+                        if (curExp) {
+                            switch(curExp.type){
+                                case 'widget':
+                                    switch(curExp.value){
+                                        case 'x':
+                                            inst = ['OPGETWIDOFFSET',TempID(param1.value),0]
+                                        break;
+                                        case 'y':
+                                            inst = ['OPGETWIDOFFSET',TempID(param1.value),1]
+                                        break;
+                                        default:
+                                            // console.log('command',command,curExp)
+                                            inst = ['OPGETWIDTE',WidgetAttrID(curExp.value),TempID(param1.value)]
+                                            // console.log('command',command,curExp,inst)
+                                    }
+                    
+                                    
+                                break;
+                                case 'layer':
+                                    switch(curExp.value){
+                                        case 'x':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPGETLAYOFFSET',curExp.aVals[0],0,TempID(param1.value),0]
+                                            }else{
+                                                inst = ['OPGETLAYOFFSET',TempID(curExp.aVals[0]),0,TempID(param1.value),1]
+                                            }
+                                            
+                                        break;
+                                        case 'y':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPGETLAYOFFSET',curExp.aVals[0],1,TempID(param1.value),0]
+                                            }else{
+                                                inst = ['OPGETLAYOFFSET',TempID(curExp.aVals[0]),1,TempID(param1.value),1]
+                                            }
+                                        break;
+                                        default:
+                                            if (curExp.aVals[1]=='IMM'){
+                                            // inst = {
+                                            //     type:'OPGETLAY1',
+                                            //     tempID:param1.value,
+                                            //     attrID:curExp.value,
+                                            //     layerID:curExp.aVals[0]
+                                            // }
+                                            inst = ['OPGETLAY',curExp.aVals[0],LayerAttrID(curExp.value),TempID(param1.value)]
+                                        }else{
+                                            // inst = {
+                                            //     type:'OPGETLAY2',
+                                            //     tempID:param1.value,
+                                            //     attrID:curExp.value,
+                                            //     layerID:curExp.aVals[0]
+                                            // }
+                                            inst = ['OPGETLAYTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),TempID(param1.value)]
+                                        }
+                                    }
+                                    
+
+                                break;
+                                case 'subLayer':
+
+                                    if (curExp.aVals[2]=='IMM'){
+                                        // inst = {
+                                        //     type:'OPGETSUBLAY1',
+                                        //     tempID:param1.value,
+                                        //     attrID:curExp.value,
+                                        //     layerID:curExp.aVals[0]
+                                        // }
+                                        // curExp.value = sublayAttr,sublayattr,layerID,imm
+                                       inst = ['OPGETSUBLAY',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param1.value)]
+                                    }else{
+                                        // inst = {
+                                        //     type:'OPGETSUBLAY2',
+                                        //     tempID:param1.value,
+                                        //     attrID:curExp.value,
+                                        //     layerID:curExp.aVals[0]
+                                        // }
+                                       inst = ['OPGETSUBLAYTE',TempID(curExp.aVals[1]),SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param1.value)]
+                                    }
+                                break;
+                            }
+                        }else{
+                            // console.log(param2)
+                            throw new Error('invalid exp',param2)
+                        }
+                    }
+                }else if (param1.type == 'EXP'){
+                    if (param2.type == 'Int') {
+                        curExp = expDepth(param1)
+                        if (curExp) {
+                            switch(curExp.type){
+                                case 'widget':
+                                    // inst = {
+                                    //     type:'OPSETWIDIM',
+                                    //     attrID:curExp.value,
+                                    //     imm:param2.value
+                                    // }
+                                    switch(curExp.value){
+                                        case 'x':
+                                            inst = ['OPSETWIDOFFSETIM',0,param1.value]
+                                        break;
+                                        case 'y':
+                                            inst = ['OPSETWIDOFFSETIM',1,param1.value]
+                                        break;
+                                        default:
+                                            inst = ['OPSETWIDIM',WidgetAttrID(curExp.value),param2.value]
+                                    }
+                                    
+                                break;
+                                case 'layer':
+                                    switch(curExp.value){
+                                        case 'x':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],0,0,param2.value]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),0,1,param2.value]
+                                            }
+                                            
+                                        break;
+                                        case 'y':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETIM',curExp.aVals[0],1,0,param2.value]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETIM',TempID(curExp.aVals[0]),1,1,param2.value]
+                                            }
+                                        break;
+                                        default:
+                                            if (curExp.aVals[1]=='IMM'){
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAY',curExp.aVals[0],LayerAttrID(curExp.value),0,param2.value]
+                                            }else{
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAY',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,param2.value]
+                                            }
+                                    }
+                                    
+                                    
+                                break;
+                                case 'subLayer':
+                                    if (curExp.aVals[2]=='IMM'){
+                                        // inst = {
+                                        //     type:'OPSETSUBLAY1',
+                                            
+                                        //     attrID:curExp.value,
+                                        //     layerID:curExp.aVals[0],
+                                        //     imm:param2.value
+                                        // }
+                                        inst = ['OPSETSUBLAY',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param2.value]
+                                    }else{
+                                        // inst = {
+                                        //     type:'OPSETSUBLAY1',
+                                            
+                                        //     attrID:curExp.value,
+                                        //     layerID:curExp.aVals[0],
+                                        //     imm:param2.value
+                                        // }
+                                        inst = ['OPSETSUBLAYTE',TempID(curExp.aVals[1]),SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),param2.value]
+                                    }
+                                break;
+                            }
+                        }else{
+                            // console.log(param1)
+                            throw new Error('invalid exp')
+                        }
+                    }else if(param2.type == 'ID'){
+                        curExp = expDepth(param1)
+                        if (curExp) {
+                            switch(curExp.type){
+                                case 'widget':
+                                    // inst = {
+                                    //     type:'OPSETWIDTE',
+                                    //     attrID:curExp.value,
+                                    //     tempID:param2.value
+                                    // }
+                                    inst = ['OPSETWIDTE',WidgetAttrID(curExp.value),param2.value]
+                                break;
+                                case 'layer':
+                                    switch(curExp.value){
+                                        case 'x':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],0,TempID(param2.value),0]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),0,TempID(param2.value),1]
+                                            }
+                                            
+                                        break;
+                                        case 'y':
+                                            if (curExp.aVals[1]=='IMM') {
+                                                inst = ['OPSETLAYOFFSETTE',curExp.aVals[0],1,TempID(param2.value),0]
+                                            }else{
+                                                inst = ['OPSETLAYOFFSETTE',TempID(curExp.aVals[0]),1,TempID(param2.value),1]
+                                            }
+                                        break;
+                                        default:
+                                            if (curExp.aVals[1]=='IMM'){
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAYTE',curExp.aVals[0],LayerAttrID(curExp.value),0,TempID(param2.value)]
+                                            }else{
+                                                // inst = {
+                                                //     type:'OPSETLAY1',
+                                                //     attrID:curExp.value,
+                                                //     layerID:curExp.aVals[0],
+                                                //     imm:param2.value
+                                                // }
+                                                inst = ['OPSETLAYTE',TempID(curExp.aVals[0]),LayerAttrID(curExp.value),1,TempID(param2.value)]
+                                            }
+                                    }
+                                    
+                                break;
+                                case 'subLayer':
+                                    if (curExp.aVals[2]=='IMM'){
+                                        // inst = {
+                                        //     type:'OPSETSUBLAY1',
+                                            
+                                        //     attrID:curExp.value,
+                                        //     layerID:curExp.aVals[0],
+                                        //     imm:param2.value
+                                        // }
+                                        inst = ['OPSETSUBLAYT',curExp.aVals[1],SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param2.value)]
+                                    }else{
+                                        // inst = {
+                                        //     type:'OPSETSUBLAY1',
+                                            
+                                        //     attrID:curExp.value,
+                                        //     layerID:curExp.aVals[0],
+                                        //     imm:param2.value
+                                        // }
+                                        inst = ['OPSETSUBLAYTET',TempID(curExp.aVals[1]),SubLayerID(curExp.value),SubLayerAttrID(curExp.value,curExp.aVals[0]),TempID(param2.value)]
+                                    }
+                                break;
+                            }
+                        }else{
+                            // console.log(param2)
+                            throw new Error('invalid exp',param2)
+                        }
+                    }
+                }
+                break;
+            case 'jump':
+                // inst = {
+                //     type:'OPJUMP',
+                //     imm:command[2]
+                // }
+                inst = ['OPJUMP',command[2]]
+                break;
+            case 'end':
+                // inst = {
+                //     type:'OPNOP'
+                // }
+                inst = ['OPNOP']
+                break;
+            //tag
+            case 'getTag':
+                // inst = {
+                //     type:'OPGETTAG',
+                //     tempID:command[1].value
+                // }
+                inst =['OPGETTAG',TempID(command[1].value)]
+                break;
+            case 'setTag':
+                if (command[1].type == 'ID'){
+                    // inst = {
+                    //     type:'OPSETTAGTE',
+                    //     tempID:command[1].value
+                    // }
+                    inst = ['OPSETTAGTE',TempID(command[1].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPSETTAGIM',
+                    //     imm:command[1].value
+                    // }
+                    inst = ['OPSETTAGIM',command[1].value]
+                }
+                break;
+            //compare
+            case 'eq':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPEQTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+
+                    // }
+                    inst = ['OPEQTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPEQIM',
+                    //     tempID1:command[1].value,
+                    //     imm:command[2].value
+
+                    // }
+                    inst = ['OPEQIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'lt':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPLTTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+
+                    // }
+
+                    inst = ['OPLTTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPLTIM',
+                    //     tempID1:command[1].value,
+                    //     imm:command[2].value
+
+                    // }
+                    inst = ['OPLTIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'lte':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPLTETE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+
+                    // }
+                    inst = ['OPLTETE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPLTEIM',
+                    //     tempID1:command[1].value,
+                    //     imm:command[2].value
+
+                    // }
+                    inst = ['OPLTIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'gt':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPGTTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+
+                    // }
+                    inst = ['OPGTTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    inst = ['OPGTIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'gte':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    inst = ['OPGTETE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    inst = ['OPGTEIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            //algebra
+            case 'add':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPADDTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPADDTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPADDIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPADDIM',TempID(command[1].value),command[2].value]
+                }
+                
+                break;
+            case 'minus':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPMINUSTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPMINUSTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPMINUSIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPMINUSIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'multiply':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPMULTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPMULTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPMULIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPMULIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'divide':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPDIVTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPDIVTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPDIVIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPDIVIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'mod':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPMODTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPMODTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPMODIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPMODIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            //bit operation
+            case 'and':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPANDTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPANDTE',TempID(command[1].value),cTempID(ommand[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPANDIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPANDIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'or':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPORTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPORTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPORIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPORIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'xor':
+                if (command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPXORTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPXORTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPXORIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPXORIM',TempID(command[1].value),command[2].value]
+                }
+                break;
+            case 'not':
+                if (command[2]&&command[2].type == 'ID'){
+                    //comapare two id
+                    // inst = {
+                    //     type:'OPNOTTE',
+                    //     tempID1:command[1].value,
+                    //     tempID2:command[2].value
+                    // }
+                    inst = ['OPNOTTE',TempID(command[1].value),TempID(command[2].value)]
+                }else{
+                    // inst = {
+                    //     type:'OPNOTIM',
+                    //     tempID:command[1].value,
+                    //     imm:command[2].value
+                    // }
+                    inst = ['OPNOTIM',TempID(command[1].value)]
+                }
+                break;
+            case 'checkalarm':
+                inst = ['OPCHKVALALARM']
+            break;
+            case 'startanimation':
+                inst = ['OPSTARTANIMATION']
+                break;
+            case 'setglobalvar':
+                inst = ['OPSETGLOBALVAR',command[1].value,command[2].value];
+                break;
+            case 'executeaction':
+                inst = ['OPEXECUTEACTION',command[1].value]
+            break;
+            default:
+                console.log('warning: ',op)
+                inst = ['OPNOP']
+
+        }
+        return inst;
+    }
+
+    function buf2hex(buffer) { // buffer is an ArrayBuffer
+      return Array.prototype.map.call(new Uint8Array(buffer), function (x) {
+          return ('00' + x.toString(16)).slice(-2)
+      }).join('')
+    }
+
+    function mapArrayCmdToBuffer(cmd) {
+        var bigEndian = true;
+        var buf = new ArrayBuffer(8)
+        var dv = new DataView(buf)
+        var count = 1//cmd parameters
+        var bytesCount = 0
+        // console.log(cmd)
+        var op = cmd[0]
+        var cmdProto = cppWidgetInsts[op];
+        if (!cmdProto) {
+            console.log('unsupported op',op)
+        }
+        var bytes = 0;
+        var reserve = false;
+        dv.setUint8(bytesCount,cmdProto.index,bigEndian);
+        bytesCount +=1;
+        for (var i=0;i<cmdProto.operands.length;i++){
+            bytes = cmdProto.operands[i].bytes
+            reserve = cmdProto.operands[i].reserve
+            if (!reserve) {
+                //write cmd[count]
+                switch(bytes){
+                    case 1:
+                        dv.setUint8(bytesCount,cmd[count],bigEndian)
+                    break;
+                    case 2:
+                        dv.setUint16(bytesCount,cmd[count],bigEndian)
+                    break;
+                    case 4:
+                        dv.setUint32(bytesCount,cmd[count],bigEndian)
+                    break;
+                    default:
+                        console.log('writing to buffer error',cmd)
+                }
+
+                count = count +1;
+            }else{
+
+            }
+            bytesCount += bytes;
+        }
+        // console.log(new Uint8Array(buf))
+        return buf2hex(buf)
+
+    }
+
+    function mapArrayCmdsToBuffer(cmds) {
+        return cmds.map(function (c) {
+            return mapArrayCmdToBuffer(c)
+        })
+    }
+
+    function transJSWidgetCommands(commands){
+        var transedCommands = []
+        //scan temps
+        var tempCommands = commands.filter(function (cmd) {
+            return cmd[0] == 'temp'
+        })
+        var count = 0;
+        temps = {}
+        for (var i=0;i<tempCommands.length;i++){
+            var curTemp = tempCommands[i][1]
+            if (!(curTemp in temps)) {
+                temps[curTemp] = count
+                count++;
+            }
+        }
+        //total num count
+        transedCommands.push(['OPSTART',count,commands.length])
+        for (var j=0;j<commands.length;j++){
+            transedCommands.push(transJSWidgetCommandToCPPForm(commands[j]))
+        }
+        transedCommands.push(['OPEND'])
+        // console.log('transedCmd',transedCommands)
+        var bufCommands = mapArrayCmdsToBuffer(transedCommands)
+        // console.log(bufCommands)
+        return bufCommands
+    }
+    translator.transJSWidgetCommandToCPPForm = transJSWidgetCommandToCPPForm
+    translator.transJSWidgetCommands = transJSWidgetCommands;
+    return translator;
+}))

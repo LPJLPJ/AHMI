@@ -1,1 +1,93 @@
-ide.controller("characterSetCtrl",["$scope","characterSetService","$timeout","ProjectService","Type","Preference","ResourceService","CanvasService","UserTypeService",function(e,t,n,a,o,c,r,l,i){function u(){e.componentOfChar={character:{text:null,fontName:"默认",fontFamily:"宋体",fontSize:"20px",fontColor:null,fontBold:null,fontItalic:null,fontAlignment:null},fontFamilies:[],enableInput:f,disableInput:h,allCharacters:[],selectCharacterByIndex:d}}function m(){var t=r.getAllFontResources().map(function(t){var n={name:t.name};return e.customFontDisabled&&(n.type="disable"),n});e.componentOfChar.fontFamilies=[{name:"宋体"},{name:"Arial"},{name:"times"}].concat(t)}function s(){e.componentOfChar.allCharacters=t.getCharacterSet(),e.customFontDisabled=i.getCustomFontAuthor(),m(),e.$on("ResourceChanged",function(e){console.log("Fonts changed!!"),m()})}function f(e){var t=document.getElementById("characterNameInput"),n=t.getElementsByTagName("input");0<=e&&e<n.length&&n[e].removeAttribute("readonly")}function h(e){var t=document.getElementById("characterNameInput"),n=t.getElementsByTagName("input");0<=e&&e<n.length&&n[e].setAttribute("readonly","readonly")}function d(n){console.log("hh"),e.componentOfChar.character=t.selectCharacterByIndex(n)}e.$on("GlobalProjectReceived",function(){u(),s()})}]);
+/**
+ * Created by lixiang on 16/3/25.
+ */
+ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
+    'ProjectService',
+    'Type', 'Preference',
+    'ResourceService','CanvasService','UserTypeService',function($scope,characterSetService,$timeout,
+                                           ProjectService,
+                                           Type, Preference,
+                                           ResourceService,CanvasService,UserTypeService){
+    var initObject=null;
+
+    $scope.$on('GlobalProjectReceived',function(){
+        initUserInterface();
+        initProject();
+    });
+
+    function initUserInterface(){
+        $scope.componentOfChar={
+            character:{
+                text:null,
+                fontName:'默认',
+                fontFamily:'宋体',
+                fontSize:'20px',
+                fontColor:null,
+                fontBold:null,
+                fontItalic:null,
+                fontAlignment:null
+            },
+            fontFamilies:[],
+
+            enableInput:enableInput,
+            disableInput:disableInput,
+            allCharacters:[],
+            selectCharacterByIndex:selectCharacterByIndex,
+        };
+    }
+
+    function syncFontFamilies() {
+        var customFonts = ResourceService.getAllFontResources().map(function (fRes) {
+            var customFont={
+                name:fRes.name
+            };
+            if($scope.customFontDisabled){
+                customFont.type='disable'
+            }
+            return customFont;
+        });
+        $scope.componentOfChar.fontFamilies = [{name:'宋体'},{name:'Arial'},{name:'times'}].concat(customFonts)
+    }
+
+    function initProject(){
+
+        //ProjectService.getProjectTo($scope);
+        //
+        //onAttributeChanged();
+        //$scope.$on('AttributeChanged', function (event) {
+        //    onAttributeChanged();
+        //});
+
+        $scope.componentOfChar.allCharacters=characterSetService.getCharacterSet();
+        $scope.customFontDisabled=UserTypeService.getCustomFontAuthor();
+
+        syncFontFamilies();
+
+        $scope.$on('ResourceChanged',function (e) {
+            console.log('Fonts changed!!')
+            syncFontFamilies();
+        })
+    }
+
+    function enableInput(index){
+        var list = document.getElementById("characterNameInput");
+        var str = list.getElementsByTagName("input");
+        if((0<=index)&&(index<str.length)){
+            str[index].removeAttribute("readonly");
+        }
+    }
+    function disableInput(index){
+        //document.getElementsByClassName("characterNameInput").readonly=true;
+        var list = document.getElementById("characterNameInput");
+        var str = list.getElementsByTagName("input");
+        if((0<=index)&&(index<str.length)){
+            str[index].setAttribute('readonly','readonly');
+        }
+    }
+
+    function selectCharacterByIndex(index){
+        console.log('hh');
+        $scope.componentOfChar.character=characterSetService.selectCharacterByIndex(index);
+    }
+
+}]);
