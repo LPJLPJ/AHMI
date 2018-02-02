@@ -3352,6 +3352,7 @@
             var(tH,0)
             var(tS,0)
             var(tV,0)
+            
             //get Last HSV
             set(tH,'this.otherAttrs.1')
             set(tS,'this.otherAttrs.2')
@@ -3359,6 +3360,7 @@
             var(tR,0)
             var(tG,0)
             var(tB,0)
+            var(tA,0)
             var(tI,0)
             var(tF,0)
             var(tP,0)
@@ -3376,10 +3378,10 @@
             var(tPickerH,0)
             var(tPickerRightX,0)
             var(tPickerBottomY,0)
-            set(tPickerX,'this.layers.2.x')
-            set(tPickerY,'this.layers.2.y')
-            set(tPickerW,'this.layers.2.width')
-            set(tPickerH,'this.layers.2.height')
+            set(tPickerX,'this.layers.3.x')
+            set(tPickerY,'this.layers.3.y')
+            set(tPickerW,'this.layers.3.width')
+            set(tPickerH,'this.layers.3.height')
             set(tPickerRightX,tPickerX)
             add(tPickerRightX,tPickerW)
             set(tPickerBottomY,tPickerY)
@@ -3393,8 +3395,8 @@
                             //otherAttr 4 hit area 0:none 1:hue 2:picker
                             set('this.otherAttrs.4',1)
                             //move picker indicator
-                            set('this.layers.5.x',tInnerX)
-                            set('this.layers.5.y',tInnerY)
+                            set('this.layers.7.x',tInnerX)
+                            set('this.layers.7.y',tInnerY)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3436,7 +3438,7 @@
                             set('this.otherAttrs.4',2)
                             //move hue indicator
                             // set('this.layers.4.x',tInnerX)
-                            set('this.layers.4.y',tInnerY)
+                            set('this.layers.5.y',tInnerY)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)
@@ -3522,12 +3524,47 @@
                                 
                             }
                             //set picker bg color
-                            set('this.layers.2.subLayers.color.r',tR)
-                            set('this.layers.2.subLayers.color.g',tG)
-                            set('this.layers.2.subLayers.color.b',tB)
+                            set('this.layers.3.subLayers.color.r',tR)
+                            set('this.layers.3.subLayers.color.g',tG)
+                            set('this.layers.3.subLayers.color.b',tB)
                             //restore tS,tV
                             set(tS,tSBack)
                             set(tV,tVBack)
+                        }
+                    }
+                }
+            }
+            
+            //alpha
+            var(tAlphaX,0)
+            var(tAlphaY,0)
+            var(tAlphaRightX,0)
+            var(tAlphaBottomY,0)
+            var(tAlphaW,0)
+            var(tAlphaH,0)
+            set(tAlphaX,'this.layers.2.x')
+            set(tAlphaY,'this.layers.2.y')
+            set(tAlphaW,'this.layers.2.width')
+            set(tAlphaH,'this.layers.2.height')
+            set(tAlphaRightX,tAlphaX)
+            add(tAlphaRightX,tAlphaW)
+            set(tAlphaBottomY,tAlphaY)
+            add(tAlphaBottomY,tAlphaH)
+            if(tInnerX > tAlphaX){
+                if(tInnerX < tAlphaRightX){
+                    if(tInnerY > tAlphaY){
+                        if(tInnerY < tAlphaBottomY){
+                            // hit alpha
+                            set(tChangeFlag,1)
+                            set('this.otherAttrs.4',3)
+                            //change alpha
+                            set('this.layers.6.y',tInnerY)
+                            set(tA,tInnerY)
+                            minus(tA,tAlphaY)
+                            multiply(tA,255)
+                            divide(tA,tAlphaH)
+                            set('this.layers.4.subLayers.color.a',tA)
+                            
                         }
                     }
                 }
@@ -3609,9 +3646,9 @@
                     
                 }
                
-                set('this.layers.3.subLayers.color.r',tR)
-                set('this.layers.3.subLayers.color.g',tG)
-                set('this.layers.3.subLayers.color.b',tB)
+                set('this.layers.4.subLayers.color.r',tR)
+                set('this.layers.4.subLayers.color.g',tG)
+                set('this.layers.4.subLayers.color.b',tB)
                 
                 var(tResult,0)
                 set(tResult,tR)
@@ -3619,6 +3656,8 @@
                 add(tResult,tG)
                 multiply(tResult,1000)
                 add(tResult,tB)
+                multiply(tResult,1000)
+                add(tResult,tA)
                 setTag(tResult)
                 
                 print('r',tR)
@@ -3636,6 +3675,7 @@
             var(tH,0)
             var(tS,0)
             var(tV,0)
+            
             //get Last HSV
             set(tH,'this.otherAttrs.1')
             set(tS,'this.otherAttrs.2')
@@ -3643,6 +3683,7 @@
             var(tR,0)
             var(tG,0)
             var(tB,0)
+            var(tA,0)
             var(tI,0)
             var(tF,0)
             var(tP,0)
@@ -3660,10 +3701,10 @@
             var(tPickerH,0)
             var(tPickerRightX,0)
             var(tPickerBottomY,0)
-            set(tPickerX,'this.layers.2.x')
-            set(tPickerY,'this.layers.2.y')
-            set(tPickerW,'this.layers.2.width')
-            set(tPickerH,'this.layers.2.height')
+            set(tPickerX,'this.layers.3.x')
+            set(tPickerY,'this.layers.3.y')
+            set(tPickerW,'this.layers.3.width')
+            set(tPickerH,'this.layers.3.height')
             set(tPickerRightX,tPickerX)
             add(tPickerRightX,tPickerW)
             set(tPickerBottomY,tPickerY)
@@ -3675,9 +3716,10 @@
                             set(tChangeFlag,1)
                             //hit picker area
                             //otherAttr 4 hit area 0:none 1:hue 2:picker
+                            set('this.otherAttrs.4',1)
                             //move picker indicator
-                            set('this.layers.5.x',tInnerX)
-                            set('this.layers.5.y',tInnerY)
+                            set('this.layers.7.x',tInnerX)
+                            set('this.layers.7.y',tInnerY)
                             set(tS,tInnerX)
                             minus(tS,tPickerX)
                             multiply(tS,255)
@@ -3716,7 +3758,10 @@
                     if(tInnerY>=tHueY){
                         if(tInnerY<tHueBottomY){
                             set(tChangeFlag,1)
-                            set('this.layers.4.y',tInnerY)
+                            set('this.otherAttrs.4',2)
+                            //move hue indicator
+                            // set('this.layers.4.x',tInnerX)
+                            set('this.layers.5.y',tInnerY)
                             //set h
                             set(tH,tInnerY)
                             minus(tH,tHueY)
@@ -3802,12 +3847,47 @@
                                 
                             }
                             //set picker bg color
-                            set('this.layers.2.subLayers.color.r',tR)
-                            set('this.layers.2.subLayers.color.g',tG)
-                            set('this.layers.2.subLayers.color.b',tB)
+                            set('this.layers.3.subLayers.color.r',tR)
+                            set('this.layers.3.subLayers.color.g',tG)
+                            set('this.layers.3.subLayers.color.b',tB)
                             //restore tS,tV
                             set(tS,tSBack)
                             set(tV,tVBack)
+                        }
+                    }
+                }
+            }
+            
+            //alpha
+            var(tAlphaX,0)
+            var(tAlphaY,0)
+            var(tAlphaRightX,0)
+            var(tAlphaBottomY,0)
+            var(tAlphaW,0)
+            var(tAlphaH,0)
+            set(tAlphaX,'this.layers.2.x')
+            set(tAlphaY,'this.layers.2.y')
+            set(tAlphaW,'this.layers.2.width')
+            set(tAlphaH,'this.layers.2.height')
+            set(tAlphaRightX,tAlphaX)
+            add(tAlphaRightX,tAlphaW)
+            set(tAlphaBottomY,tAlphaY)
+            add(tAlphaBottomY,tAlphaH)
+            if(tInnerX > tAlphaX){
+                if(tInnerX < tAlphaRightX){
+                    if(tInnerY > tAlphaY){
+                        if(tInnerY < tAlphaBottomY){
+                            // hit alpha
+                            set(tChangeFlag,1)
+                            set('this.otherAttrs.4',3)
+                            //change alpha
+                            set('this.layers.6.y',tInnerY)
+                            set(tA,tInnerY)
+                            minus(tA,tAlphaY)
+                            multiply(tA,255)
+                            divide(tA,tAlphaH)
+                            set('this.layers.4.subLayers.color.a',tA)
+                            
                         }
                     }
                 }
@@ -3889,9 +3969,9 @@
                     
                 }
                
-                set('this.layers.3.subLayers.color.r',tR)
-                set('this.layers.3.subLayers.color.g',tG)
-                set('this.layers.3.subLayers.color.b',tB)
+                set('this.layers.4.subLayers.color.r',tR)
+                set('this.layers.4.subLayers.color.g',tG)
+                set('this.layers.4.subLayers.color.b',tB)
                 
                 var(tResult,0)
                 set(tResult,tR)
@@ -3899,6 +3979,8 @@
                 add(tResult,tG)
                 multiply(tResult,1000)
                 add(tResult,tB)
+                multiply(tResult,1000)
+                add(tResult,tA)
                 setTag(tResult)
                 
                 print('r',tR)
@@ -3908,7 +3990,942 @@
             }
             
         `
-    }
+    };
+
+    WidgetCommands['SysDatePicker'] = {
+        onInitialize:`
+            var(tTag,0)
+            var(tY,0)        //年
+            var(tM,0)        //月
+            var(tD,0)        //日
+
+            var(zM,0)        //月份[3,14]，用于蔡勒公式
+            var(zY,0)        //年的后两位，用于蔡勒公式
+            var(zC,0)        //世纪-1  用于蔡勒公式
+            var(zW,0)        //星期几 用于蔡勒公式
+
+            var(temp1,0)     //临时变量1
+            var(temp2,0)
+            var(daysCnt,0)   //此月的天数
+            var(initIndex,0) //日图层的起始索引坐标
+            var(layersCnt,0) //图层个数
+
+            //设置tY，tM和tD。
+            getTag(tTag)
+            if(tTag==0){
+                set(tY,'this.otherAttrs.0')
+                set(tM,'this.otherAttrs.1')
+                set(tD,1)
+            }else{
+                //使用tag设置变量
+                print('use tag','init')
+            }
+
+            //设置蔡勒公式相关变量
+            set(zC,tY)
+            set(zY,tY)
+            set(zM,tM)
+            if(tM<3){    
+                add(zM,12)
+                minus(zC,1)
+                minus(zY,1)
+            }
+            divide(zC,100)
+            mod(zY,100)
+            
+            //显示年、月
+            set('this.layers.1.subLayers.font.text',tY)
+            set('this.layers.2.subLayers.font.text',tM)
+            
+            //计算zW:w=[c/4]-2c+y+[y/4]+[13(m+1)/5]+d-1;d=1;
+            set(zW,zC)
+            divide(zW,4)
+            set(temp1,zC)
+            multiply(temp1,2)
+            minus(zW,temp1)
+            add(zW,zY)
+            set(temp1,zY)
+            divide(temp1,4)
+            add(zW,temp1)
+            set(temp1,zM)
+            add(temp1,1)
+            multiply(temp1,13)
+            divide(temp1,5)
+            add(zW,temp1)
+            mod(zW,7)
+            
+            //根据月份设置天数
+            if(tM==4){
+                set(daysCnt,30)
+            }else{
+                if(tM==6){
+                    set(daysCnt,30)
+                }else{
+                    if(tM==9){
+                        set(daysCnt,30)
+                    }else{
+                        if(tM==11){
+                            set(daysCnt,30)
+                        }else{
+                            if(tM==2){
+                                //非闰年28天
+                                set(daysCnt,28)
+                                
+                                //判断闰年
+                                set(temp1,tY)
+                                mod(temp1,100)
+                                if(temp1==0){
+                                    //世纪年
+                                    set(temp2,tY)
+                                    mod(temp2,400)
+                                    if(temp2==0){
+                                        set(daysCnt,29)
+                                    }
+                                }else{
+                                    //普通年
+                                    set(temp2,tY)
+                                    mod(temp2,4)
+                                    if(temp2==0){
+                                        set(temp2,tY)
+                                        mod(temp2,100)
+                                        if(temp2>0){
+                                            set(daysCnt,29)
+                                        }
+                                    }
+                                }
+                            }else{
+                                set(daysCnt,31)
+                            }
+                        }
+                    }
+                }
+            }
+            //保存daysCnt
+            set('this.otherAttrs.11',daysCnt)
+            
+            //开始绘制日图层上的数字
+            set(initIndex,'this.otherAttrs.2')
+            set(layersCnt,'this.layers.length')            
+           
+            set(temp1,zW)
+            add(temp1,initIndex)            //起始显示坐标
+            add(daysCnt,temp1)
+
+            
+            set(temp2,1)                    //显示的日字符
+            while(initIndex<layersCnt){
+                if(initIndex>=temp1){
+                    if(initIndex<daysCnt){
+                        set('this.layers.initIndex.hidden',0)
+                        set('this.layers.initIndex.subLayers.font.text',temp2)
+                        add(temp2,1)
+                    }else{
+                        // set('this.layers.initIndex.subLayers.font.text',0)
+                        set('this.layers.initIndex.hidden',1)
+                    }
+                }else{
+                    // set('this.layers.initIndex.subLayers.font.text',0)
+                    set('this.layers.initIndex.hidden',1)
+                }
+                add(initIndex,1)
+            }
+            
+        `,
+        onMouseDown:`
+            //***********mouseDown事件独有变量***********
+            var(mouseX,0)             //鼠标x位置
+            var(mouseY,0)             //鼠标y位置
+            var(btnSize,0)            //按键大小
+            var(lSide,0)              //左边界，左右按钮的边界
+            var(rSide,0)              //右边界
+            var(tSide,0)              //上边界
+            var(bSide,0)              //下边界
+            var(btnFlag,0)            //左、右按键标志位,代表是否按下按键。0,1
+            var(highLightIndex,0)
+             
+            
+            set(mouseX,'this.innerX')
+            set(mouseY,'this.innerY')
+            set(btnSize,'this.otherAttrs.4')
+            set(highLightIndex,'this.layers.length')
+            minus(highLightIndex,1)
+            
+            //***********绘制数字变量，与onInitialize事件相同***********
+            var(tTag,0)
+            var(tY,0)        //年
+            var(tM,0)        //月
+            var(tD,0)        //日
+            
+            //设置tY，tM和tD。
+            getTag(tTag)
+            if(tTag==0){
+                set(tY,'this.otherAttrs.0')
+                set(tM,'this.otherAttrs.1')
+                set(tD,1)
+            }else{
+                //使用tag设置变量
+                print('use tag','init')
+            }
+            
+            //按下左键,日期减
+            if(mouseX>0){
+                if(mouseX<btnSize){
+                    if(mouseY>0){
+                        if(mouseY<btnSize){
+                            set(btnFlag,1)
+                            minus(tM,1)
+                            if(tM==0){
+                                set(tM,12)
+                                minus(tY,1)
+                            }
+                            set('this.otherAttrs.0',tY)
+                            set('this.otherAttrs.1',tM)
+                        }
+                    }
+                }
+            }
+            //按下右键，日期加
+            set(lSide,'this.layers.0.width')
+            minus(lSide,btnSize)
+            set(rSide,'this.layers.0.width')
+            if(mouseX>lSide){
+                if(mouseX<rSide){
+                    if(mouseY>0){
+                        if(mouseY<btnSize){
+                            set(btnFlag,1)
+                            add(tM,1)
+                            if(tM==13){
+                                set(tM,1)
+                                add(tY,1)
+                            }
+                            set('this.otherAttrs.0',tY)
+                            set('this.otherAttrs.1',tM)
+                        }
+                    }
+                }
+            }
+            
+            //******开始重新绘制日图层，逻辑与onInitialize一致
+            if(btnFlag==1){
+                //隐藏高亮
+                set('this.layers.highLightIndex.hidden',0)
+                
+                var(zM,0)        //月份[3,14]，用于蔡勒公式
+                var(zY,0)        //年的后两位，用于蔡勒公式
+                var(zC,0)        //世纪-1  用于蔡勒公式
+                var(zW,0)        //星期几 用于蔡勒公式
+    
+                var(temp1,0)     //临时变量1
+                var(temp2,0)
+                var(daysCnt,0)   //此月的天数
+                var(initIndex,0) //日图层的起始索引坐标
+                var(layersCnt,0) //图层个数
+    
+                //设置蔡勒公式相关变量
+                set(zC,tY)
+                set(zY,tY)
+                set(zM,tM)
+                if(tM<3){    
+                    add(zM,12)
+                    minus(zC,1)
+                    minus(zY,1)
+                }
+                divide(zC,100)
+                mod(zY,100)
+                
+                //显示年、月
+                set('this.layers.1.subLayers.font.text',tY)
+                set('this.layers.2.subLayers.font.text',tM)
+                
+                //计算zW:w=[c/4]-2c+y+[y/4]+[13(m+1)/5]+d-1;d=1;
+                set(zW,zC)
+                divide(zW,4)
+                set(temp1,zC)
+                multiply(temp1,2)
+                minus(zW,temp1)
+                add(zW,zY)
+                set(temp1,zY)
+                divide(temp1,4)
+                add(zW,temp1)
+                set(temp1,zM)
+                add(temp1,1)
+                multiply(temp1,13)
+                divide(temp1,5)
+                add(zW,temp1)
+                mod(zW,7)
+                
+                //保存zW
+                set('this.otherAttrs.12',zW)
+                
+                //根据月份设置天数
+                if(tM==4){
+                    set(daysCnt,30)
+                }else{
+                    if(tM==6){
+                        set(daysCnt,30)
+                    }else{
+                        if(tM==9){
+                            set(daysCnt,30)
+                        }else{
+                            if(tM==11){
+                                set(daysCnt,30)
+                            }else{
+                                if(tM==2){
+                                    //非闰年28天
+                                    set(daysCnt,28)
+                                    
+                                    //判断闰年
+                                    set(temp1,tY)
+                                    mod(temp1,100)
+                                    if(temp1==0){
+                                        //世纪年
+                                        set(temp2,tY)
+                                        mod(temp2,400)
+                                        if(temp2==0){
+                                            set(daysCnt,29)
+                                        }
+                                    }else{
+                                        //普通年
+                                        set(temp2,tY)
+                                        mod(temp2,4)
+                                        if(temp2==0){
+                                            set(temp2,tY)
+                                            mod(temp2,100)
+                                            if(temp2>0){
+                                                set(daysCnt,29)
+                                            }
+                                        }
+                                    }
+                                }else{
+                                    set(daysCnt,31)
+                                }
+                            }
+                        }
+                    }
+                }
+                //保存daysCnt
+                set('this.otherAttrs.11',daysCnt)
+                
+                //开始绘制日图层上的数字
+                set(initIndex,'this.otherAttrs.2')
+                set(layersCnt,'this.layers.length')            
+               
+                set(temp1,zW)
+                add(temp1,initIndex)            //起始显示坐标
+                add(daysCnt,temp1)
+    
+                set(temp2,1)                    //显示的日字符
+                while(initIndex<layersCnt){
+                    if(initIndex>=temp1){
+                        if(initIndex<daysCnt){
+                            set('this.layers.initIndex.hidden',0)
+                            set('this.layers.initIndex.subLayers.font.text',temp2)
+                            add(temp2,1)
+                        }else{
+                            // set('this.layers.initIndex.subLayers.font.text',0)
+                            set('this.layers.initIndex.hidden',1)
+                        }
+                    }else{
+                        // set('this.layers.initIndex.subLayers.font.text',0)
+                        set('this.layers.initIndex.hidden',1)
+                    }
+                    add(initIndex,1)
+                }
+            
+            }
+            
+            //********开始绘制高亮选中层**********
+            var(daysLayerMinX,0)      
+            var(daysLayerMaxX,0)
+            var(daysLayerMinY,0)
+            var(daysLayerMaxY,0)
+            var(highLightX,0)
+            var(highLightY,0)
+            var(dayW,0)
+            var(dayH,0)
+            var(selectedDayIndex,0)
+            var(daysCnt,0)
+            
+            set(daysLayerMinX,'this.otherAttrs.5')
+            set(daysLayerMaxX,'this.otherAttrs.6')
+            set(daysLayerMinY,'this.otherAttrs.7')
+            set(daysLayerMaxY,'this.otherAttrs.8')
+            set(dayW,'this.otherAttrs.9')
+            set(dayH,'this.otherAttrs.10')
+            set(daysCnt,'this.otherAttrs.11')
+            set(zW,'this.otherAttrs.12')
+            
+            if(mouseX>=daysLayerMinX){
+                if(mouseX<=daysLayerMaxX){
+                    if(mouseY>=daysLayerMinY){
+                        if(mouseY<=daysLayerMaxY){
+                            //计算第几层被选中,首先是第几行，然后是此行第几列
+                            set(temp1,mouseY)
+                            minus(temp1,daysLayerMinY)
+                            divide(temp1,dayH)
+                            set(selectedDayIndex,7)
+                            multiply(selectedDayIndex,temp1)
+                            
+                            set(temp2,mouseX)
+                            minus(temp2,daysLayerMinX)
+                            divide(temp2,dayW)
+                            add(selectedDayIndex,temp2)
+                            
+                            set(initIndex,'this.otherAttrs.2') //获取日图层起始坐标
+                            add(selectedDayIndex,initIndex)
+                            
+                            set(temp1,zW)
+                            add(temp1,initIndex)
+                            set(temp2,daysCnt)
+                            add(temp2,temp1)
+                            minus(temp2,1)
+                            
+                            if(selectedDayIndex>=temp1){
+                                if(selectedDayIndex<=temp2){
+                                    set(highLightX,'this.layers.selectedDayIndex.x')
+                                    set(highLightY,'this.layers.selectedDayIndex.y')
+                                    set('this.layers.highLightIndex.x',highLightX)
+                                    set('this.layers.highLightIndex.y',highLightY)
+                                    set('this.layers.highLightIndex.hidden',0)
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            
+            
+        `,
+        onMouseUp:`
+
+        `,
+        onTagChange:`
+
+        `,
+        onKeyBoardLeft:`
+
+        `,
+        onKeyBoardRight:`
+
+        `,
+        onKeyBoardOK:`
+
+        `
+    };
+
+    WidgetCommands['SysTexDatePicker'] = {
+        onInitialize:`
+            var(tTag,0)
+            var(tY,0)        //年
+            var(tM,0)        //月
+            var(tD,0)        //日
+
+            var(zM,0)        //月份[3,14]，用于蔡勒公式
+            var(zY,0)        //年的后两位，用于蔡勒公式
+            var(zC,0)        //世纪-1  用于蔡勒公式
+            var(zW,0)        //星期几 用于蔡勒公式
+
+            var(temp1,0)     //临时变量1
+            var(temp2,0)
+            var(daysCnt,0)   //此月的天数
+            var(initIndex,0) //日图层的起始索引坐标
+            var(layersCnt,0) //图层个数
+            
+            var(dayW,0)
+            var(dayH,0)
+            var(daysLayerMinX,0)
+            var(daysLayerMaxX,0)
+            var(daysLayerMinY,0)
+            var(daysLayerMaxY,0)
+
+            //设置tY，tM和tD。
+            getTag(tTag)
+            if(tTag==0){
+                set(tY,'this.otherAttrs.0')
+                set(tM,'this.otherAttrs.1')
+                set(tD,1)
+            }else{
+                //使用tag设置变量
+                print('use tag','init')
+            }
+
+            //设置蔡勒公式相关变量
+            set(zC,tY)
+            set(zY,tY)
+            set(zM,tM)
+            if(tM<3){    
+                add(zM,12)
+                minus(zC,1)
+                minus(zY,1)
+            }
+            divide(zC,100)
+            mod(zY,100)
+            
+            //显示年
+            set(temp1,1)
+            while(temp1<5){
+                set(temp2,tY)
+                if(temp1==1){
+                    divide(temp2,1000)
+                }else{
+                    if(temp1==2){
+                        divide(temp2,100)
+                    }else{
+                        if(temp1==3){
+                            divide(temp2,10)
+                        }
+                    }
+                }
+                mod(temp2,10)
+                add(temp2,48)
+                set('this.layers.temp1.subLayers.font.text',temp2)
+                add(temp1,1)
+            }
+            
+            //显示月
+            while(temp1<7){
+                set(temp2,tM)
+                if(temp1==5){
+                    divide(temp2,10)
+                }
+                mod(temp2,10)
+                add(temp2,48)
+                set('this.layers.temp1.subLayers.font.text',temp2)
+                add(temp1,1)
+            }
+            
+            //计算zW:w=[c/4]-2c+y+[y/4]+[13(m+1)/5]+d-1;d=1;
+            set(zW,zC)
+            divide(zW,4)
+            set(temp1,zC)
+            multiply(temp1,2)
+            minus(zW,temp1)
+            add(zW,zY)
+            set(temp1,zY)
+            divide(temp1,4)
+            add(zW,temp1)
+            set(temp1,zM)
+            add(temp1,1)
+            multiply(temp1,13)
+            divide(temp1,5)
+            add(zW,temp1)
+            mod(zW,7)
+            
+            //根据月份设置天数
+            if(tM==4){
+                set(daysCnt,30)
+            }else{
+                if(tM==6){
+                    set(daysCnt,30)
+                }else{
+                    if(tM==9){
+                        set(daysCnt,30)
+                    }else{
+                        if(tM==11){
+                            set(daysCnt,30)
+                        }else{
+                            if(tM==2){
+                                //非闰年28天
+                                set(daysCnt,28)
+                                
+                                //判断闰年
+                                set(temp1,tY)
+                                mod(temp1,100)
+                                if(temp1==0){
+                                    //世纪年
+                                    set(temp2,tY)
+                                    mod(temp2,400)
+                                    if(temp2==0){
+                                        set(daysCnt,29)
+                                    }
+                                }else{
+                                    //普通年
+                                    set(temp2,tY)
+                                    mod(temp2,4)
+                                    if(temp2==0){
+                                        set(temp2,tY)
+                                        mod(temp2,100)
+                                        if(temp2>0){
+                                            set(daysCnt,29)
+                                        }
+                                    }
+                                }
+                            }else{
+                                set(daysCnt,31)
+                            }
+                        }
+                    }
+                }
+            }
+            //保存daysCnt
+            set('this.otherAttrs.11',daysCnt)
+            
+            //开始绘制日图层上的数字            
+            set(initIndex,'this.otherAttrs.2')
+            set(layersCnt,'this.layers.length')
+            set(dayW,'this.otherAttrs.9')
+            set(dayH,'this.otherAttrs.10')
+            set(daysLayerMinX,'this.otherAttrs.5')
+            set(daysLayerMaxX,'this.otherAttrs.6')
+            set(daysLayerMinY,'this.otherAttrs.7')
+            set(daysLayerMaxY,'this.otherAttrs.8')  
+                      
+            add(daysCnt,initIndex)
+            set(temp1,zW)
+            multiply(temp1,dayW)              
+            add(temp1,daysLayerMinX)        //日图层的x坐标
+            set(temp2,daysLayerMinY)        //日图层的y坐标
+            while(initIndex<layersCnt){
+                
+                if(initIndex<daysCnt){
+                    //排列日期
+                    if(temp1>=daysLayerMaxX){
+                        set(temp1,daysLayerMinX)
+                        add(temp2,dayH)
+                    }
+                    set('this.layers.initIndex.x',temp1)
+                    set('this.layers.initIndex.y',temp2)
+                    add(temp1,dayW)
+                }else{
+                    //多于的日期隐藏
+                    set('this.layers.initIndex.hidden',1)
+                }
+                
+                add(initIndex,1)
+            }
+        `,
+        onMouseDown:`
+            //***********mouseDown事件独有变量***********
+            var(mouseX,0)             //鼠标x位置
+            var(mouseY,0)             //鼠标y位置
+            var(btnSize,0)            //按键大小
+            var(lSide,0)              //左边界，左右按钮的边界
+            var(rSide,0)              //右边界
+            var(tSide,0)              //上边界
+            var(bSide,0)              //下边界
+            var(btnFlag,0)            //左、右按键标志位,代表是否按下按键。0,1
+            var(highLightIndex,0) 
+            
+            set(mouseX,'this.innerX')
+            set(mouseY,'this.innerY')
+            set(btnSize,'this.otherAttrs.4')
+            set(highLightIndex,'this.layers.length')
+            minus(highLightIndex,1)
+            
+            //***********绘制年月日、高亮变量***********
+            var(tTag,0)
+            var(tY,0)        //年
+            var(tM,0)        //月
+            var(tD,0)        //日
+            var(zM,0)        //月份[3,14]，用于蔡勒公式
+            var(zY,0)        //年的后两位，用于蔡勒公式
+            var(zC,0)        //世纪-1  用于蔡勒公式
+            var(zW,0)        //星期几 用于蔡勒公式
+
+            var(temp1,0)     //临时变量1
+            var(temp2,0)
+            var(daysCnt,0)   //此月的天数
+            var(initIndex,0) //日图层的起始索引坐标
+            var(layersCnt,0) //图层个数
+            
+            var(daysLayerMinX,0)      
+            var(daysLayerMaxX,0)
+            var(daysLayerMinY,0)
+            var(daysLayerMaxY,0)
+            var(highLightX,0)
+            var(highLightY,0)
+            var(dayW,0)
+            var(dayH,0)
+            var(selectedDayIndex,0)
+            var(daysCnt,0)
+            
+            //设置tY，tM和tD。
+            getTag(tTag)
+            if(tTag==0){
+                set(tY,'this.otherAttrs.0')
+                set(tM,'this.otherAttrs.1')
+                set(tD,1)
+            }else{
+                //使用tag设置变量
+                print('use tag','init')
+            }
+            
+            //按下左键,日期减
+            if(mouseX>0){
+                if(mouseX<btnSize){
+                    if(mouseY>0){
+                        if(mouseY<btnSize){
+                            set(btnFlag,1)
+                            minus(tM,1)
+                            if(tM==0){
+                                set(tM,12)
+                                minus(tY,1)
+                            }
+                            set('this.otherAttrs.0',tY)
+                            set('this.otherAttrs.1',tM)
+                        }
+                    }
+                }
+            }
+            //按下右键，日期加
+            set(lSide,'this.layers.0.width')
+            minus(lSide,btnSize)
+            set(rSide,'this.layers.0.width')
+            if(mouseX>lSide){
+                if(mouseX<rSide){
+                    if(mouseY>0){
+                        if(mouseY<btnSize){
+                            set(btnFlag,1)
+                            add(tM,1)
+                            if(tM==13){
+                                set(tM,1)
+                                add(tY,1)
+                            }
+                            set('this.otherAttrs.0',tY)
+                            set('this.otherAttrs.1',tM)
+                        }
+                    }
+                }
+            }
+            
+            if(btnFlag==1){
+                //隐藏高亮
+                set('this.layers.highLightIndex.hidden',0)
+                
+                //设置蔡勒公式相关变量
+                set(zC,tY)
+                set(zY,tY)
+                set(zM,tM)
+                if(tM<3){    
+                    add(zM,12)
+                    minus(zC,1)
+                    minus(zY,1)
+                }
+                divide(zC,100)
+                mod(zY,100)
+                
+                //显示年
+                set(temp1,1)
+                while(temp1<5){
+                    set(temp2,tY)
+                    if(temp1==1){
+                        divide(temp2,1000)
+                    }else{
+                        if(temp1==2){
+                            divide(temp2,100)
+                        }else{
+                            if(temp1==3){
+                                divide(temp2,10)
+                            }
+                        }
+                    }
+                    mod(temp2,10)
+                    add(temp2,48)
+                    set('this.layers.temp1.subLayers.font.text',temp2)
+                    add(temp1,1)
+                }
+                
+                //显示月
+                while(temp1<7){
+                    set(temp2,tM)
+                    if(temp1==5){
+                        divide(temp2,10)
+                    }
+                    mod(temp2,10)
+                    add(temp2,48)
+                    set('this.layers.temp1.subLayers.font.text',temp2)
+                    add(temp1,1)
+                }
+                
+                //计算zW:w=[c/4]-2c+y+[y/4]+[13(m+1)/5]+d-1;d=1;
+                set(zW,zC)
+                divide(zW,4)
+                set(temp1,zC)
+                multiply(temp1,2)
+                minus(zW,temp1)
+                add(zW,zY)
+                set(temp1,zY)
+                divide(temp1,4)
+                add(zW,temp1)
+                set(temp1,zM)
+                add(temp1,1)
+                multiply(temp1,13)
+                divide(temp1,5)
+                add(zW,temp1)
+                mod(zW,7)
+                if(zW<0){
+                    set(temp1,zW)
+                    set(zW,0)
+                    minus(zW,temp1)
+                }
+                
+                //保存zW
+                set('this.otherAttrs.12',zW)
+                
+                //根据月份设置天数
+                if(tM==4){
+                    set(daysCnt,30)
+                }else{
+                    if(tM==6){
+                        set(daysCnt,30)
+                    }else{
+                        if(tM==9){
+                            set(daysCnt,30)
+                        }else{
+                            if(tM==11){
+                                set(daysCnt,30)
+                            }else{
+                                if(tM==2){
+                                    //非闰年28天
+                                    set(daysCnt,28)
+                                    
+                                    //判断闰年
+                                    set(temp1,tY)
+                                    mod(temp1,100)
+                                    if(temp1==0){
+                                        //世纪年
+                                        set(temp2,tY)
+                                        mod(temp2,400)
+                                        if(temp2==0){
+                                            set(daysCnt,29)
+                                        }
+                                    }else{
+                                        //普通年
+                                        set(temp2,tY)
+                                        mod(temp2,4)
+                                        if(temp2==0){
+                                            set(temp2,tY)
+                                            mod(temp2,100)
+                                            if(temp2>0){
+                                                set(daysCnt,29)
+                                            }
+                                        }
+                                    }
+                                }else{
+                                    set(daysCnt,31)
+                                }
+                            }
+                        }
+                    }
+                }
+                //保存daysCnt
+                set('this.otherAttrs.11',daysCnt)
+                
+                //*****开始绘制日图层上的数字*****
+                set(initIndex,'this.otherAttrs.2')
+                set(layersCnt,'this.layers.length')
+                set(dayW,'this.otherAttrs.9')
+                set(dayH,'this.otherAttrs.10')
+                set(daysLayerMinX,'this.otherAttrs.5')
+                set(daysLayerMaxX,'this.otherAttrs.6')
+                set(daysLayerMinY,'this.otherAttrs.7')
+                set(daysLayerMaxY,'this.otherAttrs.8')  
+                          
+                add(daysCnt,initIndex)
+                set(temp1,zW)
+                multiply(temp1,dayW)              
+                add(temp1,daysLayerMinX)        //日图层的x坐标
+                set(temp2,daysLayerMinY)        //日图层的y坐标
+                while(initIndex<layersCnt){
+                    
+                    if(initIndex<daysCnt){
+                        //排列日期
+                        set('this.layers.initIndex.hidden',0)
+                        if(temp1>=daysLayerMaxX){
+                            set(temp1,daysLayerMinX)
+                            add(temp2,dayH)
+                        }
+                        set('this.layers.initIndex.x',temp1)
+                        set('this.layers.initIndex.y',temp2)
+                        add(temp1,dayW)
+                    }else{
+                        //多于的日期隐藏
+                        set('this.layers.initIndex.hidden',1)
+                    }
+                    
+                    add(initIndex,1)
+                }
+            }
+            
+            
+            //********开始绘制高亮选中层**********
+            set(daysLayerMinX,'this.otherAttrs.5')
+            set(daysLayerMaxX,'this.otherAttrs.6')
+            set(daysLayerMinY,'this.otherAttrs.7')
+            set(daysLayerMaxY,'this.otherAttrs.8')
+            set(dayW,'this.otherAttrs.9')
+            set(dayH,'this.otherAttrs.10')
+            set(daysCnt,'this.otherAttrs.11')
+            set(zW,'this.otherAttrs.12')
+            
+            if(mouseX>=daysLayerMinX){
+                if(mouseX<=daysLayerMaxX){
+                    if(mouseY>=daysLayerMinY){
+                        if(mouseY<=daysLayerMaxY){
+                            //计算第几层被选中,并且是否在有效层的范围内
+                            set(temp1,mouseY)
+                            minus(temp1,daysLayerMinY)
+                            divide(temp1,dayH)
+                            set(selectedDayIndex,7)
+                            multiply(selectedDayIndex,temp1)
+                            
+                            set(temp2,mouseX)
+                            minus(temp2,daysLayerMinX)
+                            divide(temp2,dayW)
+                            add(selectedDayIndex,temp2)
+                            
+                            set(initIndex,'this.otherAttrs.2') //获取日图层起始坐标
+                            add(selectedDayIndex,initIndex)
+                            
+                            set(temp1,zW)
+                            add(temp1,initIndex)
+                            set(temp2,daysCnt)
+                            add(temp2,temp1)
+                            minus(temp2,1)
+                            
+                            if(selectedDayIndex>=temp1){
+                                if(selectedDayIndex<=temp2){
+                                    //计算高亮层x，y坐标
+                                    set(highLightX,mouseX)
+                                    minus(highLightX,daysLayerMinX)
+                                    divide(highLightX,dayW)
+                                    
+                                    set(highLightY,mouseY)
+                                    minus(highLightY,daysLayerMinY)
+                                    divide(highLightY,dayH)
+                                    
+                                    multiply(highLightX,dayW)
+                                    add(highLightX,daysLayerMinX)
+                                    multiply(highLightY,dayH)
+                                    add(highLightY,daysLayerMinY)
+                                    
+                                    set('this.layers.highLightIndex.x',highLightX)
+                                    set('this.layers.highLightIndex.y',highLightY)
+                                    set('this.layers.highLightIndex.hidden',0)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+        onMouseUp:`
+
+        `,
+        onTagChange:`
+
+        `,
+        onKeyBoardLeft:`
+
+        `,
+        onKeyBoardRight:`
+
+        `,
+        onKeyBoardOK:`
+
+        `
+    };
 
     WidgetCommands['TexTime'] = {
         'onInitialize': ` 

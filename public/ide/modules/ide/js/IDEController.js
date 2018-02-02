@@ -50,6 +50,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
     var loadStep=0;     //加载到了第几步,共8步
     var fs,path,__dirname;
 
+    var systemResourceList = []
+
     initUI();
 
     loadProject();
@@ -288,48 +290,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
             globalProject.projectId = id;
 
-            var resourceList = globalProject.resourceList;
-            // console.log('resourceList',resourceList);
-            var count = resourceList.length;
-            var rLen = resourceList.length
-            var globalResources = ResourceService.getGlobalResources();
-            window.globalResources = globalResources;
+            window.globalResources = ResourceService.getGlobalResources()
 
-            var coutDown = function (e, resourceObj) {
-                if (e.type === 'error'){
-                    toastr.warning('资源加载失败: ' + resourceObj.name);
-                    resourceObj.complete = false;
-                } else {
-                    resourceObj.complete = true;
-                }
-                count = count - 1;
-                updateSpinner((rLen-count)/rLen);
-                if (count<=0){
-                    console.log('time cost in cache imge :',Date.now()-timeStamp);
-                    TemplateProvider.saveProjectFromGlobal(globalProject);
-                    syncServices(globalProject);
-                    timeStamp = Date.now();
-                    ProjectService.saveProjectFromGlobal(globalProject, function () {
-                        $scope.$broadcast('GlobalProjectReceived');
-                        console.log('time cost in render',Date.now()-timeStamp)
-                    });
-                }
-            }.bind(this);
-            if (count>0){
-                timeStamp = Date.now();
-                for (var i=0;i<resourceList.length;i++){
-                    var curRes = resourceList[i];
-                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-                }
-            }else{
-                // console.log(globalProject);
-                updateSpinner(100)
-                TemplateProvider.saveProjectFromGlobal(globalProject);
-                syncServices(globalProject)
+            cacheResources(globalProject.resourceList,function () {
+                TemplateProvider.setProjectSize(globalProject.currentSize);
+                syncServices(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     $scope.$broadcast('GlobalProjectReceived');
                 });
-            }
+            })
+
+
         }else{
             globalProject = GlobalService.getBlankProject();
             globalProject.projectId = id;
@@ -348,13 +319,47 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }
             globalProject.maxSize = data.maxSize;
 
-            TemplateProvider.saveProjectFromGlobal(globalProject);
+            TemplateProvider.setProjectSize(globalProject.currentSize);
             syncServices(globalProject);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
 
                 $scope.$broadcast('GlobalProjectReceived');
 
             });
+        }
+    }
+
+    function cacheResources(resourceList,cb) {
+
+        // console.log('resourceList',resourceList);
+        var count = resourceList.length;
+        var rLen = resourceList.length
+        // var globalResources = ResourceService.getGlobalResources();
+        // window.globalResources = globalResources;
+
+        var coutDown = function (e, resourceObj) {
+            if (e.type === 'error'){
+                toastr.warning('资源加载失败: ' + resourceObj.name);
+                resourceObj.complete = false;
+            } else {
+                resourceObj.complete = true;
+            }
+            count = count - 1;
+            updateSpinner((rLen-count)/rLen);
+            if (count===0){
+                cb && cb()
+            }
+        }.bind(this);
+        if (count>0){
+            // timeStamp = Date.now();
+            for (var i=0;i<resourceList.length;i++){
+                var curRes = resourceList[i];
+                ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+            }
+        }else{
+            // console.log(globalProject);
+            updateSpinner(100);
+            cb && cb()
         }
     }
 
@@ -374,10 +379,10 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             height :resolution[1]
         }
         globalProject.maxSize = options.maxSize||100*1024*1024;
-        console.log('globalProject',globalProject)
+        console.log('globalProject',globalProject);
 
 
-        TemplateProvider.saveProjectFromGlobal(globalProject);
+        TemplateProvider.setProjectSize(globalProject.currentSize);
         ProjectService.saveProjectFromGlobal(globalProject, function () {
             syncServices(globalProject)
             $scope.$broadcast('GlobalProjectReceived');
@@ -495,7 +500,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             $timeout(function () {
                 toastr.info('加载离线项目');
                 globalProject=GlobalService.getBlankProject();
-                TemplateProvider.saveProjectFromGlobal(globalProject);
+                // TemplateProvider.saveProjectFromGlobal(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     PID=pid;
 
@@ -539,7 +544,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
                     if (globalProject){
 
-                        TemplateProvider.saveProjectFromGlobal(globalProject);
+                        // TemplateProvider.saveProjectFromGlobal(globalProject);
                         ProjectService.saveProjectFromGlobal(globalProject, function () {
                             PID = pid;
 
@@ -758,7 +763,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             var project=JSON.parse(window.localStorage.getItem('projectCache'+pid));
             var globalProject=project;
             console.log(globalProject);
-            TemplateProvider.saveProjectFromGlobal(globalProject);
+            TemplateProvider.setProjectSize(globalProject.currentSize);
             ProjectService.saveProjectFromGlobal(globalProject, function () {
                 syncServices(globalProject)
                 $scope.$broadcast('GlobalProjectReceived');

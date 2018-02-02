@@ -125,7 +125,7 @@
 
     TextureSubLayer.prototype.constructor = TextureSubLayer;
 
-//color
+    //color
     function ColorSubLayer(colorElems) {
         SubLayer.call(this);
         this.r = colorElems.r;

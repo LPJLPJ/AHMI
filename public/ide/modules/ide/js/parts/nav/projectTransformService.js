@@ -1,4 +1,4 @@
-ideServices.service('ProjectTransformService',['Type','ResourceService',function(Type,ResourceService){
+ideServices.service('ProjectTransformService',['Type','ResourceService','TemplateProvider',function(Type,ResourceService,TemplateProvider){
 
     /**
      * 暴露对外接口
@@ -28,8 +28,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
             targetProject.pageList.push(transPage(rawProject.pages[i],i));
         }
 
-        //系统控件
-        transSysWidget(targetProject);
+        //添加系统控件
+        transSysWidgets(targetProject);
 
         return targetProject;
     }
@@ -158,7 +158,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
         var targetSubLayer = {};
         targetSubLayer.id = layerIdx+'.'+subLayerIdx;
         targetSubLayer.type = Type.MySubLayer;
-        deepCopyAttributes(rawSubLayer,targetSubLayer,['name','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['name','info','tag','actions','zIndex','backgroundImage','backgroundColor']);
         transActions(targetSubLayer);
 
         targetSubLayer.widgetList = [];
@@ -791,17 +791,116 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
     /**
      * 转换系统控件
      */
-    function transSysWidget(targetProject){
-        var colorPicker = new WidgetModel.models.ColorPicker(0,0,targetProject.size.width,targetProject.size.height,[{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},{color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}])
+    function transSysWidgets(targetProject){
+        var colorPicker = GenColorPicker(targetProject.size.width,targetProject.size.height);
+        var texDatePicker = GenTexDatePicker();
+
+        targetProject.systemWidgets = [];
+        //push system widgets
+        targetProject.systemWidgets.push(colorPicker);
+        targetProject.systemWidgets.push(texDatePicker);
+    }
+
+    /**
+     * 生成颜色选择器
+     */
+    function GenColorPicker(width,height){
+        // var minSize = Math.min(width,height)
+        // minSize = Math.ceil(0.05*minSize)
+        // var colorPicker = new WidgetModel.models.ColorPicker(minSize,minSize,width-2*minSize,height-2*minSize,[
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/slide.png'},
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/colorpickerAlphaBg.png'},
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/bg.png'},
+        //     {color:'rgba(255,0,0,255)',imgSrc:'/public/images/colorPicker/pickerIndicator.png'}
+        // ])
+
+        var colorPickerData = TemplateProvider.getSysColorPicker()
+        var info = colorPickerData.info
+        var slices = [];
+        colorPickerData.texList.map(function (curTex) {
+            curTex.slices.map(function(slice){
+                slices.push(slice)
+            })
+        });
+        var colorPicker = new WidgetModel.models.ColorPicker(info.left,info.top,info.width,info.height,slices)
         colorPicker = colorPicker.toObject()
-        colorPicker.generalType = 'ColorPicker'
+        colorPicker.generalType = colorPickerData.generalType
         colorPicker.type = 'widget'
         colorPicker.subType = 'general'
-        //
-        targetProject.systemWidgets = []
+        return colorPicker;
+    }
 
-        //push system widgets
-        targetProject.systemWidgets.push(colorPicker)
+    /**
+     * 生成日期选择器
+     */
+    function GenDatePicker(){
+        var datePickerDate = TemplateProvider.getSystemDatePicker();
+        var info = datePickerDate.info;
+        var texList = datePickerDate.texList||[];
+
+        var slices = [];
+        texList.map(function (curTex) {
+            curTex.slices.map(function(slice){
+                slices.push(slice)
+            })
+        });
+
+        var datePicker = new WidgetModel.models.DatePicker(info.left,info.top,info.width,info.height,info,slices);
+
+        datePicker = datePicker.toObject();
+        datePicker.generalType = Type.SysDatePicker;
+        datePicker.type = 'widget';
+        datePicker.subType = 'general';
+
+        //other attrs
+        datePicker.otherAttrs[0] = 2018;  //year
+        datePicker.otherAttrs[1] = 1;     //month
+        datePicker.otherAttrs[2] = 3 ;     //日图层在所有图层中的起始坐标
+        datePicker.otherAttrs[3] = 35;    //所有的日图层个数。
+        datePicker.otherAttrs[4] = info.buttonSize;  //按钮大小
+        datePicker.otherAttrs[5] = info.paddingX;             //日图层区域的起始x坐标,用于计算日图层区域范围
+        datePicker.otherAttrs[6] = info.paddingX+info.dayW*7; //日图层区域的终止x坐标
+        datePicker.otherAttrs[7] = info.paddingY;             //日图层区域的起始y坐标
+        datePicker.otherAttrs[8] = info.paddingY+info.dayH*5; //日图层区域的终止y坐标
+        datePicker.otherAttrs[9] = info.dayW;
+        datePicker.otherAttrs[10] = info.dayH;
+        datePicker.otherAttrs[11] = 31;                       //此月日数，默认一月31
+        datePicker.otherAttrs[12] = 1;                        //此月一号是星期几，默认2018一月一号星期一
+
+        return datePicker;
+    }
+
+    /**
+     * 生成图层日期选择器
+     * Todo:commands
+     */
+    function GenTexDatePicker(){
+        var texDatePickerDate = TemplateProvider.getSystemTexDatePicker();
+        var info = texDatePickerDate.info;
+        var texList = texDatePickerDate.texList||[];
+
+        var texDatePicker = new WidgetModel.models.TexDatePicker(info.left,info.top,info.width,info.height,info,texList);
+        texDatePicker = texDatePicker.toObject();
+        texDatePicker.generalType = Type.SysTexDatePicker;
+        texDatePicker.type = 'widget';
+        texDatePicker.subType = 'general';
+
+        //other attrs
+        texDatePicker.otherAttrs[0] = 2018;  //year
+        texDatePicker.otherAttrs[1] = 1;     //month
+        texDatePicker.otherAttrs[2] = 7 ;     //日图层在所有图层中的起始坐标
+        texDatePicker.otherAttrs[3] = 31;    //所有的日图层个数。
+        texDatePicker.otherAttrs[4] = info.buttonSize;  //按钮大小
+        texDatePicker.otherAttrs[5] = info.paddingX;             //日图层区域的起始x坐标,用于计算日图层区域范围
+        texDatePicker.otherAttrs[6] = info.paddingX+info.dayW*7; //日图层区域的终止x坐标
+        texDatePicker.otherAttrs[7] = info.paddingY;             //日图层区域的起始y坐标
+        texDatePicker.otherAttrs[8] = info.paddingY+info.dayH*6; //日图层区域的终止y坐标
+        texDatePicker.otherAttrs[9] = info.dayW;
+        texDatePicker.otherAttrs[10] = info.dayH;
+        texDatePicker.otherAttrs[11] = 31;                       //此月日数，默认一月31
+        texDatePicker.otherAttrs[12] = 1;                        //此月一号是星期几，默认2018一月一号星期一
+
+        return texDatePicker;
     }
 
     /**
@@ -921,7 +1020,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService',function
 
     function transSubLayerBase(rawSubLayer){
         var targetSubLayer = {};
-        deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
+        console.log(rawSubLayer)
+        deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','info','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
         var widgets = rawSubLayer.widgets;
         targetSubLayer.widgets = [];
         for (var i=0;i<widgets.length;i++){
