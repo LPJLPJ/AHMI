@@ -1230,14 +1230,6 @@ ideServices
                         imgSrc:'/public/images/colorPicker/pickerIndicator.png',
                         name:'pickerIndicator'
                     }]
-                },
-                {
-                    currentSliceIdx:4,
-                    name:'高亮',
-                    slices:[{
-                        color:'rgba(0,0,0,0)',
-                        imgSrc:'/public/images/datePicker/highlight.png'
-                    }]
                 }
             ];
             return {
