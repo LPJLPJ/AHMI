@@ -874,6 +874,7 @@
     DateTime.prototype = Object.create(Widget.prototype);
     DateTime.prototype.constructor = DateTime;
 
+
     //TexNum
     function TexNum(x,y,w,h,valueObj,slices){
         var layers = [];                           //图层数组
@@ -888,7 +889,6 @@
         for(var i=0;i<slices.length;i++){
             textureList.push(slices[i].imgSrc)
         }
-
         //字符总数
         // if (symbol==1) {layerCount++;}
         // if(decimalCount>0){layerCount++;}
@@ -1170,6 +1170,202 @@
     }
     DatePicker.prototype = Object.create(Widget.prototype);
     DatePicker.prototype.constructor = DatePicker;
+
+
+    //图层日期选择器
+    function TexDatePicker(x,y,w,h,opts,texList){
+        var layers = [];
+        var fontStyle = {},slices;
+        var bgLayer,yLayer,mLayer,dLayer,hlLayer;
+        var i=0,j=0;
+
+        fontStyle['font-size'] = opts.titleFontSize;
+        fontStyle['font-family'] = opts.titleFontFamily;
+        fontStyle['font-color'] = opts.titleFontColor;
+
+        //background image
+        slices = texList[0].slices;
+        bgLayer = new Layer(0,0,w,h);
+        bgLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+        layers.push(bgLayer);
+
+        //year
+        slices = texList[1].slices;
+        var year = opts.year,
+            yearPos = year.pos;
+        for(i=0;i<yearPos.length;i++){
+            yLayer = new Layer(yearPos[i].x,yearPos[i].y,year.w,year.h);
+            yLayer.subLayers.font = new FontSubLayer('0',fontStyle);
+            layers.push(yLayer);
+        }
+
+        //month
+        slices = texList[2].slices;
+        var month = opts.month,
+            monthPos = month.pos;
+        for(i=0;i<monthPos.length;i++){
+            mLayer = new Layer(monthPos[i].x,monthPos[i].y,month.w,month.h);
+            mLayer.subLayers.font = new FontSubLayer('0',fontStyle);
+            layers.push(mLayer);
+        }
+
+        //day image and text
+        slices = texList[3].slices;
+        var initX = opts.paddingX,
+            initY = opts.paddingY;
+
+        for(i=0;i<slices.length;i++){
+            dLayer = new Layer(initX,initY,opts.dayW,opts.dayH);
+            dLayer.subLayers.image = new TextureSubLayer(slices[i].imgSrc);
+            layers.push(dLayer);
+        }
+
+        //highlight image
+        slices = texList[4].slices;
+        hlLayer = new Layer(0,0,opts.dayW,opts.dayH);
+        hlLayer.subLayers.image = new TextureSubLayer(slices[0].imgSrc);
+        layers.push(hlLayer);
+
+        Widget.call(this,x,y,w,h,layers);
+    }
+    TexDatePicker.prototype = Object.create(Widget.prototype);
+    TexDatePicker.prototype.constructor = TexDatePicker;
+
+    //TexTime
+    function TexTime(x,y,w,h,valueObj,slices,info) {
+        console.log('textTime info',info)
+        //console.log('slices',slices)
+        var layers = [];                                     //图层数组
+        var layerCount=valueObj.numOfDigits;                //数字位数
+        var mH = valueObj.characterH;                       //字符高度
+        var mW = valueObj.characterW;                       //字符宽度
+        var dateTimeModeId = Number(info.dateTimeModeId);
+        var i = 0;
+        var dx = 0;
+        var FontWidth = info.characterW;
+        var fontLayer = null;
+        var sWidth = FontWidth;
+        var sHeight = h;
+
+        //生成textureList
+        var textureList=[];
+        for(var i=0;i<slices.length;i++){
+            textureList.push(slices[i].imgSrc)
+        }
+
+        switch (dateTimeModeId){
+            case 0:
+               // console.log('时分秒')
+                layerCount = 8;
+                for(i=0;i<layerCount;i++){
+                    dx = i*FontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==2 || i==5){
+                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+                    }else {
+                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
+                    }
+                     layers.push(fontLayer);
+                    }
+                    break;
+            case 1:
+                //console.log('时分');
+                layerCount = 5;
+                for(i=0;i<layerCount;i++){
+                    dx = i*FontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==2){
+                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+                    }else {
+                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
+                    }
+                    layers.push(fontLayer);
+                }
+                break;
+            case 2:
+                //console.log('斜杠日期');
+                layerCount = 10;
+                for(i=0;i<layerCount;i++){
+                    dx = i*FontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==4 || i==7){
+                        fontLayer.subLayers.font = new FontSubLayer('/',fontStyle);
+                    }else {
+                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
+                    }
+                    layers.push(fontLayer);
+                }
+                break;
+            case 3:
+                //console.log('减号日期');
+                layerCount = 10;
+                for(i=0;i<layerCount;i++){
+                    dx = i*FontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==4 || i==7){
+                        fontLayer.subLayers.font = new FontSubLayer('-',fontStyle);
+                    }else {
+                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
+                    }
+                    layers.push(fontLayer);
+                }
+                break;
+            default:
+                //console.log('时分秒');
+                layerCount = 8;
+                for(i=0;i<layerCount;i++){
+                    dx = i*FontWidth;
+                    fontLayer = new Layer(dx,0,sWidth,sHeight);
+                    if(i==2 || i==5){
+                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+                    }else {
+                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
+                    }
+                    layers.push(fontLayer);
+                }
+                break;
+                }
+
+
+        //字符总数
+        //fontLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
+        // switch (layerCount){
+        //     case 0:
+        //         //时分模式
+        //         layerCount == 5;
+        //         if(i == 2 ){
+        //             FontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+        //         }
+        //     case 1:
+        //          //时分秒模式
+        //         layerCount == 8;
+        //         if(i == 2 || i == 5){
+        //             FontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
+        //         }
+        //     case 2:
+        //         //斜杠日期模式
+        //         layerCount == 10;
+        //         if(i == 4 || i == 7){
+        //             FontLayer.subLayers.font = new FontSubLayer('/',fontStyle);
+        //         }else {
+        //         //减号日期模式
+        //          if(i == 4 || i == 7){
+        //              FontLayer.subLayers.font = new FontSubLayer('-',fontStyle);
+        //             }
+        //         }
+        // }
+        //添加图层
+        // var curDigitLayer;
+        // for(var i=0;i<layerCount;i++){
+        //     curDigitLayer = new Layer(0,0,mW,mH,true);
+        //     curDigitLayer.subLayers.image = new TextureSubLayer(textureList);
+        //     layers.push(curDigitLayer);
+        // }
+        this.subType = 'TexTime';
+        Widget.call(this,x,y,w,h,layers);
+    }
+    TexTime.prototype = Object.create(Widget.prototype);
+    TexTime.prototype.constructor = TexTime;
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -1513,6 +1709,8 @@
     WidgetModel.models.RotaryKnob = RotaryKnob;
     WidgetModel.models.ColorPicker = ColorPicker;
     WidgetModel.models.DatePicker = DatePicker;
+    WidgetModel.models.TexDatePicker = TexDatePicker;
+    WidgetModel.models.TexTime = TexTime;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 
@@ -1521,53 +1719,3 @@
 
 }));
 
-// //button group
-// function ButtonGroup(x,y,w,h,num,align,space,slices,highLight) {
-//     var sWidth = 0;
-//     var sHeight = 0;
-//     var colorElems;
-//     var layers = [];
-//     if (align==0) {
-//         //hori
-//         sWidth = (w-(num-1)*space)/num;
-//         sHeight = h;
-//         if (highLight) {
-//             for (var i=0;i<num;i++){
-//                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-//                 upLayer.subLayers.image = new TextureSubLayer(slices[3*i].imgSrc)
-//                 colorElems = parseColor(slices[3*i].color);
-//                 upLayer.subLayers.color = new ColorSubLayer(colorElems)
-//                 var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-//                 downLayer.subLayers.image = new TextureSubLayer(slices[3*i+1].imgSrc)
-//                 colorElems = parseColor(slices[3*i+1].color);
-//                 downLayer.subLayers.color = new ColorSubLayer(colorElems)
-//                 var highLightLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-//                 highLightLayer.subLayers.image = new TextureSubLayer(slices[3*i+2].imgSrc)
-//                 colorElems = parseColor(slices[3*i+2].color);
-//                 highLightLayer.subLayers.color = new ColorSubLayer(colorElems)
-//                 layers.push(downLayer)
-//                 layers.push(upLayer)
-//                 layers.push(highLightLayer)
-//             }
-//             this.enableHighLight = true
-//             this.maxHighLightNum = num;
-//         }else{
-//             for (var i=0;i<num;i++){
-//                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight)
-//                 upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc)
-//                 colorElems = parseColor(slices[2*i].color);
-//                 upLayer.subLayers.color = new ColorSubLayer(colorElems)
-//                 var downLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight,true)
-//                 downLayer.subLayers.image = new TextureSubLayer(slices[2*i+1].imgSrc)
-//                 colorElems = parseColor(slices[2*i+1].color);
-//                 downLayer.subLayers.color = new ColorSubLayer(colorElems)
-//                 layers.push(downLayer)
-//                 layers.push(upLayer)
-//             }
-//         }
-//     }else{
-//         //ver
-//     }
-//     this.subType = 'ButtonGroup';
-//     Widget.call(this,x,y,w,h,layers)
-// }

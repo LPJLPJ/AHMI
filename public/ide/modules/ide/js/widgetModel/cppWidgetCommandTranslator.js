@@ -205,6 +205,7 @@
         nowFrame:'mWDGNowFrame',
         arrange:'mWDGArrange',
         mode:'mWDGMode',
+
         oldValue:'mWDGOldValue',
         minValue:'mWDGMinValue',
         maxValue:'mWDGMaxValue',

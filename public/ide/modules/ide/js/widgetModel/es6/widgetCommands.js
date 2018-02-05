@@ -1,8 +1,8 @@
 ;(function (factory) {
-	if (typeof define === 'function' && define.amd) {
+    if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
 
-        define('WidgetCommands',[], factory);
+        define('WidgetCommands', [], factory);
     } else if (typeof module === 'object' && module.exports) {
         // Node/CommonJS
         module.exports = factory()
@@ -13,7 +13,7 @@
 }(function () {
     var WidgetCommands = {};
     WidgetCommands['Button'] = {
-        onInitialize:`
+        onInitialize: `
 
             var(a,0)
             set(a,'this.mode')
@@ -24,7 +24,7 @@
                 set('this.layers.1.hidden',0)
             }
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(b,0)
             set(b,'this.mode')
             if(b==0){
@@ -40,7 +40,7 @@
                 }
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
             var(b,0)
             set(b,'this.mode')
             if(b==0){
@@ -48,7 +48,7 @@
                 set('this.layers.1.hidden',0)
             }
         `,
-        onTagChange:`
+        onTagChange: `
             var(a,0)
             var(b,0)
             set(b,'this.mode')
@@ -63,7 +63,7 @@
                 }
             }
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
           var(tMaxHighLightNum,0)
           set(tMaxHighLightNum,'this.maxHighLightNum')
           if (tMaxHighLightNum>0) {
@@ -77,7 +77,7 @@
             }
           }
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
           var(tMaxHighLightNum,0)
           set(tMaxHighLightNum,'this.maxHighLightNum')
           if (tMaxHighLightNum>0) {
@@ -91,15 +91,15 @@
             }
           }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
           executeaction(5)
         `
     };
 
     WidgetCommands['ButtonGroup'] = {
-        onInitialize:`
+        onInitialize: `
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(a,0)
             var(b,0)
             var(c,0)
@@ -146,9 +146,9 @@
                 minus(c,tSingleButtonLayers)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onTagChange:`
+        onTagChange: `
           var(laylen,0)                                //图层数目
           var(spacing,0)                               //按钮间距
           var(btnCnt,0)                                //按钮个数
@@ -188,7 +188,7 @@
           }
          
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
           var(arrange,0)
           var(laylen,0)                                //图层数目
           var(spacing,0)                               //按钮间距
@@ -254,7 +254,7 @@
             } 
           }
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
           var(arrange,0)
           var(laylen,0)                                //图层数目
           var(spacing,0)                               //按钮间距
@@ -319,7 +319,7 @@
             } 
           }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
           var(tHighLightNum,0)
           var(laylen,0)
           
@@ -334,7 +334,7 @@
             }
           }
         `,
-        onHighlightFrame:`
+        onHighlightFrame: `
           //curHLAnimationFactor理论上为0~1的小数，为了指令的计算取curHLAnimationFactor理论上为0~1000的正数
           
           var(highlightIndex,0)                     //高亮层坐标
@@ -369,11 +369,11 @@
     };
 
     WidgetCommands['Dashboard'] = {
-        onInitialize:`
+        onInitialize: `
         `,
-        onMouseDown:``,
-        onMouseUp:``,
-        onTagChange:`
+        onMouseDown: ``,
+        onMouseUp: ``,
+        onTagChange: `
             var(toffsetValue,0)
             var(tminValue,0)
             var(tmaxValue,0)
@@ -484,7 +484,7 @@
             }
 
         `,
-        onAnimationFrame:`
+        onAnimationFrame: `
           var(tStartTag,0)
           var(tStopTag,0)
           set(tStartTag,'this.startAnimationTag')
@@ -599,9 +599,9 @@
     };
 
     WidgetCommands['RotateImg'] = {
-        onInitialize:`
+        onInitialize: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(tTagValue,0)
             getTag(tTagValue)
             var(tMinAngle,0)
@@ -627,7 +627,7 @@
     }
 
     WidgetCommands['Progress'] = {
-        onInitialize:`
+        onInitialize: `
             var(mod,0)
             set(mod,'this.mode')
             var(cur,0)
@@ -639,13 +639,13 @@
                 set('this.layers.2.x',0)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
             
         `,
-        onMouseDown:`
+        onMouseDown: `
             
         `,
-        onTagChange:`
+        onTagChange: `
             var(tTotalFrame,0)
             set(tTotalFrame,'this.totalFrame')
             var(m,0)
@@ -826,7 +826,7 @@
             }
 
         `,
-        onAnimationFrame:`
+        onAnimationFrame: `
           var(m,0)
           set(m,'this.mode')
           var(tTag,0)
@@ -1011,19 +1011,19 @@
         `
     };
 
-    WidgetCommands['TextArea']={
-        onInitialize:``
+    WidgetCommands['TextArea'] = {
+        onInitialize: ``
     };
 
-    WidgetCommands['Switch']={
-        onInitialize:`
+    WidgetCommands['Switch'] = {
+        onInitialize: `
             set('this.layers.0.hidden',1)
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(tag,0)
             var(bt,0)
             set(bt,'this.otherAttrs.0')
@@ -1047,9 +1047,9 @@
         `
     }
 
-    WidgetCommands['ScriptTrigger']={
-        onInitialize:``,
-        onTagChange:`
+    WidgetCommands['ScriptTrigger'] = {
+        onInitialize: ``,
+        onTagChange: `
             var(tTagValue,0)
             getTag(tTagValue)
             checkalarm(0)
@@ -1057,18 +1057,16 @@
         `
     };
 
-    WidgetCommands['Video']={
-        
-    };
+    WidgetCommands['Video'] = {};
 
-    WidgetCommands['Slide']={
-        onInitialize:`
+    WidgetCommands['Slide'] = {
+        onInitialize: `
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(len,0)
             set(len,'this.layers.length')
             while(len>0){
@@ -1082,12 +1080,12 @@
         `
     };
 
-    WidgetCommands['SlideBlock']={
-        onInitialize:`
+    WidgetCommands['SlideBlock'] = {
+        onInitialize: `
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(tBx,0)
             var(tBy,0)
             var(tBw,0)
@@ -1121,7 +1119,7 @@
                 }
             }
         `,
-        onMouseMove:`
+        onMouseMove: `
             var(tArrange,0)
             set(tArrange,'this.arrange')
             var(tInnerX,0)
@@ -1184,7 +1182,7 @@
 
             }
         `,
-        onTagChange:`
+        onTagChange: `
             var(tMinValue,0)
             var(tMaxValue,0)
             var(tValueDist,0)
@@ -1233,8 +1231,8 @@
         `
     };
 
-    WidgetCommands['Num']={
-        onInitialize:`
+    WidgetCommands['Num'] = {
+        onInitialize: `
             // var(tInitValue,0)
             // var(tLen,0)
             // var(tIndex,0)
@@ -1262,11 +1260,11 @@
             //     add(tIndex,1)
             // }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             //清空所有数字内容
             var(tIndex,0)   //用于循环
             var(tLaysLen,0)     //图层长度
@@ -1500,8 +1498,8 @@
         `
     };
 
-    WidgetCommands['TexNum']={
-        onInitialize:`
+    WidgetCommands['TexNum'] = {
+        "onInitialize": `
             //隐藏所有图层
             var(offset,0)
             var(len,0)
@@ -1764,11 +1762,11 @@
                 }
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             //隐藏所有图层
             var(offset,0)
             var(len,0)
@@ -2035,8 +2033,8 @@
             }
         `
     };
-    WidgetCommands['Selector']={
-        onInitialize:`
+    WidgetCommands['Selector'] = {
+        onInitialize: `
             var(offset,0)
             set(offset,2)
             var(len,0)
@@ -2051,11 +2049,11 @@
                 add(offset,1)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(curItem,0)                            //curValue当前元素 = tag值
             getTag(curItem)
                        
@@ -2190,7 +2188,7 @@
             set('this.layers.0.subLayers.roi.p4y',temp2)
             
         `,
-        onMouseUp:`
+        onMouseUp: `
             var(curValue,0)                                 //tag值
             getTag(curValue) 
 
@@ -2364,12 +2362,12 @@
             }
             set('this.otherAttrs.14',0)                     //isMoved = 0
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(tInnerY,0)
             set(tInnerY,'this.innerY')
             set('this.otherAttrs.15',tInnerY)               //记录鼠标上一坐标y       
         `,
-        onMouseMove:`
+        onMouseMove: `
             var(curValue,0)                                 //tag值
             getTag(curValue) 
 
@@ -2467,7 +2465,7 @@
                 }
             }
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -2501,7 +2499,7 @@
             }
           
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -2534,7 +2532,7 @@
                 }
             }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
             var(okFlag,0)                                    //高亮是否已选中
             set(okFlag,'this.otherAttrs.10')
             if(okFlag==0){
@@ -2555,8 +2553,8 @@
             }
         `
     };
-    WidgetCommands['RotaryKnob']={
-        onInitialize:`
+    WidgetCommands['RotaryKnob'] = {
+        onInitialize: `
             var(offset,0)
             set(offset,0)
             var(len,0)
@@ -2571,9 +2569,9 @@
                 add(offset,1)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(curValue,0)                                        //tag值
             getTag(curValue)
             
@@ -2665,7 +2663,7 @@
                 }
             }        
         `,
-        onMouseMove:`
+        onMouseMove: `
             var(tHit,0)                                 //isHited
             set(tHit,'this.otherAttrs.4')
         
@@ -2890,7 +2888,7 @@
                 
             }
         `,
-        onTagChange:`
+        onTagChange: `
             var(curValue,0)                                //tag值
             getTag(curValue)
             
@@ -2951,7 +2949,7 @@
             set('this.layers.2.rotateAngle',tRotateAngle)  
             
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -2979,7 +2977,7 @@
             }
           
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -3006,7 +3004,7 @@
                 }
             }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
             var(okFlag,0)                                    //高亮是否已选中
             set(okFlag,'this.otherAttrs.1')
             if(okFlag==0){
@@ -3020,7 +3018,7 @@
     };
 
     WidgetCommands['DateTime'] = {
-        onInitialize:`
+        onInitialize: `
             var(offset,0)
             var(len,0)
             set(offset,'this.otherAttrs.0')
@@ -3030,11 +3028,11 @@
                 add(offset,1)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(m,0)
             set(m,'this.mode')
             var(tag,0)
@@ -3089,7 +3087,7 @@
                 }
             }
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
             var(tMaxHighLightNum,0)
             var(okFlag,0)
             set(tMaxHighLightNum,'this.maxHighLightNum')
@@ -3166,7 +3164,7 @@
                 }              
             }
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
             var(tMaxHighLightNum,0)
             var(okFlag,0)
             set(tMaxHighLightNum,'this.maxHighLightNum')
@@ -3246,7 +3244,7 @@
                 }                
             }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
             var(okFlag,0)
             set(okFlag,'this.otherAttrs.1')
             if(okFlag==0){
@@ -3260,7 +3258,7 @@
     };
 
     WidgetCommands['ColorPicker'] = {
-        "onInitialize":`
+        "onInitialize": `
             var(tInitValue,0)
             set(tInitValue,'this.otherAttrs.0')
            
@@ -3349,7 +3347,7 @@
             print('v',tV)
             
         `,
-        'onMouseDown':`
+        'onMouseDown': `
             var(tTemp,0)
             var(tH,0)
             var(tS,0)
@@ -3672,7 +3670,7 @@
             
             
         `,
-        'onMouseMove':`
+        'onMouseMove': `
             var(tTemp,0)
             var(tH,0)
             var(tS,0)
@@ -3994,7 +3992,7 @@
         `
     };
 
-    WidgetCommands['DatePicker'] = {
+    WidgetCommands['SysDatePicker'] = {
         onInitialize:`
             var(tTag,0)
             var(tY,0)        //年
@@ -4355,8 +4353,7 @@
             set(dayW,'this.otherAttrs.9')
             set(dayH,'this.otherAttrs.10')
             set(daysCnt,'this.otherAttrs.11')
-            set(zw,'this.otherAttrs.12')
-
+            set(zW,'this.otherAttrs.12')
             
             if(mouseX>=daysLayerMinX){
                 if(mouseX<=daysLayerMaxX){
@@ -4417,6 +4414,1161 @@
         `
     };
 
+    WidgetCommands['SysTexDatePicker'] = {
+        onInitialize:`
+            var(tTag,0)
+            var(tY,0)        //年
+            var(tM,0)        //月
+            var(tD,0)        //日
+
+            var(zM,0)        //月份[3,14]，用于蔡勒公式
+            var(zY,0)        //年的后两位，用于蔡勒公式
+            var(zC,0)        //世纪-1  用于蔡勒公式
+            var(zW,0)        //星期几 用于蔡勒公式
+
+            var(temp1,0)     //临时变量1
+            var(temp2,0)
+            var(daysCnt,0)   //此月的天数
+            var(initIndex,0) //日图层的起始索引坐标
+            var(layersCnt,0) //图层个数
+            
+            var(dayW,0)
+            var(dayH,0)
+            var(daysLayerMinX,0)
+            var(daysLayerMaxX,0)
+            var(daysLayerMinY,0)
+            var(daysLayerMaxY,0)
+
+            //设置tY，tM和tD。
+            getTag(tTag)
+            if(tTag==0){
+                set(tY,'this.otherAttrs.0')
+                set(tM,'this.otherAttrs.1')
+                set(tD,1)
+            }else{
+                //使用tag设置变量
+                print('use tag','init')
+            }
+
+            //设置蔡勒公式相关变量
+            set(zC,tY)
+            set(zY,tY)
+            set(zM,tM)
+            if(tM<3){    
+                add(zM,12)
+                minus(zC,1)
+                minus(zY,1)
+            }
+            divide(zC,100)
+            mod(zY,100)
+            
+            //显示年
+            set(temp1,1)
+            while(temp1<5){
+                set(temp2,tY)
+                if(temp1==1){
+                    divide(temp2,1000)
+                }else{
+                    if(temp1==2){
+                        divide(temp2,100)
+                    }else{
+                        if(temp1==3){
+                            divide(temp2,10)
+                        }
+                    }
+                }
+                mod(temp2,10)
+                add(temp2,48)
+                set('this.layers.temp1.subLayers.font.text',temp2)
+                add(temp1,1)
+            }
+            
+            //显示月
+            while(temp1<7){
+                set(temp2,tM)
+                if(temp1==5){
+                    divide(temp2,10)
+                }
+                mod(temp2,10)
+                add(temp2,48)
+                set('this.layers.temp1.subLayers.font.text',temp2)
+                add(temp1,1)
+            }
+            
+            //计算zW:w=[c/4]-2c+y+[y/4]+[13(m+1)/5]+d-1;d=1;
+            set(zW,zC)
+            divide(zW,4)
+            set(temp1,zC)
+            multiply(temp1,2)
+            minus(zW,temp1)
+            add(zW,zY)
+            set(temp1,zY)
+            divide(temp1,4)
+            add(zW,temp1)
+            set(temp1,zM)
+            add(temp1,1)
+            multiply(temp1,13)
+            divide(temp1,5)
+            add(zW,temp1)
+            mod(zW,7)
+            
+            //根据月份设置天数
+            if(tM==4){
+                set(daysCnt,30)
+            }else{
+                if(tM==6){
+                    set(daysCnt,30)
+                }else{
+                    if(tM==9){
+                        set(daysCnt,30)
+                    }else{
+                        if(tM==11){
+                            set(daysCnt,30)
+                        }else{
+                            if(tM==2){
+                                //非闰年28天
+                                set(daysCnt,28)
+                                
+                                //判断闰年
+                                set(temp1,tY)
+                                mod(temp1,100)
+                                if(temp1==0){
+                                    //世纪年
+                                    set(temp2,tY)
+                                    mod(temp2,400)
+                                    if(temp2==0){
+                                        set(daysCnt,29)
+                                    }
+                                }else{
+                                    //普通年
+                                    set(temp2,tY)
+                                    mod(temp2,4)
+                                    if(temp2==0){
+                                        set(temp2,tY)
+                                        mod(temp2,100)
+                                        if(temp2>0){
+                                            set(daysCnt,29)
+                                        }
+                                    }
+                                }
+                            }else{
+                                set(daysCnt,31)
+                            }
+                        }
+                    }
+                }
+            }
+            //保存daysCnt
+            set('this.otherAttrs.11',daysCnt)
+            
+            //开始绘制日图层上的数字            
+            set(initIndex,'this.otherAttrs.2')
+            set(layersCnt,'this.layers.length')
+            set(dayW,'this.otherAttrs.9')
+            set(dayH,'this.otherAttrs.10')
+            set(daysLayerMinX,'this.otherAttrs.5')
+            set(daysLayerMaxX,'this.otherAttrs.6')
+            set(daysLayerMinY,'this.otherAttrs.7')
+            set(daysLayerMaxY,'this.otherAttrs.8')  
+                      
+            add(daysCnt,initIndex)
+            set(temp1,zW)
+            multiply(temp1,dayW)              
+            add(temp1,daysLayerMinX)        //日图层的x坐标
+            set(temp2,daysLayerMinY)        //日图层的y坐标
+            while(initIndex<layersCnt){
+                
+                if(initIndex<daysCnt){
+                    //排列日期
+                    if(temp1>=daysLayerMaxX){
+                        set(temp1,daysLayerMinX)
+                        add(temp2,dayH)
+                    }
+                    set('this.layers.initIndex.x',temp1)
+                    set('this.layers.initIndex.y',temp2)
+                    add(temp1,dayW)
+                }else{
+                    //多于的日期隐藏
+                    set('this.layers.initIndex.hidden',1)
+                }
+                
+                add(initIndex,1)
+            }
+        `,
+        onMouseDown:`
+            //***********mouseDown事件独有变量***********
+            var(mouseX,0)             //鼠标x位置
+            var(mouseY,0)             //鼠标y位置
+            var(btnSize,0)            //按键大小
+            var(lSide,0)              //左边界，左右按钮的边界
+            var(rSide,0)              //右边界
+            var(tSide,0)              //上边界
+            var(bSide,0)              //下边界
+            var(btnFlag,0)            //左、右按键标志位,代表是否按下按键。0,1
+            var(highLightIndex,0) 
+            
+            set(mouseX,'this.innerX')
+            set(mouseY,'this.innerY')
+            set(btnSize,'this.otherAttrs.4')
+            set(highLightIndex,'this.layers.length')
+            minus(highLightIndex,1)
+            
+            //***********绘制年月日、高亮变量***********
+            var(tTag,0)
+            var(tY,0)        //年
+            var(tM,0)        //月
+            var(tD,0)        //日
+            var(zM,0)        //月份[3,14]，用于蔡勒公式
+            var(zY,0)        //年的后两位，用于蔡勒公式
+            var(zC,0)        //世纪-1  用于蔡勒公式
+            var(zW,0)        //星期几 用于蔡勒公式
+
+            var(temp1,0)     //临时变量1
+            var(temp2,0)
+            var(daysCnt,0)   //此月的天数
+            var(initIndex,0) //日图层的起始索引坐标
+            var(layersCnt,0) //图层个数
+            
+            var(daysLayerMinX,0)      
+            var(daysLayerMaxX,0)
+            var(daysLayerMinY,0)
+            var(daysLayerMaxY,0)
+            var(highLightX,0)
+            var(highLightY,0)
+            var(dayW,0)
+            var(dayH,0)
+            var(selectedDayIndex,0)
+            var(daysCnt,0)
+            
+            //设置tY，tM和tD。
+            getTag(tTag)
+            if(tTag==0){
+                set(tY,'this.otherAttrs.0')
+                set(tM,'this.otherAttrs.1')
+                set(tD,1)
+            }else{
+                //使用tag设置变量
+                print('use tag','init')
+            }
+            
+            //按下左键,日期减
+            if(mouseX>0){
+                if(mouseX<btnSize){
+                    if(mouseY>0){
+                        if(mouseY<btnSize){
+                            set(btnFlag,1)
+                            minus(tM,1)
+                            if(tM==0){
+                                set(tM,12)
+                                minus(tY,1)
+                            }
+                            set('this.otherAttrs.0',tY)
+                            set('this.otherAttrs.1',tM)
+                        }
+                    }
+                }
+            }
+            //按下右键，日期加
+            set(lSide,'this.layers.0.width')
+            minus(lSide,btnSize)
+            set(rSide,'this.layers.0.width')
+            if(mouseX>lSide){
+                if(mouseX<rSide){
+                    if(mouseY>0){
+                        if(mouseY<btnSize){
+                            set(btnFlag,1)
+                            add(tM,1)
+                            if(tM==13){
+                                set(tM,1)
+                                add(tY,1)
+                            }
+                            set('this.otherAttrs.0',tY)
+                            set('this.otherAttrs.1',tM)
+                        }
+                    }
+                }
+            }
+            
+            if(btnFlag==1){
+                //隐藏高亮
+                set('this.layers.highLightIndex.hidden',0)
+                
+                //设置蔡勒公式相关变量
+                set(zC,tY)
+                set(zY,tY)
+                set(zM,tM)
+                if(tM<3){    
+                    add(zM,12)
+                    minus(zC,1)
+                    minus(zY,1)
+                }
+                divide(zC,100)
+                mod(zY,100)
+                
+                //显示年
+                set(temp1,1)
+                while(temp1<5){
+                    set(temp2,tY)
+                    if(temp1==1){
+                        divide(temp2,1000)
+                    }else{
+                        if(temp1==2){
+                            divide(temp2,100)
+                        }else{
+                            if(temp1==3){
+                                divide(temp2,10)
+                            }
+                        }
+                    }
+                    mod(temp2,10)
+                    add(temp2,48)
+                    set('this.layers.temp1.subLayers.font.text',temp2)
+                    add(temp1,1)
+                }
+                
+                //显示月
+                while(temp1<7){
+                    set(temp2,tM)
+                    if(temp1==5){
+                        divide(temp2,10)
+                    }
+                    mod(temp2,10)
+                    add(temp2,48)
+                    set('this.layers.temp1.subLayers.font.text',temp2)
+                    add(temp1,1)
+                }
+                
+                //计算zW:w=[c/4]-2c+y+[y/4]+[13(m+1)/5]+d-1;d=1;
+                set(zW,zC)
+                divide(zW,4)
+                set(temp1,zC)
+                multiply(temp1,2)
+                minus(zW,temp1)
+                add(zW,zY)
+                set(temp1,zY)
+                divide(temp1,4)
+                add(zW,temp1)
+                set(temp1,zM)
+                add(temp1,1)
+                multiply(temp1,13)
+                divide(temp1,5)
+                add(zW,temp1)
+                mod(zW,7)
+                if(zW<0){
+                    set(temp1,zW)
+                    set(zW,0)
+                    minus(zW,temp1)
+                }
+                
+                //保存zW
+                set('this.otherAttrs.12',zW)
+                
+                //根据月份设置天数
+                if(tM==4){
+                    set(daysCnt,30)
+                }else{
+                    if(tM==6){
+                        set(daysCnt,30)
+                    }else{
+                        if(tM==9){
+                            set(daysCnt,30)
+                        }else{
+                            if(tM==11){
+                                set(daysCnt,30)
+                            }else{
+                                if(tM==2){
+                                    //非闰年28天
+                                    set(daysCnt,28)
+                                    
+                                    //判断闰年
+                                    set(temp1,tY)
+                                    mod(temp1,100)
+                                    if(temp1==0){
+                                        //世纪年
+                                        set(temp2,tY)
+                                        mod(temp2,400)
+                                        if(temp2==0){
+                                            set(daysCnt,29)
+                                        }
+                                    }else{
+                                        //普通年
+                                        set(temp2,tY)
+                                        mod(temp2,4)
+                                        if(temp2==0){
+                                            set(temp2,tY)
+                                            mod(temp2,100)
+                                            if(temp2>0){
+                                                set(daysCnt,29)
+                                            }
+                                        }
+                                    }
+                                }else{
+                                    set(daysCnt,31)
+                                }
+                            }
+                        }
+                    }
+                }
+                //保存daysCnt
+                set('this.otherAttrs.11',daysCnt)
+                
+                //*****开始绘制日图层上的数字*****
+                set(initIndex,'this.otherAttrs.2')
+                set(layersCnt,'this.layers.length')
+                set(dayW,'this.otherAttrs.9')
+                set(dayH,'this.otherAttrs.10')
+                set(daysLayerMinX,'this.otherAttrs.5')
+                set(daysLayerMaxX,'this.otherAttrs.6')
+                set(daysLayerMinY,'this.otherAttrs.7')
+                set(daysLayerMaxY,'this.otherAttrs.8')  
+                          
+                add(daysCnt,initIndex)
+                set(temp1,zW)
+                multiply(temp1,dayW)              
+                add(temp1,daysLayerMinX)        //日图层的x坐标
+                set(temp2,daysLayerMinY)        //日图层的y坐标
+                while(initIndex<layersCnt){
+                    
+                    if(initIndex<daysCnt){
+                        //排列日期
+                        set('this.layers.initIndex.hidden',0)
+                        if(temp1>=daysLayerMaxX){
+                            set(temp1,daysLayerMinX)
+                            add(temp2,dayH)
+                        }
+                        set('this.layers.initIndex.x',temp1)
+                        set('this.layers.initIndex.y',temp2)
+                        add(temp1,dayW)
+                    }else{
+                        //多于的日期隐藏
+                        set('this.layers.initIndex.hidden',1)
+                    }
+                    
+                    add(initIndex,1)
+                }
+            }
+            
+            
+            //********开始绘制高亮选中层**********
+            set(daysLayerMinX,'this.otherAttrs.5')
+            set(daysLayerMaxX,'this.otherAttrs.6')
+            set(daysLayerMinY,'this.otherAttrs.7')
+            set(daysLayerMaxY,'this.otherAttrs.8')
+            set(dayW,'this.otherAttrs.9')
+            set(dayH,'this.otherAttrs.10')
+            set(daysCnt,'this.otherAttrs.11')
+            set(zW,'this.otherAttrs.12')
+            
+            if(mouseX>=daysLayerMinX){
+                if(mouseX<=daysLayerMaxX){
+                    if(mouseY>=daysLayerMinY){
+                        if(mouseY<=daysLayerMaxY){
+                            //计算第几层被选中,并且是否在有效层的范围内
+                            set(temp1,mouseY)
+                            minus(temp1,daysLayerMinY)
+                            divide(temp1,dayH)
+                            set(selectedDayIndex,7)
+                            multiply(selectedDayIndex,temp1)
+                            
+                            set(temp2,mouseX)
+                            minus(temp2,daysLayerMinX)
+                            divide(temp2,dayW)
+                            add(selectedDayIndex,temp2)
+                            
+                            set(initIndex,'this.otherAttrs.2') //获取日图层起始坐标
+                            add(selectedDayIndex,initIndex)
+                            
+                            set(temp1,zW)
+                            add(temp1,initIndex)
+                            set(temp2,daysCnt)
+                            add(temp2,temp1)
+                            minus(temp2,1)
+                            
+                            if(selectedDayIndex>=temp1){
+                                if(selectedDayIndex<=temp2){
+                                    //计算高亮层x，y坐标
+                                    set(highLightX,mouseX)
+                                    minus(highLightX,daysLayerMinX)
+                                    divide(highLightX,dayW)
+                                    
+                                    set(highLightY,mouseY)
+                                    minus(highLightY,daysLayerMinY)
+                                    divide(highLightY,dayH)
+                                    
+                                    multiply(highLightX,dayW)
+                                    add(highLightX,daysLayerMinX)
+                                    multiply(highLightY,dayH)
+                                    add(highLightY,daysLayerMinY)
+                                    
+                                    set('this.layers.highLightIndex.x',highLightX)
+                                    set('this.layers.highLightIndex.y',highLightY)
+                                    set('this.layers.highLightIndex.hidden',0)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+        onMouseUp:`
+
+        `,
+        onTagChange:`
+
+        `,
+        onKeyBoardLeft:`
+
+        `,
+        onKeyBoardRight:`
+
+        `,
+        onKeyBoardOK:`
+
+        `
+    };
+
+    WidgetCommands['TexTime'] = {
+        'onInitialize': ` 
+
+         //隐藏所有图层
+            var(tOffset,0)
+            set(tOffset,0)
+            var(len,0)
+            set(len,'this.layers.length')
+            while(tOffset < len){
+                set('this.layers.tOffset.hidden',1)
+                add(tOffset,1)
+            }
+            //初始化
+            var(tCurCount,0)           //当前位数
+            set(tCurCount,'this.otherAttrs.0')
+
+            var(TimeMinuteMode,0)      //时分秒模式
+            set(TimeMinuteMode,'this.otherAttrs.1')
+
+            var(TimeMode,0)             //时分模式
+            set(TimeMode,'this.otherAttrs.2')
+
+            var(ObliqueDate,0)            //斜杠日期
+            set(ObliqueDate,'this.otherAttrs.3')
+
+            var(MinusDate,0)            //减号日期
+            set(MinusDate,'this.otherAttrs.4')
+
+            var(ColonCnt,0)             //冒号位数
+            set(ColonCnt,'this.otherAttrs.5')
+
+            var(MinusCnt,0)             //减号位数
+            set(MinusCnt,'this.otherAttrs.6')
+
+            var(ObliqueCnt,0)            //斜杠位数
+            set(ObliqueCnt,'this.otherAttrs.7')
+
+            var(fontWidth,0)                //字符图层宽度
+            set(fontWidth,'this.otherAttrs.8')
+            
+            var(hasColonCnt,0)              //是否有冒号
+            set(hasColonCnt,'this.otherAttrs.9')
+            
+            var(hasObliqueCnt,0)            //是否有斜杠
+            set(hasObliqueCnt,'this.otherAttrs.10')
+            
+            var(hasMinusCnt,0)              //是否有减号
+            set(hasMinusCnt,'this.otherAttrs.11')
+
+            var(symbolColonCnt,0)                //要绘制的冒号的个数
+            set(symbolColonCnt,0)
+            
+            var(symbolObliqueCnt,0)              //要绘制的斜杠的个数
+            set(symbolObliqueCnt,0)
+            
+            var(symbolMinusCnt,0)                //要绘制的减号的个数
+            set(symbolMinusCnt,0)
+            
+            var(needDraw,0)                 //是否需要绘制，0不需要，1需要
+            set(needDraw,1)
+            
+            var(tempVal,0)               //临时变量
+
+            var(CountCnt,0)              //要绘制的当前值数字的个数
+            
+            var(LayersNum,0)                 //layer数
+            
+            var(allFontCnt,0)           //要绘制的总字符的个数
+            
+            var(i,0)                     //变量
+                    
+            var(curl,0)                  //当前字符
+            
+            var(tempValW,0)                      //总字符所占宽度
+            
+            var(initPosX,0)                      //绘制起始坐标
+
+            var(fontWidthHalf,0)                 //半个字符所占宽度
+            
+            var(index,0)                        //layer index
+            //显示模式选择
+            //时分秒模式
+            if(i == TimeMinuteMode){
+                if(LayersNum == 8){
+                    set(TimeMinuteMode,LayersNum)
+                }
+            }
+            //时分模式
+            if(i == TimeMode){
+                if(LayersNum == 5){
+                    set(TimeMode,LayersNum)
+                }
+            }
+            //斜杠日期
+            if(i == ObliqueDate){
+                if(LayersNum == 10){
+                    set(ObliqueDate,LayersNum)
+                }
+            }
+            //减号日期
+            if(i == MinusDate){
+                if(LayersNum == 10){
+                    set(MinusDate,LayersNum)
+                }
+            }
+            //判断是否需要绘制
+            if(needDraw == 1){ 
+            }else{
+                if(tCurCount == 8){             //时分秒模式
+                    if(hasColonCnt == 1){       //是否有冒号
+                        set(symbolColonCnt,2)        //要绘制的冒号的个数
+                    }
+                }else{
+                    if(tCurCount == 5){                  //时分模式
+                        if(hasColonCnt == 1){
+                            set(symbolColonCnt,1)       //要绘制的冒号的个数
+                        }
+                    }else{
+                        if(tCurCount == 10){            //斜杠日期
+                            if(hasObliqueCnt == 1){
+                                set(symbolObliqueCnt,2)     //要绘制的斜杠的个数
+                            }
+                        }else{
+                            if(tCurCount == 10){            //减号日期
+                                if(hasMinusCnt == 1){
+                                    set(symbolMinusCnt,2)    //要绘制的减号的个数
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //冒号位置
+            if(ColonCnt>0){
+                add(allFontCnt,1)
+                if(ColonCnt == 2){
+                    set(CountCnt,ColonCnt)
+                    add(ColonCnt,1)
+                    add(allFontCnt,ColonCnt)
+                }else{
+                    if(ColonCnt == 5){
+                       set(CountCnt,ColonCnt)
+                       add(ColonCnt,1)
+                       add(allFontCnt,ColonCnt)
+                    }
+                }
+            }
+            //斜杠位置
+            if(ObliqueCnt>0){
+                add(allFontCnt,1)
+                if(ObliqueCnt == 4){
+                    set(CountCnt,ObliqueCnt)
+                    add(ObliqueCnt,1)
+                    add(allFontCnt,ObliqueCnt)
+                }else{
+                    if(ObliqueCnt == 7){
+                        set(CountCnt,ObliqueCnt)
+                        add(ObliqueCnt,1)
+                        add(allFontCnt,ObliqueCnt)
+                    }
+                 }
+            } 
+            //减号位置
+            if(MinusCnt>0){
+                add(allFontCnt,1)
+                if(MinusCnt == 4){
+                    set(CountCnt,MinusCnt)
+                    add(MinusCnt,1)
+                    add(allFontCnt,MinusCnt)
+                }else{
+                    if(MinusCnt == 7){
+                        set(CountCnt,MinusCnt)
+                        add(MinusCnt,1)
+                        add(allFontCnt,MinusCnt)
+                    }
+                }
+            }
+            
+            //绘制逻辑
+            while(i<LayersNum){
+                if(i == ColonCnt){
+                if(ColonCnt == 0){
+                }else{
+                    //画冒号
+                    if(ColonCnt == 2){
+                        set(LayersNum,tCurCount)
+                        add(tCurCount,ColonCnt)
+                       
+                        set('this.layers.1.hidden',0)
+                        
+                        set('this.layers.1.subLayers.image.texture',10)
+                       
+                    }else{
+                        if(ColonCnt == 5){
+                            set(LayersNum,tCurCount)
+                            add(tCurCount,ColonCnt)
+                           
+                            set('this.layers.1.hidden',0)
+                          
+                            set('this.layers.1.subLayers.image.texture',10)
+                            
+                        }
+                    }
+                }
+            }
+            if(i == ObliqueCnt){
+                if(ObliqueCnt == 0){
+                }else{
+                    //画斜杠
+                    if(ObliqueCnt == 4){
+                        set(LayersNum,tCurCount)
+                        add(tCurCount,ObliqueCnt)
+                       
+                        set('this.layers.1.hidden',0)
+                      
+                        set('this.layers.1.subLayers.image.texture',10)
+                       
+                    }else{
+                        if(ObliqueCnt == 7){
+                            set(LayersNum,tCurCount)
+                            add(tCurCount,ObliqueCnt)
+                           
+                            set('this.layers.1.hidden',0)
+                         
+                            set('this.layers.1.subLayers.image.texture',10)
+                            
+                        }
+                    }
+                }
+            }
+            if(i == MinusCnt){
+                if(MinusCnt == 0){
+                }else{
+                    //画减号
+                    if(MinusCnt == 4){
+                        set(tempVal,fontWidth)
+                        add(tCurCount,MinusCnt)
+                       
+                        set('this.layers.1.hidden',0)
+                      
+                        set('this.layers.1.subLayers.image.texture',10)
+                        
+                    }else{
+                        if(MinusCnt == 7){
+                            set(tempVal,fontWidth)
+                            add(tCurCount,MinusCnt)
+                          
+                            set('this.layers.1.hidden',0)
+                           
+                            set('this.layers.1.subLayers.image.texture',10)
+                           
+                        }
+                    }
+                }
+            }
+         }
+         if(i<CountCnt){
+            //画数字
+            if(LayersNum == 8){
+                set(LayersNum,ColonCnt)
+                divide(LayersNum,10)
+                multiply(LayersNum,10)
+                set(curl,CountCnt) 
+                    
+                divide(CountCnt,10)
+                
+                set(index,allFontCnt)
+                minus(index,i)   
+                
+                set('this.layers.index.hidden',0)
+                set('this.layers.index.subLayers.image.texture',curl)
+            }else{
+                if(LayersNum == 5){
+                    set(LayersNum,ColonCnt)
+                    divide(LayersNum,10)
+                    multiply(LayersNum,10)
+                    set(curl,CountCnt) 
+                        
+                    divide(CountCnt,10)
+                    
+                    set(index,allFontCnt)
+                    minus(index,i)   
+                    
+                    set('this.layers.index.hidden',0)
+                    set('this.layers.index.subLayers.image.texture',curl)
+                }else{
+                    if(LayersNum == 10){
+                        set(LayersNum,ObliqueCnt)
+                        divide(LayersNum,10)
+                        multiply(LayersNum,10)
+                        set(curl,CountCnt) 
+                            
+                        divide(CountCnt,10)
+                        
+                        set(index,allFontCnt)
+                        minus(index,i)   
+                        
+                        set('this.layers.index.hidden',0)
+                        set('this.layers.index.subLayers.image.texture',curl)
+                    }else{
+                        if(LayersNum == 10){
+                            set(LayersNum,MinusCnt)
+                            divide(LayersNum,10)
+                            multiply(LayersNum,10)
+                            set(curl,CountCnt) 
+                                
+                            divide(CountCnt,10)
+                            
+                            set(index,allFontCnt)
+                            minus(index,i)   
+                            
+                            set('this.layers.index.hidden',0)
+                            set('this.layers.index.subLayers.image.texture',curl)
+                        }
+                    }
+                }
+            }
+         }   
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+        `,
+        onTagChange:`
+            //隐藏所有图层
+            var(tOffset,0)
+            set(tOffset,0)
+            var(len,0)
+            set(len,'this.layers.length')
+            while(tOffset < len){
+                set('this.layers.tOffset.hidden',0)
+                add(tOffset,1)
+            }
+            print('hhh','this')
+            //初始化
+            var(tCurCount,0)           //当前位数
+            set(tCurCount,'this.otherAttrs.0')
+
+            var(TimeMinuteMode,0)      //时分秒模式
+            set(TimeMinuteMode,'this.otherAttrs.1')
+
+            var(TimeMode,0)             //时分模式
+            set(TimeMode,'this.otherAttrs.2')
+
+            var(ObliqueDate,0)            //斜杠日期
+            set(ObliqueDate,'this.otherAttrs.3')
+
+            var(MinusDate,0)            //减号日期
+            set(MinusDate,'this.otherAttrs.4')
+
+            var(ColonCnt,0)             //冒号位数
+            set(ColonCnt,'this.otherAttrs.5')
+
+            var(MinusCnt,0)             //减号位数
+            set(MinusCnt,'this.otherAttrs.6')
+
+            var(ObliqueCnt,0)            //斜杠位数
+            set(ObliqueCnt,'this.otherAttrs.7')
+
+            var(fontWidth,0)                //字符图层宽度
+            set(fontWidth,'this.otherAttrs.8')
+            
+            var(hasColonCnt,0)              //是否有冒号
+            set(hasColonCnt,'this.otherAttrs.9')
+            
+            var(hasObliqueCnt,0)            //是否有斜杠
+            set(hasObliqueCnt,'this.otherAttrs.10')
+            
+            var(hasMinusCnt,0)              //是否有减号
+            set(hasMinusCnt,'this.otherAttrs.11')
+
+            var(symbolColonCnt,0)                //要绘制的冒号的个数
+            set(symbolColonCnt,0)
+            
+            var(symbolObliqueCnt,0)              //要绘制的斜杠的个数
+            set(symbolObliqueCnt,0)
+            
+            var(symbolMinusCnt,0)                //要绘制的减号的个数
+            set(symbolMinusCnt,0)
+            
+            var(needDraw,0)                 //是否需要绘制，0不需要，1需要
+            set(needDraw,1)
+            
+            var(tempVal,0)               //临时变量
+
+            var(CountCnt,0)              //要绘制的当前值数字的个数
+            
+            var(LayersNum,0)                 //layer数
+            
+            var(allFontCnt,0)           //要绘制的总字符的个数
+            
+            var(i,0)                     //变量
+                    
+            var(curl,0)                  //当前字符
+            
+            var(tempValW,0)                      //总字符所占宽度
+            
+            var(initPosX,0)                      //绘制起始坐标
+
+            var(fontWidthHalf,0)                 //半个字符所占宽度
+            
+            var(index,0)                        //layer index
+            //显示模式选择
+            //时分秒模式
+            if(i == TimeMinuteMode){
+                if(LayersNum == 8){
+                    set(TimeMinuteMode,LayersNum)
+                }
+            }
+            //时分模式
+            if(i == TimeMode){
+                if(LayersNum == 5){
+                    set(TimeMode,LayersNum)
+                }
+            }
+            //斜杠日期
+            if(i == ObliqueDate){
+                if(LayersNum == 10){
+                    set(ObliqueDate,LayersNum)
+                }
+            }
+            //减号日期
+            if(i == MinusDate){
+                if(LayersNum == 10){
+                    set(MinusDate,LayersNum)
+                }
+            }
+            //判断是否需要绘制
+            if(needDraw == 1){ 
+            }else{
+                if(tCurCount == 8){             //时分秒模式
+                    if(hasColonCnt == 1){       //是否有冒号
+                        set(symbolColonCnt,2)        //要绘制的冒号的个数
+                    }
+                }else{
+                    if(tCurCount == 5){                  //时分模式
+                        if(hasColonCnt == 1){
+                            set(symbolColonCnt,1)       //要绘制的冒号的个数
+                        }
+                    }else{
+                        if(tCurCount == 10){            //斜杠日期
+                            if(hasObliqueCnt == 1){
+                                set(symbolObliqueCnt,2)     //要绘制的斜杠的个数
+                            }
+                        }else{
+                            if(tCurCount == 10){            //减号日期
+                                if(hasMinusCnt == 1){
+                                    set(symbolMinusCnt,2)    //要绘制的减号的个数
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //冒号位置
+            if(ColonCnt>0){
+                add(allFontCnt,1)
+                if(ColonCnt == 2){
+                    set(CountCnt,ColonCnt)
+                    add(ColonCnt,1)
+                    add(allFontCnt,ColonCnt)
+                }else{
+                    if(ColonCnt == 5){
+                       set(CountCnt,ColonCnt)
+                       add(ColonCnt,1)
+                       add(allFontCnt,ColonCnt)
+                    }
+                }
+            }
+            //斜杠位置
+            if(ObliqueCnt>0){
+                add(allFontCnt,1)
+                if(ObliqueCnt == 4){
+                    set(CountCnt,ObliqueCnt)
+                    add(ObliqueCnt,1)
+                    add(allFontCnt,ObliqueCnt)
+                }else{
+                    if(ObliqueCnt == 7){
+                        set(CountCnt,ObliqueCnt)
+                        add(ObliqueCnt,1)
+                        add(allFontCnt,ObliqueCnt)
+                    }
+                 }
+            } 
+            //减号位置
+            if(MinusCnt>0){
+                add(allFontCnt,1)
+                if(MinusCnt == 4){
+                    set(CountCnt,MinusCnt)
+                    add(MinusCnt,1)
+                    add(allFontCnt,MinusCnt)
+                }else{
+                    if(MinusCnt == 7){
+                        set(CountCnt,MinusCnt)
+                        add(MinusCnt,1)
+                        add(allFontCnt,MinusCnt)
+                    }
+                }
+            }
+            
+            //绘制逻辑
+            while(i<LayersNum){
+                if(i == ColonCnt){
+                if(ColonCnt == 0){
+                }else{
+                    //画冒号
+                    if(ColonCnt == 2){
+                        set(LayersNum,tCurCount)
+                        add(tCurCount,ColonCnt)
+                       
+                        set('this.layers.1.hidden',0)
+                        
+                        set('this.layers.1.subLayers.image.texture',10)
+                       
+                    }else{
+                        if(ColonCnt == 5){
+                            set(LayersNum,tCurCount)
+                            add(tCurCount,ColonCnt)
+                           
+                            set('this.layers.1.hidden',0)
+                          
+                            set('this.layers.1.subLayers.image.texture',10)
+                            
+                        }
+                    }
+                }
+            }
+            if(i == ObliqueCnt){
+                if(ObliqueCnt == 0){
+                }else{
+                    //画斜杠
+                    if(ObliqueCnt == 4){
+                        set(LayersNum,tCurCount)
+                        add(tCurCount,ObliqueCnt)
+                       
+                        set('this.layers.1.hidden',0)
+                      
+                        set('this.layers.1.subLayers.image.texture',10)
+                       
+                    }else{
+                        if(ObliqueCnt == 7){
+                            set(LayersNum,tCurCount)
+                            add(tCurCount,ObliqueCnt)
+                           
+                            set('this.layers.1.hidden',0)
+                         
+                            set('this.layers.1.subLayers.image.texture',10)
+                            
+                        }
+                    }
+                }
+            }
+            if(i == MinusCnt){
+                if(MinusCnt == 0){
+                }else{
+                    //画减号
+                    if(MinusCnt == 4){
+                        set(tempVal,fontWidth)
+                        add(tCurCount,MinusCnt)
+                       
+                        set('this.layers.1.hidden',0)
+                      
+                        set('this.layers.1.subLayers.image.texture',10)
+                        
+                    }else{
+                        if(MinusCnt == 7){
+                            set(tempVal,fontWidth)
+                            add(tCurCount,MinusCnt)
+                          
+                            set('this.layers.1.hidden',0)
+                           
+                            set('this.layers.1.subLayers.image.texture',10)
+                           
+                        }
+                    }
+                }
+            }
+         }
+         if(i<CountCnt){
+            //画数字
+            if(LayersNum == 8){
+                set(LayersNum,ColonCnt)
+                divide(LayersNum,10)
+                multiply(LayersNum,10)
+                set(curl,CountCnt) 
+                    
+                divide(CountCnt,10)
+                
+                set(index,allFontCnt)
+                minus(index,i)   
+                
+                set('this.layers.index.hidden',0)
+                set('this.layers.index.subLayers.image.texture',curl)
+            }else{
+                if(LayersNum == 5){
+                    set(LayersNum,ColonCnt)
+                    divide(LayersNum,10)
+                    multiply(LayersNum,10)
+                    set(curl,CountCnt) 
+                        
+                    divide(CountCnt,10)
+                    
+                    set(index,allFontCnt)
+                    minus(index,i)   
+                    
+                    set('this.layers.index.hidden',0)
+                    set('this.layers.index.subLayers.image.texture',curl)
+                }else{
+                    if(LayersNum == 10){
+                        set(LayersNum,ObliqueCnt)
+                        divide(LayersNum,10)
+                        multiply(LayersNum,10)
+                        set(curl,CountCnt) 
+                            
+                        divide(CountCnt,10)
+                        
+                        set(index,allFontCnt)
+                        minus(index,i)   
+                        
+                        set('this.layers.index.hidden',0)
+                        set('this.layers.index.subLayers.image.texture',curl)
+                    }else{
+                        if(LayersNum == 10){
+                            set(LayersNum,MinusCnt)
+                            divide(LayersNum,10)
+                            multiply(LayersNum,10)
+                            set(curl,CountCnt) 
+                                
+                            divide(CountCnt,10)
+                            
+                            set(index,allFontCnt)
+                            minus(index,i)   
+                            
+                            set('this.layers.index.hidden',0)
+                            set('this.layers.index.subLayers.image.texture',curl)
+                        }
+                    }
+                }
+            }
+         } 
+        `
+    };
     return WidgetCommands;
 
 }));

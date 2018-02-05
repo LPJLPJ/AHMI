@@ -181,22 +181,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
         targetWidget = _.cloneDeep(rawWidget);
         transActions(targetWidget);
-        if (targetWidget.type == 'general'){
-            //default Button
-            var info = targetWidget.info;
-            var x = info.left;
-            var y = info.top;
-            var w = info.width;
-            var h = info.height;
-            generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',null,targetWidget.texList[0].slices)
-            generalWidget = generalWidget.toObject();
-
-            generalWidget.generalType = 'Button'
-            generalWidget.id = subLayerIdx+'.'+widgetIdx;
-            generalWidget.type = 'widget';
-            generalWidget.tag = rawWidget.tag;
-            generalWidget.subType = 'general';
-        }else{
+        if (targetWidget.type != 'general') {
             var info = targetWidget.info;
             var texList = targetWidget.texList;
             var x = info.left;
@@ -204,12 +189,12 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
             var w = info.width;
             var h = info.height;
             var highLight = false;
-            switch(targetWidget.type){
+            switch (targetWidget.type) {
                 case 'MyButton':
                     highLight = !targetWidget.info.disableHighlight;
                     var fontStyle = {};
-                    for(var key in info){
-                        switch (key){
+                    for (var key in info) {
+                        switch (key) {
                             case "fontItalic":
                                 fontStyle['font-style'] = info[key];
                                 break;
@@ -227,7 +212,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                                 break;
                         }
                     }
-                    generalWidget =  new WidgetModel.models['Button'](x,y,w,h,'button',fontStyle,targetWidget.texList[0].slices,highLight);
+                    generalWidget = new WidgetModel.models['Button'](x, y, w, h, 'button', fontStyle, targetWidget.texList[0].slices, highLight);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'Button';
                     generalWidget.mode = Number(rawWidget.buttonModeId);
@@ -235,17 +220,17 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions
-                break;
+                    break;
                 case 'MyButtonGroup':
                     highLight = !info.disableHighlight;
                     var slices = [];
                     texList.map(function (curTex) {
-                        curTex.slices.map(function(slice){
+                        curTex.slices.map(function (slice) {
                             slices.push(slice)
                         })
                     });
 
-                    generalWidget =  new WidgetModel.models['ButtonGroup'](x,y,w,h,info.count||1,(info.arrange==="horizontal"?0:1),info.interval||0,slices,highLight);
+                    generalWidget = new WidgetModel.models['ButtonGroup'](x, y, w, h, info.count || 1, (info.arrange === "horizontal" ? 0 : 1), info.interval || 0, slices, highLight);
                     generalWidget = generalWidget.toObject();
 
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
@@ -253,7 +238,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
 
-                    generalWidget['totalHLFrame']=highLight?(200/1000 * fps):undefined;
+                    generalWidget['totalHLFrame'] = highLight ? (200 / 1000 * fps) : undefined;
 
                     //other attrs
                     generalWidget.otherAttrs[0] = info.interval; //间距
@@ -261,10 +246,10 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.otherAttrs[2] = 1;             //高亮动画起始值
                     generalWidget.otherAttrs[3] = 1;             //高亮动画终止值
                     //Todo:默认属性中有arrange，但是在simulaor中无法解析错误，故使用otherAttrs
-                    generalWidget.otherAttrs[4] = (info.arrange==="horizontal"?0:1); //排列方向
-                break;
+                    generalWidget.otherAttrs[4] = (info.arrange === "horizontal" ? 0 : 1); //排列方向
+                    break;
                 case 'MyDashboard':
-                    generalWidget =  new WidgetModel.models['Dashboard'](x,y,w,h,targetWidget.dashboardModeId,targetWidget.texList,targetWidget.info)
+                    generalWidget = new WidgetModel.models['Dashboard'](x, y, w, h, targetWidget.dashboardModeId, targetWidget.texList, targetWidget.info)
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'Dashboard';
                     generalWidget.mode = Number(rawWidget.dashboardModeId);
@@ -273,41 +258,41 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     //additional attrs
                     var attrs = 'minValue,maxValue,minAngle,maxAngle,lowAlarmValue,highAlarmValue';
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     })
                     //animation
                     // console.log('enableAnimation',info.enableAnimation)
                     if (info.enableAnimation) {
-                        generalWidget['totalFrame'] = defaultDuration/1000 * fps;
+                        generalWidget['totalFrame'] = defaultDuration / 1000 * fps;
                     }
                     //otherAttrs
-                    generalWidget.otherAttrs[0] = info['offsetValue']||0
+                    generalWidget.otherAttrs[0] = info['offsetValue'] || 0
                     generalWidget.otherAttrs[1] = Number(info['clockwise'])
                     generalWidget.actions = targetWidget.actions
-                break;
+                    break;
                 case 'MyProgress':
-                    var  slices = [];
-                    targetWidget.texList.map(function(tex){
+                    var slices = [];
+                    targetWidget.texList.map(function (tex) {
                         slices.push(tex.slices[0]);
                     });
-                    generalWidget = new  WidgetModel.models['Progress'](x,y,w,h,targetWidget.info,slices);
-                    generalWidget= generalWidget.toObject();
+                    generalWidget = new WidgetModel.models['Progress'](x, y, w, h, targetWidget.info, slices);
+                    generalWidget = generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
-                    generalWidget.mode= Number(rawWidget.info.progressModeId);
+                    generalWidget.mode = Number(rawWidget.info.progressModeId);
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue';
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     });
                     //animation
                     if (info.enableAnimation) {
-                        generalWidget['totalFrame'] = defaultDuration/1000 * fps;
+                        generalWidget['totalFrame'] = defaultDuration / 1000 * fps;
                     }
                     generalWidget.actions = targetWidget.actions;
                     generalWidget.generalType = 'Progress';
                     generalWidget.subType = 'general';
                     //otherAttrs
                     var colorElems
-                    if(generalWidget.mode==1){
+                    if (generalWidget.mode == 1) {
                         colorElems = parseColor(slices[1].color);
                         generalWidget.otherAttrs[0] = colorElems.r;
                         generalWidget.otherAttrs[1] = colorElems.g;
@@ -318,7 +303,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         generalWidget.otherAttrs[5] = colorElems.g;
                         generalWidget.otherAttrs[6] = colorElems.b;
                         generalWidget.otherAttrs[7] = colorElems.a;
-                    }else if(generalWidget.mode==3){
+                    } else if (generalWidget.mode == 3) {
                         generalWidget.otherAttrs[0] = targetWidget.info.thresholdModeId;
                         generalWidget.otherAttrs[1] = targetWidget.info.threshold1;
                         generalWidget.otherAttrs[2] = targetWidget.info.threshold2;
@@ -332,7 +317,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         generalWidget.otherAttrs[8] = colorElems.g;
                         generalWidget.otherAttrs[9] = colorElems.b;
                         generalWidget.otherAttrs[10] = colorElems.a;
-                        if(targetWidget.info.thresholdModeId==2){
+                        if (targetWidget.info.thresholdModeId == 2) {
                             colorElems = parseColor(slices[3].color);
                             generalWidget.otherAttrs[11] = colorElems.a;
                             generalWidget.otherAttrs[12] = colorElems.g;
@@ -341,14 +326,14 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         }
                     }
                     generalWidget.otherAttrs[19] = Number(rawWidget.info.cursor);
-                    if(rawWidget.info.cursor=='1'){
-                        var imgSrc = slices[slices.length-1].imgSrc;
-                        if(imgSrc){
+                    if (rawWidget.info.cursor == '1') {
+                        var imgSrc = slices[slices.length - 1].imgSrc;
+                        if (imgSrc) {
                             var cursorImg = ResourceService.getResourceFromCache(imgSrc);
                             generalWidget.layers[2].width = cursorImg.width;
                             generalWidget.layers[2].height = cursorImg.height;
                             rawH = generalWidget.layers[0].height;
-                            yTemp = parseInt((rawH-cursorImg.height)/2);
+                            yTemp = parseInt((rawH - cursorImg.height) / 2);
                             generalWidget.layers[2].y = yTemp;
                         }
                     }
@@ -356,7 +341,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
                     break;
                 case 'MyRotateImg':
-                    generalWidget =  new WidgetModel.models['RotateImg'](x,y,w,h,targetWidget.texList[0].slices[0])
+                    generalWidget = new WidgetModel.models['RotateImg'](x, y, w, h, targetWidget.texList[0].slices[0])
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'RotateImg';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
@@ -364,11 +349,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     //additional attrs
                     var attrs = 'minValue,maxValue'
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     })
                     //otherAttrs
                     generalWidget.actions = targetWidget.actions
-                break;
+                    break;
                 case 'MyTextArea':
                     // "fontFamily": "宋体",
                     // "fontSize": 15,
@@ -377,30 +362,30 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     // "fontItalic": "",
                     // "fontUnderline": null,
                     var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
-                    var fontStyle={}
+                    var fontStyle = {}
                     styleElems.split(',').forEach(function (elem) {
                         fontStyle[elem] = info[elem]
                     });
-                    generalWidget =  new WidgetModel.models['TextArea'](x,y,w,h,info.text,fontStyle,targetWidget.texList[0].slices[0])
+                    generalWidget = new WidgetModel.models['TextArea'](x, y, w, h, info.text, fontStyle, targetWidget.texList[0].slices[0])
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'TextArea';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
-                break;
+                    break;
                 case 'MySwitch':
-                    var  slices = [];
-                    targetWidget.texList.map(function(tex){
+                    var slices = [];
+                    targetWidget.texList.map(function (tex) {
                         slices.push(tex.slices[0]);
                     });
-                    generalWidget = new  WidgetModel.models['Switch'](x,y,w,h,targetWidget.info,slices);
-                    generalWidget= generalWidget.toObject();
+                    generalWidget = new WidgetModel.models['Switch'](x, y, w, h, targetWidget.info, slices);
+                    generalWidget = generalWidget.toObject();
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.generalType = 'Switch';
                     generalWidget.subType = 'general';
                     generalWidget.otherAttrs[0] = Number(targetWidget.info.bindBit);
-                break;
+                    break;
                 case 'MyScriptTrigger':
-                    generalWidget =  new WidgetModel.models['ScriptTrigger'](x,y,w,h)
+                    generalWidget = new WidgetModel.models['ScriptTrigger'](x, y, w, h)
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'ScriptTrigger';
 
@@ -409,54 +394,54 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     //additional attrs
                     var attrs = 'lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     });
                     //add minValue, maxValue
-                    generalWidget['minValue'] = generalWidget['lowAlarmValue']-1
-                    generalWidget['maxValue'] = generalWidget['highAlarmValue']+1
+                    generalWidget['minValue'] = generalWidget['lowAlarmValue'] - 1
+                    generalWidget['maxValue'] = generalWidget['highAlarmValue'] + 1
                     generalWidget.actions = targetWidget.actions;
 
-                break;
+                    break;
                 case 'MyVideo':
-                    generalWidget =  new WidgetModel.models['Video'](x,y,w,h,targetWidget.texList[0].slices[0])
+                    generalWidget = new WidgetModel.models['Video'](x, y, w, h, targetWidget.texList[0].slices[0])
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'Video';
-                    if (info.scource=='HDMI') {
+                    if (info.scource == 'HDMI') {
                         generalWidget.mode = 0
-                    }else{
+                    } else {
                         generalWidget.mode = 1
                     }
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
-                break;
+                    break;
                 case 'MySlide':
-                    generalWidget = new WidgetModel.models['Slide'](x,y,w,h,targetWidget.info,_.cloneDeep(targetWidget.texList[0].slices));
+                    generalWidget = new WidgetModel.models['Slide'](x, y, w, h, targetWidget.info, _.cloneDeep(targetWidget.texList[0].slices));
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'Slide';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                break;
+                    break;
                 case 'MySlideBlock':
                     var imgSrc = targetWidget.texList[1].slices[0].imgSrc;
-                    var blockInfo = {w:0,h:0}
-                    if(imgSrc){
+                    var blockInfo = {w: 0, h: 0}
+                    if (imgSrc) {
                         var blockImg = ResourceService.getResourceFromCache(imgSrc);
-                        if(blockImg){
+                        if (blockImg) {
                             blockInfo.w = blockImg.width;
                             blockInfo.h = blockImg.height;
                         }
 
                     }
-                    generalWidget = new WidgetModel.models['SlideBlock'](x,y,w,h,info.arrange,blockInfo,[targetWidget.texList[0].slices[0],targetWidget.texList[1].slices[0]]);
+                    generalWidget = new WidgetModel.models['SlideBlock'](x, y, w, h, info.arrange, blockInfo, [targetWidget.texList[0].slices[0], targetWidget.texList[1].slices[0]]);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'SlideBlock';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     })
-                    generalWidget.arrange = (info.arrange=='horizontal')?0:1
+                    generalWidget.arrange = (info.arrange == 'horizontal') ? 0 : 1
                     // console.log(generalWidget,targetWidget)
                     generalWidget.otherAttrs[0] = 0 //lastX
                     generalWidget.otherAttrs[1] = 0 //lastY
@@ -467,12 +452,12 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.otherAttrs[6] = 0 //last block y
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                break;
+                    break;
                 case 'MyNum':
                     var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
-                    var fontStyle={}
-                    for(var key in info){
-                        switch (key){
+                    var fontStyle = {}
+                    for (var key in info) {
+                        switch (key) {
                             case "fontItalic":
                                 fontStyle['font-style'] = info[key];
                                 break;
@@ -490,11 +475,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                                 break;
                         }
                     }
-                    generalWidget = new WidgetModel.models['Num'](x,y,w,h,info,fontStyle);
+                    generalWidget = new WidgetModel.models['Num'](x, y, w, h, info, fontStyle);
                     generalWidget = generalWidget.toObject();
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     })
                     generalWidget.mode = Number(info.numModeId);
                     generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');
@@ -504,16 +489,16 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.otherAttrs[4] = info['numOfDigits'];
                     generalWidget.otherAttrs[5] = Number(info['overFlowStyle']);
                     generalWidget.otherAttrs[6] = Number(info['maxFontWidth']);
-                    switch(info['align']){
+                    switch (info['align']) {
                         case 'left':
                             generalWidget.otherAttrs[7] = 0
-                        break;
+                            break;
                         case 'center':
                             generalWidget.otherAttrs[7] = 1
-                        break;
+                            break;
                         case 'right':
                             generalWidget.otherAttrs[7] = 2
-                        break;
+                            break;
                         default:
                             generalWidget.otherAttrs[7] = 1
                     }
@@ -523,13 +508,13 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                break;
+                    break;
                 case 'MyTexNum':
-                    generalWidget = new WidgetModel.models['TexNum'](x,y,w,h,info,targetWidget.texList[0].slices);
+                    generalWidget = new WidgetModel.models['TexNum'](x, y, w, h, info, targetWidget.texList[0].slices);
                     generalWidget = generalWidget.toObject();
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     })
                     generalWidget.mode = Number(info.numModeId)
                     generalWidget.otherAttrs[0] = Number(info['numValue']);//初始化的数字值
@@ -541,7 +526,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.otherAttrs[6] = Number(info['characterW']);//字符宽度
                     generalWidget.otherAttrs[7] = Number(info['characterH']);//字符高度
                     generalWidget.otherAttrs[8] = Number(info['width']);//控件宽度
-                    switch(info['align']){
+                    switch (info['align']) {
                         case 'left':
                             generalWidget.otherAttrs[9] = 0
                             break;
@@ -559,17 +544,18 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
+                    console.log('texnum', generalWidget);
                     break;
                 case 'MyRotaryKnob':
-                    generalWidget = new WidgetModel.models['RotaryKnob'](x,y,w,h,info,targetWidget.texList);
+                    generalWidget = new WidgetModel.models['RotaryKnob'](x, y, w, h, info, targetWidget.texList);
                     generalWidget = generalWidget.toObject();
                     var attrs = 'minValue,maxValue';
                     attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr]||0
+                        generalWidget[attr] = info[attr] || 0
                     });
                     generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
-                    generalWidget.otherAttrs[2] = w/2;//旋转中心x
-                    generalWidget.otherAttrs[3] = h/2;//旋转中心y
+                    generalWidget.otherAttrs[2] = w / 2;//旋转中心x
+                    generalWidget.otherAttrs[3] = h / 2;//旋转中心y
                     generalWidget.otherAttrs[4] = 0;//isHited 此位置代表了是否在mouseDown状态
                     generalWidget.otherAttrs[5] = 0 //lastArea
                     generalWidget.otherAttrs[6] = 0 //over是否非法越过原点
@@ -581,46 +567,46 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     break;
                 case 'MySelector':
                     //纹理
-                    var tempSlices=targetWidget.texList[1].slices;
+                    var tempSlices = targetWidget.texList[1].slices;
                     var slicesItem = [];
-                    for(var i=0,il=tempSlices.length;i<il;i++){
+                    for (var i = 0, il = tempSlices.length; i < il; i++) {
                         slicesItem[i] = {};
                         slicesItem[i].color = tempSlices[i].color;
                         slicesItem[i].text = tempSlices[i].text;
                         slicesItem[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
                     }
-                    tempSlices=targetWidget.texList[2].slices;
+                    tempSlices = targetWidget.texList[2].slices;
                     var slicesSelected = [];
-                    for(var i=0,il=tempSlices.length;i<il;i++){
+                    for (var i = 0, il = tempSlices.length; i < il; i++) {
                         slicesSelected[i] = {};
                         slicesSelected[i].color = tempSlices[i].color;
                         slicesSelected[i].text = tempSlices[i].text;
                         slicesSelected[i].img = ResourceService.getResourceFromCache(tempSlices[i].imgSrc);
                     }
-                    var itemFontString=info.itemFont.fontItalic+" "+info.itemFont.fontBold+" "+info.itemFont.fontSize+"px"+" "+'"'+info.itemFont.fontFamily+'"';
-                    var selectorFontString=info.selectorFont.fontItalic+" "+info.selectorFont.fontBold+" "+info.selectorFont.fontSize+"px"+" "+'"'+info.selectorFont.fontFamily+'"';
+                    var itemFontString = info.itemFont.fontItalic + " " + info.itemFont.fontBold + " " + info.itemFont.fontSize + "px" + " " + '"' + info.itemFont.fontFamily + '"';
+                    var selectorFontString = info.selectorFont.fontItalic + " " + info.selectorFont.fontBold + " " + info.selectorFont.fontSize + "px" + " " + '"' + info.selectorFont.fontFamily + '"';
 
                     //生成前景item大图
-                    var selectedImg=jointImageText(info.selectorWidth,info.selectorHeight*info.itemCount,info.selectorHeight,slicesSelected,selectorFontString,info.selectorFont.fontColor);
+                    var selectedImg = jointImageText(info.selectorWidth, info.selectorHeight * info.itemCount, info.selectorHeight, slicesSelected, selectorFontString, info.selectorFont.fontColor);
                     //生成后景item大图
-                    var unSelectedImg=jointImageText(info.itemWidth,info.itemHeight*info.itemCount,info.itemHeight,slicesItem,itemFontString,info.itemFont.fontColor);
+                    var unSelectedImg = jointImageText(info.itemWidth, info.itemHeight * info.itemCount, info.itemHeight, slicesItem, itemFontString, info.itemFont.fontColor);
 
-                    var id1='selector'+(++idStart).toString()+'.png';
-                    var id2='selector'+(++idStart).toString()+'.png';
-                    var file1={
-                        id:id1,
-                        name:'selectedImg',
-                        type:"image/png",
-                        src:selectedImg.src
+                    var id1 = 'selector' + (++idStart).toString() + '.png';
+                    var id2 = 'selector' + (++idStart).toString() + '.png';
+                    var file1 = {
+                        id: id1,
+                        name: 'selectedImg',
+                        type: "image/png",
+                        src: selectedImg.src
                     };
-                    var file2={
-                        id:id2,
-                        name:'unSelectedImg',
-                        type:"image/png",
-                        src:unSelectedImg.src
+                    var file2 = {
+                        id: id2,
+                        name: 'unSelectedImg',
+                        type: "image/png",
+                        src: unSelectedImg.src
                     };
-                    var fcb=function (e, resourceObj) {
-                        if (e.type === 'error'){
+                    var fcb = function (e, resourceObj) {
+                        if (e.type === 'error') {
                             toastr.warning('资源加载失败: ' + resourceObj.name);
                             resourceObj.complete = false;
                         } else {
@@ -628,18 +614,18 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         }
 
                     }.bind(this);
-                    if(!isFileInGlobalResources('selector001')){
+                    if (!isFileInGlobalResources('selector001')) {
                         ResourceService.cacheFile(file1, globalResources, null, fcb);
                     }
-                    if(!isFileInGlobalResources('selector002')){
+                    if (!isFileInGlobalResources('selector002')) {
                         ResourceService.cacheFile(file2, globalResources, null, fcb);
                     }
-                    var newSelectedImgSrc='/'+id1;
-                    changeSrcInGlobalResources(id1,newSelectedImgSrc);
-                    var newUnSelectedImgSrc='/'+id2;
-                    changeSrcInGlobalResources(id2,newUnSelectedImgSrc);
+                    var newSelectedImgSrc = '/' + id1;
+                    changeSrcInGlobalResources(id1, newSelectedImgSrc);
+                    var newUnSelectedImgSrc = '/' + id2;
+                    changeSrcInGlobalResources(id2, newUnSelectedImgSrc);
                     //实例化一个选择器控件
-                    generalWidget = new WidgetModel.models['Selector'](x,y,w,h,info,targetWidget.texList[0].slices[0],newUnSelectedImgSrc,newSelectedImgSrc,targetWidget.texList[3].slices[0]);
+                    generalWidget = new WidgetModel.models['Selector'](x, y, w, h, info, targetWidget.texList[0].slices[0], newUnSelectedImgSrc, newSelectedImgSrc, targetWidget.texList[3].slices[0]);
                     generalWidget = generalWidget.toObject();
 
                     // generalWidget.otherAttrs[0] = Number(info['noInit'] != 'NO');//
@@ -667,11 +653,48 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     break;
+
+                case 'MyTexTime':
+                    generalWidget = new WidgetModel.models['TexTime'](x,y,w,h,info,texList[0].slices,info);
+                    console.log('generalWidget',generalWidget);
+                    generalWidget = generalWidget.toObject();
+                    var attrs = 'characterW,characterH'
+                    attrs.split(',').forEach(function (attr) {
+                        generalWidget[attr] = info[attr] || 0
+                    })
+                    switch (info['dateTimeModeId']) {
+                        //时分模式
+                        case '0':
+                            LayerNum = 5;
+                            break;
+                            //时分秒模式
+                        case '1':
+                            LayerNum = 8;
+                            break;
+                            //减号日期
+                        case '2':
+                            LayerNum = 10;
+                            break;
+                            //斜杠日期
+                        case '3':
+                            LayerNum = 10;
+                            break;
+                            //时分秒模式
+                        default:
+                            LayerNum = 8;
+                    }
+                    generalWidget.generalType = 'TexTime';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);         //clonedeep函数封装了深拷贝的逻辑 raw(未处理的控件)
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    //console.log('TexTime', generalWidget);
+                    break;
+
                 case 'MyDateTime':
                     var fontStyle = {},
                         baseLayerNum = 0;
-                    for(var key in info){
-                        switch (key){
+                    for (var key in info) {
+                        switch (key) {
                             case "fontItalic":
                                 fontStyle['font-style'] = info[key];
                                 break;
@@ -689,18 +712,18 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                                 break;
                         }
                     }
-                    generalWidget = new WidgetModel.models['DateTime'](x,y,w,h,targetWidget.info,fontStyle,targetWidget.texList[0].slices[0]);
+                    generalWidget = new WidgetModel.models['DateTime'](x, y, w, h, targetWidget.info, fontStyle, targetWidget.texList[0].slices[0]);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'DateTime';
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     generalWidget.mode = targetWidget.info.dateTimeModeId;
-                    if(generalWidget.mode=='0'||generalWidget.mode=='1'){
-                        generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量时分秒';
-                    }else{
-                        generalWidget.tag = _.cloneDeep(rawWidget.tag)||'时钟变量年月日';
+                    if (generalWidget.mode == '0' || generalWidget.mode == '1') {
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量时分秒';
+                    } else {
+                        generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量年月日';
                     }
-                    switch (Number(targetWidget.info.dateTimeModeId)){
+                    switch (Number(targetWidget.info.dateTimeModeId)) {
                         case 0:
                             baseLayerNum = 8;
                             break;
@@ -717,14 +740,29 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     }
                     generalWidget.otherAttrs[0] = baseLayerNum;//除去高亮，font layer的数量
                     generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
-                break;
+                    break;
 
                 default:
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget
             }
-            generalWidget.id = subLayerIdx+'.'+widgetIdx;
+            generalWidget.id = subLayerIdx + '.' + widgetIdx;
             generalWidget.type = 'widget';
+        } else {
+            //default Button
+            var info = targetWidget.info;
+            var x = info.left;
+            var y = info.top;
+            var w = info.width;
+            var h = info.height;
+            generalWidget = new WidgetModel.models['Button'](x, y, w, h, 'button', null, targetWidget.texList[0].slices)
+            generalWidget = generalWidget.toObject();
+
+            generalWidget.generalType = 'Button'
+            generalWidget.id = subLayerIdx + '.' + widgetIdx;
+            generalWidget.type = 'widget';
+            generalWidget.tag = rawWidget.tag;
+            generalWidget.subType = 'general';
         }
         return generalWidget;
     }
@@ -755,14 +793,12 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      */
     function transSysWidgets(targetProject){
         var colorPicker = GenColorPicker(targetProject.size.width,targetProject.size.height);
-        var datePicker = GenDatePicker();
+        var texDatePicker = GenTexDatePicker();
 
         targetProject.systemWidgets = [];
-        console.log('colorPicker',colorPicker);
-        console.log('datePicker',datePicker);
         //push system widgets
         targetProject.systemWidgets.push(colorPicker);
-        targetProject.systemWidgets.push(datePicker);
+        targetProject.systemWidgets.push(texDatePicker);
     }
 
     /**
@@ -796,7 +832,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
     /**
      * 生成日期选择器
-     * Todo:重构日期选择器，采用方案二，统一使用图片layer，排列图片位置
      */
     function GenDatePicker(){
         var datePickerDate = TemplateProvider.getSystemDatePicker();
@@ -813,7 +848,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         var datePicker = new WidgetModel.models.DatePicker(info.left,info.top,info.width,info.height,info,slices);
 
         datePicker = datePicker.toObject();
-        datePicker.generalType = 'DatePicker';
+        datePicker.generalType = Type.SysDatePicker;
         datePicker.type = 'widget';
         datePicker.subType = 'general';
 
@@ -832,8 +867,40 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         datePicker.otherAttrs[11] = 31;                       //此月日数，默认一月31
         datePicker.otherAttrs[12] = 1;                        //此月一号是星期几，默认2018一月一号星期一
 
-        console.log('datePicker',datePicker);
         return datePicker;
+    }
+
+    /**
+     * 生成图层日期选择器
+     * Todo:commands
+     */
+    function GenTexDatePicker(){
+        var texDatePickerDate = TemplateProvider.getSystemTexDatePicker();
+        var info = texDatePickerDate.info;
+        var texList = texDatePickerDate.texList||[];
+
+        var texDatePicker = new WidgetModel.models.TexDatePicker(info.left,info.top,info.width,info.height,info,texList);
+        texDatePicker = texDatePicker.toObject();
+        texDatePicker.generalType = Type.SysTexDatePicker;
+        texDatePicker.type = 'widget';
+        texDatePicker.subType = 'general';
+
+        //other attrs
+        texDatePicker.otherAttrs[0] = 2018;  //year
+        texDatePicker.otherAttrs[1] = 1;     //month
+        texDatePicker.otherAttrs[2] = 7 ;     //日图层在所有图层中的起始坐标
+        texDatePicker.otherAttrs[3] = 31;    //所有的日图层个数。
+        texDatePicker.otherAttrs[4] = info.buttonSize;  //按钮大小
+        texDatePicker.otherAttrs[5] = info.paddingX;             //日图层区域的起始x坐标,用于计算日图层区域范围
+        texDatePicker.otherAttrs[6] = info.paddingX+info.dayW*7; //日图层区域的终止x坐标
+        texDatePicker.otherAttrs[7] = info.paddingY;             //日图层区域的起始y坐标
+        texDatePicker.otherAttrs[8] = info.paddingY+info.dayH*6; //日图层区域的终止y坐标
+        texDatePicker.otherAttrs[9] = info.dayW;
+        texDatePicker.otherAttrs[10] = info.dayH;
+        texDatePicker.otherAttrs[11] = 31;                       //此月日数，默认一月31
+        texDatePicker.otherAttrs[12] = 1;                        //此月一号是星期几，默认2018一月一号星期一
+
+        return texDatePicker;
     }
 
     /**
