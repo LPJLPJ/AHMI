@@ -53158,7 +53158,7 @@ module.exports = React.createClass({
                     }.bind(this));
 
                     break;
-                case 'Alpha':
+                case 'FADE-IN_FADE-OUT':
                     options.pageAnimate = true;
                     page.alpha = 0;
                     page.animating = true;
@@ -53657,7 +53657,7 @@ module.exports = React.createClass({
             // }
             var transition = canvasData.transition;
             var method = transition && transition.name;
-            method = 'SWIPE_H';
+            // method = 'SWIPE_H'
             if (method == 'SWIPE_H') {
                 if (!subCanvas.translate) {
                     //init
@@ -53716,7 +53716,7 @@ module.exports = React.createClass({
                 if (subCanvas.animating) {
 
                     var transitionMethod = canvasData.transition && canvasData.transition.name;
-                    transitionMethod = 'SWIPE_H';
+                    // transitionMethod = 'SWIPE_H'
                     switch (transitionMethod) {
                         case 'SWIPE_H':
                             for (var i = 0; i < canvasData.subCanvasList.length; i++) {
@@ -53831,7 +53831,7 @@ module.exports = React.createClass({
         var offctx = this.offctx;
         var method = transition && transition.name;
 
-        method = 'SWIPE_H';
+        // method = 'SWIPE_H'
         if (updateOnly) {
             return this.drawSingleSubCanvas(subCanvas, x, y, w, h, options, updateOnly);
         }
@@ -54007,6 +54007,42 @@ module.exports = React.createClass({
                             // offctx.restore()
                             subCanvas.translate = null;
                             unloadSC.translate = null;
+                            subCanvas.animating = false;
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
+                            subCanvas.curSubCanvasImg = null;
+                            this.handleTargetAction(subCanvas, 'Load');
+                            this.draw();
+                        }.bind(this));
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'FADE-IN_FADE-OUT':
+                        subCanvas.alpha = 0;
+
+                        subCanvas.animating = true;
+                        AnimationManager.step(0, 0, 1.0, 0, duration, frames, easing, function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+
+
+                            if (!newCopyFlag) {
+
+                                subCanvas.animating = false;
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                newCopyFlag = true;
+                            }
+
+                            subCanvas.animating = true;
+
+                            subCanvas.alpha = deltas.curX;
+                            unloadSC && (unloadSC.alpha = 1.0 - subCanvas.alpha);
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            // this.draw();
+                            // offctx.restore();
+                        }.bind(this), function () {
+                            // offctx.restore()
+                            subCanvas.alpha = 1.0;
+                            unloadSC.alpha = 1.0;
                             subCanvas.animating = false;
                             subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
                             subCanvas.curSubCanvasImg = null;
@@ -54208,6 +54244,9 @@ module.exports = React.createClass({
 
         if (subCanvas.animating) {
             // console.log('sc animating')
+            if (subCanvas.alpha !== undefined) {
+                offctx.globalAlpha = subCanvas.alpha;
+            }
             if (subCanvas.curSubCanvasImg) {
                 offctx.drawImage(subCanvas.curSubCanvasImg, x, y, w, h);
             }
@@ -57421,7 +57460,8 @@ module.exports = React.createClass({
         //transition
         var curTransition = canvas.transition;
         var method = curTransition && curTransition.name;
-        method = 'SWIPE_H';
+        // method = 'SWIPE_H'
+
 
         //scroll
 
@@ -57748,7 +57788,7 @@ module.exports = React.createClass({
             }.bind(this), this.fps);
         } else {
             var method = canvas.transition && canvas.transition.name;
-            method = 'SWIPE_H';
+            // method = 'SWIPE_H'
             var elem = subCanvas;
             switch (method) {
                 case 'SWIPE_H':
