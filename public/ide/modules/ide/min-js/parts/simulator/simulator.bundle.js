@@ -52189,6 +52189,9 @@ module.exports = React.createClass({
         WidgetExecutor.setTag = function (tag, value) {
             // console.log('aaa',tag,value)
             this.setTagByName(tag, value);
+            this.draw(null, {
+                updatedTagName: tag
+            });
         }.bind(this);
         WidgetExecutor.getTag = function (tag) {
             return this.getValueByTagName(tag);
@@ -52199,8 +52202,17 @@ module.exports = React.createClass({
         if (!widget.initialzed) {
             widget.initialzed = true;
             this.interpretGeneralCommand(widget, 'onInitialize');
+            this.interpretGeneralCommand(widget, 'onTagChange');
+        } else {
+
+            if (options && widget.tag !== undefined) {
+                if (options.updatedTagName !== undefined && options.updatedTagName === widget.tag || options.updatedTagNames && this.isIn(widget.tag, options.updatedTagNames)) {
+                    //change
+                    this.handleTargetAction(widget, 'TagChange');
+                    this.interpretGeneralCommand(widget, 'onTagChange');
+                }
+            }
         }
-        this.interpretGeneralCommand(widget, 'onTagChange');
     },
     drawGeneralButton: function drawGeneralButton(curX, curY, widget, options, cb) {},
     paintGeneralWidget: function paintGeneralWidget(curX, curY, widget, options, cb, ctx) {
@@ -57580,7 +57592,7 @@ module.exports = React.createClass({
                 break;
             case 'general':
                 this.interpretGeneralCommand(widget, 'onMouseMove');
-                needRedraw = true;
+                needRedraw = false;
                 break;
 
         }
@@ -57637,7 +57649,7 @@ module.exports = React.createClass({
             // case 'MyInputKeyboard':
             case 'general':
                 this.interpretGeneralCommand(widget, 'onMouseDown');
-                needRedraw = true;
+                needRedraw = false;
                 break;
 
             default:
@@ -57811,7 +57823,7 @@ module.exports = React.createClass({
                                     this.startSwipeAnimation(canvas, subCanvas);
                                 } else {
                                     this.setTagByTag(targetTag, pos);
-                                    this.draw();
+                                    this.draw(null, { updatedTagName: canvas.tag });
                                 }
                             } else {
                                 this.startSwipeAnimation(canvas, subCanvas);
@@ -57848,7 +57860,7 @@ module.exports = React.createClass({
                                     this.startSwipeAnimation(canvas, subCanvas, true);
                                 } else {
                                     this.setTagByTag(targetTag, pos);
-                                    this.draw();
+                                    this.draw(null, { updatedTagName: canvas.tag });
                                 }
                             } else {
                                 this.startSwipeAnimation(canvas, subCanvas, true);
@@ -58036,7 +58048,7 @@ module.exports = React.createClass({
                         break;
                     case 'general':
                         this.interpretGeneralCommand(elem, 'onMouseUp');
-                        needRedraw = true;
+                        needRedraw = false;
                         break;
                 }
 
