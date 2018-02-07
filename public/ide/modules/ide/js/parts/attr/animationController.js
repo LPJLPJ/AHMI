@@ -1,98 +1,98 @@
 /**
  * Created by lixiang on 2016/10/19.
  */
-ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','AnimationService','UserTypeService',function($scope,ProjectService,Type,$uibModal,AnimationService,UserTypeService){
+ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal', 'AnimationService', 'UserTypeService', function ($scope, ProjectService, Type, $uibModal, AnimationService, UserTypeService) {
     //工程接收完毕，初始化动画控制器
-    $scope.$on('GlobalProjectReceived',function(){
+    $scope.$on('GlobalProjectReceived', function () {
         initUserInterface();
         initProject();
     });
 
-    function initUserInterface(){
+    function initUserInterface() {
         readAnimationInfo();
         setAnimationAuthor();
-        $scope.status={
-            collapsed:false,
+        $scope.status = {
+            collapsed: false,
         };
-        $scope.collapse=function(event){
-            $scope.status.collapsed=!$scope.status.collapsed;
+        $scope.collapse = function (event) {
+            $scope.status.collapsed = !$scope.status.collapsed;
         }
     }
 
-    function setAnimationAuthor(){
-        var animationsDisabled=UserTypeService.getAnimationAuthor();
-        var animationBtn=document.getElementById('addAnimationBtn');
-        animationBtn.disabled=animationsDisabled;
+    function setAnimationAuthor() {
+        var animationsDisabled = UserTypeService.getAnimationAuthor();
+        var animationBtn = document.getElementById('addAnimationBtn');
+        animationBtn.disabled = animationsDisabled;
     }
 
     //读取当前选中对象的动画信息
-    function readAnimationInfo(){
-        if(!ProjectService.getCurrentSelectObject()){
+    function readAnimationInfo() {
+        if (!ProjectService.getCurrentSelectObject()) {
             console.warn('空');
             return;
         }
         var curLevel = ProjectService.getCurrentSelectObject().level;
-        $scope.animations = _.cloneDeep(curLevel.animations)||[];
-        switch (curLevel.type){
+        $scope.animations = _.cloneDeep(curLevel.animations) || [];
+        switch (curLevel.type) {
             case 'MyLayer':
-                $scope.showAnimationPanel=true;
+                $scope.showAnimationPanel = true;
                 break;
             default:
-                $scope.showAnimationPanel=false;
+                $scope.showAnimationPanel = false;
                 break;
         }
     }
 
-    function initProject(){
-        $scope.$on('AttributeChanged',function(){
+    function initProject() {
+        $scope.$on('AttributeChanged', function () {
             readAnimationInfo();
         });
 
-        $scope.deleteAnimation=function(index){
-            if(index>=0&&index<$scope.animations.length){
-                $scope.animations.splice(index,1);
+        $scope.deleteAnimation = function (index) {
+            if (index >= 0 && index < $scope.animations.length) {
+                $scope.animations.splice(index, 1);
                 ProjectService.ChangeAttributeAnimation(_.cloneDeep($scope.animations));
             }
         };
 
-        $scope.openPanel=function(index){
-            $scope.selectIdx=index;
+        $scope.openPanel = function (index) {
+            $scope.selectIdx = index;
             var targetAnimation;
-            if(index==-1){
+            if (index == -1) {
                 targetAnimation = AnimationService.getNewAnimation();
-                targetAnimation.newAnimation=true;
-            }else if(index>=0&&index<$scope.animations.length){
-                targetAnimation=_.cloneDeep($scope.animations[index]);
-                targetAnimation.newAnimation=false;
+                targetAnimation.newAnimation = true;
+            } else if (index >= 0 && index < $scope.animations.length) {
+                targetAnimation = _.cloneDeep($scope.animations[index]);
+                targetAnimation.newAnimation = false;
             }
 
-            var animationNames=[];
-            for(var i=0;i<$scope.animations.length;i++){
+            var animationNames = [];
+            for (var i = 0; i < $scope.animations.length; i++) {
                 animationNames.push($scope.animations[i].title);
             }
 
             var modalInstance = $uibModal.open({
-                animation:true,
-                templateUrl:'animationPanelModal.html',
-                controller:'AnimationInstanceCtrl',
-                size:'middle',
-                resolve:{
-                    animation:function(){
+                animation: true,
+                templateUrl: 'animationPanelModal.html',
+                controller: 'AnimationInstanceCtrl',
+                size: 'lg',
+                resolve: {
+                    animation: function () {
                         return targetAnimation;
                     },
-                    animationNames: function(){
+                    animationNames: function () {
                         return animationNames;
                     }
                 }
             });
 
-            modalInstance.result.then(function(newAnimation){
-                if($scope.selectIdx==-1){
+            modalInstance.result.then(function (newAnimation) {
+                if ($scope.selectIdx == -1) {
                     $scope.animations.push(newAnimation);
                     ProjectService.ChangeAttributeAnimation(_.cloneDeep($scope.animations));
-                }else if($scope.selectIdx>=0&&$scope.selectIdx<$scope.animations.length){
-                    if(index>=0&&index<$scope.animations.length){
-                        $scope.animations[index]=newAnimation;
+                } else if ($scope.selectIdx >= 0 && $scope.selectIdx < $scope.animations.length) {
+                    if (index >= 0 && index < $scope.animations.length) {
+                        $scope.animations[index] = newAnimation;
                         ProjectService.ChangeAttributeAnimation(_.cloneDeep($scope.animations));
                     }
                 }
@@ -102,26 +102,26 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
 }])
 
-    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','ProjectService','animation','animationNames',function($scope,$uibModalInstance,ProjectService,animation,animationNames){
-        $scope.animation=animation;
-        $scope.animationNames=animationNames;
+    .controller('AnimationInstanceCtrl', ['$scope', '$uibModalInstance', 'ProjectService', 'animation', 'animationNames', function ($scope, $uibModalInstance, ProjectService, animation, animationNames) {
+        $scope.animation = animation;
+        $scope.animationNames = animationNames;
         $scope.checkDuration = function (e) {
-            if($scope.animation.duration<0){
+            if ($scope.animation.duration < 0) {
                 toastr.error('持续时间必须大于0s');
-                $scope.animation.duration=0;
-            }else if($scope.animation.duration>5000){
+                $scope.animation.duration = 0;
+            } else if ($scope.animation.duration > 5000) {
                 toastr.error('持续时间不能大于5s');
-                $scope.animation.duration=5000;
+                $scope.animation.duration = 5000;
             }
         };
         $scope.confirm = function (th) {
-            if(th.animation.newAnimation===false){
-                if (th.animation.title===restoreValue){
+            if (th.animation.newAnimation === false) {
+                if (th.animation.title === restoreValue) {
                     $uibModalInstance.close($scope.animation);
                     return;
                 }
             }
-            if(validation&&duplicate(th)){
+            if (validation && duplicate(th)) {
                 $uibModalInstance.close($scope.animation);
             }
 
@@ -131,39 +131,40 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             $uibModalInstance.dismiss();
         };
 
-        var restoreValue=$scope.animation.title;
-        var validation=true;
+        var restoreValue = $scope.animation.title;
+        var validation = true;
         //保存旧值
-        $scope.store=function(th){
-            restoreValue=th.animation.title;
+        $scope.store = function (th) {
+            restoreValue = th.animation.title;
 
         };
 
         //恢复旧值
         $scope.restore = function (th) {
-            th.animation.title=restoreValue;
+            th.animation.title = restoreValue;
         };
 
         //验证新值
-        $scope.enterName=function(th){
+        $scope.enterName = function (th) {
             //判断是否和初始一样
-            if (th.animation.title===restoreValue){
+            if (th.animation.title === restoreValue) {
                 return;
             }
             //输入有效性检测
-            validation=ProjectService.inputValidate(th.animation.title);
-            if(!validation||!duplicate(th)){
+            validation = ProjectService.inputValidate(th.animation.title);
+            if (!validation || !duplicate(th)) {
                 $scope.restore(th);
                 return;
             }
             toastr.info('修改成功');
-            restoreValue=th.animation.title;
+            restoreValue = th.animation.title;
         };
+
         //验证重名
-        function duplicate(th){
-            var tempArray=$scope.animationNames;
-            for(var i=0;i<tempArray.length;i++){
-                if(th.animation.title===tempArray[i]){
+        function duplicate(th) {
+            var tempArray = $scope.animationNames;
+            for (var i = 0; i < tempArray.length; i++) {
+                if (th.animation.title === tempArray[i]) {
                     toastr.info('重复的动画名');
                     return false;
                 }
@@ -172,10 +173,39 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         }
 
         //验证enter键
-        $scope.enterPress=function(e,th){
-            if (e.keyCode==13){
+        $scope.enterPress = function (e, th) {
+            if (e.keyCode == 13) {
                 $scope.enterName(th);
             }
         };
 
-}]);
+        //switch button
+        $scope.switchButtons = {
+            startX: 'on',
+            startY: 'on',
+        }
+
+    }]);
+
+ide.directive('mySwitchButton', function () {
+    return {
+        restrict: "EA",
+        template: "<div id='btn' ng-click='clickHandler()' class='switch-button switch-button-close'><span class='switch-flag'></span></div>",
+        scope: {
+            status: '=status',
+        },
+        replace: true,
+        link: function ($scope, $element) {
+            $scope.clickHandler = function () {
+                if ($scope.status === 'on') {
+                    $scope.status = 'off';
+                    $element.addClass('switch-button-close')
+                } else if ($scope.status === 'off') {
+                    $scope.status = 'on';
+                    $element.removeClass('switch-button-close')
+                }
+            }
+
+        }
+    }
+});

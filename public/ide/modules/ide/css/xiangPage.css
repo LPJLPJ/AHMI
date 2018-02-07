@@ -94,3 +94,82 @@ div.wrapper-custom{
 .jumbotron h2{
     text-align: center;
 }
+
+/*switch button edit in 2018/2/5*/
+.switch-button{
+    /*margin:0 auto;*/
+    position: relative;
+    background: #008CEE;
+    width: 38px;
+    height: 20px;
+    cursor: pointer;
+
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+
+    -webkit-transition:background-color 0.5s ease-in-out 0s;
+    -moz-transition:background-color 0.5s ease-in-out 0s;
+    transition:background-color 0.5s ease-in-out 0s;
+
+    -webkit-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    -moz-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+
+}
+
+.switch-button .switch-flag{
+    display: block;
+    position: absolute;
+    width:20px;
+    height: 20px;
+    left:18px;
+    background: #fff;
+
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+
+    -webkit-transition:left 0.2s ease-in-out 0s;
+    -moz-transition:left 0.2s ease-in-out 0s;
+    transition: left 0.2s ease-in-out 0s;
+
+    -webkit-box-shadow:1px 0 1px 1px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:1px 0 1px 1px rgba(0,0,0,0.3);
+    box-shadow: 1px 0 1px 1px rgba(0,0,0,0.3);
+
+}
+
+.switch-button-close{
+    background:#eee;
+}
+
+.switch-button-close .switch-flag{
+    left:0px;
+}
+
+/*for animation modal panel*/
+.lx-modal-body{
+    font-size: 12px;
+    font-weight:bold;
+}
+.lx-modal-body .row{
+    margin-bottom: 10px;
+}
+.lx-modal-body .col-md-1{
+    padding:0px 5px 0px 15px
+}
+.lx-modal-body input{
+    height: 30px;
+    width: 85%;
+    display: inline-block;
+}
+.lx-modal-title{
+    margin-top: 5px;
+}
+.lx-margin-top-5{
+    margin-top:5px;
+}
+.lx-margin-bottom-10{
+    margin-bottom: 10px;
+}
