@@ -3213,7 +3213,7 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.duration">
-                                    <span style="margin-left: 3px">ms</span>
+                                    <span style="margin-left: 2px;font-weight:100">ms</span>
                                 </div>
                             </div>
 
@@ -3877,62 +3877,3 @@
 <script type="text/javascript" src="../../public/general/js/versionTag.js"></script>
 </body>
 </html>
-
-
-<!--old animation set panel-->
-<!--<script type="text/ng-template" id="animationPanelModal.html">-->
-    <!--<div class="modal-header">-->
-        <!--<h3 class="modal-title">动画配置</h3>-->
-    <!--</div>-->
-    <!--<div class="modal-body dengModel-body">-->
-        <!--<div class="modal-title form-group modelPart">-->
-            <!--<span class="my-attr-title">动画名称</span>-->
-
-            <!--<input class="width150px form-control time-input"-->
-                   <!--type="text"-->
-                   <!--ng-model="animation.title"-->
-                   <!--ng-focus="store(this)"-->
-                   <!--ng-blur="enterName(this)"-->
-                   <!--ng-keypress="enterPress($event,this)"><br>-->
-            <!--<span class="my-attr-title" >动画序号</span>-->
-            <!--<input class="width150px form-control time-input" type="text" ng-model="animation.id"><br>-->
-            <!--<span>动画类型</span>-->
-            <!--<table>-->
-                <!--<tr>-->
-                    <!--<td><span class="move-and-zoom">平移</span></td><td><span class="move-and-zoom">缩放</span></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td><span class="object-position">起始位置</span></td><td><span class="object-position">起始大小</span></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td><span class="margin-left40px">X:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.srcPos.x"></td>-->
-                    <!--<td><span class="margin-left40px">W:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.srcScale.x"></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td><span class="margin-left40px">Y:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.srcPos.y"></td>-->
-                    <!--<td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.srcScale.y"></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td><span class="object-position">目标位置</span></td><td><span class="object-position">目标大小</span></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td><span class="margin-left40px">X:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.dstPos.x"></td>-->
-                    <!--<td><span class="margin-left40px">W:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.x"></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td><span class="margin-left40px">Y:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.dstPos.y"></td>-->
-                    <!--<td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.y"></td>-->
-                <!--</tr>-->
-            <!--</table>-->
-        <!--</div>-->
-
-        <!--<div class="modal-title form-group modelPart">-->
-            <!--<span>持续时间</span>-->
-            <!--<input class="width150px form-control time-input" type="number" ng-model="animation.duration" ng-blur="checkDuration()">ms-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div class="modal-footer">-->
-        <!--<button class="btn btn-primary" type="button" ng-click="confirm(this)">保存</button>-->
-        <!--<button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>-->
-    <!--</div>-->
-<!--</script>-->
