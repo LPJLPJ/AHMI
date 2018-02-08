@@ -246,7 +246,7 @@ var defaultTemplate ={
             type:"image/png"
         }
 
-	],	
+	]
 	
 }
 

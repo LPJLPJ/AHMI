@@ -357,6 +357,90 @@ ideServices
             },
             defaultButtonGroup={};
 
+        var defaultResources = []
+
+
+
+        //注册使用到的资源，主要是图片
+        function registerRes(id,name,type,src) {
+            if (id === undefined){
+                id = name
+            }
+            var curRes = {
+                id:id,
+                name:name,
+                type:type||'image/png',
+                src : src||''
+            }
+            defaultResources.push(curRes)
+        }
+
+        function registerResByImgSrc(imgSrc) {
+            if (imgSrc && imgSrc !=''){
+                var pars = imgSrc.split('/')
+                var name = pars[pars.length-1]
+                var id = name
+                var type
+                var nameParts = name.split('.')
+                switch (nameParts[nameParts.length-1].toLowerCase()){
+                    case 'png':
+                        type = 'image/png'
+                        break
+                    case 'jpg':
+                    case 'jpeg':
+                        type = 'image/jpeg'
+                        break
+                    case 'bmp':
+                        type = 'image/bmp'
+                        break
+                    case 'ttf':
+                        type = 'font/ttf'
+                        break
+                    case 'woff':
+                        type = 'font/woff'
+                        break
+                    default:
+                        type = null
+                }
+                if (type){
+                    //valid
+                    registerRes(id,name,type,imgSrc)
+                }
+            }
+        }
+
+        this.initDefaultResources = function () {
+            var sysResList = [
+                //colorPicker
+                '/public/images/colorPicker/slide.png',
+                '/public/images/colorPicker/bg.png',
+                '/public/images/colorPicker/pickerIndicator.png',
+                '/public/images/colorPicker/colorpickerAlphaBg.png',
+                //datePicker
+                '/public/images/datePicker/background.png',
+                '/public/images/datePicker/highlight.png',
+                '/public/images/datePicker/itemBack.png',
+                //texDatePicker
+                '/public/images/texDatePicker/highlight.png',
+                '/public/images/texDatePicker/background1.png'
+
+            ]
+
+            for(var i=1;i<32;i++){
+                sysResList.push('/public/images/texDatePicker/day'+i+'.png')
+            }
+            for(i=0;i<sysResList.length;i++){
+                registerResByImgSrc(sysResList[i])
+
+            }
+            // console.log(sysResList)
+
+        }
+
+        this.getDefaultResources = function () {
+            return defaultResources
+        }
+
         //设置当前工程尺寸
         this.setProjectSize = function(currentSize){
             if(currentSize&&currentSize.height&&currentSize.width){
@@ -386,6 +470,8 @@ ideServices
                 defaultSlideBlock=widget.defaultSlideBlock
             }
         };
+
+
 
         // this.saveProjectFromGlobal= function (_project) {
         //     project=_project;
@@ -1229,14 +1315,6 @@ ideServices
                         color:'rgba(0,0,0,0)',
                         imgSrc:'/public/images/colorPicker/pickerIndicator.png',
                         name:'pickerIndicator'
-                    }]
-                },
-                {
-                    currentSliceIdx:4,
-                    name:'高亮',
-                    slices:[{
-                        color:'rgba(0,0,0,0)',
-                        imgSrc:'/public/images/datePicker/highlight.png'
                     }]
                 }
             ];

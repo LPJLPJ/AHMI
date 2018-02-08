@@ -55,7 +55,7 @@ ideServices.
             _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope||_typeStr==this.MyImage||
             _typeStr==this.MySwitch||_typeStr==this.MyRotateImg||_typeStr==this.MyDateTime||_typeStr==this.MyScriptTrigger||_typeStr==this.MySlideBlock||
             _typeStr==this.MyVideo||_typeStr==this.MyAnimation||_typeStr==this.MyTexNum||_typeStr==this.MySelector||_typeStr==this.MyRotaryKnob||
-            _typeStr==this.General||_typeStr==this.SysDatePicker||_typeStr==this.SysTexDatePicker){
+            _typeStr==this.General||_typeStr==this.MyTexTime||_typeStr==this.SysDatePicker||_typeStr==this.SysTexDatePicker){
             return true;
         }
         return false

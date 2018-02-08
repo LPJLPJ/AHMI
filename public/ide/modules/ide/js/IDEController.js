@@ -292,7 +292,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
             window.globalResources = ResourceService.getGlobalResources()
 
-            cacheResources(globalProject.resourceList,function () {
+            cacheResources(globalProject.resourceList.concat(TemplateProvider.getDefaultResources()),function () {
                 TemplateProvider.setProjectSize(globalProject.currentSize);
                 syncServices(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -319,13 +319,13 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             }
             globalProject.maxSize = data.maxSize;
 
-            TemplateProvider.setProjectSize(globalProject.currentSize);
-            syncServices(globalProject);
-            ProjectService.saveProjectFromGlobal(globalProject, function () {
-
-                $scope.$broadcast('GlobalProjectReceived');
-
-            });
+            cacheResources(TemplateProvider.getDefaultResources(),function () {
+                TemplateProvider.setProjectSize(globalProject.currentSize);
+                syncServices(globalProject);
+                ProjectService.saveProjectFromGlobal(globalProject, function () {
+                    $scope.$broadcast('GlobalProjectReceived');
+                });
+            })
         }
     }
 
@@ -381,13 +381,14 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         globalProject.maxSize = options.maxSize||100*1024*1024;
         console.log('globalProject',globalProject);
 
+        cacheResources(TemplateProvider.getDefaultResources(),function () {
+            TemplateProvider.setProjectSize(globalProject.currentSize);
+            syncServices(globalProject);
+            ProjectService.saveProjectFromGlobal(globalProject, function () {
+                $scope.$broadcast('GlobalProjectReceived');
+            });
+        })
 
-        TemplateProvider.setProjectSize(globalProject.currentSize);
-        ProjectService.saveProjectFromGlobal(globalProject, function () {
-            syncServices(globalProject)
-            $scope.$broadcast('GlobalProjectReceived');
-
-        });
 
     }
 
@@ -405,6 +406,8 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         }
         //window.localStorage.setItem('projectId',id);
         ResourceService.setResourceUrl('/project/'+id+'/resources/')
+
+        TemplateProvider.initDefaultResources()
 
         $http({
             method:'GET',
