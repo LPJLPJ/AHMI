@@ -1,61 +1,86 @@
 /**
  * Created by lixiang on 2016/10/19.
  */
-ideServices.service('AnimationService',[function(){
+ideServices.service('AnimationService', [function () {
     //Animation 构造函数
-    function Animation(title,id,srcX,srcY,srcScaleX,srcScaleY,xTranslate,yTranslate,xScale,yScale,duration){
-        this.title=title;
-        this.id=id;
-        this.animationAttrs={
-            translate:{
-                srcPos:{
-                    x:srcX,
-                    y:srcY
+    function Animation(title, id, srcX, srcY, srcScaleX, srcScaleY, dstX, dstY, dstXScale, dstYScale, duration) {
+        this.title = title;
+        this.id = id;
+        this.animationAttrs = {
+            translate: {
+                srcPos: {
+                    x: {
+                        value: srcX,
+                        tag: ''
+                    },
+                    y: {
+                        value: srcY,
+                        tag: ''
+                    }
                 },
-                dstPos:{
-                    x:xTranslate,
-                    y:yTranslate
+                dstPos: {
+                    x: {
+                        value: dstX,
+                        tag: ''
+                    },
+                    y: {
+                        value: dstY,
+                        tag: ''
+                    }
                 }
             },
-            scale:{
-                srcScale:{
-                    x:srcScaleX,
-                    y:srcScaleY
+            scale: {
+                srcScale: {
+                    x: {
+                        value: srcScaleX,
+                        tag: ''
+                    },
+                    y: {
+                        value: srcScaleY,
+                        tag: ''
+                    }
                 },
-                dstScale:{
-                    x:xScale,
-                    y:yScale
+                dstScale: {
+                    x: {
+                        value: dstXScale,
+                        tag: ''
+                    },
+                    y: {
+                        value: dstYScale,
+                        tag: ''
+                    }
                 }
             }
         };
-        this.duration=duration;
+        this.duration = duration;
+        this.timingFun = '';
     }
 
     //过渡动画构造函数
-    function Transition(name,show,duration){
-        this.name=name||'';
-        this.show=show||'';
-        this.duration=duration;
+    function Transition(name, show, duration) {
+        this.name = name || '';
+        this.show = show || '';
+        this.duration = duration;
     }
 
-    var noTransition=new Transition('NO_TRANSITION','无动画',0);
-    var moveLR=new Transition('MOVE_LR','从左进入',1);
-    var moveRL=new Transition('MOVE_RL','从右进入',1);
-    var scale=new Transition('SCALE','缩放',1);
-    var transition=[noTransition,moveLR,moveRL,scale];
+    var noTransition = new Transition('NO_TRANSITION', '无动画', 0);
+    var moveLR = new Transition('MOVE_LR', '从左进入', 1);
+    var moveRL = new Transition('MOVE_RL', '从右进入', 1);
+    var scale = new Transition('SCALE', '缩放', 1);
+    var transition = [noTransition, moveLR, moveRL, scale];
 
 
-    this.getNewAnimation=function(){
-        return new Animation('动画',null,null,null,1,1,0,0,1,1,0);
+    this.getNewAnimation = function () {
+        return new Animation('动画', null, 0, 0, 1, 1, 0, 0, 1, 1, 1000);
     };
 
 
-    this.getAllTransititon=function(){
+    this.getAllTransititon = function () {
         return _.cloneDeep(transition);
     };
 
-    this.getDefaultTransition=function(){
-        return new Transition('NO_TRANSITION','无动画',0);
+    this.getDefaultTransition = function () {
+        return new Transition('NO_TRANSITION', '无动画', 0);
     }
 
 }]);

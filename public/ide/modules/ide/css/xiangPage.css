@@ -161,9 +161,20 @@ div.wrapper-custom{
 }
 .lx-modal-body input{
     height: 30px;
-    width: 85%;
+    width: 170px;
     display: inline-block;
+    font-weight: 100;
 }
+
+.lx-modal-body select{
+    height: 30px;
+    width: 170px;
+    display: inline-block;
+    font-weight: 100;
+    position: absolute;
+    left: 15px;
+}
+
 .lx-modal-title{
     margin-top: 5px;
 }
