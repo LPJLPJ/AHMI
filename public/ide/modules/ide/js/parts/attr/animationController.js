@@ -116,7 +116,7 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             }
         };
         $scope.confirm = function (th) {
-            fixData($scope.animation,$scope.switchButtons);
+            fixData($scope.animation, $scope.switchButtons);
             if (th.animation.newAnimation === false) {
                 if (th.animation.title === restoreValue) {
                     $uibModalInstance.close($scope.animation);
@@ -205,30 +205,30 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             }
         };
 
-        $scope.timingFuns = ['linear','easeInQuad','easeOutQuad','easeInOutQuad','easeInCubic','easeOutCubic','easeInOutCubic','easeInQuart','easeOutQuart','easeInOutQuart','easeInQuint','easeOutQuint','easeInOutQuint'];
+        $scope.timingFuns = ['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'];
 
         //修正数据，将为绑定tag的属性置空,将绑定了tag的属性的value置0
-        function fixData(animation,switchButtons){
+        function fixData(animation, switchButtons) {
             var animationAttrs = animation.animationAttrs;
             var translate = animationAttrs.translate;
             var scale = animationAttrs.scale;
-            for(var key in switchButtons){
-                switch (key){
+            for (var key in switchButtons) {
+                switch (key) {
                     case 'srcPos':
-                        (switchButtons[key].x==='on')?(translate[key].x.value=0):(translate[key].x.tag="");
-                        (switchButtons[key].y==='on')?(translate[key].y.value=0):(translate[key].y.tag="");
+                        (switchButtons[key].x === 'on') ? (translate[key].x.value = 0) : (translate[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (translate[key].y.value = 0) : (translate[key].y.tag = "");
                         break;
                     case 'dstPos':
-                        (switchButtons[key].x==='on')?(translate[key].x.value=0):(translate[key].x.tag="");
-                        (switchButtons[key].y==='on')?(translate[key].y.value=0):(translate[key].y.tag="");
+                        (switchButtons[key].x === 'on') ? (translate[key].x.value = 0) : (translate[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (translate[key].y.value = 0) : (translate[key].y.tag = "");
                         break;
                     case 'srcScale':
-                        (switchButtons[key].x==='on')?(scale[key].x.value=1):(scale[key].x.tag="");
-                        (switchButtons[key].y==='on')?(scale[key].y.value=1):(scale[key].y.tag="");
+                        (switchButtons[key].x === 'on') ? (scale[key].x.value = 1) : (scale[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (scale[key].y.value = 1) : (scale[key].y.tag = "");
                         break;
                     case 'dstScale':
-                        (switchButtons[key].x==='on')?(scale[key].x.value=1):(scale[key].x.tag="");
-                        (switchButtons[key].y==='on')?(scale[key].y.value=1):(scale[key].y.tag="");
+                        (switchButtons[key].x === 'on') ? (scale[key].x.value = 1) : (scale[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (scale[key].y.value = 1) : (scale[key].y.tag = "");
                         break;
                 }
             }
@@ -247,8 +247,9 @@ ide.directive('mySwitchButton', function () {
         replace: true,
         link: function ($scope, $element) {
             function init() {
-                ($scope.status === 'on')?$element.removeClass('switch-button-close'): $element.addClass('switch-button-close')
+                ($scope.status === 'on') ? $element.removeClass('switch-button-close') : $element.addClass('switch-button-close')
             }
+
             init();
             $scope.clickHandler = function () {
                 if ($scope.status === 'on') {
