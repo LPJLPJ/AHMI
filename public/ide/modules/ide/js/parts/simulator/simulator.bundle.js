@@ -22768,10 +22768,11 @@
 
 	        switch (align) {
 	            case 'left':
-	                initXPos = paddingX;
+	                initXPos = 0;
 	                break;
 	            case 'right':
-	                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - (widthOfNumStr + paddingX);
+					curWidth -= paddingX * 2;
+					initXPos = widthOfNumStr > curWidth ? 0 : curWidth - (widthOfNumStr);
 	                break;
 	            case 'center':
 	            default:

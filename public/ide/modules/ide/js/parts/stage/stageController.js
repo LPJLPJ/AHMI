@@ -406,6 +406,13 @@
         function selectWidget(event){
             var _target=event.target;
 
+            //add by tang
+            if(ProjectService.getLayerInfo){
+                ProjectService.setAbsolutePosition(_target);
+            }else{
+                ProjectService.getLayerInfo=true;
+            }
+
             ProjectService.OnWidgetClicked(_target,function () {
                 if (!KeydownService.isCtrlPressed()){
                     //如果不是按住Ctrl,用当前选中的Widget作为历史记录
@@ -502,7 +509,7 @@
             ProjectService.OnLayerDoubleClicked(_target.id,function () {
                 $timeout(function () {
                     layerDoubleClicking=false;
-                
+
                 },0);
                 // layerDoubleClicking=false;
                 //更新缩略图
@@ -678,9 +685,10 @@
         }
 
         function releaseWidget(event){
-
-
             var widget=ProjectService.getCurrentWidget();
+            //add by tang
+            ProjectService.setAbsolutePosition(event.target);
+
             if (widget){
                 var fabWidget=ProjectService.getFabricObject(widget.id,true);
                 if (fabWidget){

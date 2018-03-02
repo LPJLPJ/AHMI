@@ -1,11 +1,11 @@
 
 
-ide.controller('AttributeCtrl',['$scope','$timeout',
+ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
     'ProjectService',
     'Type', 'Preference',
     'ResourceService',
     'characterSetService',
-    'CanvasService','AnimationService','UserTypeService', function ($scope,$timeout,
+    'CanvasService','AnimationService','UserTypeService', function ($scope,$rootScope,$timeout,
                                      ProjectService,
                                      Type, Preference,
 										  ResourceService,
@@ -290,6 +290,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             enterFontItalic:enterFontItalic,
 			enterX:enterX,
 			enterY:enterY,
+            enterAbsoluteX:enterAbsoluteX,
+            enterAbsoluteY:enterAbsoluteY,
 			enterWidth:enterWidth,
 			enterHeight:enterHeight,
 			enterImage:enterBackgroundImage,
@@ -714,7 +716,8 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
 
 			ProjectService.ChangeAttributePosition(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
-
+                var currentWidgetInfo=$scope.component.object.level.info;
+                ProjectService.setAbsolutePosition(currentWidgetInfo);
 			})
 
 		}
@@ -745,11 +748,78 @@ ide.controller('AttributeCtrl',['$scope','$timeout',
             // console.log('oldOperate',oldOperate);
             ProjectService.ChangeAttributePosition(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
-
+                var currentWidgetInfo=$scope.component.object.level.info;
+                ProjectService.setAbsolutePosition(currentWidgetInfo);
 			})
 
 		}
 	}
+
+    //add by tang 2018/01/15
+    function enterAbsoluteX(e){
+        var absoluteX = Number($rootScope.position.absoluteX);
+        var xCoor=$rootScope.position.absoluteX-$rootScope.position.currentLayerInfo.left;
+        if (e.keyCode==13){
+            //判断输入是否合法
+            if (!_.isInteger(absoluteX)){
+                toastr.warning('输入不合法');
+                $rootScope.position.absoluteX=$rootScope.position.initAbsoluteX;
+                return;
+            }
+            if(xCoor<-2000||xCoor>2000){
+                toastr.warning('超出画布范围');
+                $rootScope.position.absoluteX=$rootScope.position.initAbsoluteX;
+                return;
+            }
+            //判断是否有变化
+            if (absoluteX==$rootScope.position.initAbsoluteX){
+                toastr.warning('未改变值'+$rootScope.position.absoluteX);
+                return;
+            }
+            var option={
+                left:xCoor
+            };
+
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+
+            })
+
+        }
+    }
+
+    function enterAbsoluteY(e){
+        if (e.keyCode==13){
+            //判断输入是否合法
+            var absoluteY = Number($rootScope.position.absoluteY);
+            var yCoor=$rootScope.position.absoluteY-$rootScope.position.currentLayerInfo.top;
+            if (!_.isInteger(absoluteY)){
+                toastr.warning('输入不合法');
+                $rootScope.position.absoluteY=$rootScope.position.initAbsoluteY;
+                return;
+            }
+            if(yCoor<-2000||yCoor>2000){
+                toastr.warning('超出画布范围');
+                $rootScope.position.absoluteY=$rootScope.position.initAbsoluteY;
+                return;
+            }
+            //判断是否有变化
+            if (absoluteY==$rootScope.position.initAbsoluteY){
+                toastr.warning('未改变值'+$rootScope.position.absoluteY);
+                return;
+            }
+            var option={
+                top:yCoor
+            };
+
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage',oldOperate);
+
+            })
+
+        }
+    }
+
 	function enterWidth(e){
 		if (e.keyCode==13){
 			//判断输入是否合法

@@ -3296,17 +3296,18 @@ module.exports =   React.createClass({
         widthOfNumStr=(decimalCount==0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
         widthOfNumStr += (numStr.length-1)*spacing;
 
-        switch(align){
+        switch (align) {
             case 'left':
-                initXPos=paddingX;
+                initXPos = 0;
                 break;
             case 'right':
-                initXPos= (widthOfNumStr > curWidth) ? 0 : curWidth-(widthOfNumStr+paddingX);
+                curWidth -= paddingX * 2;
+                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - (widthOfNumStr);
                 break;
             case 'center':
             default:
-                curWidth-=paddingX*2;
-                initXPos = (widthOfNumStr > curWidth) ? 0 : (curWidth-widthOfNumStr)/2;
+                curWidth -= paddingX * 2;
+                initXPos = widthOfNumStr > curWidth ? 0 : (curWidth - widthOfNumStr) / 2;
                 break;
         }
         // console.log('initXPos',initXPos,'paddingX',paddingX);
