@@ -445,6 +445,7 @@ projectRoute.createProject = function (req, res) {
                                 info.resolution = newProject.resolution;
                                 info.name = newProject.name;
                                 info.template = newProject.template;
+                                info.ideVersion = newProject.ideVersion;
                                 info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
                                 info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                                 info.supportTouch = newProject.supportTouch;
