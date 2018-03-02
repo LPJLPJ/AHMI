@@ -31,7 +31,7 @@ ideServices
         var backLight = new Tag('背光',false,null,'true',0,'system');
         var buzzer =new Tag('蜂鸣器',false,null,'true',0,'system');
         var sysTags = [keyCode,videoTag,curPageTag,RTCTag1,RTCTag2,backLight,buzzer];
-        var tags = sysTags;
+        var tags = sysTags; 
         var timerTags=[];
         var timerNum=0;
         //var templateTimerTags= [{ name:"", register: false, indexOfRegister: null, writeOrRead:false, value: 0}];

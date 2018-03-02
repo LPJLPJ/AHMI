@@ -5,9 +5,6 @@
 angular.module('GlobalModule',[])
     .service('GlobalService', function (TemplateProvider,Type) {
 
-
-
-
         var exampleProject={
             initSize:{
                 width:500,

@@ -193,12 +193,6 @@
 
         <div class="my-tool-content" ng-class="{true:'my-tool-show',false:'my-tool-hidden'}[component.tool.toolShow]">
             <div class="my-tool-content-item" ng-show="component.nav.currentNav==0">
-
-                <!--===========================-->
-                <!--暂时屏蔽ide中的新建工程功能-->
-                <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe60c;</span><span class="caption">新建工程</span></a>-->
-                <!--===========================-->
-
                 <a ng-click="component.tool.saveProject()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe60e;</span><span
                         class="caption">保存工程</span>
                     <script type="text/ng-template" id="saveProject.html">
@@ -337,6 +331,44 @@
                 <script type="text/ng-template" id="navModalCloseWindow.html">
                     <div class="modal-header">
                         <h3 class="modal-title">关闭前保存工程?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">是</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">否</button>
+                    </div>
+                </script>
+                <a ng-click="component.tool.openTagsPanel()" class="my-cmd-item">
+                    <span class="iconfont icon">&#xe651;</span><span class="caption">导入变量</span>
+                </a>
+                <script type="text/ng-template" id="tagsImport.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">导入预设变量</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div style="font-size: 16px;font-weight: 500;margin-bottom: 16px">
+                            系统预设
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-offset-1 col-xs-3">
+                                <label class="radio-inline">
+                                    <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">预设1
+                                </label>
+                            </div>
+                            <div class="col-xs-3">
+                                <label class="radio-inline">
+                                    <input type="radio" name="tagsOptions" value="tags_default2" ng-model="selectedTagId">预设2
+                                </label>
+                            </div>
+                            <div class="col-xs-3">
+                                <label class="radio-inline">
+                                    <input type="radio" name="tagsOptions" value="tags_default3" ng-model="selectedTagId">预设3
+                                </label>
+                            </div>
+                        </div>
+                        <!--<hr>-->
+                        <!--<h4>用户预设</h4>-->
+                        <!--<div class="row">-->
+                        <!--</div>-->
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary" type="button" ng-click="ok()">是</button>
