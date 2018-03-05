@@ -19,6 +19,7 @@ module.exports = function (req, res) {
                     info.resolution = project.resolution;
                     info.name = project.name;
                     info.template = project.template;
+                    info.ideVersion = project.ideVersion;
                     info.createTime = moment(project.createTime).format('YYYY-MM-DD HH:mm');
                     info.lastModifiedTime = moment(project.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                     info.supportTouch = project.supportTouch;

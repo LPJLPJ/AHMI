@@ -390,6 +390,13 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
         function selectWidget(event){
             var _target=event.target;
 
+            //add by tang
+            if(ProjectService.getLayerInfo){
+                ProjectService.setAbsolutePosition(_target);
+            }else{
+                ProjectService.getLayerInfo=true;
+            }
+
             ProjectService.OnWidgetClicked(_target,function () {
                 if (!KeydownService.isCtrlPressed()){
                     //如果不是按住Ctrl,用当前选中的Widget作为历史记录
@@ -629,8 +636,11 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
                 }
                 pageMouseUpTime=new Date();
 
-            }
-            var layer=ProjectService.getCurrentLayer();
+        }
+
+
+            var layer=ProjectService.getCurrentLayer();//add by tang
+            ProjectService.setAbsolutePosition(event.target);
             if (layer){
                 var fabLayer=ProjectService.getFabricObject(layer.id);
                 if (fabLayer){
