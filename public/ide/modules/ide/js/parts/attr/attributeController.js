@@ -29,21 +29,7 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 		$scope.component={
 			type:'',
 			onAttributeChanged:onAttributeChanged,
-            transitionMode:[
-                {name:'NO_TRANSITION',show:'无动画'},
-                {name:'MOVE_LR',show:'从左进入(cover)'},
-                {name:'MOVE_RL',show:'从右进入(cover)'},
-                {name:'MOVE_TB',show:'从上进入(cover)'},
-                {name:'MOVE_BT',show:'从下进入(cover)'},
-                {name:'PUSH_LR',show:'从左进入(push)'},
-                {name:'PUSH_RL',show:'从右进入(push)'},
-                {name:'PUSH_TB',show:'从上进入(push)'},
-                {name:'PUSH_BT',show:'从下进入(push)'},
-                {name:'SCALE',show:'缩放'},
-                {name:'FADE-IN_FADE-OUT',show:'淡入淡出'},
-                {name:'SWIPE_H',show:'水平滑动'},
-                {name:'SWIPE_V',show:'垂直滑动'},
-            ],
+            transitionMode:AnimationService.getTransitionModes(),
             transitionName:null,
 
             page:{
