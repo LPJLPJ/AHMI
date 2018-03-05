@@ -2180,8 +2180,6 @@ ideServices
             this.OnLayerClicked= function (_target,_successCallback) {
                 //除了选中的layer,清除所有Layer,SubLayer,Widget的current
                 _self.currentFabWidgetIdList=[];
-
-
                 var currentPage=_self.getCurrentPage();
                 if (!currentPage){
                     console.warn('找不到Page');
@@ -4105,15 +4103,7 @@ ideServices
                         var widget = getLevelById(item.id,'widget');
                         widget.info.left = Math.round(baseLeft+item.left);
                         widget.info.top = Math.round(baseTop+item.top);
-                    })
-
-                    // if (getCurrentSubLayer()){
-                    //     var currentSubLayer=getCurrentSubLayer();
-                    //     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    // }else {
-                    //     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                    //     //console.log(currentPage.proJsonStr);
-                    // }
+                    });
                     subLayerNode.renderAll();
                     pageNode.renderAll();
                     _successCallback && _successCallback(currentOperate);

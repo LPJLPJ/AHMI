@@ -422,6 +422,7 @@ body{
 .my-top-panel .my-panel-item{
     height: calc(100% - 33px);
     padding: 10px;
+    overflow-y: auto;
 }
 
 .my-attr-item{

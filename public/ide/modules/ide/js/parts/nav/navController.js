@@ -8,17 +8,25 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
     'Type',
     'CanvasService',
     '$uibModal',
-    'OperateQueService', 'TagService', 'ResourceService', 'TimerService', '$http', 'ProjectTransformService', 'RenderSerive', 'LinkPageWidgetsService', 'NavModalCANConfigService', function ($scope, $timeout,
-                                                                                                                                                                                              GlobalService,
-                                                                                                                                                                                              NavService,
-                                                                                                                                                                                              saveProjectModal,
-                                                                                                                                                                                              ProjectService,
-                                                                                                                                                                                              TemplateProvider,
-                                                                                                                                                                                              ProjectFileManage,
-                                                                                                                                                                                              Type,
-                                                                                                                                                                                              CanvasService,
-                                                                                                                                                                                              $uibModal,
-                                                                                                                                                                                              OperateQueService, TagService, ResourceService, TimerService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService, NavModalCANConfigService) {
+    'OperateQueService',
+    'TagService',
+    'ResourceService',
+    '$http',
+    'ProjectTransformService',
+    'RenderSerive',
+    'LinkPageWidgetsService',
+    'NavModalCANConfigService',
+    function ($scope, $timeout,
+              GlobalService,
+              NavService,
+              saveProjectModal,
+              ProjectService,
+              TemplateProvider,
+              ProjectFileManage,
+              Type,
+              CanvasService,
+              $uibModal,
+              OperateQueService, TagService, ResourceService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService, NavModalCANConfigService) {
 
         var path, fs, __dirname, fse;
         initLocalPref();
@@ -26,7 +34,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         confirmForClosingWindow();
 
         $scope.$on('GlobalProjectReceived', function () {
-
 
             initProject();
             $scope.$emit('LoadUp');
@@ -1345,46 +1352,47 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                     $scope.selectedTagId = null;
 
-                    $scope.ok = function(){
+                    $scope.ok = function () {
                         console.log('haha');
-                        if(!$scope.selectedTagId){
+                        if (!$scope.selectedTagId) {
                             return;
                         }
                         getTagsFromRemote($scope.selectedTagId);
                         $uibModalInstance.close();
                     };
 
-                    $scope.cancel = function(){
+                    $scope.cancel = function () {
                         $uibModalInstance.dismiss();
                     };
 
-                    function getTagsFromRemote(id){
+                    function getTagsFromRemote(id) {
                         var pattern = new RegExp(/tags_default\d+$/g);
                         var url = '';
 
-                        if(pattern.test(id)){
+                        if (pattern.test(id)) {
                             //sys
-                            url = '/public/ide/modules/tagConfig/template/'+id.replace('_','.')+'.json';
-                        }else{
+                            url = '/public/ide/modules/tagConfig/template/' + id.replace('_', '.') + '.json';
+                        } else {
                             //custom
                         }
                         $http({
-                            method:'get',
-                            url:url
-                        }).success(function(data){
-                            handler(null,data);
-                        }).error(function(err){
-                            handler(err,null);
+                            method: 'get',
+                            url: url
+                        }).success(function (data) {
+                            handler(null, data);
+                        }).error(function (err) {
+                            handler(err, null);
                         });
-                    };
+                    }
 
-                    function handler(err,data){
-                        if(err){
+                    function handler(err, data) {
+                        if (err) {
                             console.error('err in get tags template');
                             toastr.error('获取失败，请检查您的网络');
                             return;
                         }
-                        console.log('data',data);
+                        console.log('data', data);
+                        $scope.$emit('GetTagsFromRemote',data);
                     }
                 }],
                 scope: $scope,//指定父scope

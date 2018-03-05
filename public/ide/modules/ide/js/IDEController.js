@@ -1,7 +1,7 @@
 /**
  * Created by shenaolin on 16/2/26.
  */
-var ide=angular.module('ide',['ui.bootstrap.contextMenu','colorpicker.module','btford.modal','ui.bootstrap','ngAnimate','GlobalModule','ui.tree','IDEServices']);
+var ide = angular.module('ide', ['ui.bootstrap.contextMenu', 'colorpicker.module', 'btford.modal', 'ui.bootstrap', 'ngAnimate', 'GlobalModule', 'ui.tree', 'IDEServices']);
 
 
 ide.config(['$compileProvider',
@@ -10,21 +10,21 @@ ide.config(['$compileProvider',
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file:chrome-extension|chrome-extension):/);
     }]);
 
-var baseUrl='';
+var baseUrl = '';
 
-var PID='';
-var TOKEN='';
+var PID = '';
+var TOKEN = '';
 
-var MAX_DATA_LENGTH=100000;
+var MAX_DATA_LENGTH = 100000;
 
 var ideScope;
 var isOffline;
 var mode = 'DEBUG';
 
 console.log = (function (console) {
-    if (mode === 'DEBUG'){
+    if (mode === 'DEBUG') {
         return console.log;
-    }else{
+    } else {
         console.oldLog = console.log;
         return function () {
         }
@@ -32,334 +32,368 @@ console.log = (function (console) {
 })(console);
 
 
-var logs=[];
-ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService','NavModalCANConfigService',
-    'socketIOService',function ($scope,$timeout,$http,$interval,
-                                    ProjectService,
-                                    GlobalService,
-                                    Preference,
-                                    ResourceService,
-                                    TagService,
-                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService,socketIOService) {
+var logs = [];
+ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
+    'socketIOService', function ($scope, $timeout, $http, $interval,
+                                 ProjectService,
+                                 GlobalService,
+                                 Preference,
+                                 ResourceService,
+                                 TagService,
+                                 TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService) {
 
-    ideScope=$scope;
-    $scope.ide={
-        loaded:false    //页面是否渲染完成
-    };
+        ideScope = $scope;
+        $scope.ide = {
+            loaded: false    //页面是否渲染完成
+        };
 
-    var loadStep=0;     //加载到了第几步,共8步
-    var fs,path,__dirname;
+        var loadStep = 0;     //加载到了第几步,共8步
+        var fs, path, __dirname;
 
-    // showIDE();
+        // showIDE();
 
-    //var params=getUrlParams();
-    //PID=params.pid;
-    //
-    //TOKEN=window.localStorage.getItem('token');
-    //
-    //var offLine=params.offline;
-    //
-    //isOffline=offLine;
-    //if (offLine){
-    //    toastr.info('离线测试');
-    //}
-    //else if (!PID||!TOKEN){
-    //    console.log(getUrlParams());
-    //    $interval(function () {
-    //        toastr.warning('无法识别的项目');
-    //    },2000);
-    //    return;
-    //}
+        //var params=getUrlParams();
+        //PID=params.pid;
+        //
+        //TOKEN=window.localStorage.getItem('token');
+        //
+        //var offLine=params.offline;
+        //
+        //isOffline=offLine;
+        //if (offLine){
+        //    toastr.info('离线测试');
+        //}
+        //else if (!PID||!TOKEN){
+        //    console.log(getUrlParams());
+        //    $interval(function () {
+        //        toastr.warning('无法识别的项目');
+        //    },2000);
+        //    return;
+        //}
 
-    initUI();
+        initUI();
 
-    loadProject();
+        loadProject();
 
-    //receiveGlobalProject();
-    readUserType();
+        //receiveGlobalProject();
+        readUserType();
 
-    listenChange();
+        listenChange();
 
-    loadPreference();
+        loadPreference();
 
-    refreshLoginStatus();
+        refreshLoginStatus();
 
-    function initUI(){
-        $scope.leftShown=true;
-        $scope.rightShown=true;
-        $scope.bottomShown=true;
+        function initUI() {
+            $scope.leftShown = true;
+            $scope.rightShown = true;
+            $scope.bottomShown = true;
 
-        try {
-            var os = require('os');
-            if (os){
+            try {
+                var os = require('os');
+                if (os) {
 
-                window.local = true;
-                $scope.local = true;
-                window.ondragover = function(e){
-                    e.preventDefault();
-                    return false;
-                }
-                window.ondrop = function(e){
-                    e.preventDefault();
-                    return false
-                }
-                __dirname = global.__dirname;
-                path = require('path');
-                fs = require('fs');
-
-            }
-        }catch (e){
-            window.local = false;
-        }
-    }
-
-    function loadProject() {
-        if (window.local){
-            readLocalProjectData();
-        }else{
-            readProjectData();
-        }
-
-    }
-
-    function updateSpinner(value) {
-        window.spinner && window.spinner.update(value*100)
-    }
-
-    function readUserType(){
-        var userType = 'basic';
-        if(window.local){
-            var userInfoUrl = path.join(__dirname,'public','nw','userInfo.json');
-            var userInfo = {
-                name:'',
-                type:'basic'
-            };
-            if(!fs.existsSync(userInfoUrl)){
-                fs.writeFileSync(userInfoUrl,JSON.stringify(userInfo));
-            }
-            var data = JSON.parse(fs.readFileSync(userInfoUrl,'utf-8'));
-            userType = data.type;
-        }else{
-            userType=localStorage.getItem('userType');
-        }
-        UserTypeService.setUserType(userType);
-    }
-
-    function readLocalProjectData() {
-        var url = window.location.href;
-        // var projectId = url.split('?')[1].split('=')[1];
-        // if (projectId[projectId.length - 1] === '#') {
-        //     projectId = projectId.slice(0, -1);
-        // }
-        var query = window.location.search;
-        if (query&&query.length){
-            query = query.slice(1)
-        }
-        var queryElems = query.split('&')||[];
-        var queryObj = {};
-        queryElems.forEach(function (q) {
-            var pair = q.split('=');
-            if (pair.length == 2){
-                queryObj[pair[0]] = pair[1]
-            }
-        });
-        var projectId = queryObj['project_id'];
-        var v = queryObj['v'];
-        console.log(projectId);
-        //load projectId project
-        var projectBaseUrl = path.join(__dirname,'localproject',projectId);
-        ResourceService.setProjectUrl(projectBaseUrl);
-        var resourceUrl = path.join(projectBaseUrl, 'resources');
-        ResourceService.setResourceUrl(resourceUrl);
-        var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
-
-        ResourceService.setResourceNWUrl(path.relative(realDirPath, resourceUrl));
-        console.log(path.relative(realDirPath, resourceUrl));
-        var data = readSingleFile(path.join(projectBaseUrl,'project.json'));
-
-
-        $timeout(function () {
-            if (data){
-                data = JSON.parse(data);
-                //process date content
-                data.backups = data.backups||[];
-                if (data.backups.length>0){
-                    if (v in data.backups){
-                        data.content = data.backups[v].content ||''
+                    window.local = true;
+                    $scope.local = true;
+                    window.ondragover = function (e) {
+                        e.preventDefault();
+                        return false;
                     }
+                    window.ondrop = function (e) {
+                        e.preventDefault();
+                        return false
+                    }
+                    __dirname = global.__dirname;
+                    path = require('path');
+                    fs = require('fs');
+
                 }
-                data.backups = [];
-                loadFromContent(data,projectId);
-            }else{
-                loadFromBlank({},projectId);
+            } catch (e) {
+                window.local = false;
             }
-        },0);
-       
+        }
 
-        $scope.$on('LoadUp', function () {
-
-            loadStep++;
-            if (loadStep == 6) {
-                //到达第8步,加载完成
-                showIDE();
+        function loadProject() {
+            if (window.local) {
+                readLocalProjectData();
+            } else {
+                readProjectData();
             }
-        })
-        
 
-    }
+        }
 
-    function readSingleFile(filePath,check) {
-        if (check){
-            try{
-                var stats = fs.statSync(filePath);
-                if (stats&&stats.isFile()){
-                    return fs.readFileSync(filePath,'utf-8');
-                }else{
+        function updateSpinner(value) {
+            window.spinner && window.spinner.update(value * 100)
+        }
+
+        function readUserType() {
+            var userType = 'basic';
+            if (window.local) {
+                var userInfoUrl = path.join(__dirname, 'public', 'nw', 'userInfo.json');
+                var userInfo = {
+                    name: '',
+                    type: 'basic'
+                };
+                if (!fs.existsSync(userInfoUrl)) {
+                    fs.writeFileSync(userInfoUrl, JSON.stringify(userInfo));
+                }
+                var data = JSON.parse(fs.readFileSync(userInfoUrl, 'utf-8'));
+                userType = data.type;
+            } else {
+                userType = localStorage.getItem('userType');
+            }
+            UserTypeService.setUserType(userType);
+        }
+
+        function readLocalProjectData() {
+            var url = window.location.href;
+            // var projectId = url.split('?')[1].split('=')[1];
+            // if (projectId[projectId.length - 1] === '#') {
+            //     projectId = projectId.slice(0, -1);
+            // }
+            var query = window.location.search;
+            if (query && query.length) {
+                query = query.slice(1)
+            }
+            var queryElems = query.split('&') || [];
+            var queryObj = {};
+            queryElems.forEach(function (q) {
+                var pair = q.split('=');
+                if (pair.length == 2) {
+                    queryObj[pair[0]] = pair[1]
+                }
+            });
+            var projectId = queryObj['project_id'];
+            var v = queryObj['v'];
+            console.log(projectId);
+            //load projectId project
+            var projectBaseUrl = path.join(__dirname, 'localproject', projectId);
+            ResourceService.setProjectUrl(projectBaseUrl);
+            var resourceUrl = path.join(projectBaseUrl, 'resources');
+            ResourceService.setResourceUrl(resourceUrl);
+            var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
+
+            ResourceService.setResourceNWUrl(path.relative(realDirPath, resourceUrl));
+            console.log(path.relative(realDirPath, resourceUrl));
+            var data = readSingleFile(path.join(projectBaseUrl, 'project.json'));
+
+
+            $timeout(function () {
+                if (data) {
+                    data = JSON.parse(data);
+                    //process date content
+                    data.backups = data.backups || [];
+                    if (data.backups.length > 0) {
+                        if (v in data.backups) {
+                            data.content = data.backups[v].content || ''
+                        }
+                    }
+                    data.backups = [];
+                    loadFromContent(data, projectId);
+                } else {
+                    loadFromBlank({}, projectId);
+                }
+            }, 0);
+
+
+            $scope.$on('LoadUp', function () {
+
+                loadStep++;
+                if (loadStep == 6) {
+                    //到达第8步,加载完成
+                    showIDE();
+                }
+            })
+
+
+        }
+
+        function readSingleFile(filePath, check) {
+            if (check) {
+                try {
+                    var stats = fs.statSync(filePath);
+                    if (stats && stats.isFile()) {
+                        return fs.readFileSync(filePath, 'utf-8');
+                    } else {
+                        return null;
+                    }
+                } catch (e) {
                     return null;
                 }
-            }catch (e){
-                return null;
+
+
+            } else {
+                return fs.readFileSync(filePath, 'utf-8');
             }
-
-
-        }else{
-            return fs.readFileSync(filePath,'utf-8');
         }
-    }
 
 
-
-    function LoadWithTemplate(data, id){
-        // console.log('project data.content receive',data);
-        var templateId = data.template;
-        //add templateId to template
-        TemplateProvider.setTemplateId(templateId);
-        if (templateId && templateId!==''){
-            $http({
-                method:'GET',
-                url:'/public/templates/defaultTemplate/defaultTemplate.json'
-            }).success(function (tdata) {
-                // console.log('get json success',tdata);
-                setTemplate(tdata,function(){
-                    var tempData
-                    if (typeof data == 'string'){
-                        tempData = JSON.parse(data)
-                    }else {
-                        tempData = data
-                    }
-                    if(tempData.format!==undefined||tempData.DSFlag==='base'){
+        function LoadWithTemplate(data, id) {
+            // console.log('project data.content receive',data);
+            var templateId = data.template;
+            //add templateId to template
+            TemplateProvider.setTemplateId(templateId);
+            if (templateId && templateId !== '') {
+                $http({
+                    method: 'GET',
+                    url: '/public/templates/defaultTemplate/defaultTemplate.json'
+                }).success(function (tdata) {
+                    // console.log('get json success',tdata);
+                    setTemplate(tdata, function () {
+                        var tempData
+                        if (typeof data == 'string') {
+                            tempData = JSON.parse(data)
+                        } else {
+                            tempData = data
+                        }
+                        if (tempData.format !== undefined || tempData.DSFlag === 'base') {
+                            //load from a zip
+                            preProcessData(data, function (newData) {
+                                loadFromContent(newData, id);
+                            });
+                        } else {
+                            loadFromContent(data, id);
+                        }
+                    }.bind(this));
+                }).error(function (msg) {
+                    //toastr.warning('读取错误');
+                    //loadFromBlank({},id);
+                    console.log('get json failed');
+                })
+            } else {
+                // loadFromContent(data,id);
+                if (!!data.content) {
+                    var tempData = JSON.parse(data.content);
+                    if (tempData.format !== undefined) {
                         //load from a zip
-                        preProcessData(data,function(newData){
-                            loadFromContent(newData,id);
+                        preProcessData(data, function (newData) {
+                            loadFromContent(newData, id);
                         });
-                    }else{
-                        loadFromContent(data,id);
+                    } else {
+                        loadFromContent(data, id);
                     }
-                }.bind(this));
-            }).error(function (msg) {
-                //toastr.warning('读取错误');
-                //loadFromBlank({},id);
-                console.log('get json failed');
-            })
-        }else{
-            // loadFromContent(data,id);
-            if(!!data.content){
-                var tempData = JSON.parse(data.content);
-                if(tempData.format!==undefined){
-                    //load from a zip
-                    preProcessData(data,function(newData){
-                        loadFromContent(newData,id);
-                    });
-                }else{
-                    loadFromContent(data,id);
-                }
-            }else{
-                loadFromContent(data,id);
-            }
-        }
-
-    }
-
-    function loadFromContent(data,id) {
-        //若是分享的工程，则需要开启socket
-        // console.log('data.shared',data);
-        if(!!data.shared){
-            if(!!data.readOnlyState){
-                //在分享状态下，并且以只读方式打开，不用打开socket进行排队
-                toastr.options.closeButton = true;
-                toastr.options.timeOut = 0;
-                toastr.warning('注意：您无法执行保存工程操作','只读模式');
-                toastr.options.closeButton = close;
-                toastr.options.timeOut = 1000;
-            }else if(!socketIOService.getSocket()){
-                initSocketIO(data.userId);
-            }
-
-        }
-        //change html title to name
-        var name = data&&data.name||''
-        document.title = '工程编辑-'+name
-        if (data.content){
-            //var globalProject = GlobalService.getBlankProject()
-            var globalProject = JSON.parse(data.content);
-            var resolution = data.resolution.split('*').map(function (r) {
-                return Number(r)
-            });
-            globalProject.name = data.name;
-            globalProject.author = data.author;
-            globalProject.initSize = {
-                width : resolution[0],
-                height :resolution[1]
-            }
-            globalProject.currentSize = {
-                width : resolution[0],
-                height :resolution[1]
-            }
-            globalProject.maxSize = data.maxSize;
-
-            globalProject.projectId = id;
-
-
-            //console.log('globalProject',globalProject);
-
-            var resourceList = globalProject.resourceList;
-            // console.log('resourceList',resourceList);
-            var count = resourceList.length;
-            var rLen = resourceList.length
-            var globalResources = ResourceService.getGlobalResources();
-            window.globalResources = globalResources;
-
-            var coutDown = function (e, resourceObj) {
-                if (e.type === 'error'){
-                    // console.log(e)
-                    toastr.warning('资源加载失败: ' + resourceObj.name);
-                    resourceObj.complete = false;
                 } else {
-                    resourceObj.complete = true;
+                    loadFromContent(data, id);
                 }
-                count = count - 1;
+            }
 
-                updateSpinner((rLen-count)/rLen)
-                if (count<=0){
-                    // toastr.info('loaded');
+        }
+
+        function loadFromContent(data, id) {
+            //若是分享的工程，则需要开启socket
+            // console.log('data.shared',data);
+            if (!!data.shared) {
+                if (!!data.readOnlyState) {
+                    //在分享状态下，并且以只读方式打开，不用打开socket进行排队
+                    toastr.options.closeButton = true;
+                    toastr.options.timeOut = 0;
+                    toastr.warning('注意：您无法执行保存工程操作', '只读模式');
+                    toastr.options.closeButton = close;
+                    toastr.options.timeOut = 1000;
+                } else if (!socketIOService.getSocket()) {
+                    initSocketIO(data.userId);
+                }
+
+            }
+            //change html title to name
+            var name = data && data.name || ''
+            document.title = '工程编辑-' + name
+            if (data.content) {
+                //var globalProject = GlobalService.getBlankProject()
+                var globalProject = JSON.parse(data.content);
+                var resolution = data.resolution.split('*').map(function (r) {
+                    return Number(r)
+                });
+                globalProject.name = data.name;
+                globalProject.author = data.author;
+                globalProject.initSize = {
+                    width: resolution[0],
+                    height: resolution[1]
+                }
+                globalProject.currentSize = {
+                    width: resolution[0],
+                    height: resolution[1]
+                }
+                globalProject.maxSize = data.maxSize;
+
+                globalProject.projectId = id;
+
+
+                //console.log('globalProject',globalProject);
+
+                var resourceList = globalProject.resourceList;
+                // console.log('resourceList',resourceList);
+                var count = resourceList.length;
+                var rLen = resourceList.length
+                var globalResources = ResourceService.getGlobalResources();
+                window.globalResources = globalResources;
+
+                var coutDown = function (e, resourceObj) {
+                    if (e.type === 'error') {
+                        // console.log(e)
+                        toastr.warning('资源加载失败: ' + resourceObj.name);
+                        resourceObj.complete = false;
+                    } else {
+                        resourceObj.complete = true;
+                    }
+                    count = count - 1;
+
+                    updateSpinner((rLen - count) / rLen)
+                    if (count <= 0) {
+                        // toastr.info('loaded');
+                        TemplateProvider.saveProjectFromGlobal(globalProject);
+                        syncServices(globalProject);
+                        ProjectService.saveProjectFromGlobal(globalProject, function () {
+
+                            $scope.$broadcast('GlobalProjectReceived');
+
+                        });
+                    }
+                }.bind(this);
+                if (count > 0) {
+                    for (var i = 0; i < resourceList.length; i++) {
+                        var curRes = resourceList[i];
+                        // console.log('caching ',i)
+                        ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+                    }
+                } else {
+                    // console.log(globalProject);
+                    updateSpinner(100)
                     TemplateProvider.saveProjectFromGlobal(globalProject);
-                    syncServices(globalProject);
+                    syncServices(globalProject)
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
 
                         $scope.$broadcast('GlobalProjectReceived');
 
                     });
                 }
-            }.bind(this);
-            if (count>0){
-                for (var i=0;i<resourceList.length;i++){
-                    var curRes = resourceList[i];
-                    // console.log('caching ',i)
-                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+
+
+                //readCache();
+            } else {
+                //console.log('获取信息失败');
+                //
+                //readCache();
+
+                globalProject = GlobalService.getBlankProject();
+                globalProject.projectId = id;
+                //change resolution
+                //console.log(data);
+                var resolution = data.resolution.split('*').map(function (r) {
+                    return Number(r)
+                })
+                globalProject.initSize = {
+                    width: resolution[0],
+                    height: resolution[1]
                 }
-            }else{
-                // console.log(globalProject);
-                updateSpinner(100)
+                globalProject.currentSize = {
+                    width: resolution[0],
+                    height: resolution[1]
+                }
+                globalProject.maxSize = data.maxSize;
+                console.log('globalProject new', _.cloneDeep(globalProject));
+
+
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -368,954 +402,915 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
                 });
             }
+        }
 
-
-
-            //readCache();
-        }else{
-            //console.log('获取信息失败');
-            //
-            //readCache();
-
-            globalProject = GlobalService.getBlankProject();
+        function loadFromBlank(options, id) {
+            var globalProject = GlobalService.getBlankProject()
             globalProject.projectId = id;
             //change resolution
-            //console.log(data);
-            var resolution = data.resolution.split('*').map(function (r) {
+            var resolution = (options.resolution || '800*480').split('*').map(function (r) {
                 return Number(r)
             })
             globalProject.initSize = {
-                width : resolution[0],
-                height :resolution[1]
+                width: resolution[0],
+                height: resolution[1]
             }
             globalProject.currentSize = {
-                width : resolution[0],
-                height :resolution[1]
+                width: resolution[0],
+                height: resolution[1]
             }
-            globalProject.maxSize = data.maxSize;
-            console.log('globalProject new',_.cloneDeep(globalProject));
+            globalProject.maxSize = options.maxSize || 100 * 1024 * 1024;
+            console.log('globalProject', globalProject)
 
 
             TemplateProvider.saveProjectFromGlobal(globalProject);
-            syncServices(globalProject)
             ProjectService.saveProjectFromGlobal(globalProject, function () {
-
+                syncServices(globalProject)
                 $scope.$broadcast('GlobalProjectReceived');
 
             });
+
         }
-    }
 
-    function loadFromBlank(options,id) {
-        var globalProject = GlobalService.getBlankProject()
-        globalProject.projectId = id;
-        //change resolution
-        var resolution = (options.resolution||'800*480').split('*').map(function (r) {
-            return Number(r)
-        })
-        globalProject.initSize = {
-            width : resolution[0],
-            height :resolution[1]
-        }
-        globalProject.currentSize = {
-            width : resolution[0],
-            height :resolution[1]
-        }
-        globalProject.maxSize = options.maxSize||100*1024*1024;
-        console.log('globalProject',globalProject)
-
-
-        TemplateProvider.saveProjectFromGlobal(globalProject);
-        ProjectService.saveProjectFromGlobal(globalProject, function () {
-            syncServices(globalProject)
-            $scope.$broadcast('GlobalProjectReceived');
-
-        });
-
-    }
-
-    function readProjectData(){
-        var url = window.location.href
-        var url_splices = url.split('/')
-        //console.log(url_splices)
-        var id = ''
-        for (var i=0;i<url_splices.length;i++){
-            if (url_splices[i] == 'project'){
-                id = url_splices[i+1]
-                //console.log(id)
-                break
-            }
-        }
-        //window.localStorage.setItem('projectId',id);
-        ResourceService.setResourceUrl('/project/'+id+'/resources/')
-
-        $http({
-            method:'GET',
-            url:baseUrl+'/project/'+id+'/content'+(window.location.search||'')
-        }).success(function (data) {
-            LoadWithTemplate(data,id);
-
-        }).error(function (msg) {
-            toastr.warning('读取错误');
-            loadFromBlank({},id);
-        })
-
-        $scope.$on('LoadUp', function () {
-
-            loadStep++;
-
-            if (loadStep == 6) {
-                //到达第8步,加载完成
-                showIDE();
-            }
-        })
-    }
-
-    function showIDE() {
-        $timeout(function () {
-            $scope.ide.loaded=true;
-            window.spinner && window.spinner.hide(true);
-            // intervalSave();
-        },200)
-    }
-
-    function getUrlParams() {
-        var result = {};
-        var params = (window.location.search.split('?')[1] || '').split('&');
-        for(var param in params) {
-            if (params.hasOwnProperty(param)) {
-                var paramParts = params[param].split('=');
-                result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
-            }
-        }
-        console.log(result);
-        return result;
-    }
-
-    function reLogin(_callback,_errCallback) {
-        $http({
-                method:'GET',
-                url:baseUrl+'/refreshToken',
-                params:{
-                    token:window.localStorage.getItem('token')
+        function readProjectData() {
+            var url = window.location.href
+            var url_splices = url.split('/')
+            //console.log(url_splices)
+            var id = ''
+            for (var i = 0; i < url_splices.length; i++) {
+                if (url_splices[i] == 'project') {
+                    id = url_splices[i + 1]
+                    //console.log(id)
+                    break
                 }
             }
-        ).success(function (result) {
+            //window.localStorage.setItem('projectId',id);
+            ResourceService.setResourceUrl('/project/' + id + '/resources/')
 
-            if (result.status!='success'){
-                return;
-            }
-            console.log(result);
-            var token=result.newToken;
-            window.localStorage.setItem('token',token);
-            TOKEN=token;
-            console.log(TOKEN);
-            //
-            // var pid=result.user.projects[0].pid;
-            // PID=pid;
+            $http({
+                method: 'GET',
+                url: baseUrl + '/project/' + id + '/content' + (window.location.search || '')
+            }).success(function (data) {
+                LoadWithTemplate(data, id);
 
-            _callback&&_callback(result);
-        }).error(function (err) {
-            _errCallback&&_errCallback(err);
-        });
-    };
-
-    function refreshLoginStatus() {
-        if (!window.local) {
-            setInterval(function () {
-                $http({
-                    method: 'GET',
-                    url: baseUrl + '/api/refreshlogin'
-                }).success(function (data) {
-                    console.log(data);
-                }).error(function (err) {
-                    console.log(err)
-                });
-            }, 10 * 60 * 1000)
-        }
-
-    }
-
-    function receiveProject(pid) {
-
-        var globalProject={};
-        if (!pid){
-            $timeout(function () {
-                toastr.info('加载离线项目');
-                globalProject=GlobalService.getBlankProject();
-                TemplateProvider.saveProjectFromGlobal(globalProject);
-                ProjectService.saveProjectFromGlobal(globalProject, function () {
-                    PID=pid;
-
-                    //TODO:初始化资源,tags
-
-                    syncServices(globalProject);
-
-                    $scope.$broadcast('GlobalProjectReceived');
-
-                });
+            }).error(function (msg) {
+                toastr.warning('读取错误');
+                loadFromBlank({}, id);
             })
 
-            logs.push('打开本地项目');
-            return;
-        }
-        console.log(TOKEN);
+            $scope.$on('LoadUp', function () {
 
-        var globalProjectString='';
-        getProjectData();
+                loadStep++;
 
-
-        
-        function getProjectData(_dataIndex) {
-            $http({
-                method:'GET',
-                url:baseUrl+'/project',
-                params:{
-                    token:window.localStorage.getItem('token'),
-
-                    pid:pid
-
+                if (loadStep == 6) {
+                    //到达第8步,加载完成
+                    showIDE();
                 }
-            }).success(function (r) {
+            })
+        }
 
-                console.log(r);
+        function showIDE() {
+            $timeout(function () {
+                $scope.ide.loaded = true;
+                window.spinner && window.spinner.hide(true);
+                // intervalSave();
+            }, 200)
+        }
 
-                var status=r.status;
-                if (status=='success')
-                {
-                    globalProject=r.project.data;
+        function getUrlParams() {
+            var result = {};
+            var params = (window.location.search.split('?')[1] || '').split('&');
+            for (var param in params) {
+                if (params.hasOwnProperty(param)) {
+                    var paramParts = params[param].split('=');
+                    result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
+                }
+            }
+            console.log(result);
+            return result;
+        }
 
-                    if (globalProject){
+        function reLogin(_callback, _errCallback) {
+            $http({
+                    method: 'GET',
+                    url: baseUrl + '/refreshToken',
+                    params: {
+                        token: window.localStorage.getItem('token')
+                    }
+                }
+            ).success(function (result) {
 
-                        TemplateProvider.saveProjectFromGlobal(globalProject);
-                        ProjectService.saveProjectFromGlobal(globalProject, function () {
-                            PID = pid;
+                if (result.status != 'success') {
+                    return;
+                }
+                console.log(result);
+                var token = result.newToken;
+                window.localStorage.setItem('token', token);
+                TOKEN = token;
+                console.log(TOKEN);
+                //
+                // var pid=result.user.projects[0].pid;
+                // PID=pid;
 
-                            //TODO:初始化资源,tags
+                _callback && _callback(result);
+            }).error(function (err) {
+                _errCallback && _errCallback(err);
+            });
+        };
 
-                            syncServices(globalProject);
+        function refreshLoginStatus() {
+            if (!window.local) {
+                setInterval(function () {
+                    $http({
+                        method: 'GET',
+                        url: baseUrl + '/api/refreshlogin'
+                    }).success(function (data) {
+                        console.log(data);
+                    }).error(function (err) {
+                        console.log(err)
+                    });
+                }, 10 * 60 * 1000)
+            }
 
-                            $scope.$broadcast('GlobalProjectReceived');
-                            logs.push('从服务器获取项目');
+        }
 
-                        });
+        function receiveProject(pid) {
 
-                    }else{
+            var globalProject = {};
+            if (!pid) {
+                $timeout(function () {
+                    toastr.info('加载离线项目');
+                    globalProject = GlobalService.getBlankProject();
+                    TemplateProvider.saveProjectFromGlobal(globalProject);
+                    ProjectService.saveProjectFromGlobal(globalProject, function () {
+                        PID = pid;
+
+                        //TODO:初始化资源,tags
+
+                        syncServices(globalProject);
+
+                        $scope.$broadcast('GlobalProjectReceived');
+
+                    });
+                })
+
+                logs.push('打开本地项目');
+                return;
+            }
+            console.log(TOKEN);
+
+            var globalProjectString = '';
+            getProjectData();
+
+
+            function getProjectData(_dataIndex) {
+                $http({
+                    method: 'GET',
+                    url: baseUrl + '/project',
+                    params: {
+                        token: window.localStorage.getItem('token'),
+
+                        pid: pid
+
+                    }
+                }).success(function (r) {
+
+                    console.log(r);
+
+                    var status = r.status;
+                    if (status == 'success') {
+                        globalProject = r.project.data;
+
+                        if (globalProject) {
+
+                            TemplateProvider.saveProjectFromGlobal(globalProject);
+                            ProjectService.saveProjectFromGlobal(globalProject, function () {
+                                PID = pid;
+
+                                //TODO:初始化资源,tags
+
+                                syncServices(globalProject);
+
+                                $scope.$broadcast('GlobalProjectReceived');
+                                logs.push('从服务器获取项目');
+
+                            });
+
+                        } else {
+                            console.log('获取信息失败');
+
+                            readCache();
+                        }
+
+
+                    }
+                    else {
                         console.log('获取信息失败');
 
                         readCache();
                     }
-
-
-                }
-                else{
-                    console.log('获取信息失败');
-
+                }).error(function (msg) {
+                    console.log(msg);
                     readCache();
-                }
-            }).error(function (msg) {
-                console.log(msg);
-                readCache();
 
-            })
-        }
-    }
-    /**
-     * 接收打开的项目并且通知其他controller获取
-     */
-    function receiveGlobalProject(){
-        if(offLine){
-            receiveProject();
-
-        }else {
-            reLogin(function () {
-                var pid=PID;
-                receiveProject(pid);
-            },function (err) {
-                console.log(err);
-                readCache();
-
-            })
-        }
-
-
-
-        // $timeout(function () {
-        //     //TODO:以后按照需要选择
-        //     var globalProject=GlobalService.getBlankProject();
-        //     TemplateProvider.saveProjectFromGlobal(globalProject);
-        //     ProjectService.saveProjectFromGlobal(globalProject, function () {
-        //         $scope.$broadcast('GlobalProjectReceived');
-        //
-        //     });
-        // },1000);
-
-        //当其他Controller渲染各自作用域后,传来一个事件,用来驱动loadStep
-        $scope.$on('LoadUp', function () {
-
-            loadStep++;
-            if (loadStep == 6) {
-                //到达第8步,加载完成
-                $timeout(function () {
-                    $scope.ide.loaded=true;
-
-                    // intervalSave();
-
-                },2000)
-            }
-        })
-
-    }
-
-    /**
-     * 当创建,切换或修改page,通知更新预览图和舞台区
-     */
-    function listenChange(){
-
-        $scope.$on('ChangePageNode', function () {
-            $scope.$broadcast('PageNodeChanged');
-            $scope.$broadcast('NavStatusChanged');
-        });
-
-        $scope.$on('ChangeCurrentPage', function (event,operate,callback) {
-            $scope.$broadcast('CurrentPageChanged',operate,callback);
-            $scope.$broadcast('NavStatusChanged');
-            $scope.$broadcast('AttributeChanged');
-
-            document.getElementById("saveFlag").value = "false";//一表示表单值已经被修改过，未save
-        });
-
-        $scope.$on('ChangeCurrentSubLayer', function (event,operate, callback) {
-            $scope.$broadcast('CurrentSubLayerChanged',operate,callback);
-            $scope.$broadcast('NavStatusChanged');
-            $scope.$broadcast('AttributeChanged');
-        })
-
-        $scope.$on('SwitchCurrentPage', function (event,oldOperate,callback) {
-            $scope.$broadcast('PageChangedSwitched',oldOperate,callback);
-            $scope.$broadcast('NavStatusChanged');
-            $scope.$broadcast('AttributeChanged');
-
-
-        })
-
-        $scope.$on('ChangeToolShow', function (event, toolShow) {
-            $scope.$broadcast('ToolShowChanged',toolShow);
-            $scope.$broadcast('NavStatusChanged');
-
-
-        });
-        $scope.$on('AddNewPage', function (event, operate, callback) {
-            $scope.$broadcast('NewPageAdded',operate, callback);
-            $scope.$broadcast('PageNodeChanged');
-            $scope.$broadcast('NavStatusChanged');
-            $scope.$broadcast('AttributeChanged');
-
-
-        });
-
-        $scope.$on('changeCanvasScale', function (event,scaleMode) {
-            $scope.$broadcast('CanvasScaleChanged',scaleMode);
-        });
-
-        $scope.$on('UpdateProject', function (event) {
-            $scope.$broadcast('ProjectUpdated');
-
-            document.getElementById("saveFlag").value = "true";//表示以保存
-        });
-
-
-
-        $scope.$on('Undo', function (event, operate, callback) {
-            $scope.$broadcast('OperateQueChanged',operate,callback);
-            $scope.$broadcast('NavStatusChanged');
-            $scope.$broadcast('PageNodeChanged');
-            $scope.$broadcast('AttributeChanged');
-        });
-        $scope.$on('Redo', function (event, operate, callback) {
-            $scope.$broadcast('OperateQueChanged',operate,callback);
-            $scope.$broadcast('NavStatusChanged');
-            $scope.$broadcast('PageNodeChanged');
-            $scope.$broadcast('AttributeChanged');
-        });
-
-        $scope.$on('DoCopy', function (event) {
-            $scope.$broadcast('NavStatusChanged');
-        });
-
-        $scope.$on('ResourceUpdate',function(){
-            $scope.$broadcast('AttributeChanged');
-            $scope.$broadcast('ResourceChanged');
-        });
-
-        $scope.$on('ReOpenProject',reOpenProject);
-
-
-        $scope.$on('ChangeShownArea', function (event, _op) {
-            console.log(_op);
-            switch (_op){
-                case 0:$scope.leftShown=!$scope.leftShown;break;
-                case 1:$scope.rightShown=!$scope.rightShown;break;
-                case 2:$scope.bottomShown =!$scope.bottomShown;break;
-
-            }
-        })
-    }
-
-    function reOpenProject(event,pid) {
-        $scope.ide.loaded=false;
-
-        loadStep=0;     //加载到了第几步,共8步
-
-        receiveProject(pid);
-
-
-
-    }
-    function loadPreference(){
-        fabric.FX_DURATION=Preference.FX_DURATION;
-    }
-
-
-    function intervalSave(){
-        //缓存项目
-        $interval(function () {
-            console.log('项目已自动缓存');
-            ProjectService.getProjectTo($scope);
-            $scope.project.resourceList = ResourceService.getAllResource()
-            $scope.project.customTags = TagService.getAllCustomTags()
-            $scope.project.timerTags = TagService.getAllTimerTags()
-            $scope.project.timers = TagService.getTimerNum()
-            var pid=PID;
-            console.log($scope.project)
-            window.localStorage.setItem('projectCache'+pid,JSON.stringify($scope.project));
-        },5*60*1000);
-
-        //保持登录
-        //$interval(function () {
-        //
-        //    console.log('重新登录');
-        //    reLogin();
-        //},20*60*1000)
-    }
-
-    function readCache() {
-        try{
-            console.log('读取缓存');
-            var pid=PID;
-            var project=JSON.parse(window.localStorage.getItem('projectCache'+pid));
-            var globalProject=project;
-            console.log(globalProject);
-            TemplateProvider.saveProjectFromGlobal(globalProject);
-            ProjectService.saveProjectFromGlobal(globalProject, function () {
-                syncServices(globalProject)
-                $scope.$broadcast('GlobalProjectReceived');
-
-            });
-        }catch (e){
-            toastr.info('获取项目失败')
-        }
-
-    }
-
-    //sync services like resource service and tag service
-
-    function syncServices(globalProject){
-        ResourceService.setMaxTotalSize(globalProject.maxSize||100*1024*1024);
-        ResourceService.syncFiles(globalProject.resourceList);
-        //tags tbc
-        TagService.syncCustomTags(globalProject.customTags);
-        TagService.syncTimerTags(globalProject.timerTags);
-        TagService.setTimerNum(globalProject.timers);
-        NavModalCANConfigService.setCANId(globalProject.CANId);
-    }
-
-    function setTemplate(date,cb){
-        var template = _.cloneDeep(date);
-
-        //translate src
-        var resourceUrl = ResourceService.getResourceUrl()+'template/';
-        var tempSrc = ''
-        for(var key in template){
-            if(template[key] instanceof Array){
-                //resourcelist
-                template[key].forEach(function(item){
-
-                    tempSrc = item.src&&item.src.split('/');
-                    tempSrc = tempSrc[tempSrc.length-1];
-                    tempSrc = resourceUrl + tempSrc;
-                    item.src = tempSrc;
                 })
-            }else{
-                //widget
-                if(template[key].texList){
-                    template[key].texList.forEach(function(tex){
-                        if(tex.slices){
-                            tex.slices.forEach(function(slice){
-                                if(slice.imgSrc!==''){
-                                    tempSrc = slice.imgSrc&&slice.imgSrc.split('/');
-                                    tempSrc = tempSrc[tempSrc.length-1];
-                                    tempSrc = resourceUrl+tempSrc;
-                                    slice.imgSrc = tempSrc;
-                                }
-                            })
-                        }
-                    })
-                }
             }
         }
-        //add template resource to resource list
-        ResourceService.setTemplateFiles(template.templateResourcesList);
-        //add template attribute to widget
-        TemplateProvider.setDefaultWidget(template);
 
+        /**
+         * 接收打开的项目并且通知其他controller获取
+         */
+        function receiveGlobalProject() {
+            if (offLine) {
+                receiveProject();
 
-
-        var templateList = template.templateResourcesList||[];
-        var totalNum = templateList.length;
-        var coutDown = function (e, resourceObj) {
-            if (e.type === 'error') {
-                toastr.warning('图片加载失败: ' + resourceObj.name);
-                resourceObj.complete = false;
             } else {
-                resourceObj.complete = true;
+                reLogin(function () {
+                    var pid = PID;
+                    receiveProject(pid);
+                }, function (err) {
+                    console.log(err);
+                    readCache();
+
+                })
             }
-            totalNum--;
-            if(totalNum<=0){
-                //cb
+
+
+            // $timeout(function () {
+            //     //TODO:以后按照需要选择
+            //     var globalProject=GlobalService.getBlankProject();
+            //     TemplateProvider.saveProjectFromGlobal(globalProject);
+            //     ProjectService.saveProjectFromGlobal(globalProject, function () {
+            //         $scope.$broadcast('GlobalProjectReceived');
+            //
+            //     });
+            // },1000);
+
+            //当其他Controller渲染各自作用域后,传来一个事件,用来驱动loadStep
+            $scope.$on('LoadUp', function () {
+
+                loadStep++;
+                if (loadStep == 6) {
+                    //到达第8步,加载完成
+                    $timeout(function () {
+                        $scope.ide.loaded = true;
+
+                        // intervalSave();
+
+                    }, 2000)
+                }
+            })
+
+        }
+
+        /**
+         * 当创建,切换或修改page,通知更新预览图和舞台区
+         */
+        function listenChange() {
+
+            $scope.$on('ChangePageNode', function () {
+                $scope.$broadcast('PageNodeChanged');
+                $scope.$broadcast('NavStatusChanged');
+            });
+
+            $scope.$on('ChangeCurrentPage', function (event, operate, callback) {
+                $scope.$broadcast('CurrentPageChanged', operate, callback);
+                $scope.$broadcast('NavStatusChanged');
+                $scope.$broadcast('AttributeChanged');
+
+                document.getElementById("saveFlag").value = "false";//一表示表单值已经被修改过，未save
+            });
+
+            $scope.$on('ChangeCurrentSubLayer', function (event, operate, callback) {
+                $scope.$broadcast('CurrentSubLayerChanged', operate, callback);
+                $scope.$broadcast('NavStatusChanged');
+                $scope.$broadcast('AttributeChanged');
+            });
+
+            $scope.$on('SwitchCurrentPage', function (event, oldOperate, callback) {
+                $scope.$broadcast('PageChangedSwitched', oldOperate, callback);
+                $scope.$broadcast('NavStatusChanged');
+                $scope.$broadcast('AttributeChanged');
+            });
+
+            $scope.$on('ChangeToolShow', function (event, toolShow) {
+                $scope.$broadcast('ToolShowChanged', toolShow);
+                $scope.$broadcast('NavStatusChanged');
+            });
+
+            $scope.$on('AddNewPage', function (event, operate, callback) {
+                $scope.$broadcast('NewPageAdded', operate, callback);
+                $scope.$broadcast('PageNodeChanged');
+                $scope.$broadcast('NavStatusChanged');
+                $scope.$broadcast('AttributeChanged');
+            });
+
+            $scope.$on('changeCanvasScale', function (event, scaleMode) {
+                $scope.$broadcast('CanvasScaleChanged', scaleMode);
+            });
+
+            $scope.$on('UpdateProject', function (event) {
+                $scope.$broadcast('ProjectUpdated');
+                document.getElementById("saveFlag").value = "true";//表示以保存
+            });
+
+            $scope.$on('Undo', function (event, operate, callback) {
+                $scope.$broadcast('OperateQueChanged', operate, callback);
+                $scope.$broadcast('NavStatusChanged');
+                $scope.$broadcast('PageNodeChanged');
+                $scope.$broadcast('AttributeChanged');
+            });
+
+            $scope.$on('Redo', function (event, operate, callback) {
+                $scope.$broadcast('OperateQueChanged', operate, callback);
+                $scope.$broadcast('NavStatusChanged');
+                $scope.$broadcast('PageNodeChanged');
+                $scope.$broadcast('AttributeChanged');
+            });
+
+            $scope.$on('DoCopy', function (event) {
+                $scope.$broadcast('NavStatusChanged');
+            });
+
+            $scope.$on('ResourceUpdate', function () {
+                $scope.$broadcast('AttributeChanged');
+                $scope.$broadcast('ResourceChanged');
+            });
+
+            $scope.$on('ReOpenProject', reOpenProject);
+
+            $scope.$on('ChangeShownArea', function (event, _op) {
+                switch (_op) {
+                    case 0:
+                        $scope.leftShown = !$scope.leftShown;
+                        break;
+                    case 1:
+                        $scope.rightShown = !$scope.rightShown;
+                        break;
+                    case 2:
+                        $scope.bottomShown = !$scope.bottomShown;
+                        break;
+                }
+            });
+
+            $scope.$on('GetTagsFromRemote', function (data) {
+                $scope.$broadcast('ChangeAllTags',data);
+            });
+        }
+
+        function reOpenProject(event, pid) {
+            $scope.ide.loaded = false;
+
+            loadStep = 0;     //加载到了第几步,共8步
+
+            receiveProject(pid);
+
+
+        }
+
+        function loadPreference() {
+            fabric.FX_DURATION = Preference.FX_DURATION;
+        }
+
+        function intervalSave() {
+            //缓存项目
+            $interval(function () {
+                console.log('项目已自动缓存');
+                ProjectService.getProjectTo($scope);
+                $scope.project.resourceList = ResourceService.getAllResource()
+                $scope.project.customTags = TagService.getAllCustomTags()
+                $scope.project.timerTags = TagService.getAllTimerTags()
+                $scope.project.timers = TagService.getTimerNum()
+                var pid = PID;
+                console.log($scope.project)
+                window.localStorage.setItem('projectCache' + pid, JSON.stringify($scope.project));
+            }, 5 * 60 * 1000);
+
+            //保持登录
+            //$interval(function () {
+            //
+            //    console.log('重新登录');
+            //    reLogin();
+            //},20*60*1000)
+        }
+
+        function readCache() {
+            try {
+                console.log('读取缓存');
+                var pid = PID;
+                var project = JSON.parse(window.localStorage.getItem('projectCache' + pid));
+                var globalProject = project;
+                console.log(globalProject);
+                TemplateProvider.saveProjectFromGlobal(globalProject);
+                ProjectService.saveProjectFromGlobal(globalProject, function () {
+                    syncServices(globalProject)
+                    $scope.$broadcast('GlobalProjectReceived');
+
+                });
+            } catch (e) {
+                toastr.info('获取项目失败')
+            }
+
+        }
+
+        //sync services like resource service and tag service
+
+        function syncServices(globalProject) {
+            ResourceService.setMaxTotalSize(globalProject.maxSize || 100 * 1024 * 1024);
+            ResourceService.syncFiles(globalProject.resourceList);
+            //tags tbc
+            TagService.syncCustomTags(globalProject.customTags);
+            TagService.syncTimerTags(globalProject.timerTags);
+            TagService.setTimerNum(globalProject.timers);
+            NavModalCANConfigService.setCANId(globalProject.CANId);
+        }
+
+        function setTemplate(date, cb) {
+            var template = _.cloneDeep(date);
+
+            //translate src
+            var resourceUrl = ResourceService.getResourceUrl() + 'template/';
+            var tempSrc = ''
+            for (var key in template) {
+                if (template[key] instanceof Array) {
+                    //resourcelist
+                    template[key].forEach(function (item) {
+
+                        tempSrc = item.src && item.src.split('/');
+                        tempSrc = tempSrc[tempSrc.length - 1];
+                        tempSrc = resourceUrl + tempSrc;
+                        item.src = tempSrc;
+                    })
+                } else {
+                    //widget
+                    if (template[key].texList) {
+                        template[key].texList.forEach(function (tex) {
+                            if (tex.slices) {
+                                tex.slices.forEach(function (slice) {
+                                    if (slice.imgSrc !== '') {
+                                        tempSrc = slice.imgSrc && slice.imgSrc.split('/');
+                                        tempSrc = tempSrc[tempSrc.length - 1];
+                                        tempSrc = resourceUrl + tempSrc;
+                                        slice.imgSrc = tempSrc;
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }
+            }
+            //add template resource to resource list
+            ResourceService.setTemplateFiles(template.templateResourcesList);
+            //add template attribute to widget
+            TemplateProvider.setDefaultWidget(template);
+
+
+            var templateList = template.templateResourcesList || [];
+            var totalNum = templateList.length;
+            var coutDown = function (e, resourceObj) {
+                if (e.type === 'error') {
+                    toastr.warning('图片加载失败: ' + resourceObj.name);
+                    resourceObj.complete = false;
+                } else {
+                    resourceObj.complete = true;
+                }
+                totalNum--;
+                if (totalNum <= 0) {
+                    //cb
+                    cb && cb();
+                }
+            };
+            //for(var i=0;i<templateList.length;i++){
+            //    var curRes = templateList[i];
+            //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+            //}
+            if (totalNum > 0) {
+                templateList.map(function (curRes, index) {
+                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+                });
+            } else {
                 cb && cb();
             }
-        };
-        //for(var i=0;i<templateList.length;i++){
-        //    var curRes = templateList[i];
-        //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-        //}
-        if(totalNum>0){
-            templateList.map(function(curRes,index){
-                ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-            });
-        }else{
-            cb && cb();
+
+
         }
 
+        /**
+         * 预处理并恢复从zip包上传并创建的工程
+         * @param rawData
+         */
 
-    }
+        function preProcessData(rawData, cb) {
+            var newData = _.cloneDeep(rawData),
+                i = 0,//循环变量
+                index,//第一个timer tag的下标
+                tempContentObj = JSON.parse(rawData.content),
+                attrArr = [],//属性名数组
+                pageNode = new fabric.Canvas('c'),
+                subLayerNode = new fabric.Canvas('c1', {renderOnAddRemove: false});
 
-    /**
-     * 预处理并恢复从zip包上传并创建的工程
-     * @param rawData
-     */
+            //fix basic data structure
+            newData.thumbnail = '';
+            newData.template = '';
+            newData.supportTouch = 'false';
 
-    function preProcessData(rawData,cb){
-        var newData = _.cloneDeep(rawData),
-            i = 0,//循环变量
-            index,//第一个timer tag的下标
-            tempContentObj = JSON.parse(rawData.content),
-            attrArr = [],//属性名数组
-            pageNode = new fabric.Canvas('c'),
-            subLayerNode = new fabric.Canvas('c1',{renderOnAddRemove: false });
-
-        //fix basic data structure
-        newData.thumbnail = '';
-        newData.template = '';
-        newData.supportTouch = 'false';
-
-        tempContentObj.currentSize = _.cloneDeep(tempContentObj.size);
-        tempContentObj.customTags = _.cloneDeep(tempContentObj.tagList);
-        tempContentObj.projectId = window.location.pathname&&window.location.pathname.split('/')[2];
-        tempContentObj.initSize = _.cloneDeep(tempContentObj.size);
-        tempContentObj.pages = _.cloneDeep(tempContentObj.pageList);
-        for(i=0;i<tempContentObj.tagList.length;i++){
-            if(tempContentObj.tagList[i].type===undefined){
-                index = i;
-                break;
-            }
-        }
-        tempContentObj.timerTags = index>0?tempContentObj.customTags.splice(index,tempContentObj.customTags.length-index):[];
-
-        attrArr = ['size','tagList','basicUrl','format','name','author','pageList'];
-        deleteObjAttr(tempContentObj,attrArr);
-
-        //then fix page layer sublayer and widget
-        i=0;
-        var pageLength = tempContentObj.pages.length;
-        var page;
-        var index;
-        var ergodicPages = function(){
-            page = null;
-            page = tempContentObj.pages[i];
-            index = i;
-            pageNode.setWidth(tempContentObj.initSize.width);
-            pageNode.setHeight(tempContentObj.initSize.height);
-            pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
-            // pageNode.clear();
-            if(page.canvasList!==undefined){
-                page.selected = (index===0)?true:false
-                page.layers = page.canvasList;
-                attrArr = ['canvasList','linkedAllWidgets'];
-                deleteObjAttr(page,attrArr);
-                if(page.actions){
-                    page.actions.forEach(function (action) {
-                        if(action.commands){
-                            var newCommands;
-                            newCommands = action.commands.map(function(command){
-                                    return command.cmd;
-                            });
-                            action.commands = newCommands;
-                        }
-                    })
+            tempContentObj.currentSize = _.cloneDeep(tempContentObj.size);
+            tempContentObj.customTags = _.cloneDeep(tempContentObj.tagList);
+            tempContentObj.projectId = window.location.pathname && window.location.pathname.split('/')[2];
+            tempContentObj.initSize = _.cloneDeep(tempContentObj.size);
+            tempContentObj.pages = _.cloneDeep(tempContentObj.pageList);
+            for (i = 0; i < tempContentObj.tagList.length; i++) {
+                if (tempContentObj.tagList[i].type === undefined) {
+                    index = i;
+                    break;
                 }
-                page.layers.forEach(function(layer,index){
-                    layer.subLayers = layer.subCanvasList;
-                    layer.subLayers.forEach(function (subLayer,index) {
-                        subLayer.widgets = subLayer.widgetList;
-                        attrArr = ['widgetList'];
-                        deleteObjAttr(subLayer,attrArr);
-                        subLayerNode.setWidth(layer.w);
-                        subLayerNode.setHeight(layer.h);
-                        subLayerNode.zoomToPoint(new fabric.Point(0, 0), 1);
-                        // subLayerNode.clear();
-                        subLayer.current = false;
-                        subLayer.expand = true;
-                        subLayer.selected = false;
-                        subLayer.url = '';
-                        if(subLayer.actions){
-                            subLayer.actions.forEach(function (action) {
-                                if(action.commands){
-                                    var newCommands;
-                                    newCommands = action.commands.map(function(command){
-                                        return command.cmd;
-                                    });
-                                    action.commands = newCommands;
-                                }
-                            })
-                        }
-                        subLayer.widgets.forEach(function (widget,index) {
-                            widget.type = widget.subType;
-                            deleteObjAttr(widget,['subType']);
-                            widget.current = false;
-                            widget.currentFabwidget = null;
-                            widget.expand = true;
-                            widget.selected = false;
-                            if(widget.actions){
-                                widget.actions.forEach(function (action) {
-                                    if(action.commands){
+            }
+            tempContentObj.timerTags = index > 0 ? tempContentObj.customTags.splice(index, tempContentObj.customTags.length - index) : [];
+
+            attrArr = ['size', 'tagList', 'basicUrl', 'format', 'name', 'author', 'pageList'];
+            deleteObjAttr(tempContentObj, attrArr);
+
+            //then fix page layer sublayer and widget
+            i = 0;
+            var pageLength = tempContentObj.pages.length;
+            var page;
+            var index;
+            var ergodicPages = function () {
+                page = null;
+                page = tempContentObj.pages[i];
+                index = i;
+                pageNode.setWidth(tempContentObj.initSize.width);
+                pageNode.setHeight(tempContentObj.initSize.height);
+                pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                // pageNode.clear();
+                if (page.canvasList !== undefined) {
+                    page.selected = (index === 0) ? true : false
+                    page.layers = page.canvasList;
+                    attrArr = ['canvasList', 'linkedAllWidgets'];
+                    deleteObjAttr(page, attrArr);
+                    if (page.actions) {
+                        page.actions.forEach(function (action) {
+                            if (action.commands) {
+                                var newCommands;
+                                newCommands = action.commands.map(function (command) {
+                                    return command.cmd;
+                                });
+                                action.commands = newCommands;
+                            }
+                        })
+                    }
+                    page.layers.forEach(function (layer, index) {
+                        layer.subLayers = layer.subCanvasList;
+                        layer.subLayers.forEach(function (subLayer, index) {
+                            subLayer.widgets = subLayer.widgetList;
+                            attrArr = ['widgetList'];
+                            deleteObjAttr(subLayer, attrArr);
+                            subLayerNode.setWidth(layer.w);
+                            subLayerNode.setHeight(layer.h);
+                            subLayerNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                            // subLayerNode.clear();
+                            subLayer.current = false;
+                            subLayer.expand = true;
+                            subLayer.selected = false;
+                            subLayer.url = '';
+                            if (subLayer.actions) {
+                                subLayer.actions.forEach(function (action) {
+                                    if (action.commands) {
                                         var newCommands;
-                                        newCommands = action.commands.map(function(command){
+                                        newCommands = action.commands.map(function (command) {
                                             return command.cmd;
                                         });
                                         action.commands = newCommands;
                                     }
                                 })
                             }
-                            if(widget.texList&&(widget.texList instanceof Array)){
-                                widget.texList.forEach(function (tex,index) {
-                                    if(tex.slices&&(tex.slices instanceof Array)){
-                                        tex.slices.forEach(function (slice,index) {
-                                            if(slice.hasOwnProperty('originSrc')){
-                                                slice.imgSrc = slice.originSrc;
-                                                delete slice.originSrc;
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                            addWidgetInCurrentSubLayer(widget,subLayerNode);
+                            subLayer.widgets.forEach(function (widget, index) {
+                                widget.type = widget.subType;
+                                deleteObjAttr(widget, ['subType']);
+                                widget.current = false;
+                                widget.currentFabwidget = null;
+                                widget.expand = true;
+                                widget.selected = false;
+                                if (widget.actions) {
+                                    widget.actions.forEach(function (action) {
+                                        if (action.commands) {
+                                            var newCommands;
+                                            newCommands = action.commands.map(function (command) {
+                                                return command.cmd;
+                                            });
+                                            action.commands = newCommands;
+                                        }
+                                    })
+                                }
+                                if (widget.texList && (widget.texList instanceof Array)) {
+                                    widget.texList.forEach(function (tex, index) {
+                                        if (tex.slices && (tex.slices instanceof Array)) {
+                                            tex.slices.forEach(function (slice, index) {
+                                                if (slice.hasOwnProperty('originSrc')) {
+                                                    slice.imgSrc = slice.originSrc;
+                                                    delete slice.originSrc;
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                                addWidgetInCurrentSubLayer(widget, subLayerNode);
+                            });
+                            subLayer.proJsonStr = subLayerNode.toJSON();
+                            subLayerNode.clear();
                         });
-                        subLayer.proJsonStr  = subLayerNode.toJSON();
-                        subLayerNode.clear();
+                        layer.info = {};
+                        layer.info.width = layer.w;
+                        layer.info.height = layer.h;
+                        layer.info.top = layer.y;
+                        layer.info.left = layer.x;
+                        layer.zIndex = index;
+                        layer.current = false;
+                        layer.expand = true;
+                        layer.selected = false;
+                        layer.showSubLayer = layer.subLayers[0];
+                        layer.url = '';
+                        attrArr = ['w', 'h', 'y', 'x', 'subCanvasList'];
+                        deleteObjAttr(layer, attrArr);
+                        addWidgetInCurrentSubLayer(layer, pageNode)
                     });
-                    layer.info = {};
-                    layer.info.width = layer.w;
-                    layer.info.height = layer.h;
-                    layer.info.top = layer.y;
-                    layer.info.left = layer.x;
-                    layer.zIndex = index;
-                    layer.current = false;
-                    layer.expand = true;
-                    layer.selected = false;
-                    layer.showSubLayer = layer.subLayers[0];
-                    layer.url = '';
-                    attrArr = ['w','h','y','x','subCanvasList'];
-                    deleteObjAttr(layer,attrArr);
-                    addWidgetInCurrentSubLayer(layer,pageNode)
+                    if (page.backgroundImage && page.backgroundImage !== '') {
+                        pageNode.setBackgroundImage(page.backgroundImage, function () {
+                            pageNode.setBackgroundColor(page.backgroundColor, function () {
+                                page.proJsonStr = pageNode.toJSON();
+                                pageNode.clear();
+                                i++;
+                                if (i < pageLength) {
+                                    ergodicPages();
+                                } else {
+                                    newData.content = JSON.stringify(tempContentObj);
+                                    // console.log('after preprocess',newData);
+                                    cb && cb(newData)
+                                }
+                            });
+                        }, {
+                            width: pageNode.getWidth(),
+                            height: pageNode.getHeight()
+                        });
+                    } else {
+                        pageNode.setBackgroundImage(null, function () {
+                            pageNode.setBackgroundColor(page.backgroundColor, function () {
+                                page.proJsonStr = pageNode.toJSON();
+                                pageNode.clear();
+                                i++;
+                                if (i < pageLength) {
+                                    ergodicPages();
+                                } else {
+                                    newData.content = JSON.stringify(tempContentObj);
+                                    // console.log('after preprocess',newData);
+                                    cb && cb(newData)
+                                }
+                            });
+                        });
+                    }
+                }
+            };
+            ergodicPages();
+        }
+
+
+        /**
+         * 删除一个对象中的指定的属性
+         * @param obj 对象
+         * @param attrArr 属性名称组成的数组
+         */
+        function deleteObjAttr(obj, attrArr) {
+            if (attrArr instanceof Array) {
+                attrArr.forEach(function (key, index) {
+                    delete obj[key];
+                })
+            }
+            return obj
+        }
+
+        /**
+         * 将widget加入sublayer
+         * @param dataStructure
+         * @param node
+         * @param _successCallback
+         */
+        function addWidgetInCurrentSubLayer(dataStructure, node, _successCallback) {
+            var initiator = {
+                width: dataStructure.info.width,
+                height: dataStructure.info.height,
+                top: dataStructure.info.top,
+                left: dataStructure.info.left,
+                id: dataStructure.id,
+                lockScalingFlip: true,
+                hasRotatingPoint: false,
+                shadow: {
+                    color: 'rgba(0,0,0,0.4)', blur: 2
+                }
+            };
+            var addFabWidget = function (fabWidget) {
+                node.add(fabWidget);
+            };
+
+            switch (dataStructure.type) {
+                case 'MySlide':
+                    fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyProgress':
+                    fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyDashboard':
+                    fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyButton':
+                    fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyButtonGroup':
+                    fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyNumber':
+                    fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyTextArea':
+                    fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyKnob':
+                    fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyOscilloscope':
+                    fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MySwitch':
+                    fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyRotateImg':
+                    fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyDateTime':
+                    fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyScriptTrigger':
+                    fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyVideo':
+                    fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyAnimation':
+                    fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
+                    break;
+                case 'MyLayer':
+                    node.add(new fabric.MyLayer(dataStructure, initiator));
+                    break;
+                case 'MyNum':
+                    node.add(new fabric.MyNum(dataStructure, initiator));
+                    break;
+                case 'MyTexNum':
+                    node.add(new fabric.MyTexNum(dataStructure, initiator));
+                    break;
+                case 'MyTexTime':
+                    node.add(new fabric.MyTexTime(dataStructure, initiator));
+                    break;
+                default :
+                    console.error('not match widget in preprocess!');
+                    break;
+            }
+
+        };
+
+        /**
+         * 初始化socket
+         */
+        $scope.wrapperForCoop = false;
+        $scope.projectOwner = false;
+        var inCharge = false;
+
+        function initSocketIO(ownerId) {
+            socketIOService.createSocket('', function (data) {
+
+                console.log('you have connect');
+
+                //capture current users in room
+                socketIOService.on('connect:success', function (allUsers, currentUser) {
+                    // console.log('connect:success',allUsers);
+                    socketIOService.setRoomUsers(allUsers);
+                    $scope.currentUser = currentUser;
+                    inCharge = allUsers[0] && (allUsers[0].id === $scope.currentUser.id);
+                    if (!inCharge) {
+                        console.log('wenerId', ownerId, 'currId', currentUser.id);
+                        $scope.projectOwner = (ownerId === currentUser.id);
+                        $scope.wrapperForCoop = true;
+                        $scope.currentUsers = socketIOService.getRoomUsers();
+                    }
                 });
-                if(page.backgroundImage&&page.backgroundImage!==''){
-                    pageNode.setBackgroundImage(page.backgroundImage,function () {
-                        pageNode.setBackgroundColor(page.backgroundColor,function () {
-                            page.proJsonStr = pageNode.toJSON();
-                            pageNode.clear();
-                            i++;
-                            if(i<pageLength){
-                                ergodicPages();
-                            }else{
-                                newData.content = JSON.stringify(tempContentObj);
-                                // console.log('after preprocess',newData);
-                                cb&&cb(newData)
-                            }
-                        });
-                    },{
-                        width:pageNode.getWidth(),
-                        height:pageNode.getHeight()
+
+
+                //capture new user enter this room
+                socketIOService.on("user:enter", function (data) {
+                    toastr.info('用户 ' + data.username + '加入');
+                    $scope.$apply(function () {
+                        $scope.currentUsers = socketIOService.addUserInRoom(data);
+                        // console.log('add user',$scope.currentUsers);
+                    })
+                });
+
+                //capture user leave this room
+                socketIOService.on("user:leave", function (data) {
+                    toastr.info('用户 ' + data.username + ' 已离开');
+                    $scope.$apply(function () {
+                        $scope.currentUsers = socketIOService.deleteUserInRoom(data);
                     });
-                }else{
-                    pageNode.setBackgroundImage(null,function(){
-                        pageNode.setBackgroundColor(page.backgroundColor,function () {
-                            page.proJsonStr = pageNode.toJSON();
-                            pageNode.clear();
-                            i++;
-                            if(i<pageLength){
-                                ergodicPages();
-                            }else{
-                                newData.content = JSON.stringify(tempContentObj);
-                                // console.log('after preprocess',newData);
-                                cb&&cb(newData)
+
+                    //check currentUser have right to edit project
+                    // console.log('inCharge',inCharge);
+                    if (!inCharge) {
+                        inCharge = $scope.currentUsers[0] && ($scope.currentUsers[0].id === $scope.currentUser.id);
+                        $timeout(function () {
+                            if (inCharge) {
+                                alert('您已获得编辑工程的权限，即将重新加载工程');
+                                window.spinner && window.spinner.show();
+                                $scope.wrapperForCoop = false;
+                                loadStep = 0;
+                                readProjectData();
                             }
-                        });
-                    });
-                }
-            }
-        };
-        ergodicPages();
-    }
+                        }, 1500)
+                    }
+                });
 
 
-    /**
-     * 删除一个对象中的指定的属性
-     * @param obj 对象
-     * @param attrArr 属性名称组成的数组
-     */
-    function deleteObjAttr(obj,attrArr){
-        if(attrArr instanceof Array){
-            attrArr.forEach(function(key,index){
-                delete obj[key];
-            })
-        }
-        return obj
-    }
-
-    /**
-     * 将widget加入sublayer
-     * @param dataStructure
-     * @param node
-     * @param _successCallback
-     */
-    function addWidgetInCurrentSubLayer(dataStructure,node,_successCallback) {
-        var initiator = {
-            width: dataStructure.info.width,
-            height: dataStructure.info.height,
-            top: dataStructure.info.top,
-            left: dataStructure.info.left,
-            id: dataStructure.id,
-            lockScalingFlip:true,
-            hasRotatingPoint:false,
-            shadow:{
-                color:'rgba(0,0,0,0.4)',blur:2
-            }
-        };
-        var addFabWidget = function(fabWidget){
-            node.add(fabWidget);
-        };
-
-        switch (dataStructure.type){
-            case 'MySlide':
-                fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyProgress':
-                fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyDashboard':
-                fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyButton':
-                fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyButtonGroup':
-                fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyNumber':
-                fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyTextArea':
-                fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyKnob':
-                fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyOscilloscope':
-                fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MySwitch':
-                fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyRotateImg':
-                fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyDateTime':
-                fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyScriptTrigger':
-                fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyVideo':
-                fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyAnimation':
-                fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
-                break;
-            case 'MyLayer':
-                node.add(new fabric.MyLayer(dataStructure,initiator));
-                break;
-            case 'MyNum':
-                node.add(new fabric.MyNum(dataStructure,initiator));
-                break;
-            case 'MyTexNum':
-                node.add(new fabric.MyTexNum(dataStructure,initiator));
-                break;
-            case 'MyTexTime':
-                node.add(new fabric.MyTexTime(dataStructure,initiator));
-                break;
-            default :
-                console.error('not match widget in preprocess!');
-                break;
-        }
-
-    };
-
-    /**
-     * 初始化socket
-     */
-    $scope.wrapperForCoop = false;
-    $scope.projectOwner = false;
-    var inCharge = false;
-    function initSocketIO(ownerId){
-        socketIOService.createSocket('',function(data){
-
-            console.log('you have connect');
-
-            //capture current users in room
-            socketIOService.on('connect:success',function(allUsers,currentUser){
-                // console.log('connect:success',allUsers);
-                socketIOService.setRoomUsers(allUsers);
-                $scope.currentUser = currentUser;
-                inCharge = allUsers[0]&&(allUsers[0].id===$scope.currentUser.id);
-                if(!inCharge){
-                    console.log('wenerId',ownerId,'currId',currentUser.id);
-                    $scope.projectOwner = (ownerId===currentUser.id);
-                    $scope.wrapperForCoop = true;
-                    $scope.currentUsers = socketIOService.getRoomUsers();
-                }
-            });
-
-
-            //capture new user enter this room
-            socketIOService.on("user:enter",function(data){
-                toastr.info('用户 '+data.username +'加入');
-                $scope.$apply(function(){
-                    $scope.currentUsers = socketIOService.addUserInRoom(data);
-                    // console.log('add user',$scope.currentUsers);
+                //capture room close
+                socketIOService.on('room:close', function () {
+                    toastr.warning('管理员已经关闭共享，页面即将关闭');
+                    socketIOService.closeSocket(function () {
+                        setTimeout(function () {
+                            closeWebPage();
+                        }, 1000)
+                    })
                 })
             });
 
-            //capture user leave this room
-            socketIOService.on("user:leave",function (data) {
-                toastr.info('用户 '+data.username+' 已离开');
-                $scope.$apply(function(){
-                    $scope.currentUsers = socketIOService.deleteUserInRoom(data);
-                });
+        }
 
-                //check currentUser have right to edit project
-                // console.log('inCharge',inCharge);
-                if(!inCharge){
-                    inCharge = $scope.currentUsers[0]&&($scope.currentUsers[0].id===$scope.currentUser.id);
-                    $timeout(function(){
-                        if(inCharge){
-                            alert('您已获得编辑工程的权限，即将重新加载工程');
-                            window.spinner&&window.spinner.show();
+        $scope.openSimulator = function () {
+            $scope.$broadcast('OpenSimulator')
+        };
+
+        $scope.cancelShare = function () {
+            if (confirm('强制取消将对正在编辑的工程产生影响，确定取消分享？')) {
+                var arr = window.location.href.split('/');
+                var id = arr[arr.length - 2];
+                console.log('id', id);
+                $http({
+                    method: 'POST',
+                    url: '/project/' + id + '/share',
+                    data: {
+                        share: false
+                    }
+                })
+                    .success(function (data, status, xhr) {
+                        socketIOService.emit('room:close');
+                        socketIOService.closeSocket();
+                        toastr.info('取消成功,工程即将重新加载!');
+                        setTimeout(function () {
+                            window.spinner && window.spinner.show();
                             $scope.wrapperForCoop = false;
                             loadStep = 0;
                             readProjectData();
-                        }
-                    },1500)
-                }
-            });
+                        }, 1500);
 
+                    })
+                    .error(function (err) {
+                        console.log(err)
+                    });
+            }
+        };
 
-            //capture room close
-            socketIOService.on('room:close',function(){
-                toastr.warning('管理员已经关闭共享，页面即将关闭');
-                socketIOService.closeSocket(function(){
-                    setTimeout(function(){
-                        closeWebPage();
-                    },1000)
-                })
-            })
+        $scope.$on('createSocketIO', function () {
+            console.log('open share then create socketIO');
+            initSocketIO();
         });
 
-    }
+        $scope.$on('closeSocketIO', function () {
+            console.log('close share then close socketIO');
+            socketIOService.emit('room:close');
+            socketIOService.closeSocket();
+        });
 
-    $scope.openSimulator = function(){
-        $scope.$broadcast('OpenSimulator')
-    };
 
-    $scope.cancelShare = function(){
-        if(confirm('强制取消将对正在编辑的工程产生影响，确定取消分享？')){
-            var arr = window.location.href.split('/');
-            var id = arr[arr.length-2];
-            console.log('id',id);
-            $http({
-                method:'POST',
-                url:'/project/'+id+'/share',
-                data:{
-                    share:false
+        function closeWebPage() {
+            if (navigator.userAgent.indexOf("MSIE") > 0) {
+                if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+                    window.opener = null;
+                    window.close();
+                } else {
+                    window.open('', '_top');
+                    window.top.close();
                 }
-            })
-            .success(function(data,status,xhr){
-                socketIOService.emit('room:close');
-                socketIOService.closeSocket();
-                toastr.info('取消成功,工程即将重新加载!');
-                setTimeout(function(){
-                    window.spinner&&window.spinner.show();
-                    $scope.wrapperForCoop = false;
-                    loadStep = 0;
-                    readProjectData();
-                },1500);
-
-            })
-            .error(function(err){
-                console.log(err)
-            });
-        }
-    };
-
-    $scope.$on('createSocketIO',function () {
-        console.log('open share then create socketIO');
-        initSocketIO();
-    });
-
-    $scope.$on('closeSocketIO',function(){
-        console.log('close share then close socketIO');
-        socketIOService.emit('room:close');
-        socketIOService.closeSocket();
-    });
-
-
-    function closeWebPage(){
-        if (navigator.userAgent.indexOf("MSIE") > 0) {
-            if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
-                window.opener = null;
-                window.close();
+            }
+            else if (navigator.userAgent.indexOf("Firefox") > 0) {
+                window.location.href = 'about:blank ';
             } else {
-                window.open('', '_top');
-                window.top.close();
+                window.opener = null;
+                window.open('', '_self', '');
+                window.close();
             }
         }
-        else if (navigator.userAgent.indexOf("Firefox") > 0) {
-            window.location.href = 'about:blank ';
-        } else {
-            window.opener = null;
-            window.open('', '_self', '');
-            window.close();
-        }
-    }
-}]);
+    }]);

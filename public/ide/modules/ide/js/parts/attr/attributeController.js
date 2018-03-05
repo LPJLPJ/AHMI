@@ -655,19 +655,6 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 	function enterName(e,th){
 		if (e.keyCode==13){
 
-			// //判断是否超长
-			// if ($scope.component.object.level.name.length>Preference.OBJECT_MAX_LENGTH){
-			// 	toastr.warning('名称超长');
-			// 	restore();
-			// 	return;
-			// }
-			// //判断是否为空
-			// if ($scope.component.object.level.name.length==0){
-			// 	toastr.warning('名称不能为空');
-			// 	restore();
-            //
-			// 	return;
-			// }
 			//判断是否和初始一样
 			if ($scope.component.object.level.name==initObject.level.name){
                 th.component.object.level.name=$scope.component.object.level.name;
@@ -745,7 +732,6 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 				top:yCoor
 			};
 
-            // console.log('oldOperate',oldOperate);
             ProjectService.ChangeAttributePosition(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
                 var currentWidgetInfo=$scope.component.object.level.info;
