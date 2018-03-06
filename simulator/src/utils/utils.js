@@ -49,6 +49,7 @@ function linkWidgets(widgetList) {
     var curWidget;
     var linkedWidgetList = [];
     var sequence = [];
+    var widgetItemList=[];
     for (i = 0; i < widgetList.length; i++) {
         curWidget = widgetList[i];
         if (curWidget.info.disableHighlight==true){
@@ -63,6 +64,7 @@ function linkWidgets(widgetList) {
                 var singleWidth = 0;
                 var singleHeight = 0;
                 var hori = false;
+                widgetItemList=[];
                 if (curWidget.info.arrange == 'horizontal') {
                     singleWidth = (width - interval * (count - 1)) / count;
                     hori = true;
@@ -78,8 +80,9 @@ function linkWidgets(widgetList) {
                     // linkedWidget.value = j;
                     // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
                     // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? (j * (singleWidth + interval)) : 0), curWidget.info.absoluteTop + (hori ? 0 : (j * (singleHeight + interval)))));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? (j * (singleWidth + interval)) : 0), curWidget.info.absoluteTop + (hori ? 0 : (j * (singleHeight + interval)))));
                 }
+                linkedWidgetList.push(widgetItemList.slice(0));
 
                 break;
             case 'MyDateTime':
@@ -88,71 +91,77 @@ function linkWidgets(widgetList) {
                 var fontFamily = curWidget.info.fontFamily;
                 var fontStr = fontSize+'px '+fontFamily;
                 var delimiterWidth;
+                widgetItemList=[];
                 if(mode=='0'){
                     delimiterWidth = measureMetrics(':',fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width-2*delimiterWidth)/3;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2,curWidget.info.absoluteTop))
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2,curWidget.info.absoluteTop))
                 }else if (mode == '1'){
                     delimiterWidth = measureMetrics(':',fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width-delimiterWidth)/2;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+delimiterWidth,curWidget.info.absoluteTop));
 
                 }else if (mode == '2'){
                     delimiterWidth = measureMetrics('/',fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
                 }else if (mode == '3'){
                     delimiterWidth = measureMetrics('-',fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width-2*delimiterWidth)/4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+delimiterWidth,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+delimiterWidth)*2+eachWidth,curWidget.info.absoluteTop))
                 }
+                linkedWidgetList.push(widgetItemList.slice(0));
                 break;
             case 'MyTexTime':
                 var mode = curWidget.info.dateTimeModeId;
                 var charW=curWidget.info.characterW;
+                widgetItemList=[];
                 if(mode=='0'){
                     delimiterWidth = measureMetrics(':',fontStr);
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width-2*charW)/3;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2,curWidget.info.absoluteTop))
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2,curWidget.info.absoluteTop))
                 }else if (mode == '1'){
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width-charW)/2;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+eachWidth+charW,curWidget.info.absoluteTop));
 
                 }else if (mode == '2'){
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width-2*charW)/4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
                 }else if (mode == '3'){
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width-2*charW)/4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,0,curWidget.info.absoluteLeft,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,1,curWidget.info.absoluteLeft+2*eachWidth+charW,curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,2,curWidget.info.absoluteLeft+(eachWidth+charW)*2+eachWidth,curWidget.info.absoluteTop))
                 }
+                linkedWidgetList.push(widgetItemList.slice(0));
                 break;
             case 'MyInputKeyboard':
                 var keys = curWidget.info.keys;
+                widgetItemList=[];
                 keys.forEach(function (key, index) {
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType,curWidget,index,key.x,key.y));
                 })
+                linkedWidgetList.push(widgetItemList.slice(0));
                 break;
 
             default:
@@ -161,19 +170,38 @@ function linkWidgets(widgetList) {
                 // linkedWidget.value = 0;
                 // linkedWidget.left=curWidget.info.left;
                 // linkedWidget.top=curWidget.info.top;
-                linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                widgetItemList=[];
+                widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                linkedWidgetList.push(widgetItemList.slice(0));//deepclone
 
         }
     }
-
+    //added by LH in 2017/12/21
+    //控件内按left排序
+    for(var x in linkedWidgetList){
+        if(linkedWidgetList[x]){
+            linkedWidgetList[x].sort(function (a, b) {
+                return (a.left - b.left);
+            });
+        }
+    }
+    //控件间按left排序
     linkedWidgetList.sort(function (a, b) {
-        return (a.left - b.left);
+        return (a[0].left - b[0].left);
     });
-    linkedWidgetList.sort(function (a, b) {
-        return (a.top - b.top);
+    //控件间按top排序，稳定版
+    linkedWidgetList.sort(function (a,b) {
+        if(a[0].top===b[0].top){return (a[0].left-b[0].left);}
+        return a[0].top - b[0].top;
     });
-
-    return linkedWidgetList;
+    var sortedLinkedWidgetList = [];
+    //链接
+    for(var y in linkedWidgetList){
+        if(linkedWidgetList[y]){
+            sortedLinkedWidgetList=sortedLinkedWidgetList.concat(linkedWidgetList[y]);
+        }
+    }
+    return sortedLinkedWidgetList;
 }
 
 

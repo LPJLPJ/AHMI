@@ -146,6 +146,24 @@ $(function(){
         }
     }
 
+    //versionOptions
+    if(!local){
+        var $versionSelector = $('#basicinfo-ideversion')
+        $.ajax({
+            type:'GET',
+            url:'/api/versions',
+            success:function (data) {
+                data = JSON.parse(data)||[]
+                data.forEach(function (op) {
+                    $versionSelector.append($('<option value="'+op+'">'+op+'</option>'))
+                })
+            },
+            error:function (err) {
+                console.log(err)
+            }
+        })
+    }
+
     function readLocalProjects(projectType) {
         var dir;
         var fileName;
@@ -476,7 +494,12 @@ $(function(){
 
                 targetUrl = '../ide/index.html?project_id='+project._id;
             }else{
-                targetUrl = '/project/'+project._id+'/editor';
+                if (project.ideVersion){
+                    targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
+                }else{
+                    targetUrl = '/project/'+project._id+'/editor';
+                }
+
             }
 
             window.open(targetUrl);
@@ -491,6 +514,7 @@ $(function(){
             var customWidth = $('#customWidth');
             var customHeight = $('#customHeight');
             var template = $('#basicinfo-template');
+            var ideVersion = $('#basicinfo-ideversion');
             var supportTouch = $('#basicinfo-supportTouch');
             title.val(project.name);
             author.val(project.author);
@@ -507,6 +531,7 @@ $(function(){
             }
             template.val(project.template);
             template.attr('disabled',true);
+            ideVersion.val(project.ideVersion);
             supportTouch.val(project.supportTouch);
             supportTouch.attr('disabled',true);
         }else if (curNodeName == 'I'){
@@ -635,6 +660,7 @@ $(function(){
         var title = $('#basicinfo-title');
         var author = $('#basicinfo-author');
         var template = $('#basicinfo-template');
+        var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
         var resolution = $('#basicinfo-resolution');
         var customWidth = $('#customWidth');
@@ -645,6 +671,7 @@ $(function(){
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
+            project.ideVersion = ideVersion.val().trim();
             project.supportTouch = supportTouch.val().trim();
             if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
@@ -786,11 +813,12 @@ $(function(){
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
         var template = $('#basicinfo-template');
+        var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
         var thumbnailDOM = curPanel.find('img');
         console.log("thumbnailDOM",thumbnailDOM);
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
-        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim()){
+        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim() || project.ideVersion != ideVersion.val().trim()){
             //changed
             project.name = title.val().trim();
             project.author = author.val().trim();
@@ -809,6 +837,7 @@ $(function(){
             }else{
                 project.resolution = resolution.val().trim();
             }
+            project.ideVersion = ideVersion.val().trim();
             project.supportTouch = supportTouch.val().trim();
             var updateSuccess = false;
             if (local){
@@ -831,7 +860,7 @@ $(function(){
                         //console.log('success',data)
                         //update panel
                         updateSuccess = true;
-                        //console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
+                        console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
                         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
                         curPanel.replaceWith(html)
 

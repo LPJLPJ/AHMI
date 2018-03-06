@@ -455,7 +455,7 @@ body{
 
 .my-attr-item .my-attr-title{
     display: inline-block;
-    width: 50px;
+    width: 100px;
     text-overflow:ellipsis;
     padding-left: 2px;
 }
@@ -611,6 +611,11 @@ body{
 .tag-table-wrapper>table>tbody>tr>td>input{
     width: 60px;
 }
+
+.setting-wrapper{
+    background-color:white;
+}
+
 
 #simulator-container{
 

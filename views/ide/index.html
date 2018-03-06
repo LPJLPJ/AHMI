@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
+    <!--add-->
+    <script src="../../public/ide/modules/ide/js/ruler.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
     <!--lib-->
@@ -45,6 +47,8 @@
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/tags.css"/>
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/dengPage.css"/>
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/xiangPage.css"/>
+    <!--add-->
+    <link rel="stylesheet" href="../../public/ide/modules/ide/css/ruler.css"/>
 
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
@@ -142,7 +146,7 @@
 <body ng-app="ide" style="height: 100%" ng-controller="IDECtrl">
 <!--loading spinner-->
 <!--<script src="../../public/ide/lib/spinner.bundle.js"></script>-->
-<script src='../../public/ide/modules/ide/min-js/parts/utils/spinner.js'></script>
+<script src='../../public/ide/modules/ide/js/parts/utils/spinner.js'></script>
 <!--工程协作遮盖窗口-->
 <div class="wrapper-custom" ng-show="wrapperForCoop">
     <div class="container container-custom">
@@ -414,16 +418,17 @@
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61a;</span><span class="caption">字体颜色</span></a>-->
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61d;</span><span class="caption">上标</span></a>-->
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61c;</span><span class="caption">下标</span></a>-->
-                <a ng-click="component.tool.play()" class="my-cmd-item" ng-class=""><span
+                <a ng-click="component.tool.play()" class="my-cmd-item runProject" ng-class=""><span
                         class="iconfont icon">&#xe620;</span><span class="caption">运行</span></a>
             </div>
+
 
             <div id="simulator-wrapper" style="" ng-show="component.simulator.show">
                 <div class="navbar navbar-default" style="text-align:center">
                     <div class="nav">
                         <button id="play" type="button" class=" btn btn-default navbar-btn"
                                 ng-click="component.tool.runSimulator()">运行</button>
-                        <button id="close" type="button" class=" btn btn-default navbar-btn"
+                        <button id="close" type="button" class=" btn btn-default navbar-btn offProject"
                                 ng-click="component.tool.closeSimulator()">关闭
                         </button>
                     </div>
@@ -504,6 +509,9 @@
                         class="caption"></span></a>
                 <!--<a ng-click="component.tool.rotateCanvasLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>-->
                 <!--<a ng-click="component.tool.rotateCanvasRight()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>-->
+                <a class="my-cmd-item" id="ruler">
+                    <span class="iconfont icon">&#xe65d;</span><span class="caption"></span>
+                </a>
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
                     <div class="input-group" style="top: 13px;">
@@ -551,8 +559,8 @@
             </ol>
         </div>
     </div>
-    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container">
-        <div class="my-stage" ng-show="status.editPage">
+    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage">
+        <div class="my-stage" ng-show="status.editPage" id="myStageTable">
             <table width="100%" height="100%">
                 <tr>
                     <td align="center" valign="middle">
@@ -757,6 +765,7 @@
                                    ng-keypress="component.enterY($event)"
                                    type="number">
                         </div>
+
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">对齐</span>
                             <select class="my-attr-number-input form-control" ng-model="component.group.alignModeId"
@@ -841,6 +850,22 @@
                         </div>
 
                         <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.width"
@@ -889,6 +914,22 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
                         </div>
 
                         <div class="my-attr-item">
@@ -1020,6 +1061,22 @@
                         </div>
 
                         <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="form-control my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.width"
@@ -1097,6 +1154,22 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
                         </div>
 
                         <div class="my-attr-item">
@@ -1254,6 +1327,22 @@
                         </div>
 
                         <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.width"
@@ -1392,6 +1481,22 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
                         </div>
 
                         <div class="my-attr-item">
@@ -1566,6 +1671,22 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
                         </div>
 
                         <div class="my-attr-item">
@@ -1746,6 +1867,23 @@
                                    ng-keypress="component.enterY($event)"
                                    type="number">
                         </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1920,6 +2058,22 @@
                         </div>
 
                         <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.width"
@@ -1977,6 +2131,22 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
                         </div>
 
                         <div class="my-attr-item">
@@ -2038,6 +2208,22 @@
                         </div>
 
                         <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.width"
@@ -2078,6 +2264,22 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
                         </div>
 
                         <div class="my-attr-item">
@@ -2135,6 +2337,22 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterY($event)"
                                    type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
                         </div>
 
                         <div class="my-attr-item">
@@ -2200,7 +2418,23 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                    </div>
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2289,7 +2523,23 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                    </div>
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2574,6 +2824,22 @@
                         </div>
 
                         <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.width"
@@ -2618,6 +2884,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterName($event)">
                         </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">坐标X</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2632,7 +2899,23 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                    </div>
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2690,7 +2973,23 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                    </div>
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2779,6 +3078,22 @@
                                ng-model="component.object.level.info.top"
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
                         </div>
 
@@ -3578,7 +3893,7 @@
                                ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
                         </div>
 
-                        <div class="y-attr-item lg">
+                        <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">对齐方式</span>
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.align"
@@ -3589,7 +3904,7 @@
                             </select>
                         </div>
 
-                        <div class="y-attr-item lg">
+                        <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">字体大小</span>
                             <input class="form-control xiangPage-selected"
                                    ng-model="component.object.level.info.fontSize"
@@ -3606,7 +3921,7 @@
                         </div>
                     </div>
                     <div ng-show="component.object.type=='MyTexNum'">
-                        <div class="y-attr-item lg">
+                        <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">对齐方式</span>
                             <select class="form-control xiangPage-selected"
                                     ng-model="component.object.level.info.align"
@@ -3733,7 +4048,7 @@
                             <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']" ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
                             <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']" ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
                         </div>
-                        <div class="y-attr-item lg">
+                        <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">字体大小</span>
                             <input class="form-control xiangPage-selected"
                                    ng-model="component.object.level.info.fontSize"
@@ -3769,7 +4084,7 @@
                            ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
                     </div>
 
-                        <div class="y-attr-item lg">
+                        <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">字体大小</span>
                             <input class="form-control xiangPage-selected"
                                    ng-model="component.object.level.info.fontSize"

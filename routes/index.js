@@ -11,6 +11,7 @@ var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
 var DownloadRouter = require('./routeDownload');
+var VersionManager = require('../utils/versionManager')
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -125,6 +126,7 @@ router.route('/private/*')
 router.route('/private/space')
 .get(route_space);
 
+
 //router.route('/private/info')
 //    .get(route_personalInfo)
 
@@ -141,6 +143,11 @@ router.route('/api/refreshlogin')
     .get(function (req, res) {
        res.end('ok');
     });
+
+router.route('/api/versions')
+    .get(function (req, res) {
+        res.end(JSON.stringify(VersionManager.versions||[]))
+    })
 
 //captcha
 router.route('/captcha')

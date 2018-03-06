@@ -566,28 +566,37 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             for(var a in content.pages){
                 if(content.pages[a].layers){
                     for(var b in content.pages[a].layers){
-                        content.pages[a].layers[b].info.width=Math.round(content.pages[a].layers[b].info.width*widthProportion);
-                        content.pages[a].layers[b].info.height=Math.round(content.pages[a].layers[b].info.height*heightProportion);
-                        content.pages[a].layers[b].info.left=Math.round(content.pages[a].layers[b].info.left*widthProportion);
-                        content.pages[a].layers[b].info.top=Math.round(content.pages[a].layers[b].info.top*heightProportion);
+                        var layerInfo=content.pages[a].layers[b].info;
+                        layerInfo.width=Math.round(layerInfo.width*widthProportion);
+                        layerInfo.height=Math.round(layerInfo.height*heightProportion);
+                        layerInfo.left=Math.round(layerInfo.left*widthProportion);
+                        layerInfo.top=Math.round(layerInfo.top*heightProportion);
                         if(content.pages[a].layers[b].subLayers){
                             for(var c in content.pages[a].layers[b].subLayers){
                                 for(var d in content.pages[a].layers[b].subLayers[c].widgets){
                                     var type=content.pages[a].layers[b].subLayers[c].widgets[d].type;
-                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.width=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.width*widthProportion);
-                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.height=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.height*heightProportion);
-                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.left=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.left*widthProportion);
-                                    content.pages[a].layers[b].subLayers[c].widgets[d].info.top=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.top*heightProportion);
+                                    var widgetInfo=content.pages[a].layers[b].subLayers[c].widgets[d].info;
+
+                                    widgetInfo.width=Math.round(widgetInfo.width*widthProportion);
+                                    widgetInfo.height=Math.round(widgetInfo.height*heightProportion);
+                                    widgetInfo.left=Math.round(widgetInfo.left*widthProportion);
+                                    widgetInfo.top=Math.round(widgetInfo.top*heightProportion);
                                     if(type=="MyButton"||type=='MyTextArea') {
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
+                                        widgetInfo.fontSize=Math.round(widgetInfo.fontSize*widthProportion);
                                     }
-                                    if(type=='MyTexNum'){
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterW*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.characterH*heightProportion);
+                                    if(type=='MyTexNum'||type=='MyTexTime'){
+                                        widgetInfo.characterW=Math.round(widgetInfo.characterW*widthProportion);
+                                        widgetInfo.characterH=Math.round(widgetInfo.characterH*heightProportion);
+                                    }
+                                    //added by LH in 2017/12/20
+                                    if(type=='MyTexTime'){
+                                        widgetInfo.characterW=Math.round(widgetInfo.characterW*widthProportion);
+                                        widgetInfo.characterH=Math.round(widgetInfo.characterH*heightProportion);
                                     }
                                     if(type=="MyDateTime"||type=='MyNum'){
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.fontSize*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.maxFontWidth*widthProportion);
+                                        widgetInfo.fontSize = Math.round(widgetInfo.fontSize*widthProportion);
+                                        widgetInfo.maxFontWidth = Math.round(widgetInfo.maxFontWidth*widthProportion);
+                                        widgetInfo.spacing = Math.round((widgetInfo.spacing||0)*widthProportion);
                                     }
                                     if(type=="MySelector"||type=='MySelector'){
                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize*widthProportion);
@@ -599,14 +608,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     }
                                     //改变仪表盘指针 取宽高中较小值为边长
                                     if(type=="MyDashboard"){
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*widthProportion);
-                                        /*if(content.pages[a].layers[b].subLayers[c].widgets[d].info.width-content.pages[a].layers[b].subLayers[c].widgets[d].info.height>0){
-                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.width=content.pages[a].layers[b].subLayers[c].widgets[d].info.height;
-                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*weightProportion);
-                                         }else{
-                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.height=content.pages[a].layers[b].subLayers[c].widgets[d].info.width;
-                                         content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength=Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.pointerLength*widthProportion);
-                                         }*/
+                                        widgetInfo.pointerLength=Math.round(widgetInfo.pointerLength*widthProportion);
                                     }
 
                                 }
@@ -615,20 +617,22 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         if(content.pages[a].layers[b].showSubLayer){
                             for(var h in content.pages[a].layers[b].showSubLayer.widgets){
                                 var type1=content.pages[a].layers[b].showSubLayer.widgets[h].type;
-                                content.pages[a].layers[b].showSubLayer.widgets[h].info.width=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.width*widthProportion);
-                                content.pages[a].layers[b].showSubLayer.widgets[h].info.height=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.height*heightProportion);
-                                content.pages[a].layers[b].showSubLayer.widgets[h].info.left=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.left*widthProportion);
-                                content.pages[a].layers[b].showSubLayer.widgets[h].info.top=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.top*heightProportion);
+                                var showWidgetInfo=content.pages[a].layers[b].showSubLayer.widgets[h].info;
+
+                                showWidgetInfo.width=Math.round(showWidgetInfo.width*widthProportion);
+                                showWidgetInfo.height=Math.round(showWidgetInfo.height*heightProportion);
+                                showWidgetInfo.left=Math.round(showWidgetInfo.left*widthProportion);
+                                showWidgetInfo.top=Math.round(showWidgetInfo.top*heightProportion);
                                 if(type1=="MyButton"||type1=='MyTextArea') {
-                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize*widthProportion);
+                                    showWidgetInfo.fontSize=Math.round(showWidgetInfo.fontSize*widthProportion);
                                 }
-                                if(type1=='MyTexNum'){
-                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.characterW=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.characterW*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.characterH=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.characterH*heightProportion);
+                                if(type1=='MyTexNum'||type=='MyTexTime'){
+                                    showWidgetInfo.characterW=Math.round(showWidgetInfo.characterW*widthProportion);
+                                    showWidgetInfo.characterH=Math.round(showWidgetInfo.characterH*heightProportion);
                                 }
                                 if(type1=="MyDateTime"||type1=='MyNum'){
-                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.fontSize*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth = Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.maxFontWidth*widthProportion);
+                                    showWidgetInfo.fontSize = Math.round(showWidgetInfo.fontSize*widthProportion);
+                                    showWidgetInfo.maxFontWidth = Math.round(showWidgetInfo.maxFontWidth*widthProportion);
                                 }
                                 if(type=="MySelector"||type=='MySelector'){
                                     content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize*widthProportion);
@@ -639,17 +643,19 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight*widthProportion);
                                 }
                                 if(type1=="MyDashboard"){
-                                    content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength=Math.round(content.pages[a].layers[b].showSubLayer.widgets[h].info.pointerLength*widthProportion);
+                                    showWidgetInfo.pointerLength=Math.round(showWidgetInfo.pointerLength*widthProportion);
                                 }
                             }
                         }
                         //修改动画
                         if(content.pages[a].layers[b].animations){
                             for(var x in content.pages[a].layers[b].animations){
-                                content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.x=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.x*widthProportion);
-                                content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.y=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.srcPos.y*heightProportion);
-                                content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.x=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.x*widthProportion);
-                                content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.y=Math.round(content.pages[a].layers[b].animations[x].animationAttrs.translate.dstPos.y*heightProportion);
+                                var translate=content.pages[a].layers[b].animations[x].animationAttrs.translate;
+
+                                translate.srcPos.x=Math.round(translate.srcPos.x*widthProportion);
+                                translate.srcPos.y=Math.round(translate.srcPos.y*heightProportion);
+                                translate.dstPos.x=Math.round(translate.dstPos.x*widthProportion);
+                                translate.dstPos.y=Math.round(translate.dstPos.y*heightProportion);
                             }
                         }
                     }
