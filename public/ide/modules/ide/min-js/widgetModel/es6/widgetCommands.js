@@ -1,8 +1,8 @@
 ;(function (factory) {
-	if (typeof define === 'function' && define.amd) {
+    if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
 
-        define('WidgetCommands',[], factory);
+        define('WidgetCommands', [], factory);
     } else if (typeof module === 'object' && module.exports) {
         // Node/CommonJS
         module.exports = factory()
@@ -13,7 +13,7 @@
 }(function () {
     var WidgetCommands = {};
     WidgetCommands['Button'] = {
-        onInitialize:`
+        onInitialize: `
 
             var(a,0)
             set(a,'this.mode')
@@ -24,7 +24,7 @@
                 set('this.layers.1.hidden',0)
             }
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(b,0)
             set(b,'this.mode')
             if(b==0){
@@ -40,7 +40,7 @@
                 }
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
             var(b,0)
             set(b,'this.mode')
             if(b==0){
@@ -48,7 +48,7 @@
                 set('this.layers.1.hidden',0)
             }
         `,
-        onTagChange:`
+        onTagChange: `
             var(a,0)
             var(b,0)
             set(b,'this.mode')
@@ -63,7 +63,7 @@
                 }
             }
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
           var(tMaxHighLightNum,0)
           set(tMaxHighLightNum,'this.maxHighLightNum')
           if (tMaxHighLightNum>0) {
@@ -77,7 +77,7 @@
             }
           }
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
           var(tMaxHighLightNum,0)
           set(tMaxHighLightNum,'this.maxHighLightNum')
           if (tMaxHighLightNum>0) {
@@ -91,15 +91,15 @@
             }
           }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
           executeaction(5)
         `
     };
 
     WidgetCommands['ButtonGroup'] = {
-        onInitialize:`
+        onInitialize: `
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(a,0)
             var(b,0)
             var(c,0)
@@ -146,9 +146,9 @@
                 minus(c,tSingleButtonLayers)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onTagChange:`
+        onTagChange: `
           var(laylen,0)                                //图层数目
           var(spacing,0)                               //按钮间距
           var(btnCnt,0)                                //按钮个数
@@ -188,7 +188,7 @@
           }
          
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
           var(arrange,0)
           var(laylen,0)                                //图层数目
           var(spacing,0)                               //按钮间距
@@ -254,7 +254,7 @@
             } 
           }
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
           var(arrange,0)
           var(laylen,0)                                //图层数目
           var(spacing,0)                               //按钮间距
@@ -319,7 +319,7 @@
             } 
           }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
           var(tHighLightNum,0)
           var(laylen,0)
           
@@ -334,7 +334,7 @@
             }
           }
         `,
-        onHighlightFrame:`
+        onHighlightFrame: `
           //curHLAnimationFactor理论上为0~1的小数，为了指令的计算取curHLAnimationFactor理论上为0~1000的正数
           
           var(highlightIndex,0)                     //高亮层坐标
@@ -369,11 +369,11 @@
     };
 
     WidgetCommands['Dashboard'] = {
-        onInitialize:`
+        onInitialize: `
         `,
-        onMouseDown:``,
-        onMouseUp:``,
-        onTagChange:`
+        onMouseDown: ``,
+        onMouseUp: ``,
+        onTagChange: `
             var(toffsetValue,0)
             var(tminValue,0)
             var(tmaxValue,0)
@@ -484,7 +484,7 @@
             }
 
         `,
-        onAnimationFrame:`
+        onAnimationFrame: `
           var(tStartTag,0)
           var(tStopTag,0)
           set(tStartTag,'this.startAnimationTag')
@@ -599,9 +599,9 @@
     };
 
     WidgetCommands['RotateImg'] = {
-        onInitialize:`
+        onInitialize: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(tTagValue,0)
             getTag(tTagValue)
             var(tMinAngle,0)
@@ -627,7 +627,7 @@
     }
 
     WidgetCommands['Progress'] = {
-        onInitialize:`
+        onInitialize: `
             var(mod,0)
             set(mod,'this.mode')
             var(cur,0)
@@ -639,13 +639,13 @@
                 set('this.layers.2.x',0)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
             
         `,
-        onMouseDown:`
+        onMouseDown: `
             
         `,
-        onTagChange:`
+        onTagChange: `
             var(tTotalFrame,0)
             set(tTotalFrame,'this.totalFrame')
             var(m,0)
@@ -826,7 +826,7 @@
             }
 
         `,
-        onAnimationFrame:`
+        onAnimationFrame: `
           var(m,0)
           set(m,'this.mode')
           var(tTag,0)
@@ -1011,19 +1011,19 @@
         `
     };
 
-    WidgetCommands['TextArea']={
-        onInitialize:``
+    WidgetCommands['TextArea'] = {
+        onInitialize: ``
     };
 
-    WidgetCommands['Switch']={
-        onInitialize:`
+    WidgetCommands['Switch'] = {
+        onInitialize: `
             set('this.layers.0.hidden',1)
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(tag,0)
             var(bt,0)
             set(bt,'this.otherAttrs.0')
@@ -1047,9 +1047,9 @@
         `
     }
 
-    WidgetCommands['ScriptTrigger']={
-        onInitialize:``,
-        onTagChange:`
+    WidgetCommands['ScriptTrigger'] = {
+        onInitialize: ``,
+        onTagChange: `
             var(tTagValue,0)
             getTag(tTagValue)
             checkalarm(0)
@@ -1057,18 +1057,16 @@
         `
     };
 
-    WidgetCommands['Video']={
-        
-    };
+    WidgetCommands['Video'] = {};
 
-    WidgetCommands['Slide']={
-        onInitialize:`
+    WidgetCommands['Slide'] = {
+        onInitialize: `
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(len,0)
             set(len,'this.layers.length')
             while(len>0){
@@ -1082,12 +1080,12 @@
         `
     };
 
-    WidgetCommands['SlideBlock']={
-        onInitialize:`
+    WidgetCommands['SlideBlock'] = {
+        onInitialize: `
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(tBx,0)
             var(tBy,0)
             var(tBw,0)
@@ -1121,7 +1119,7 @@
                 }
             }
         `,
-        onMouseMove:`
+        onMouseMove: `
             var(tArrange,0)
             set(tArrange,'this.arrange')
             var(tInnerX,0)
@@ -1184,7 +1182,7 @@
 
             }
         `,
-        onTagChange:`
+        onTagChange: `
             var(tMinValue,0)
             var(tMaxValue,0)
             var(tValueDist,0)
@@ -1233,8 +1231,8 @@
         `
     };
 
-    WidgetCommands['Num']={
-        onInitialize:`
+    WidgetCommands['Num'] = {
+        onInitialize: `
             // var(tInitValue,0)
             // var(tLen,0)
             // var(tIndex,0)
@@ -1262,11 +1260,11 @@
             //     add(tIndex,1)
             // }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             //清空所有数字内容
             var(tIndex,0)   //用于循环
             var(tLaysLen,0)     //图层长度
@@ -1500,8 +1498,8 @@
         `
     };
 
-    WidgetCommands['TexNum']={
-        onInitialize:`
+    WidgetCommands['TexNum'] = {
+        "onInitialize": `
             //隐藏所有图层
             var(offset,0)
             var(len,0)
@@ -1764,11 +1762,11 @@
                 }
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             //隐藏所有图层
             var(offset,0)
             var(len,0)
@@ -2035,8 +2033,8 @@
             }
         `
     };
-    WidgetCommands['Selector']={
-        onInitialize:`
+    WidgetCommands['Selector'] = {
+        onInitialize: `
             var(offset,0)
             set(offset,2)
             var(len,0)
@@ -2051,11 +2049,11 @@
                 add(offset,1)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(curItem,0)                            //curValue当前元素 = tag值
             getTag(curItem)
                        
@@ -2190,7 +2188,7 @@
             set('this.layers.0.subLayers.roi.p4y',temp2)
             
         `,
-        onMouseUp:`
+        onMouseUp: `
             var(curValue,0)                                 //tag值
             getTag(curValue) 
 
@@ -2364,12 +2362,12 @@
             }
             set('this.otherAttrs.14',0)                     //isMoved = 0
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(tInnerY,0)
             set(tInnerY,'this.innerY')
             set('this.otherAttrs.15',tInnerY)               //记录鼠标上一坐标y       
         `,
-        onMouseMove:`
+        onMouseMove: `
             var(curValue,0)                                 //tag值
             getTag(curValue) 
 
@@ -2467,7 +2465,7 @@
                 }
             }
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -2501,7 +2499,7 @@
             }
           
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -2534,7 +2532,7 @@
                 }
             }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
             var(okFlag,0)                                    //高亮是否已选中
             set(okFlag,'this.otherAttrs.10')
             if(okFlag==0){
@@ -2555,8 +2553,8 @@
             }
         `
     };
-    WidgetCommands['RotaryKnob']={
-        onInitialize:`
+    WidgetCommands['RotaryKnob'] = {
+        onInitialize: `
             var(offset,0)
             set(offset,0)
             var(len,0)
@@ -2571,9 +2569,9 @@
                 add(offset,1)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
             var(curValue,0)                                        //tag值
             getTag(curValue)
             
@@ -2665,7 +2663,7 @@
                 }
             }        
         `,
-        onMouseMove:`
+        onMouseMove: `
             var(tHit,0)                                 //isHited
             set(tHit,'this.otherAttrs.4')
         
@@ -2890,7 +2888,7 @@
                 
             }
         `,
-        onTagChange:`
+        onTagChange: `
             var(curValue,0)                                //tag值
             getTag(curValue)
             
@@ -2951,7 +2949,7 @@
             set('this.layers.2.rotateAngle',tRotateAngle)  
             
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -2979,7 +2977,7 @@
             }
           
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
             var(tMaxHighLightNum,0)                          //控件内高亮块数
             set(tMaxHighLightNum,'this.maxHighLightNum')
             var(okFlag,0)                                    //高亮是否已选中
@@ -3006,7 +3004,7 @@
                 }
             }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
             var(okFlag,0)                                    //高亮是否已选中
             set(okFlag,'this.otherAttrs.1')
             if(okFlag==0){
@@ -3020,7 +3018,7 @@
     };
 
     WidgetCommands['DateTime'] = {
-        onInitialize:`
+        onInitialize: `
             var(offset,0)
             var(len,0)
             set(offset,'this.otherAttrs.0')
@@ -3030,11 +3028,11 @@
                 add(offset,1)
             }
         `,
-        onMouseUp:`
+        onMouseUp: `
         `,
-        onMouseDown:`
+        onMouseDown: `
         `,
-        onTagChange:`
+        onTagChange: `
             var(m,0)
             set(m,'this.mode')
             var(tag,0)
@@ -3089,7 +3087,7 @@
                 }
             }
         `,
-        onKeyBoardLeft:`
+        onKeyBoardLeft: `
             var(tMaxHighLightNum,0)
             var(okFlag,0)
             set(tMaxHighLightNum,'this.maxHighLightNum')
@@ -3166,7 +3164,7 @@
                 }              
             }
         `,
-        onKeyBoardRight:`
+        onKeyBoardRight: `
             var(tMaxHighLightNum,0)
             var(okFlag,0)
             set(tMaxHighLightNum,'this.maxHighLightNum')
@@ -3246,7 +3244,7 @@
                 }                
             }
         `,
-        onKeyBoardOK:`
+        onKeyBoardOK: `
             var(okFlag,0)
             set(okFlag,'this.otherAttrs.1')
             if(okFlag==0){
@@ -3260,7 +3258,7 @@
     };
 
     WidgetCommands['ColorPicker'] = {
-        "onInitialize":`
+        "onInitialize": `
             var(tInitValue,0)
             set(tInitValue,'this.otherAttrs.0')
            
@@ -3349,7 +3347,7 @@
             print('v',tV)
             
         `,
-        'onMouseDown':`
+        'onMouseDown': `
             var(tTemp,0)
             var(tH,0)
             var(tS,0)
@@ -3672,7 +3670,7 @@
             
             
         `,
-        'onMouseMove':`
+        'onMouseMove': `
             var(tTemp,0)
             var(tH,0)
             var(tS,0)
@@ -4929,6 +4927,385 @@
         `
     };
 
+    WidgetCommands['TexTime'] = {
+        'onInitialize': ` 
+            //显示除高亮以外所有图层
+            var(tOffset,0)
+            var(len,0)
+            set(len,'this.layers.length')
+            minus(len,1)
+            while(tOffset < len){
+                set('this.layers.tOffset.hidden',0)
+                add(tOffset,1)
+            }
+            set('this.layers.tOffset.hidden',1)
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+        `,
+        onTagChange:`
+            //初始化属性
+            var(tCurValue,0)                      //tag值
+            getTag(tCurValue)
+
+            var(tDigitCount,0)                    //数字个数
+            set(tDigitCount,'this.otherAttrs.2')
+            
+            var(tempCurValue,0)                   //临时变量tempCurValue
+            set(tempCurValue,tCurValue)            
+
+            var(index,0)                          //数字图片序号
+            var(i,0)                              //循环变量
+            var(tOverFlow,0)                        //溢出标志
+                        
+            var(temp1,0)                          //临时变量1
+            var(temp2,0)                          //临时变量2
+            
+            if(tCurValue<0){
+                //负溢出
+                set(tOverFlow,1)
+            }
+            while(tDigitCount>i){
+                //循环因子
+                add(i,1)
+            
+                //当前位的数字值
+                //temp2=tempCurValue-tempCurValue/16*16
+                //tempCurValue=tempCurValue/16
+                set(temp1,tempCurValue)
+                set(temp2,tempCurValue)
+                divide(temp1,16)
+                set(tempCurValue,temp1)            
+                multiply(temp1,16)
+                minus(temp2,temp1)
+                
+                //溢出处理
+                if(temp2>9){
+                    set(temp2,0)
+                    set(tOverFlow,1)
+                }
+                            
+                //index=tDigitCount-i
+                set(index,tDigitCount)
+                minus(index,i)
+
+                //draw(index)
+                set('this.layers.index.subLayers.image.texture',temp2)
+            }
+
+            //溢出处理:全部置为零
+            if(tOverFlow==1){
+                set(i,0)
+                while(tDigitCount>i){
+                    //循环因子
+                    add(i,1)
+                         
+                    //index=tDigitCount-i
+                    set(index,tDigitCount)
+                    minus(index,i)
+    
+                    //draw(index)
+                    set('this.layers.index.subLayers.image.texture',0)
+                }
+            }
+        `,
+        onKeyBoardLeft: `
+            var(tMaxHighLightNum,0)                           //maxHighLightNum
+            set(tMaxHighLightNum,'this.maxHighLightNum')   
+                     
+            var(okFlag,0)                                     //okFlag
+            set(okFlag,'this.otherAttrs.1')
+            
+            var(offset,0)                                     //highlight图层位置
+            set(offset,'this.layers.length')
+            minus(offset,1)
+            
+            if(tMaxHighLightNum>0){                         
+                if(okFlag==0){                                  
+                    //隐藏高亮层                
+                    set('this.layers.offset.hidden',1)
+                    
+                    //set target highlight
+                    var(tHighLightNum,0)
+                    set(tHighLightNum,'this.highLightNum')
+                    
+                    var(tMode,0)
+                    set(tMode,'this.otherAttrs.3')
+                    
+                    var(tCharW,o)
+                    set(tCharW,'this.otherAttrs.4')
+                         
+                    var(xOffset,0)                    
+                    var(tHighlightWidth,0)                   
+                    var(temp1,0)
+                    
+                    //跳入下一个有高亮的控件
+                    if(tHighLightNum==0){
+                        set('this.layers.offset.hidden',1)
+                    }else{
+                        //控件内部高亮
+                        if(tHighLightNum==1){
+                            if(tMode==0){
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==1){
+                                    set(tHighlightWidth,2)
+                                }else{
+                                    set(tHighlightWidth,4)
+                                }
+                            }
+                            set(xOffset,0)
+                        }else{
+                            if(tHighLightNum==2){
+                                if(tMode==0){
+                                    set(xOffset,3)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,3)
+                                    }else{
+                                        set(xOffset,5)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==0){
+                                    set(xOffset,6)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,6)
+                                    }else{
+                                        set(xOffset,8)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }
+                        }
+                        //修改高亮层位置
+                        set(temp1,tCharW)
+                        multiply(temp1,xOffset)
+                        set('this.layers.offset.x',temp1)
+                        
+                        //修改高亮层宽度
+                        set(temp1,tCharW)
+                        multiply(temp1,tHighlightWidth)
+                        set('this.layers.offset.width',temp1)
+                        
+                        //显示高亮图层
+                        set('this.layers.offset.hidden',0)
+                    }
+                    print('tHighLightNum',tHighLightNum)
+                    print('xOffset',xOffset)
+                    print('tHighlightWidth',tHighlightWidth)  
+                }else{
+                    var(tHighLightNum,0)
+                    var(tTag,0)
+                    var(tMode,0)
+                    var(xr,0)
+                    var(minusNum,0)
+                    set(minusNum,1)
+                    set(tHighLightNum,'this.highLightNum')
+                    getTag(tTag)
+                    set(tMode,'this.mode')
+                    if(tMode==1){
+                        if(tHighLightNum==1){
+                            set(xr,2)
+                        }else{
+                            set(xr,0)
+                        }
+                    }else{
+                        if(tHighLightNum==1){
+                            set(xr,4)
+                        }else{
+                            if(tHighLightNum==2){
+                                set(xr,2)
+                            }else{
+                                set(xr,0)
+                            }
+                        }
+                    }
+                    var(ttTag,0)
+                    var(txr,0)
+                    set(ttTag,tTag)
+                    set(txr,xr)
+                    while(xr>0){
+                        divide(ttTag,16)
+                        minus(xr,1)
+                    }
+                    mod(ttTag,16)
+                    var(rawttTag,0)
+                    set(rawttTag,ttTag)
+                    minus(ttTag,1)
+                    if(ttTag<0){
+                        set(ttTag,-7)
+                    }
+                    while(txr>0){
+                        multiply(ttTag,16)
+                        multiply(rawttTag,16)
+                        minus(txr,1)
+                    }
+                    minus(ttTag,rawttTag)
+                    add(tTag,ttTag)
+                    setTag(tTag)
+                }              
+            }
+        `,
+        onKeyBoardRight: `
+            var(tMaxHighLightNum,0)                           //maxHighLightNum
+            set(tMaxHighLightNum,'this.maxHighLightNum')   
+                     
+            var(okFlag,0)                                     //okFlag
+            set(okFlag,'this.otherAttrs.1')
+            
+            var(offset,0)                                     //highlight图层位置
+            set(offset,'this.layers.length')
+            minus(offset,1)
+            
+            if(tMaxHighLightNum>0){                         
+                if(okFlag==0){                                  
+                    //隐藏高亮层                
+                    set('this.layers.offset.hidden',1)
+                    
+                    //set target highlight
+                    var(tHighLightNum,0)
+                    set(tHighLightNum,'this.highLightNum')
+                    
+                    var(tMode,0)
+                    set(tMode,'this.otherAttrs.3')
+                    
+                    var(tCharW,o)
+                    set(tCharW,'this.otherAttrs.4')
+                         
+                    var(xOffset,0)                    
+                    var(tHighlightWidth,0)                   
+                    var(temp1,0)
+                    
+                    //跳入下一个有高亮的控件
+                    if(tHighLightNum==0){
+                        set('this.layers.offset.hidden',1)
+                    }else{
+                        //控件内部高亮
+                        if(tHighLightNum==1){
+                            if(tMode==0){
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==1){
+                                    set(tHighlightWidth,2)
+                                }else{
+                                    set(tHighlightWidth,4)
+                                }
+                            }
+                            set(xOffset,0)
+                        }else{
+                            if(tHighLightNum==2){
+                                if(tMode==0){
+                                    set(xOffset,3)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,3)
+                                    }else{
+                                        set(xOffset,5)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==0){
+                                    set(xOffset,6)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,6)
+                                    }else{
+                                        set(xOffset,8)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }
+                        }
+                        //修改高亮层位置
+                        set(temp1,tCharW)
+                        multiply(temp1,xOffset)
+                        set('this.layers.offset.x',temp1)
+                        
+                        //修改高亮层宽度
+                        set(temp1,tCharW)
+                        multiply(temp1,tHighlightWidth)
+                        set('this.layers.offset.width',temp1)
+                        
+                        //显示高亮图层
+                        set('this.layers.offset.hidden',0)
+                    }
+                    print('tHighLightNum',tHighLightNum)
+                    print('xOffset',xOffset)
+                    print('tHighlightWidth',tHighlightWidth)
+                }else{
+                    //change num in ok mode
+                    var(tHighLightNum,0)
+                    var(tTag,0)
+                    var(tMode,0)
+                    var(xr,0)
+                    var(addNum,0)
+                    set(addNum,1)
+                    set(tHighLightNum,'this.highLightNum')
+                    getTag(tTag)
+                    set(tMode,'this.mode')
+                    if(tMode==1){
+                        if(tHighLightNum==1){
+                            set(xr,2)
+                        }else{
+                            set(xr,0)
+                        }
+                    }else{
+                        if(tHighLightNum==1){
+                            set(xr,4)
+                        }else{
+                            if(tHighLightNum==2){
+                                set(xr,2)
+                            }else{
+                                set(xr,0)
+                            }
+                        }
+                    }
+                    var(ttTag,0)
+                    var(txr,0)
+                    var(ttxr,0)
+                    set(ttTag,tTag)
+                    set(txr,xr)
+                    set(ttxr,xr)
+                    while(xr>0){
+                        divide(ttTag,16)
+                        minus(xr,1)
+                    }
+                    mod(ttTag,16)
+                    var(rawttTag,0)
+                    set(rawttTag,ttTag)
+                    add(ttTag,1)
+                    if(ttTag>=10){
+                        set(ttTag,16)
+                    }
+                    while(txr>0){
+                        multiply(ttTag,16)
+                        multiply(rawttTag,16)
+                        minus(txr,1)
+                    }
+                    minus(ttTag,rawttTag)
+                    add(tTag,ttTag)
+                    //check value in limit
+                    setTag(tTag)
+                }                
+            }
+        `,
+        onKeyBoardOK: `
+            var(okFlag,0)
+            set(okFlag,'this.otherAttrs.1')
+            if(okFlag==0){
+                setglobalvar(0,1)
+                set('this.otherAttrs.1',1)
+            }else{
+                setglobalvar(0,0)
+                set('this.otherAttrs.1',0)
+            }
+        `
+    };
     return WidgetCommands;
 
 }));

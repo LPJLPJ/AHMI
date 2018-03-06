@@ -4929,644 +4929,381 @@
 
     WidgetCommands['TexTime'] = {
         'onInitialize': ` 
-
-         //隐藏所有图层
+            //显示除高亮以外所有图层
             var(tOffset,0)
-            set(tOffset,0)
             var(len,0)
             set(len,'this.layers.length')
+            minus(len,1)
             while(tOffset < len){
-                set('this.layers.tOffset.hidden',1)
+                set('this.layers.tOffset.hidden',0)
                 add(tOffset,1)
             }
-            //初始化
-            var(tCurCount,0)           //当前位数
-            set(tCurCount,'this.otherAttrs.0')
-
-            var(TimeMinuteMode,0)      //时分秒模式
-            set(TimeMinuteMode,'this.otherAttrs.1')
-
-            var(TimeMode,0)             //时分模式
-            set(TimeMode,'this.otherAttrs.2')
-
-            var(ObliqueDate,0)            //斜杠日期
-            set(ObliqueDate,'this.otherAttrs.3')
-
-            var(MinusDate,0)            //减号日期
-            set(MinusDate,'this.otherAttrs.4')
-
-            var(ColonCnt,0)             //冒号位数
-            set(ColonCnt,'this.otherAttrs.5')
-
-            var(MinusCnt,0)             //减号位数
-            set(MinusCnt,'this.otherAttrs.6')
-
-            var(ObliqueCnt,0)            //斜杠位数
-            set(ObliqueCnt,'this.otherAttrs.7')
-
-            var(fontWidth,0)                //字符图层宽度
-            set(fontWidth,'this.otherAttrs.8')
-            
-            var(hasColonCnt,0)              //是否有冒号
-            set(hasColonCnt,'this.otherAttrs.9')
-            
-            var(hasObliqueCnt,0)            //是否有斜杠
-            set(hasObliqueCnt,'this.otherAttrs.10')
-            
-            var(hasMinusCnt,0)              //是否有减号
-            set(hasMinusCnt,'this.otherAttrs.11')
-
-            var(symbolColonCnt,0)                //要绘制的冒号的个数
-            set(symbolColonCnt,0)
-            
-            var(symbolObliqueCnt,0)              //要绘制的斜杠的个数
-            set(symbolObliqueCnt,0)
-            
-            var(symbolMinusCnt,0)                //要绘制的减号的个数
-            set(symbolMinusCnt,0)
-            
-            var(needDraw,0)                 //是否需要绘制，0不需要，1需要
-            set(needDraw,1)
-            
-            var(tempVal,0)               //临时变量
-
-            var(CountCnt,0)              //要绘制的当前值数字的个数
-            
-            var(LayersNum,0)                 //layer数
-            
-            var(allFontCnt,0)           //要绘制的总字符的个数
-            
-            var(i,0)                     //变量
-                    
-            var(curl,0)                  //当前字符
-            
-            var(tempValW,0)                      //总字符所占宽度
-            
-            var(initPosX,0)                      //绘制起始坐标
-
-            var(fontWidthHalf,0)                 //半个字符所占宽度
-            
-            var(index,0)                        //layer index
-            //显示模式选择
-            //时分秒模式
-            if(i == TimeMinuteMode){
-                if(LayersNum == 8){
-                    set(TimeMinuteMode,LayersNum)
-                }
-            }
-            //时分模式
-            if(i == TimeMode){
-                if(LayersNum == 5){
-                    set(TimeMode,LayersNum)
-                }
-            }
-            //斜杠日期
-            if(i == ObliqueDate){
-                if(LayersNum == 10){
-                    set(ObliqueDate,LayersNum)
-                }
-            }
-            //减号日期
-            if(i == MinusDate){
-                if(LayersNum == 10){
-                    set(MinusDate,LayersNum)
-                }
-            }
-            //判断是否需要绘制
-            if(needDraw == 1){ 
-            }else{
-                if(tCurCount == 8){             //时分秒模式
-                    if(hasColonCnt == 1){       //是否有冒号
-                        set(symbolColonCnt,2)        //要绘制的冒号的个数
-                    }
-                }else{
-                    if(tCurCount == 5){                  //时分模式
-                        if(hasColonCnt == 1){
-                            set(symbolColonCnt,1)       //要绘制的冒号的个数
-                        }
-                    }else{
-                        if(tCurCount == 10){            //斜杠日期
-                            if(hasObliqueCnt == 1){
-                                set(symbolObliqueCnt,2)     //要绘制的斜杠的个数
-                            }
-                        }else{
-                            if(tCurCount == 10){            //减号日期
-                                if(hasMinusCnt == 1){
-                                    set(symbolMinusCnt,2)    //要绘制的减号的个数
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            //冒号位置
-            if(ColonCnt>0){
-                add(allFontCnt,1)
-                if(ColonCnt == 2){
-                    set(CountCnt,ColonCnt)
-                    add(ColonCnt,1)
-                    add(allFontCnt,ColonCnt)
-                }else{
-                    if(ColonCnt == 5){
-                       set(CountCnt,ColonCnt)
-                       add(ColonCnt,1)
-                       add(allFontCnt,ColonCnt)
-                    }
-                }
-            }
-            //斜杠位置
-            if(ObliqueCnt>0){
-                add(allFontCnt,1)
-                if(ObliqueCnt == 4){
-                    set(CountCnt,ObliqueCnt)
-                    add(ObliqueCnt,1)
-                    add(allFontCnt,ObliqueCnt)
-                }else{
-                    if(ObliqueCnt == 7){
-                        set(CountCnt,ObliqueCnt)
-                        add(ObliqueCnt,1)
-                        add(allFontCnt,ObliqueCnt)
-                    }
-                 }
-            } 
-            //减号位置
-            if(MinusCnt>0){
-                add(allFontCnt,1)
-                if(MinusCnt == 4){
-                    set(CountCnt,MinusCnt)
-                    add(MinusCnt,1)
-                    add(allFontCnt,MinusCnt)
-                }else{
-                    if(MinusCnt == 7){
-                        set(CountCnt,MinusCnt)
-                        add(MinusCnt,1)
-                        add(allFontCnt,MinusCnt)
-                    }
-                }
-            }
-            
-            //绘制逻辑
-            while(i<LayersNum){
-                if(i == ColonCnt){
-                if(ColonCnt == 0){
-                }else{
-                    //画冒号
-                    if(ColonCnt == 2){
-                        set(LayersNum,tCurCount)
-                        add(tCurCount,ColonCnt)
-                       
-                        set('this.layers.1.hidden',0)
-                        
-                        set('this.layers.1.subLayers.image.texture',10)
-                       
-                    }else{
-                        if(ColonCnt == 5){
-                            set(LayersNum,tCurCount)
-                            add(tCurCount,ColonCnt)
-                           
-                            set('this.layers.1.hidden',0)
-                          
-                            set('this.layers.1.subLayers.image.texture',10)
-                            
-                        }
-                    }
-                }
-            }
-            if(i == ObliqueCnt){
-                if(ObliqueCnt == 0){
-                }else{
-                    //画斜杠
-                    if(ObliqueCnt == 4){
-                        set(LayersNum,tCurCount)
-                        add(tCurCount,ObliqueCnt)
-                       
-                        set('this.layers.1.hidden',0)
-                      
-                        set('this.layers.1.subLayers.image.texture',10)
-                       
-                    }else{
-                        if(ObliqueCnt == 7){
-                            set(LayersNum,tCurCount)
-                            add(tCurCount,ObliqueCnt)
-                           
-                            set('this.layers.1.hidden',0)
-                         
-                            set('this.layers.1.subLayers.image.texture',10)
-                            
-                        }
-                    }
-                }
-            }
-            if(i == MinusCnt){
-                if(MinusCnt == 0){
-                }else{
-                    //画减号
-                    if(MinusCnt == 4){
-                        set(tempVal,fontWidth)
-                        add(tCurCount,MinusCnt)
-                       
-                        set('this.layers.1.hidden',0)
-                      
-                        set('this.layers.1.subLayers.image.texture',10)
-                        
-                    }else{
-                        if(MinusCnt == 7){
-                            set(tempVal,fontWidth)
-                            add(tCurCount,MinusCnt)
-                          
-                            set('this.layers.1.hidden',0)
-                           
-                            set('this.layers.1.subLayers.image.texture',10)
-                           
-                        }
-                    }
-                }
-            }
-         }
-         if(i<CountCnt){
-            //画数字
-            if(LayersNum == 8){
-                set(LayersNum,ColonCnt)
-                divide(LayersNum,10)
-                multiply(LayersNum,10)
-                set(curl,CountCnt) 
-                    
-                divide(CountCnt,10)
-                
-                set(index,allFontCnt)
-                minus(index,i)   
-                
-                set('this.layers.index.hidden',0)
-                set('this.layers.index.subLayers.image.texture',curl)
-            }else{
-                if(LayersNum == 5){
-                    set(LayersNum,ColonCnt)
-                    divide(LayersNum,10)
-                    multiply(LayersNum,10)
-                    set(curl,CountCnt) 
-                        
-                    divide(CountCnt,10)
-                    
-                    set(index,allFontCnt)
-                    minus(index,i)   
-                    
-                    set('this.layers.index.hidden',0)
-                    set('this.layers.index.subLayers.image.texture',curl)
-                }else{
-                    if(LayersNum == 10){
-                        set(LayersNum,ObliqueCnt)
-                        divide(LayersNum,10)
-                        multiply(LayersNum,10)
-                        set(curl,CountCnt) 
-                            
-                        divide(CountCnt,10)
-                        
-                        set(index,allFontCnt)
-                        minus(index,i)   
-                        
-                        set('this.layers.index.hidden',0)
-                        set('this.layers.index.subLayers.image.texture',curl)
-                    }else{
-                        if(LayersNum == 10){
-                            set(LayersNum,MinusCnt)
-                            divide(LayersNum,10)
-                            multiply(LayersNum,10)
-                            set(curl,CountCnt) 
-                                
-                            divide(CountCnt,10)
-                            
-                            set(index,allFontCnt)
-                            minus(index,i)   
-                            
-                            set('this.layers.index.hidden',0)
-                            set('this.layers.index.subLayers.image.texture',curl)
-                        }
-                    }
-                }
-            }
-         }   
+            set('this.layers.tOffset.hidden',1)
         `,
         onMouseUp:`
         `,
         onMouseDown:`
         `,
         onTagChange:`
-            //隐藏所有图层
-            var(tOffset,0)
-            set(tOffset,0)
-            var(len,0)
-            set(len,'this.layers.length')
-            while(tOffset < len){
-                set('this.layers.tOffset.hidden',0)
-                add(tOffset,1)
+            //初始化属性
+            var(tCurValue,0)                      //tag值
+            getTag(tCurValue)
+
+            var(tDigitCount,0)                    //数字个数
+            set(tDigitCount,'this.otherAttrs.2')
+            
+            var(tempCurValue,0)                   //临时变量tempCurValue
+            set(tempCurValue,tCurValue)            
+
+            var(index,0)                          //数字图片序号
+            var(i,0)                              //循环变量
+            var(tOverFlow,0)                        //溢出标志
+                        
+            var(temp1,0)                          //临时变量1
+            var(temp2,0)                          //临时变量2
+            
+            if(tCurValue<0){
+                //负溢出
+                set(tOverFlow,1)
             }
-            print('hhh','this')
-            //初始化
-            var(tCurCount,0)           //当前位数
-            set(tCurCount,'this.otherAttrs.0')
-
-            var(TimeMinuteMode,0)      //时分秒模式
-            set(TimeMinuteMode,'this.otherAttrs.1')
-
-            var(TimeMode,0)             //时分模式
-            set(TimeMode,'this.otherAttrs.2')
-
-            var(ObliqueDate,0)            //斜杠日期
-            set(ObliqueDate,'this.otherAttrs.3')
-
-            var(MinusDate,0)            //减号日期
-            set(MinusDate,'this.otherAttrs.4')
-
-            var(ColonCnt,0)             //冒号位数
-            set(ColonCnt,'this.otherAttrs.5')
-
-            var(MinusCnt,0)             //减号位数
-            set(MinusCnt,'this.otherAttrs.6')
-
-            var(ObliqueCnt,0)            //斜杠位数
-            set(ObliqueCnt,'this.otherAttrs.7')
-
-            var(fontWidth,0)                //字符图层宽度
-            set(fontWidth,'this.otherAttrs.8')
+            while(tDigitCount>i){
+                //循环因子
+                add(i,1)
             
-            var(hasColonCnt,0)              //是否有冒号
-            set(hasColonCnt,'this.otherAttrs.9')
-            
-            var(hasObliqueCnt,0)            //是否有斜杠
-            set(hasObliqueCnt,'this.otherAttrs.10')
-            
-            var(hasMinusCnt,0)              //是否有减号
-            set(hasMinusCnt,'this.otherAttrs.11')
+                //当前位的数字值
+                //temp2=tempCurValue-tempCurValue/16*16
+                //tempCurValue=tempCurValue/16
+                set(temp1,tempCurValue)
+                set(temp2,tempCurValue)
+                divide(temp1,16)
+                set(tempCurValue,temp1)            
+                multiply(temp1,16)
+                minus(temp2,temp1)
+                
+                //溢出处理
+                if(temp2>9){
+                    set(temp2,0)
+                    set(tOverFlow,1)
+                }
+                            
+                //index=tDigitCount-i
+                set(index,tDigitCount)
+                minus(index,i)
 
-            var(symbolColonCnt,0)                //要绘制的冒号的个数
-            set(symbolColonCnt,0)
-            
-            var(symbolObliqueCnt,0)              //要绘制的斜杠的个数
-            set(symbolObliqueCnt,0)
-            
-            var(symbolMinusCnt,0)                //要绘制的减号的个数
-            set(symbolMinusCnt,0)
-            
-            var(needDraw,0)                 //是否需要绘制，0不需要，1需要
-            set(needDraw,1)
-            
-            var(tempVal,0)               //临时变量
+                //draw(index)
+                set('this.layers.index.subLayers.image.texture',temp2)
+            }
 
-            var(CountCnt,0)              //要绘制的当前值数字的个数
+            //溢出处理:全部置为零
+            if(tOverFlow==1){
+                set(i,0)
+                while(tDigitCount>i){
+                    //循环因子
+                    add(i,1)
+                         
+                    //index=tDigitCount-i
+                    set(index,tDigitCount)
+                    minus(index,i)
+    
+                    //draw(index)
+                    set('this.layers.index.subLayers.image.texture',0)
+                }
+            }
+        `,
+        onKeyBoardLeft: `
+            var(tMaxHighLightNum,0)                           //maxHighLightNum
+            set(tMaxHighLightNum,'this.maxHighLightNum')   
+                     
+            var(okFlag,0)                                     //okFlag
+            set(okFlag,'this.otherAttrs.1')
             
-            var(LayersNum,0)                 //layer数
+            var(offset,0)                                     //highlight图层位置
+            set(offset,'this.layers.length')
+            minus(offset,1)
             
-            var(allFontCnt,0)           //要绘制的总字符的个数
-            
-            var(i,0)                     //变量
+            if(tMaxHighLightNum>0){                         
+                if(okFlag==0){                                  
+                    //隐藏高亮层                
+                    set('this.layers.offset.hidden',1)
                     
-            var(curl,0)                  //当前字符
-            
-            var(tempValW,0)                      //总字符所占宽度
-            
-            var(initPosX,0)                      //绘制起始坐标
-
-            var(fontWidthHalf,0)                 //半个字符所占宽度
-            
-            var(index,0)                        //layer index
-            //显示模式选择
-            //时分秒模式
-            if(i == TimeMinuteMode){
-                if(LayersNum == 8){
-                    set(TimeMinuteMode,LayersNum)
-                }
-            }
-            //时分模式
-            if(i == TimeMode){
-                if(LayersNum == 5){
-                    set(TimeMode,LayersNum)
-                }
-            }
-            //斜杠日期
-            if(i == ObliqueDate){
-                if(LayersNum == 10){
-                    set(ObliqueDate,LayersNum)
-                }
-            }
-            //减号日期
-            if(i == MinusDate){
-                if(LayersNum == 10){
-                    set(MinusDate,LayersNum)
-                }
-            }
-            //判断是否需要绘制
-            if(needDraw == 1){ 
-            }else{
-                if(tCurCount == 8){             //时分秒模式
-                    if(hasColonCnt == 1){       //是否有冒号
-                        set(symbolColonCnt,2)        //要绘制的冒号的个数
-                    }
-                }else{
-                    if(tCurCount == 5){                  //时分模式
-                        if(hasColonCnt == 1){
-                            set(symbolColonCnt,1)       //要绘制的冒号的个数
-                        }
+                    //set target highlight
+                    var(tHighLightNum,0)
+                    set(tHighLightNum,'this.highLightNum')
+                    
+                    var(tMode,0)
+                    set(tMode,'this.otherAttrs.3')
+                    
+                    var(tCharW,o)
+                    set(tCharW,'this.otherAttrs.4')
+                         
+                    var(xOffset,0)                    
+                    var(tHighlightWidth,0)                   
+                    var(temp1,0)
+                    
+                    //跳入下一个有高亮的控件
+                    if(tHighLightNum==0){
+                        set('this.layers.offset.hidden',1)
                     }else{
-                        if(tCurCount == 10){            //斜杠日期
-                            if(hasObliqueCnt == 1){
-                                set(symbolObliqueCnt,2)     //要绘制的斜杠的个数
-                            }
-                        }else{
-                            if(tCurCount == 10){            //减号日期
-                                if(hasMinusCnt == 1){
-                                    set(symbolMinusCnt,2)    //要绘制的减号的个数
+                        //控件内部高亮
+                        if(tHighLightNum==1){
+                            if(tMode==0){
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==1){
+                                    set(tHighlightWidth,2)
+                                }else{
+                                    set(tHighlightWidth,4)
                                 }
                             }
+                            set(xOffset,0)
+                        }else{
+                            if(tHighLightNum==2){
+                                if(tMode==0){
+                                    set(xOffset,3)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,3)
+                                    }else{
+                                        set(xOffset,5)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==0){
+                                    set(xOffset,6)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,6)
+                                    }else{
+                                        set(xOffset,8)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }
+                        }
+                        //修改高亮层位置
+                        set(temp1,tCharW)
+                        multiply(temp1,xOffset)
+                        set('this.layers.offset.x',temp1)
+                        
+                        //修改高亮层宽度
+                        set(temp1,tCharW)
+                        multiply(temp1,tHighlightWidth)
+                        set('this.layers.offset.width',temp1)
+                        
+                        //显示高亮图层
+                        set('this.layers.offset.hidden',0)
+                    }
+                    print('tHighLightNum',tHighLightNum)
+                    print('xOffset',xOffset)
+                    print('tHighlightWidth',tHighlightWidth)  
+                }else{
+                    var(tHighLightNum,0)
+                    var(tTag,0)
+                    var(tMode,0)
+                    var(xr,0)
+                    var(minusNum,0)
+                    set(minusNum,1)
+                    set(tHighLightNum,'this.highLightNum')
+                    getTag(tTag)
+                    set(tMode,'this.mode')
+                    if(tMode==1){
+                        if(tHighLightNum==1){
+                            set(xr,2)
+                        }else{
+                            set(xr,0)
+                        }
+                    }else{
+                        if(tHighLightNum==1){
+                            set(xr,4)
+                        }else{
+                            if(tHighLightNum==2){
+                                set(xr,2)
+                            }else{
+                                set(xr,0)
+                            }
                         }
                     }
-                }
-            }
-            //冒号位置
-            if(ColonCnt>0){
-                add(allFontCnt,1)
-                if(ColonCnt == 2){
-                    set(CountCnt,ColonCnt)
-                    add(ColonCnt,1)
-                    add(allFontCnt,ColonCnt)
-                }else{
-                    if(ColonCnt == 5){
-                       set(CountCnt,ColonCnt)
-                       add(ColonCnt,1)
-                       add(allFontCnt,ColonCnt)
+                    var(ttTag,0)
+                    var(txr,0)
+                    set(ttTag,tTag)
+                    set(txr,xr)
+                    while(xr>0){
+                        divide(ttTag,16)
+                        minus(xr,1)
                     }
-                }
-            }
-            //斜杠位置
-            if(ObliqueCnt>0){
-                add(allFontCnt,1)
-                if(ObliqueCnt == 4){
-                    set(CountCnt,ObliqueCnt)
-                    add(ObliqueCnt,1)
-                    add(allFontCnt,ObliqueCnt)
-                }else{
-                    if(ObliqueCnt == 7){
-                        set(CountCnt,ObliqueCnt)
-                        add(ObliqueCnt,1)
-                        add(allFontCnt,ObliqueCnt)
+                    mod(ttTag,16)
+                    var(rawttTag,0)
+                    set(rawttTag,ttTag)
+                    minus(ttTag,1)
+                    if(ttTag<0){
+                        set(ttTag,-7)
                     }
-                 }
-            } 
-            //减号位置
-            if(MinusCnt>0){
-                add(allFontCnt,1)
-                if(MinusCnt == 4){
-                    set(CountCnt,MinusCnt)
-                    add(MinusCnt,1)
-                    add(allFontCnt,MinusCnt)
-                }else{
-                    if(MinusCnt == 7){
-                        set(CountCnt,MinusCnt)
-                        add(MinusCnt,1)
-                        add(allFontCnt,MinusCnt)
+                    while(txr>0){
+                        multiply(ttTag,16)
+                        multiply(rawttTag,16)
+                        minus(txr,1)
                     }
-                }
+                    minus(ttTag,rawttTag)
+                    add(tTag,ttTag)
+                    setTag(tTag)
+                }              
             }
+        `,
+        onKeyBoardRight: `
+            var(tMaxHighLightNum,0)                           //maxHighLightNum
+            set(tMaxHighLightNum,'this.maxHighLightNum')   
+                     
+            var(okFlag,0)                                     //okFlag
+            set(okFlag,'this.otherAttrs.1')
             
-            //绘制逻辑
-            while(i<LayersNum){
-                if(i == ColonCnt){
-                if(ColonCnt == 0){
-                }else{
-                    //画冒号
-                    if(ColonCnt == 2){
-                        set(LayersNum,tCurCount)
-                        add(tCurCount,ColonCnt)
-                       
-                        set('this.layers.1.hidden',0)
-                        
-                        set('this.layers.1.subLayers.image.texture',10)
-                       
-                    }else{
-                        if(ColonCnt == 5){
-                            set(LayersNum,tCurCount)
-                            add(tCurCount,ColonCnt)
-                           
-                            set('this.layers.1.hidden',0)
-                          
-                            set('this.layers.1.subLayers.image.texture',10)
-                            
-                        }
-                    }
-                }
-            }
-            if(i == ObliqueCnt){
-                if(ObliqueCnt == 0){
-                }else{
-                    //画斜杠
-                    if(ObliqueCnt == 4){
-                        set(LayersNum,tCurCount)
-                        add(tCurCount,ObliqueCnt)
-                       
-                        set('this.layers.1.hidden',0)
-                      
-                        set('this.layers.1.subLayers.image.texture',10)
-                       
-                    }else{
-                        if(ObliqueCnt == 7){
-                            set(LayersNum,tCurCount)
-                            add(tCurCount,ObliqueCnt)
-                           
-                            set('this.layers.1.hidden',0)
+            var(offset,0)                                     //highlight图层位置
+            set(offset,'this.layers.length')
+            minus(offset,1)
+            
+            if(tMaxHighLightNum>0){                         
+                if(okFlag==0){                                  
+                    //隐藏高亮层                
+                    set('this.layers.offset.hidden',1)
+                    
+                    //set target highlight
+                    var(tHighLightNum,0)
+                    set(tHighLightNum,'this.highLightNum')
+                    
+                    var(tMode,0)
+                    set(tMode,'this.otherAttrs.3')
+                    
+                    var(tCharW,o)
+                    set(tCharW,'this.otherAttrs.4')
                          
-                            set('this.layers.1.subLayers.image.texture',10)
-                            
-                        }
-                    }
-                }
-            }
-            if(i == MinusCnt){
-                if(MinusCnt == 0){
-                }else{
-                    //画减号
-                    if(MinusCnt == 4){
-                        set(tempVal,fontWidth)
-                        add(tCurCount,MinusCnt)
-                       
-                        set('this.layers.1.hidden',0)
-                      
-                        set('this.layers.1.subLayers.image.texture',10)
-                        
-                    }else{
-                        if(MinusCnt == 7){
-                            set(tempVal,fontWidth)
-                            add(tCurCount,MinusCnt)
-                          
-                            set('this.layers.1.hidden',0)
-                           
-                            set('this.layers.1.subLayers.image.texture',10)
-                           
-                        }
-                    }
-                }
-            }
-         }
-         if(i<CountCnt){
-            //画数字
-            if(LayersNum == 8){
-                set(LayersNum,ColonCnt)
-                divide(LayersNum,10)
-                multiply(LayersNum,10)
-                set(curl,CountCnt) 
+                    var(xOffset,0)                    
+                    var(tHighlightWidth,0)                   
+                    var(temp1,0)
                     
-                divide(CountCnt,10)
-                
-                set(index,allFontCnt)
-                minus(index,i)   
-                
-                set('this.layers.index.hidden',0)
-                set('this.layers.index.subLayers.image.texture',curl)
+                    //跳入下一个有高亮的控件
+                    if(tHighLightNum==0){
+                        set('this.layers.offset.hidden',1)
+                    }else{
+                        //控件内部高亮
+                        if(tHighLightNum==1){
+                            if(tMode==0){
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==1){
+                                    set(tHighlightWidth,2)
+                                }else{
+                                    set(tHighlightWidth,4)
+                                }
+                            }
+                            set(xOffset,0)
+                        }else{
+                            if(tHighLightNum==2){
+                                if(tMode==0){
+                                    set(xOffset,3)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,3)
+                                    }else{
+                                        set(xOffset,5)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }else{
+                                if(tMode==0){
+                                    set(xOffset,6)
+                                }else{
+                                    if(tMode==1){
+                                        set(xOffset,6)
+                                    }else{
+                                        set(xOffset,8)
+                                    }
+                                }
+                                set(tHighlightWidth,2)
+                            }
+                        }
+                        //修改高亮层位置
+                        set(temp1,tCharW)
+                        multiply(temp1,xOffset)
+                        set('this.layers.offset.x',temp1)
+                        
+                        //修改高亮层宽度
+                        set(temp1,tCharW)
+                        multiply(temp1,tHighlightWidth)
+                        set('this.layers.offset.width',temp1)
+                        
+                        //显示高亮图层
+                        set('this.layers.offset.hidden',0)
+                    }
+                    print('tHighLightNum',tHighLightNum)
+                    print('xOffset',xOffset)
+                    print('tHighlightWidth',tHighlightWidth)
+                }else{
+                    //change num in ok mode
+                    var(tHighLightNum,0)
+                    var(tTag,0)
+                    var(tMode,0)
+                    var(xr,0)
+                    var(addNum,0)
+                    set(addNum,1)
+                    set(tHighLightNum,'this.highLightNum')
+                    getTag(tTag)
+                    set(tMode,'this.mode')
+                    if(tMode==1){
+                        if(tHighLightNum==1){
+                            set(xr,2)
+                        }else{
+                            set(xr,0)
+                        }
+                    }else{
+                        if(tHighLightNum==1){
+                            set(xr,4)
+                        }else{
+                            if(tHighLightNum==2){
+                                set(xr,2)
+                            }else{
+                                set(xr,0)
+                            }
+                        }
+                    }
+                    var(ttTag,0)
+                    var(txr,0)
+                    var(ttxr,0)
+                    set(ttTag,tTag)
+                    set(txr,xr)
+                    set(ttxr,xr)
+                    while(xr>0){
+                        divide(ttTag,16)
+                        minus(xr,1)
+                    }
+                    mod(ttTag,16)
+                    var(rawttTag,0)
+                    set(rawttTag,ttTag)
+                    add(ttTag,1)
+                    if(ttTag>=10){
+                        set(ttTag,16)
+                    }
+                    while(txr>0){
+                        multiply(ttTag,16)
+                        multiply(rawttTag,16)
+                        minus(txr,1)
+                    }
+                    minus(ttTag,rawttTag)
+                    add(tTag,ttTag)
+                    //check value in limit
+                    setTag(tTag)
+                }                
+            }
+        `,
+        onKeyBoardOK: `
+            var(okFlag,0)
+            set(okFlag,'this.otherAttrs.1')
+            if(okFlag==0){
+                setglobalvar(0,1)
+                set('this.otherAttrs.1',1)
             }else{
-                if(LayersNum == 5){
-                    set(LayersNum,ColonCnt)
-                    divide(LayersNum,10)
-                    multiply(LayersNum,10)
-                    set(curl,CountCnt) 
-                        
-                    divide(CountCnt,10)
-                    
-                    set(index,allFontCnt)
-                    minus(index,i)   
-                    
-                    set('this.layers.index.hidden',0)
-                    set('this.layers.index.subLayers.image.texture',curl)
-                }else{
-                    if(LayersNum == 10){
-                        set(LayersNum,ObliqueCnt)
-                        divide(LayersNum,10)
-                        multiply(LayersNum,10)
-                        set(curl,CountCnt) 
-                            
-                        divide(CountCnt,10)
-                        
-                        set(index,allFontCnt)
-                        minus(index,i)   
-                        
-                        set('this.layers.index.hidden',0)
-                        set('this.layers.index.subLayers.image.texture',curl)
-                    }else{
-                        if(LayersNum == 10){
-                            set(LayersNum,MinusCnt)
-                            divide(LayersNum,10)
-                            multiply(LayersNum,10)
-                            set(curl,CountCnt) 
-                                
-                            divide(CountCnt,10)
-                            
-                            set(index,allFontCnt)
-                            minus(index,i)   
-                            
-                            set('this.layers.index.hidden',0)
-                            set('this.layers.index.subLayers.image.texture',curl)
-                        }
-                    }
-                }
+                setglobalvar(0,0)
+                set('this.otherAttrs.1',0)
             }
-         } 
         `
     };
     return WidgetCommands;
