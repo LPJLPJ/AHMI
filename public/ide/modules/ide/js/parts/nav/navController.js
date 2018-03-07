@@ -1348,13 +1348,13 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'tagsImport.html',
+                scope: $scope,//指定父scope
+                size: 'md',
                 controller: ['$scope', '$uibModalInstance', '$http', function ($scope, $uibModalInstance, $http) {
-
                     $scope.selectedTagId = null;
-
                     $scope.ok = function () {
-                        console.log('haha');
                         if (!$scope.selectedTagId) {
+                            toastr.warning('请选择一项预设变量');
                             return;
                         }
                         getTagsFromRemote($scope.selectedTagId);
@@ -1394,9 +1394,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         console.log('data', data);
                         $scope.$emit('GetTagsFromRemote',data);
                     }
-                }],
-                scope: $scope,//指定父scope
-                size: 'md'
+                }]
             });
 
         }
