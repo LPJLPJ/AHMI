@@ -16,6 +16,10 @@ var Canvas = require('canvas');
 var archiver = require('archiver');
 var crypto = require('crypto');
 
+var FileLoader = require('../utils/fileLoader')
+var VersionManager = require('../utils/versionManager')
+VersionManager.getAllVersions()
+
 var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
@@ -118,12 +122,41 @@ projectRoute.checkSharedKey = function (req, res) {
         errHandler(res,500,'error')
     }
 };
+function addVersionQueryFunc(ideVersion) {
+    return function (url) {
+        return url+'?ideVersion='+ideVersion
+        // return url+'?ideVersion=1.10.1'
+    }
+}
+function renderIDEEditorPageWithResources(res,ideVersion) {
+    var versionScripts  = ''
+
+    if (ideVersion){
+        var curAddVersionQueryFunc = addVersionQueryFunc(ideVersion)
+        versionScripts = VersionManager.versionScripts[ideVersion]
+        var frontScriptDOMs = FileLoader.generateFiles((versionScripts.frontScripts||[]).map(curAddVersionQueryFunc))
+        var rearScriptsDOMs = FileLoader.generateFiles((versionScripts.rearScripts||[]).map(curAddVersionQueryFunc))
+
+        res.render('../legacy/'+ideVersion+'/views/ide/index.html',{
+            frontScripts:frontScriptDOMs,
+            rearScripts:rearScriptsDOMs
+        })
+
+        // res.render('../legacy/'+ideVersion+'/views/ide/index.html')
+    }else{
+        res.render('ide/index.html')
+    }
 
 
+
+
+}
 
 projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session.user&&req.session.user.id;
+    var ideVersion = req.query.ideVersion
+    console.log(ideVersion)
     if(req.session.user){
         req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
     }
@@ -136,7 +169,8 @@ projectRoute.getProjectById = function (req, res) {
             if(!project){
                 errHandler(res,500,'project is null');
             }else if (project.userId == userId){
-                res.render('ide/index.html')
+                // res.render('ide/index.html')
+                renderIDEEditorPageWithResources(res,ideVersion)
             }else if(!userId){
                 res.render('login/login.html',{
                     title:'重新登录'
@@ -411,6 +445,7 @@ projectRoute.createProject = function (req, res) {
                                 info.resolution = newProject.resolution;
                                 info.name = newProject.name;
                                 info.template = newProject.template;
+                                info.ideVersion = newProject.ideVersion;
                                 info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
                                 info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                                 info.supportTouch = newProject.supportTouch;
