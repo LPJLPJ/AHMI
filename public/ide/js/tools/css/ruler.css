@@ -3,6 +3,8 @@
     padding: 0;
 }
 
+
+/*¸¨ÖúÏß*/
 #rulerX {
     background: url("../../../../images/ruler/ruler_h.png") repeat-x;
     position: absolute;
@@ -112,4 +114,30 @@
     color: red;
     font-size: 10px;
     z-index: 999;
+}
+
+/*Ä£¾ß¿ò*/
+#mask {
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(0,0,0,0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url("../img/img.png") 0 0/100% 100%;
+    z-index: 998;
+}
+
+#maskWrap {
+    width: inherit;
+    height: inherit;
+    cursor: move;
+}
+
+.maskCoor {
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(0,0,0,0.8);
+    background-color: rgba(255,255,255,.2);
+    position: absolute;
 }
