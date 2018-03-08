@@ -1233,9 +1233,6 @@
 
     //TexTime
     function TexTime(x,y,w,h,valueObj,texTimeSlices,highlightSlice) {
-        console.log('textTime info',valueObj)
-        console.log('textTime texTimeSlices',texTimeSlices)
-
         //图层数组
         var layers = [];
 
@@ -1327,6 +1324,23 @@
     }
     TexTime.prototype = Object.create(Widget.prototype);
     TexTime.prototype.constructor = TexTime;
+
+    //ColorBlock
+    function ColorBlock(x,y,w,h) {
+        //图层数组
+        var layers = [];
+
+        //颜色层
+        var curLayer = new Layer(0,0,w,h,true);
+        var colorElems = parseColor('rgba(111,111,111,1)');
+        curLayer .subLayers.color = new ColorSubLayer(colorElems);
+        layers.push(curLayer);
+
+        this.subType = 'ColorBlock';
+        Widget.call(this,x,y,w,h,layers);
+    }
+    ColorBlock.prototype = Object.create(Widget.prototype);
+    ColorBlock.prototype.constructor = ColorBlock;
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -1672,6 +1686,7 @@
     WidgetModel.models.DatePicker = DatePicker;
     WidgetModel.models.TexDatePicker = TexDatePicker;
     WidgetModel.models.TexTime = TexTime;
+    WidgetModel.models.ColorBlock = ColorBlock;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

@@ -2033,6 +2033,7 @@
             }
         `
     };
+
     WidgetCommands['Selector'] = {
         onInitialize: `
             var(offset,0)
@@ -2553,6 +2554,7 @@
             }
         `
     };
+
     WidgetCommands['RotaryKnob'] = {
         onInitialize: `
             var(offset,0)
@@ -3254,6 +3256,129 @@
                 setglobalvar(0,0)
                 set('this.otherAttrs.1',0)
             }
+        `
+    };
+
+    WidgetCommands['ColorBlock'] = {
+        'onInitialize': ` 
+            //显示除高亮以外所有图层
+            var(tOffset,0)
+            var(len,0)
+            set(len,'this.layers.length')
+            while(tOffset < len){
+                set('this.layers.tOffset.hidden',0)
+                add(tOffset,1)
+            }
+        `,
+        onMouseUp:`
+        `,
+        onMouseDown:`
+        `,
+        onTagChange:`
+            //初始化属性
+            var(tCurValue,0)                      //tag值
+            getTag(tCurValue)
+            print('tCurValue',tCurValue)
+
+            var(tempCurValue,0)                   //临时变量tempCurValue           
+            set(tempCurValue,tCurValue)
+
+            var(tOverFlow,0)                        //溢出标志
+                        
+            var(temp1,0)                          //临时变量1
+            var(temp2,0)                          //临时变量2
+            
+            if(tCurValue<0){
+                //负溢出
+                set(tOverFlow,1)
+            }
+
+            //a
+            //temp2=tempCurValue-tempCurValue/1000*1000
+            //tempCurValue=tempCurValue/1000
+            set(temp1,tempCurValue)
+            set(temp2,tempCurValue)
+            divide(temp1,1000)
+            set(tempCurValue,temp1)            
+            multiply(temp1,1000)
+            minus(temp2,temp1)
+            
+            //溢出标记
+            if(temp2>255){
+                set(tOverFlow,1)
+            }
+                        
+            //change
+            set('this.layers.0.subLayers.color.a',temp2)
+
+            //b
+            //temp2=tempCurValue-tempCurValue/1000*1000
+            //tempCurValue=tempCurValue/1000
+            set(temp1,tempCurValue)
+            set(temp2,tempCurValue)
+            divide(temp1,1000)
+            set(tempCurValue,temp1)            
+            multiply(temp1,1000)
+            minus(temp2,temp1)
+            
+            //溢出标记
+            if(temp2>255){
+                set(tOverFlow,1)
+            }
+                        
+            //change
+            set('this.layers.0.subLayers.color.b',temp2)
+
+            //g
+            //temp2=tempCurValue-tempCurValue/1000*1000
+            //tempCurValue=tempCurValue/1000
+            set(temp1,tempCurValue)
+            set(temp2,tempCurValue)
+            divide(temp1,1000)
+            set(tempCurValue,temp1)            
+            multiply(temp1,1000)
+            minus(temp2,temp1)
+            
+            //溢出标记
+            if(temp2>255){
+                set(tOverFlow,1)
+            }
+                        
+            //change
+            set('this.layers.0.subLayers.color.g',temp2)
+            
+            //r
+            //temp2=tempCurValue-tempCurValue/1000*1000
+            //tempCurValue=tempCurValue/1000
+            set(temp1,tempCurValue)
+            set(temp2,tempCurValue)
+            divide(temp1,1000)
+            set(tempCurValue,temp1)            
+            multiply(temp1,1000)
+            minus(temp2,temp1)
+            
+            //溢出标记
+            if(temp2>255){
+                set(tOverFlow,1)
+            }
+                        
+            //change
+            set('this.layers.0.subLayers.color.r',temp2)
+
+            //溢出处理:全部置为零
+            if(tOverFlow==1){
+                set('this.layers.0.subLayers.color.r',0)
+                set('this.layers.0.subLayers.color.g',0)
+                set('this.layers.0.subLayers.color.b',0)
+                set('this.layers.0.subLayers.color.a',0)
+            }
+
+        `,
+        onKeyBoardLeft: `
+        `,
+        onKeyBoardRight: `
+        `,
+        onKeyBoardOK: `
         `
     };
 
@@ -5094,9 +5219,6 @@
                         //显示高亮图层
                         set('this.layers.offset.hidden',0)
                     }
-                    print('tHighLightNum',tHighLightNum)
-                    print('xOffset',xOffset)
-                    print('tHighlightWidth',tHighlightWidth)  
                 }else{
                     var(tHighLightNum,0)
                     var(tTag,0)
@@ -5234,9 +5356,6 @@
                         //显示高亮图层
                         set('this.layers.offset.hidden',0)
                     }
-                    print('tHighLightNum',tHighLightNum)
-                    print('xOffset',xOffset)
-                    print('tHighlightWidth',tHighlightWidth)
                 }else{
                     //change num in ok mode
                     var(tHighLightNum,0)

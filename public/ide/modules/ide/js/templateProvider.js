@@ -318,8 +318,6 @@ ideServices
                     minValue:0,
                     //当前值
                     curValue:0,
-
-                    disableHighlight:false
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -352,6 +350,30 @@ ideServices
                         color:'rgba(0,0,0,0)',
                         imgSrc:'',
                         name:'高亮'
+                    }]
+                }]
+            },
+            defaultColorBlock={
+                info :{
+                    //坐标
+                    left: 0,
+                    top: 0,
+                    //宽高
+                    width:100,
+                    height: 100,
+
+                    //当前值
+                    curValue:0,
+
+                    disableHighlight:false
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'背景'
                     }]
                 }]
             },
@@ -1248,6 +1270,22 @@ ideServices
                 info: info,
                 name: 'NewRotaryKnob',
                 type: Type.MyRotaryKnob,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList,
+            };
+        };
+
+        //颜色控件
+        this.getDefaultColorBlock= function () {
+            var info = _.cloneDeep(defaultColorBlock.info);
+            var texList = _.cloneDeep(defaultColorBlock.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewColorBlock',
+                type: Type.MyColorBlock,
                 expand:true,
                 url:'',
                 zIndex:0,

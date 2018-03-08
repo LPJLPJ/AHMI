@@ -565,6 +565,15 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     break;
+                case 'MyColorBlock':
+                    generalWidget = new WidgetModel.models['ColorBlock'](x, y, w, h);
+                    generalWidget = generalWidget.toObject();
+
+                    generalWidget.generalType = 'ColorBlock';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
                 case 'MySelector':
                     //纹理
                     var tempSlices = targetWidget.texList[1].slices;

@@ -112,6 +112,13 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
                 initConfigure(false,false,1,widgetInfo.tex,true,false,true);
             }
             break;
+        case Type.MyColorBlock:
+            if(widgetInfo.tex.name==='高亮'){
+                initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            }else{
+                initConfigure(false,false,1,widgetInfo.tex,true,true,false);
+            }
+            break;
         default:
             initConfigure(true,false,1,widgetInfo.tex,false,false,false);
             break;
