@@ -1113,6 +1113,15 @@ ideServices
                             _newWidget.info.height=fabWidget.getHeight();
                             syncSublayer(fabWidget);
                         },initiator);
+                }else if(_newWidget.type===Type.MyColorBlock){
+                    fabric.MyColorBlock.fromLevel(_newWidget,function (fabWidget) {
+                        _self.currentFabLayerIdList = [fabWidget.id];
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else if (_newWidget.type==Type.General){
 
                     fabric.General.fromLevel(_newWidget, function (fabWidget) {
@@ -5243,6 +5252,9 @@ ideServices
                         break;
                     case 'MyRotaryKnob':
                         node.add(new fabric.MyRotaryKnob(dataStructure,initiator));
+                        break;
+                    case 'MyColorBlock':
+                        node.add(new fabric.MyColorBlock(dataStructure,initiator));
                         break;
                     default :
                         console.error('not match widget in _addFabricObjInCanvasNode!');

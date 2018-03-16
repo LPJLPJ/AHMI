@@ -1234,140 +1234,115 @@
     TexDatePicker.prototype.constructor = TexDatePicker;
 
     //TexTime
-    function TexTime(x,y,w,h,valueObj,slices,info) {
-        console.log('textTime info',info)
-        //console.log('slices',slices)
-        var layers = [];                                     //图层数组
-        var layerCount=valueObj.numOfDigits;                //数字位数
-        var mH = valueObj.characterH;                       //字符高度
-        var mW = valueObj.characterW;                       //字符宽度
-        var dateTimeModeId = Number(info.dateTimeModeId);
-        var i = 0;
-        var dx = 0;
-        var FontWidth = info.characterW;
-        var fontLayer = null;
-        var sWidth = FontWidth;
-        var sHeight = h;
+    function TexTime(x,y,w,h,valueObj,texTimeSlices,highlightSlice) {
+        //图层数组
+        var layers = [];
 
-        //生成textureList
-        var textureList=[];
-        for(var i=0;i<slices.length;i++){
-            textureList.push(slices[i].imgSrc)
+        //属性
+        var charH = valueObj.characterH;                      //字符高度
+        var charW = valueObj.characterW;                      //字符宽度
+        var dateTimeModeId = Number(valueObj.dateTimeModeId); //显示模式
+        // var enableHighlight=valueObj.disableHighlight;        //是否显示高亮
+        var digitTextureList=[];                              //digitTextureList中存放了所有数字的图片
+        for(var i=0;i<=9;i++){
+            digitTextureList.push(texTimeSlices[i].imgSrc)
         }
 
+        //变量
+        var digitCount=0;                                     //数字位数
+        var opeCount=0;                                       //符号位数
+        var firstOpe=0;                                       //第一个符号位置
+        var opeSliceNum=0;                                    //符号纹理编号
+        var dx = 0;                                           //偏移
+        var curLayer=[];                                      //当前图层
+
+
         switch (dateTimeModeId){
-            case 0:
-               // console.log('时分秒')
-                layerCount = 8;
-                for(i=0;i<layerCount;i++){
-                    dx = i*FontWidth;
-                    fontLayer = new Layer(dx,0,sWidth,sHeight);
-                    if(i==2 || i==5){
-                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
-                    }else {
-                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
-                    }
-                     layers.push(fontLayer);
-                    }
-                    break;
-            case 1:
-                //console.log('时分');
-                layerCount = 5;
-                for(i=0;i<layerCount;i++){
-                    dx = i*FontWidth;
-                    fontLayer = new Layer(dx,0,sWidth,sHeight);
-                    if(i==2){
-                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
-                    }else {
-                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
-                    }
-                    layers.push(fontLayer);
-                }
+            case 0://时分秒
+                digitCount=6;
+                opeCount=2;
+                firstOpe=2;
+                opeSliceNum=10;
+                this.maxHighLightNum = 3;
+            case 1://
+                digitCount=4;
+                opeCount=1;
+                firstOpe=2;
+                opeSliceNum=10;
+                this.maxHighLightNum = 2;
                 break;
-            case 2:
-                //console.log('斜杠日期');
-                layerCount = 10;
-                for(i=0;i<layerCount;i++){
-                    dx = i*FontWidth;
-                    fontLayer = new Layer(dx,0,sWidth,sHeight);
-                    if(i==4 || i==7){
-                        fontLayer.subLayers.font = new FontSubLayer('/',fontStyle);
-                    }else {
-                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
-                    }
-                    layers.push(fontLayer);
-                }
+            case 2://
+                digitCount=8;
+                opeCount=2;
+                firstOpe=4;
+                opeSliceNum=11;
+                this.maxHighLightNum = 3;
                 break;
-            case 3:
-                //console.log('减号日期');
-                layerCount = 10;
-                for(i=0;i<layerCount;i++){
-                    dx = i*FontWidth;
-                    fontLayer = new Layer(dx,0,sWidth,sHeight);
-                    if(i==4 || i==7){
-                        fontLayer.subLayers.font = new FontSubLayer('-',fontStyle);
-                    }else {
-                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
-                    }
-                    layers.push(fontLayer);
-                }
+            case 3://
+                digitCount=8;
+                opeCount=2;
+                firstOpe=4;
+                opeSliceNum=12;
+                this.maxHighLightNum = 3;
                 break;
             default:
-                //console.log('时分秒');
-                layerCount = 8;
-                for(i=0;i<layerCount;i++){
-                    dx = i*FontWidth;
-                    fontLayer = new Layer(dx,0,sWidth,sHeight);
-                    if(i==2 || i==5){
-                        fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
-                    }else {
-                        fontLayer.subLayers.image = new TextureSubLayer(textureList);
-                    }
-                    layers.push(fontLayer);
-                }
-                break;
-                }
+                console.log('error');
+        }
 
+        //添加数字图层
+        for (i=0;i<digitCount;i++){
+            if(i==firstOpe || i==firstOpe+2){
+                dx += charW;
+            }
+            curLayer = new Layer(dx,0,charW,charH,true);
+            curLayer .subLayers.image = new TextureSubLayer(digitTextureList);
+            layers.push(curLayer);
+            dx += charW;
+        }
+        //添加符号图层
+        for (i=0;i<opeCount;i++){
+            curLayer = new Layer((firstOpe+3*i)*charW,0,charW,charH,true);
+            curLayer .subLayers.image = new TextureSubLayer(texTimeSlices[opeSliceNum].imgSrc);
+            layers.push(curLayer);
+        }
 
-        //字符总数
-        //fontLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
-        // switch (layerCount){
-        //     case 0:
-        //         //时分模式
-        //         layerCount == 5;
-        //         if(i == 2 ){
-        //             FontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
-        //         }
-        //     case 1:
-        //          //时分秒模式
-        //         layerCount == 8;
-        //         if(i == 2 || i == 5){
-        //             FontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
-        //         }
-        //     case 2:
-        //         //斜杠日期模式
-        //         layerCount == 10;
-        //         if(i == 4 || i == 7){
-        //             FontLayer.subLayers.font = new FontSubLayer('/',fontStyle);
-        //         }else {
-        //         //减号日期模式
-        //          if(i == 4 || i == 7){
-        //              FontLayer.subLayers.font = new FontSubLayer('-',fontStyle);
-        //             }
-        //         }
-        // }
-        //添加图层
-        // var curDigitLayer;
-        // for(var i=0;i<layerCount;i++){
-        //     curDigitLayer = new Layer(0,0,mW,mH,true);
-        //     curDigitLayer.subLayers.image = new TextureSubLayer(textureList);
-        //     layers.push(curDigitLayer);
-        // }
+        //高亮层
+        this.enableHighLight = !(valueObj.disableHighlight);
+        if(this.enableHighLight){
+            curLayer = new Layer(0,0,charW,charH,true);
+            if(highlightSlice.imgSrc){
+                curLayer.subLayers.image = new TextureSubLayer(highlightSlice.imgSrc);
+            }else{
+                var colorElems = parseColor(highlightSlice.color);
+                curLayer.subLayers.color = new ColorSubLayer(colorElems);
+            }
+            layers.push(curLayer);
+        }else{
+            this.maxHighLightNum = 0;
+        }
+
         this.subType = 'TexTime';
         Widget.call(this,x,y,w,h,layers);
     }
     TexTime.prototype = Object.create(Widget.prototype);
     TexTime.prototype.constructor = TexTime;
+
+    //ColorBlock
+    function ColorBlock(x,y,w,h) {
+        //图层数组
+        var layers = [];
+
+        //颜色层
+        var curLayer = new Layer(0,0,w,h,true);
+        var colorElems = parseColor('rgba(111,111,111,1)');
+        curLayer .subLayers.color = new ColorSubLayer(colorElems);
+        layers.push(curLayer);
+
+        this.subType = 'ColorBlock';
+        Widget.call(this,x,y,w,h,layers);
+    }
+    ColorBlock.prototype = Object.create(Widget.prototype);
+    ColorBlock.prototype.constructor = ColorBlock;
 
     var WidgetCommandParser = {};
     var scope = {};
@@ -1713,6 +1688,7 @@
     WidgetModel.models.DatePicker = DatePicker;
     WidgetModel.models.TexDatePicker = TexDatePicker;
     WidgetModel.models.TexTime = TexTime;
+    WidgetModel.models.ColorBlock = ColorBlock;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

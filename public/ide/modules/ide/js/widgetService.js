@@ -4297,7 +4297,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             };
             this.callSuper('initialize', options);
             this.lockRotation = true;
-            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.setControlsVisibility(ctrlOptions);
             this.hasRotatingPoint = false;
 
             //宽高
@@ -4419,4 +4419,81 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyRotaryKnob(level,object));
     };
     fabric.MyRotaryKnob.async = true;
+
+    //myColorBlock
+    fabric.MyColorBlock = fabric.util.createClass(fabric.Object,{
+        type: Type.MyColorBlock,
+        initialize: function (level, options) {
+            var self = this;
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);
+            this.hasRotatingPoint = false;
+
+            //宽高
+            this.width = level.info.width;
+            this.height = level.info.height;
+
+            //位置
+            this.left = level.info.left;
+            this.top = level.info.top;
+
+            //纹理
+            this.blockColor = level.texList[0].slices[0].color;
+
+
+            //修改纹理
+            this.on('changeTex', function (arg) {
+                var _callback=arg.callback;
+                self.blockColor = arg.level.texList[0].slices[0].color;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                ctx.beginPath();
+                //填充颜色
+                if(this.blockColor){
+                    ctx.fillStyle=this.blockColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
+                }
+                ctx.closePath();
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染ColorBlock出错');
+            }
+        }
+    });
+    fabric.MyColorBlock.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyColorBlock(level, option));
+    };
+    fabric.MyColorBlock.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MyColorBlock(level,object));
+    };
+    fabric.MyColorBlock.async = true;
+
 }]);

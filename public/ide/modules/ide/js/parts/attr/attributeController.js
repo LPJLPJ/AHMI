@@ -272,6 +272,10 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
                 highlightModeId:'0',
                 enterCurValue:enterRotaryKnobCurValue
             },
+            //色块
+            colorBlock:{
+                highlightModeId:'0',
+            },
             //滑块
             slideBlock:{
                 enterInitValue:enterInitValue,

@@ -799,6 +799,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultSelector();
             }else if(_index===17){
                 newWidget = TemplateProvider.getDefaultRotaryKnob();
+            }else if(_index===18){
+                newWidget = TemplateProvider.getDefaultColorBlock();
             }
             else {
                 return;
@@ -1179,6 +1181,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     break;
                 case 'MyRotaryKnob':
                     node.add(new fabric.MyRotaryKnob(dataStructure,initiator));
+                    break;
+                case 'MyColorBlock':
+                    node.add(new fabric.MyColorBlock(dataStructure,initiator));
                     break;
                 default :
                     console.error('not match widget in preprocess!');

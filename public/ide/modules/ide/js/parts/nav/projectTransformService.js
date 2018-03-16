@@ -640,6 +640,15 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     break;
+                case 'MyColorBlock':
+                    generalWidget = new WidgetModel.models['ColorBlock'](x, y, w, h);
+                    generalWidget = generalWidget.toObject();
+
+                    generalWidget.generalType = 'ColorBlock';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
                 case 'MySelector':
                     //纹理
                     var tempSlices = targetWidget.texList[1].slices;
@@ -730,39 +739,37 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     break;
 
                 case 'MyTexTime':
-                    generalWidget = new WidgetModel.models['TexTime'](x,y,w,h,info,texList[0].slices,info);
-                    console.log('generalWidget',generalWidget);
+                    generalWidget = new WidgetModel.models['TexTime'](x,y,w,h,info,texList[0].slices,texList[1].slices[0]);
                     generalWidget = generalWidget.toObject();
-                    var attrs = 'characterW,characterH'
-                    attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr] || 0
-                    })
+                    //数字个数
+                    var digitCount=0;
                     switch (info['dateTimeModeId']) {
-                        //时分模式
-                        case '0':
-                            LayerNum = 5;
+                        case '0'://时分秒
+                            digitCount = 6;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量时分秒';
                             break;
-                            //时分秒模式
-                        case '1':
-                            LayerNum = 8;
+                        case '1'://时分
+                            digitCount = 4;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量时分秒';
                             break;
-                            //减号日期
-                        case '2':
-                            LayerNum = 10;
+                        case '2'://斜杠日期
+                            digitCount = 8;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量年月日';
                             break;
-                            //斜杠日期
-                        case '3':
-                            LayerNum = 10;
+                        case '3'://减号日期
+                            digitCount = 8;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量年月日';
                             break;
-                            //时分秒模式
                         default:
-                            LayerNum = 8;
                     }
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[2] = digitCount;//数字个数
+                    generalWidget.otherAttrs[3] = Number(info['dateTimeModeId']);//模式
+                    generalWidget.otherAttrs[4] = Number(info['characterW']);//单个字符宽度
+
                     generalWidget.generalType = 'TexTime';
-                    generalWidget.tag = _.cloneDeep(rawWidget.tag);         //clonedeep函数封装了深拷贝的逻辑 raw(未处理的控件)
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    //console.log('TexTime', generalWidget);
                     break;
 
                 case 'MyDateTime':
