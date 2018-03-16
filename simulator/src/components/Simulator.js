@@ -169,7 +169,7 @@ module.exports =   React.createClass({
             pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw
             //push return button
             pageData.canvasList[0].subCanvasList[0].widgetList[1] = _.cloneDeep(returnButtonData)
-            data.pageList.push(pageData)
+            // data.pageList.push(pageData)
             var swRes = [];
             (sw.layers||[]).forEach(function (layer) {
                 layer.subLayers.image && (swRes = swRes.concat(layer.subLayers.image.textureList))

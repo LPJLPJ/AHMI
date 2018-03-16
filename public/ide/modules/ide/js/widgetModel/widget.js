@@ -118,7 +118,9 @@
                 a:colorElems[3]*255
             }
         }else if (color.indexOf('rgb')!==-1){
-            colorElems = color.split(/[\(|\)]/)[1].split(',')
+            colorElems = color.split(/[\(|\)]/)[1].split(',').map(function (c) {
+                    return Number(c)
+                })
             result = {
                 r:colorElems[0],
                 g:colorElems[1],

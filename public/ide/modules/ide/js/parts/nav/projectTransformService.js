@@ -31,7 +31,82 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         //添加系统控件
         transSysWidgets(targetProject);
 
+        //添加系统控件页面
+        var sysWidgetPageTemplate = {
+            "name": "NewPage",
+            backgroundColor: 'rgb(212,212,212)',
+            backgroundImage: '',
+            actions: undefined,
+            tag: '',
+            triggers: undefined,
+            type:'MyPage',
+            transition: {
+                "name": "NO_TRANSITION",
+                "show": "无动画",
+                "duration": 0
+            },
+            canvasList: [
+                {
+                    "type": "MyLayer",
+                    "name": "NewCanvas",
+                    "transition": {
+                        "name": "NO_TRANSITION",
+                        "show": "无动画",
+                        "duration": 0
+                    },
+                    curSubCanvasIdx: 0,
+                    w: targetProject.size.width,
+                    h: targetProject.size.height,
+                    x: 0,
+                    y: 0,
+                    zIndex: 0,
+                    subCanvasList: [
+                        {
+                            "type": "MySubLayer",
+                            "name": "NewSubCanvas",
+                            widgetList: [
+
+                            ]
+                        }
+                    ]
+
+                }
+            ]
+
+        };
+        var systemWidgetResources = []
+        var systemWidgetPages = (targetProject.systemWidgets||[]).map(function (sw,i) {
+            var pageData = _.cloneDeep(sysWidgetPageTemplate)
+            pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw
+            //push return button
+            // pageData.canvasList[0].subCanvasList[0].widgetList[1] = _.cloneDeep(returnButtonData)
+            // targetProject.pageList.push(pageData)
+            var swRes = [];
+            (sw.layers||[]).forEach(function (layer) {
+                layer.subLayers.image && (swRes = swRes.concat(layer.subLayers.image.textureList))
+            })
+            systemWidgetResources = systemWidgetResources.concat(swRes)
+            return pageData
+        })
+        systemWidgetResources = systemWidgetResources.map(function (r) {
+            return {id:getFileName(r),name:getFileName, type:'image/png',src:r}
+        }.bind(this))
+
+
+        for (var i=0;i<systemWidgetPages.length;i++){
+            targetProject.pageList.push(systemWidgetPages[i])
+        }
+
+        targetProject.systemWidgetResources = systemWidgetResources
+
+
+
         return targetProject;
+    }
+
+    function getFileName(fileUrl) {
+        var parts =  (fileUrl||'').split('/')
+        return parts[parts.length-1]
     }
 
     /**
