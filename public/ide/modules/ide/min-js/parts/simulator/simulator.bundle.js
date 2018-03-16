@@ -51958,7 +51958,7 @@ module.exports = React.createClass({
         //initialize inputkeyboard
         var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
         // console.log(keyboardData);
-        data.pageList.push(keyboardData);
+        // data.pageList.push(keyboardData);
 
         //remember inputkeyboard page and widget
         this.inputKeyboard = {};
@@ -52010,6 +52010,8 @@ module.exports = React.createClass({
 
         //handle system widgets
         var systemWidgetResources = [];
+        this.systemWidgets = data.systemWidgets;
+
         this.systemWidgetPages = (data.systemWidgets || []).map(function (sw, i) {
             var pageData = _.cloneDeep(keyboardData);
             pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw;
@@ -58335,39 +58337,45 @@ module.exports = React.createClass({
                         this.draw(null, {
                             updatedTagName: project.tag
                         });
-                    } else if (param2Value === -2) {
-                        //input keyboard
-                        this.inputKeyboard.widget.returnPageId = curPageTag.value;
-                        this.inputKeyboard.widget.targetTag = param1.tag;
-                        this.inputKeyboard.widget.curValue = '' + this.getParamValue(param1);
-                        this.setTagByTag(curPageTag, this.originalPageNum + 1);
-                        this.draw(null, {
-                            updatedTagName: project.tag
-                        });
-                    } else if (param2Value < -2) {
-                        var sysIdx = -param2Value - 3;
-                        if (this.systemWidgetPages[sysIdx]) {
-                            var curWidget = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[0];
-                            var returnButton = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[1];
-                            //otherAttrs 0 returnPageId
-                            //otherAttrs 1 initValue
-                            // curWidget.otherAttrs[0] = curPageTag.value
-                            // curWidget.otherAttrs[1] = Number(this.getParamValue(param1))||0
-                            curWidget.tag = param1.tag;
-                            //set returnButton
-                            returnButton.actions = [{
-                                title: 'return',
-                                trigger: 'Release',
-                                commands: [{
-                                    cmd: [{ name: 'GOTO', symbol: '->' }, { tag: '', value: '' }, { tag: '', value: curPageTag.value || 1 }]
-                                }]
-                            }];
-                            this.setTagByTag(curPageTag, this.originalPageNum - param2Value - 1);
-                            this.draw(null, {
-                                updatedTagName: project.tag
-                            });
-                        }
                     }
+                    // else if (param2Value === -2) {
+                    //     //input keyboard
+                    //     this.inputKeyboard.widget.returnPageId = curPageTag.value;
+                    //     this.inputKeyboard.widget.targetTag = param1.tag;
+                    //     this.inputKeyboard.widget.curValue = '' + this.getParamValue(param1);
+                    //     this.setTagByTag(curPageTag, this.originalPageNum+1);
+                    //     this.draw(null, {
+                    //         updatedTagName: project.tag
+                    //     });
+                    // }
+                    else if (param2Value <= -2) {
+                            var sysIdx = -param2Value - 2;
+                            sysIdx = project.pageList.length - this.systemWidgets.length + sysIdx + 1;
+
+                            if (project.pageList[sysIdx - 1]) {
+                                // var curWidget = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[0]
+                                // var returnButton = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[1]
+                                var curWidget = project.pageList[sysIdx - 1].canvasList[0].subCanvasList[0].widgetList[0];
+                                var returnButton = project.pageList[sysIdx - 1].canvasList[0].subCanvasList[0].widgetList[1];
+                                //otherAttrs 0 returnPageId
+                                //otherAttrs 1 initValue
+                                // curWidget.otherAttrs[0] = curPageTag.value
+                                // curWidget.otherAttrs[1] = Number(this.getParamValue(param1))||0
+                                curWidget.tag = param1.tag;
+                                //set returnButton
+                                returnButton.actions = [{
+                                    title: 'return',
+                                    trigger: 'Release',
+                                    commands: [{
+                                        cmd: [{ name: 'GOTO', symbol: '->' }, { tag: '', value: '' }, { tag: '', value: curPageTag.value || 1 }]
+                                    }]
+                                }];
+                                this.setTagByTag(curPageTag, sysIdx);
+                                this.draw(null, {
+                                    updatedTagName: project.tag
+                                });
+                            }
+                        }
                 }
                 //next
                 nextStep.process = false;

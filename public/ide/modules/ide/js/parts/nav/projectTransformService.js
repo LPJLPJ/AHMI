@@ -74,12 +74,54 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
             ]
 
         };
+        //添加系统控件页面返回按钮
+        var defaultMargin = 5
+        var sysCanvas = sysWidgetPageTemplate.canvasList[0]
+        var minReturnButtonSize = Math.ceil(0.05*Math.min(sysCanvas.w,sysCanvas.h))
+
+        var returnButtonImgSrc = '/public/images/returnButton/returnIcon.png'
+        var returnButtonData = {
+            type:'widget',
+            subType:'MyReturnButton',
+            buttonModeId:'0',
+            info :{
+                width:minReturnButtonSize,
+                height: minReturnButtonSize,
+                left: sysCanvas.w-minReturnButtonSize-defaultMargin, top: defaultMargin,
+                originX: 'center', originY: 'center',
+                arrange:true,
+
+                text:'',
+                fontFamily:"宋体",
+                fontSize:20,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:'',
+            },
+            texList:[{
+                name:'按钮纹理',
+                currentSliceIdx:0,
+                slices:[{
+                    color:'rgba(255,0,0,0)',
+                    imgSrc:returnButtonImgSrc,
+                    name:'按下前'
+                },{
+                    color:'rgba(0,255,0,0)',
+                    imgSrc:returnButtonImgSrc,
+                    name:'按下后'
+                },{
+                    color:'rgba(244,244,244,0.3)',
+                    imgSrc:'',
+                    name:'高亮'
+                }]
+            }]
+        }
         var systemWidgetResources = []
         var systemWidgetPages = (targetProject.systemWidgets||[]).map(function (sw,i) {
             var pageData = _.cloneDeep(sysWidgetPageTemplate)
             pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw
             //push return button
-            // pageData.canvasList[0].subCanvasList[0].widgetList[1] = _.cloneDeep(returnButtonData)
+            pageData.canvasList[0].subCanvasList[0].widgetList[1] = _.cloneDeep(returnButtonData)
             // targetProject.pageList.push(pageData)
             var swRes = [];
             (sw.layers||[]).forEach(function (layer) {
