@@ -3540,7 +3540,7 @@
             
             //hue
             var(tHueX,0)
-            var(tHuey,0)
+            var(tHueY,0)
             var(tHueW,0)
             var(tHueH,0)
             var(tHueRightX,0)
@@ -3652,6 +3652,7 @@
                             set('this.layers.3.subLayers.color.r',tR)
                             set('this.layers.3.subLayers.color.g',tG)
                             set('this.layers.3.subLayers.color.b',tB)
+                            set('this.layers.3.subLayers.color.a',255)
                             //restore tS,tV
                             set(tS,tSBack)
                             set(tV,tVBack)

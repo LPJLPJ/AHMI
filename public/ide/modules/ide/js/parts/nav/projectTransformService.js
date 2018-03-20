@@ -80,41 +80,166 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         var minReturnButtonSize = Math.ceil(0.05*Math.min(sysCanvas.w,sysCanvas.h))
 
         var returnButtonImgSrc = '/public/images/returnButton/returnIcon.png'
+        // var returnButtonData = {
+        //     type:'widget',
+        //     subType:'MyReturnButton',
+        //     buttonModeId:'0',
+        //     info :{
+        //         width:minReturnButtonSize,
+        //         height: minReturnButtonSize,
+        //         left: sysCanvas.w-minReturnButtonSize-defaultMargin, top: defaultMargin,
+        //         originX: 'center', originY: 'center',
+        //         arrange:true,
+        //
+        //         text:'',
+        //         fontFamily:"宋体",
+        //         fontSize:20,
+        //         fontColor:'rgba(0,0,0,1)',
+        //         fontBold:"100",
+        //         fontItalic:'',
+        //     },
+        //     texList:[{
+        //         name:'按钮纹理',
+        //         currentSliceIdx:0,
+        //         slices:[{
+        //             color:'rgba(255,0,0,0)',
+        //             imgSrc:returnButtonImgSrc,
+        //             name:'按下前'
+        //         },{
+        //             color:'rgba(0,255,0,0)',
+        //             imgSrc:returnButtonImgSrc,
+        //             name:'按下后'
+        //         },{
+        //             color:'rgba(244,244,244,0.3)',
+        //             imgSrc:'',
+        //             name:'高亮'
+        //         }]
+        //     }]
+        // }
         var returnButtonData = {
-            type:'widget',
-            subType:'MyReturnButton',
-            buttonModeId:'0',
-            info :{
+            "info": {
                 width:minReturnButtonSize,
                 height: minReturnButtonSize,
-                left: sysCanvas.w-minReturnButtonSize-defaultMargin, top: defaultMargin,
-                originX: 'center', originY: 'center',
-                arrange:true,
+                left: sysCanvas.w-minReturnButtonSize-defaultMargin,
+                top: defaultMargin,
 
-                text:'',
-                fontFamily:"宋体",
-                fontSize:20,
-                fontColor:'rgba(0,0,0,1)',
-                fontBold:"100",
-                fontItalic:'',
             },
-            texList:[{
-                name:'按钮纹理',
-                currentSliceIdx:0,
-                slices:[{
-                    color:'rgba(255,0,0,0)',
-                    imgSrc:returnButtonImgSrc,
-                    name:'按下前'
-                },{
-                    color:'rgba(0,255,0,0)',
-                    imgSrc:returnButtonImgSrc,
-                    name:'按下后'
-                },{
-                    color:'rgba(244,244,244,0.3)',
-                    imgSrc:'',
-                    name:'高亮'
-                }]
-            }]
+            "enableHighLight": true,
+            "highLightNum": 0,
+            "maxHighLightNum": 1,
+            "mode": 0,
+            "layers": [
+                {
+                    "subLayers": {
+                        "roi": null,
+                        "font": null,
+                        "image": {
+                            "textureList": [
+                                returnButtonImgSrc
+                            ],
+                            "texture": 0,
+                            "type": 0
+                        },
+                        "color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 0
+                        }
+                    },
+                    "x": 0,
+                    "y": 0,
+                    "width": minReturnButtonSize,
+                    "height": minReturnButtonSize,
+                    "rotateAngle": 0,
+                    "hidden": false,
+                    "validSubLayer": 7,
+                    "rotateCenterX": 0,
+                    "rotateCenterY": 0
+                },
+                {
+                    "subLayers": {
+                        "roi": null,
+                        "font": null,
+                        "image": {
+                            "textureList": [
+                                returnButtonImgSrc
+                            ],
+                            "texture": 0,
+                            "type": 0
+                        },
+                        "color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 0
+                        }
+                    },
+                    "x": 0,
+                    "y": 0,
+                    "width": minReturnButtonSize,
+                    "height": minReturnButtonSize,
+                    "rotateAngle": 0,
+                    "hidden": false,
+                    "validSubLayer": 7,
+                    "rotateCenterX": 0,
+                    "rotateCenterY": 0
+                },
+                {
+                    "subLayers": {
+                        "roi": null,
+                        "font": null,
+                        "image": null,
+                        "color": {
+                            "r": 244,
+                            "g": 244,
+                            "b": 244,
+                            "a": 76.5
+                        }
+                    },
+                    "x": 0,
+                    "y": 0,
+                    "width": minReturnButtonSize,
+                    "height": minReturnButtonSize,
+                    "rotateAngle": 0,
+                    "hidden": true,
+                    "validSubLayer": 7,
+                    "rotateCenterX": 0,
+                    "rotateCenterY": 0
+                }
+            ],
+            "otherAttrs": [],
+            "generalType": "Button",
+            "subType": "general",
+            "actions": [
+                {
+                    "title": "action0",
+                    "trigger": "Release",
+                    "commands": [
+                        {
+                            "label": "",
+                            "cmd": [
+                                {
+                                    "name": "GOTO",
+                                    "symbol": "->"
+                                },
+                                {
+                                    "tag": "a",
+                                    "value": ""
+                                },
+                                {
+                                    "tag": "",
+                                    "value": -1
+                                }
+                            ]
+                        }
+                    ],
+                    "newAction": false
+                }
+            ],
+            "id": "0.0.0.1",
+            "type": "widget",
+            "wId": 1
         }
         var systemWidgetResources = []
         var systemWidgetPages = (targetProject.systemWidgets||[]).map(function (sw,i) {
