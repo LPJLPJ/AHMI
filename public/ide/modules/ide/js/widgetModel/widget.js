@@ -1084,6 +1084,7 @@
         var svLayer = new Layer(d,d,0.8*w,0.8*h)
         svLayer.subLayers.image = new TextureSubLayer(slices[2].imgSrc)
         svLayer.subLayers.color = new ColorSubLayer(parseColor(slices[2].color))
+        //svLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
         //preview layer
         var pLayer = new Layer(d,0.8*h+d*2,w-d*2,0.2*h-d*3)
         pLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(0,0,0)'))
