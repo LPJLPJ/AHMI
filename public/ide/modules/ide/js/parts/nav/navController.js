@@ -304,6 +304,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
                         curScope.project.timers = TagService.getTimerNum();//-
+                        curScope.project.tagClasses = TagService.getAllTagClasses();
                         curScope.project.version = window.ideVersion;
                         curScope.project.CANId = NavModalCANConfigService.getCANId();
                         var currentProject = curScope.project;

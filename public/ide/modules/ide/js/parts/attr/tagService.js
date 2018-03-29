@@ -142,6 +142,15 @@ ideServices.service('TagService', [function () {
             cb && cb();
         }
     };
+    //通过name删除一个tag
+    this.deleteTagByName = function (name, cb) {
+        for(var i=0;i<tags.length;i++){
+            if(tags[i].name==name){
+                tags.splice(i, 1);
+                cb && cb();
+            }
+        }
+    };
 
     //点击edit按钮调用此方法，将编辑后的tag放入tags数组
     this.editTagByIndex = function (index, tag, cb) {
@@ -211,6 +220,102 @@ ideServices.service('TagService', [function () {
     this.setTagsFromRemote = function (_tags, cb) {
         Object.assign(tags, _tags);
         cb && cb()
+    };
+
+
+    //*********tagClass*********//edit by LH in 2018/3/20
+    function TagClass(name,type,tagArray){
+        this.name=name;
+        this.type=type || 'custom'; //custom, system, timer
+        this.tagArray=tagArray||[];
     }
+
+    var allTags=new TagClass('全部','system',tags);
+    var timeTags=new TagClass('定时器','timer',timerTags);
+    var defaultTagClass = new TagClass('default','custom',null);
+    var tagClasses=[allTags,timeTags];
+
+    //新增一个tagClass
+    this.getNewTagClass = function () {
+        return _.cloneDeep(defaultTagClass);
+    };
+
+    //tagClass不允许重名，数量不允许超过30
+    this.addToTagClasses = function (tagClass) {
+        var tagClassesLength=tagClasses.length;
+        if ((tagClassesLength) >= 30) {
+            toastr.warning('超出标签数量限制');
+            return false;
+        }
+        for(var i=0;i<tagClassesLength;i++){
+            if(tagClass.name===tagClasses[i].name){
+                toastr.warning('重复的标签名');
+                return false;
+            }
+        }
+        tagClasses.push(tagClass);
+        return true;
+    };
+
+    //同步用户的标签列表
+    this.syncTagClasses = function (_customTagClasses) {
+        tagClasses = addDefaultTagClasses(_customTagClasses || []);
+    };
+
+    //给用户的标签列表添加默认标签
+    function addDefaultTagClasses(tagClassesList) {
+        var allTags=new TagClass('全部','system',tags);
+        var timeTags=new TagClass('定时器','timer',timerTags);
+        var defaultTagClasses = [allTags,timeTags];
+        var sysTagClassFlags = defaultTagClasses.map(function () {
+            return false;
+        });
+        for (var j = 0; j < sysTagClassFlags.length; j++) {
+            for (var i = 0; i < tagClassesList.length; i++) {
+                if (tagClassesList[i].name === defaultTagClasses[j].name) {
+                    //has
+                    sysTagClassFlags[j] = true;
+                    break;
+                }
+            }
+        }
+
+        for (j = 0; j < sysTagClassFlags.length; j++) {
+            if (!sysTagClassFlags[j]) {
+                tagClassesList.push(defaultTagClasses[j]);
+            }
+        }
+        return tagClassesList;
+
+    }
+
+    //返回所有标签
+    this.getAllTagClasses = function () {
+        addDefaultTagClasses(tagClasses);
+        return tagClasses;
+    };
+
+    //通过index返回一个指定的tagClass
+    this.getTagClassByIndex = function (index) {
+        return tagClasses[index];
+    };
+
+    //通过index删除一个tagClass
+    this.deleteTagClassByIndex = function (index, cb) {
+        if ((index >= 0) && (index <= tagClasses.length - 1)) {
+            tagClasses.splice(index, 1);
+            cb && cb();
+        }
+    };
+
+    //将编辑后的tag放入tags数组
+    this.editTagClassByIndex = function (index, tagClass, cb) {
+        if (tagClasses.length <= 2) {
+            return;
+        }
+        var newTagClass = _.clone(tagClass);
+        tags.splice(index, 1, newTagClass);
+        cb && cb();
+    };
 
 }]);

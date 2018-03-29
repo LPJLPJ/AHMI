@@ -10,6 +10,11 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         indexOfTagInList:null,
         timerNum:null,
 
+        tagClasses:null,
+        curTagClass:null,
+        curTagClassName:null,
+        timerTagShow:false,
+
         addNewTag:addNewTag,
         openPanel:openPanel,
         setTag:setTag,
@@ -20,12 +25,17 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         displayTagByIndex:displayTagByIndex,
         displayTimerTagByIndex:displayTimerTagByIndex,
         setTimerNum:setTimerNum,
+        addTimerNum:addTimerNum,
+        minusTimerNum:minusTimerNum,
         restoreTimerNum:restoreTimerNum,
         readTags:readTags,
         sortByName:sortByName,
-        sortByRegister:sortByRegister
-    };
+        sortByRegister:sortByRegister,
 
+        editTagClass:editTagClass,
+        changeCurTagClass:changeCurTagClass,
+        addToTagClass:addToTagClass
+    };
 
     $scope.$on('GlobalProjectReceived', function () {
         initProject();
@@ -37,6 +47,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
 
     function initProject() {
         readTagsInfo();
+        readTagClassesInfo();
     }
 
     function addNewTag(){
@@ -92,6 +103,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 //new tag
                 TagService.setUniqueTags(newTag,noDuplication,function(){
                     readTagsInfo();
+                    addTagToTagClass(newTag,$scope.component.curTagClass.name);
                 }.bind(this));
             }else if ($scope.selectedType == 'custom'){
                 //edit custom tag
@@ -106,6 +118,204 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 }.bind(this));
             }
         }, function (newTag) {});
+    }
+    function openPanelAddToTagClass (index){
+        $scope.selectedIdx=index;
+        var tagClassNames=$scope.component.tagClasses.map(
+            function(tagClass){
+                return tagClass.name;
+            });
+        var defaultTagClassesLength=2;
+        tagClassNames.splice(0, defaultTagClassesLength);
+        for(var i=0;i<tagClassNames.length;i++){
+            if(tagClassNames[i]==$scope.component.curTagClass.name){
+                tagClassNames.splice(i,1);
+            }
+        }
+
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'addToTagClassModal.html',
+            controller: function($scope,$uibModalInstance){
+                $scope.tagClassNames=tagClassNames;
+                //确定
+                $scope.save = function (th) {
+                    if($scope.curIndex===undefined){
+                        toastr.warning('未选中任何标签');
+                    }else{
+                        $uibModalInstance.close($scope.tagClassNames[$scope.curIndex]);
+                    }
+                    return;
+                };
+                //取消
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+
+                $scope.indexSelected=function(index){
+                    $scope.curIndex=index;
+                };
+            },
+            size: 'sm',
+            resolve: {
+                tagClassNames: function () {
+                    return tagClassNames;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (tagClassName) {
+            addTagToTagClass($scope.component.allCustomTags[$scope.selectedIdx],tagClassName);
+        }, function (tagClassName) {});
+    }
+    function addTagToTagClass(tag,tagClassName){
+        for(var i=0;i<$scope.component.tagClasses.length;i++){
+            if(tagClassName===$scope.component.tagClasses[i].name){
+                if($scope.component.tagClasses[i].tagArray===null){
+                    $scope.component.tagClasses[i].tagArray=[];
+                }
+                for(var j=0;j<$scope.component.tagClasses[i].tagArray.length;j++){
+                    if($scope.component.tagClasses[i].tagArray[j].name===tag.name){
+                        return;
+                    }
+                }
+                $scope.component.tagClasses[i].tagArray.push(tag);
+                return;
+            }
+        }
+    }
+
+    function openPanelEditTagClasses (index){
+        var tagClassesManage=$scope.component.tagClasses.map(
+            function(tagClass){
+                return {
+                    name:tagClass.name,
+                    renamed:false,
+                    renaming:false,
+                    delete:false,
+                    new:false
+                };
+            });
+        var defaultTagClassesLength=2;
+        var defaultTagClasses=tagClassesManage.splice(0, defaultTagClassesLength);
+
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'editTagClasses.html',
+            controller: function($scope,$uibModalInstance){
+                $scope.tagClassesManage=tagClassesManage;
+                $scope.defaultTagClasses=defaultTagClasses;
+                $scope.$scopeCtl=$scope;
+                $scope.$scopeCtl.curTagClassNewName=null;
+                $scope.someTagClassRenaming=false;
+                $scope.addTagClass=false;
+                //添加新标签
+                $scope.addTagClass = function () {
+                    $scope.addTagClassFlag=true;
+                    $scope.someTagClassRenaming=true;
+                    $scope.$scopeCtl.curTagClassNewName=null;
+                    return;
+                };
+                //打开关闭重命名输入框
+                $scope.inputName=function(index){
+                    if(index!==undefined&&index!==null){
+                        var curTagClass=$scope.tagClassesManage[index];
+                        curTagClass.renaming=!curTagClass.renaming;
+                        $scope.$scopeCtl.curTagClassNewName=curTagClass.name;
+                    }else{
+                        $scope.addTagClassFlag=false;
+                    }
+                    $scope.someTagClassRenaming=!$scope.someTagClassRenaming;
+
+                };
+                //命名
+                $scope.enterName = function (index) {
+                    if(isNameStandard($scope.$scopeCtl.curTagClassNewName)==true){
+                        if(index){
+                            var curTagClass=$scope.tagClassesManage[index];
+                            curTagClass.name=$scope.$scopeCtl.curTagClassNewName;
+                            curTagClass.renamed=true;
+                            curTagClass.renaming=false;
+
+                        }else{
+                            var newTagClass={
+                                name:$scope.$scopeCtl.curTagClassNewName,
+                                renamed:false,
+                                renaming:false,
+                                delete:false,
+                                new:true
+                            };
+                            $scope.tagClassesManage.push(newTagClass);
+                            $scope.addTagClassFlag=false;
+                        }
+
+                        $scope.someTagClassRenaming=false;
+                    }
+                    return;
+                };
+                //删除
+                $scope.delete = function (index) {
+
+                };
+                //关闭
+                $scope.close = function () {
+                    $uibModalInstance.close($scope.tagClassesManage);
+                };
+                //命名验证
+                function isNameStandard(name){
+                    if(name==null){
+                        toastr.error('名称不能为空');
+                        return false;
+                    }
+                    for(var i=0;i<$scope.tagClassesManage.length;i++){
+                        if(name==$scope.tagClassesManage[i].name) {
+                            toastr.error('重复的名称');
+                            return false;
+                        }
+                    }
+                    if(!ProjectService.inputValidate(name)){
+                        return false;
+                    }
+                    return true;
+                }
+            },
+            size: 'md',
+            resolve: {
+                tagClassesManage: function () {
+                    return tagClassesManage;
+                },
+                defaultTagClasses:function () {
+                    return defaultTagClasses;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (tagClassesManage) {
+            //delete
+            //rename
+            for(var i=0;i<$scope.component.tagClasses.length-defaultTagClassesLength;i++){
+                if(tagClassesManage[i].delete==true){
+                    tagClassesManage.splice(i, 1);
+                    $scope.component.tagClasses.splice(i+defaultTagClassesLength, 1);
+                    i--;
+                    continue;
+                }
+                if(tagClassesManage[i].renamed==true){
+                    $scope.component.tagClasses[i+defaultTagClassesLength].name=tagClassesManage[i].name;
+                }
+            }
+            if($scope.component.tagClasses.length-defaultTagClassesLength<tagClassesManage.length){
+                for(;i<tagClassesManage.length;i++){
+                    if(tagClassesManage[i].delete==false){
+                        //addNewTagclass
+                        var newTagclass=TagService.getNewTagClass();
+                        newTagclass.name=tagClassesManage[i].name;
+                        $scope.component.tagClasses.push(newTagclass);
+                    }
+                }
+            }
+            TagService.syncTagClasses($scope.component.tagClasses);
+        }, function (tagClassesManage) {});
     }
 
     function readTagsInfo(){
@@ -198,25 +408,32 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         $scope.component.visibleOfList=!$scope.component.visibleOfList;
     }
 
-    //点击按钮删除自定义tag
-    function deleteTag(index){
+    function deleteTag(name,type){
         var requiredTagNames=ProjectService.getRequiredTagNames();
         for (var i=0;i<requiredTagNames.length;i++){
-            if ($scope.component.allCustomTags[index].name==requiredTagNames[i]){
+            if (name==requiredTagNames[i]){
                 toastr.warning('该tag已经被使用');
                 return;
             }
         }
-        switch ($scope.component.allCustomTags[index].type){
+        switch (type){
             case "system":
                 toastr.warning('系统变量不可删除');
                 return;
             default: break;
         }
 
-        TagService.deleteTagByIndex(index,function(){
+        //全部列表中删除
+        TagService.deleteTagByName(name,function(){
             readTagsInfo();
         }.bind(this));
+        //当前标签列表中删除
+        var tags=$scope.component.curTagClass.tagArray;
+        for(i=0;i<tags.length;i++){
+            if(tags[i].name===name){
+                tags.splice(i, 1);
+            }
+        }
     }
 
     //点击list里的自定义tag名称，将其先显示编辑面板上。
@@ -262,6 +479,22 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         readTagsInfo();
     }
 
+    function addTimerNum(){
+        $scope.component.timerNum++;
+        //模拟input标签enter输入
+        var ev={};
+        ev.keyCode=13;
+        setTimerNum(ev);
+    }
+
+    function minusTimerNum(){
+        $scope.component.timerNum--;
+        //模拟input标签enter输入
+        var ev={};
+        ev.keyCode=13;
+        setTimerNum(ev);
+    }
+
     function setTimerNum(ev){
         if(ev.keyCode!==13){
             return;
@@ -300,6 +533,65 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         })
     }
 
+    //*********tagClass*********//edit by LH in 2018/3/20
+    //读取默认标签列表
+    function readTagClassesInfo(){
+        $scope.component.tagClasses = TagService.getAllTagClasses();
+        $scope.component.tagClasses[0].tagArray = $scope.component.allCustomTags;
+        $scope.component.tagClasses[1].tagArray = $scope.component.allTimerTags;
+        $scope.component.curTagClass=TagService.getAllTagClasses()[0];
+        $scope.component.curTagClassName=TagService.getAllTagClasses()[0].name;
+    }
+
+    //打开标签管理模态框
+    function editTagClass(){
+        openPanelEditTagClasses();
+    }
+
+    function addToTagClass(index) {
+        openPanelAddToTagClass(index);
+    }
+
+    function changeCurTagClass(){
+        var tagClasses=$scope.component.tagClasses;
+        var curTagClassName=$scope.component.curTagClassName;
+        var allTags=$scope.component.tagClasses[0].tagArray;
+        var curTagClass=[];
+        var syncCurTagArray=[];
+        for(var i=0;i<tagClasses.length;i++){
+            if(curTagClassName===tagClasses[i].name){
+                $scope.component.curTagClass=curTagClass=tagClasses[i];
+                break;
+            }
+        }
+        if($scope.component.curTagClass.name==='定时器'){
+            $scope.component.timerTagShow=true;
+        }else{
+            //将标签内的tag列表与allTags列表同步
+            $scope.component.timerTagShow=false;
+            if($scope.component.curTagClass.name!='全部'){
+                var allTagsFlag=allTags.map(function(){
+                    return false;
+                });
+                for(var j=0;j<curTagClass.tagArray.length;j++){
+                    for(var k=0;k<allTags.length;k++){
+                        if(curTagClass.tagArray[j].name===allTags[k].name){
+                            allTagsFlag[k]=true;
+                            break;
+                        }
+                    }
+                }
+                for(var m=0;m<allTags.length;m++){
+                    if(allTagsFlag[m]===true){
+                        syncCurTagArray.push(allTags[m]);
+                    }
+                }
+                $scope.component.curTagClass.tagArray=syncCurTagArray;
+
+            }
+
+        }
+    }
 }]);
 
 /**

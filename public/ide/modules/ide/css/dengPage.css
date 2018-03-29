@@ -414,6 +414,12 @@
     border-left:1px solid #ccc;
     border-right:1px solid #ccc;
 }
+.deng-attr-item .listTable td:not(:first-child) {
+    /*background: #cccc99;*/
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
+    text-align: center;
+}
 .deng-attr-item .listTable tr .tagName{
     overflow: hidden;
     text-overflow: ellipsis;
@@ -424,9 +430,9 @@
 .deng-attr-item .listTable tr .tagReg{
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100px;
-    width: 60px;
-    white-space: nowrap;
+    max-width: 30px;
+    width: 30px;
+    /*white-space: nowrap;*/
 }
 .deng-attr-item .listTable tr .icon-close {
     width:20px;
