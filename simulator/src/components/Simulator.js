@@ -6375,7 +6375,6 @@ module.exports =   React.createClass({
 
                     this.startBounceAnimation(elem,'bounceAnimeX','contentOffsetX',stepX,-bounceLimit,0,bounceDuration,elem.contentOffsetX/bounceLimit + 1)
 
-
                 }else if (elem.contentOffsetX<canvas.w - subCanvas.width){
                     clearInterval(elem.scrollXTimerId)
                     //left
@@ -6418,7 +6417,8 @@ module.exports =   React.createClass({
 
                 if (elem.contentOffsetY>0 ){
                     clearInterval(elem.scrollYTimerId)
-
+                    
+                    console.log('stepY',stepY,'-bounceLimit',-bounceLimit,'bounceDuration',bounceDuration,'startX',elem.contentOffsetY/bounceLimit + 1);
                     this.startBounceAnimation(elem,'bounceAnimeY','contentOffsetY',stepY,-bounceLimit,0,bounceDuration,elem.contentOffsetY/bounceLimit + 1)
 
 
@@ -6593,7 +6593,6 @@ module.exports =   React.createClass({
         var self = this
         if (!vertical){
             springLen = canvas.w
-            console.log('stepX',subCanvas.stepX)
             swipeAnime = new AnimationAPI.SpringAnimation(null,'x',subCanvas.stepX*1000/self.fps||0,26,170,{x:-springLen},{x:0},duration,(startX+springLen)/springLen)
             swipeAnime.onFrameCB = function () {
                 subCanvas.animating = true
