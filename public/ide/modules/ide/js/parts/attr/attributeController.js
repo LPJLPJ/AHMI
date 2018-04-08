@@ -818,7 +818,6 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
                 restore();
                 return;
             }
-
             if(type===Type.MySubLayer){
                 var currentLayer = ProjectService.getCurrentLayer();
                 var layerWidth = currentLayer&&currentLayer.info.width;
