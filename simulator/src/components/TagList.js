@@ -78,7 +78,7 @@ module.exports = React.createClass({
     render: function () {
 
         return (
-            <div className='tag-table-wrapper col-md-3'>
+            <div className='tag-table-wrapper'>
                 <table className='tag-table table table-responsive'>
                     <thead className='tag-table-header'>
                     <tr className='tag-table-row'>

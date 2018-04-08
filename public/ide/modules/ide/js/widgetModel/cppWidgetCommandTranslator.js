@@ -735,7 +735,7 @@
                                     //     attrID:curExp.value,
                                     //     tempID:param2.value
                                     // }
-                                    inst = ['OPSETWIDTE',WidgetAttrID(curExp.value),param2.value]
+                                    inst = ['OPSETWIDTE',WidgetAttrID(curExp.value),TempID(param2.value)]
                                 break;
                                 case 'layer':
                                     switch(curExp.value){

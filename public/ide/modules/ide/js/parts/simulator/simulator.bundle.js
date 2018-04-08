@@ -53160,7 +53160,7 @@ module.exports = React.createClass({
         // console.log('curRegisters',this.props.registers);
         return React.createElement(
             'div',
-            { className: 'tag-table-wrapper col-md-3' },
+            { className: 'tag-table-wrapper' },
             React.createElement(
                 'table',
                 { className: 'tag-table table table-responsive' },
@@ -53331,7 +53331,7 @@ module.exports = React.createClass({
         //initialize inputkeyboard
         var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
         // console.log(keyboardData);
-        data.pageList.push(keyboardData);
+        // data.pageList.push(keyboardData);
 
         //remember inputkeyboard page and widget
         this.inputKeyboard = {};
@@ -53383,12 +53383,14 @@ module.exports = React.createClass({
 
         //handle system widgets
         var systemWidgetResources = [];
+        this.systemWidgets = data.systemWidgets;
+
         this.systemWidgetPages = (data.systemWidgets || []).map(function (sw, i) {
             var pageData = _.cloneDeep(keyboardData);
             pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw;
             //push return button
             pageData.canvasList[0].subCanvasList[0].widgetList[1] = _.cloneDeep(returnButtonData);
-            data.pageList.push(pageData);
+            // data.pageList.push(pageData)
             var swRes = [];
             (sw.layers || []).forEach(function (layer) {
                 layer.subLayers.image && (swRes = swRes.concat(layer.subLayers.image.textureList));
@@ -54133,7 +54135,10 @@ module.exports = React.createClass({
                 }
             }
             ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
+
+            //paint with pixelRatio
+            this.pixelRatio = this.pixelRatio || 1.0;
+            ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height, 0, 0, offcanvas.width, offcanvas.height * this.pixelRatio);
         }
 
         if (shouldTestFPS) {
@@ -54829,10 +54834,10 @@ module.exports = React.createClass({
         //         }
         //     }
         // };
-        var srcScale = animationAttrs.scale && animationAttrs.scale.srcScale || { x: 1, y: 1 };
-        var dstScale = animationAttrs.scale && animationAttrs.scale.dstScale || { x: 1, y: 1 };
-        var srcTranslate = animationAttrs.translate && animationAttrs.translate.srcPos || { x: 0, y: 0 };
-        var dstTranslate = animationAttrs.translate && animationAttrs.translate.dstPos || { x: 0, y: 0 };
+        var srcScale = animationAttrs.scale && animationAttrs.scale.srcScale && this.getAnimationAtrr(animationAttrs.scale.srcScale) || { x: 1, y: 1 };
+        var dstScale = animationAttrs.scale && animationAttrs.scale.dstScale && this.getAnimationAtrr(animationAttrs.scale.dstScale) || { x: 1, y: 1 };
+        var srcTranslate = animationAttrs.translate && animationAttrs.translate.srcPos && this.getAnimationAtrr(animationAttrs.translate.srcPos) || { x: 0, y: 0 };
+        var dstTranslate = animationAttrs.translate && animationAttrs.translate.dstPos && this.getAnimationAtrr(animationAttrs.translate.dstPos) || { x: 0, y: 0 };
         var type = target.type;
         var duration = animation && animation.duration || 1000;
         // console.log(scale,translate,duration)
@@ -54908,7 +54913,7 @@ module.exports = React.createClass({
         for (var key in attr) {
             if (attr.hasOwnProperty(key)) {
                 //own key
-                values[key] = this.getParamValue(values[key]);
+                values[key] = this.getParamValue(attr[key]);
             }
         }
         return values;
@@ -57419,7 +57424,6 @@ module.exports = React.createClass({
                     break;
                 case '.':
                     curTexSlice = widget.texList[0].slices[10];
-                    drawW = 0.5 * charW;
                     break;
                 case '+':
                     curTexSlice = widget.texList[0].slices[11];
@@ -57432,7 +57436,11 @@ module.exports = React.createClass({
             if (curTexSlice) {
                 this.drawBg(dstX + leftOffset, dstY, drawW, charH, curTexSlice.imgSrc, curTexSlice.color, offctx);
             }
-            leftOffset += drawW;
+            if (curElem === '.') {
+                leftOffset += drawW / 2;
+            } else {
+                leftOffset += drawW;
+            }
         }
 
         offctx.restore();
@@ -57467,10 +57475,11 @@ module.exports = React.createClass({
 
         switch (align) {
             case 'left':
-                initXPos = paddingX;
+                initXPos = 0;
                 break;
             case 'right':
-                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - (widthOfNumStr + paddingX);
+                curWidth -= paddingX * 2;
+                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - widthOfNumStr;
                 break;
             case 'center':
             default:
@@ -58562,39 +58571,121 @@ module.exports = React.createClass({
                 } else {
                     changedType = changedDateTypes[widget.highlightValue];
                 }
-                switch (changedType) {
-                    case 'year':
-                        curWidgetDate.setFullYear(curWidgetDate.getFullYear() + direction);
+                if (widget.info.RTCModeId == '0') {
+                    switch (changedType) {
+                        case 'year':
+                            curWidgetDate.setFullYear(curWidgetDate.getFullYear() + direction);
 
-                        break;
-                    case 'month':
-                        curWidgetDate.setMonth(curWidgetDate.getMonth() + direction);
+                            break;
+                        case 'month':
+                            curWidgetDate.setMonth(curWidgetDate.getMonth() + direction);
 
-                        break;
-                    case 'day':
-                        curWidgetDate.setDate(curWidgetDate.getDate() + direction);
+                            break;
+                        case 'day':
+                            curWidgetDate.setDate(curWidgetDate.getDate() + direction);
 
-                        break;
-                    case 'hour':
-                        curWidgetDate.setHours(curWidgetDate.getHours() + direction);
+                            break;
+                        case 'hour':
+                            curWidgetDate.setHours(curWidgetDate.getHours() + direction);
 
-                        break;
-                    case 'minute':
-                        curWidgetDate.setMinutes(curWidgetDate.getMinutes() + direction);
+                            break;
+                        case 'minute':
+                            curWidgetDate.setMinutes(curWidgetDate.getMinutes() + direction);
 
-                        break;
-                    case 'second':
-                        curWidgetDate.setSeconds(curWidgetDate.getSeconds() + direction);
+                            break;
+                        case 'second':
+                            curWidgetDate.setSeconds(curWidgetDate.getSeconds() + direction);
 
-                        break;
+                            break;
+                    }
+                    curOffset = curWidgetDate.getTime() - oldWidgetDateTime;
+                    // console.log(curWidgetDate,oldWidgetDateStr,curOffset);
+                    widget.timeOffset = widget.timeOffset || 0;
+                    widget.timeOffset += curOffset;
+                } else {
+                    var ymd = this.findTagByName('时钟变量年月日');
+                    var hms = this.findTagByName('时钟变量时分秒');
+                    var ymdValue;
+                    var hmsValue;
+                    var monthValue;
+                    var yearValue;
+                    switch (changedType) {
+                        case 'year':
+                            ymdValue = Number(ymd.value) + 10000 * direction;
+                            ymd.value = ymdValue.toString();
+                            break;
+                        case 'month':
+                            ymdValue = Number(ymd.value) + 100 * direction;
+                            if (parseInt(ymdValue % 10000 / 100) > 12) ymdValue = ymdValue + (10000 - 1200) * parseInt(parseInt(ymdValue % 10000 / 100) / 12);
+                            if (parseInt(ymdValue % 10000 / 100) === 0) ymdValue = ymdValue + (1200 - 10000);
+                            ymd.value = ymdValue.toString();
+                            break;
+                        case 'day':
+                            ymdValue = Number(ymd.value) + 1 * direction;
+                            monthValue = parseInt(ymdValue % 10000 / 100) % 12;
+                            switch (monthValue) {
+                                case 0:
+                                case 1:
+                                case 3:
+                                case 5:
+                                case 7:
+                                case 8:
+                                case 10:
+                                    if (ymdValue % 100 > 31) ymdValue = ymdValue + (100 - 31) * parseInt(ymdValue % 100 / 31);
+                                    if (ymdValue % 100 === 0) ymdValue = ymdValue + (31 - 100);
+                                    break;
+                                case 4:
+                                case 6:
+                                case 9:
+                                case 11:
+                                    if (ymdValue % 100 >= 30) ymdValue = ymdValue + (100 - 30) * parseInt(ymdValue % 100 / 30);
+                                    if (ymdValue % 100 === 0) ymdValue = ymdValue + (30 - 100);
+                                    break;
+                                case 2:
+                                    yearValue = parseInt(ymdValue / 10000);
+                                    if (yearValue % 4 === 0) {
+                                        if (ymdValue % 100 >= 29) ymdValue = ymdValue + (100 - 29) * parseInt(ymdValue % 100 / 29);
+                                        if (ymdValue % 100 === 0) ymdValue = ymdValue + (29 - 100);
+                                    } else {
+                                        if (ymdValue % 100 >= 28) ymdValue = ymdValue + (100 - 28) * parseInt(ymdValue % 100 / 28);
+                                        if (ymdValue % 100 === 0) ymdValue = ymdValue + (28 - 100);
+                                    }
+                                    break;
+                                default:
+                                    console.log("error!");
+                            }
+                            ymd.value = ymdValue.toString();
+                            break;
+                        case 'hour':
+                            hmsValue = Number(hms.value) + 10000 * direction;
+                            // if(parseInt(hmsValue%1000000/10000)==99){
+                            //     hmsValue=hmsValue-760000;
+                            // }
+                            // if(parseInt(hmsValue%1000000/10000)>=24)hmsValue=hmsValue-240000;
+                            hms.value = hmsValue.toString();
+                            break;
+                        case 'minute':
+                            hmsValue = Number(hms.value) + 100 * direction;
+                            if (parseInt(hmsValue % 10000 / 100) == 99) {
+                                hmsValue = hmsValue - 4000;
+                            } else {
+                                if (parseInt(hmsValue % 10000 / 100) >= 60) hmsValue = hmsValue - 6000 + 10000;
+                            }
+                            hms.value = hmsValue.toString();
+                            break;
+                        case 'second':
+                            hmsValue = Number(hms.value) + 1 * direction;
+                            if (hmsValue % 100 == 99) {
+                                hmsValue = hmsValue - 40;
+                            } else {
+                                if (hmsValue % 100 >= 60) hmsValue = hmsValue - 60 + 100;
+                            }
+                            hms.value = hmsValue.toString();
+                            break;
+                    }
                 }
-                curOffset = curWidgetDate.getTime() - oldWidgetDateTime;
-                // console.log(curWidgetDate,oldWidgetDateStr,curOffset);
-                widget.timeOffset = widget.timeOffset || 0;
-                widget.timeOffset += curOffset;
-
+                console.log("parseInt(this.getValueByTagName('时钟变量年月日',0))", parseInt(this.getValueByTagName('时钟变量年月日', 0)));
                 this.draw();
-
                 break;
         }
     },
@@ -58717,6 +58808,8 @@ module.exports = React.createClass({
             x = x * ratioW;
             y = y * ratioH;
         }
+        //pixelRatio
+        y = y / (this.pixelRatio || 1.0);
 
         return {
             x: x,
@@ -59618,39 +59711,45 @@ module.exports = React.createClass({
                         this.draw(null, {
                             updatedTagName: project.tag
                         });
-                    } else if (param2Value === -2) {
-                        //input keyboard
-                        this.inputKeyboard.widget.returnPageId = curPageTag.value;
-                        this.inputKeyboard.widget.targetTag = param1.tag;
-                        this.inputKeyboard.widget.curValue = '' + this.getParamValue(param1);
-                        this.setTagByTag(curPageTag, this.originalPageNum + 1);
-                        this.draw(null, {
-                            updatedTagName: project.tag
-                        });
-                    } else if (param2Value < -2) {
-                        var sysIdx = -param2Value - 3;
-                        if (this.systemWidgetPages[sysIdx]) {
-                            var curWidget = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[0];
-                            var returnButton = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[1];
-                            //otherAttrs 0 returnPageId
-                            //otherAttrs 1 initValue
-                            // curWidget.otherAttrs[0] = curPageTag.value
-                            // curWidget.otherAttrs[1] = Number(this.getParamValue(param1))||0
-                            curWidget.tag = param1.tag;
-                            //set returnButton
-                            returnButton.actions = [{
-                                title: 'return',
-                                trigger: 'Release',
-                                commands: [{
-                                    cmd: [{ name: 'GOTO', symbol: '->' }, { tag: '', value: '' }, { tag: '', value: curPageTag.value || 1 }]
-                                }]
-                            }];
-                            this.setTagByTag(curPageTag, this.originalPageNum - param2Value - 1);
-                            this.draw(null, {
-                                updatedTagName: project.tag
-                            });
-                        }
                     }
+                    // else if (param2Value === -2) {
+                    //     //input keyboard
+                    //     this.inputKeyboard.widget.returnPageId = curPageTag.value;
+                    //     this.inputKeyboard.widget.targetTag = param1.tag;
+                    //     this.inputKeyboard.widget.curValue = '' + this.getParamValue(param1);
+                    //     this.setTagByTag(curPageTag, this.originalPageNum+1);
+                    //     this.draw(null, {
+                    //         updatedTagName: project.tag
+                    //     });
+                    // }
+                    else if (param2Value <= -2) {
+                            var sysIdx = -param2Value - 2;
+                            sysIdx = project.pageList.length - this.systemWidgets.length + sysIdx + 1;
+
+                            if (project.pageList[sysIdx - 1]) {
+                                // var curWidget = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[0]
+                                // var returnButton = this.systemWidgetPages[sysIdx].canvasList[0].subCanvasList[0].widgetList[1]
+                                var curWidget = project.pageList[sysIdx - 1].canvasList[0].subCanvasList[0].widgetList[0];
+                                var returnButton = project.pageList[sysIdx - 1].canvasList[0].subCanvasList[0].widgetList[1];
+                                //otherAttrs 0 returnPageId
+                                //otherAttrs 1 initValue
+                                // curWidget.otherAttrs[0] = curPageTag.value
+                                // curWidget.otherAttrs[1] = Number(this.getParamValue(param1))||0
+                                curWidget.tag = param1.tag;
+                                //set returnButton
+                                returnButton.actions = [{
+                                    title: 'return',
+                                    trigger: 'Release',
+                                    commands: [{
+                                        cmd: [{ name: 'GOTO', symbol: '->' }, { tag: '', value: '' }, { tag: '', value: curPageTag.value || 1 }]
+                                    }]
+                                }];
+                                this.setTagByTag(curPageTag, sysIdx);
+                                this.draw(null, {
+                                    updatedTagName: project.tag
+                                });
+                            }
+                        }
                 }
                 //next
                 nextStep.process = false;
@@ -60045,6 +60144,19 @@ module.exports = React.createClass({
             offcanvas.style.width = curScale * canvas.width + 'px';
         }
     },
+    setPixelRatio: function setPixelRatio(e) {
+        if (e.keyCode == 13) {
+            //enter
+            e.target.blur();
+            var curRatio = Number(e.target.value) || 1.0;
+
+            this.pixelRatio = curRatio > 0 ? curRatio : 1.0;
+            //set canvas height
+            var canvas = this.refs.canvas;
+            var offcanvas = this.refs.offcanvas;
+            canvas.height = offcanvas.height * this.pixelRatio;
+        }
+    },
     handleStep: function handleStep() {
         if (Debugger.getMode() == 'debugging') {
             Debugger.nextStep();
@@ -60216,26 +60328,44 @@ module.exports = React.createClass({
             ),
             React.createElement(
                 'div',
-                { className: 'phical-keyboard-wrapper' },
+                { className: 'col-md-3' },
                 React.createElement(
-                    'button',
-                    { onClick: this.handleMoveNext.bind(null, 'left') },
-                    ' < '
+                    'div',
+                    { className: 'setting-wrapper' },
+                    React.createElement(
+                        'div',
+                        { className: 'row' },
+                        React.createElement(
+                            'span',
+                            null,
+                            '\u50CF\u7D20\u5BBD\u9AD8\u6BD4\uFF1A 1\uFF1A'
+                        ),
+                        React.createElement('input', { type: 'number', min: '0', onKeyDown: this.setPixelRatio })
+                    )
                 ),
                 React.createElement(
-                    'button',
-                    { onMouseDown: this.handleOk.bind(null, 'press'),
-                        onMouseUp: this.handleOk.bind(null, 'release') },
-                    'OK'
+                    'div',
+                    { className: 'phical-keyboard-wrapper', style: { margin: '1em' } },
+                    React.createElement(
+                        'button',
+                        { className: 'btn btn-default', onClick: this.handleMoveNext.bind(null, 'left') },
+                        ' < '
+                    ),
+                    React.createElement(
+                        'button',
+                        { className: 'btn btn-default', onMouseDown: this.handleOk.bind(null, 'press'),
+                            onMouseUp: this.handleOk.bind(null, 'release') },
+                        'OK'
+                    ),
+                    React.createElement(
+                        'button',
+                        { className: 'btn btn-default', onClick: this.handleMoveNext.bind(null, 'right') },
+                        ' > '
+                    )
                 ),
-                React.createElement(
-                    'button',
-                    { onClick: this.handleMoveNext.bind(null, 'right') },
-                    ' > '
-                )
-            ),
-            React.createElement(TagList, { tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag }),
-            React.createElement(RegisterList, { registers: this.state.registers || {}, handleRegisterChange: this.handleRegisterChange })
+                React.createElement(TagList, { tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag }),
+                React.createElement(RegisterList, { registers: this.state.registers || {}, handleRegisterChange: this.handleRegisterChange })
+            )
         );
     }
 });
@@ -60326,7 +60456,7 @@ module.exports = React.createClass({
 
         return React.createElement(
             'div',
-            { className: 'tag-table-wrapper col-md-3' },
+            { className: 'tag-table-wrapper' },
             React.createElement(
                 'table',
                 { className: 'tag-table table table-responsive' },
@@ -61324,6 +61454,7 @@ function linkWidgets(widgetList) {
     var curWidget;
     var linkedWidgetList = [];
     var sequence = [];
+    var widgetItemList = [];
     for (i = 0; i < widgetList.length; i++) {
         curWidget = widgetList[i];
         if (curWidget.info.disableHighlight == true) {
@@ -61338,6 +61469,7 @@ function linkWidgets(widgetList) {
                 var singleWidth = 0;
                 var singleHeight = 0;
                 var hori = false;
+                widgetItemList = [];
                 if (curWidget.info.arrange == 'horizontal') {
                     singleWidth = (width - interval * (count - 1)) / count;
                     hori = true;
@@ -61352,8 +61484,9 @@ function linkWidgets(widgetList) {
                     // linkedWidget.value = j;
                     // linkedWidget.left=curWidget.info.left + hori?(j*(singleWidth+interval)):0;
                     // linkedWidget.top=curWidget.info.top + hori?0:(j*(singleHeight+interval));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? j * (singleWidth + interval) : 0), curWidget.info.absoluteTop + (hori ? 0 : j * (singleHeight + interval))));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, j, curWidget.info.absoluteLeft + (hori ? j * (singleWidth + interval) : 0), curWidget.info.absoluteTop + (hori ? 0 : j * (singleHeight + interval))));
                 }
+                linkedWidgetList.push(widgetItemList.slice(0));
 
                 break;
             case 'MyDateTime':
@@ -61362,69 +61495,75 @@ function linkWidgets(widgetList) {
                 var fontFamily = curWidget.info.fontFamily;
                 var fontStr = fontSize + 'px ' + fontFamily;
                 var delimiterWidth;
+                widgetItemList = [];
                 if (mode == '0') {
                     delimiterWidth = measureMetrics(':', fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width - 2 * delimiterWidth) / 3;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + delimiterWidth, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2, curWidget.info.absoluteTop));
                 } else if (mode == '1') {
                     delimiterWidth = measureMetrics(':', fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width - delimiterWidth) / 2;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + delimiterWidth, curWidget.info.absoluteTop));
                 } else if (mode == '2') {
                     delimiterWidth = measureMetrics('/', fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width - 2 * delimiterWidth) / 4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + delimiterWidth, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
                 } else if (mode == '3') {
                     delimiterWidth = measureMetrics('-', fontStr);
                     curWidget.delimiterWidth = delimiterWidth;
                     var eachWidth = (curWidget.info.width - 2 * delimiterWidth) / 4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + delimiterWidth, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + delimiterWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + delimiterWidth) * 2 + eachWidth, curWidget.info.absoluteTop));
                 }
+                linkedWidgetList.push(widgetItemList.slice(0));
                 break;
             case 'MyTexTime':
                 var mode = curWidget.info.dateTimeModeId;
                 var charW = curWidget.info.characterW;
+                widgetItemList = [];
                 if (mode == '0') {
                     delimiterWidth = measureMetrics(':', fontStr);
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width - 2 * charW) / 3;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2, curWidget.info.absoluteTop));
                 } else if (mode == '1') {
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width - charW) / 2;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + eachWidth + charW, curWidget.info.absoluteTop));
                 } else if (mode == '2') {
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width - 2 * charW) / 4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
                 } else if (mode == '3') {
                     curWidget.delimiterWidth = charW;
                     var eachWidth = (curWidget.info.width - 2 * charW) / 4;
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 1, curWidget.info.absoluteLeft + 2 * eachWidth + charW, curWidget.info.absoluteTop));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 2, curWidget.info.absoluteLeft + (eachWidth + charW) * 2 + eachWidth, curWidget.info.absoluteTop));
                 }
+                linkedWidgetList.push(widgetItemList.slice(0));
                 break;
             case 'MyInputKeyboard':
                 var keys = curWidget.info.keys;
+                widgetItemList = [];
                 keys.forEach(function (key, index) {
-                    linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, index, key.x, key.y));
+                    widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, index, key.x, key.y));
                 });
+                linkedWidgetList.push(widgetItemList.slice(0));
                 break;
 
             default:
@@ -61433,19 +61572,40 @@ function linkWidgets(widgetList) {
                 // linkedWidget.value = 0;
                 // linkedWidget.left=curWidget.info.left;
                 // linkedWidget.top=curWidget.info.top;
-                linkedWidgetList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                widgetItemList = [];
+                widgetItemList.push(new LinkedWidget(curWidget.subType, curWidget, 0, curWidget.info.absoluteLeft, curWidget.info.absoluteTop));
+                linkedWidgetList.push(widgetItemList.slice(0)); //deepclone
 
         }
     }
-
+    //added by LH in 2017/12/21
+    //控件内按left排序
+    for (var x in linkedWidgetList) {
+        if (linkedWidgetList[x]) {
+            linkedWidgetList[x].sort(function (a, b) {
+                return a.left - b.left;
+            });
+        }
+    }
+    //控件间按left排序
     linkedWidgetList.sort(function (a, b) {
-        return a.left - b.left;
+        return a[0].left - b[0].left;
     });
+    //控件间按top排序，稳定版
     linkedWidgetList.sort(function (a, b) {
-        return a.top - b.top;
+        if (a[0].top === b[0].top) {
+            return a[0].left - b[0].left;
+        }
+        return a[0].top - b[0].top;
     });
-
-    return linkedWidgetList;
+    var sortedLinkedWidgetList = [];
+    //链接
+    for (var y in linkedWidgetList) {
+        if (linkedWidgetList[y]) {
+            sortedLinkedWidgetList = sortedLinkedWidgetList.concat(linkedWidgetList[y]);
+        }
+    }
+    return sortedLinkedWidgetList;
 }
 
 function getPageAllInteractiveWidgets(page) {

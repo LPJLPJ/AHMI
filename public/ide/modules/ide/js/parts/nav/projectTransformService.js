@@ -31,7 +31,249 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         //添加系统控件
         transSysWidgets(targetProject);
 
+        //添加系统控件页面
+        var sysWidgetPageTemplate = {
+            "name": "NewPage",
+            backgroundColor: 'rgb(212,212,212)',
+            backgroundImage: '',
+            actions: undefined,
+            tag: '',
+            triggers: undefined,
+            type:'MyPage',
+            transition: {
+                "name": "NO_TRANSITION",
+                "show": "无动画",
+                "duration": 0
+            },
+            canvasList: [
+                {
+                    "type": "MyLayer",
+                    "name": "NewCanvas",
+                    "transition": {
+                        "name": "NO_TRANSITION",
+                        "show": "无动画",
+                        "duration": 0
+                    },
+                    curSubCanvasIdx: 0,
+                    w: targetProject.size.width,
+                    h: targetProject.size.height,
+                    x: 0,
+                    y: 0,
+                    zIndex: 0,
+                    subCanvasList: [
+                        {
+                            "type": "MySubLayer",
+                            "name": "NewSubCanvas",
+                            widgetList: [
+
+                            ]
+                        }
+                    ]
+
+                }
+            ]
+
+        };
+        //添加系统控件页面返回按钮
+        var defaultMargin = 5
+        var sysCanvas = sysWidgetPageTemplate.canvasList[0]
+        var minReturnButtonSize = Math.ceil(0.05*Math.min(sysCanvas.w,sysCanvas.h))
+
+        var returnButtonImgSrc = '/public/images/returnButton/returnIcon.png'
+        // var returnButtonData = {
+        //     type:'widget',
+        //     subType:'MyReturnButton',
+        //     buttonModeId:'0',
+        //     info :{
+        //         width:minReturnButtonSize,
+        //         height: minReturnButtonSize,
+        //         left: sysCanvas.w-minReturnButtonSize-defaultMargin, top: defaultMargin,
+        //         originX: 'center', originY: 'center',
+        //         arrange:true,
+        //
+        //         text:'',
+        //         fontFamily:"宋体",
+        //         fontSize:20,
+        //         fontColor:'rgba(0,0,0,1)',
+        //         fontBold:"100",
+        //         fontItalic:'',
+        //     },
+        //     texList:[{
+        //         name:'按钮纹理',
+        //         currentSliceIdx:0,
+        //         slices:[{
+        //             color:'rgba(255,0,0,0)',
+        //             imgSrc:returnButtonImgSrc,
+        //             name:'按下前'
+        //         },{
+        //             color:'rgba(0,255,0,0)',
+        //             imgSrc:returnButtonImgSrc,
+        //             name:'按下后'
+        //         },{
+        //             color:'rgba(244,244,244,0.3)',
+        //             imgSrc:'',
+        //             name:'高亮'
+        //         }]
+        //     }]
+        // }
+        var returnButtonData = {
+            "info": {
+                width:minReturnButtonSize,
+                height: minReturnButtonSize,
+                left: sysCanvas.w-minReturnButtonSize-defaultMargin,
+                top: defaultMargin,
+
+            },
+            "enableHighLight": true,
+            "highLightNum": 0,
+            "maxHighLightNum": 1,
+            "mode": 0,
+            "layers": [
+                {
+                    "subLayers": {
+                        "roi": null,
+                        "font": null,
+                        "image": {
+                            "textureList": [
+                                returnButtonImgSrc
+                            ],
+                            "texture": 0,
+                            "type": 0
+                        },
+                        "color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 0
+                        }
+                    },
+                    "x": 0,
+                    "y": 0,
+                    "width": minReturnButtonSize,
+                    "height": minReturnButtonSize,
+                    "rotateAngle": 0,
+                    "hidden": false,
+                    "validSubLayer": 7,
+                    "rotateCenterX": 0,
+                    "rotateCenterY": 0
+                },
+                {
+                    "subLayers": {
+                        "roi": null,
+                        "font": null,
+                        "image": {
+                            "textureList": [
+                                returnButtonImgSrc
+                            ],
+                            "texture": 0,
+                            "type": 0
+                        },
+                        "color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 0
+                        }
+                    },
+                    "x": 0,
+                    "y": 0,
+                    "width": minReturnButtonSize,
+                    "height": minReturnButtonSize,
+                    "rotateAngle": 0,
+                    "hidden": false,
+                    "validSubLayer": 7,
+                    "rotateCenterX": 0,
+                    "rotateCenterY": 0
+                },
+                {
+                    "subLayers": {
+                        "roi": null,
+                        "font": null,
+                        "image": null,
+                        "color": {
+                            "r": 244,
+                            "g": 244,
+                            "b": 244,
+                            "a": 76.5
+                        }
+                    },
+                    "x": 0,
+                    "y": 0,
+                    "width": minReturnButtonSize,
+                    "height": minReturnButtonSize,
+                    "rotateAngle": 0,
+                    "hidden": true,
+                    "validSubLayer": 7,
+                    "rotateCenterX": 0,
+                    "rotateCenterY": 0
+                }
+            ],
+            "otherAttrs": [],
+            "generalType": "Button",
+            "subType": "general",
+            "actions": [
+                {
+                    "title": "action0",
+                    "trigger": "Release",
+                    "commands": [
+                        {
+                            "label": "",
+                            "cmd": [
+                                {
+                                    "name": "GOTO",
+                                    "symbol": "->"
+                                },
+                                {
+                                    "tag": "a",
+                                    "value": ""
+                                },
+                                {
+                                    "tag": "",
+                                    "value": -1
+                                }
+                            ]
+                        }
+                    ],
+                    "newAction": false
+                }
+            ],
+            "id": "0.0.0.1",
+            "type": "widget",
+            "wId": 1
+        }
+        var systemWidgetResources = []
+        var systemWidgetPages = (targetProject.systemWidgets||[]).map(function (sw,i) {
+            var pageData = _.cloneDeep(sysWidgetPageTemplate)
+            pageData.canvasList[0].subCanvasList[0].widgetList[0] = sw
+            //push return button
+            pageData.canvasList[0].subCanvasList[0].widgetList[1] = _.cloneDeep(returnButtonData)
+            // targetProject.pageList.push(pageData)
+            var swRes = [];
+            (sw.layers||[]).forEach(function (layer) {
+                layer.subLayers.image && (swRes = swRes.concat(layer.subLayers.image.textureList))
+            })
+            systemWidgetResources = systemWidgetResources.concat(swRes)
+            return pageData
+        })
+        systemWidgetResources = systemWidgetResources.map(function (r) {
+            return {id:getFileName(r),name:getFileName, type:'image/png',src:r}
+        }.bind(this))
+
+
+        for (var i=0;i<systemWidgetPages.length;i++){
+            targetProject.pageList.push(systemWidgetPages[i])
+        }
+
+        targetProject.systemWidgetResources = systemWidgetResources
+
+
+
         return targetProject;
+    }
+
+    function getFileName(fileUrl) {
+        var parts =  (fileUrl||'').split('/')
+        return parts[parts.length-1]
     }
 
     /**
@@ -565,6 +807,15 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
                     break;
+                case 'MyColorBlock':
+                    generalWidget = new WidgetModel.models['ColorBlock'](x, y, w, h);
+                    generalWidget = generalWidget.toObject();
+
+                    generalWidget.generalType = 'ColorBlock';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
                 case 'MySelector':
                     //纹理
                     var tempSlices = targetWidget.texList[1].slices;
@@ -655,39 +906,37 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     break;
 
                 case 'MyTexTime':
-                    generalWidget = new WidgetModel.models['TexTime'](x,y,w,h,info,texList[0].slices,info);
-                    console.log('generalWidget',generalWidget);
+                    generalWidget = new WidgetModel.models['TexTime'](x,y,w,h,info,texList[0].slices,texList[1].slices[0]);
                     generalWidget = generalWidget.toObject();
-                    var attrs = 'characterW,characterH'
-                    attrs.split(',').forEach(function (attr) {
-                        generalWidget[attr] = info[attr] || 0
-                    })
+                    //数字个数
+                    var digitCount=0;
                     switch (info['dateTimeModeId']) {
-                        //时分模式
-                        case '0':
-                            LayerNum = 5;
+                        case '0'://时分秒
+                            digitCount = 6;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量时分秒';
                             break;
-                            //时分秒模式
-                        case '1':
-                            LayerNum = 8;
+                        case '1'://时分
+                            digitCount = 4;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量时分秒';
                             break;
-                            //减号日期
-                        case '2':
-                            LayerNum = 10;
+                        case '2'://斜杠日期
+                            digitCount = 8;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量年月日';
                             break;
-                            //斜杠日期
-                        case '3':
-                            LayerNum = 10;
+                        case '3'://减号日期
+                            digitCount = 8;
+                            generalWidget.tag = _.cloneDeep(rawWidget.tag) || '时钟变量年月日';
                             break;
-                            //时分秒模式
                         default:
-                            LayerNum = 8;
                     }
+                    generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    generalWidget.otherAttrs[2] = digitCount;//数字个数
+                    generalWidget.otherAttrs[3] = Number(info['dateTimeModeId']);//模式
+                    generalWidget.otherAttrs[4] = Number(info['characterW']);//单个字符宽度
+
                     generalWidget.generalType = 'TexTime';
-                    generalWidget.tag = _.cloneDeep(rawWidget.tag);         //clonedeep函数封装了深拷贝的逻辑 raw(未处理的控件)
                     generalWidget.subType = 'general';
                     generalWidget.actions = targetWidget.actions;
-                    //console.log('TexTime', generalWidget);
                     break;
 
                 case 'MyDateTime':

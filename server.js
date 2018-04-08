@@ -129,7 +129,19 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
 
 //public
-app.use('/public',express.static('public'));
+// app.use('/public',express.static('public'));
+app.use('/public',function (req, res, next) {
+    var idev = req.query.ideVersion
+    if (idev){
+        return express.static('legacy/'+idev+'/public')(req,res,next)
+    }else{
+        return express.static('public')(req,res,next)
+    }
+})
+
+
+
+
 app.use('/release',express.static('release'));
 app.use('/.well-known', express.static('.well-known'));
 

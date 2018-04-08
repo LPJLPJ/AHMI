@@ -34,6 +34,7 @@ ideServices.
         var MyTexTime = this.MyTexTime = 'MyTexTime';
         var MySelector = this.MySelector = 'MySelector';
         var MyRotaryKnob = this.MyRotaryKnob = 'MyRotaryKnob';
+        var MyColorBlock = this.MyColorBlock = 'MyColorBlock';
 
         //system widgets
         var SysDatePicker = this.SysDatePicker = 'SysDatePicker';
@@ -54,7 +55,7 @@ ideServices.
             _typeStr==this.MyProgress||_typeStr==this.MyNumber||_typeStr==this.MyButtonGroup||_typeStr == this.MyDashboard||
             _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope||_typeStr==this.MyImage||
             _typeStr==this.MySwitch||_typeStr==this.MyRotateImg||_typeStr==this.MyDateTime||_typeStr==this.MyScriptTrigger||_typeStr==this.MySlideBlock||
-            _typeStr==this.MyVideo||_typeStr==this.MyAnimation||_typeStr==this.MyTexNum||_typeStr==this.MySelector||_typeStr==this.MyRotaryKnob||
+            _typeStr==this.MyVideo||_typeStr==this.MyAnimation||_typeStr==this.MyTexNum||_typeStr==this.MySelector||_typeStr==this.MyRotaryKnob||_typeStr==this.MyColorBlock||
             _typeStr==this.General||_typeStr==this.MyTexTime||_typeStr==this.SysDatePicker||_typeStr==this.SysTexDatePicker){
             return true;
         }

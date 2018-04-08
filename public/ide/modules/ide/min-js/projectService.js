@@ -349,6 +349,33 @@ ideServices
 
             }
 
+            //add by tang  设置widget相对于page的绝对坐标
+            this.getLayerInfo=true;//当执行attr服务里的调用时就不使用stage服务的调用
+            this.setAbsolutePosition=function (widgetInfo,layerInfo) {
+                var currentLayer=this.getCurrentLayer(),
+                    absoluteX=null,absoluteY=null,
+                    currentLayerInfo=null;
+                //如果传入layerInfo就不使用getCurrentLayer()获取的参数；
+                if(widgetInfo&&layerInfo){
+                    absoluteX=widgetInfo.left+layerInfo.left;
+                    absoluteY=widgetInfo.top+layerInfo.top;
+                    currentLayerInfo=layerInfo;
+                }else{
+                    if(widgetInfo&&currentLayer){
+                        absoluteX=widgetInfo.left+currentLayer.info.left;
+                        absoluteY=widgetInfo.top+currentLayer.info.top;
+                        currentLayerInfo=currentLayer.info;
+                    }
+                }
+                $rootScope.position={
+                    absoluteX:Math.round(absoluteX),
+                    absoluteY:Math.round(absoluteY),
+                    currentLayerInfo:currentLayerInfo,
+                    initAbsoluteX:Math.round(absoluteX),
+                    initAbsoluteY:Math.round(absoluteY)
+                };
+            };
+
             /**
              * 找到画布对应的Fabric对象
              * @returns {null}
@@ -1086,6 +1113,15 @@ ideServices
                             _newWidget.info.height=fabWidget.getHeight();
                             syncSublayer(fabWidget);
                         },initiator);
+                }else if(_newWidget.type===Type.MyColorBlock){
+                    fabric.MyColorBlock.fromLevel(_newWidget,function (fabWidget) {
+                        _self.currentFabLayerIdList = [fabWidget.id];
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else if (_newWidget.type==Type.General){
 
                     fabric.General.fromLevel(_newWidget, function (fabWidget) {
@@ -5216,6 +5252,9 @@ ideServices
                         break;
                     case 'MyRotaryKnob':
                         node.add(new fabric.MyRotaryKnob(dataStructure,initiator));
+                        break;
+                    case 'MyColorBlock':
+                        node.add(new fabric.MyColorBlock(dataStructure,initiator));
                         break;
                     default :
                         console.error('not match widget in _addFabricObjInCanvasNode!');

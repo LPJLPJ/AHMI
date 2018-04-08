@@ -1790,7 +1790,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }else {
                 this.widthBeforePadding=10*this.fontSize+9*this.spacing;
             }
-            this.setWidth(this.widthBeforePadding+2*this.paddingRatio*this.fontSize);
+            this.spacing =level.info.spacing;
+            this.paddingRatio=level.info.paddingRatio;
+
+            if(self.dateTimeModeId=='0'){
+                self.widthBeforePadding=8*self.fontSize+7*self.spacing;
+            }else if(self.dateTimeModeId=='1'){
+                self.widthBeforePadding=5*self.fontSize+4*self.spacing;
+            }else {
+                self.widthBeforePadding=10*self.fontSize+9*self.spacing;
+            }
+            self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
 
             this.on('changeDateTimeModeId',function(arg){
                 var _callback=arg.callback;
@@ -1856,7 +1866,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else {
                     self.widthBeforePadding=10*self.fontSize+9*self.spacing;
                 }
-                // self.setWidth(self.widthBeforePadding+0.2*self.fontSize);
+                // self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
                 self.setWidth(self.widthBeforePadding+2*self.paddingRatio*self.fontSize);
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
@@ -2760,6 +2770,40 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxFontWidth=level.info.maxFontWidth;
             this.spacing = level.info.spacing;
             this.paddingRatio = level.info.paddingRatio;
+
+            var maxWidth = parseInt(self.fontSize);//+
+            self.maxFontWidth = maxWidth;
+            level.info.maxFontWidth = maxWidth;
+            var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
+            var paddingX = Math.ceil(maxWidth*self.paddingRatio);
+            width+=paddingX*2;
+            if(self.decimalCount!=0){
+                width +=0.5*maxWidth+self.spacing;
+            }
+            var height = self.fontSize*1.2;
+            self.set({width:width,height:height});
+
+            if(this.paddingRatio===undefined){
+                //维护旧的数字控件
+                level.info.paddingRatio = 0.1;
+                this.paddingRatio = 0.1;
+                var maxWidth = parseInt(this.fontSize);
+                var paddingX = Math.ceil(maxWidth*this.paddingRatio);
+                this.maxFontWidth = maxWidth;
+                level.info.paddingX = this.paddingX;
+                level.info.maxFontWidth = maxWidth;
+                if(this.numOfDigits&&this.fontSize){
+                    var width = this.symbolMode=='0'?(this.numOfDigits*(maxWidth+this.spacing)-this.spacing):((this.numOfDigits+1)*(maxWidth+this.spacing)-this.spacing);
+                    width+=paddingX*2;
+                    if(this.decimalCount!=0){
+                        width +=0.5*maxWidth+this.spacing;
+                    }
+                    var height = Math.ceil(self.fontSize*1.2);
+                    level.info.width = width;
+                    level.info.height = height;
+                    self.set({width:width,height:height});
+                };
+            }
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -3288,7 +3332,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     drawNum(9,characterW,height,numObj,xCoordinate,ctx);
                     break;
                 case '.':
-                    drawNum(10,characterW/2,height,numObj,xCoordinate-characterW/4,ctx);
+                    drawNum(10,characterW,height,numObj,xCoordinate,ctx);
                     break;
                 case '+':
                     drawNum(11,characterW,height,numObj,xCoordinate,ctx);
@@ -4253,7 +4297,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             };
             this.callSuper('initialize', options);
             this.lockRotation = true;
-            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+            this.setControlsVisibility(ctrlOptions);
             this.hasRotatingPoint = false;
 
             //宽高
@@ -4375,4 +4419,81 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyRotaryKnob(level,object));
     };
     fabric.MyRotaryKnob.async = true;
+
+    //myColorBlock
+    fabric.MyColorBlock = fabric.util.createClass(fabric.Object,{
+        type: Type.MyColorBlock,
+        initialize: function (level, options) {
+            var self = this;
+            var ctrlOptions = {
+                bl: false,
+                br: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mt: false,
+                tl: false,
+                tr: false
+            };
+            this.callSuper('initialize', options);
+            this.lockRotation = true;
+            this.setControlsVisibility(ctrlOptions);
+            this.hasRotatingPoint = false;
+
+            //宽高
+            this.width = level.info.width;
+            this.height = level.info.height;
+
+            //位置
+            this.left = level.info.left;
+            this.top = level.info.top;
+
+            //纹理
+            this.blockColor = level.texList[0].slices[0].color;
+
+
+            //修改纹理
+            this.on('changeTex', function (arg) {
+                var _callback=arg.callback;
+                self.blockColor = arg.level.texList[0].slices[0].color;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                ctx.beginPath();
+                //填充颜色
+                if(this.blockColor){
+                    ctx.fillStyle=this.blockColor;
+                    ctx.fillRect(
+                        -(this.width / 2),
+                        -(this.height / 2) ,
+                        this.width ,
+                        this.height );
+                }
+                ctx.closePath();
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染ColorBlock出错');
+            }
+        }
+    });
+    fabric.MyColorBlock.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyColorBlock(level, option));
+    };
+    fabric.MyColorBlock.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MyColorBlock(level,object));
+    };
+    fabric.MyColorBlock.async = true;
+
 }]);
