@@ -764,10 +764,13 @@ ideServices
 
                 var newSubLayer = _.cloneDeep(_newSubLayer);
                 var currentLayer=getCurrentLayer();
+
+                newSubLayer.info.width = currentLayer.info.width;
+                newSubLayer.info.height = currentLayer.info.height;
+
                 var currentLayerIndex= _indexById(_self.getCurrentPage().layers,currentLayer);
                 currentLayer.subLayers.push(newSubLayer);
                 var newSubLayerIndex=currentLayer.subLayers.length - 1;
-
                 _self.OnSubLayerSelected(currentLayerIndex,newSubLayerIndex,_successCallback,true);
 
             }
@@ -1862,9 +1865,21 @@ ideServices
                         subLayers.forEach(function(subLayer){
                             (!subLayer.info.scrollHEnabled)?(subLayer.info.width = layer.info.width):'';
                             (!subLayer.info.scrollVEnabled)?(subLayer.info.height = layer.info.height):'';
+                            if(subLayer.info.width<layer.info.width){
+                                subLayer.info.width = layer.info.width;
+                            }
+                            if(subLayer.info.height<layer.info.height){
+                                subLayer.info.height = layer.info.height;
+                            }
                         });
                         (!showSubLayer.info.scrollHEnabled)?(showSubLayer.info.width = layer.info.width):'';
                         (!showSubLayer.info.scrollVEnabled)?(showSubLayer.info.height = layer.info.height):'';
+                        if(showSubLayer.info.width<layer.info.width){
+                            showSubLayer.info.width = layer.info.width;
+                        }
+                        if(showSubLayer.info.height<layer.info.height){
+                            showSubLayer.info.height = layer.info.height;
+                        }
 
                         _self.SyncSubLayerImage(selectObj.level,selectObj.level.showSubLayer, function () {
                             // selectObj.target.fire('OnScaleRelease',selectObj.target.id);
@@ -4588,6 +4603,30 @@ ideServices
                             fabLayer = _fabObj;
                         }
                     });
+
+                    //resize sublayer
+                    if(currentLayer.subLayers){
+                        var subLayers = currentLayer.subLayers;
+                        subLayers.forEach(function(item){
+                            var info = item.info;
+                            if(!info){
+                                return;
+                            }
+                            if(info.width<_option.width){
+                                info.width = _option.width;
+                            }
+                            if(info.height<_option.height){
+                                info.height = _option.height;
+                            }
+                            if(!info.scrollVEnabled){
+                                info.height = _option.height||info.height;
+                            }
+                            if(!info.scrollHEnabled){
+                                info.width = _option.width||info.width;
+                            }
+                        });
+                    }
+
                     if (!fabLayer) {
                         console.warn('找不到Layer');
                         alertErr();
