@@ -806,6 +806,8 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 		if (e.keyCode==13){
 			//判断输入是否合法
             var width = Number($scope.component.object.level.info.width);
+            var type = $scope.component.object.level.type;
+
 			if (!_.isInteger(width)){
 				toastr.warning('输入不合法');
 				restore();
@@ -816,6 +818,17 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
                 restore();
                 return;
             }
+
+            if(type===Type.MySubLayer){
+                var currentLayer = ProjectService.getCurrentLayer();
+                var layerWidth = currentLayer&&currentLayer.info.width;
+                if(width<layerWidth){
+                    toastr.warning('子图层宽度不能小于父图层宽度');
+                    restore();
+                    return;
+                }
+            }
+
 			//判断是否有变化
 			if (width==initObject.level.info.width){
 				console.log('没有变化');
@@ -825,7 +838,7 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 				width:width
 			};
 
-			toastr.info('修改成功');
+            toastr.info('修改成功');
 
 			ProjectService.ChangeAttributeSize(option, function (oldOperate) {
 				$scope.$emit('ChangeCurrentPage',oldOperate);
@@ -836,6 +849,7 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 		if (e.keyCode==13){
 			//判断输入是否合法
             var height = Number($scope.component.object.level.info.height);
+            var type = $scope.component.object.level.type;
 			if (!_.isInteger(height)){
 				toastr.warning('输入不合法');
 				restore();
@@ -846,6 +860,17 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
                 restore();
                 return;
             }
+
+            if(type===Type.MySubLayer){
+                var currentLayer = ProjectService.getCurrentLayer();
+                var layerHeight = currentLayer&&currentLayer.info.height;
+                if(height<layerHeight){
+                    toastr.warning('子图层的高度不能小于父图层的高度');
+                    restore();
+                    return;
+                }
+            }
+
 			//判断是否有变化
 			if (height==initObject.level.info.height){
 				console.log('没有变化');

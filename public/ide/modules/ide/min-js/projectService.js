@@ -4593,7 +4593,6 @@ ideServices
                         alertErr();
                         return;
                     }
-                    var currentPage = _self.getCurrentPage();
                     if (_option.width) {
                         //fabLayer.setScaleX(_option.width / fabLayer.width);
                         fabLayer.set({width:_option.width,scaleX:1});
@@ -4609,14 +4608,13 @@ ideServices
                     object.target.fire('OnRelease',object.target.id);
 
                     pageNode.renderAll();
-                    // currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                    //console.log(currentPage.proJsonStr);
 
                     var layer = getCurrentLayer();
                     _self.OnLayerSelected(layer, function () {
                         _successCallback && _successCallback(currentOperate);
 
                     });
+
                 }else if (Type.isWidget(object.type)) {
                     var subLayerNode = CanvasService.getSubLayerNode();
                     var fabWidget = null;
@@ -4629,7 +4627,7 @@ ideServices
                     });
                     if (!fabWidget) {
                         console.warn('找不到Widget');
-                        alertErr()
+                        alertErr();
                         return;
                     }
                     if (_option.width) {
@@ -4643,14 +4641,13 @@ ideServices
                         currentWidget.info.height = _option.height;
                     }
                     subLayerNode.renderAll();
-
-                    // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
                     OnWidgetSelected(currentWidget, function () {
                         _successCallback && _successCallback(currentOperate);
 
                     });
                 }else if(object.type===Type.MySubLayer){
                     var currentSubLayer = getCurrentSubLayer();
+
                     if(_option.hasOwnProperty('width')){
                         currentSubLayer.info.width = _option.width;
                     }

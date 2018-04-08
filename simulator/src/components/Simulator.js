@@ -6512,13 +6512,15 @@ module.exports =   React.createClass({
                 if (elem.contentOffsetY>0 ){
                     clearInterval(elem.scrollYTimerId)
                     
-                    console.log('stepY',stepY,'-bounceLimit',-bounceLimit,'bounceDuration',bounceDuration,'startX',elem.contentOffsetY/bounceLimit + 1);
+                    console.log('stepY',stepY,'-bounceLimit',-bounceLimit,'bounceDuration',bounceDuration,'elem.contentOffsetY',elem.contentOffsetY);
                     this.startBounceAnimation(elem,'bounceAnimeY','contentOffsetY',stepY,-bounceLimit,0,bounceDuration,elem.contentOffsetY/bounceLimit + 1)
 
 
                 }else if (elem.contentOffsetY<canvas.h - subCanvas.height ){
                     clearInterval(elem.scrollYTimerId)
                     //left
+                    console.log('stepY',stepY,'-bounceLimit',-bounceLimit,'bounceDuration',bounceDuration,'elem.contentOffsetY',elem.contentOffsetY);
+
                     this.startBounceAnimation(elem,'bounceAnimeY','contentOffsetY',stepY,topLimit-bounceLimit,topLimit,bounceDuration,(elem.contentOffsetY-topLimit)/bounceLimit + 1)
                 }
 
@@ -6754,7 +6756,6 @@ module.exports =   React.createClass({
     },
     addHideScrollBarTimeout:function (elem) {
 
-        console.log('add scrollbar timeout')
 
         if (elem.scrollBarHideAnime){
             elem.scrollBarHideAnime.stop()
@@ -6777,7 +6778,6 @@ module.exports =   React.createClass({
         elem.scrollBarHideAnime =  new AnimationAPI.Animation(null,'alpha',1.0,0.0,500)
         elem.scrollBarHideAnime.onFrameCB = function () {
             elem.scrollBarAlpha = this.state.curValue
-            console.log('alpha',this.state.curValue)
 
         }
         // elem.scrollBarHideAnime.timingFunction = AnimationAPI.timingFunctions.easeOutCubic
