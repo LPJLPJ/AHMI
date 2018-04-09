@@ -773,6 +773,12 @@ function saveAsReset(newResolution,oldResolution,content){
                 layerInfo.top=Math.round(layerInfo.top*heightProportion);
                 if(content.pages[a].layers[b].subLayers){
                     for(var c in content.pages[a].layers[b].subLayers){
+                        var subLayer = content.pages[a].layers[b].subLayers[c];
+                        if(subLayer&&subLayer.info){
+                            subLayer.info.width = Math.round(subLayer.info.width*widthProportion);
+                            subLayer.info.height = Math.round(subLayer.info.height*heightProportion);
+                        }
+
                         for(var d in content.pages[a].layers[b].subLayers[c].widgets){
                             var type=content.pages[a].layers[b].subLayers[c].widgets[d].type;
                             var widgetInfo=content.pages[a].layers[b].subLayers[c].widgets[d].info;

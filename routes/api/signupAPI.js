@@ -14,7 +14,7 @@ signupAPI.post = function(req, res){
 
     var userInfo = req.body;
 
-    if (userInfo.username && userInfo.mail && userInfo.password && userInfo.captcha) {
+    if (userInfo.username && userInfo.mail && userInfo.password) {
         //compare captcha
         if (req.session.captcha&&(userInfo.captcha == req.session.captcha.text)) {
             //valid
