@@ -209,11 +209,20 @@ ideServices
                 }
             };
 
+            //add by tang    save mask info
+            this.saveMaskInfo=function(data){
+                if(data){
+                    project.mask=_.cloneDeep(data);
+                }
+            };
+
             //add save timestamp and uuid
             this.addSaveInfo = function () {
                 project.lastSaveTimeStamp = Date.now();
                 project.lastSaveUUID = window.uuidv1();
-            }
+            };
+
+
 
             /**
              * 将当前项目赋值到scope.project
@@ -765,6 +774,7 @@ ideServices
 
                 var fabLayer=new fabric.MyLayer(_newLayer.id,initiator);
                 pageNode.add(fabLayer);
+                console.log(pageNode)
 
                 pageNode.renderAll.bind(pageNode)();
                 _newLayer.info.width=fabLayer.getWidth();
@@ -820,7 +830,6 @@ ideServices
                     // currentSubLayer.proJsonStr= subLayerNode.toJSON();
                     currentSubLayer.widgets.push(_newWidget);
                     currentSubLayer.currentFabWidget=fabWidget;
-
 
                     OnWidgetSelected(_newWidget,_successCallback);
                 }
@@ -4825,8 +4834,6 @@ ideServices
             var SaveCurrentOperate=this.SaveCurrentOperate;
 
 
-
-
             /**
              * 用于求渐变色
              * @param initColor
@@ -5134,7 +5141,40 @@ ideServices
                 }
                 return true;
 
+            };
+
+            /**
+             * 模具框
+             * @return maskStyle
+             * add by tang
+             */
+            this.initMaskAttr=function(){
+                var mask=project.mask;
+                var maskStyle={};
+
+                if(mask){
+                    maskStyle={
+                        "width":mask.width,
+                        "height":mask.height,
+                        "top":mask.top,
+                        "left":mask.left,
+                        "name":mask.name,
+                        "src":mask.src
+                    }
+                }else{
+                    maskStyle={
+                        "width":800,
+                        "height":480,
+                        "top":0,
+                        "left":0,
+                        "name":'模具框',
+                        "src":""
+                    }
+                }
+                return maskStyle;
             }
+
+
 
 
         }]);

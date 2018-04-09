@@ -617,8 +617,26 @@ projectRoute.saveProject = function (req, res) {
                                                 console.log(err)
                                                 errHandler(res, 500, 'project resave error')
                                             }else{
+                                                res.end('ok');
 
-                                                res.end('ok')
+                                                //delete other maskFiles , just keep one pic .
+                                                if(curProjectContent.mask){
+                                                    var baseUrl = path.join(__dirname,'../project/',projectId,'mask');
+                                                    var mask = curProjectContent.mask.src.split("/");
+                                                    var maskFile=mask[mask.length-1];
+                                                    fs.readdir(baseUrl,function(err,files){
+                                                        if(!err){
+                                                            files.forEach(function(fileName){
+                                                                if(fileName!==maskFile){
+                                                                    var url=path.join(baseUrl,fileName);
+                                                                    fs.unlink(url,function(){})
+                                                                }
+                                                            })
+                                                        }
+                                                    });
+                                                }
+
+
                                                 //delete files
                                                 // var resourceList = curProjectContent.resourceList;
                                                 var resourceList = []
@@ -660,7 +678,6 @@ projectRoute.saveProject = function (req, res) {
                                                         });
                                                     }
                                                 })
-
                                             }
                                         })
                                     }else{
@@ -1043,7 +1060,8 @@ projectRoute.generateLocalProject = function(req, res){
                     var zipName = '/'+projectId+'.zip';
                     var targetUrl = path.join(__dirname,'../project/',projectId,zipName);
                     var srcResourcesFolderUrl = path.join(__dirname,'../project/',projectId,'resources/');
-                    var srcJsonUrl = path.join(__dirname,'../project/',projectId,'/project.json'); 
+                    var srcMaskFolderUrl = path.join(__dirname,'../project/',projectId,'mask/');
+                    var srcJsonUrl = path.join(__dirname,'../project/',projectId,'/project.json');
                     var output = fs.createWriteStream(targetUrl);
                     var archive = archiver('zip', {
                                 store: true 
@@ -1058,6 +1076,11 @@ projectRoute.generateLocalProject = function(req, res){
                     });
                     archive.pipe(output);
                     archive.directory(srcResourcesFolderUrl,'/resources');
+
+                    if(contentObj.mask){
+                        archive.directory(srcMaskFolderUrl,'/mask');
+                    }
+
                     archive.file(srcJsonUrl,{ name: 'project.json' });
                     archive.finalize();
                 }catch(e){

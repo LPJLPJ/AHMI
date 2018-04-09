@@ -322,6 +322,8 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
 
 		onAttributeChanged();
 		updateImageList();
+        initMask();
+
 		$scope.$on('ResourceChanged', function () {
 			updateImageList();
 
@@ -1117,6 +1119,7 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
         var selectImage='';
         if ($scope.component.object.type==Type.MyPage){
             selectImage=$scope.component.page.selectImage;
+            console.log(selectImage);
             if(!selectImage){
                 $scope.component.object.level.backgroundColor='rgb(54,71,92)';
             }
@@ -1918,9 +1921,6 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
                 default:
                     console.log("error!");
             }
-
-
-
         }
     }
 
@@ -2616,4 +2616,95 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
         })
     }
 
+
+    /**
+     * 模具框
+     * add by tang
+     */
+    function initMask(){
+        $scope.maskAttr=ProjectService.initMaskAttr();
+    }
+
+    $scope.maskRestore=initMask;
+
+    setMaskAttr();
+    function setMaskAttr(){
+        $scope.$on('MaskStyle',function(event,data){
+            $scope.maskAttr=_.cloneDeep(data);
+            ProjectService.saveMaskInfo($scope.maskAttr);
+        });
+
+        $scope.$on('MaskView',function(event,data){
+            $scope.myMask=data;
+        });
+    }
+
+    $scope.enterMaskAttr=function(event,n){
+        var option=null;
+        var _mask=$scope.maskAttr;
+        if(event.keyCode==13){
+            switch(n)
+            {
+                case 'name':
+                    var name=$scope.maskAttr.name;
+                    if(name.match(/\S/)&&name.length<10){
+                        $scope.maskAttr.name=name.replace(/(^\s*)|(\s*$)/g, "");
+                        option=_mask;
+                        toastr.info('修改成功');
+                    }else{
+                        toastr.warning('不能为空或长度超范围');
+                        initMask();
+                        return false;
+                    }
+                    break;
+                case 'left':
+                    var posX=Number($scope.maskAttr.left);
+                    if(-2000<posX&&posX<2000){
+                        option=_mask;
+                        toastr.info('修改成功');
+                    }else{
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false;
+                    }
+                    break;
+                case 'top':
+                    var posY=Number($scope.maskAttr.top);
+                    if(-2000<posY&&posY<2000){
+                        option=_mask;
+                        toastr.info('修改成功');
+                    }else{
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false
+                    }
+                    break;
+                case 'width':
+                    var width=Number($scope.maskAttr.width);
+                    if(-2000<width&&width<2000){
+                        option=_mask;
+                        toastr.info('修改成功');
+                    }else{
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false
+                    }
+                    break;
+                case 'height':
+                    var height=Number($scope.maskAttr.height);
+                    if(-2000<height&&height<2000){
+                        option=_mask;
+                        toastr.info('修改成功');
+                    }else{
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false
+                    }
+                    break;
+            }
+            $scope.$emit('ChangeMaskAttr',option);
+        }else{
+            return false;
+        }
+    }
 }]);

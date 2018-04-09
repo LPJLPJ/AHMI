@@ -35,6 +35,10 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         console.log('receive ChangeAllTags',data);
     });
 
+    $scope.$on("MaskView",function(event,data){
+        $scope.myMask=data;
+    });
+
     function initProject() {
         readTagsInfo();
     }

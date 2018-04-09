@@ -7,6 +7,10 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         initProject();
     });
 
+    $scope.$on("MaskView",function(event,data){
+        $scope.myMask=data;
+    });
+
     function initUserInterface(){
         readAnimationInfo();
         setAnimationAuthor();

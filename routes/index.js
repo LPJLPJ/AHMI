@@ -11,7 +11,7 @@ var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
 var DownloadRouter = require('./routeDownload');
-var VersionManager = require('../utils/versionManager')
+var VersionManager = require('../utils/versionManager');
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -257,6 +257,10 @@ router.route('/CANProject/:id/downloadCANFile')
 //project file
 router.route('/project/:id/upload')
     .post(uploadFile.uploadProjectFile);
+
+//add by tang   mask upload
+router.route('/project/:id/mask')
+    .post(uploadFile.uploadMask);
 
 router.route('/project/:id/generatetex')
     .post(uploadFile.uploadTex);
