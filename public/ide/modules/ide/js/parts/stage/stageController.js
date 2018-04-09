@@ -22,7 +22,7 @@
         $scope.$on('GlobalProjectReceived', function () {
             initProject();
             $scope.$emit('LoadUp');
-
+            initMask();
         });
 
         function initOffCanvas(){
@@ -779,4 +779,50 @@
             ProjectService.ScaleCanvas(scaleMode);
         }
 
+        /**
+         * 模具框
+         * add by tang
+         * @param maskStyle
+         */
+        function initMask(){
+            var mask=ProjectService.initMaskAttr();
+            $scope.maskStyle=mask;
+            $scope.maskSrc=mask.src;
+        }
+
+        //监听模具框属性变化
+        $scope.$on('MaskAttr',function(event,data){
+            $scope.maskStyle=_.cloneDeep(data);
+            ProjectService.saveMaskInfo($scope.maskStyle);
+        });
+        $scope.$on('MaskCtrl',function(event,data){
+            $scope.maskSwitch=data;
+        });
+        $scope.$on('ChangeMask',function(event,data){
+            $scope.maskSrc=data;
+            getMask();
+        });
+
+        $scope.getMaskAttr=getMask;
+
+        //模具框选中状态
+        $scope.selectMask=function(b){
+            $scope.$emit('ChangeMaskStyle',b)
+        };
+
+        //获取模具框属性
+        function getMask(){
+            var mask=angular.element('div #mask');
+            $timeout(function(){
+                var maskStyle={
+                    "width":parseInt(mask.css('width')),
+                    "height":parseInt(mask.css('height')),
+                    "top":parseInt(mask.css('top')),
+                    "left":parseInt(mask.css('left')),
+                    "name":$scope.maskStyle.name,
+                    "src":$scope.maskSrc
+                };
+                $scope.$emit('ChangeMaskStyle',maskStyle);
+            });
+        }
     }]);

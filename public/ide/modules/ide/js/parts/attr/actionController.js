@@ -14,6 +14,9 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
     });
 
 
+    $scope.$on("MaskView",function(event,data){
+        $scope.myMask=data;
+    });
 
     function initUserInterface(){
         $scope.status={
@@ -322,4 +325,6 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 $scope.enterName(th);
             }
         };
+
+
     }]);

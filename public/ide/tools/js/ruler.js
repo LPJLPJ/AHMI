@@ -274,20 +274,20 @@ $(function(){
 
         //模具框
         $.mask=function(){
-            var maskWrap='<div id="mask"><div id="maskWrap"></div><div class="maskCoor" id="mask_LT" draggable="false"></div><div class="maskCoor" id="mask_T" draggable="true"></div><div class="maskCoor" id="mask_RT" draggable="true"></div><div class="maskCoor" id="mask_LM" draggable="true"></div><div class="maskCoor" id="mask_RM" draggable="true"></div><div class="maskCoor" id="mask_LB" draggable="true"></div><div class="maskCoor" id="mask_B" draggable="true"></div><div class="maskCoor" id="mask_RB" draggable="true"></div></div>';
-            var _wrap=$("#stage");
-            _wrap.append(maskWrap);
-            var _mask=$("#mask"),_maskCoor=$("div .maskCoor");
+            var maskWrap='<div id="maskWrap"></div><div class="maskCoor" id="mask_LT" draggable="false"></div><div class="maskCoor" id="mask_T" draggable="true"></div><div class="maskCoor" id="mask_RT" draggable="true"></div><div class="maskCoor" id="mask_LM" draggable="true"></div><div class="maskCoor" id="mask_RM" draggable="true"></div><div class="maskCoor" id="mask_LB" draggable="true"></div><div class="maskCoor" id="mask_B" draggable="true"></div><div class="maskCoor" id="mask_RB" draggable="true"></div>';
+            var _mask=$("#mask"),_wrap=$("#stage");
+            _mask.append(maskWrap);
+            var _maskCoor=$("div .maskCoor");
 
             var maskParams=[
-                {left:'-6px',top:'-6px',cursor:'nw-resize'},
-                {top:'-6px',left:'calc(50% - 6px)',cursor:'s-resize'},
-                {right:'-6px',top:'-6px',cursor:'ne-resize'},
-                {left:'-6px',top:'calc(50% - 6px)',cursor:'w-resize'},
-                {right:'-6px',top:'calc(50% - 6px)',cursor:'w-resize'},
-                {left:'-6px',bottom:'-6px',cursor:'ne-resize'},
-                {left:'calc(50% - 6px)',bottom:'-6px',cursor:'s-resize'},
-                {right:'-6px',bottom:'-6px',cursor:'nw-resize'}
+                {left:'-8px',top:'-8px',cursor:'nw-resize'},
+                {top:'-8px',left:'calc(50% - 8px)',cursor:'s-resize'},
+                {right:'-8px',top:'-8px',cursor:'ne-resize'},
+                {left:'-8px',top:'calc(50% - 8px)',cursor:'w-resize'},
+                {right:'-8px',top:'calc(50% - 8px)',cursor:'w-resize'},
+                {left:'-8px',bottom:'-8px',cursor:'ne-resize'},
+                {left:'calc(50% - 8px)',bottom:'-8px',cursor:'s-resize'},
+                {right:'-8px',bottom:'-8px',cursor:'nw-resize'}
             ];
             _maskCoor.each(function(n){
                 _maskCoor.eq(n).css(maskParams[n]);
@@ -307,17 +307,19 @@ $(function(){
             };
 
             var maskDrag=function(target,point,type){
-                dragParams.width=parseInt(target.css('width'));
-                dragParams.height=parseInt(target.css('height'));
-                dragParams.left=parseInt(target.css('left'));
-                dragParams.top=parseInt(target.css('top'));
-
                 //鼠标按下记录当前按下坐标
+                var ratio=null;
                 point.on('mousedown',function(e){
+                    dragParams.width=parseInt(target.css('width'));
+                    dragParams.height=parseInt(target.css('height'));
+                    dragParams.left=parseInt(target.css('left'));
+                    dragParams.top=parseInt(target.css('top'));
                     dragParams.dragType=type;
                     dragParams.drag=true;
                     dragParams.nowX=parseInt(e.pageX-_wrap.offset().left);
                     dragParams.nowY=parseInt(e.pageY-_wrap.offset().top);
+
+                    ratio=dragParams.width/dragParams.height;
                     return false;
                 });
 
@@ -467,6 +469,15 @@ $(function(){
             maskDrag(_mask,$("#mask_LB"),'lb');
             maskDrag(_mask,$("#mask_B"),'b');
             maskDrag(_mask,$("#mask_RB"),'rb');
+
+            _mask.on('click',function(e){
+                e.stopPropagation();
+                $(this).children().show();
+            });
+
+            _wrap.on('click',function(){
+                _mask.children().not("img").hide();
+            });
         };
         $.mask();
 
