@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
     <!--add-->
-    <script src="../../public/ide/modules/ide/js/ruler.js"></script>
+    <script src="../../public/ide/tools/js/ruler.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
     <!--lib-->
@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/dengPage.css"/>
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/xiangPage.css"/>
     <!--add-->
-    <link rel="stylesheet" href="../../public/ide/modules/ide/css/ruler.css"/>
+    <link rel="stylesheet" href="../../public/ide/tools/css/ruler.css"/>
 
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
@@ -512,6 +512,9 @@
                 <a class="my-cmd-item" id="ruler">
                     <span class="iconfont icon">&#xe65d;</span><span class="caption"></span>
                 </a>
+                <a class="my-cmd-item" id="maskIcon" ng-click="component.tool.maskSwitch()">
+                    <span class="iconfont icon">&#xe661;</span><span class="caption"></span>
+                </a>
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
                     <div class="input-group" style="top: 13px;">
@@ -559,7 +562,12 @@
             </ol>
         </div>
     </div>
-    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage">
+    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)">
+
+        <div id="mask" ng-hide="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
+            <img style="position: absolute;left: 0;top: 0;z-index: 100;float: left" width="100%" height="100%" ng-src="{{maskSrc}}"/>
+        </div>
+
         <div class="my-stage" ng-show="status.editPage" id="myStageTable">
             <table width="100%" height="100%">
                 <tr>
@@ -623,7 +631,56 @@
                 <!--属性面板-->
                 <div ng-controller="AttributeCtrl">
 
-                    <div ng-show="component.object.type=='MyPage'">
+                    <!--模具框-->
+                    <div ng-show="myMask" id="myMask">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">模具框名称</span>
+                            <input class="my-attr-number-input form-control form-control"
+                                   type="text"
+                                   ng-model="maskAttr.name"
+                                   ng-blur="maskRestore()"
+                                   ng-keypress="enterMaskAttr($event,'name')">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control form-control short-input"
+                                   ng-model="maskAttr.left"
+                                   ng-blur="maskRestore()"
+                                   ng-keypress="enterMaskAttr($event,'left')"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="maskAttr.top"
+                               ng-blur="maskRestore()"
+                               ng-keypress="enterMaskAttr($event,'top')"
+                               type="number">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="maskAttr.width"
+                                   ng-blur="maskRestore()"
+                                   ng-keypress="enterMaskAttr($event,'width')"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title ">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="maskAttr.height"
+                               ng-blur="maskRestore()"
+                               ng-keypress="enterMaskAttr($event,'height')"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item lg" style="margin-top: 20px" ng-controller="ResourceCtrl">
+                            <a href="javascript:;" class="my-upload" style="width: 100%;text-align: center">
+                                <maskform></maskform>
+                                上传模具框图片<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div ng-show="component.object.type=='MyPage'&&!myMask">
                         <div class="my-attr-item lg ">
                             <span class="my-attr-title dengPage-title ">页面名称</span>
                             <input class="my-attr-number-input form-control  dengPage-input dengPage-title-input form-control"
@@ -673,7 +730,7 @@
                         </div>
 
                     </div>
-                    <div ng-show="component.object.type=='MyLayer'">
+                    <div ng-show="component.object.type=='MyLayer'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="form-control my-attr-number-input form-control"
@@ -749,7 +806,7 @@
                         </div>
 
                     </div>
-                    <div ng-show="component.object.type=='group'">
+                    <div ng-show="component.object.type=='group'&&!myMask">
                         <div class="my-attr-item">
                             <span class="my-attr-title">坐标X</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -777,7 +834,7 @@
                             </select>
                         </div>
                     </div>
-                    <div ng-show="component.object.type=='MySubLayer'">
+                    <div ng-show="component.object.type=='MySubLayer'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control form-control"
@@ -824,7 +881,7 @@
                                    type="number">
                         </div>
                     </div>
-                    <div ng-show="component.object.type=='MySlide'">
+                    <div ng-show="component.object.type=='MySlide'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control form-control"
@@ -891,7 +948,7 @@
                         <!--</div>-->
                     </div>
 
-                    <div ng-show="component.object.type=='MyButton'">
+                    <div ng-show="component.object.type=='MyButton'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="form-control my-attr-number-input form-control"
@@ -1035,7 +1092,7 @@
 
                     </div>
 
-                    <div ng-show="component.object.type=='MyButtonGroup'">
+                    <div ng-show="component.object.type=='MyButtonGroup'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="form-control my-attr-number-input form-control"
@@ -1131,7 +1188,7 @@
                     </div>
 
 
-                    <div ng-show="component.object.type=='MyProgress'">
+                    <div ng-show="component.object.type=='MyProgress'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -1301,7 +1358,7 @@
                     </div>
 
                     <!-- oscilloScope-->
-                    <div ng-show="component.object.type=='MyOscilloscope'">
+                    <div ng-show="component.object.type=='MyOscilloscope'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -1458,7 +1515,7 @@
 
                     <!--Dashboard-->
 
-                    <div ng-show="component.object.type=='MyDashboard'">
+                    <div ng-show="component.object.type=='MyDashboard'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -1637,7 +1694,7 @@
                                    ng-disabled="animationsDisabled">
                         </div>
                     </div>
-                    <div ng-show="component.object.type=='MyNum'">
+                    <div ng-show="component.object.type=='MyNum'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -1753,7 +1810,7 @@
                                    type="number">
                         </div>
                         <div class="my-attr-item">
-                            <span class="my-attr-title">数字值</span>
+                            <span class="my-attr-title">当前值</span>
                             <input class="my-attr-number-input form-control short-input"
                                    type="number"
                                    ng-model="component.object.level.info.numValue"
@@ -1834,7 +1891,7 @@
                         <!--</div>-->
 
                     </div>
-                    <div ng-show="component.object.type=='MyTexNum'">
+                    <div ng-show="component.object.type=='MyTexNum'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2022,7 +2079,7 @@
                             </select>
                         </div>
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title">数字值</span>
+                            <span class="my-attr-title">当前值</span>
                             <input class="my-attr-number-input form-control"
                                    type="number"
                                    ng-model="component.object.level.info.numValue"
@@ -2031,7 +2088,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="component.object.type=='MyTextArea'">
+                    <div ng-show="component.object.type=='MyTextArea'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2108,7 +2165,7 @@
 
                     </div>
 
-                    <div ng-show="component.object.type=='MyKnob'">
+                    <div ng-show="component.object.type=='MyKnob'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2182,7 +2239,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="component.object.type=='MyImage'">
+                    <div ng-show="component.object.type=='MyImage'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2241,7 +2298,7 @@
 
                     </div>
 
-                    <div ng-show="component.object.type=='MySwitch'">
+                    <div ng-show="component.object.type=='MySwitch'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2314,7 +2371,7 @@
                                    ng-keypress="component.switchWidget.enterBindBit($event)"/>
                         </div>
                     </div>
-                    <div ng-show="component.object.type=='MyRotateImg'">
+                    <div ng-show="component.object.type=='MyRotateImg'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2395,7 +2452,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="component.object.type=='MyDateTime'">
+                    <div ng-show="component.object.type=='MyDateTime'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2500,7 +2557,7 @@
                             </select>
                         </div>
                     </div>
-                    <div ng-show="component.object.type=='MyTexTime'">
+                    <div ng-show="component.object.type=='MyTexTime'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2838,7 +2895,7 @@
                                type="number">
                     </div>
                     </div>
-                    <div ng-show="component.object.type=='MyVideo'">
+                    <div ng-show="component.object.type=='MyVideo'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2915,7 +2972,7 @@
                     </div>
 
 
-                    <div ng-show="component.object.type=='MyScriptTrigger'">
+                    <div ng-show="component.object.type=='MyScriptTrigger'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -2990,7 +3047,7 @@
 
                     </div>
 
-                    <div ng-show="component.object.type=='MySlideBlock'">
+                    <div ng-show="component.object.type=='MySlideBlock'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control"
@@ -3096,7 +3153,7 @@
                         </div>
 
                     </div>
-                    <div ng-show="component.object.type=='MyAnimation'">
+                    <div ng-show="component.object.type=='MyAnimation'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
                             <input class="my-attr-number-input form-control form-control"
@@ -3153,9 +3210,10 @@
                                type="number">
                         </div>
                     </div>
+
                 </div>
                 <!--example of select image-->
-                <div ng-controller="TexCtl" class="tex-container" ng-show="showTexPanel">
+                <div ng-controller="TexCtl" class="tex-container" ng-show="showTexPanel&&!myMask">
                     <span class="my-attr-title">纹理设置</span>
                     <ul>
                         <li ng-repeat="tex in texList">
@@ -3244,7 +3302,7 @@
                     </script>
 
                 </div>
-                <div ng-controller="TagCtrl" ng-show="showTagPanel" class="my-attr-item lg deng-bgTags">
+                <div ng-controller="TagCtrl" ng-show="showTagPanel&&!myMask" class="my-attr-item lg deng-bgTags">
                     <span class="my-attr-title ">变量</span>
                     <select ng-model="component.selectedTag" ng-change="component.selectedTagFun()"
                             class="my-attr-number-input form-control ng-pristine ng-untouched ng-valid ng-not-empty form-control">
@@ -3259,7 +3317,7 @@
                 </div>
 
                 <!--Actions-->
-                <div ng-controller="ActionCtl" ng-show="showActionPanel">
+                <div ng-controller="ActionCtl" ng-show="showActionPanel&&!myMask">
                     <div>
                         <span class="dengPage-Action-Title">动作列表</span>
                         <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)">
@@ -3381,7 +3439,7 @@
                 </div>
 
                 <!--Animations-->
-                <div ng-controller="animationCtl" ng-show="showAnimationPanel">
+                <div ng-controller="animationCtl" ng-show="showAnimationPanel&&!myMask">
                     <div>
                         <span class="dengPage-Action-Title">动画</span>
                         <button type="button" class="btn btn-default dengPage-addAction" ng-click="openPanel(-1)" id="addAnimationBtn">

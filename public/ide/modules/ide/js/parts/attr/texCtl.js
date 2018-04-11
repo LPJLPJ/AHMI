@@ -10,6 +10,10 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
         initProject();
     });
 
+    $scope.$on("MaskView",function(event,data){
+        $scope.myMask=data;
+    });
+
 
     function initUserInterface(){
         readCurrentObjectInfo();

@@ -10316,6 +10316,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    *   // ... do some stuff ...
    * });
    */
+
   loadFromJSON: function (json, callback, reviver) {
     if (!json) {
       return;
