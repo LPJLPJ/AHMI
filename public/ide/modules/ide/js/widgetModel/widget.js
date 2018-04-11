@@ -245,7 +245,7 @@
         // this.arrange = align;
         if (align==0) {
             //hori
-            sWidth = (w-(num-1)*space)/num;
+            sWidth = Math.floor((w-(num-1)*space)/num);
             sHeight = h;
             for (var i=0;i<num;i++){
                 var upLayer = new Layer(i*(sWidth+space),0,sWidth,sHeight);
@@ -271,7 +271,7 @@
         }else{
             //ver
             sWidth = w;
-            sHeight = (h-(num-1)*space)/num;
+            sHeight = Math.floor((h-(num-1)*space)/num);
             for (var i=0;i<num;i++){
                 var upLayer = new Layer(0,i*(sHeight+space),sWidth,sHeight);
                 upLayer.subLayers.image = new TextureSubLayer(slices[2*i].imgSrc);
