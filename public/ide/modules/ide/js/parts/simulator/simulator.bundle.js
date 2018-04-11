@@ -54804,7 +54804,6 @@ module.exports = React.createClass({
         if (widget.info.arrange == 'horizontal') {
             //horizontal
             var singleWidth = Math.floor((width - interval * (count - 1)) / count);
-            console.log('singleWidht', singleWidth, (width - interval * (count - 1)) / count);
             for (var i = 0; i < texList.length - 1; i++) {
                 var curButtonTex = texList[i];
                 if (i == curButtonIdx - 1) {
