@@ -14,7 +14,6 @@
     var WidgetCommands = {};
     WidgetCommands['Button'] = {
         onInitialize: `
-
             var(a,0)
             set(a,'this.mode')
             set(a,3)
@@ -1303,6 +1302,7 @@
             var(isOverflow,0)     //是否溢出
             
             getTag(tCurVal)
+            print('tagVal',tCurVal)
             set(tMaxVal,'this.maxValue')
             set(tMinVal,'this.minValue')
             set(hasFrontZero,'this.otherAttrs.1')
