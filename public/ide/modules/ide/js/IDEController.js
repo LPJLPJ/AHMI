@@ -315,13 +315,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     height: resolution[1]
                 }
                 globalProject.maxSize = data.maxSize;
-
                 globalProject.projectId = id;
-
-                if(globalProject.mask){
-
-                }
-
                 //console.log('globalProject',globalProject);
                 var resourceList = globalProject.resourceList;
                 // console.log('resourceList',resourceList);
