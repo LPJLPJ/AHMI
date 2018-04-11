@@ -42,6 +42,21 @@ localIDEService.uploadProject = function (req,res) {
         newProject.userId = req.session.user.id;
         //console.log('id',newProject._id);
         var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources','template');
+        var maskDir = path.join(__dirname,'../project/',String(newProject._id),'mask');
+
+        //创建mask文件夹 add by tang
+        fs.stat(maskDir,function(err,stats){
+            if (stats&&stats.isDirectory&&stats.isDirectory()) {
+
+            }else{
+                mkdir(maskDir,function(err){
+                    if(err){
+                        console.log("err"+err);
+                    }
+                })
+            }
+        });
+
         fs.stat(targetDir,function(err,stats){
             if (stats&&stats.isDirectory&&stats.isDirectory()) {
                 parseFormData(req,res,newProject);
@@ -54,8 +69,7 @@ localIDEService.uploadProject = function (req,res) {
                     }
                 })
             }
-        })
-
+        });
     }else{
         errHandler(res,500,'NOT LOGIN!');
     }
@@ -200,6 +214,7 @@ localIDEService.returnUserType = function(req,res){
  */
 function parseFormData(req,res,newProject){
     var resourceDir = path.join(__dirname,'../project/',String(newProject._id),'resources');
+    var maskDir = path.join(__dirname,'../project/',String(newProject._id),'mask');
     var templateDir = path.join(resourceDir,'template');
     var projectId = newProject._id;
     var field = {};
@@ -236,6 +251,8 @@ function parseFormData(req,res,newProject){
         var reDir;
         if(name.indexOf('template')!=-1){
             reDir = path.join(templateDir,file.name);
+        }else if(name.indexOf('mask')!=-1){
+            reDir = path.join(maskDir,file.name);
         }else{
             reDir = path.join(resourceDir,file.name);
         }

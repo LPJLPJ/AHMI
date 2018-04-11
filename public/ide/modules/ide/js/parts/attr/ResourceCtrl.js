@@ -38,7 +38,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 oppSelect:oppSelect,
                 allSelected:false,
                 unSelAll:unSelAll,
-                imageType:imageType
+                imageType:imageType,
+                mask:[]
             }
         };
 

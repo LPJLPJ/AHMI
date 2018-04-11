@@ -20,7 +20,7 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
         $scope.$on('GlobalProjectReceived', function () {
             initProject();
             $scope.$emit('LoadUp');
-
+            initMask();
         });
 
         $scope.$on('AttributeChanged', function (event) {
@@ -759,55 +759,101 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
             ProjectService.ScaleCanvas(scaleMode);
         }
 
-}]);
+        /**
+         * 模具框
+         * add by tang
+         * @param maskStyle
+         */
+        function initMask(){
+            var mask=ProjectService.initMaskAttr();
+            $scope.maskStyle=mask;
+            $scope.maskSrc=mask.src;
+        }
 
-ide.controller('previewInstanceCtrl',['$scope','$uibModalInstance','currentSubLayer','currentLayer','subLayerNode',
-    function($scope,$uibModalInstance,currentSubLayer,currentLayer,subLayerNode){
-
-    $scope.cancel = function () {
-        $uibModalInstance.dismiss();
-    };
-
-    $scope.init = function(){
-        var backCanvasNode = document.getElementById('backgroundCanvas');
-        var backgroundImgUrl = backCanvasNode.toDataURL();
-        var subLayerImaURL = subLayerNode.toDataURL();
-        var backgroundImg = new Image();
-        var subLayerImg = new Image();
-
-        var paintBoard = new SXRender({
-            id:'previewCanvas',
-            w:currentLayer.info.width,
-            h:currentLayer.info.height,
-            contentW:subLayerNode.width,
-            contentH:subLayerNode.height,
-            backgroundColor:'rgb(159,192,234)',
-            drawScrollBar:true
+        //监听模具框属性变化
+        $scope.$on('MaskAttr',function(event,data){
+            $scope.maskStyle=_.cloneDeep(data);
+            ProjectService.saveMaskInfo($scope.maskStyle);
+        });
+        $scope.$on('MaskCtrl',function(event,data){
+            $scope.maskSwitch=data;
+        });
+        $scope.$on('ChangeMask',function(event,data){
+            $scope.maskSrc=data;
+            getMask();
         });
 
-        backgroundImg.onload = function(){
-            var opts = {
-                imgObj:backgroundImg,
-                sw:paintBoard.width,
-                sh:paintBoard.height
+        $scope.getMaskAttr=getMask;
+
+        //模具框选中状态
+        $scope.selectMask=function(b){
+            $scope.$emit('ChangeMaskStyle',b)
+        };
+
+        //获取模具框属性
+        function getMask(){
+            var mask=angular.element('div #mask');
+            $timeout(function(){
+                var maskStyle={
+                    "width":parseInt(mask.css('width')),
+                    "height":parseInt(mask.css('height')),
+                    "top":parseInt(mask.css('top')),
+                    "left":parseInt(mask.css('left')),
+                    "name":$scope.maskStyle.name,
+                    "src":$scope.maskSrc
+                };
+                $scope.$emit('ChangeMaskStyle',maskStyle);
+            });
+        }
+    }]);
+
+    ide.controller('previewInstanceCtrl',['$scope','$uibModalInstance','currentSubLayer','currentLayer','subLayerNode',
+        function($scope,$uibModalInstance,currentSubLayer,currentLayer,subLayerNode){
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss();
             };
-            paintBoard.drawBackground(opts);
-            paintBoard.reRender();
-        };
 
-        subLayerImg.onload = function(){
-            paintBoard.add({
-                type:'image',
-                imgObj:subLayerImg,
-                w:paintBoard.contentW,
-                h:paintBoard.contentH,
-                x:0,
-                y:0});
-            paintBoard.reRender()
-        };
+            $scope.init = function(){
+                var backCanvasNode = document.getElementById('backgroundCanvas');
+                var backgroundImgUrl = backCanvasNode.toDataURL();
+                var subLayerImaURL = subLayerNode.toDataURL();
+                var backgroundImg = new Image();
+                var subLayerImg = new Image();
 
-        backgroundImg.src = backgroundImgUrl;
-        subLayerImg.src = subLayerImaURL ;
-    };
+                var paintBoard = new SXRender({
+                    id:'previewCanvas',
+                    w:currentLayer.info.width,
+                    h:currentLayer.info.height,
+                    contentW:subLayerNode.width,
+                    contentH:subLayerNode.height,
+                    backgroundColor:'rgb(159,192,234)',
+                    drawScrollBar:true
+                });
 
-}]);
+                backgroundImg.onload = function(){
+                    var opts = {
+                        imgObj:backgroundImg,
+                        sw:paintBoard.width,
+                        sh:paintBoard.height
+                    };
+                    paintBoard.drawBackground(opts);
+                    paintBoard.reRender();
+                };
+
+                subLayerImg.onload = function(){
+                    paintBoard.add({
+                        type:'image',
+                        imgObj:subLayerImg,
+                        w:paintBoard.contentW,
+                        h:paintBoard.contentH,
+                        x:0,
+                        y:0});
+                    paintBoard.reRender()
+                };
+
+                backgroundImg.src = backgroundImgUrl;
+                subLayerImg.src = subLayerImaURL ;
+            };
+
+        }]);

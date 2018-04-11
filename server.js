@@ -139,8 +139,7 @@ app.use('/public',function (req, res, next) {
     }
 })
 
-
-
+app.use('/project',express.static('project'));
 
 app.use('/release',express.static('release'));
 app.use('/.well-known', express.static('.well-known'));
