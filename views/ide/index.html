@@ -1602,20 +1602,20 @@
                                type="number">
                         </div>
                         <div class="my-attr-item">
+                            <span class="my-attr-title">终止遮罩</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.maxCoverAngle"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterMaxCoverAngle($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
                             <span class="my-attr-title">起始遮罩</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.minCoverAngle"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.dashboard.enterMinCoverAngle($event)"
                                    type="number">
-                        </div><div class="my-attr-item ">
-                        <span class="my-attr-title">终止遮罩</span>
-                        <input class="my-attr-number-input form-control short-input"
-                               ng-model="component.object.level.info.maxCoverAngle"
-                               ng-blur="component.restore()"
-                               ng-keypress="component.dashboard.enterMaxCoverAngle($event)"
-                               type="number">
-                    </div>
+                        </div>
                         <div class="my-attr-item ">
                             <span class="my-attr-title">起始角度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -3302,7 +3302,7 @@
                     </script>
 
                 </div>
-                <div ng-controller="TagSelectCtl" ng-show="component.showTagPanel" class="my-attr-item lg deng-bgTags" >
+                <div ng-controller="TagSelectCtl" ng-show="component.showTagPanel&&!myMask" class="my-attr-item lg deng-bgTags" >
                     <span class="my-attr-title ">变量</span>
                     <select ng-model="component.selectedTag" ng-change="component.selectedTagFun()"
                             class="my-attr-number-input form-control ng-pristine ng-untouched ng-valid ng-not-empty form-control">

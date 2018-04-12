@@ -1295,6 +1295,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             _changeTextAttr(option);
         }
 
+
         function enterSelectorFontItalic(e, mode) {
             if (mode === 'itemFont') {
                 var fontItalic = $scope.component.object.level.info.itemFont.fontItalic;
@@ -1333,53 +1334,42 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             _changeTextAttr(option);
         }
 
-
-        /**
-         * 根据控件类型，更改控件字体属性
-         * @param option
-         * @private
-         */
-        function _changeTextAttr(option) {
-            var oldOperate = ProjectService.SaveCurrentOperate();
-            var selectObj = ProjectService.getCurrentSelectObject();
-            switch (selectObj.type) {
-                case Type.MyTextArea:
-                    ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                case Type.MyDateTime:
-                    ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                case Type.MyNum:
-                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                case Type.MySelector:
-                    ProjectService.ChangeSelectorFontStyle(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                case Type.MySwitch:
-                case Type.MySlide:
-                case Type.MyButton:
-                    ProjectService.ChangeAttributeFontStyle(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                case Type.MySelector:
-                    ProjectService.ChangeSelectorFontStyle(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                default:
-                    console.error('not match in change font color!');
-                    break;
-            }
+    /**
+     * 根据控件类型，更改控件字体属性
+     * @param option
+     * @private
+     */
+    function _changeTextAttr(option) {
+        var oldOperate=ProjectService.SaveCurrentOperate();
+        var selectObj=ProjectService.getCurrentSelectObject();
+        switch(selectObj.type){
+            case Type.MyTextArea:
+                ProjectService.ChangeAttributeTextContent(option, function () {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyDateTime:
+                ProjectService.ChangeAttributeDateTimeText(option, function () {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyNum:
+                ProjectService.ChangeAttributeNumContent(option,function(){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MySwitch:
+            case Type.MySlide:
+            case Type.MyButton:
+                ProjectService.ChangeAttributeFontStyle(option,function(){
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            default:
+                console.error('not match in change font color!');
+                break;
         }
+    }
 
         function enterHighlightMode() {
             var selectObj = ProjectService.getCurrentSelectObject();
