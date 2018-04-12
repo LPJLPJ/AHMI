@@ -1032,24 +1032,24 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
         var selectObj=ProjectService.getCurrentSelectObject();
         switch(selectObj.type){
             case Type.MyTextArea:
-                ProjectService.ChangeAttributeTextContent(option, function (oldOperate) {
+                ProjectService.ChangeAttributeTextContent(option, function () {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
             case Type.MyDateTime:
-                ProjectService.ChangeAttributeDateTimeText(option, function (oldOperate) {
+                ProjectService.ChangeAttributeDateTimeText(option, function () {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
             case Type.MyNum:
-                ProjectService.ChangeAttributeNumContent(option,function(oldOperate){
+                ProjectService.ChangeAttributeNumContent(option,function(){
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
             case Type.MySwitch:
             case Type.MySlide:
             case Type.MyButton:
-                ProjectService.ChangeAttributeFontStyle(option,function(oldOperate){
+                ProjectService.ChangeAttributeFontStyle(option,function(){
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
