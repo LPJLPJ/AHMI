@@ -774,7 +774,6 @@ ideServices
 
                 var fabLayer=new fabric.MyLayer(_newLayer.id,initiator);
                 pageNode.add(fabLayer);
-                console.log(pageNode)
 
                 pageNode.renderAll.bind(pageNode)();
                 _newLayer.info.width=fabLayer.getWidth();
@@ -3063,6 +3062,7 @@ ideServices
              * @constructor
              */
             this.ChangeAttributeHighLightMode = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
                 var selectObj = getCurrentSelectObject();
                 //console.log('_option',_option);
                 if(_option.highlightMode=='0'){
@@ -3071,6 +3071,7 @@ ideServices
                     selectObj.level.info.disableHighlight=true;
                 }
                 //console.log('selectObje.level',selectObj.level);
+                _successCallback && _successCallback(currentOperate)
             };
 
             /**
