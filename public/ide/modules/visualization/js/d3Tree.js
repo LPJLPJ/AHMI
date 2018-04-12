@@ -168,7 +168,6 @@ $(function(){
             .append('tspan')
             .attr('x',function(d){
                 let text = d3.select(this.parentNode);
-                console.log(text.attr('x'));
                 return text.attr('x')
             })
             .attr('dy',"1em")
