@@ -774,7 +774,6 @@ ideServices
 
                 var fabLayer=new fabric.MyLayer(_newLayer.id,initiator);
                 pageNode.add(fabLayer);
-                console.log(pageNode)
 
                 pageNode.renderAll.bind(pageNode)();
                 _newLayer.info.width=fabLayer.getWidth();

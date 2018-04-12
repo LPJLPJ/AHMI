@@ -1119,7 +1119,6 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
         var selectImage='';
         if ($scope.component.object.type==Type.MyPage){
             selectImage=$scope.component.page.selectImage;
-            console.log(selectImage);
             if(!selectImage){
                 $scope.component.object.level.backgroundColor='rgb(54,71,92)';
             }
