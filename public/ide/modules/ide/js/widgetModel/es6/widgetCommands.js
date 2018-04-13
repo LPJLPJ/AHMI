@@ -1288,6 +1288,8 @@
             var(fontWidth,0)      //字符图层宽度
             var(align,0)          //对齐方式，0左，1中，2右
             var(widgetWidth,0)    //控件宽度
+            var(fontSpacing,0)    //字符间距
+            var(paddingRatio,0)   //padddingRatio
             
             var(initPosX,0)       //绘制起始坐标
             var(symbolCnt,0)      //要绘制的符号的个数
@@ -1312,7 +1314,11 @@
             set(overflow,'this.otherAttrs.5')
             set(fontWidth,'this.otherAttrs.6')
             set(align,'this.otherAttrs.7')
-            set(widgetWidth,'this.otherAttrs.8')      
+            set(widgetWidth,'this.otherAttrs.8')
+            set(fontSpacing,'this.otherAttrs.9')
+            set(paddingRatio,'this.otherAttrs.10')      
+            
+            multiply(paddingRatio,fontWidth)
             
             set(needDraw,1)
             // print(needDraw,'needDrawInit')      
@@ -1411,21 +1417,43 @@
                 var(fontWidthHalf,0) //半个字符所占宽度
                 set(fontWidthHalf,fontWidth)
                 divide(fontWidthHalf,2)
-                while(tempVal>0){
+                
+                if(tempVal>0){
                     add(tempValW,fontWidth)
+                    minus(tempVal,1)
+                }
+                while(tempVal>0){
+                   
+                    add(tempValW,fontWidth)
+                    add(tempValW,fontSpacing)
                     minus(tempVal,1)
                 }
                 if(decimalCnt>0){
                     minus(tempValW,fontWidthHalf)
-                }                
+                }
+                //考虑起始位置
+                                
                 if(align==0){
                     //左对齐
-                    set(initPosX,0)
+                    if(paddingRatio>0){
+                        set(initPosX,paddingRatio)
+                       
+                    }else{
+                        set(initPosX,0)
+                    }
+                    
                 }else{
                     if(align==2){
                         //右对齐
-                        set(initPosX,widgetWidth)
-                        minus(initPosX,tempValW)
+                        if(paddingRatio>0){
+                            set(initPosX,widgetWidth)
+                            minus(initPosX,tempValW)
+                            minus(initPosX,paddingRatio)
+                        }else{
+                            set(initPosX,widgetWidth)
+                            minus(initPosX,tempValW)
+                        }
+                        
                     }else{
                         //居中对齐
                         set(initPosX,widgetWidth)
@@ -1450,6 +1478,7 @@
                         set('this.layers.tempVal.subLayers.font.text',tempValText)
                         set(symbolCnt,0)
                         add(initPosX,fontWidth)
+                        add(initPosX,fontSpacing)
                     }else{
                         if(decimalIndex==tempVal){
                             //绘制小数点
@@ -1457,6 +1486,7 @@
                             set(tempValMid1,46)
                             set('this.layers.tempVal.subLayers.font.text',46)
                             add(initPosX,fontWidthHalf)
+                            add(initPosX,fontSpacing)
                         }else{
                             if(frontZeroCnt>0){
                                 //绘制前导零
@@ -1465,12 +1495,14 @@
                                 set('this.layers.tempVal.subLayers.font.text',tempValText)
                                 minus(frontZeroCnt,1)
                                 add(initPosX,fontWidth)
+                                add(initPosX,fontSpacing)
                             }else{
                                 if(decimalZeroCnt>0){
                                     set(tempValText,0)
                                     add(tempValText,48)
                                     set('this.layers.tempVal.subLayers.font.text',tempValText)
                                     add(initPosX,fontWidth)
+                                    add(initPosX,fontSpacing)
                                     minus(decimalZeroCnt,1)
                                 }else{
                                     //绘制数字值
@@ -1487,6 +1519,7 @@
                                     set('this.layers.tempVal.subLayers.font.text',tempValText)
                                     minus(curValCnt,1)
                                     add(initPosX,fontWidth)
+                                    add(initPosX,fontSpacing)
                                 }
                             }
                         }

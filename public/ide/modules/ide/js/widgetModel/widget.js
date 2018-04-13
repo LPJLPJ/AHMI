@@ -547,6 +547,18 @@
         // bgLayer.subLayers.image = new TextureSubLayer(slice.imgSrc);
         // bgLayer.subLayers.color = new ColorSubLayer(parseColor(slice.color))
         // layers.push(bgLayer)
+        console.log(valueObj)
+        var decimalCount = valueObj.decimalCount
+        var numOfDigits = valueObj.numOfDigits
+
+        var maxFontWidth = valueObj.maxFontWidth
+
+        var spacing = Number(valueObj.spacing);
+        var paddingRatio = Number(valueObj.paddingRatio)||0;
+
+        var xCoordinate = (maxFontWidth * decimalCount > w) ? maxFontWidth/2 :(w-maxFontWidth*decimalCount)/2;//如果装不下字符串，从maxFontWidth处开始显示
+        if(paddingRatio!==0)xCoordinate=paddingRatio*maxFontWidth;
+
         var layers = []
         var symbol,symbolLayer
         if (valueObj.symbolMode==0) {
@@ -558,34 +570,37 @@
         if (!mW) {
             return
         }
-        var decimalCount = valueObj.decimalCount
-        var numOfDigits = valueObj.numOfDigits
-        var curX = 0;
+
+        var curX = xCoordinate;
         if (symbol) {
-            symbolLayer = new Layer(0,0,mW,h);
+            symbolLayer = new Layer(curX,0,mW,h);
             symbolLayer.subLayers.font = new FontSubLayer('+',fontStyle)
             layers.push(symbolLayer)
-            curX +=mW;
+            curX +=mW+spacing;
         }
+
+
+
         var curDigitLayer
         for (var i=0;i<(numOfDigits-decimalCount);i++){
             //add decimal digits
             curDigitLayer = new Layer(curX,0,mW,h)
+            console.log(curX,mW)
             curDigitLayer.subLayers.font= new FontSubLayer('0',fontStyle)
             layers.push(curDigitLayer)
-            curX = curX+mW
+            curX = curX+mW+spacing
 
         }
         if (decimalCount>0) {
             var curDotLayer = new Layer(curX,0,0.5*mW,h)
             curDotLayer.subLayers.font = new FontSubLayer('.',fontStyle)
             layers.push(curDotLayer)
-            curX = Math.floor(curX+0.5*mW);
+            curX = Math.floor(curX+0.5*mW+spacing);
             for(var i=0;i<decimalCount;i++){
                 curDigitLayer = new Layer(curX,0,mW,h)
                 curDigitLayer.subLayers.font = new FontSubLayer('0',fontStyle)
                 layers.push(curDigitLayer)
-                curX+=mW
+                curX+=mW+spacing
             }
         }
 

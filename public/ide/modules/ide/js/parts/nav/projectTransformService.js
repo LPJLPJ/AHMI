@@ -745,6 +745,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                             generalWidget.otherAttrs[7] = 1
                     }
                     generalWidget.otherAttrs[8] = Number(info['width']);
+                    generalWidget.otherAttrs[9] = Number(info['spacing']);
+                    generalWidget.otherAttrs[10] = Number(info['paddingRatio']);
 
                     generalWidget.generalType = 'Num';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
