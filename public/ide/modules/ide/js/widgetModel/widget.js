@@ -709,12 +709,34 @@
             colorElems = '',
             i = 0;
 
+        var textNum = 0
+
+        switch(dateTimeModeId){
+            case 0:
+                textNum = 8
+                break
+            case 1:
+                textNum = 5
+                break
+            case 2:
+            case 3:
+                textNum = 10
+                break
+        }
+
+        var spacing = Number(info.spacing);
+        var paddingRatio = Number(info.paddingRatio)||0;
+
+        var xCoordinate = (maxFontWidth * textNum > w) ? maxFontWidth/2 :(w-maxFontWidth*textNum)/2;//如果装不下字符串，从maxFontWidth处开始显示
+        if(paddingRatio!==0)xCoordinate=paddingRatio*maxFontWidth;
+
+
         switch (dateTimeModeId){
             case 0:
                 //console.log('时分秒');
                 fontLayersNum = 8;
                 for(i=0;i<fontLayersNum;i++){
-                    dx = i*maxFontWidth;
+                    dx = xCoordinate+i*(maxFontWidth+spacing);
                     fontLayer = new Layer(dx,0,sWidth,sHeight);
                     if(i==2||i==5){
                         fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
@@ -726,15 +748,15 @@
                 }
                 if(highLight){
                     highLightLayerNum = 3;
-                    sWidth = 2*maxFontWidth;
-                    dx = 0;
+                    sWidth = 2*maxFontWidth+spacing;
+                    dx = xCoordinate;
                     for(i=0;i<highLightLayerNum;i++){
                         highLightLayer = new Layer(dx,0,sWidth,sHeight);
                         highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
                         colorElems = parseColor(slices.color);
                         highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
                         layers.push(highLightLayer);
-                        dx += 3*maxFontWidth;
+                        dx += 3*(maxFontWidth+spacing);
                     }
                     this.enableHighLight = true;
                     this.maxHighLightNum = highLightLayerNum;
@@ -744,7 +766,7 @@
                 //console.log('时分');
                 fontLayersNum = 5;
                 for(i=0;i<fontLayersNum;i++){
-                    dx = i*maxFontWidth;
+                    dx = xCoordinate+i*(maxFontWidth+spacing);
                     fontLayer = new Layer(dx,0,sWidth,sHeight);
                     if(i==2){
                         fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
@@ -755,15 +777,15 @@
                 }
                 if(highLight){
                     highLightLayerNum = 2;
-                    sWidth = 2*maxFontWidth;
-                    dx = 0;
+                    sWidth = 2*maxFontWidth+spacing;
+                    dx = xCoordinate;
                     for(i=0;i<highLightLayerNum;i++){
                         highLightLayer = new Layer(dx,0,sWidth,sHeight);
                         highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
                         colorElems = parseColor(slices.color);
                         highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
                         layers.push(highLightLayer);
-                        dx += 3*maxFontWidth;
+                        dx += 3*(maxFontWidth+spacing);
                     }
                     this.enableHighLight = true;
                     this.maxHighLightNum = highLightLayerNum;
@@ -773,7 +795,7 @@
                 //console.log('斜杠日期');
                 fontLayersNum = 10;
                 for(i=0;i<fontLayersNum;i++){
-                    dx = i*maxFontWidth;
+                    dx = xCoordinate+i*(maxFontWidth+spacing);
                     fontLayer = new Layer(dx,0,sWidth,sHeight);
                     if(i==4||i==7){
                         fontLayer.subLayers.font = new FontSubLayer('/',fontStyle);
@@ -784,8 +806,8 @@
                 }
                 if(highLight){
                     highLightLayerNum = 3;
-                    sWidth = 4*maxFontWidth;
-                    dx = 0;
+                    sWidth = 4*maxFontWidth+3*spacing;
+                    dx = xCoordinate;
                     for(i=0;i<highLightLayerNum;i++){
                         highLightLayer = new Layer(dx,0,sWidth,sHeight);
                         highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
@@ -793,10 +815,10 @@
                         highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
                         layers.push(highLightLayer);
                         if(i===0){
-                            dx += 5*maxFontWidth;
-                            sWidth = 2*maxFontWidth;
+                            dx += 5*(maxFontWidth+spacing);
+                            sWidth = 2*maxFontWidth+spacing;
                         }else{
-                            dx += 3*maxFontWidth;
+                            dx += 3*(maxFontWidth+spacing);
                         }
                     }
                     this.enableHighLight = true;
@@ -807,7 +829,7 @@
                 //console.log('减号日期');
                 fontLayersNum = 10;
                 for(i=0;i<fontLayersNum;i++){
-                    dx = i*maxFontWidth;
+                    dx = xCoordinate+i*(maxFontWidth+spacing);
                     fontLayer = new Layer(dx,0,sWidth,sHeight);
                     if(i==4||i==7){
                         fontLayer.subLayers.font = new FontSubLayer('-',fontStyle);
@@ -819,8 +841,8 @@
                 }
                 if(highLight){
                     highLightLayerNum = 3;
-                    sWidth = 4*maxFontWidth;
-                    dx = 0;
+                    sWidth = 4*maxFontWidth+3*spacing;
+                    dx = xCoordinate;
                     for(i=0;i<highLightLayerNum;i++){
                         highLightLayer = new Layer(dx,0,sWidth,sHeight);
                         highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
@@ -828,10 +850,10 @@
                         highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
                         layers.push(highLightLayer);
                         if(i===0){
-                            dx += 5*maxFontWidth;
+                            dx += 5*(maxFontWidth+spacing);
                             sWidth = 2*maxFontWidth;
                         }else{
-                            dx += 3*maxFontWidth;
+                            dx += 3*(maxFontWidth+spacing);
                         }
                     }
                     this.enableHighLight = true;
@@ -842,7 +864,7 @@
                 //console.log('时分秒');
                 fontLayersNum = 8;
                 for(i=0;i<fontLayersNum;i++){
-                    dx = i*maxFontWidth;
+                    dx = xCoordinate+i*(maxFontWidth+spacing);
                     fontLayer = new Layer(dx,0,sWidth,sHeight);
                     if(i==2||i==5){
                         fontLayer.subLayers.font = new FontSubLayer(':',fontStyle);
@@ -854,15 +876,15 @@
                 }
                 if(highLight){
                     highLightLayerNum = 3;
-                    sWidth = 2*maxFontWidth;
-                    dx = 0;
+                    sWidth = 2*maxFontWidth+spacing;
+                    dx = xCoordinate;
                     for(i=0;i<highLightLayerNum;i++){
                         highLightLayer = new Layer(dx,0,sWidth,sHeight);
                         highLightLayer.subLayers.image = new TextureSubLayer(slices.imgSrc);
                         colorElems = parseColor(slices.color);
                         highLightLayer.subLayers.color = new ColorSubLayer(colorElems);
                         layers.push(highLightLayer);
-                        dx += 3*maxFontWidth;
+                        dx += 3*(maxFontWidth+spacing);
                     }
                     this.enableHighLight = true;
                     this.maxHighLightNum = highLightLayerNum;
