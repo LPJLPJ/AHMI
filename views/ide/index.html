@@ -3337,7 +3337,7 @@
                     <div class="addTag-container">
                         <span>Tags</span>
                         <button type="button" id=""
-                                ng-click="addNewTag()"
+                                ng-click="component.addNewTag()"
                                 class="btn btn-default">
                             添加新Tag
                         </button>
@@ -3423,7 +3423,7 @@
                             </tr>
                             <tr ng-repeat="tags in component.allCustomTags track by $index" class="tagTr"
                                 ng-class="{'selected':selected==$id}">
-                                <td ng-click="openPanel($index,'custom')">
+                                <td ng-click="component.openPanel($index,'custom')">
                                     <div class="tagName">{{tags.name}}</div>
                                 </td>
                                 <td><div class="tagReg">{{tags.indexOfRegister}}</div></td>
@@ -3434,7 +3434,7 @@
                             </tr>
                             <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr"
                                 ng-class="{'selected':selected==$id}">
-                                <td ng-click="openPanel($index,'timer')">{{timerTags.name}}</td>
+                                <td ng-click="component.openPanel($index,'timer')">{{timerTags.name}}</td>
                                 <td><div class="tagReg">{{timerTags.indexOfRegister}}</div></td>
                                 <td><img class="icon-close"></td>
                             </tr>
