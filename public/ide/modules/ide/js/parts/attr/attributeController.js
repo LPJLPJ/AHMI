@@ -1335,16 +1335,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             var selectImage = '';
             var currentPage = null;
             var currentSubLayer = null;
-            var option = null;
-            var oldColor = 'rgb(54,71,92)';
+            var option;
             if ($scope.component.object.type === Type.MyPage) {
                 selectImage = $scope.component.page.selectImage;
                 currentPage = ProjectService.getCurrentPage();
-                oldColor = currentPage.backgroundColor;
             } else if ($scope.component.object.type === Type.MySubLayer) {
                 selectImage = $scope.component.subLayer.selectImage;
                 currentSubLayer = ProjectService.getCurrentSubLayer();
-                oldColor = currentSubLayer.backgroundColor;
             } else {
                 return;
             }
@@ -1352,14 +1349,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 image: selectImage
             };
             ProjectService.ChangeAttributeBackgroundImage(option, function (oldOperate) {
-                if (!selectImage) {
-                    $scope.component.object.level.backgroundColor = oldColor;
-                    currentPage.backgroundColor = oldColor;
-                } else {
-                    $scope.component.object.level.backgroundColor = 'rgb(0,0,0)';
-                    currentPage.backgroundColor = 'rgb(0,0,0)';
-                }
-                console.log('haha',ProjectService.getCurrentPage());
                 $scope.$emit('ChangeCurrentPage', oldOperate);
 
             })
