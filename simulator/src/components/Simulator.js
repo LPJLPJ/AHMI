@@ -2175,7 +2175,7 @@ module.exports =   React.createClass({
         ctx.save()
         ctx.beginPath()
         ctx.lineWidth = 10
-        ctx.strokeStyle = 'rgba(77,77,77)'
+        ctx.strokeStyle = '#888888'
         ctx.globalAlpha = alpha
         ctx.moveTo(sx,sy)
         ctx.lineTo(tx,ty)

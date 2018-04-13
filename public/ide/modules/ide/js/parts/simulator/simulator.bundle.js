@@ -55199,7 +55199,7 @@ module.exports = React.createClass({
         ctx.save();
         ctx.beginPath();
         ctx.lineWidth = 10;
-        ctx.strokeStyle = 'rgba(77,77,77)';
+        ctx.strokeStyle = '#888888';
         ctx.globalAlpha = alpha;
         ctx.moveTo(sx, sy);
         ctx.lineTo(tx, ty);
@@ -56177,7 +56177,6 @@ module.exports = React.createClass({
         if (widget.info.arrange == 'horizontal') {
             //horizontal
             var singleWidth = Math.floor((width - interval * (count - 1)) / count);
-            console.log('singleWidht', singleWidth, (width - interval * (count - 1)) / count);
             for (var i = 0; i < texList.length - 1; i++) {
                 var curButtonTex = texList[i];
                 if (i == curButtonIdx - 1) {

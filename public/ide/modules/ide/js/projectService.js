@@ -3057,7 +3057,6 @@ ideServices
                         pageNode.setBackgroundImage(img, function () {
                                 pageNode.renderAll();
                                 currentPage.backgroundImage=_option.image;
-                                // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
                                 var currentPageIndex= _indexById(project.pages, currentPage);
                                 _self.OnPageSelected(currentPageIndex, function () {
                                     _successCallback&&_successCallback(currentOperate);
