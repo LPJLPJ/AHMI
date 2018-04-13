@@ -489,12 +489,10 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
 
             function deleteUploadingItem(translatedFile) {
-                console.log(scope.component.top.uploadingArray);
                 var uploadingArray = scope.component.top.uploadingArray;
                 for (var i = 0; i < uploadingArray.length; i++) {
                     if (uploadingArray[i].id == translatedFile.id) {
                         uploadingArray.splice(i, 1);
-                        console.log(scope.component.top.uploadingArray);
                         break;
                     }
                 }
