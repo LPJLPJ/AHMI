@@ -12,7 +12,7 @@ $(function(){
 			wrong:'验证码错误'
 		},
 		general:{
-			wrong:'账户错误',
+			wrong:'无效的账号或密码',
             verify:'<a id="resend">账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>',
             verifyErr:'邮箱不存在'
 		}

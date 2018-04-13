@@ -3058,7 +3058,11 @@ ideServices
                         pageNode.setBackgroundImage(img, function () {
                                 pageNode.renderAll();
                                 currentPage.backgroundImage=_option.image;
-                                // currentPage.proJsonStr=JSON.stringify(pageNode.toJSON());
+                                if(!!_option.image){
+                                    currentPage.backgroundColor='rgb(0,0,0)';
+                                }else{
+                                    currentPage.backgroundColor=pageNode.backgroundColor;
+                                }
                                 var currentPageIndex= _indexById(project.pages, currentPage);
                                 _self.OnPageSelected(currentPageIndex, function () {
                                     _successCallback&&_successCallback(currentOperate);

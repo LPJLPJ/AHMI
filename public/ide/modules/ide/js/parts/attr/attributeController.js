@@ -1433,15 +1433,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             var selectImage = '';
             var currentPage = null;
             var currentSubLayer = null;
-            var option = null;
+            var option;
             if ($scope.component.object.type === Type.MyPage) {
                 selectImage = $scope.component.page.selectImage;
                 currentPage = ProjectService.getCurrentPage();
-
             } else if ($scope.component.object.type === Type.MySubLayer) {
                 selectImage = $scope.component.subLayer.selectImage;
                 currentSubLayer = ProjectService.getCurrentSubLayer();
-
             } else {
                 return;
             }
@@ -1449,13 +1447,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 image: selectImage
             };
             ProjectService.ChangeAttributeBackgroundImage(option, function (oldOperate) {
-                if (!selectImage) {
-                    $scope.component.object.level.backgroundColor = 'rgb(54,71,92)';
-                    currentPage.backgroundColor = 'rgb(54,71,92)';
-                } else {
-                    $scope.component.object.level.backgroundColor = 'rgb(0,0,0)';
-                    currentPage.backgroundColor = 'rgb(0,0,0)';
-                }
                 $scope.$emit('ChangeCurrentPage', oldOperate);
 
             })
