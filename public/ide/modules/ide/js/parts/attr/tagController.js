@@ -128,19 +128,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 $scope.selectedIdx=j;
             }
         }
-        // var tagClassNames=$scope.component.tagClasses.map(
-        //     function(tagClass){
-        //         return tagClass.name;
-        //     });
-        // //两个默认标签不需要显示
-        // var defaultTagClassesLength=2;
-        // tagClassNames.splice(0, defaultTagClassesLength);
-        // //当前标签不需要显示
-        // for(var i=0;i<tagClassNames.length;i++){
-        //     if(tagClassNames[i]==$scope.component.curTagClass.name){
-        //         tagClassNames.splice(i,1);
-        //     }
-        // }
+
         var tempTagClasses=_.cloneDeep($scope.component.tagClasses);
         //两个默认标签不需要显示
         var defaultTagClassesLength=2;
@@ -165,7 +153,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'addToTagClassModal.html',
-            controller: function($scope,$uibModalInstance){
+            controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
                 $scope.tagClassNames=tagClassNames;
                 //确定
                 $scope.save = function (th) {
@@ -186,7 +174,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 $scope.indexSelected=function(index){
                     $scope.curIndex=index;
                 };
-            },
+            }],
             size: 'sm',
             resolve: {
                 tagClassNames: function () {
@@ -241,7 +229,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'editTagClasses.html',
-            controller: function($scope,$uibModalInstance){
+            controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
                 $scope.tagClassesManage=tagClassesManage;   //自定义标签
                 $scope.defaultTagClasses=defaultTagClasses; //默认标签
                 $scope.$scopeCtl=$scope;
@@ -318,7 +306,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                     }
                     return true;
                 }
-            },
+            }],
             size: 'md',
             resolve: {
                 tagClassesManage: function () {
