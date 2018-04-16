@@ -187,7 +187,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
     .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance','ProjectService', 'action','triggers','tags','timerTags','actionNames','OperationService', function ($scope, $uibModalInstance,ProjectService, action,triggers,tags,timerTags,actionNames,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
 
-        var blankCmd = [{name:'',symbol:''}, {tag: '', value: ''}, {tag: '', value: ''}];
+        var blankCmd = [{name:'',symbol:''}, {tag:'', value:''}, {tag:'', value:''}];
         $scope.ops = OperationService.getOperations();
 
         $scope.tags=_.map(tags.filter(function(item){
@@ -321,5 +321,26 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             if (e.keyCode==13){
                 $scope.enterName(th);
             }
+        };
+
+        //tagSelect Obj
+        $scope.selectedTagObjArray=[
+            {
+                tagName:null,
+                useTag:true
+            },
+            {
+                tagName:null,
+                useTag:true
+            }
+        ];
+        //tagSelect 回调
+        $scope.actionFunction=function(index){
+            $scope.chosenCmd[index+1].tag=$scope.selectedTagObjArray[index].tagName;
+        };
+        //启用变量
+        $scope.usetagSwitch=function(index){
+            $scope.selectedTagObjArray[index].tagName='';
+            $scope.actionFunction(index);
         };
     }]);

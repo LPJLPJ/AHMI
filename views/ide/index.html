@@ -2811,19 +2811,38 @@
                 </div>
 
                 <!--tag控制-->
-                <div ng-controller="TagSelectCtl" ng-show="component.showTagPanel" class="my-attr-item lg deng-bgTags" >
-                    <span class="my-attr-title ">变量</span>
-                    <select ng-model="component.selectedTag" ng-change="component.selectedTagFun()"
-                            class="my-attr-number-input form-control ng-pristine ng-untouched ng-valid ng-not-empty form-control">
-                        <option value="">---</option>
-                        <option ng-repeat="customTag in component.allCustomTags|filter:{bindMod:'default'} track by $index"
-                                value="{{customTag.name}}">{{customTag.name}}
-                        </option>
-                        <option ng-repeat="timerTag in component.allTimerTags" value="{{timerTag.name}}">
-                            {{timerTag.name}}
-                        </option>
-                    </select>
+                <script type="text/ng-template" id="tagSelect.html">
+                    <div class="my-attr-item lg deng-bgTags">
+                        <div class="my-tagSelect-main-div">
+                            <div class="my-tagSelect-div">
+                                <span class="my-tagSelect-span-left">标签</span>
+                                <select ng-model="component.curTagClassName"  ng-focus="component.syncTagClasses()" ng-change="component.changeCurTagClass()"
+                                        class="form-control my-tagSelect-select">{{component.curTagClassName}}
+                                    <option ng-repeat="tagClass in component.tagClasses"
+                                            value="{{tagClass.name}}">{{tagClass.name}}
+                                    </option>
+                                </select>
+                                <input type="checkbox" ng-model="component.showRegValidTagsFlag" ng-click="component.showRegValidTags()" class=" my-tagSelect-input">
+                                    <span class="my-tagSelect-span-right">寄存器</span>
+                            </div>
+                            <div >
+                                <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()"
+                                        class="form-control my-tagSelect-tagSelect">
+                                    <option value="">---</option>
+                                    <option ng-repeat="customTag in component.curTagArray"
+                                            value="{{customTag.name}}">{{customTag.name}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </script>
+
+                <div ng-show="component.showTagPanel"  class="my-attr-item lg deng-bgTags" ng-controller='TagSelectCtl'>
+                    <span class="my-tagSelect-main-span">变量</span>
+                    <tag-select bind="selectedTagObj" action-function="component.selectedTagFun()"></tag-select>
                 </div>
+
 
                 <!--动作控制-->
                 <div ng-controller="ActionCtl" ng-show="showActionPanel">
@@ -2850,8 +2869,8 @@
                         </div>
                         <div class="modal-body dengModel-body">
                             <div class="modal-title form-group modelPart">
-                                <label for="actionName">动作名称</label>
-                                <input class="form-control"
+                                <label for="actionName" class="my-action-label">动作名称</label>
+                                <input class="form-control my-action-input-width"
                                        id="actionName"
                                        type="text"
                                        ng-model="action.title"
@@ -2861,7 +2880,7 @@
                             </div>
 
                             <div class="modal-title form-group modelPart">
-                                <span>触发条件</span>
+                                <span class="my-action-span">触发条件</span>
                                 <select class="form-control dengModel-trigger" ng-model="action.trigger"
                                         ng-options="trigger.value as trigger.name for trigger in triggers"></select>
                             </div>
@@ -2877,47 +2896,63 @@
                                         </div>
                                     </td>
 
-                                    <td>
+                                    <td class="my-action-td">
                                         <div class="form-group modelPart">
-                                            <span>变量</span>
-                                            <select class="form-control" ng-model="chosenCmd[1].tag">
-                                                <option value="">--</option>
-                                                <option ng-if="showCustomTags" ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
-                                                <option ng-repeat="timerTag in timerTags" value="{{timerTag}}">
-                                                    {{timerTag}}
-                                                </option>
-                                            </select>
-                                            <input class="form-control modelPart" type="text"
-                                                   ng-model="chosenCmd[1].value"/>
+                                            <span>操作数1</span>
+                                            <div class="my-action-div-main">
+                                                <div>
+                                                    <span class="my-action-span">启用变量</span>
+                                                    <input type="checkbox" ng-model='selectedTagObjArray[0].useTag' ng-click="usetagSwitch(0)" class="my-action-check-box">
+                                                </div>
+                                                <div ng-show="selectedTagObjArray[0].useTag">
+                                                    <span  class="my-action-span my-action-span-width">变量</span>
+                                                    <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
+                                                </div>
+                                                <div ng-show="!selectedTagObjArray[0].useTag">
+                                                    <span  class="my-action-span my-action-span-width">值</span>
+                                                    <input class="form-control modelPart my-action-input-value" type="text"
+                                                           ng-model="chosenCmd[1].value"/>
+                                                </div>
+                                            </div>
+
+
                                         </div>
                                     </td>
 
-                                    <td>
+                                    <td class="my-action-td">
                                         <div class="form-group modelPart">
-                                            <span>值</span>
-                                            <select class="form-control" ng-model="chosenCmd[2].tag">
-                                                <option value="">--</option>
-                                                <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
-                                                <option ng-repeat="timerTag in timerTags" value="{{timerTag}}">
-                                                    {{timerTag}}
-                                                </option>
-                                            </select>
-                                            <input class="form-control modelPart" type="number"
-                                                   ng-model="chosenCmd[2].value" ng-keyup="checkValueIsInt()"/>
+                                            <span>操作数2</span>
+                                            <div class="my-action-div-main">
+                                                <div>
+                                                    <span  class="my-action-span">启用变量</span>
+                                                    <input type="checkbox" ng-model='selectedTagObjArray[1].useTag' ng-change="usetagSwitch(1)" class="my-action-check-box">
+                                                </div>
+                                                <div ng-show="selectedTagObjArray[1].useTag">
+                                                    <span  class="my-action-span my-action-span-width">变量</span>
+                                                    <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[1]" action-function="actionFunction(1)"></tag-select>
+                                                </div>
+                                                <div  ng-show="!selectedTagObjArray[1].useTag">
+                                                    <span  class="my-action-span my-action-span-width">值</span>
+                                                    <input class="form-control modelPart my-action-input-value" type="text"
+                                                           ng-model="chosenCmd[2].value"/>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-
+                            <div style="float: left;width: 15%">
+                                <button type="button" class="btn btn-default add-option" ng-click="addNewCmd()">添加指令</button>
+                            </div>
                             <div class="dengModal-table-display">
-                                <table class="table table-bordered table-hover">
+                                <table style="width: 90%;padding: 20px;margin: 0" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
                                         <td class="col-xs-1">#</td>
                                         <td class="col-xs-1">操作</td>
-                                        <td class="col-xs-1">变量</td>
-                                        <td class="col-xs-1">值</td>
+                                        <td class="col-xs-1">操作数1</td>
+                                        <td class="col-xs-1">操作数2</td>
                                         <td class="col-xs-1"></td>
                                     </tr>
                                     </thead>
@@ -2936,8 +2971,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <button type="button" class="btn btn-default add-option" ng-click="addNewCmd()">添加指令
-                            </button>
+
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
@@ -3131,63 +3165,40 @@
             <!-- 变量栏-->
             <div class="my-panel-item deng-pannel-item" ng-show="component.top.currentNav==2">
                 <div ng-controller="TagCtrl">
-                    <div class="my-attr-item deng-tags" style="width: 100%;display: block">
+                    <div class="my-attr-item deng-tags my-tag-tag-calss-div">
                         <span class="my-attr-title xiangPage-title">标签</span>
-
-                        <div style="padding: 10px 0 20px 0">
-                        <select class="form-control xiangPage-selected" style="display: inline-block;width: 60%"
-                                ng-model="component.curTagClassName" ng-click="component.changeCurTagClass()">{{component.curTagClassName}}
-                            <option ng-repeat="classItem in component.tagClasses track by $index" value="{{classItem.name}}" >{{classItem.name}}</option>
-                        </select><button type="button"  ng-click="component.editTagClass()" class="btn btn-default">
-                        标签管理
-                    </button>
+                        <div class="my-tag-tag-calss-div-pad">
+                            <select class="form-control xiangPage-selected my-tag-tag-calss-select"
+                                    ng-model="component.curTagClassName" ng-click="component.changeCurTagClass()">{{component.curTagClassName}}
+                                <option ng-repeat="classItem in component.tagClasses track by $index" value="{{classItem.name}}" >{{classItem.name}}</option>
+                            </select>
+                            <button type="button"  ng-click="component.editTagClass()" class="btn btn-default">标签管理</button>
                         </div>
 
                     </div>
-                    <div class="TimeCtrl" style="margin-bottom:20px;vertical-align: middle;line-height: 28px;" ng-show="component.timerTagShow==true">
+                    <div class="TimeCtrl my-tag-timer" ng-show="component.timerTagShow==true">
                         <span>定时器数量：</span>
-                        <div style="margin: 0 10px;display: inline-block;position: relative;float:right;line-height: 28px;margin-bottom: 10px">
-                            <div style="display: inline-block;
-                                        height: 28px;
-                                        border: 1px solid #ccc;
-                                        width: 28px;
-                                        text-align: center;
-                                        background-color: #eee;
-                                          float: left;"
+                        <div class="my-tag-timer-main-div">
+                            <div class="my-tag-timer-div"
                                  ng-click="component.minusTimerNum()" ng-blur="component.restoreTimerNum()"><span class="glyphicon glyphicon-minus"></span>
                             </div>
-                            <input class="form-control"
-                                   style="  height: 28px;
-                                            margin: 0;
-                                            text-align: center;
-                                            display: inline-block;
-                                            width: 20%;
-                                            border-radius: 0;
-                                            border-left: 0;
-                                            border-right: 0;
-                                            float: left;"
+                            <input class="form-control my-tag-timer-input"
                                    ng-model="component.timerNum" ng-keypress="component.setTimerNum($event)"
                                    ng-blur="component.restoreTimerNum()">
 
-                            <div style="display: inline-block;
-                                        height: 28px;
-                                        border: 1px solid #ccc;
-                                        width: 28px;
-                                        text-align: center;
-                                        background-color: #eee;
-                                        float: left;"
+                            <div class="my-tag-timer-div"
                                  ng-click="component.addTimerNum()" ng-blur="component.restoreTimerNum()"><span class="glyphicon glyphicon-plus"></span>
                             </div>
                         </div>
                     </div>
                     <div class="my-attr-item deng-attr-item lg deng-tags">
                         <div class="addTag-container"  ng-show="component.timerTagShow==false">
-                            <!--<span>tags</span>-->
-                            <button type="button"
-                                    ng-click=""
-                                    class="btn btn-default"style="float: none">
-                                批量操作
-                            </button>
+                            <span>tags</span>
+                            <!--<button type="button"-->
+                                    <!--ng-click=""-->
+                                    <!--class="btn btn-default"style="float: none">-->
+                                <!--批量操作-->
+                            <!--</button>-->
 
                             <button type="button"
                                     ng-click="component.addNewTag()"
@@ -3196,8 +3207,7 @@
                             </button>
                             <button type="button"
                                      ng-click=""
-                                    style="margin-right: 10px"
-                                     class="btn btn-default">导入tag
+                                     class="btn btn-default my-tag-button-import">导入tag
                             </button>
                         </div>
 
@@ -3240,10 +3250,10 @@
                                 <h3 class="modal-title">移动到标签</h3>
                             </div>
 
-                            <div class="modal-body" style="max-height: 250px;padding: 20px">
+                            <div class="modal-body my-tag-add-to-div">
                                 <table class="listTable table table-hover">
                                     <tr ng-repeat="name in tagClassNames track by $index" ng-class="{'active':$index===curIndex}">
-                                        <td style="border: none;padding: 5px" ng-click="indexSelected($index)">
+                                        <td class="my-tag-add-to-td" ng-click="indexSelected($index)">
                                             <div class="tagName">{{name}}</div>
                                         </td>
                                     </tr>
@@ -3261,18 +3271,18 @@
 
                             </div>
 
-                            <div class="modal-body" style="max-height: 250px;padding: 20px">
-                                <table class="listTable table table-hover" style="text-align: center;margin: 0">
-                                    <tr ng-show="someTagClassRenaming==true" style="width: 100%;background-color: #eee">
-                                        <td style="text-align: left;width: 60%;padding-left: 30px"  colspan="3">名称</td>
+                            <div class="modal-body  my-tag-add-to-div">
+                                <table class="listTable table table-hover my-tag-edit-table">
+                                    <tr ng-show="someTagClassRenaming==true" class="my-tag-edit-tr">
+                                        <td class="my-tag-edit-td my-tag-edit-td-width" colspan="3">名称</td>
                                     </tr>
-                                    <tr ng-show="someTagClassRenaming==false" style="width: 100%;background-color: #eee">
-                                        <td style="text-align: left;width: 60%;padding-left: 30px" >名称</td>
+                                    <tr ng-show="someTagClassRenaming==false"  class="my-tag-edit-tr">
+                                        <td class="my-tag-edit-td my-tag-edit-td-width" >名称</td>
                                         <td >重命名</td>
                                         <td >删除</td>
                                     </tr>
                                     <tr ng-show="addTagClassFlag==true">
-                                        <td style="text-align: left;padding-left: 30px;" colspan="3">
+                                        <td class="my-tag-edit-td" colspan="3">
                                             <div >
                                                 <input type="text" ng-model="$scopeCtl.curTagClassNewName" >
                                                 <button type="button" attr-type="ok" class="btn btn-default btn-xs btn-ok" ng-click="enterName()"><span class="glyphicon glyphicon-ok"></span></button>
@@ -3280,15 +3290,15 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr ng-repeat="tagClass in defaultTagClasses track by $index" ng-show="tagClass.delete==false">
-                                        <td style="text-align: left;padding-left: 30px">
+                                    <tr ng-repeat="tagClass in defaultTagClasses track by $index" ng-show="tagClass.deleted==false">
+                                        <td class="my-tag-edit-td" >
                                             <div ng-show="tagClass.renaming==false">{{tagClass.name}}</div>
                                         </td>
                                         <td><i ng-show="someTagClassRenaming==false">--</i></td>
                                         <td><i ng-show="someTagClassRenaming==false">--</i></td>
                                     </tr>
-                                    <tr ng-repeat="tagClass in tagClassesManage track by $index" ng-show="tagClass.delete==false">
-                                        <td style="text-align: left;padding-left: 30px">
+                                    <tr ng-repeat="tagClass in tagClassesManage track by $index" ng-show="tagClass.deleted==false">
+                                        <td class="my-tag-edit-td" >
                                             <div ng-show="tagClass.renaming==false">{{tagClass.name}}</div>
                                             <div ng-show="tagClass.renaming==true">
                                                 <input type="text" class=""  ng-model="$scopeCtl.curTagClassNewName" >
@@ -3298,7 +3308,7 @@
                                         </td>
                                         <td><i class="iconfont" ng-click="inputName($index)" ng-show="someTagClassRenaming==false">
                                             &#xe6b4;</i></td>
-                                        <td><i class="iconfont" ng-click="tagClass.delete=true"  ng-show="someTagClassRenaming==false">
+                                        <td><i class="iconfont" ng-click="tagClass.deleted=true"  ng-show="someTagClassRenaming==false">
                                             &#xe627;</i></td>
                                     </tr>
                                 </table>
@@ -3333,7 +3343,7 @@
                                                class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
                                                ng-model="tags.register">
                                     </td>
-                                    <td><i class="iconfont" ng-click="component.addToTagClass($index)">
+                                    <td><i class="iconfont" ng-click="component.addToTagClass(tags.name)">
                                         &#xe7c5;</i></td>
                                     <td><i class="iconfont" ng-click="component.deleteTag(tags.name,tags.type)">
                                         &#xe627;</i></td>
@@ -3653,5 +3663,6 @@
 <!--<script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
 <script type="text/javascript" src="../../public/general/js/versionTag.js"></script>
+<script type="text/javascript" src="../../public/ide/modules/ide/js/myDirective.js"></script>
 </body>
 </html>

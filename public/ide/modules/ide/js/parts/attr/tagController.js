@@ -103,6 +103,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                 //new tag
                 TagService.setUniqueTags(newTag,noDuplication,function(){
                     readTagsInfo();
+                    //如果添加了一个新的tag，同事将其添加到当前标签里
                     addTagToTagClass(newTag,$scope.component.curTagClass.name);
                 }.bind(this));
             }else if ($scope.selectedType == 'custom'){
@@ -119,19 +120,47 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
             }
         }, function (newTag) {});
     }
-    function openPanelAddToTagClass (index){
-        $scope.selectedIdx=index;
-        var tagClassNames=$scope.component.tagClasses.map(
+    //加入的标签模态框
+    function openPanelAddToTagClass (name){
+        //由于tag名不能重名，可以用来做统一标识，根据tag名找到在allCustomTags中对应的index
+        for(var j=0;j<$scope.component.allCustomTags.length;j++){
+            if($scope.component.allCustomTags[j].name===name){
+                $scope.selectedIdx=j;
+            }
+        }
+        // var tagClassNames=$scope.component.tagClasses.map(
+        //     function(tagClass){
+        //         return tagClass.name;
+        //     });
+        // //两个默认标签不需要显示
+        // var defaultTagClassesLength=2;
+        // tagClassNames.splice(0, defaultTagClassesLength);
+        // //当前标签不需要显示
+        // for(var i=0;i<tagClassNames.length;i++){
+        //     if(tagClassNames[i]==$scope.component.curTagClass.name){
+        //         tagClassNames.splice(i,1);
+        //     }
+        // }
+        var tempTagClasses=_.cloneDeep($scope.component.tagClasses);
+        //两个默认标签不需要显示
+        var defaultTagClassesLength=2;
+        tempTagClasses.splice(0, defaultTagClassesLength);
+        //已经含有当前tag的标签不需要显示
+        var tempTags;
+        for(var k=0;k<tempTagClasses.length;k++){
+            tempTags=tempTagClasses[k].tagArray;
+            for(var m=0;m<tempTags.length;m++){
+                if(name===tempTags[m].name){
+                    tempTagClasses.splice(k,1);
+                    k--;
+                    break;
+                }
+            }
+        }
+        var tagClassNames=tempTagClasses.map(
             function(tagClass){
                 return tagClass.name;
             });
-        var defaultTagClassesLength=2;
-        tagClassNames.splice(0, defaultTagClassesLength);
-        for(var i=0;i<tagClassNames.length;i++){
-            if(tagClassNames[i]==$scope.component.curTagClass.name){
-                tagClassNames.splice(i,1);
-            }
-        }
 
         var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
@@ -143,6 +172,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                     if($scope.curIndex===undefined){
                         toastr.warning('未选中任何标签');
                     }else{
+                        //传回选中的标签
                         $uibModalInstance.close($scope.tagClassNames[$scope.curIndex]);
                     }
                     return;
@@ -152,6 +182,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                     $uibModalInstance.dismiss('cancel');
                 };
 
+                //选中标签
                 $scope.indexSelected=function(index){
                     $scope.curIndex=index;
                 };
@@ -165,50 +196,58 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         });
 
         modalInstance.result.then(function (tagClassName) {
+            //将当前tag加入到选中的标签中
             addTagToTagClass($scope.component.allCustomTags[$scope.selectedIdx],tagClassName);
         }, function (tagClassName) {});
     }
+    //将tag加入到以tagClassName标识的标签中
     function addTagToTagClass(tag,tagClassName){
         for(var i=0;i<$scope.component.tagClasses.length;i++){
+            //找到name为tagClassName的标签
             if(tagClassName===$scope.component.tagClasses[i].name){
-                if($scope.component.tagClasses[i].tagArray===null){
-                    $scope.component.tagClasses[i].tagArray=[];
-                }
+                //查重
                 for(var j=0;j<$scope.component.tagClasses[i].tagArray.length;j++){
                     if($scope.component.tagClasses[i].tagArray[j].name===tag.name){
                         return;
                     }
                 }
+                //将tag加入到该标签中
                 $scope.component.tagClasses[i].tagArray.push(tag);
                 return;
             }
         }
     }
 
-    function openPanelEditTagClasses (index){
+    //标签管理模态框
+    function openPanelEditTagClasses (){
+
         var tagClassesManage=$scope.component.tagClasses.map(
+            // name:tagClass.name 标签名
+            // renamed:false      是否被改过名
+            // renaming:false     是否处在改名中状态
+            // delete:false       是否已经被删除
             function(tagClass){
                 return {
                     name:tagClass.name,
                     renamed:false,
                     renaming:false,
-                    delete:false,
-                    new:false
+                    deleted:false,
                 };
             });
         var defaultTagClassesLength=2;
+        //2个默认标签不能被改名或者删除
         var defaultTagClasses=tagClassesManage.splice(0, defaultTagClassesLength);
 
         var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'editTagClasses.html',
             controller: function($scope,$uibModalInstance){
-                $scope.tagClassesManage=tagClassesManage;
-                $scope.defaultTagClasses=defaultTagClasses;
+                $scope.tagClassesManage=tagClassesManage;   //自定义标签
+                $scope.defaultTagClasses=defaultTagClasses; //默认标签
                 $scope.$scopeCtl=$scope;
-                $scope.$scopeCtl.curTagClassNewName=null;
-                $scope.someTagClassRenaming=false;
-                $scope.addTagClass=false;
+                $scope.$scopeCtl.curTagClassNewName=null;   //改名后的新名字在有效性验证前存放在这里
+                $scope.someTagClassRenaming=false;          //标志位，如果有标签正在改名，会限制其他标签的操作
+                $scope.addTagClass=false;                   //标志位，如果正在添加新标签，会显示新标签命名框
                 //添加新标签
                 $scope.addTagClass = function () {
                     $scope.addTagClassFlag=true;
@@ -216,7 +255,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                     $scope.$scopeCtl.curTagClassNewName=null;
                     return;
                 };
-                //打开关闭重命名输入框
+                //打开/关闭重命名输入框
                 $scope.inputName=function(index){
                     if(index!==undefined&&index!==null){
                         var curTagClass=$scope.tagClassesManage[index];
@@ -242,8 +281,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                                 name:$scope.$scopeCtl.curTagClassNewName,
                                 renamed:false,
                                 renaming:false,
-                                delete:false,
-                                new:true
+                                deleted:false,
                             };
                             $scope.tagClassesManage.push(newTagClass);
                             $scope.addTagClassFlag=false;
@@ -269,8 +307,10 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
                     }
                     for(var i=0;i<$scope.tagClassesManage.length;i++){
                         if(name==$scope.tagClassesManage[i].name) {
-                            toastr.error('重复的名称');
-                            return false;
+                            if($scope.tagClassesManage[i].deleted===false){
+                                toastr.error('重复的名称');
+                                return false;
+                            }
                         }
                     }
                     if(!ProjectService.inputValidate(name)){
@@ -294,7 +334,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
             //delete
             //rename
             for(var i=0;i<$scope.component.tagClasses.length-defaultTagClassesLength;i++){
-                if(tagClassesManage[i].delete==true){
+                if(tagClassesManage[i].deleted==true){
                     tagClassesManage.splice(i, 1);
                     $scope.component.tagClasses.splice(i+defaultTagClassesLength, 1);
                     i--;
@@ -306,7 +346,7 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
             }
             if($scope.component.tagClasses.length-defaultTagClassesLength<tagClassesManage.length){
                 for(;i<tagClassesManage.length;i++){
-                    if(tagClassesManage[i].delete==false){
+                    if(tagClassesManage[i].deleted==false){
                         //addNewTagclass
                         var newTagclass=TagService.getNewTagClass();
                         newTagclass.name=tagClassesManage[i].name;
@@ -423,17 +463,17 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
             default: break;
         }
 
-        //全部列表中删除
-        TagService.deleteTagByName(name,function(){
-            readTagsInfo();
-        }.bind(this));
-        //当前标签列表中删除
-        var tags=$scope.component.curTagClass.tagArray;
-        for(i=0;i<tags.length;i++){
-            if(tags[i].name===name){
-                tags.splice(i, 1);
+        //从标签列表中删除
+        var tags;
+        for(var j=0;j<$scope.component.tagClasses.length;j++){
+            tags=$scope.component.tagClasses[j].tagArray;
+            for(i=0;i<tags.length;i++){
+                if(tags[i].name===name){
+                    tags.splice(i, 1);
+                }
             }
         }
+
     }
 
     //点击list里的自定义tag名称，将其先显示编辑面板上。
@@ -548,8 +588,8 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         openPanelEditTagClasses();
     }
 
-    function addToTagClass(index) {
-        openPanelAddToTagClass(index);
+    function addToTagClass(name) {
+        openPanelAddToTagClass(name);
     }
 
     function changeCurTagClass(){
@@ -567,30 +607,11 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         if($scope.component.curTagClass.name==='定时器'){
             $scope.component.timerTagShow=true;
         }else{
-            //将标签内的tag列表与allTags列表同步
+            //显示非定时器模式下的tag列表
             $scope.component.timerTagShow=false;
-            if($scope.component.curTagClass.name!='全部'){
-                var allTagsFlag=allTags.map(function(){
-                    return false;
-                });
-                for(var j=0;j<curTagClass.tagArray.length;j++){
-                    for(var k=0;k<allTags.length;k++){
-                        if(curTagClass.tagArray[j].name===allTags[k].name){
-                            allTagsFlag[k]=true;
-                            break;
-                        }
-                    }
-                }
-                for(var m=0;m<allTags.length;m++){
-                    if(allTagsFlag[m]===true){
-                        syncCurTagArray.push(allTags[m]);
-                    }
-                }
-                $scope.component.curTagClass.tagArray=syncCurTagArray;
-
-            }
 
         }
+
     }
 }]);
 
@@ -680,6 +701,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
         allTimerTags: null,
         selectedTagFun: selectedTagFun,
     };
+    $scope.selectedTagObj={tagName:null};
 
     $scope.$on('GlobalProjectReceived', function () {
         _initController();
@@ -749,6 +771,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
 
     //选择tag，并将其绑定到当前对象上
     function selectedTagFun() {
+        $scope.component.selectedTag=$scope.selectedTagObj.tagName;
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);
         });

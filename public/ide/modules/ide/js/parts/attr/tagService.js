@@ -232,7 +232,7 @@ ideServices.service('TagService', [function () {
 
     var allTags=new TagClass('全部','system',tags);
     var timeTags=new TagClass('定时器','timer',timerTags);
-    var defaultTagClass = new TagClass('default','custom',null);
+    var defaultTagClass = new TagClass('default','custom',[]);
     var tagClasses=[allTags,timeTags];
 
     //新增一个tagClass
@@ -317,5 +317,6 @@ ideServices.service('TagService', [function () {
         tags.splice(index, 1, newTagClass);
         cb && cb();
     };
+
 
 }]);
