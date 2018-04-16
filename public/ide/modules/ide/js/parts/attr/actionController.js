@@ -14,6 +14,9 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
     });
 
 
+    $scope.$on("MaskView",function(event,data){
+        $scope.myMask=data;
+    });
 
     function initUserInterface(){
         $scope.status={
@@ -259,6 +262,18 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
 
         //保存
         $scope.save = function (th) {
+            //add by tang
+            var cmd=th.action.commands;
+            for(var i=0;i<cmd.length;i++){
+                var symbol=cmd[i][0].symbol;
+                var tag=cmd[i][1].tag||cmd[i][1].value;
+                var val=cmd[i][2].tag||cmd[i][2].value;
+                if(symbol===""){
+                    alert("禁止使用空指令");
+                    return;
+                }
+            }
+
             //判断是否和初始一样
             if(th.action.newAction===false){
                 if (th.action.title===restoreValue){

@@ -25,6 +25,8 @@ ideServices
         var resourceUrl = '';
         var resourceNWUrl = '';
         var projectUrl = '';
+        var maskUrl='';
+
         var fontStyle = (function() {
             // 创建 <style> 标签
             var style = document.createElement("style");
@@ -206,7 +208,6 @@ ideServices
             //console.log('added font: ',fontFile,fontSheet,curRule)
         }
 
-
         //cache file to targetarray
         this.cacheFile = function (file, targetArray, scb, fcb) {
             // console.log(file)
@@ -313,7 +314,7 @@ ideServices
                 cb && cb();
             }
 
-            console.log(files)
+            //console.log(files)
 
         };
 
@@ -376,6 +377,14 @@ ideServices
         };
         this.getResourceUrl = function () {
             return resourceUrl;
+        };
+
+
+        this.setMaskUrl = function(url){
+            maskUrl = url;
+        };
+        this.getMaskUrl = function () {
+            return maskUrl;
         }
 
     }])
@@ -480,7 +489,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 
 
             function deleteUploadingItem(translatedFile) {
-
                 var uploadingArray = scope.component.top.uploadingArray;
                 for (var i = 0; i < uploadingArray.length; i++) {
                     if (uploadingArray[i].id == translatedFile.id) {
@@ -521,20 +529,17 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                         ResourceService.cacheFileToGlobalResources(translatedFile, function () {
                             //删除scope.uploadingArray中该项
                             deleteUploadingItem(translatedFile);
-                            //update
 
-                            //scope.component.top.files = ResourceService.getAllImages();
-                            // console.log('updating fonts')
                             scope.$emit('ResourceUpdate');
                         }.bind(this));
                     }.bind(this));
-                }
+                };
 
                 var errHandler = function () {
                     translatedFile.progress = '上传失败';
                     deleteUploadingItem(translatedFile);
 
-                }
+                };
 
                 /**
                  * 处理进度
@@ -739,6 +744,141 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 newSelectFile.name = fileNameArray.slice(0,-1).join('');
                 newSelectFile.src = _baseUrl + newSelectFile.id;
                 //console.log(newSelectFile)
+
+                return newSelectFile;
+            }
+        }
+    }
+}]);
+
+//模具框上传
+ideServices.directive("maskform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
+    return {
+        restrict:'AE',
+        template:"<input type='file' ngf-select='uploadFiles($file)'  ngf-multiple='true' />",
+        replace:'true',
+        link: function (scope) {
+            var path;
+            var fs;
+            var local = false;
+            try {
+                path = require('path');
+                fs = require('fs');
+                local = true;
+            } catch (e) {
+
+            }
+
+            scope.uploadFiles = function (file) {
+                if (file){
+                    if(isValidFile(file)){
+                        var translatedFile = transFile(file);
+                        scope.component.top.mask=translatedFile;
+                        upload(file,translatedFile);
+                    }else{
+                        toastr.warning('只支持图片格式');
+                    }
+                }
+            };
+
+            //格式处理
+            function isValidFile(file) {
+                var fileExt = file.name.split('.');
+                var fileFormat =fileExt[1].toLowerCase();
+                switch (fileFormat){
+                    case 'png':
+                    case 'jpg':
+                    case 'bmp':
+                    case 'jpeg':
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            function upload(file, translatedFile) {
+                    uploadServer(file, translatedFile);
+            }
+
+            function uploadServer(file, translatedFile) {
+                var curSize = ResourceService.getCurrentTotalSize();
+                var maxSize = ResourceService.getMaxTotalSize();
+                if (curSize>maxSize){
+                    toastr.info('图片大小超过限制');
+                    return;
+                }
+
+                /**
+                 * 上传成功处理
+                 * @param data
+                 * @param status
+                 * @param headers
+                 */
+                var successHandler = function(e){
+                    if (e.status == 200){
+                        toastr.info('上传成功');
+                        scope.$emit('MaskUpdate',scope.component.top.mask.src);
+                    }else{
+                        scope.$emit('MaskUpdate');
+                    }
+                };
+
+                var errHandler = function (e) {
+                    console.error(e);
+                    translatedFile.progress ='上传失败';
+                    switch (e.data.errMsg){
+                        case 'not logged in':
+                            toastr.info('请重新登录');
+                            break;
+                        case 'user not valid':
+                            toastr.info('请登录');
+                            break;
+                        default:
+                    }
+                };
+
+                /**
+                 * 处理进度
+                 * @param e
+                 */
+                var progressHandler = function(e){
+                    translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100)+'%';
+                };
+
+                Upload.upload({
+                    url: '/project/' + ResourceService.getResourceUrl().split('/')[2] + '/mask',
+                    data: {file: file, name: translatedFile.id}
+                }).then(
+                    successHandler,
+                    errHandler,
+                    progressHandler
+                )
+            }
+
+            /**
+             * 处理需要上传的文件,改变其id和名字.
+             * @param uploadingFile
+             * @returns {*}
+             */
+            var idnum=Math.ceil(Math.random() * 100000);//生成一个0-100000的随机数，作为id编码的起始位置
+            function transFile(uploadingFile){
+                var newSelectFile = {};
+                var _baseUrl= ResourceService.getMaskUrl();
+                if (!uploadingFile.name) {
+                    return null;
+                }
+                var fileNameArray = uploadingFile.name.split('.');//从.后缀开始分割我一个字符串数组，数组的第一个元素是名字，第二个元素是后缀名。
+
+                //生成唯一识别码，作为fileName。
+                var fileName = (idnum++).toString()+'.'+fileNameArray[fileNameArray.length-1];//顺序生成id
+                var fd = new FormData();
+                fd.append('file',uploadingFile);
+                fd.append('name',fileName);
+
+                _.extend(newSelectFile,uploadingFile);
+                newSelectFile.id  = fileName;
+                newSelectFile.name = fileNameArray.slice(0,-1).join('');
+                newSelectFile.src = _baseUrl + newSelectFile.id;
 
                 return newSelectFile;
             }

@@ -7,6 +7,10 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         initProject();
     });
 
+    $scope.$on("MaskView",function(event,data){
+        $scope.myMask=data;
+    });
+
     function initUserInterface(){
         readAnimationInfo();
         setAnimationAuthor();
@@ -118,6 +122,13 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             }
         };
         $scope.confirm = function (th) {
+            //add by tang
+            var scaleX=$scope.animation.animationAttrs.scale.srcScale.x,scaleY=$scope.animation.animationAttrs.scale.srcScale.y;
+            if(scaleX<0||scaleY<0){
+                alert("缩放倍率禁止使用负数");
+                return;
+            }
+
             if(th.animation.newAnimation===false){
                 if (th.animation.title===restoreValue){
                     $uibModalInstance.close($scope.animation);

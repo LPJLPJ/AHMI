@@ -296,8 +296,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
             }
             //change html title to name
-            var name = data && data.name || ''
-            document.title = '工程编辑-' + name
+            var name = data && data.name || '';
+            document.title = '工程编辑-' + name;
             if (data.content) {
                 //var globalProject = GlobalService.getBlankProject()
                 var globalProject = JSON.parse(data.content);
@@ -315,12 +315,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     height: resolution[1]
                 }
                 globalProject.maxSize = data.maxSize;
-
                 globalProject.projectId = id;
-
-
                 //console.log('globalProject',globalProject);
-
                 var resourceList = globalProject.resourceList;
                 // console.log('resourceList',resourceList);
                 var count = resourceList.length;
@@ -445,7 +441,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 }
             }
             //window.localStorage.setItem('projectId',id);
-            ResourceService.setResourceUrl('/project/' + id + '/resources/')
+            ResourceService.setResourceUrl('/project/' + id + '/resources/');
+            ResourceService.setMaskUrl('/project/' + id + '/mask/');
 
             $http({
                 method: 'GET',
@@ -756,7 +753,29 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             $scope.$on('GetTagsFromRemote', function (data) {
                 $scope.$broadcast('ChangeAllTags',data);
             });
+
         }
+
+        //add by tang
+        $scope.$on('ChangeMaskStyle',function(event,data){
+            if(typeof data=='object'){
+                $scope.$broadcast('MaskStyle',data);
+            }else{
+                $scope.$broadcast('MaskView',data)
+            }
+
+        });
+        $scope.$on('ChangeMaskAttr',function(event,data){
+            $scope.$broadcast('MaskAttr',data);
+        });
+        $scope.$on('MaskSwitch',function(event,data){
+                $scope.$broadcast('MaskCtrl',data);
+                $scope.$broadcast('MaskView',data);
+        });
+        $scope.$on('MaskUpdate',function(event,data){
+            $scope.$broadcast('ChangeMask',data)
+        });
+
 
         function reOpenProject(event, pid) {
             $scope.ide.loaded = false;

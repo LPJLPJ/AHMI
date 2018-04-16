@@ -102,7 +102,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     showRight: showRight,
                     showBottom: showBottom,
                     rotateCanvasLeft: rotateCanvasLeft,
-                    rotateCanvasRight: rotateCanvasRight
+                    rotateCanvasRight: rotateCanvasRight,
+                    maskSwitch:maskSwitch
                 },
                 simulator: {
                     show: false
@@ -146,6 +147,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function showBottom() {
             $scope.$emit('ChangeShownArea', 2);
+        }
+
+        $scope.maskView=false;
+        function maskSwitch(){
+            $scope.maskView=!$scope.maskView;
+            $scope.$emit('MaskSwitch',$scope.maskView)
         }
 
         function rotateCanvasLeft() {
@@ -1783,4 +1790,6 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
         }
         return resolution;
     }
+
+
 }]);

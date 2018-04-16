@@ -713,6 +713,10 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
         _readObjType();
     });
 
+    $scope.$on("MaskView",function(event,data){
+        $scope.myMask=data;
+    });
+
 
     //初始化控制器
     function _initController() {

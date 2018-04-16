@@ -70,6 +70,10 @@ $(function(){
     let treemap = d3.tree().size([height,width]);
 
     d3.json('/project/'+projectId+'/content',function(error,data){
+        if(!data.content){
+            $('#loading').hide();
+            return;
+        }
         project = JSON.parse(data.content);
         project.name = data.name;
         root = d3.hierarchy(project,function(d){
@@ -139,6 +143,7 @@ $(function(){
                 return d._children ? "lightsteelblue" : "#fff";
             });
 
+
         nodeEnter.append('text')
             .attr("dy", ".35em")
             .attr("x", function(d) {
@@ -147,7 +152,28 @@ $(function(){
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
             })
-            .text(function(d) { return d.data.name; })
+            .selectAll('tspan')
+            .data(function(d){
+                let str = d.data.name;
+                let start = 0;
+                let NUM = 9;
+                let result = [];
+                for(;start<str.length;start+=NUM){
+                    result.push(str.substr(start,NUM));
+
+                }
+                return result;
+            })
+            .enter()
+            .append('tspan')
+            .attr('x',function(d){
+                let text = d3.select(this.parentNode);
+                return text.attr('x')
+            })
+            .attr('dy',"1em")
+            .text(function(d){
+                return d
+            })
             .on("mouseover",toolTip.show)
             .on("mouseout",toolTip.hide);
 
