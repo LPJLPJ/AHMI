@@ -32,6 +32,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
         $scope.editTex = function(index){
             $scope.selectedIdx = index;
             var transTex = null;
+            var objInfo = null;
             if  (index === -1){
                 transTex = {
                     name:'default',
@@ -84,7 +85,6 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
             }, function () {
-                console.log('Modal dismissed at: ' + new Date());
             });
 
 

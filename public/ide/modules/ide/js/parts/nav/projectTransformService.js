@@ -454,7 +454,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                                 break;
                         }
                     }
-                    generalWidget = new WidgetModel.models['Button'](x, y, w, h, 'button', fontStyle, targetWidget.texList[0].slices, highLight);
+                    generalWidget = new WidgetModel.models['Button'](x, y, w, h, info.text, fontStyle, targetWidget.texList[0].slices, highLight);
                     generalWidget = generalWidget.toObject();
                     generalWidget.generalType = 'Button';
                     generalWidget.mode = Number(rawWidget.buttonModeId);

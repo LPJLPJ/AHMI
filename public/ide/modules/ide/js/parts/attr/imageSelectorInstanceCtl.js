@@ -154,11 +154,12 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
     };
 
     $scope.disableColorInput = function(slice,e){
-        console.log(slice,e)
+        //为了能够记录旧的color值，这里做了一点小处理，增加了oldColor
         if(slice.imgSrc){
+            slice._oldColor = slice.color;
             slice.color='rgba(0,0,0,0)';
         }else{
-            slice.color=_getRandomColor();
+            slice.color=slice._oldColor?slice._oldColor:_getRandomColor();
         }
     };
 
@@ -176,9 +177,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
 
     //edit by lixiang
     function cloneSlice(){
-        //console.log('open success');
         $scope.tempSlices= _.cloneDeep($scope.tex.slices);
-        //console.log($scope.tempSlices);
     }
 
     function enterColor(op) {
