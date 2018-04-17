@@ -1,7 +1,7 @@
 [
     {
-        "name": "主题1_电压_数字",
-        "indexOfRegister": 101,
+        "name": "主题2_电压_数字",
+        "indexOfRegister": 201,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -9,8 +9,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_电压_图片集",
-        "indexOfRegister": 102,
+        "name": "主题2_电压_图片集",
+        "indexOfRegister": 202,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -18,8 +18,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_电压_进度条",
-        "indexOfRegister": 103,
+        "name": "主题2_电压_进度条",
+        "indexOfRegister": 203,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -27,8 +27,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_电压_仪表盘",
-        "indexOfRegister": 104,
+        "name": "主题2_电压_仪表盘",
+        "indexOfRegister": 204,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -36,8 +36,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_电流_数字",
-        "indexOfRegister": 105,
+        "name": "主题2_电流_数字",
+        "indexOfRegister": 205,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -45,8 +45,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_电流_图片集",
-        "indexOfRegister": 106,
+        "name": "主题2_电流_图片集",
+        "indexOfRegister": 206,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -54,8 +54,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_电流_进度条",
-        "indexOfRegister": 107,
+        "name": "主题2_电流_进度条",
+        "indexOfRegister": 207,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -63,8 +63,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_电流_仪表盘",
-        "indexOfRegister": 108,
+        "name": "主题2_电流_仪表盘",
+        "indexOfRegister": 208,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -72,8 +72,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_剩余电量_数字",
-        "indexOfRegister": 109,
+        "name": "主题2_剩余电量_数字",
+        "indexOfRegister": 209,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -81,8 +81,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_剩余电量_图片集",
-        "indexOfRegister": 110,
+        "name": "主题2_剩余电量_图片集",
+        "indexOfRegister": 210,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -90,8 +90,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_剩余电量_进度条",
-        "indexOfRegister": 111,
+        "name": "主题2_剩余电量_进度条",
+        "indexOfRegister": 211,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -99,8 +99,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_剩余电量_仪表盘",
-        "indexOfRegister": 112,
+        "name": "主题2_剩余电量_仪表盘",
+        "indexOfRegister": 212,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -108,8 +108,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_续航里程_数字",
-        "indexOfRegister": 113,
+        "name": "主题2_续航里程_数字",
+        "indexOfRegister": 213,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -117,8 +117,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_续航里程_图片集",
-        "indexOfRegister": 114,
+        "name": "主题2_续航里程_图片集",
+        "indexOfRegister": 214,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -126,8 +126,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_续航里程_进度条",
-        "indexOfRegister": 115,
+        "name": "主题2_续航里程_进度条",
+        "indexOfRegister": 215,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -135,8 +135,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_续航里程_仪表盘",
-        "indexOfRegister": 116,
+        "name": "主题2_续航里程_仪表盘",
+        "indexOfRegister": 216,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -144,8 +144,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_转速_数字",
-        "indexOfRegister": 117,
+        "name": "主题2_转速_数字",
+        "indexOfRegister": 217,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -153,8 +153,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_转速_图片集",
-        "indexOfRegister": 118,
+        "name": "主题2_转速_图片集",
+        "indexOfRegister": 218,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -162,8 +162,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_转速_进度条",
-        "indexOfRegister": 119,
+        "name": "主题2_转速_进度条",
+        "indexOfRegister": 219,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -171,8 +171,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_转速_仪表盘",
-        "indexOfRegister": 120,
+        "name": "主题2_转速_仪表盘",
+        "indexOfRegister": 220,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -180,8 +180,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_车速_数字",
-        "indexOfRegister": 121,
+        "name": "主题2_车速_数字",
+        "indexOfRegister": 221,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -189,8 +189,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_车速_图片集",
-        "indexOfRegister": 122,
+        "name": "主题2_车速_图片集",
+        "indexOfRegister": 222,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -198,8 +198,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_车速_进度条",
-        "indexOfRegister": 123,
+        "name": "主题2_车速_进度条",
+        "indexOfRegister": 223,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -207,8 +207,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_车速_仪表盘",
-        "indexOfRegister": 124,
+        "name": "主题2_车速_仪表盘",
+        "indexOfRegister": 224,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -216,8 +216,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_温度_数字",
-        "indexOfRegister": 125,
+        "name": "主题2_温度_数字",
+        "indexOfRegister": 225,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -225,8 +225,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_温度_图片集",
-        "indexOfRegister": 126,
+        "name": "主题2_温度_图片集",
+        "indexOfRegister": 226,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -234,8 +234,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_温度_进度条",
-        "indexOfRegister": 127,
+        "name": "主题2_温度_进度条",
+        "indexOfRegister": 227,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -243,8 +243,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_温度_仪表盘",
-        "indexOfRegister": 128,
+        "name": "主题2_温度_仪表盘",
+        "indexOfRegister": 228,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -252,8 +252,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_文字报警",
-        "indexOfRegister": 129,
+        "name": "主题2_文字报警",
+        "indexOfRegister": 229,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -261,8 +261,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_小记里程",
-        "indexOfRegister": 130,
+        "name": "主题2_小记里程",
+        "indexOfRegister": 230,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -270,8 +270,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_总里程",
-        "indexOfRegister": 131,
+        "name": "主题2_总里程",
+        "indexOfRegister": 231,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -279,8 +279,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_遮盖",
-        "indexOfRegister": 132,
+        "name": "主题2_遮盖",
+        "indexOfRegister": 232,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -288,8 +288,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题1_车门状态",
-        "indexOfRegister": 133,
+        "name": "主题2_车门状态",
+        "indexOfRegister": 233,
         "register": true,
         "writeOrRead": "true",
         "value": 0,

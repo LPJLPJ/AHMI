@@ -750,10 +750,6 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 }
             });
 
-            $scope.$on('GetTagsFromRemote', function (data) {
-                $scope.$broadcast('ChangeAllTags',data);
-            });
-
         }
 
         //add by tang
