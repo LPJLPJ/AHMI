@@ -61,7 +61,10 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
         }else{
             type = 'custom';
         }
-        $scope.selectedIdx = index;
+
+        var tagName=$scope.component.curTagClass.tagArray[index].name;
+        $scope.selectedIdx = IndexInTagClass(tagName,$scope.component.tagClasses[0]);
+        index=$scope.selectedIdx;
         $scope.selectedType = type;
 
         var targetTag ;
@@ -600,6 +603,15 @@ ide.controller('TagCtrl', ['$scope','TagService','ProjectService','Type','$uibMo
 
         }
 
+    }
+    //返回tagName在tagClass的index
+    function IndexInTagClass(tagName,tagClass){
+        for(var i=0;i<tagClass.tagArray.length;i++){
+            if(tagName===tagClass.tagArray[i].name){
+                return i;
+            }
+        }
+        return -1;
     }
 }]);
 
