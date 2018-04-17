@@ -3406,9 +3406,70 @@
                                 添加新Tag
                             </button>
                             <button type="button"
-                                     ng-click=""
+                                     ng-click="component.importTags()"
                                      class="btn btn-default my-tag-button-import">导入tag
                             </button>
+                            <!--导入tags模板-->
+                            <script type="text/ng-template" id="tagsImport.html">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" style="margin-bottom: 5px">导入预设变量集<small></small></h3>
+                                    <p class="text-muted" style="margin-bottom: 0px">变量集将会追加到所有变量中，并自动归类到当前变量标签</p>
+                                </div>
+                                <div class="modal-body">
+                                    <h5>选项:</h5>
+                                    <div class="row" style="margin-bottom: 10px">
+                                        <div class="col-xs-5">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox"
+                                                       value="option1"
+                                                       ng-model="overlay"> 覆盖重名变量
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <h5>主题:</h5>
+                                    <div class="row" style="margin-bottom: 10px">
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default" target="_blank">预设</a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default1" target="_blank">主题1</a>
+                                            </label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default2" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default2" target="_blank">主题2</a>
+                                            </label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default3" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default3" target="_blank">主题3</a>
+                                            </label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default4" target="_blank">主题4</a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-primary"
+                                            type="button"
+                                            ng-disabled="disableBtn"
+                                            ng-click="ok()">{{btnText}}</button>
+                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                </div>
+                            </script>
                         </div>
 
                         <script type="text/ng-template" id="tagModal.html">
