@@ -11,6 +11,8 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
 var math = require('mathjs');
 
+var Papa = require('papaparse')
+
 var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev'){
@@ -185,6 +187,12 @@ module.exports =   React.createClass({
         var requiredResourceList = [];
         //handle required resources like key tex
         requiredResourceList = requiredResourceList.concat(InputKeyboard.texList);
+        requiredResourceList = requiredResourceList.concat({
+            type:'csv',
+            name:'contacts',
+            id:'contacts',
+            src:'/public/images/contacts.csv'
+        })
         // console.log(requiredResourceList)
 
         var requiredResourceNum = requiredResourceList.length;
@@ -230,6 +238,44 @@ module.exports =   React.createClass({
                         newResource.content = newImg;
                         imageList.push(newResource)
 
+                        break;
+                    case 'csv':
+                        var csv = []
+                        var header = []
+                        var headerNum = 0
+                        var isHeader = true
+                        Papa.parse("/public/images/contacts.csv", {
+                            download: true,
+                            step: function(row) {
+                                if (isHeader){
+                                    header = row.data[0] || []
+                                    headerNum = header.length
+                                    isHeader = false
+                                }else{
+                                    if(row.data[0]&&row.data[0].length){
+                                        csv.push(row.data[0])
+                                    }
+
+                                }
+
+                            },
+                            error:function (e) {
+                                console.log("error ",e)
+                            },
+                            complete: function() {
+                                this.contacts = {
+                                    header:header,
+                                    csv:csv
+                                }
+                                requiredResourceNum = requiredResourceNum - 1;
+                                //update loading progress
+                                this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
+                                if (requiredResourceNum <= 0) {
+                                    // console.log(imageList);
+                                    callBack(data);
+                                }
+                            }.bind(this)
+                        });
                         break;
                     default:
                         num = num - 1
@@ -1477,6 +1523,9 @@ module.exports =   React.createClass({
                 case 'MyAnimation':
                     this.drawAnimation(curX, curY, widget, options,cb);
                     break;
+                case 'MyContacts':
+                    this.drawContacts(curX,curY,widget,options,cb)
+                    break;
             }
 
         }
@@ -1577,6 +1626,9 @@ module.exports =   React.createClass({
                 break;
             case 'MyAnimation':
                 this.paintAnimation(curX, curY, widget, options,cb);
+                break;
+            case 'MyContacts':
+                this.paintContacts(curX,curY,widget,options,cb);
                 break;
         }
 
@@ -3644,6 +3696,39 @@ module.exports =   React.createClass({
         cb && cb();
 
     },
+    drawContacts:function (curX,curY,widget,options,cb) {
+        if(this.contacts){
+            var cellPhone = this.getValueByTagName(widget.tag,0)
+            widget.curContact = null
+            if (cellPhone){
+                if(this.contacts&&this.contacts.csv){
+
+                    for(var i=0;i<this.contacts.csv.length;i++){
+                        var curRow = this.contacts.csv[i]
+                        for(var j=2;j<curRow.length;j++){
+                            if (curRow[j] == cellPhone){
+                                widget.curContact = {
+                                    cellPhone:cellPhone,
+                                    name:curRow[0]+curRow[1]
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    paintContacts:function (curX, curY, widget, options,cb) {
+        if (widget.curContact){
+            //paint
+            //paintName
+
+            //paintCellPhone
+
+
+        }
+    },
     drawOscilloscope: function (curX, curY, widget, options,cb) {
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
@@ -3959,6 +4044,7 @@ module.exports =   React.createClass({
         }
         offctx.restore();
     },
+
     drawBg: function (x, y, w, h, imageName, color, ctx) {
         this.drawBgColor(x, y, w, h, color, ctx);
         this.drawBgImg(x, y, w, h, imageName, ctx);

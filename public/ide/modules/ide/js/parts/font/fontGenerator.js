@@ -41,7 +41,7 @@
         var x=0,y=0
         var column = 0
         var row = 0
-        for(var i = 0;i<128;i++){
+        for(var i = 0;i<options.charNum;i++){
             row = Math.ceil(i/gridSize.w)
             column = i - (row-1)*gridSize.w
             if (options.showGrid) {
@@ -68,10 +68,11 @@
     function generateSingleFont(font,options) {
         var fontSize = font['font-size']||24;
         options = options||{};
+        options.charNum = options.charNum || 128
         //add padding
         var paddingRatio = options.paddingRatio||1.0;
         var paddingFontSize=paddingRatio*fontSize;
-        gridSize = calCanvasSize(paddingFontSize,128);
+        gridSize = calCanvasSize(paddingFontSize,options.charNum);
         if (gridSize) {
             initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize);
             var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (fontSize) + 'px' + ' ' + ('"' + font['font-family'] + '"');
