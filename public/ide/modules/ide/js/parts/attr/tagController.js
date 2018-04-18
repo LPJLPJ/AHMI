@@ -35,6 +35,7 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
         editTagClass: editTagClass,
         changeCurTagClass: changeCurTagClass,
         addToTagClass: addToTagClass,
+        regCheckboxClick:regCheckboxClick,
 
         importTags: importTags
     };
@@ -64,10 +65,16 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
         } else {
             type = 'custom';
         }
-
-        var tagName=$scope.component.curTagClass.tagArray[index].name;
-        $scope.selectedIdx = IndexInTagClass(tagName,$scope.component.tagClasses[0]);
-        index=$scope.selectedIdx;
+        if(type !=='timer'){
+            if(index!=-1){
+                var tagName=$scope.component.curTagClass.tagArray[index].name;
+                $scope.selectedIdx = IndexInTagClass(tagName,$scope.component.tagClasses[0]);
+                index=$scope.selectedIdx;
+            }else{
+                $scope.selectedIdx =index;
+            }
+        }
+        $scope.selectedIdx =index;
         $scope.selectedType = type;
 
         var targetTag;
@@ -117,6 +124,7 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
                 TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
                     readTagsInfo();
                 }.bind(this));
+                editTagInTagClass(tagName,newTag,$scope.component.curTagClass);
 
             } else if ($scope.selectedType == 'timer') {
                 //edit timer tag
@@ -366,10 +374,12 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
     }
 
     function noDuplication(tag, tags) {
-        for (var i = 0; i < tags.length; i++) {
-            if (tag.name == tags[i].name) {
-                toastr.error('重复的tag名称');
-                return false;
+        if(tag.type==='custom'){
+            for (var i = 0; i < tags.length; i++) {
+                if (tag.name == tags[i].name) {
+                    toastr.error('重复的tag名称');
+                    return false;
+                }
             }
         }
         return true;
@@ -610,8 +620,8 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
         } else {
             //显示非定时器模式下的tag列表
             $scope.component.timerTagShow = false;
-
         }
+        syncTagClassTagArray($scope.component.curTagClass);
 
     }
     //返回tagName在tagClass的index
@@ -622,6 +632,30 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
             }
         }
         return -1;
+    }
+    //更新某个tagclass中的某个tag
+    function editTagInTagClass(tagName,newTag,tagClass){
+        var index=IndexInTagClass(tagName,tagClass);
+        tagClass.tagArray[index]=newTag;
+    }
+    //同步标签的tagArray
+    function syncTagClassTagArray(tagClass){
+        for(var i=0;i<tagClass.tagArray.length;i++){
+            for(var j=0;j<$scope.component.allTags.length;j++){
+                if(tagClass.tagArray[i].name===$scope.component.allTags[j].name){
+                    tagClass.tagArray[i]=$scope.component.allTags[j];
+                }
+            }
+        }
+    }
+    //regCheckboxClick
+    function regCheckboxClick(tag){
+        if($scope.component.curTagClassName!==$scope.component.tagClasses[0].name){
+            var index=IndexInTagClass(tag.name,$scope.component.tagClasses[0]);
+            TagService.editTagByIndex(index, tag, function () {
+                readTagsInfo();
+            });
+        }
     }
 
     /**

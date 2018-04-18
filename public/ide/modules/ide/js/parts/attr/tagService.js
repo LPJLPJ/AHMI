@@ -316,7 +316,8 @@ ideServices.service('TagService', [function () {
             return;
         }
         var newTagClass = _.clone(tagClass);
-        tags.splice(index, 1, newTagClass);
+        // tags.splice(index, 1, newTagClass);
+        tagClasses.splice(index, 1, newTagClass);
         cb && cb();
     };
 

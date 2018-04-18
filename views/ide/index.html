@@ -3624,19 +3624,20 @@
                                     <td>标签</td>
                                     <td>删除</td>
                             </tr>
-                            <tr ng-repeat="tags in component.curTagClass.tagArray track by $index" class="tagTr"
+                            <tr ng-repeat="tag in component.curTagClass.tagArray track by $index" class="tagTr"
                                 ng-class="{'selected':selected==$id}">
                                 <td ng-click="component.openPanel($index,'custom')">
-                                    <div class="tagName">{{tags.name}}</div>
+                                    <div class="tagName">{{tag.name}}</div>
                                 </td>
-                                <td><div class="tagReg">{{tags.indexOfRegister}}</div></td>
+                                <td><div class="tagReg">{{tag.indexOfRegister}}</div></td>
                                 <td><input type="checkbox"
-                                               class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
-                                               ng-model="tags.register">
+                                           class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
+                                           ng-change="component.regCheckboxClick(tag)"
+                                           ng-model="tag.register">
                                     </td>
-                                    <td><i class="iconfont" ng-click="component.addToTagClass(tags.name)">
+                                    <td><i class="iconfont" ng-click="component.addToTagClass(tag.name)">
                                         &#xe7c5;</i></td>
-                                    <td><i class="iconfont" ng-click="component.deleteTag(tags.name,tags.type)">
+                                    <td><i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">
                                     &#xe627;</i></td>
                                 <!--<td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"-->
                                          <!--ng-click="component.deleteTag($index)"></td>-->
@@ -3659,8 +3660,9 @@
                                 <td ng-click="component.openPanel($index,'timer')">{{timerTags.name}}</td>
                                 <td><div class="tagReg">{{timerTags.indexOfRegister}}</div></td>
                                 <td><input type="checkbox"
-                                               class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
-                                               ng-model="timerTags.register">
+                                           class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
+                                           ng-click="component.regCheckboxClick(timerTags)"
+                                           ng-model="timerTags.register">
                                     </td>
                             </tr>
                         </table>
