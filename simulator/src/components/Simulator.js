@@ -3721,13 +3721,33 @@ module.exports =   React.createClass({
     },
     paintContacts:function (curX, curY, widget, options,cb) {
         if (widget.curContact){
-            //paint
+
             //paintName
+            var offctx = this.offctx;
+            var info  = widget.info
+            var curWidth = widget.info.width
+            var curHeight = widget.info.height
+
+            //paint
+            this.drawBg(curX,curY,curWidth,curHeight,widget.texList[0].slices[0].imgSrc,widget.texList[0].slices[0].color)
+
+            var fontString = (widget.info.fontStyle||'') + " " + widget.info.fontBold + " " + widget.info.fontSize + "px" + " " + '"'+widget.info.fontFamily+'"';
+            offctx.save()
+            //console.log(fontString)
+            offctx.font = fontString
+            offctx.fillStyle = info.fontColor
+            offctx.fillText(widget.curContact.name,info.nameOffsetX,info.nameOffsetY)
+            offctx.fillText(widget.curContact.cellPhone,info.numOffsetX,info.numOffsetY)
+
+
+            offctx.restore()
+
 
             //paintCellPhone
 
 
         }
+        cb && cb()
     },
     drawOscilloscope: function (curX, curY, widget, options,cb) {
         var lowAlarm = widget.info.lowAlarmValue;
