@@ -934,7 +934,43 @@ ideServices
                 }]
 
             }
-        }
+        };
+
+        this.getDefaultContacts = function(){
+            var info={
+                width:200, height:80,
+                left:0, top:0,
+                originX: 'center', originY: 'center',
+
+                textName:'XXX',
+                textNum:'***********',
+                nameOffsetX:10,nameOffsetY:10, //姓名在控件内的偏移
+                numOffsetX:10,numOffsetY:40,   //号码在控件内的偏移
+                fontFamily:"宋体",
+                fontSize:20,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:'',
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewContacts',
+                type: Type.MyContacts,
+                expand:true,
+                zIndex:0,
+                texList:[{
+                    name:'背景',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'背景'
+                    }]
+                }]
+
+            }
+        };
 
 
         function _getRandomColor(){

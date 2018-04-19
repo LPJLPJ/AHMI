@@ -1188,6 +1188,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 case 'MyTexTime':
                     node.add(new fabric.MyTexTime(dataStructure, initiator));
                     break;
+                case 'MyContacts':
+                    node.add(new fabric.MyContacts(dataStructure,initiator));
                 default :
                     console.error('not match widget in preprocess!');
                     break;
