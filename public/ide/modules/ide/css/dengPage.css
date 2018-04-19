@@ -414,6 +414,12 @@
     border-left:1px solid #ccc;
     border-right:1px solid #ccc;
 }
+.deng-attr-item .listTable td:not(:first-child) {
+    /*background: #cccc99;*/
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
+    text-align: center;
+}
 .deng-attr-item .listTable tr .tagName{
     overflow: hidden;
     text-overflow: ellipsis;
@@ -424,9 +430,9 @@
 .deng-attr-item .listTable tr .tagReg{
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100px;
-    width: 60px;
-    white-space: nowrap;
+    max-width: 30px;
+    width: 30px;
+    /*white-space: nowrap;*/
 }
 .deng-attr-item .listTable tr .icon-close {
     width:20px;
@@ -607,3 +613,163 @@
     float: right;
 }
 .texRow:hover{ background-color:#f5f5f5;}
+
+.my-tagSelect-main-span{
+    margin-top:20px !important;
+}
+
+.my-tagSelect-span-left{
+    float: left;
+    width: auto !important;
+}
+
+.my-tagSelect-span-right{
+    float: right;
+    width: auto !important;
+    margin-right: 10px !important;
+}
+
+.my-tagSelect-input{
+    float:right;
+    height: 16px !important;
+    width: 16px !important;
+    margin: 6px 0 !important;
+}
+
+.my-tagSelect-select{
+    width: 50% !important;
+    float: left !important;
+}
+
+.my-tagSelect-main-div{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding:10px;
+    width: 100%;
+    min-width: 250px;
+    vertical-align: middle
+}
+
+.my-tagSelect-div{
+    vertical-align: middle;
+    margin:0 0 40px 0;
+    padding-right:20px;
+    line-height: 28px
+}
+
+.my-tagSelect-tagSelect{
+    margin:0!important;
+    width: 100%!important;
+}
+
+.my-action-label{
+    float: left;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+    line-height: 32px
+}
+
+.my-action-input-width{
+    width: 30%;
+}
+
+.my-action-span{
+    float: left;
+    line-height: 32px;
+}
+.my-action-td{
+    width: 40% !important;
+    padding: 8px 20px !important;
+}
+.my-action-div-main{
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+.my-action-span-width{
+    width: 40px;
+}
+.my-action-tag-select{
+    width: 80%;
+    display: inline-block;
+}
+.my-action-check-box{
+    height: 16px;
+    width: 16px;
+    margin: 8px !important;
+}
+.my-action-input-value{
+    width: 250px;
+    margin: 0;
+    display: inline-block;
+}
+
+.my-tag-tag-calss-div{
+    width: 100%;
+    display: block
+}
+.my-tag-tag-calss-div-pad{
+    padding: 10px 0 20px 0
+}
+.my-tag-tag-calss-select{
+    display: inline-block;
+    width: 60% !important;
+}
+.my-tag-timer{
+    margin-bottom:20px;
+    vertical-align: middle;
+    line-height: 28px;
+}
+.my-tag-timer-main-div{
+    margin: 0 10px 10px 10px;
+    display: inline-block;
+    position: relative;
+    float:right;
+    line-height: 28px;
+}
+.my-tag-timer-div{
+    display: inline-block;
+    height: 28px;
+    border: 1px solid #ccc;
+    width: 28px;
+    text-align: center;
+    background-color: #eee;
+    float: left;
+}
+.my-tag-timer-input{
+    height: 28px !important;
+    margin: 0;
+    text-align: center !important;
+    display: inline-block;
+    width: 20% !important;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    float: left;
+}
+.my-tag-button-import{
+    margin-right: 10px
+}
+.my-tag-add-to-div{
+    max-height: 250px;
+    padding: 20px
+}
+.my-tag-add-to-td{
+    border-top: none !important;
+    padding: 5px !important;
+}
+.my-tag-edit-table{
+    text-align: center;
+    margin: 0
+}
+.my-tag-edit-tr{
+    width: 100%;
+    background-color: #eee
+}
+.my-tag-edit-td{
+    text-align: left;
+    padding-left: 30px !important;
+}
+.my-tag-edit-td-width{
+    width: 60%;
+}

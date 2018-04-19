@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tags Preview</title>
+    <link href="../../public/libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">预设变量:<%=title%></a>
+        </div>
+    </div>
+
+</nav>
+<div class="container">
+    <table class="table table-striped">
+        <tr>
+            <th>#</th>
+            <th>变量名称</th>
+            <th>是否启用寄存器</th>
+            <th>寄存器号</th>
+            <th>变量类型</th>
+        </tr>
+        <% for(var i=0,il=tags.length;i<il;i++){%>
+            <tr>
+
+                <td><%=i%></td>
+                <td><%=tags[i].name%></td>
+                <td><%=(tags[i].register?"是":"否")%></td>
+                <td><%=tags[i].indexOfRegister%></td>
+                <td><%=(tags[i].type==='custom'?'自定义':'系统')%></td>
+            </tr>
+        <% } %>
+    </table>
+</div>
+
+
+<script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
+</body>
+</html>
