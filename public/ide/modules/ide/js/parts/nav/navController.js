@@ -103,7 +103,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     showBottom: showBottom,
                     rotateCanvasLeft: rotateCanvasLeft,
                     rotateCanvasRight: rotateCanvasRight,
-                    maskSwitch:maskSwitch
+                    maskSwitch: maskSwitch
                 },
                 simulator: {
                     show: false
@@ -149,10 +149,11 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             $scope.$emit('ChangeShownArea', 2);
         }
 
-        $scope.maskView=false;
-        function maskSwitch(){
-            $scope.maskView=!$scope.maskView;
-            $scope.$emit('MaskSwitch',$scope.maskView)
+        $scope.maskView = false;
+
+        function maskSwitch() {
+            $scope.maskView = !$scope.maskView;
+            $scope.$emit('MaskSwitch', $scope.maskView)
         }
 
         function rotateCanvasLeft() {
@@ -799,6 +800,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultTexNum();
             } else if (_index === 15) {
                 newWidget = TemplateProvider.getDefaultTexTime();
+            } else if (_index === 16) {
+                newWidget = TemplateProvider.getDefaultContacts();
             }
             else {
                 return;
@@ -1161,6 +1164,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 case 'MyTexNum':
                     node.add(new fabric.MyTexNum(dataStructure, initiator));
                     break;
+                case 'MyContacts':
+                    node.add(new fabric.MyContacts(dataStructure, initiator));
+                    break;
                 default :
                     console.error('not match widget in preprocess!');
                     break;
@@ -1399,7 +1405,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                             return;
                         }
                         console.log('data', data);
-                        $scope.$emit('GetTagsFromRemote',data);
+                        $scope.$emit('GetTagsFromRemote', data);
                     }
                 }]
             });

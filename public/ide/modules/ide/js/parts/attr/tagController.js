@@ -452,6 +452,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyVideo:
             case Type.MyAnimation:
             case Type.MyTexNum:
+            case Type.MyContacts:
                 $scope.component.showTagPanel = true;
                 break;
             default:

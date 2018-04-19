@@ -833,25 +833,6 @@
                                    ng-model="component.object.level.name"
                                    ng-keypress="component.enterName($event)">
                         </div>
-
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">颜色</span>-->
-
-                            <!--<input colorpicker="rgba"-->
-                                   <!--type="text"-->
-                                   <!--class="my-attr-number-input form-control"-->
-                                   <!--ng-model="component.object.level.backgroundColor"/>-->
-                        <!--</div>-->
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">图片</span>-->
-
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.subLayer.selectImage"-->
-                                    <!--ng-change="component.subLayer.enterImage($event)">-->
-                                <!--<option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}-->
-                                <!--</option>-->
-
-                            <!--</select>-->
-                        <!--</div>-->
                     </div>
                     <div ng-show="component.object.type=='MySlide'&&!myMask">
                         <div class="my-attr-item lg">
@@ -909,15 +890,6 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">纹理</span>-->
-                            <!--<p ng-repeat="subSlide in component.object.level.subSlides">{{subSlide.name}}</p>-->
-                            <!--<p>-->
-                                <!--<button class="btn btn-default" style="padding: 2px 8px;"-->
-                                        <!--ng-click="component.slide.addSubSlide()">新建纹理-->
-                                <!--</button>-->
-                            <!--</p>-->
-                        <!--</div>-->
                     </div>
 
                     <div ng-show="component.object.type=='MyButton'&&!myMask">
@@ -2892,7 +2864,63 @@
                                type="number">
                         </div>
                     </div>
+                    <div ng-show="component.object.type=='MyContacts'&&!myMask">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">名称</span>
+                            <input class="my-attr-number-input form-control form-control"
+                                   type="text"
+                                   ng-model="component.object.level.name"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterName($event)">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control form-control short-input"
+                                   ng-model="component.object.level.info.left"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                    </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title ">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                        </div>
+                    </div>
                 </div>
                 <!--example of select image-->
                 <div ng-controller="TexCtl" class="tex-container" ng-show="showTexPanel&&!myMask">
@@ -3580,7 +3608,7 @@
                             </select>
                         </div>
                     </div>
-                    <div ng-show="component.object.type=='MyButton'||component.object.type==='MySwitch'||component.object.type==='MySlide'">
+                    <div ng-show="component.object.type=='MyButton'||component.object.type==='MySwitch'||component.object.type==='MySlide'||component.object.type==='MyContacts'">
                         <div class="my-attr-item xiangPage-fontfamily" ng-controller="characterSetCtrl">
                             <span class="my-attr-title xiangPage-title">字体</span>
                             <select class="form-control xiangPage-selected"
