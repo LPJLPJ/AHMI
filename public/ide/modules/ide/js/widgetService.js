@@ -4245,9 +4245,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         var textAlign=textAlign;
         var textBaseline=textBaseline;
         var ctx=ctx;
-
+        ctx.save();
         try{
             ctx.beginPath();
+            ctx.rect(x,y,w,h);
+            ctx.clip();
             //填充背景色
             if(color){
                 ctx.fillStyle=color;
@@ -4271,12 +4273,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.fillText(text,x+w,y+h);
                 }
             }
-            ctx.closePath();
-            ctx.stroke();
         }catch(err){
             console.log('error');
         }
-
+        ctx.restore();
     }
 
     //myRotaryKnob
