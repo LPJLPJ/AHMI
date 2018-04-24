@@ -720,7 +720,7 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title">背景图片</span>
+                            <span class="my-attr-title dengPage-title" style="width: 100%">背景图片(禁止使用带透明区域的图片)</span>
 
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-model="component.page.selectImage" ng-change="component.page.enterImage($event)">
@@ -3302,19 +3302,40 @@
                     </script>
 
                 </div>
-                <div ng-controller="TagSelectCtl" ng-show="component.showTagPanel&&!myMask" class="my-attr-item lg deng-bgTags" >
-                    <span class="my-attr-title ">变量</span>
-                    <select ng-model="component.selectedTag" ng-change="component.selectedTagFun()"
-                            class="my-attr-number-input form-control ng-pristine ng-untouched ng-valid ng-not-empty form-control">
-                        <option value="">---</option>
-                        <option ng-repeat="customTag in component.allCustomTags|filter:{bindMod:'default'} track by $index"
-                                value="{{customTag.name}}">{{customTag.name}}
-                        </option>
-                        <option ng-repeat="timerTag in component.allTimerTags" value="{{timerTag.name}}">
-                            {{timerTag.name}}
-                        </option>
-                    </select>
+
+                <!--tag控制-->
+                <script type="text/ng-template" id="tagSelect.html">
+                    <div class="my-attr-item lg deng-bgTags">
+                        <div class="my-tagSelect-main-div">
+                            <div class="my-tagSelect-div">
+                                <span class="my-tagSelect-span-left">标签</span>
+                                <select ng-model="component.curTagClassName"  ng-focus="component.syncTagClasses()" ng-change="component.changeCurTagClass()"
+                                        class="form-control my-tagSelect-select">{{component.curTagClassName}}
+                                    <option ng-repeat="tagClass in component.tagClasses"
+                                            value="{{tagClass.name}}">{{tagClass.name}}
+                                    </option>
+                                </select>
+                                <input type="checkbox" ng-model="component.showRegValidTagsFlag" ng-click="component.showRegValidTags()" class=" my-tagSelect-input">
+                                    <span class="my-tagSelect-span-right">寄存器</span>
+                            </div>
+                            <div >
+                                <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()"
+                                        class="form-control my-tagSelect-tagSelect">
+                                    <option value="">---</option>
+                                    <option ng-repeat="customTag in component.curTagArray"
+                                            value="{{customTag.name}}">{{customTag.name}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </script>
+
+                <div ng-show="component.showTagPanel"  class="my-attr-item lg deng-bgTags" ng-controller='TagSelectCtl'>
+                    <span class="my-tagSelect-main-span">变量</span>
+                    <tag-select bind="selectedTagObj" action-function="component.selectedTagFun()"></tag-select>
                 </div>
+
 
                 <!--Actions-->
                 <div ng-controller="ActionCtl" ng-show="showActionPanel&&!myMask">
@@ -3341,8 +3362,8 @@
                         </div>
                         <div class="modal-body dengModel-body">
                             <div class="modal-title form-group modelPart">
-                                <label for="actionName">动作名称</label>
-                                <input class="form-control"
+                                <label for="actionName" class="my-action-label">动作名称</label>
+                                <input class="form-control my-action-input-width"
                                        id="actionName"
                                        type="text"
                                        ng-model="action.title"
@@ -3352,7 +3373,7 @@
                             </div>
 
                             <div class="modal-title form-group modelPart">
-                                <span>触发条件</span>
+                                <span class="my-action-span">触发条件</span>
                                 <select class="form-control dengModel-trigger" ng-model="action.trigger"
                                         ng-options="trigger.value as trigger.name for trigger in triggers"></select>
                             </div>
@@ -3368,47 +3389,63 @@
                                         </div>
                                     </td>
 
-                                    <td>
+                                    <td class="my-action-td">
                                         <div class="form-group modelPart">
-                                            <span>变量</span>
-                                            <select class="form-control" ng-model="chosenCmd[1].tag">
-                                                <option value="">--</option>
-                                                <option ng-if="showCustomTags" ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
-                                                <option ng-repeat="timerTag in timerTags" value="{{timerTag}}">
-                                                    {{timerTag}}
-                                                </option>
-                                            </select>
-                                            <input class="form-control modelPart" type="text"
-                                                   ng-model="chosenCmd[1].value"/>
+                                            <span>操作数1</span>
+                                            <div class="my-action-div-main">
+                                                <div>
+                                                    <span class="my-action-span">启用变量</span>
+                                                    <input type="checkbox" ng-model='selectedTagObjArray[0].useTag' ng-click="usetagSwitch(0)" class="my-action-check-box">
+                                                </div>
+                                                <div ng-show="selectedTagObjArray[0].useTag">
+                                                    <span  class="my-action-span my-action-span-width">变量</span>
+                                                    <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
+                                                </div>
+                                                <div ng-show="!selectedTagObjArray[0].useTag">
+                                                    <span  class="my-action-span my-action-span-width">值</span>
+                                                    <input class="form-control modelPart my-action-input-value" type="text"
+                                                           ng-model="chosenCmd[1].value"/>
+                                                </div>
+                                            </div>
+
+
                                         </div>
                                     </td>
 
-                                    <td>
+                                    <td class="my-action-td">
                                         <div class="form-group modelPart">
-                                            <span>值</span>
-                                            <select class="form-control" ng-model="chosenCmd[2].tag">
-                                                <option value="">--</option>
-                                                <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
-                                                <option ng-repeat="timerTag in timerTags" value="{{timerTag}}">
-                                                    {{timerTag}}
-                                                </option>
-                                            </select>
-                                            <input class="form-control modelPart" type="number"
-                                                   ng-model="chosenCmd[2].value" ng-keyup="checkValueIsInt()"/>
+                                            <span>操作数2</span>
+                                            <div class="my-action-div-main">
+                                                <div>
+                                                    <span  class="my-action-span">启用变量</span>
+                                                    <input type="checkbox" ng-model='selectedTagObjArray[1].useTag' ng-change="usetagSwitch(1)" class="my-action-check-box">
+                                                </div>
+                                                <div ng-show="selectedTagObjArray[1].useTag">
+                                                    <span  class="my-action-span my-action-span-width">变量</span>
+                                                    <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[1]" action-function="actionFunction(1)"></tag-select>
+                                                </div>
+                                                <div  ng-show="!selectedTagObjArray[1].useTag">
+                                                    <span  class="my-action-span my-action-span-width">值</span>
+                                                    <input class="form-control modelPart my-action-input-value" type="text"
+                                                           ng-model="chosenCmd[2].value"/>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-
+                            <div style="float: left;width: 15%">
+                                <button type="button" class="btn btn-default add-option" ng-click="addNewCmd()">添加指令</button>
+                            </div>
                             <div class="dengModal-table-display">
-                                <table class="table table-bordered table-hover">
+                                <table style="width: 90%;padding: 20px;margin: 0" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
                                         <td class="col-xs-1">#</td>
                                         <td class="col-xs-1">操作</td>
-                                        <td class="col-xs-1">变量</td>
-                                        <td class="col-xs-1">值</td>
+                                        <td class="col-xs-1">操作数1</td>
+                                        <td class="col-xs-1">操作数2</td>
                                         <td class="col-xs-1"></td>
                                     </tr>
                                     </thead>
@@ -3427,8 +3464,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <button type="button" class="btn btn-default add-option" ng-click="addNewCmd()">添加指令
-                            </button>
+
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
@@ -3776,24 +3812,116 @@
 
             </div>
             <!-- 变量栏-->
-            <div class="my-panel-item deng-pannel-item" style="overflow: auto;" ng-show="component.top.currentNav==2">
-                <div ng-controller="TagCtrl" class="TimeCtrl">
-                    <span>定时器</span>
-                    <input class="form-control" type="number" ng-model="component.timerNum" ng-keypress="component.setTimerNum($event)"
-                           ng-blur="component.restoreTimerNum()">
-                </div>
+            <div class="my-panel-item deng-pannel-item" ng-show="component.top.currentNav==2">
+                <div ng-controller="TagCtrl">
+                    <div class="my-attr-item deng-tags my-tag-tag-calss-div">
+                        <span class="my-attr-title xiangPage-title">标签</span>
+                        <div class="my-tag-tag-calss-div-pad">
+                            <select class="form-control xiangPage-selected my-tag-tag-calss-select"
+                                    ng-model="component.curTagClassName" ng-click="component.changeCurTagClass()">{{component.curTagClassName}}
+                                <option ng-repeat="classItem in component.tagClasses track by $index" value="{{classItem.name}}" >{{classItem.name}}</option>
+                            </select>
+                            <button type="button"  ng-click="component.editTagClass()" class="btn btn-default">标签管理</button>
+                        </div>
 
-                <div ng-controller="TagCtrl" class="my-attr-item deng-attr-item lg deng-tags">
-                    <div class="addTag-container">
-                        <span>Tags</span>
-                        <button type="button" id=""
-                                ng-click="addNewTag()"
-                                class="btn btn-default">
-                            添加新Tag
-                        </button>
                     </div>
+                    <div class="TimeCtrl my-tag-timer" ng-show="component.timerTagShow==true">
+                        <span>定时器数量：</span>
+                        <div class="my-tag-timer-main-div">
+                            <div class="my-tag-timer-div"
+                                 ng-click="component.minusTimerNum()" ng-blur="component.restoreTimerNum()"><span class="glyphicon glyphicon-minus"></span>
+                            </div>
+                            <input class="form-control my-tag-timer-input"
+                                   ng-model="component.timerNum" ng-keypress="component.setTimerNum($event)"
+                                   ng-blur="component.restoreTimerNum()">
 
-                    <script type="text/ng-template" id="tagModal.html">
+                            <div class="my-tag-timer-div"
+                                 ng-click="component.addTimerNum()" ng-blur="component.restoreTimerNum()"><span class="glyphicon glyphicon-plus"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-attr-item deng-attr-item lg deng-tags">
+                        <div class="addTag-container"  ng-show="component.timerTagShow==false">
+                            <span>tags</span>
+                            <!--<button type="button"-->
+                                    <!--ng-click=""-->
+                                    <!--class="btn btn-default"style="float: none">-->
+                                <!--批量操作-->
+                            <!--</button>-->
+
+                            <button type="button"
+                                    ng-click="component.addNewTag()"
+                                    class="btn btn-default">
+                                添加新Tag
+                            </button>
+                            <button type="button"
+                                     ng-click="component.importTags()"
+                                     class="btn btn-default my-tag-button-import">导入tag
+                            </button>
+                            <!--导入tags模板-->
+                            <script type="text/ng-template" id="tagsImport.html">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" style="margin-bottom: 5px">导入预设变量集<small></small></h3>
+                                    <p class="text-muted" style="margin-bottom: 0px">变量集将会追加到所有变量中，并自动归类到当前变量标签</p>
+                                </div>
+                                <div class="modal-body">
+                                    <h5>选项:</h5>
+                                    <div class="row" style="margin-bottom: 10px">
+                                        <div class="col-xs-5">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox"
+                                                       value="option1"
+                                                       ng-model="overlay"> 覆盖重名变量
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <h5>主题:</h5>
+                                    <div class="row" style="margin-bottom: 10px">
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default" target="_blank">预设</a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default1" target="_blank">主题1</a>
+                                            </label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default2" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default2" target="_blank">主题2</a>
+                                            </label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default3" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default3" target="_blank">主题3</a>
+                                            </label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
+                                                <a href="/tags/preview?id=default4" target="_blank">主题4</a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-primary"
+                                            type="button"
+                                            ng-disabled="disableBtn"
+                                            ng-click="ok()">{{btnText}}</button>
+                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                </div>
+                            </script>
+                        </div>
+
+                        <script type="text/ng-template" id="tagModal.html">
                         <div class="modal-header">
                             <h3 class="modal-title">Tag</h3>
                         </div>
@@ -3857,38 +3985,137 @@
                             <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                         </div>
                     </script>
+                        <script type="text/ng-template" id="addToTagClassModal.html">
+                            <div class="modal-header">
+                                <h3 class="modal-title">移动到标签</h3>
+                            </div>
 
-                    <div class="listTable-container" uib-collapse="status.collapsed">
-                        <table class="listTable table table-hover">
-                            <tr class="">
-                                <td>名称
-                                    <span class="iconfont" ng-click="component.sortByName()">
+                        <div class="modal-body my-tag-add-to-div">
+                                <table class="listTable table table-hover">
+                                    <tr ng-repeat="name in tagClassNames track by $index" ng-class="{'active':$index===curIndex}">
+                                        <td class="my-tag-add-to-td" ng-click="indexSelected($index)">
+                                            <div class="tagName">{{name}}</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="button" ng-click="save(this)">确定</button>
+                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
+                        <script type="text/ng-template" id="editTagClasses.html">
+                            <div class="modal-header">
+                                <button class="btn btn-primary" style="float: right" type="button" ng-click="addTagClass()">添加新标签</button>
+                                <h3 class="modal-title">标签</h3>
+
+                            </div>
+
+                            <div class="modal-body  my-tag-add-to-div">
+                                <table class="listTable table table-hover my-tag-edit-table">
+                                    <tr ng-show="someTagClassRenaming==true" class="my-tag-edit-tr">
+                                        <td class="my-tag-edit-td my-tag-edit-td-width" colspan="3">名称</td>
+                                    </tr>
+                                    <tr ng-show="someTagClassRenaming==false"  class="my-tag-edit-tr">
+                                        <td class="my-tag-edit-td my-tag-edit-td-width" >名称</td>
+                                        <td >重命名</td>
+                                        <td >删除</td>
+                                    </tr>
+                                    <tr ng-show="addTagClassFlag==true">
+                                        <td class="my-tag-edit-td" colspan="3">
+                                            <div >
+                                                <input type="text" ng-model="$scopeCtl.curTagClassNewName" >
+                                                <button type="button" attr-type="ok" class="btn btn-default btn-xs btn-ok" ng-click="enterName()"><span class="glyphicon glyphicon-ok"></span></button>
+                                                <button type="button" attr-type="cancel" class="btn btn-default btn-xs btn-cancel" ng-click="inputName()"><span class="glyphicon glyphicon-remove"></span></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="tagClass in defaultTagClasses track by $index" ng-show="tagClass.deleted==false">
+                                        <td class="my-tag-edit-td" >
+                                            <div ng-show="tagClass.renaming==false">{{tagClass.name}}</div>
+                                        </td>
+                                        <td><i ng-show="someTagClassRenaming==false">--</i></td>
+                                        <td><i ng-show="someTagClassRenaming==false">--</i></td>
+                                    </tr>
+                                    <tr ng-repeat="tagClass in tagClassesManage track by $index" ng-show="tagClass.deleted==false">
+                                        <td class="my-tag-edit-td" >
+                                            <div ng-show="tagClass.renaming==false">{{tagClass.name}}</div>
+                                            <div ng-show="tagClass.renaming==true">
+                                                <input type="text" class=""  ng-model="$scopeCtl.curTagClassNewName" >
+                                                <button type="button" attr-type="ok" class="btn btn-default btn-xs btn-ok" ng-click="enterName($index)"><span class="glyphicon glyphicon-ok"></span></button>
+                                                <button type="button" attr-type="cancel" class="btn btn-default btn-xs btn-cancel" ng-click="inputName($index)"><span class="glyphicon glyphicon-remove"></span></button>
+                                            </div>
+                                        </td>
+                                        <td><i class="iconfont" ng-click="inputName($index)" ng-show="someTagClassRenaming==false">
+                                            &#xe6b4;</i></td>
+                                        <td><i class="iconfont" ng-click="tagClass.deleted=true"  ng-show="someTagClassRenaming==false">
+                                            &#xe627;</i></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="button" ng-click="close()">确定</button>
+                            </div>
+                        </script>
+
+                        <div class="listTable-container"uib-collapse="status.collapsed">
+                            <table class="listTable table table-hover"ng-show="component.timerTagShow==false">
+                                <tr class="">
+                                    <td>名称
+                                        <span class="iconfont" ng-click="component.sortByName()">
                                     &#xe6a5;</span>
                                 </td>
-                                <td>寄存器号
+                                <td>寄存器
                                     <span class="iconfont" ng-click="component.sortByRegister()">
                                         &#xe6a5;</span>
                                 </td>
-                                <td>操作</td>
+                                <td>启用</td>
+                                    <td>标签</td>
+                                    <td>删除</td>
                             </tr>
-                            <tr ng-repeat="tags in component.allCustomTags track by $index" class="tagTr"
+                            <tr ng-repeat="tag in component.curTagClass.tagArray track by $index" class="tagTr"
                                 ng-class="{'selected':selected==$id}">
-                                <td ng-click="openPanel($index,'custom')">
-                                    <div class="tagName">{{tags.name}}</div>
+                                <td ng-click="component.openPanel($index,'custom')">
+                                    <div class="tagName">{{tag.name}}</div>
                                 </td>
-                                <td><div class="tagReg">{{tags.indexOfRegister}}</div></td>
-                                <td><i class="iconfont" ng-click="component.deleteTag($index)">
+                                <td><div class="tagReg">{{tag.indexOfRegister}}</div></td>
+                                <td><input type="checkbox"
+                                           class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
+                                           ng-change="component.regCheckboxClick(tag)"
+                                           ng-model="tag.register">
+                                    </td>
+                                    <td><i class="iconfont" ng-click="component.addToTagClass(tag.name)">
+                                        &#xe7c5;</i></td>
+                                    <td><i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">
                                     &#xe627;</i></td>
                                 <!--<td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"-->
                                          <!--ng-click="component.deleteTag($index)"></td>-->
                             </tr>
-                            <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr"
+                            </table>
+                            <table class="listTable table table-hover" ng-show="component.timerTagShow==true">
+                                <tr class="">
+                                    <td>名称
+                                        <span class="iconfont" ng-click="component.sortByName()">
+                                    &#xe6a5;</span>
+                                    </td>
+                                    <td>寄存器号
+                                        <span class="iconfont" ng-click="component.sortByRegister()">
+                                        &#xe6a5;</span>
+                                    </td>
+                                    <td>启用</td>
+                                </tr>
+                                <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr"
                                 ng-class="{'selected':selected==$id}">
-                                <td ng-click="openPanel($index,'timer')">{{timerTags.name}}</td>
+                                <td ng-click="component.openPanel($index,'timer')">{{timerTags.name}}</td>
                                 <td><div class="tagReg">{{timerTags.indexOfRegister}}</div></td>
-                                <td><img class="icon-close"></td>
+                                <td><input type="checkbox"
+                                           class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
+                                           ng-click="component.regCheckboxClick(timerTags)"
+                                           ng-model="timerTags.register">
+                                    </td>
                             </tr>
                         </table>
+                        </div>
                     </div>
 
                 </div>
@@ -4288,5 +4515,6 @@
 <!--<script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
 <script type="text/javascript" src="../../public/general/js/versionTag.js"></script>
+<script type="text/javascript" src="../../public/ide/modules/ide/js/myDirective.js"></script>
 </body>
 </html>

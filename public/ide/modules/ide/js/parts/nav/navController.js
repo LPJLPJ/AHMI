@@ -93,7 +93,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     openPanel: openPanel,
                     openShare: openShare,
                     openCANPanel: openCANPanel,
-                    openTagsPanel: openTagsPanel,
                     runSimulator: runSimulator,
                     closeSimulator: closeSimulator,
                     saveProject: saveProject.bind(null, null, true),
@@ -311,6 +310,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
                         curScope.project.timers = TagService.getTimerNum();//-
+                        curScope.project.tagClasses = TagService.getAllTagClasses();
                         curScope.project.version = window.ideVersion;
                         curScope.project.CANId = NavModalCANConfigService.getCANId();
                         var currentProject = curScope.project;
@@ -1394,64 +1394,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         toastr.warning('获取失败');
                     });
             }
-        }
-
-        /**
-         * 打开Tags导入模态框
-         */
-        function openTagsPanel() {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'tagsImport.html',
-                scope: $scope,//指定父scope
-                size: 'md',
-                controller: ['$scope', '$uibModalInstance', '$http', function ($scope, $uibModalInstance, $http) {
-                    $scope.selectedTagId = null;
-                    $scope.ok = function () {
-                        if (!$scope.selectedTagId) {
-                            toastr.warning('请选择一项预设变量');
-                            return;
-                        }
-                        getTagsFromRemote($scope.selectedTagId);
-                        $uibModalInstance.close();
-                    };
-
-                    $scope.cancel = function () {
-                        $uibModalInstance.dismiss();
-                    };
-
-                    function getTagsFromRemote(id) {
-                        var pattern = new RegExp(/tags_default\d+$/g);
-                        var url = '';
-
-                        if (pattern.test(id)) {
-                            //sys
-                            url = '/public/ide/modules/tagConfig/template/' + id.replace('_', '.') + '.json';
-                        } else {
-                            //custom
-                        }
-                        $http({
-                            method: 'get',
-                            url: url
-                        }).success(function (data) {
-                            handler(null, data);
-                        }).error(function (err) {
-                            handler(err, null);
-                        });
-                    }
-
-                    function handler(err, data) {
-                        if (err) {
-                            console.error('err in get tags template');
-                            toastr.error('获取失败，请检查您的网络');
-                            return;
-                        }
-                        console.log('data', data);
-                        $scope.$emit('GetTagsFromRemote',data);
-                    }
-                }]
-            });
-
         }
 
         /**

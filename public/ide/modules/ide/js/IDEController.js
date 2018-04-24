@@ -734,10 +734,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 }
             });
 
-            $scope.$on('GetTagsFromRemote', function (data) {
-                $scope.$broadcast('ChangeAllTags',data);
-            });
-
         }
 
         //add by tang
@@ -784,6 +780,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 $scope.project.customTags = TagService.getAllCustomTags()
                 $scope.project.timerTags = TagService.getAllTimerTags()
                 $scope.project.timers = TagService.getTimerNum()
+                $scope.project.tagClasses = TagService.getAllTagClasses()
                 var pid = PID;
                 console.log($scope.project)
                 window.localStorage.setItem('projectCache' + pid, JSON.stringify($scope.project));
@@ -825,6 +822,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);
             TagService.setTimerNum(globalProject.timers);
+            TagService.syncTagClasses(globalProject.tagClasses);
             NavModalCANConfigService.setCANId(globalProject.CANId);
         }
 

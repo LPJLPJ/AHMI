@@ -1,0 +1,227 @@
+[
+    {
+        "name": "传递按键编码",
+        "indexOfRegister": 1000,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "forbidden"
+    },
+    {
+        "name": "视频",
+        "indexOfRegister": 1001,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "forbidden"
+    },
+    {
+        "name": "当前页面序号",
+        "indexOfRegister": 1002,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "forbidden"
+    },
+    {
+        "name": "时钟变量年月日",
+        "indexOfRegister": 1003,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "时钟变量时分秒",
+        "indexOfRegister": 1004,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "背光",
+        "indexOfRegister": 1005,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "蜂鸣器",
+        "indexOfRegister": 1006,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "语言",
+        "indexOfRegister": 1007,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "档位",
+        "indexOfRegister": 1008,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "单位",
+        "indexOfRegister": 1009,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_背光亮度",
+        "indexOfRegister": 1010,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_设置选择",
+        "indexOfRegister": 1011,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_报警车速",
+        "indexOfRegister": 1012,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_时",
+        "indexOfRegister": 1013,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_分",
+        "indexOfRegister": 1014,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_清零剩余次数",
+        "indexOfRegister": 1015,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_年",
+        "indexOfRegister": 1016,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_月",
+        "indexOfRegister": 1017,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_日",
+        "indexOfRegister": 1018,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "设置界面_主题切换",
+        "indexOfRegister": 1019,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "动画",
+        "indexOfRegister": 1020,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "动画1ms",
+        "indexOfRegister": 1021,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "能量回收",
+        "indexOfRegister": 1022,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "充电界面-电池图片集",
+        "indexOfRegister": 1023,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "警示灯",
+        "indexOfRegister": 1024,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    }
+]
