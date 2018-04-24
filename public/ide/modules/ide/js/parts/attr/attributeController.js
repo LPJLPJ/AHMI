@@ -2564,12 +2564,12 @@ ide.controller('AttributeCtrl',['$scope','$rootScope','$timeout',
         };
         switch(selectObj.type){
             case Type.MyTexTime:
-                ProjectService.ChangeAttributeTexTimeModeId(option, function (oldOperate) {
+                ProjectService.ChangeAttributeTexTimeModeId(option, function () {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
             case Type.MyDateTime:
-                ProjectService.ChangeAttributeDateTimeModeId(option,function (oldOperate) {
+                ProjectService.ChangeAttributeDateTimeModeId(option,function () {
                     $scope.$emit('ChangeCurrentPage',oldOperate);
                 });
                 break;
