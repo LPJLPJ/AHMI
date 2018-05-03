@@ -52,7 +52,7 @@ TemplateSchema.statics = {
     },
     fetchInfoBatch:function(from,limit,cb){
         return this
-            .find({},{content:-1})
+            .find({},{content:0})
             .sort({'createTime':-1})
             .skip(from)
             .limit(limit)

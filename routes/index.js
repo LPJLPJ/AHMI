@@ -291,6 +291,9 @@ router.route('/templates/center')
 router.route('/templates/new')
     .post(templateRoute.saveNewTemplate)
 
+router.route('/templates/collect')
+    .post(templateRoute.collectTemplate)
+
 
 router.route('/mail/sendverifymail')
     .post(sendMail.sendVerifyMail);

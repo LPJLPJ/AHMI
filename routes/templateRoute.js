@@ -1,5 +1,6 @@
 var TemplateModel = require('../db/models/TemplateModel')
 var ProjectModel = require('../db/models/ProjectModel')
+var UserModel = require('../db/models/UserModel')
 var errHandler = require('../utils/errHandler')
 var fse = require('fs-extra');
 var path = require('path')
@@ -82,13 +83,57 @@ TemplateRoute.saveNewTemplate = function (req, res) {
 }
 
 TemplateRoute.getTemplatesForCenter = function (req, res) {
-    TemplateModel.fetchBatch(0,10,function (err, templates) {
+    TemplateModel.fetchInfoBatch(0,10,function (err, templates) {
         if (err){
             errHandler(res,500,JSON.stringify(err))
         }else{
             res.end(JSON.stringify(templates))
         }
     })
+}
+
+TemplateRoute.collectTemplate = function (req, res) {
+    var userId = req.session.user && req.session.user.id
+    var templateId = req.body.templateId
+    if (!templateId){
+        return errHandler(res,500,'invalid templateId')
+    }
+    if (userId){
+        UserModel.findById(userId,function (err, user) {
+            if (err) {return errHandler(res,500,JSON.stringify(err))}
+            if (user){
+                user.templateIds = user.templateIds || []
+                if (addItemToSet(templateId,user.templateIds)){
+                    user.save(function (err) {
+                        if (err) {return errHandler(res,500,JSON.stringify(err))}
+                        res.end('ok')
+                    })
+                }else{
+                    res.end('ok')
+                }
+
+
+            }else{
+                errHandler(res,500,'user not found')
+            }
+        })
+    }else{
+        errHandler(res,500,'unlogin')
+    }
+}
+
+function addItemToSet(item,curItems) {
+    var flag = false
+    for(var i=0;i<curItems;i++){
+        if (curItems[i]==item){
+            flag = true
+        }
+    }
+    if (!flag){
+        curItems.push(item)
+    }
+
+    return !flag
 }
 
 

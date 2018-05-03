@@ -1,15 +1,31 @@
+.title{
+    float:none;
+    margin-top:100px;
+}
+.templates-wrapper{
+    padding:2em;
+    /*text-align:center;*/
+    /*display:inline-block;*/
+}
+
+.template-panel-wrapper{
+    display:inline-block;
+    text-align: center;
+    padding:1em 0.3em;
+}
+
 .template-panel{
-    margin:1em;
+    /*margin:1em;*/
     padding:1em;
     display:inline-block;
     border-radius:5px;
     border:1px solid lightgray;
     box-shadow: 1px 1px 2px rgba(0,0,0,.08);
+    /*width:calc(20% - 2em);*/
+    /*min-width:calc(200px + 2em);*/
 }
 
-.template-thumbnail-wrapper{
 
-}
 
 .template-thumbnail-container{
     text-align: center;
@@ -20,6 +36,7 @@
 .template-thumbnail{
     width:200px;
     height:200px;
+    border-radius:5px;
 
 }
 
