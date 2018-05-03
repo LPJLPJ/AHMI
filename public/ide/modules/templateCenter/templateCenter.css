@@ -1,7 +1,10 @@
 .template-panel{
     margin:1em;
-    padding:0.5em;
+    padding:1em;
     display:inline-block;
+    border-radius:5px;
+    border:1px solid lightgray;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.08);
 }
 
 .template-thumbnail-wrapper{
@@ -11,11 +14,13 @@
 .template-thumbnail-container{
     text-align: center;
     position:relative;
+
 }
 
 .template-thumbnail{
     width:200px;
     height:200px;
+
 }
 
 .template-btns{
@@ -29,6 +34,7 @@
 /*}*/
 
 .template-info{
+    display:none;
     position:absolute;
     top:50%;
     left:50%;
@@ -36,6 +42,14 @@
     padding:0.5em 1em;
     border-radius:5px;
     background-color:rgba(255,255,255,0.7);
+}
+
+.template-info:hover{
+    display:block;
+}
+
+.template-thumbnail:hover + .template-info{
+    display:block;
 }
 
 .template-info-title{
