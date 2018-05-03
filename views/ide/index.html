@@ -937,15 +937,7 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
-                        <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">纹理</span>-->
-                            <!--<p ng-repeat="subSlide in component.object.level.subSlides">{{subSlide.name}}</p>-->
-                            <!--<p>-->
-                                <!--<button class="btn btn-default" style="padding: 2px 8px;"-->
-                                        <!--ng-click="component.slide.addSubSlide()">新建纹理-->
-                                <!--</button>-->
-                            <!--</p>-->
-                        <!--</div>-->
+
                     </div>
 
                     <div ng-show="component.object.type=='MyButton'&&!myMask">
@@ -2679,6 +2671,23 @@
                                type="number"
                                disabled>
                     </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                    </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">选择框坐标X</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2774,7 +2783,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">高亮</span>
                             <select class="form-control my-attr-number-input form-control"
-                                    ng-model="component.object.highlightModeId"
+                                    ng-model="component.selector.highlightModeId"
                                     ng-change="component.enterHighlightMode($event)">
                                 <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
                                     {{mode.name}}
@@ -2804,6 +2813,21 @@
                                ng-model="component.object.level.info.top"
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
                     </div>
                         <div class="my-attr-item">
@@ -2847,7 +2871,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">高亮</span>
                             <select class="form-control my-attr-number-input form-control"
-                                    ng-model="component.object.highlightModeId"
+                                    ng-model="component.rotaryKnob.highlightModeId"
                                     ng-change="component.enterHighlightMode($event)">
                                 <option ng-repeat="mode in component.highlightModes" value="{{mode.id}}">
                                     {{mode.name}}
@@ -2879,6 +2903,23 @@
                                ng-keypress="component.enterY($event)"
                                type="number">
                     </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                    </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"

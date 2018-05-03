@@ -824,6 +824,14 @@ function saveAsReset(newResolution,oldResolution,content){
                             if(type=="MyDashboard"){
                                 widgetInfo.pointerLength=Math.round(widgetInfo.pointerLength*widthProportion);
                             }
+                            if(type=="MySelector"||type=='MySelector'){
+                                widgetInfo.itemFont.fontSize = Math.round(widgetInfo.itemFont.fontSize*widthProportion);
+                                widgetInfo.selectorFont.fontSize = Math.round(widgetInfo.selectorFont.fontSize*widthProportion);
+                                widgetInfo.selectorWidth = Math.round(widgetInfo.selectorWidth*widthProportion);
+                                widgetInfo.selectorHeight = Math.round(widgetInfo.selectorHeight*heightProportion);
+                                widgetInfo.itemWidth = Math.round(widgetInfo.itemWidth*widthProportion);
+                                widgetInfo.itemHeight = Math.round(widgetInfo.itemHeight*heightProportion);
+                            }
 
                         }
                     }
@@ -850,6 +858,14 @@ function saveAsReset(newResolution,oldResolution,content){
                         }
                         if(type1=="MyDashboard"){
                             showWidgetInfo.pointerLength=Math.round(showWidgetInfo.pointerLength*widthProportion);
+                        }
+                        if(type=="MySelector"||type=='MySelector'){
+                            showWidgetInfo.itemFont.fontSize = Math.round(showWidgetInfo.itemFont.fontSize*widthProportion);
+                            showWidgetInfo.selectorFont.fontSize = Math.round(showWidgetInfo.selectorFont.fontSize*widthProportion);
+                            showWidgetInfo.selectorWidth = Math.round(showWidgetInfo.selectorWidth*widthProportion);
+                            showWidgetInfo.selectorHeight = Math.round(showWidgetInfo.selectorHeight*heightProportion);
+                            showWidgetInfo.itemWidth = Math.round(showWidgetInfo.itemWidth*widthProportion);
+                            showWidgetInfo.itemHeight = Math.round(showWidgetInfo.itemHeight*heightProportion);
                         }
                     }
                 }

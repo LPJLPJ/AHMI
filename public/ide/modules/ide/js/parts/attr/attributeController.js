@@ -2886,7 +2886,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     restore();
                     return;
                 }
-                if (cur < 0 || cur > 100) {
+                if (cur <= 0 || cur > 100) {
                     toastr.warning('超出范围');
                     restore();
                     return;

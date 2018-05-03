@@ -236,7 +236,7 @@ ideServices
                     //item数
                     itemCount:1,
                     //能显示出的item数，item视窗大小
-                    itemShowCount:1,
+                    itemShowCount:0,
                     //item当前值
                     curValue:0,
 

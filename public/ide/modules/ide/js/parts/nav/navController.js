@@ -619,12 +619,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                         widgetInfo.spacing = Math.round((widgetInfo.spacing || 0) * widthProportion);
                                     }
                                     if(type=="MySelector"||type=='MySelector'){
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorFont.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorFont.fontSize*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorWidth*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorHeight = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorHeight*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemWidth*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemHeight = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemHeight*widthProportion);
+                                        widgetInfo.itemFont.fontSize = Math.round(widgetInfo.itemFont.fontSize*widthProportion);
+                                        widgetInfo.selectorFont.fontSize = Math.round(widgetInfo.selectorFont.fontSize*widthProportion);
+                                        widgetInfo.selectorWidth = Math.round(widgetInfo.selectorWidth*widthProportion);
+                                        widgetInfo.selectorHeight = Math.round(widgetInfo.selectorHeight*widthProportion);
+                                        widgetInfo.itemWidth = Math.round(widgetInfo.itemWidth*widthProportion);
+                                        widgetInfo.itemHeight = Math.round(widgetInfo.itemHeight*widthProportion);
                                     }
                                     //改变仪表盘指针 取宽高中较小值为边长
                                     if(type=="MyDashboard"){
@@ -655,12 +655,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     showWidgetInfo.maxFontWidth = Math.round(showWidgetInfo.maxFontWidth * widthProportion);
                                 }
                                 if(type=="MySelector"||type=='MySelector'){
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorFont.fontSize = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorFont.fontSize*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorWidth = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorWidth*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorHeight = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorHeight*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemWidth = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemWidth*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight*widthProportion);
+                                    showWidgetInfo.itemFont.fontSize = Math.round(showWidgetInfo.itemFont.fontSize*widthProportion);
+                                    showWidgetInfo.selectorFont.fontSize = Math.round(showWidgetInfo.selectorFont.fontSize*widthProportion);
+                                    showWidgetInfo.selectorWidth = Math.round(showWidgetInfo.selectorWidth*widthProportion);
+                                    showWidgetInfo.selectorHeight = Math.round(showWidgetInfo.selectorHeight*widthProportion);
+                                    showWidgetInfo.itemWidth = Math.round(showWidgetInfo.itemWidth*widthProportion);
+                                    showWidgetInfo.itemHeight = Math.round(showWidgetInfo.itemHeight*widthProportion);
                                 }
                                 if(type1=="MyDashboard"){
                                     showWidgetInfo.pointerLength=Math.round(showWidgetInfo.pointerLength*widthProportion);
