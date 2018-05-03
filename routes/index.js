@@ -13,6 +13,7 @@ var UserModel = require('../db/models/UserModel');
 var DownloadRouter = require('./routeDownload');
 var VersionManager = require('../utils/versionManager');
 var route_tag = require('./route_tags');
+var templateRoute = require('./templateRoute')
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -277,6 +278,18 @@ router.route('/project/:id/resources/template/:rid')
 
 router.route('/project/:id/deleteresource/:rid')
     .delete(uploadFile.deleteResource);
+
+
+//template center
+router.route('/templatecenter')
+    .get(templateRoute.getTemplateCenter)
+
+//templates
+router.route('/templates/center')
+    .get(templateRoute.getTemplatesForCenter)
+
+router.route('/templates/new')
+    .post(templateRoute.saveNewTemplate)
 
 
 router.route('/mail/sendverifymail')
