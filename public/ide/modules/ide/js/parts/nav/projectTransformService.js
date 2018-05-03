@@ -406,7 +406,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         targetSubLayer.widgetList = [];
         for (var i=0;i<rawSubLayer.widgets.length;i++){
             var curWidget = rawSubLayer.widgets[i];
-            targetSubLayer.widgetList.push(transWidget(curWidget,i,targetSubLayer.id));
+            var transedWidget=transWidget(curWidget,i,targetSubLayer.id);
+            if(transedWidget){
+                targetSubLayer.widgetList.push(transedWidget);
+            }
+
         }
 
         return targetSubLayer;
@@ -672,8 +676,14 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         if (blockImg) {
                             blockInfo.w = blockImg.width;
                             blockInfo.h = blockImg.height;
+                        }else{
+                            console.log("slideBlock need img slice!");
+                            return null;
                         }
 
+                    }else{
+                        console.log("slideBlock need img slice!");
+                        return null;
                     }
                     generalWidget = new WidgetModel.models['SlideBlock'](x, y, w, h, info.arrange, blockInfo, [targetWidget.texList[0].slices[0], targetWidget.texList[1].slices[0]]);
                     generalWidget = generalWidget.toObject();
