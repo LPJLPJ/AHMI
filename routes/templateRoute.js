@@ -92,13 +92,30 @@ TemplateRoute.getTemplatesForCenter = function (req, res) {
     })
 }
 
-TemplateRoute.getUserTemplates = function (req, res) {
+TemplateRoute.getUserTemplateIds = function (req, res) {
     var userId = req.session.user && req.session.user.id
     if (!userId){return errHandler(res,500,'invalid user')}
     UserModel.findById(userId,function (err, user) {
         if(err){return errHandler(res,500,JSON.stringify(err))}
         if(!user){return errHandler(res,500,'user not found')}
         res.end(JSON.stringify(user.templateIds||[]))
+    })
+}
+
+
+
+TemplateRoute.getUserTemplateInfos = function (req, res) {
+    var userId = req.session.user && req.session.user.id
+    if (!userId){return errHandler(res,500,'invalid user')}
+    UserModel.findById(userId,function (err, user) {
+        if(err){return errHandler(res,500,JSON.stringify(err))}
+        if(!user){return errHandler(res,500,'user not found')}
+        var ids = user.templateIds||[]
+        if (!ids.length){return res.end(JSON.stringify([]))}
+        TemplateModel.fetchUserTemplateInfos(ids,function (err,templates) {
+            if(err){return errHandler(res,500,JSON.stringify(err))}
+            res.end(JSON.stringify(templates))
+        })
     })
 }
 

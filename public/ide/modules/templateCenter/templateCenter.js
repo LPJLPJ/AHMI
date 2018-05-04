@@ -43,7 +43,7 @@ $(function () {
     function loadUserTemplates(cb) {
         $.ajax({
             type:'get',
-            url:'/templates/user',
+            url:'/templates/user/ids',
             success:function (data) {
                 console.log(data)
                 data = JSON.parse(data)||[]

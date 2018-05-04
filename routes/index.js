@@ -288,8 +288,11 @@ router.route('/templatecenter')
 router.route('/templates/center')
     .get(templateRoute.getTemplatesForCenter)
 
-router.route('/templates/user')
-    .get(templateRoute.getUserTemplates)
+router.route('/templates/user/ids')
+    .get(templateRoute.getUserTemplateIds)
+
+router.route('/templates/user/infos')
+    .get(templateRoute.getUserTemplateInfos)
 
 router.route('/templates/new')
     .post(templateRoute.saveNewTemplate)

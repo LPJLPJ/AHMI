@@ -58,6 +58,12 @@ TemplateSchema.statics = {
             .limit(limit)
             .exec(cb)
     },
+    fetchUserTemplateInfos:function (ids,cb) {
+        return this
+            .find({_id:{$in:ids}},{content:0})
+            .sort({'createTime':-1})
+            .exec(cb)
+    },
     findById:function(id,cb){
         return this
             .findOne({_id:id})
