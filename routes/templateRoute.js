@@ -92,6 +92,16 @@ TemplateRoute.getTemplatesForCenter = function (req, res) {
     })
 }
 
+TemplateRoute.getUserTemplates = function (req, res) {
+    var userId = req.session.user && req.session.user.id
+    if (!userId){return errHandler(res,500,'invalid user')}
+    UserModel.findById(userId,function (err, user) {
+        if(err){return errHandler(res,500,JSON.stringify(err))}
+        if(!user){return errHandler(res,500,'user not found')}
+        res.end(JSON.stringify(user.templateIds||[]))
+    })
+}
+
 TemplateRoute.collectTemplate = function (req, res) {
     var userId = req.session.user && req.session.user.id
     var templateId = req.body.templateId
@@ -122,11 +132,42 @@ TemplateRoute.collectTemplate = function (req, res) {
     }
 }
 
+TemplateRoute.uncollectTemplate = function (req, res) {
+    var userId = req.session.user && req.session.user.id
+    var templateId = req.body.templateId
+    if (!templateId){
+        return errHandler(res,500,'invalid templateId')
+    }
+    if (userId){
+        UserModel.findById(userId,function (err, user) {
+            if (err) {return errHandler(res,500,JSON.stringify(err))}
+            if (user){
+                user.templateIds = user.templateIds || []
+                if (deleteFromSet(templateId,user.templateIds)){
+                    user.save(function (err) {
+                        if (err) {return errHandler(res,500,JSON.stringify(err))}
+                        res.end('ok')
+                    })
+                }else{
+                    res.end('ok')
+                }
+
+
+            }else{
+                errHandler(res,500,'user not found')
+            }
+        })
+    }else{
+        errHandler(res,500,'unlogin')
+    }
+}
+
 function addItemToSet(item,curItems) {
     var flag = false
-    for(var i=0;i<curItems;i++){
+    for(var i=0;i<curItems.length;i++){
         if (curItems[i]==item){
             flag = true
+            break
         }
     }
     if (!flag){
@@ -134,6 +175,21 @@ function addItemToSet(item,curItems) {
     }
 
     return !flag
+}
+
+function deleteFromSet(item,curItems) {
+    var flag = false
+    for(var i=0;i<curItems.length;i++){
+        if (curItems[i]==item){
+            flag = true
+            break
+        }
+    }
+    if (flag){
+        curItems.splice(i,1)
+    }
+
+    return flag
 }
 
 

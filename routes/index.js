@@ -288,11 +288,17 @@ router.route('/templatecenter')
 router.route('/templates/center')
     .get(templateRoute.getTemplatesForCenter)
 
+router.route('/templates/user')
+    .get(templateRoute.getUserTemplates)
+
 router.route('/templates/new')
     .post(templateRoute.saveNewTemplate)
 
 router.route('/templates/collect')
     .post(templateRoute.collectTemplate)
+
+router.route('/templates/uncollect')
+    .post(templateRoute.uncollectTemplate)
 
 
 router.route('/mail/sendverifymail')
