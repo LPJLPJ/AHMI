@@ -1,0 +1,50 @@
+.template-panel{
+    margin:1em;
+    position:relative;
+}
+
+.template-btn-delete{
+    display:none;
+}
+
+.template-panel:hover .template-btn-delete{
+    display:block;
+}
+
+.basicinfo-template-options{
+    display:inline-block;
+    max-height:500px;
+    overflow:scroll;
+}
+
+.template-option-panel{
+    display:inline-block;
+    text-align:center;
+    border:1px solid lightgray;
+    padding:0.5em;
+    width:30%;
+    margin:0.5em;
+    border-radius:5px;
+}
+
+.template-option-panel:hover{
+    border:2px solid rgba(0,0,255,0.3);
+}
+
+.template-option-thumbnail-container{
+    width:100%;
+}
+
+
+.template-option-info{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.template-option-thumbnail{
+    width:100%;
+    border-radius:5px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
