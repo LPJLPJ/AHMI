@@ -954,10 +954,17 @@ module.exports =   React.createClass({
             var page = project.pageList[(project&&project.curPageIdx)||0];
             if (page){
                 if(page.animating){
-                    if (project.pageList[project.pageUnloadIdx]){
-                        this.paintPage(project.pageList[project.pageUnloadIdx])
+                    if(page.transition&&page.transition.name==='SWIPE_H'||page.transition&&page.transition.name==='SWIPE_V'){
+                        console.log(project.pageList)
+                        for(var i=0;i<project.pageList.length-project.systemWidgets.length;i++){
+                            this.paintPage(project.pageList[i])
+                        }
+                    }else{
+                        if (project.pageList[project.pageUnloadIdx]){
+                            this.paintPage(project.pageList[project.pageUnloadIdx])
+                        }
+                        this.paintPage(page)
                     }
-                    this.paintPage(page)
                 }else{
                     this.paintPage(page);
                 }
@@ -1135,18 +1142,17 @@ module.exports =   React.createClass({
         if (!options) {
             options = {};
         }
-        var flag = false
-        var unloadPage = project.pageList[project.pageUnloadIdx]
+        var flag = false;
+        var unloadPage = project.pageList[project.pageUnloadIdx];
 
         if (!page.state || page.state == LoadState.notLoad) {
             page.state = LoadState.willLoad
             //generate load trigger
 
             options.reLinkWidgets = true;
-            
 
             switch (method){
-                case 'MOVE_LR':
+                case 'PUSH_LR':
                     page.translate = {
                         x:-offcanvas.width,
                         y:0
@@ -1201,7 +1207,51 @@ module.exports =   React.createClass({
                     }.bind(this))
 
                     break;
-                case 'MOVE_RL':
+                case 'MOVE_LR':
+                    //移动距离
+                    page.translate = {
+                        x:-offcanvas.width,
+                        y:0
+                    }
+                    //
+                    page.animating = true
+                    //
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+
+                    options.pageAnimate = true
+                    AnimationManager.step(-offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
+
+                        options.pageAnimate = true
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded
+                        options.pageAnimate = false
+                        page.animating = false
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+
+                    break;
+                case 'PUSH_RL':
                     page.translate = {
                         x:offcanvas.width,
                         y:0
@@ -1253,7 +1303,45 @@ module.exports =   React.createClass({
                         this.draw(null,options)
                     }.bind(this))
                     break;
-                case 'MOVE_TB':
+                case 'MOVE_RL':
+                    page.translate = {
+                        x:offcanvas.width,
+                        y:0
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+                    options.pageAnimate = true
+                    AnimationManager.step(offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
+                        options.pageAnimate = true;
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        options.pageAnimate = false
+                        page.animating = false
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+                    break;
+                case 'PUSH_TB':
                     page.translate = {
                         x:0,
                         y:-offcanvas.height
@@ -1267,7 +1355,7 @@ module.exports =   React.createClass({
                         unloadPage.animating = true
                     }
                     options.pageAnimate = true
-                    AnimationManager.step(-offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
+                    AnimationManager.step(0,-offcanvas.height,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!flag){
@@ -1306,7 +1394,45 @@ module.exports =   React.createClass({
                         this.draw(null,options);
                     }.bind(this))
                     break;
-                case 'MOVE_BT':
+                case 'MOVE_TB':
+                    page.translate = {
+                        x:0,
+                        y:-offcanvas.height
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+                    options.pageAnimate = true
+                    AnimationManager.step(0,-offcanvas.height,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
+                        options.pageAnimate = true;
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        options.pageAnimate = false
+                        page.animating = false
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
+                    }.bind(this))
+                    break;
+                case 'PUSH_BT':
                     page.translate = {
                         x:0,
                         y:offcanvas.height
@@ -1319,7 +1445,7 @@ module.exports =   React.createClass({
                         }
                         unloadPage.animating = true
                     }
-                    AnimationManager.step(offcanvas.height,0,0,0,duration,frames,easing,function (deltas) {
+                    AnimationManager.step(0,offcanvas.height,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!flag){
@@ -1353,6 +1479,43 @@ module.exports =   React.createClass({
                             unloadPage.translate = null
                             unloadPage.animating = false
                         }
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+                    break;
+                case 'MOVE_BT':
+                    page.translate = {
+                        x:0,
+                        y:offcanvas.height
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+                    AnimationManager.step(0,offcanvas.height,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        options.pageAnimate = true;
+                        page.animating = true
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        options.pageAnimate = false;
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
                         this.draw(null,options)
                     }.bind(this))
@@ -1457,6 +1620,100 @@ module.exports =   React.createClass({
                             unloadPage.alpha = 1.0
                             unloadPage.animating = false
                         }
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+                    break;
+                case 'SWIPE_H':
+                    var xTranslate=(project.curPageIdx-project.pageUnloadIdx)*offcanvas.width;
+                    var pagesList=[];
+                    var startX=-project.pageUnloadIdx*offcanvas.width;
+
+                    for(var i=0;i<project.pageList.length;i++){
+                        pagesList[i]=project.pageList[i];
+                        pagesList[i].animating = false;
+                        pagesList[i].curPageImg = this.generatePageCopy(pagesList[i],offcanvas.width,offcanvas.height)
+                        pagesList[i].animating = true;
+                        pagesList[i].translate = {
+                            x:startX+i*offcanvas.width,
+                            y:0
+                        }
+                    }
+                    page.animating = true
+                    options.pageAnimate = true
+                    AnimationManager.step(xTranslate,0,0,0,duration,frames,easing,function (deltas) {
+                        if (!flag){
+                            page.animating = false
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.animating = true
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = true;
+                            pagesList[j].translate = {
+                                x:deltas.curX-offcanvas.width*(project.curPageIdx-j),
+                                y:deltas.curY
+                            }
+                        }
+
+                        options.pageAnimate = true
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded
+                        options.pageAnimate = false
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = false;
+                            pagesList[j].translate = null;
+                        }
+                        page.animating = false
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+                    break;
+                case 'SWIPE_V':
+                    var yTranslate=(project.curPageIdx-project.pageUnloadIdx)*offcanvas.height;
+                    var pagesList=[];
+                    var startY=-project.pageUnloadIdx*offcanvas.height;
+
+                    for(var i=0;i<project.pageList.length;i++){
+                        pagesList[i]=project.pageList[i];
+                        pagesList[i].animating = false;
+                        pagesList[i].curPageImg = this.generatePageCopy(pagesList[i],offcanvas.width,offcanvas.height)
+                        pagesList[i].animating = true;
+                        pagesList[i].translate = {
+                            x:0,
+                            y:startY+i*offcanvas.height
+                        }
+                    }
+                    page.animating = true;
+                    options.pageAnimate = true;
+                    AnimationManager.step(0,yTranslate,0,0,duration,frames,easing,function (deltas) {
+                        if (!flag){
+                            page.animating = false
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.animating = true
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = true;
+                            pagesList[j].translate = {
+                                x:deltas.curX,
+                                y:deltas.curY-offcanvas.height*(project.curPageIdx-j)
+                            }
+                        }
+
+                        options.pageAnimate = true
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded
+                        options.pageAnimate = false
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = false;
+                            pagesList[j].translate = null;
+                        }
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
                         this.draw(null,options)
                     }.bind(this))
@@ -2102,7 +2359,8 @@ module.exports =   React.createClass({
                     }
 
                 }else{
-                    if (canvasData.subCanvasUnloadIdx!==null){
+                    if (canvasData.subCanvasUnloadIdx!==null&&canvasData.subCanvasUnloadIdx!==undefined){
+                        console.log(canvasData.subCanvasUnloadIdx)
                         canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = false
 
                     }
