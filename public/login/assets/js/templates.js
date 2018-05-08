@@ -69,7 +69,7 @@ $(function () {
     function makeTemplateSelectorOptions(id,title,resolution) {
         var basicOptions = '<option value="">---</option>' +
             '<option value="defaultTemplate">默认模板</option>' +
-            '<option value="collectTemplate">默认模板</option>'
+            '<option value="collectTemplate">收藏模板</option>'
         return  basicOptions+'<option value="'+id+'">'+(title+" -- "+resolution)+'</option>'
     }
 
@@ -117,11 +117,13 @@ $(function () {
     function renderOptionTemplateList() {
         var templateStr = ""
 
-        templates = [{
-            _id:'defaultTemplate',
-            name:'默认模板',
-            resolution:'*'
-        }].concat(userTemplates)
+        templates = [
+        //     {
+        //     _id:'defaultTemplate',
+        //     name:'默认模板',
+        //     resolution:'*'
+        // }
+        ].concat(userTemplates)
         templates.forEach(function (template) {
             templateStr += renderOptionTemplate(template)
         })

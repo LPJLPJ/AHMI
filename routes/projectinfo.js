@@ -3,6 +3,7 @@
  */
 var ProjectModel = require('../db/models/ProjectModel')
 var UserModel = require('../db/models/UserModel')
+var TemplateModel = require('../db/models/TemplateModel')
 var projectRoute = {}
 var _ = require('lodash')
 var fs = require('fs')
@@ -403,63 +404,100 @@ projectRoute.createProject = function (req, res) {
     if (req.session.user){
         //user exists
         data.userId = req.session.user.id;
-        var newProject = new ProjectModel(data);
-        newProject.save(function (err) {
-            if (err){
-                console.log('project save error',err);
-                //res.status(500).end('save error')
-                errHandler(res,500,'save error');
-            }
-            //create project directory
-            var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources');
-            fs.stat(targetDir, function (err, stats) {
-                if (stats&&stats.isDirectory&&stats.isDirectory()){
-                    //copy template
-                    cpTemplates('defaultTemplate',path.join(targetDir,'template',function (err) {
-                        var info = {};
-                        info._id = newProject._id;
-                        info.userId = newProject.userId;
-                        info.resolution = newProject.resolution;
-                        info.name = newProject.name;
-                        info.template = newProject.template;
-                        info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
-                        info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
-                        info.supportTouch = newProject.supportTouch;
-                        info.author = newProject.author;
-                        res.end(JSON.stringify(info))
-                    }));
+        if (!data.template||data.template === 'defaultTemplate'){
+            var newProject = new ProjectModel(data);
+            newProject.save(function (err) {
+                if (err){
+                    console.log('project save error',err);
+                    //res.status(500).end('save error')
+                    errHandler(res,500,'save error');
+                }
+                //create project directory
+                var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources');
+                fse.ensureDir(targetDir,function(err){
+                    if (err){return errHandler(res,500,JSON.stringify(err))}
+                    cpDefaultTemplates(newProject._id,function (err) {
+                        if (err){return errHandler(res,500,JSON.stringify(err))}
+
+                        res.end(JSON.stringify(getProjectInfo(newProject)))
+                    });
+                })
+
+            })
+        }else{
+            //generate from template
+            TemplateModel.findById(data.template,function(err,template){
+                if(err){
+                    errHandler(res,500,'find template err');
+                }
+                else if(!template){
+                    errHandler(res,500,'project is null');
                 }else{
-                    //create new directory
-                    //console.log('create new directory',targetDir);
-                    mkdir(targetDir, function (err) {
-                        if (err){
-                            console.log('mk error');
-                            errHandler(res, 500,'mkdir error')
+                    //console.log('find project');
+                    var copyProject = copyProject = _.cloneDeep(data)
+
+                    copyProject.thumbnail = _.cloneDeep(template.thumbnail);
+                    copyProject.content = _.cloneDeep(template.content);
+
+
+                    if(data.resolution!=template.resolution){
+                        copyProject.content=saveAsReset(data.resolution,template.resolution,copyProject.content);
+                    }
+
+                    var newProject = new ProjectModel(copyProject);
+                    var newId = newProject._id;
+                    if(newProject.content){
+                        newProject.content=newProject.content.replace(/template\/[0-9a-f]+?\/resources/g,'project/'+newId+'/resources');
+                    }
+                    newProject.save(function(err){
+                        if(err){
+                            errHandler(res,500,'save new project err')
                         }else{
-                            // console.log('ok')
-                            //copy template
-                            cpTemplates('defaultTemplate',path.join(targetDir,'template'),function (err) {
-                                var info = {};
-                                info._id = newProject._id;
-                                info.userId = newProject.userId;
-                                info.resolution = newProject.resolution;
-                                info.name = newProject.name;
-                                info.template = newProject.template;
-                                info.ideVersion = newProject.ideVersion;
-                                info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
-                                info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
-                                info.supportTouch = newProject.supportTouch;
-                                info.author = newProject.author;
-                                res.end(JSON.stringify(info))
-                            });
+                            //console.log('save new project success');
+                            var targetDir = path.join(__dirname,'../project/',String(newProject._id));
+                            var srcDir = path.join(__dirname,'../template/',data.template);
+                            fse.ensureDir(targetDir,function(err){
+                                if(err){
+                                    console.log(err);
+                                    errHandler(res,500,'ensureDir err');
+                                }else{
+                                    //console.log('make dir success');
+                                    fse.copy(srcDir,targetDir,function(err){
+                                        if(err){
+                                            console.log(err);
+                                            errHandler(res,500,'copy project folder err')
+                                        }else{
+                                            //console.log('copy dir success');
+                                            res.end(JSON.stringify(getProjectInfo(newProject)))
+                                        }
+                                    })
+                                }
+                            })
                         }
-                    })
+                    });
                 }
             })
-        })
+        }
+
     }else{
         res.status(500).end('not login')
     }
+}
+
+
+function getProjectInfo(newProject) {
+    var info = {};
+    info._id = newProject._id;
+    info.userId = newProject.userId;
+    info.resolution = newProject.resolution;
+    info.name = newProject.name;
+    info.thumbnail = newProject.thumbnail;
+    info.template = newProject.template;
+    info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
+    info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
+    info.supportTouch = newProject.supportTouch;
+    info.author = newProject.author;
+    return info
 }
 
 
@@ -1172,11 +1210,39 @@ function fontFile(name,baseUrl,id) {
 
 
 //cp templates
-function cpTemplates(templateName,dstDir,cb) {
+function cpTemplates(templateName,newProjectId,cb) {
+    if (templateName){
+        if (templateName==='defaultTemplate'){
+            cpDefaultTemplates(newProjectId,cb)
+        }else{
+            //custom template
+            var srcDir = path.join(__dirname,'../template/',String(templateName),'resources')
+            var dstDir = path.join(__dirname,'../project/',String(newProjectId),'resources');
+            fse.copy(srcDir,dstDir,function (err) {
+                if (err){
+                    console.log(err);
+                    cb && cb(err);
+                }else{
+                    cb && cb();
+                }
+            })
+        }
+    }else{
+        //no template
+        cb && cb()
+    }
+
+}
+
+
+//cp default templates
+function cpDefaultTemplates(newProjectId,cb) {
+    var templateName = 'defaultTemplate'
     var srcDir = path.join(__dirname,'../public/templates/',templateName,'defaultResources');
+    var dstDir = path.join(__dirname,'../project/',String(newProjectId),'resources','template');
     fse.copy(srcDir,dstDir,function (err) {
-        console.log(err);
         if (err){
+            console.log(err);
             cb && cb(err);
         }else{
             cb && cb();
