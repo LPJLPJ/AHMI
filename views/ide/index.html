@@ -699,6 +699,15 @@
                                     ng-disabled="animationsDisabled">
                             </select>
                         </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title dengPage-title ">时间曲线</span>
+                            <select class="form-control my-attr-number-input form-control dengPage-input"
+                                    ng-options="timingFun as timingFun for timingFun in component.timingFuns"
+                                    ng-model="component.timingFun"
+                                    ng-change="component.changeTimingFun()"
+                                    ng-disabled="animationsDisabled">
+                            </select>
+                        </div>
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title dengPage-title ">持续时间(ms)</span>
@@ -746,6 +755,15 @@
                                     ng-options="transition.name as transition.show for transition in component.transitionMode"
                                     ng-model="component.transitionName"
                                     ng-change="component.changeTransitionName()"
+                                    ng-disabled="animationsDisabled">
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title dengPage-title ">时间曲线</span>
+                            <select class="form-control my-attr-number-input form-control dengPage-input"
+                                    ng-options="timingFun as timingFun for timingFun in component.timingFuns"
+                                    ng-model="component.timingFun"
+                                    ng-change="component.changeTimingFun()"
                                     ng-disabled="animationsDisabled">
                             </select>
                         </div>

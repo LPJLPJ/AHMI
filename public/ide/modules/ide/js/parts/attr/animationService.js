@@ -61,6 +61,7 @@ ideServices.service('AnimationService', [function () {
         this.name = name || '';
         this.show = show || '';
         this.duration = duration;
+        this.timingFun = '';
     }
 
 

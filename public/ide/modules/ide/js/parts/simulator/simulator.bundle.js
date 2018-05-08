@@ -53431,7 +53431,6 @@ module.exports = React.createClass({
             if (page) {
                 if (page.animating) {
                     if (page.transition && page.transition.name === 'SWIPE_H' || page.transition && page.transition.name === 'SWIPE_V') {
-                        console.log(project.pageList);
                         for (var i = 0; i < project.pageList.length - project.systemWidgets.length; i++) {
                             this.paintPage(project.pageList[i]);
                         }
@@ -53598,7 +53597,7 @@ module.exports = React.createClass({
         var canvas = this.refs.canvas;
         var ctx = this.ctx;
         var frames = this.fps;
-        var easing = 'easeInOutCubic';
+        var easing = page.transition && page.transition.timingFun || 'easeInOutCubic';
         var method = page.transition && page.transition.name;
         var duration = page.transition && page.transition.duration || 1000;
         var count = frames;
@@ -54093,6 +54092,7 @@ module.exports = React.createClass({
                     }.bind(this));
                     break;
                 case 'SWIPE_V':
+                    console.log("SWIPE_V easing", easing);
                     var pageNum = project.pageList.length - project.systemWidgets.length;
                     var yTranslate = (project.curPageIdx - project.pageUnloadIdx) * offcanvas.height;
                     var pagesList = [];
@@ -54803,7 +54803,7 @@ module.exports = React.createClass({
 
             var duration = transition && transition.duration || 1000;
             var frames = this.fps;
-            var easing = 'easeInOutCubic';
+            var easing = transition && transition.timingFun || 'easeInOutCubic';
             var hWidth = w / 2 + x;
             var hHeight = h / 2 + y;
             var newCopyFlag = false;
