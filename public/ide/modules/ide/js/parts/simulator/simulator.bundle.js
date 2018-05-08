@@ -52218,9 +52218,15 @@ module.exports = React.createClass({
     },
     drawGeneralButton: function drawGeneralButton(curX, curY, widget, options, cb) {},
     paintGeneralWidget: function paintGeneralWidget(curX, curY, widget, options, cb, ctx) {
+        var offCtx = ctx || offcanvas.getContext('2d');
+        offCtx.save();
+        offCtx.beginPath();
+        offCtx.rect(curX, curY, widget.info.width, widget.info.height);
+        offCtx.clip();
         for (var i = 0; i < widget.layers.length; i++) {
             this.paintGeneralLayer(curX, curY, widget.layers[i], widget, ctx);
         }
+        offCtx.restore();
         cb && cb();
     },
     paintGeneralButton: function paintGeneralButton(curX, curY, widget, options, cb) {},

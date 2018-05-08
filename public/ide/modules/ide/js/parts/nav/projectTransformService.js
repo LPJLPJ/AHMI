@@ -754,6 +754,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         default:
                             generalWidget.otherAttrs[7] = 1
                     }
+
+                    if (info.enableAnimation) {
+                        generalWidget['totalFrame'] = defaultDuration / 1000 * fps;
+                    }
+
                     generalWidget.otherAttrs[8] = Number(info['width']);
                     generalWidget.otherAttrs[9] = Number(info['spacing']);
                     generalWidget.otherAttrs[10] = Number(info['paddingRatio']);
