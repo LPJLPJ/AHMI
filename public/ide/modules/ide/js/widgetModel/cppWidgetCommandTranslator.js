@@ -402,7 +402,7 @@
         //layer offset
         OPSETLAYOFFSETIM:new Instruction('OPSETLAYOFFSETIM',new InstOperand(1),new InstOperand(1),new InstOperand(1,true),new InstOperand(4)),
         OPSETLAYOFFSETTE:new Instruction('OPSETLAYOFFSETTE',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
-        OPGETLAYOFFSET:new Instruction('OPGETLAYOFFSET',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(4,true)),
+        OPGETLAYOFFSET:new Instruction('OPGETLAYOFFSET',new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(1),new InstOperand(3,true)),
         OPCHKVALALARM:new Instruction('OPCHKVALALARM',new InstOperand(7,true)),
         OPNOP:new Instruction('OPNOP',new InstOperand(7,true)),
         OPSTARTANIMATION:new Instruction('OPSTARTANIMATION',new InstOperand(7,true)),
