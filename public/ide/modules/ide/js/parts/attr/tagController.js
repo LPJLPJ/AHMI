@@ -943,6 +943,9 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyVideo:
             case Type.MyAnimation:
             case Type.MyTexNum:
+            case Type.MySelector:
+            case Type.MyRotaryKnob:
+            case Type.MyColorBlock:
                 $scope.component.showTagPanel = true;
                 break;
             default:
