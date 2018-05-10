@@ -110,7 +110,7 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
             }
         });
 
-        modalInstance.result.then(function (newTag) {
+        modalInstance.result.then(function (newTag,_type) {
             //process save
             if ($scope.selectedIdx == -1) {
                 //new tag
@@ -121,10 +121,17 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
                 }.bind(this));
             } else if ($scope.selectedType == 'custom') {
                 //edit custom tag
-                TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
-                    readTagsInfo();
-                }.bind(this));
-                editTagInTagClass(tagName,newTag,$scope.component.curTagClass);
+                if (_type === 'force'){
+                    //modify all relatedTag
+                    var oldTag = TagService.getTagByIndex(index);
+                    ProjectService.replaceAllRelatedTag(oldTag,newTag)
+                }else{
+                    TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
+                        readTagsInfo();
+                    }.bind(this));
+                    editTagInTagClass(tagName,newTag,$scope.component.curTagClass);
+                }
+
 
             } else if ($scope.selectedType == 'timer') {
                 //edit timer tag
@@ -757,9 +764,11 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
 
     $scope.tag = tag;
     $scope.type = type;
+    $scope.showForceEditBtn = false;
 
     //保存
     $scope.save = function (th) {
+        $scope.showForceEditBtn = false;
         //如果是定时器，就不验证，直接关闭
         if (th.type === "timer") {
             $uibModalInstance.close($scope.tag);
@@ -769,13 +778,6 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
             //edit tag
             var oldTag = TagService.getTagByIndex(index);
             if (oldTag.name !== $scope.tag.name) {
-                var requiredTagNames = ProjectService.getRequiredTagNames();
-                for (var i = 0; i < requiredTagNames.length; i++) {
-                    if (oldTag.name === requiredTagNames[i]) {
-                        toastr.warning('该tag已经被使用,修改名称请先解除绑定');
-                        return;
-                    }
-                }
                 var allTags = _.cloneDeep(TagService.getAllTags());
                 for (var j = 0; j < allTags.length; j++) {
                     if ($scope.tag.name === allTags[j].name) {
@@ -785,6 +787,16 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
                         }
                     }
                 }
+                var requiredTagNames = ProjectService.getRequiredTagNames();
+                for (var i = 0; i < requiredTagNames.length; i++) {
+                    if (oldTag.name === requiredTagNames[i]) {
+                        toastr.warning('该tag已经被使用,修改名称请先解除绑定');
+                        //show forceEditTagBtn
+                        $scope.showForceEditBtn = true;
+                        return;
+                    }
+                }
+
             }
         }
         if (ProjectService.inputValidate($scope.tag.name)) {
@@ -794,6 +806,49 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
             }
             $uibModalInstance.close($scope.tag);
         }
+    };
+
+
+    $scope.forceSave = function (th) {
+
+
+        var shouldForceEdit = false
+        if (index !== -1) {
+            //edit tag
+            var oldTag = TagService.getTagByIndex(index);
+            if (oldTag.name !== $scope.tag.name && ProjectService.inputValidate($scope.tag.name)) {
+                var allTags = _.cloneDeep(TagService.getAllTags());
+                for (var j = 0; j < allTags.length; j++) {
+                    if ($scope.tag.name === allTags[j].name) {
+                        if (index != j) {
+                            toastr.error('重复的tag名称');
+                            return;
+                        }
+                    }
+                }
+                if ($scope.tag.name.match(/^SysTmr_[0-9]+_t$/)) {
+                    toastr.error('SysTmr_数字_t 为定时器保留名称');
+                    return;
+                }
+
+                var requiredTagNames = ProjectService.getRequiredTagNames();
+                for (var i = 0; i < requiredTagNames.length; i++) {
+                    if (oldTag.name === requiredTagNames[i]) {
+                        shouldForceEdit = true
+                        break;
+
+
+                    }
+                }
+
+                if (shouldForceEdit){
+                    //forceEdit
+                    $uibModalInstance.close($scope.tag,'force');
+                }
+
+            }
+        }
+
     };
 
     //取消

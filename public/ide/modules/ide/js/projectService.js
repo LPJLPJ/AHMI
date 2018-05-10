@@ -469,6 +469,58 @@ ideServices
                 return names
             };
 
+
+            function replaceActionTag(action,oldTagName,newTagName) {
+                if (action&&action.commands&&action.commands.length){
+                    commands.forEach(function (cmd) {
+                        replaceCommandTag(cmd,oldTagName,newTagName)
+                    })
+                }
+            }
+
+            function replaceCommandTag(cmd,oldTagName,newTagName) {
+                for(var i=1;i<3;i++){
+                    if (cmd[i]){
+                        if (cmd[i].tag === oldTagName){
+                            cmd[i].tag = newTagName
+                        }
+                    }
+                }
+            }
+
+            /**
+             * 替换所有oldTag
+             * @param oldTag
+             * @param newTag
+             */
+            this.replaceAllRelatedTag = function (oldTag,newTag) {
+                var oldTagName,newTagName
+                if (typeof oldTag === 'object'){
+                    oldTagName = oldTag.name
+                    newTagName = newTag.name
+                }else{
+                    oldTagName = oldTag
+                    newTagName = newTag
+                }
+                _.forEach(project.pages,function(page){
+                    if(page.tag === oldTagName){
+                        page.tag = newTagName
+                    }
+                    _.forEach(page.layers,function(layer){
+                        if(layer.tag=== oldTagName){
+                            layer.tag = newTagName
+                        }
+                        _.forEach(layer.subLayers,function(subLayer){
+                            _.forEach(subLayer.widgets,function(widget){
+                                if(widget.tag=== oldTagName){
+                                    widget.tag = newTagName
+                                }
+                            })
+                        })
+                    })
+                });
+            }
+
             /**
              * Page之间的切换
              * @param _pageIndex
@@ -4156,6 +4208,8 @@ ideServices
                 selectObj.level.actions=_actionObj;
                 _successCallback&&_successCallback();
             };
+
+
             this.ChangeAttributeTexList= function (_actionObj,_successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.texList=_actionObj;
