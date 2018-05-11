@@ -330,7 +330,6 @@ $(function(){
                     dragParams.left=parseInt(target.css('left'));
                     dragParams.top=parseInt(target.css('top'));
                     dragParams.drag=false;
-                    return false;
                 });
 
                 //鼠标拖拽计算
@@ -456,7 +455,6 @@ $(function(){
 
                         target.css(cssParams)
                     }
-                    return false;
                 });
             };
 

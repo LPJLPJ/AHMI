@@ -52218,9 +52218,15 @@ module.exports = React.createClass({
     },
     drawGeneralButton: function drawGeneralButton(curX, curY, widget, options, cb) {},
     paintGeneralWidget: function paintGeneralWidget(curX, curY, widget, options, cb, ctx) {
+        var offCtx = ctx || offcanvas.getContext('2d');
+        offCtx.save();
+        offCtx.beginPath();
+        offCtx.rect(curX, curY, widget.info.width, widget.info.height);
+        offCtx.clip();
         for (var i = 0; i < widget.layers.length; i++) {
             this.paintGeneralLayer(curX, curY, widget.layers[i], widget, ctx);
         }
+        offCtx.restore();
         cb && cb();
     },
     paintGeneralButton: function paintGeneralButton(curX, curY, widget, options, cb) {},
@@ -52753,10 +52759,16 @@ module.exports = React.createClass({
             var page = project.pageList[project && project.curPageIdx || 0];
             if (page) {
                 if (page.animating) {
-                    if (project.pageList[project.pageUnloadIdx]) {
-                        this.paintPage(project.pageList[project.pageUnloadIdx]);
+                    if (page.transition && page.transition.name === 'SWIPE_H' || page.transition && page.transition.name === 'SWIPE_V') {
+                        for (var i = 0; i < project.pageList.length - project.systemWidgets.length; i++) {
+                            this.paintPage(project.pageList[i]);
+                        }
+                    } else {
+                        if (project.pageList[project.pageUnloadIdx]) {
+                            this.paintPage(project.pageList[project.pageUnloadIdx]);
+                        }
+                        this.paintPage(page);
                     }
-                    this.paintPage(page);
                 } else {
                     this.paintPage(page);
                 }
@@ -52914,7 +52926,7 @@ module.exports = React.createClass({
         var canvas = this.refs.canvas;
         var ctx = this.ctx;
         var frames = this.fps;
-        var easing = 'easeInOutCubic';
+        var easing = page.transition && page.transition.timingFun || 'easeInOutCubic';
         var method = page.transition && page.transition.name;
         var duration = page.transition && page.transition.duration || 1000;
         var count = frames;
@@ -52934,7 +52946,7 @@ module.exports = React.createClass({
             options.reLinkWidgets = true;
 
             switch (method) {
-                case 'MOVE_LR':
+                case 'PUSH_LR':
                     page.translate = {
                         x: -offcanvas.width,
                         y: 0
@@ -52987,7 +52999,49 @@ module.exports = React.createClass({
                     }.bind(this));
 
                     break;
-                case 'MOVE_RL':
+                case 'MOVE_LR':
+                    //移动距离
+                    page.translate = {
+                        x: -offcanvas.width,
+                        y: 0
+                    };
+                    //
+                    page.animating = true;
+                    //
+                    if (unloadPage) {
+                        unloadPage.translate = null;
+                        unloadPage.animating = false;
+                    }
+
+                    options.pageAnimate = true;
+                    AnimationManager.step(-offcanvas.width, 0, 0, 0, duration, frames, easing, function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag) {
+                            page.animating = false;
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
+                            flag = true;
+                        }
+                        page.translate = {
+                            x: deltas.curX,
+                            y: deltas.curY
+                        };
+                        page.animating = true;
+
+                        options.pageAnimate = true;
+                        // this.draw(null,options);
+
+                    }.bind(this), function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded;
+                        options.pageAnimate = false;
+                        page.animating = false;
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null, options);
+                    }.bind(this));
+
+                    break;
+                case 'PUSH_RL':
                     page.translate = {
                         x: offcanvas.width,
                         y: 0
@@ -53037,7 +53091,43 @@ module.exports = React.createClass({
                         this.draw(null, options);
                     }.bind(this));
                     break;
-                case 'MOVE_TB':
+                case 'MOVE_RL':
+                    page.translate = {
+                        x: offcanvas.width,
+                        y: 0
+                    };
+                    page.animating = true;
+                    if (unloadPage) {
+                        unloadPage.translate = null;
+                        unloadPage.animating = false;
+                    }
+                    options.pageAnimate = true;
+                    AnimationManager.step(offcanvas.width, 0, 0, 0, duration, frames, easing, function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag) {
+                            page.animating = false;
+
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
+                            flag = true;
+                        }
+                        page.translate = {
+                            x: deltas.curX,
+                            y: deltas.curY
+                        };
+                        page.animating = true;
+                        options.pageAnimate = true;
+                        // this.draw(null,options);
+
+                    }.bind(this), function () {
+                        page.translate = null;
+                        options.pageAnimate = false;
+                        page.animating = false;
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null, options);
+                    }.bind(this));
+                    break;
+                case 'PUSH_TB':
                     page.translate = {
                         x: 0,
                         y: -offcanvas.height
@@ -53051,7 +53141,7 @@ module.exports = React.createClass({
                         unloadPage.animating = true;
                     }
                     options.pageAnimate = true;
-                    AnimationManager.step(-offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
+                    AnimationManager.step(0, -offcanvas.height, 0, 0, duration, frames, easing, function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!flag) {
@@ -53088,7 +53178,43 @@ module.exports = React.createClass({
                         this.draw(null, options);
                     }.bind(this));
                     break;
-                case 'MOVE_BT':
+                case 'MOVE_TB':
+                    page.translate = {
+                        x: 0,
+                        y: -offcanvas.height
+                    };
+                    page.animating = true;
+                    if (unloadPage) {
+                        unloadPage.translate = null;
+                        unloadPage.animating = false;
+                    }
+                    options.pageAnimate = true;
+                    AnimationManager.step(0, -offcanvas.height, 0, 0, duration, frames, easing, function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag) {
+                            page.animating = false;
+
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
+                            flag = true;
+                        }
+                        page.translate = {
+                            x: deltas.curX,
+                            y: deltas.curY
+                        };
+                        page.animating = true;
+                        options.pageAnimate = true;
+                        // this.draw(null,options);
+
+                    }.bind(this), function () {
+                        page.translate = null;
+                        options.pageAnimate = false;
+                        page.animating = false;
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null, options);
+                    }.bind(this));
+                    break;
+                case 'PUSH_BT':
                     page.translate = {
                         x: 0,
                         y: offcanvas.height
@@ -53101,7 +53227,7 @@ module.exports = React.createClass({
                         };
                         unloadPage.animating = true;
                     }
-                    AnimationManager.step(offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
+                    AnimationManager.step(0, offcanvas.height, 0, 0, duration, frames, easing, function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
                         if (!flag) {
@@ -53133,6 +53259,41 @@ module.exports = React.createClass({
                             unloadPage.translate = null;
                             unloadPage.animating = false;
                         }
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null, options);
+                    }.bind(this));
+                    break;
+                case 'MOVE_BT':
+                    page.translate = {
+                        x: 0,
+                        y: offcanvas.height
+                    };
+                    page.animating = true;
+                    if (unloadPage) {
+                        unloadPage.translate = null;
+                        unloadPage.animating = false;
+                    }
+                    AnimationManager.step(0, offcanvas.height, 0, 0, duration, frames, easing, function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag) {
+                            page.animating = false;
+
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
+                            flag = true;
+                        }
+                        page.translate = {
+                            x: deltas.curX,
+                            y: deltas.curY
+                        };
+                        options.pageAnimate = true;
+                        page.animating = true;
+                        // this.draw(null,options);
+
+                    }.bind(this), function () {
+                        page.translate = null;
+                        options.pageAnimate = false;
+                        page.animating = false;
                         this.handleTargetAction(page, 'Load');
                         this.draw(null, options);
                     }.bind(this));
@@ -53209,6 +53370,100 @@ module.exports = React.createClass({
                             unloadPage.alpha = 1.0;
                             unloadPage.animating = false;
                         }
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null, options);
+                    }.bind(this));
+                    break;
+                case 'SWIPE_H':
+                    var pageNum = project.pageList.length - project.systemWidgets.length;
+                    var xTranslate = (project.curPageIdx - project.pageUnloadIdx) * offcanvas.width;
+                    var pagesList = [];
+                    var startX = -project.pageUnloadIdx * offcanvas.width;
+
+                    for (var i = 0; i < pageNum; i++) {
+                        pagesList[i] = project.pageList[i];
+                        pagesList[i].animating = false;
+                        pagesList[i].curPageImg = this.generatePageCopy(pagesList[i], offcanvas.width, offcanvas.height);
+                        pagesList[i].animating = true;
+                        pagesList[i].translate = {
+                            x: startX + i * offcanvas.width,
+                            y: 0
+                        };
+                    }
+                    page.animating = true;
+                    options.pageAnimate = true;
+                    AnimationManager.step(xTranslate, 0, 0, 0, duration, frames, easing, function (deltas) {
+                        if (!flag) {
+                            page.animating = false;
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
+                            flag = true;
+                        }
+                        page.animating = true;
+                        for (var j = 0; pagesList[j]; j++) {
+                            pagesList[j].animating = true;
+                            pagesList[j].translate = {
+                                x: deltas.curX - offcanvas.width * (project.curPageIdx - j),
+                                y: deltas.curY
+                            };
+                        }
+
+                        options.pageAnimate = true;
+                    }.bind(this), function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded;
+                        options.pageAnimate = false;
+                        for (var j = 0; pagesList[j]; j++) {
+                            pagesList[j].animating = false;
+                            pagesList[j].translate = null;
+                        }
+                        page.animating = false;
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null, options);
+                    }.bind(this));
+                    break;
+                case 'SWIPE_V':
+                    var pageNum = project.pageList.length - project.systemWidgets.length;
+                    var yTranslate = (project.curPageIdx - project.pageUnloadIdx) * offcanvas.height;
+                    var pagesList = [];
+                    var startY = -project.pageUnloadIdx * offcanvas.height;
+
+                    for (var i = 0; i < pageNum; i++) {
+                        pagesList[i] = project.pageList[i];
+                        pagesList[i].animating = false;
+                        pagesList[i].curPageImg = this.generatePageCopy(pagesList[i], offcanvas.width, offcanvas.height);
+                        pagesList[i].animating = true;
+                        pagesList[i].translate = {
+                            x: 0,
+                            y: startY + i * offcanvas.height
+                        };
+                    }
+                    page.animating = true;
+                    options.pageAnimate = true;
+                    AnimationManager.step(0, yTranslate, 0, 0, duration, frames, easing, function (deltas) {
+                        if (!flag) {
+                            page.animating = false;
+                            page.curPageImg = this.generatePageCopy(page, offcanvas.width, offcanvas.height);
+                            flag = true;
+                        }
+                        page.animating = true;
+                        for (var j = 0; pagesList[j]; j++) {
+                            pagesList[j].animating = true;
+                            pagesList[j].translate = {
+                                x: deltas.curX,
+                                y: deltas.curY - offcanvas.height * (project.curPageIdx - j)
+                            };
+                        }
+
+                        options.pageAnimate = true;
+                    }.bind(this), function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded;
+                        options.pageAnimate = false;
+                        for (var j = 0; pagesList[j]; j++) {
+                            pagesList[j].animating = false;
+                            pagesList[j].translate = null;
+                        }
+                        page.animating = false;
                         this.handleTargetAction(page, 'Load');
                         this.draw(null, options);
                     }.bind(this));
@@ -53762,7 +54017,8 @@ module.exports = React.createClass({
                             this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
                     }
                 } else {
-                    if (canvasData.subCanvasUnloadIdx !== null) {
+                    if (canvasData.subCanvasUnloadIdx !== null && canvasData.subCanvasUnloadIdx !== undefined) {
+                        console.log(canvasData.subCanvasUnloadIdx);
                         canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = false;
                     }
                     this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, offctx);
@@ -53876,7 +54132,7 @@ module.exports = React.createClass({
 
             var duration = transition && transition.duration || 1000;
             var frames = this.fps;
-            var easing = 'easeInOutCubic';
+            var easing = transition && transition.timingFun || 'easeInOutCubic';
             var hWidth = w / 2 + x;
             var hHeight = h / 2 + y;
             var newCopyFlag = false;
@@ -53886,28 +54142,26 @@ module.exports = React.createClass({
                 if (canvas.subCanvasUnloadIdx !== null) {
                     unloadSC = canvas.subCanvasList[canvas.subCanvasUnloadIdx];
                 }
+                console.log("method", method);
                 switch (method) {
                     case 'MOVE_LR':
+                    case 'MOVE_RL':
+                        var fromLeft = method == 'MOVE_LR' ? -1 : 1;
                         subCanvas.translate = {
-                            x: -w,
+                            x: w * fromLeft,
                             y: 0
                         };
 
                         subCanvas.animating = true;
-                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
+                        AnimationManager.step(w * fromLeft, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
-
-
                             if (!newCopyFlag) {
-
                                 subCanvas.animating = false;
                                 subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
                                 newCopyFlag = true;
                             }
-
                             subCanvas.animating = true;
-
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
@@ -53929,25 +54183,29 @@ module.exports = React.createClass({
                         }.bind(this));
                         // this.dropCurrentDraw()
                         break;
-                    case 'MOVE_RL':
+                    case 'MOVE_BT':
+                    case 'MOVE_TB':
+                        var fromTop = method == 'MOVE_TB' ? -1 : 1;
                         subCanvas.translate = {
-                            x: w,
-                            y: 0
+                            x: 0,
+                            y: h * fromTop
                         };
+
                         subCanvas.animating = true;
-                        AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
+                        AnimationManager.step(0, h * fromTop, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
                             if (!newCopyFlag) {
+                                subCanvas.animating = false;
                                 subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
                                 newCopyFlag = true;
                             }
-
                             subCanvas.animating = true;
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
                             };
+                            // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
                             // subCanvas.info.x += deltas.deltaX;
                             // subCanvas.info.y += deltas.deltaY;
                             // this.draw();
@@ -53955,10 +54213,11 @@ module.exports = React.createClass({
                         }.bind(this), function () {
                             // offctx.restore()
                             subCanvas.translate = null;
-                            this.handleTargetAction(subCanvas, 'Load');
+                            // unloadSC.translate = null;
                             subCanvas.animating = false;
                             subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
                             subCanvas.curSubCanvasImg = null;
+                            this.handleTargetAction(subCanvas, 'Load');
                             this.draw();
                         }.bind(this));
                         // this.dropCurrentDraw()
@@ -53971,12 +54230,14 @@ module.exports = React.createClass({
                         subCanvas.transform = math.multiply(math.multiply(afterTranslateMatrix, beforeScaleMatrix), beforeTranslateMatrix);
                         subCanvas.animating = true;
                         AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
-                            var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
+
                             // console.log(curScaleMatrix)
                             if (!newCopyFlag) {
+                                subCanvas.animating = false;
                                 subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
                                 newCopyFlag = true;
                             }
+                            var curScaleMatrix = [[deltas.a.curValue, deltas.c.curValue, deltas.e.curValue], [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue], [0, 0, 1]];
 
                             subCanvas.animating = true;
                             var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix);
@@ -53998,32 +54259,64 @@ module.exports = React.createClass({
                         break;
                     case 'PUSH_LR':
                     case 'PUSH_RL':
-                        var fromLeft = method == 'PUSH_LR' ? 1 : -1;
+                        var fromLeft = method == 'PUSH_LR' ? -1 : 1;
                         subCanvas.translate = {
-                            x: -w * fromLeft,
+                            x: w * fromLeft,
                             y: 0
                         };
-
                         subCanvas.animating = true;
-                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
+                        AnimationManager.step(w * fromLeft, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
-
-
                             if (!newCopyFlag) {
-
                                 subCanvas.animating = false;
                                 subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
                                 newCopyFlag = true;
                             }
-
                             subCanvas.animating = true;
-
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
                             };
-                            unloadSC && (unloadSC.translate = { x: deltas.curX + w * fromLeft, y: deltas.curY });
+                            unloadSC && (unloadSC.translate = { x: deltas.curX - w * fromLeft, y: deltas.curY });
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            // this.draw();
+                            // offctx.restore();
+                        }.bind(this), function () {
+                            // offctx.restore()
+                            subCanvas.translate = null;
+                            unloadSC.translate = null;
+                            subCanvas.animating = false;
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg;
+                            subCanvas.curSubCanvasImg = null;
+                            this.handleTargetAction(subCanvas, 'Load');
+                            this.draw();
+                        }.bind(this));
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'PUSH_BT':
+                    case 'PUSH_TB':
+                        var fromTop = method == 'PUSH_TB' ? -1 : 1;
+                        subCanvas.translate = {
+                            x: 0,
+                            y: h * fromTop
+                        };
+                        subCanvas.animating = true;
+                        AnimationManager.step(0, h * fromTop, 0, 0, duration, frames, easing, function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+                            if (!newCopyFlag) {
+                                subCanvas.animating = false;
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas, w, h, options);
+                                newCopyFlag = true;
+                            }
+                            subCanvas.animating = true;
+                            subCanvas.translate = {
+                                x: deltas.curX,
+                                y: deltas.curY
+                            };
+                            unloadSC && (unloadSC.translate = { x: deltas.curX, y: deltas.curY - h * fromTop });
                             // subCanvas.info.x += deltas.deltaX;
                             // subCanvas.info.y += deltas.deltaY;
                             // this.draw();

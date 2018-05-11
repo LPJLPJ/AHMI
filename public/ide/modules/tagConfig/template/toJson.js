@@ -651,9 +651,9 @@ var defaultTags4 = [
 
 var tagsList = [defaultTags, defaultTags1, defaultTags2, defaultTags3, defaultTags4];
 
-for(var i=0,il=tagsList.length;i<il;i++){
+for (var i = 0, il = tagsList.length; i < il; i++) {
     tagsList[i].forEach(function (item) {
-        item.register = false;
+        item.register = true;
         item.writeOrRead = 'true';
         item.value = 0;
         var name = item.name;
@@ -673,8 +673,7 @@ for(var i=0,il=tagsList.length;i<il;i++){
 }
 
 
-
-fs.writeFile('tags.default0.json', JSON.stringify(defaultTags, null, 4), function (err) {
+fs.writeFile('tags.default.json', JSON.stringify(defaultTags, null, 4), function (err) {
     if (err)
         throw err;
     console.log('templates have saved!');
@@ -692,13 +691,13 @@ fs.writeFile('tags.default2.json', JSON.stringify(defaultTags2, null, 4), functi
     console.log('templates have saved!');
 });
 
-fs.writeFile('tags.default2.json', JSON.stringify(defaultTags3, null, 4), function (err) {
+fs.writeFile('tags.default3.json', JSON.stringify(defaultTags3, null, 4), function (err) {
     if (err)
         throw err;
     console.log('templates have saved!');
 });
 
-fs.writeFile('tags.default2.json', JSON.stringify(defaultTags4, null, 4), function (err) {
+fs.writeFile('tags.default4.json', JSON.stringify(defaultTags4, null, 4), function (err) {
     if (err)
         throw err;
     console.log('templates have saved!');

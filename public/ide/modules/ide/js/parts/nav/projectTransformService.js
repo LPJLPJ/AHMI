@@ -406,7 +406,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         targetSubLayer.widgetList = [];
         for (var i=0;i<rawSubLayer.widgets.length;i++){
             var curWidget = rawSubLayer.widgets[i];
-            targetSubLayer.widgetList.push(transWidget(curWidget,i,targetSubLayer.id));
+            var transedWidget=transWidget(curWidget,i,targetSubLayer.id);
+            if(transedWidget){
+                targetSubLayer.widgetList.push(transedWidget);
+            }
+
         }
 
         return targetSubLayer;
@@ -672,8 +676,14 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         if (blockImg) {
                             blockInfo.w = blockImg.width;
                             blockInfo.h = blockImg.height;
+                        }else{
+                            console.log("slideBlock need img slice!");
+                            return null;
                         }
 
+                    }else{
+                        console.log("slideBlock need img slice!");
+                        return null;
                     }
                     generalWidget = new WidgetModel.models['SlideBlock'](x, y, w, h, info.arrange, blockInfo, [targetWidget.texList[0].slices[0], targetWidget.texList[1].slices[0]]);
                     generalWidget = generalWidget.toObject();
@@ -744,6 +754,11 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         default:
                             generalWidget.otherAttrs[7] = 1
                     }
+
+                    if (info.enableAnimation) {
+                        generalWidget['totalFrame'] = defaultDuration / 1000 * fps;
+                    }
+
                     generalWidget.otherAttrs[8] = Number(info['width']);
                     generalWidget.otherAttrs[9] = Number(info['spacing']);
                     generalWidget.otherAttrs[10] = Number(info['paddingRatio']);
@@ -867,6 +882,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         }
 
                     }.bind(this);
+                    var globalResources=ResourceService.getGlobalResources();
                     if (!isFileInGlobalResources('selector001')) {
                         ResourceService.cacheFile(file1, globalResources, null, fcb);
                     }
@@ -874,9 +890,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         ResourceService.cacheFile(file2, globalResources, null, fcb);
                     }
                     var newSelectedImgSrc = '/' + id1;
-                    changeSrcInGlobalResources(id1, newSelectedImgSrc);
+                    changeSrcInResourcesArray(globalResources,id1, newSelectedImgSrc);
                     var newUnSelectedImgSrc = '/' + id2;
-                    changeSrcInGlobalResources(id2, newUnSelectedImgSrc);
+                    changeSrcInResourcesArray(globalResources,id2, newUnSelectedImgSrc);
                     //实例化一个选择器控件
                     generalWidget = new WidgetModel.models['Selector'](x, y, w, h, info, targetWidget.texList[0].slices[0], newUnSelectedImgSrc, newSelectedImgSrc, targetWidget.texList[3].slices[0]);
                     generalWidget = generalWidget.toObject();
@@ -1329,15 +1345,20 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
     }
 
     function isFileInGlobalResources(id){
-        for(var i=0;i<globalResources.length;i++){
-            if(id===globalResources[i].id){
-                return true;
+        try{
+            for(var i=0;i<globalResources.length;i++){
+                if(id===globalResources[i].id){
+                    return true;
+                }
             }
+            return false;
+        }catch(e){
+            return false;
         }
-        return false;
+
     }
 
-    function changeSrcInGlobalResources(id,newSrc){
+    function changeSrcInResourcesArray(globalResources,id, newSrc){
         for(var i=0;i<globalResources.length;i++){
             if(id===globalResources[i].id){
                 globalResources[i].src=newSrc;

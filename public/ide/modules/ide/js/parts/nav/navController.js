@@ -93,7 +93,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     openPanel: openPanel,
                     openShare: openShare,
                     openCANPanel: openCANPanel,
-                    openTagsPanel: openTagsPanel,
                     runSimulator: runSimulator,
                     closeSimulator: closeSimulator,
                     saveProject: saveProject.bind(null, null, true),
@@ -311,6 +310,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
                         curScope.project.timers = TagService.getTimerNum();//-
+                        curScope.project.tagClasses = TagService.getAllTagClasses();
                         curScope.project.version = window.ideVersion;
                         curScope.project.CANId = NavModalCANConfigService.getCANId();
                         var currentProject = curScope.project;
@@ -619,12 +619,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                         widgetInfo.spacing = Math.round((widgetInfo.spacing || 0) * widthProportion);
                                     }
                                     if(type=="MySelector"||type=='MySelector'){
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemFont.fontSize*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorFont.fontSize = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorFont.fontSize*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorWidth*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorHeight = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.selectorHeight*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemWidth = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemWidth*widthProportion);
-                                        content.pages[a].layers[b].subLayers[c].widgets[d].info.itemHeight = Math.round(content.pages[a].layers[b].subLayers[c].widgets[d].info.itemHeight*widthProportion);
+                                        widgetInfo.itemFont.fontSize = Math.round(widgetInfo.itemFont.fontSize*widthProportion);
+                                        widgetInfo.selectorFont.fontSize = Math.round(widgetInfo.selectorFont.fontSize*widthProportion);
+                                        widgetInfo.selectorWidth = Math.round(widgetInfo.selectorWidth*widthProportion);
+                                        widgetInfo.selectorHeight = Math.round(widgetInfo.selectorHeight*widthProportion);
+                                        widgetInfo.itemWidth = Math.round(widgetInfo.itemWidth*widthProportion);
+                                        widgetInfo.itemHeight = Math.round(widgetInfo.itemHeight*widthProportion);
                                     }
                                     //改变仪表盘指针 取宽高中较小值为边长
                                     if(type=="MyDashboard"){
@@ -655,12 +655,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     showWidgetInfo.maxFontWidth = Math.round(showWidgetInfo.maxFontWidth * widthProportion);
                                 }
                                 if(type=="MySelector"||type=='MySelector'){
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemFont.fontSize*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorFont.fontSize = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorFont.fontSize*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorWidth = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorWidth*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorHeight = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.selectorHeight*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemWidth = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemWidth*widthProportion);
-                                    content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight = Math.round(content.pages[a].layers[b].showSubLayer[c].widgets[d].info.itemHeight*widthProportion);
+                                    showWidgetInfo.itemFont.fontSize = Math.round(showWidgetInfo.itemFont.fontSize*widthProportion);
+                                    showWidgetInfo.selectorFont.fontSize = Math.round(showWidgetInfo.selectorFont.fontSize*widthProportion);
+                                    showWidgetInfo.selectorWidth = Math.round(showWidgetInfo.selectorWidth*widthProportion);
+                                    showWidgetInfo.selectorHeight = Math.round(showWidgetInfo.selectorHeight*widthProportion);
+                                    showWidgetInfo.itemWidth = Math.round(showWidgetInfo.itemWidth*widthProportion);
+                                    showWidgetInfo.itemHeight = Math.round(showWidgetInfo.itemHeight*widthProportion);
                                 }
                                 if(type1=="MyDashboard"){
                                     showWidgetInfo.pointerLength=Math.round(showWidgetInfo.pointerLength*widthProportion);
@@ -1394,64 +1394,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         toastr.warning('获取失败');
                     });
             }
-        }
-
-        /**
-         * 打开Tags导入模态框
-         */
-        function openTagsPanel() {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'tagsImport.html',
-                scope: $scope,//指定父scope
-                size: 'md',
-                controller: ['$scope', '$uibModalInstance', '$http', function ($scope, $uibModalInstance, $http) {
-                    $scope.selectedTagId = null;
-                    $scope.ok = function () {
-                        if (!$scope.selectedTagId) {
-                            toastr.warning('请选择一项预设变量');
-                            return;
-                        }
-                        getTagsFromRemote($scope.selectedTagId);
-                        $uibModalInstance.close();
-                    };
-
-                    $scope.cancel = function () {
-                        $uibModalInstance.dismiss();
-                    };
-
-                    function getTagsFromRemote(id) {
-                        var pattern = new RegExp(/tags_default\d+$/g);
-                        var url = '';
-
-                        if (pattern.test(id)) {
-                            //sys
-                            url = '/public/ide/modules/tagConfig/template/' + id.replace('_', '.') + '.json';
-                        } else {
-                            //custom
-                        }
-                        $http({
-                            method: 'get',
-                            url: url
-                        }).success(function (data) {
-                            handler(null, data);
-                        }).error(function (err) {
-                            handler(err, null);
-                        });
-                    }
-
-                    function handler(err, data) {
-                        if (err) {
-                            console.error('err in get tags template');
-                            toastr.error('获取失败，请检查您的网络');
-                            return;
-                        }
-                        console.log('data', data);
-                        $scope.$emit('GetTagsFromRemote',data);
-                    }
-                }]
-            });
-
         }
 
         /**

@@ -236,7 +236,7 @@ ideServices
                     //item数
                     itemCount:1,
                     //能显示出的item数，item视窗大小
-                    itemShowCount:1,
+                    itemShowCount:0,
                     //item当前值
                     curValue:0,
 
@@ -309,8 +309,8 @@ ideServices
                     left: 0,
                     top: 0,
                     //宽高
-                    width:80,
-                    height: 40,
+                    width:100,
+                    height: 100,
 
                     //最大值
                     maxValue:100,

@@ -29,8 +29,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 onAttributeChanged: onAttributeChanged,
                 transitionMode: AnimationService.getTransitionModes(),
                 transitionName: null,
+                timingFun:'',
+                timingFuns:['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'],
 
-                page: {
+
+            page: {
                     enterImage: enterBackgroundImage,
                     selectImage: 'demo20.png'
                 },
@@ -332,6 +335,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterMaxAlert: enterMaxAlert,
                 restore: restore,
                 changeTransitionName: changeTransitionName,
+                changeTimingFun: changeTimingFun,
                 changeTransitionDur: changeTransitionDur,
                 enterHighlightMode: enterHighlightMode,
                 enterEnableAnimationMode: enterEnableAnimationMode,
@@ -416,6 +420,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                         }
                         $scope.component.transitionName=$scope.component.object.level.transition.name;
+                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyPage:
                         //调整Page的背景图
@@ -425,6 +430,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                         }
                         $scope.component.transitionName=$scope.component.object.level.transition.name;
+                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MySubLayer:
                         var scrollVEnabled = $scope.component.object.level.info.scrollVEnabled;
@@ -536,6 +542,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
                         }
                         $scope.component.transitionName=$scope.component.object.level.transition.name;
+                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
                         if($scope.component.object.level.info.enableAnimation===undefined){
                             selectObject.level.info.enableAnimation=false;
                             $scope.component.num.enableAnimationModeId='1'
@@ -562,6 +569,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         $scope.component.texNum.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
                         $scope.component.texNum.arrangeModel=$scope.component.object.level.info.arrange;
                         $scope.component.transitionName=$scope.component.object.level.transition.name;
+                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
                         if($scope.component.object.level.info.enableAnimation==false){
                             $scope.component.texNum.enableAnimationModeId='1'
                         }else if($scope.component.object.level.info.enableAnimation==true){
@@ -668,6 +676,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     break;
                 }
             }
+            ProjectService.ChangeAttributeTransition(option);
+
+        }
+        function changeTimingFun() {
+            var option = {
+                timingFun: $scope.component.timingFun
+            };
             ProjectService.ChangeAttributeTransition(option);
 
         }
@@ -2886,7 +2901,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     restore();
                     return;
                 }
-                if (cur < 0 || cur > 100) {
+                if (cur <= 0 || cur > 100) {
                     toastr.warning('超出范围');
                     restore();
                     return;
@@ -3291,23 +3306,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
             var oldOperate = ProjectService.SaveCurrentOperate();
 
-            var option = {
-                dateTimeModeId: selectDateTimeModeId,
-                RTCModeId: selectRTCModeId
-            };
-            switch (selectObj.type) {
-                case Type.MyTexTime:
-                    ProjectService.ChangeAttributeTexTimeModeId(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                case Type.MyDateTime:
-                    ProjectService.ChangeAttributeDateTimeModeId(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-            }
+        var option={
+            dateTimeModeId:selectDateTimeModeId,
+            RTCModeId:selectRTCModeId
+        };
+        switch(selectObj.type){
+            case Type.MyTexTime:
+                ProjectService.ChangeAttributeTexTimeModeId(option, function () {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyDateTime:
+                ProjectService.ChangeAttributeDateTimeModeId(option,function () {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
         }
+    }
 
         function changeGroupAlign() {
             var option = {

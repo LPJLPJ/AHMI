@@ -190,7 +190,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
     .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance','ProjectService', 'action','triggers','tags','timerTags','actionNames','OperationService', function ($scope, $uibModalInstance,ProjectService, action,triggers,tags,timerTags,actionNames,OperationService) {
         //$scope.ops = ['GOTO','SET','INC','DEC'];
 
-        var blankCmd = [{name:'',symbol:''}, {tag: '', value: ''}, {tag: '', value: ''}];
+        var blankCmd = [{name:'',symbol:''}, {tag:'', value:''}, {tag:'', value:''}];
         $scope.ops = OperationService.getOperations();
 
         $scope.tags=_.map(tags.filter(function(item){
@@ -262,6 +262,18 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
 
         //保存
         $scope.save = function (th) {
+            //add by tang
+            var cmd=th.action.commands;
+            for(var i=0;i<cmd.length;i++){
+                var symbol=cmd[i][0].symbol;
+                var tag=cmd[i][1].tag||cmd[i][1].value;
+                var val=cmd[i][2].tag||cmd[i][2].value;
+                if(symbol===""){
+                    alert("禁止使用空指令");
+                    return;
+                }
+            }
+
             //判断是否和初始一样
             if(th.action.newAction===false){
                 if (th.action.title===restoreValue){
@@ -326,5 +338,24 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             }
         };
 
-
+        //tagSelect Obj
+        $scope.selectedTagObjArray=[
+            {
+                tagName:null,
+                useTag:true
+            },
+            {
+                tagName:null,
+                useTag:true
+            }
+        ];
+        //tagSelect 回调
+        $scope.actionFunction=function(index){
+            $scope.chosenCmd[index+1].tag=$scope.selectedTagObjArray[index].tagName;
+        };
+        //启用变量
+        $scope.usetagSwitch=function(index){
+            $scope.selectedTagObjArray[index].tagName='';
+            $scope.actionFunction(index);
+        };
     }]);

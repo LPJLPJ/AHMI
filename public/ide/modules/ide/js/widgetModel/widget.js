@@ -587,6 +587,7 @@
             curDigitLayer = new Layer(curX,0,mW,h)
             console.log(curX,mW)
             curDigitLayer.subLayers.font= new FontSubLayer('0',fontStyle)
+            // curDigitLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,0,0)'))
             layers.push(curDigitLayer)
             curX = curX+mW+spacing
 
@@ -599,9 +600,14 @@
             for(var i=0;i<decimalCount;i++){
                 curDigitLayer = new Layer(curX,0,mW,h)
                 curDigitLayer.subLayers.font = new FontSubLayer('0',fontStyle)
+                // curDigitLayer.subLayers.color = new ColorSubLayer(parseColor('rgb(255,0,0)'))
                 layers.push(curDigitLayer)
                 curX+=mW+spacing
             }
+        }
+
+        if (valueObj.enableAnimation){
+            layers = layers.concat(_.cloneDeep(layers))
         }
 
 

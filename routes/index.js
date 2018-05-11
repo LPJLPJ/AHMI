@@ -12,6 +12,7 @@ var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
 var DownloadRouter = require('./routeDownload');
 var VersionManager = require('../utils/versionManager');
+var route_tag = require('./route_tags');
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -396,6 +397,8 @@ router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
 
 
+router.route('/tags/preview')
+    .get(route_tag.getDefault);
 
 
 

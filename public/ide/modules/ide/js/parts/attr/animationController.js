@@ -120,6 +120,11 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             }
         };
         $scope.confirm = function (th) {
+            var scaleX=$scope.animation.animationAttrs.scale.srcScale.x,scaleY=$scope.animation.animationAttrs.scale.srcScale.y;
+            if(scaleX<0||scaleY<0){
+                alert("缩放倍率禁止使用负数");
+                return;
+            }
             fixData($scope.animation, $scope.switchButtons);
             if (th.animation.newAnimation === false) {
                 if (th.animation.title === restoreValue) {
