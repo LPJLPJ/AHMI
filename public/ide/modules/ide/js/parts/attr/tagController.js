@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$uibModal', function ($scope, TagService, ProjectService, Type, $uibModal) {
+ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService', 'Type', '$uibModal', function ($rootScope,$scope, TagService, ProjectService, Type, $uibModal) {
     $scope.selectedIdx = -1;
     $scope.component = {
         allCustomTags: null,
@@ -46,8 +46,11 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
 
     //导入tags事件
     $scope.$on('syncTagSuccess', function (data) {
+        console.log('syncTagSuccess')
         readTagsInfo();
+        readTagClassesInfo();
     });
+
 
     function initProject() {
         readTagsInfo();
@@ -110,7 +113,7 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
             }
         });
 
-        modalInstance.result.then(function (newTag,_type) {
+        modalInstance.result.then(function (newTag) {
             //process save
             if ($scope.selectedIdx == -1) {
                 //new tag
@@ -121,16 +124,22 @@ ide.controller('TagCtrl', ['$scope', 'TagService', 'ProjectService', 'Type', '$u
                 }.bind(this));
             } else if ($scope.selectedType == 'custom') {
                 //edit custom tag
-                if (_type === 'force'){
+
+                if (newTag.force === 'force') {
                     //modify all relatedTag
+                    var oldOperate = ProjectService.SaveCurrentOperate();
                     var oldTag = TagService.getTagByIndex(index);
-                    ProjectService.replaceAllRelatedTag(oldTag,newTag)
-                }else{
-                    TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
-                        readTagsInfo();
-                    }.bind(this));
-                    editTagInTagClass(tagName,newTag,$scope.component.curTagClass);
+                    ProjectService.replaceAllRelatedTag(oldTag, newTag)
+                    $scope.$emit('ChangeCurrentPage',oldOperate)
                 }
+
+
+
+                TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
+                    readTagsInfo();
+                }.bind(this));
+                editTagInTagClass(tagName,newTag,$scope.component.curTagClass);
+
 
 
             } else if ($scope.selectedType == 'timer') {
@@ -843,7 +852,9 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
 
                 if (shouldForceEdit){
                     //forceEdit
-                    $uibModalInstance.close($scope.tag,'force');
+                    console.log('force')
+                    $scope.tag.force = 'force'
+                    $uibModalInstance.close($scope.tag);
                 }
 
             }

@@ -12,14 +12,14 @@ ideServices
         'TemplateProvider',
         'ViewService',
         'Type',
-        'ResourceService',function ($rootScope,$timeout,
+        'ResourceService','TagService',function ($rootScope,$timeout,
                                     CanvasService,
                                     GlobalService,
                                     Preference,
                                     TemplateProvider,
                                     ViewService,
                                     Type,
-                                    ResourceService) {
+                                    ResourceService,TagService) {
 
 
             var _self=this;
@@ -469,10 +469,18 @@ ideServices
                 return names
             };
 
+            function replaceActions(target,oldTagName,newTagName) {
+                if (target&&target.actions){
+                    target.actions.forEach(function (action) {
+
+                        replaceActionTag(action,oldTagName,newTagName)
+                    })
+                }
+            }
 
             function replaceActionTag(action,oldTagName,newTagName) {
                 if (action&&action.commands&&action.commands.length){
-                    commands.forEach(function (cmd) {
+                    action.commands.forEach(function (cmd) {
                         replaceCommandTag(cmd,oldTagName,newTagName)
                     })
                 }
@@ -502,23 +510,29 @@ ideServices
                     oldTagName = oldTag
                     newTagName = newTag
                 }
+                console.log(oldTagName,newTagName)
                 _.forEach(project.pages,function(page){
                     if(page.tag === oldTagName){
                         page.tag = newTagName
                     }
+                    replaceActions(page,oldTagName,newTagName)
                     _.forEach(page.layers,function(layer){
                         if(layer.tag=== oldTagName){
                             layer.tag = newTagName
                         }
+                        replaceActions(layer,oldTagName,newTagName)
                         _.forEach(layer.subLayers,function(subLayer){
+                            replaceActions(subLayer,oldTagName,newTagName)
                             _.forEach(subLayer.widgets,function(widget){
                                 if(widget.tag=== oldTagName){
                                     widget.tag = newTagName
                                 }
+                                replaceActions(widget,oldTagName,newTagName)
                             })
                         })
                     })
                 });
+                console.log(project.pages)
             }
 
             /**
@@ -2008,6 +2022,10 @@ ideServices
                     }
                 }
                 //project=_operate;
+                TagService.syncCustomTags(project.customTags);
+                TagService.syncTimerTags(project.timerTags);
+                TagService.setTimerNum(project.timers);
+                TagService.syncTagClasses(project.tagClasses);
 
                 _cleanPageHashKey();
                 var pageNode=CanvasService.getPageNode();

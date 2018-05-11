@@ -5,13 +5,13 @@
         'Preference',
         'Type',
         'KeydownService',
-        'OperateQueService',function ($scope,$timeout,$interval,
+        'OperateQueService','TagService',function ($scope,$timeout,$interval,
                                           ProjectService,
                                           CanvasService,
                                           Preference,
                                           Type,
                                           KeydownService,
-                                          OperateQueService) {
+                                          OperateQueService,TagService) {
 
 
         initUserInterface();
@@ -160,6 +160,14 @@
             });
 
             $scope.$on('OperateQueChanged', function (event, operate, callback) {
+                // if (operate){
+                //     //oldOperate
+                //     console.log(operate)
+                //     TagService.syncCustomTags(operate.customTags);
+                //     TagService.syncTimerTags(operate.timerTags);
+                //     TagService.setTimerNum(operate.timers);
+                //     TagService.syncTagClasses(operate.tagClasses);
+                // }
                 renderAllCanvases(operate,callback);
             })
 
