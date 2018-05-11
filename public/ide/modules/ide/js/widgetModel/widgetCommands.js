@@ -87,6 +87,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         onTagChange: '\n            var(len,0)\n            set(len,\'this.layers.length\')\n            while(len>0){\n                minus(len,1)\n                set(\'this.layers.len.hidden\',1)\n            }\n            var(t,0)\n            getTag(t)\n            set(\'this.layers.t.hidden\',0)\n\n        '
     };
 
+    WidgetCommands['Animation'] = {
+        onInitialize: '\n        ',
+        onMouseUp: '\n        ',
+        onMouseDown: '\n        ',
+        onTagChange: '\n            var(len,0)\n            set(len,\'this.layers.length\')\n            while(len>0){\n                minus(len,1)\n                set(\'this.layers.len.hidden\',1)\n            }\n            var(t,0)\n            getTag(t)\n            set(\'this.layers.t.hidden\',0)\n\n        '
+    };
+
     WidgetCommands['SlideBlock'] = {
         onInitialize: '\n        ',
         onMouseUp: '\n        ',

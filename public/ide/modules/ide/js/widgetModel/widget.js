@@ -708,6 +708,22 @@
     Slide.prototype = Object.create(Widget.prototype);
     Slide.prototype.constructor = Slide;
 
+    //Animation
+    function Animation(x,y,w,h,info,slices){
+        var layers = [];
+        var colorElems;
+        for(var i=0;i<slices.length;i++){
+            layers[i] = new Layer(0,0,w,h);
+            colorElems = parseColor(slices[i].color);
+            layers[i].subLayers.color = new ColorSubLayer(colorElems);
+            layers[i].subLayers.image = new TextureSubLayer(slices[i].imgSrc);
+        }
+        this.subType = 'Slide';
+        Widget.call(this,x,y,w,h,layers);
+    }
+    Animation.prototype = Object.create(Widget.prototype);
+    Animation.prototype.constructor = Animation;
+
     //DateTime
     function DateTime(x,y,w,h,info,fontStyle,slices){
         var dateTimeModeId = Number(info.dateTimeModeId),
@@ -1727,6 +1743,7 @@
     WidgetModel.models.TexDatePicker = TexDatePicker;
     WidgetModel.models.TexTime = TexTime;
     WidgetModel.models.ColorBlock = ColorBlock;
+    WidgetModel.models.Animation = Animation;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

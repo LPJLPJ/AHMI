@@ -993,6 +993,15 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
                     break;
 
+                case 'MyAnimation':
+                    generalWidget = new WidgetModel.models['Animation'](x, y, w, h, targetWidget.info, _.cloneDeep(targetWidget.texList[0].slices));
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Slide';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
+                    break;
+
                 default:
                     targetWidget.subType = rawWidget.type;
                     generalWidget = targetWidget
