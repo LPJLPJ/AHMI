@@ -550,7 +550,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         generalWidget.otherAttrs[6] = colorElems.b;
                         generalWidget.otherAttrs[7] = colorElems.a;
                     } else if (generalWidget.mode == 3) {
-                        generalWidget.otherAttrs[0] = targetWidget.info.thresholdModeId;
+                        generalWidget.otherAttrs[0] = Number(targetWidget.info.thresholdModeId);
                         generalWidget.otherAttrs[1] = targetWidget.info.threshold1;
                         generalWidget.otherAttrs[2] = targetWidget.info.threshold2;
                         colorElems = parseColor(slices[1].color);
