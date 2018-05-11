@@ -36,6 +36,7 @@
     <script src="../../public/libs/uuidv1.js"></script>
     <script src="../../public/ide/lib/socket.io/socket.io.slim.js"></script>
     <script src="../../public/ide/lib/Font.min.js"></script>
+    <script src="../../public/ide/lib/sxintro/SXIntro.bundle.js"></script>
     <!--<script src="../../public/ide/lib/sortable.js"></script>-->
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
@@ -178,7 +179,7 @@
      ng-class="{'my-left-show':leftShown,'my-left-hide':!leftShown,'my-right-show':rightShown,'my-right-hide':!rightShown}">
     <!--<div class="container-fluid" >-->
 
-    <div ng-controller="NavCtrl">
+    <div ng-controller="NavCtrl" data-step="1">
 
         <ul class="nav nav-tabs my-nav-tabs">
 
@@ -535,7 +536,7 @@
     </div>
 
     <!--/** thumb colum **/-->
-    <div class="my-pages" ng-controller="ThumbCtrl" ng-class="{'my-tool-show':component.out.toolShow}">
+    <div class="my-pages" ng-controller="ThumbCtrl" ng-class="{'my-tool-show':component.out.toolShow}" data-step="2">
         <div class="my-add-page">
             <i class="iconfont" ng-click="component.addPage()">&#xe604;</i>
         </div>
@@ -558,7 +559,7 @@
             </ol>
         </div>
     </div>
-    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)">
+    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)" data-step="3">
 
         <div id="mask" ng-hide="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
             <img style="position: absolute;left: 0;top: 0;z-index: 100;float: left" width="100%" height="100%" ng-src="{{maskSrc}}"/>
@@ -605,7 +606,7 @@
     </div>
     <div class="my-attribute" ng-controller="AttrCtrl"
          ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'my-tool-show':component.out.toolShow}">
-        <div class="my-top-panel">
+        <div class="my-top-panel" data-step="4">
             <ul class="attribute-nav nav nav-tabs my-nav-tabs ">
 
                 <li role="presentation"
@@ -3877,7 +3878,7 @@
         </div>
 
 
-        <div class="my-bottom-panel">
+        <div class="my-bottom-panel" data-step="5">
             <div class="my-panel-title"><span>图层</span></div>
             <div class="my-layers-panel">
 

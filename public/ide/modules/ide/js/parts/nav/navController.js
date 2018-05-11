@@ -61,7 +61,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function initUserInterface() {
             $scope.component = {
                 nav: {
-                    currentNav: -1,
+                    currentNav: 0,
                     navs: [{name: '文件'},
                         {name: '开始'},
                         {name: '编辑'},
@@ -72,7 +72,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 },
 
                 tool: {
-                    toolShow: false,
+                    toolShow: true,
                     operateQueStatus: OperateQueService.getOperateQueStatus(),
                     deleteStatus: false,
                     sublayerStatus: false,
