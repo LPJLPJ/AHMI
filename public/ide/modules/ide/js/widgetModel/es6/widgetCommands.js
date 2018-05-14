@@ -645,6 +645,8 @@
             
         `,
         onTagChange: `
+            var(arr,0)                //方向
+            set(arr,'this.arrange')        
             var(tTotalFrame,0)
             set(tTotalFrame,'this.totalFrame')
             var(m,0)
@@ -675,6 +677,8 @@
                   var(h,0)
                   set(h,'this.layers.0.height')
                   if(m==0){
+                    if(arr==0){
+                      //水平
                       multiply(temp1,w)
                       divide(temp1,temp2)
                       set('this.layers.1.subLayers.roi.p1x',0)
@@ -686,6 +690,23 @@
                       set('this.layers.1.subLayers.roi.p4x',0)
                       set('this.layers.1.subLayers.roi.p4y',h)
                       set('this.layers.1.hidden',0)
+                    }else{
+                      //竖直
+                      multiply(temp1,h)
+                      divide(temp1,temp2)
+                      set(temp2,h)
+                      minus(temp2,temp1)
+                      set('this.layers.1.subLayers.roi.p1x',0)
+                      set('this.layers.1.subLayers.roi.p1y',temp2)
+                      set('this.layers.1.subLayers.roi.p2x',w)
+                      set('this.layers.1.subLayers.roi.p2y',temp2)
+                      set('this.layers.1.subLayers.roi.p3x',w)
+                      set('this.layers.1.subLayers.roi.p3y',h)
+                      set('this.layers.1.subLayers.roi.p4x',0)
+                      set('this.layers.1.subLayers.roi.p4y',h)
+                      set('this.layers.1.hidden',0)
+                    }
+                      
                   }
                   if(m==1){
                       var(r1,0)
@@ -733,9 +754,21 @@
                       set('this.layers.1.subLayers.color.g',gt)
                       set('this.layers.1.subLayers.color.b',bt)
                       set('this.layers.1.subLayers.color.a',at)
-                      multiply(temp1,w)
-                      divide(temp1,temp2)
-                      set('this.layers.1.width',temp1)
+                      
+                      if(arr==0){
+                        //水平
+                        multiply(temp1,w)
+                        divide(temp1,temp2)
+                        set('this.layers.1.width',temp1)
+                      }else{
+                        //竖直
+                        multiply(temp1,h)
+                        divide(temp1,temp2)
+                        set(temp2,h)
+                        minus(temp2,temp1)
+                        set('this.layers.1.y',temp2)
+                        set('this.layers.1.height',temp1)
+                      }
                       set('this.layers.1.hidden',0)
                   }
                   if(m==3){
@@ -805,9 +838,23 @@
                          }
 
                       }
-                      multiply(temp1,w)
-                      divide(temp1,temp2)
-                      set('this.layers.1.width',temp1)
+                      
+                      if(arr==0){
+                        //水平
+                        multiply(temp1,w)
+                        divide(temp1,temp2)
+                        set('this.layers.1.width',temp1)
+                        
+                      }else{
+                        //竖直
+                        multiply(temp1,h)
+                        divide(temp1,temp2)
+                        set(temp2,h)
+                        minus(temp2,temp1)
+                        set('this.layers.1.y',temp2)
+                        set('this.layers.1.height',temp1)
+                      }
+                      
                       set('this.layers.1.hidden',0)
                   }
                }
@@ -827,6 +874,8 @@
 
         `,
         onAnimationFrame: `
+          var(arr,0)
+          set(arr,'this.arrange')
           var(m,0)
           set(m,'this.mode')
           var(tTag,0)
@@ -866,17 +915,35 @@
                 var(h,0)
                 set(h,'this.layers.0.height')
                 if(m==0){
-                    multiply(temp1,w)
-                    divide(temp1,temp2)
-                    set('this.layers.1.subLayers.roi.p1x',0)
-                    set('this.layers.1.subLayers.roi.p1y',0)
-                    set('this.layers.1.subLayers.roi.p2x',temp1)
-                    set('this.layers.1.subLayers.roi.p2y',0)
-                    set('this.layers.1.subLayers.roi.p3x',temp1)
-                    set('this.layers.1.subLayers.roi.p3y',h)
-                    set('this.layers.1.subLayers.roi.p4x',0)
-                    set('this.layers.1.subLayers.roi.p4y',h)
-                    set('this.layers.1.hidden',0)
+                    if(arr==0){
+                      //水平
+                      multiply(temp1,w)
+                      divide(temp1,temp2)
+                      set('this.layers.1.subLayers.roi.p1x',0)
+                      set('this.layers.1.subLayers.roi.p1y',0)
+                      set('this.layers.1.subLayers.roi.p2x',temp1)
+                      set('this.layers.1.subLayers.roi.p2y',0)
+                      set('this.layers.1.subLayers.roi.p3x',temp1)
+                      set('this.layers.1.subLayers.roi.p3y',h)
+                      set('this.layers.1.subLayers.roi.p4x',0)
+                      set('this.layers.1.subLayers.roi.p4y',h)
+                      set('this.layers.1.hidden',0)
+                    }else{
+                      //竖直
+                      multiply(temp1,h)
+                      divide(temp1,temp2)
+                      set(temp2,h)
+                      minus(temp2,temp1)
+                      set('this.layers.1.subLayers.roi.p1x',0)
+                      set('this.layers.1.subLayers.roi.p1y',temp2)
+                      set('this.layers.1.subLayers.roi.p2x',w)
+                      set('this.layers.1.subLayers.roi.p2y',temp2)
+                      set('this.layers.1.subLayers.roi.p3x',w)
+                      set('this.layers.1.subLayers.roi.p3y',h)
+                      set('this.layers.1.subLayers.roi.p4x',0)
+                      set('this.layers.1.subLayers.roi.p4y',h)
+                      set('this.layers.1.hidden',0)
+                    }
                 }
                 if(m==1){
                     var(r1,0)
@@ -923,9 +990,20 @@
                     set('this.layers.1.subLayers.color.g',gt)
                     set('this.layers.1.subLayers.color.b',bt)
                     set('this.layers.1.subLayers.color.a',at)
-                    multiply(temp1,w)
-                    divide(temp1,temp2)
-                    set('this.layers.1.width',temp1)
+                    if(arr==0){
+                        //水平
+                        multiply(temp1,w)
+                        divide(temp1,temp2)
+                        set('this.layers.1.width',temp1)
+                      }else{
+                        //竖直
+                        multiply(temp1,h)
+                        divide(temp1,temp2)
+                        set(temp2,h)
+                        minus(temp2,temp1)
+                        set('this.layers.1.y',temp2)
+                        set('this.layers.1.height',temp1)
+                      }
                     set('this.layers.1.hidden',0)
                 }
                 if(m==3){
@@ -994,11 +1072,24 @@
                           }
                        }
 
-                    }
-                    multiply(temp1,w)
-                    divide(temp1,temp2)
-                    set('this.layers.1.width',temp1)
-                    set('this.layers.1.hidden',0)
+                   }
+                   if(arr==0){
+                     //水平
+                     multiply(temp1,w)
+                     divide(temp1,temp2)
+                     set('this.layers.1.width',temp1)
+                      
+                   }else{
+                     //竖直
+                     multiply(temp1,h)
+                     divide(temp1,temp2)
+                     set(temp2,h)
+                     minus(temp2,temp1)
+                     set('this.layers.1.y',temp2)
+                     set('this.layers.1.height',temp1)
+                   }
+                      
+                  set('this.layers.1.hidden',0)
                 }
              }
              var(cur,0)

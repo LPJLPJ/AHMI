@@ -37,6 +37,7 @@
         this.tag = 'defaultTag'
         this.type = 'general'
         this.mode = 0
+        this.arrange = 0
         this.otherAttrs = []
         if (!layers||!layers.length){
             this.layers= [new Layer(w,h)]
@@ -56,10 +57,10 @@
             highLightNum:0,
             maxHighLightNum:this.maxHighLightNum||0,
             mode:this.mode,
+            arrange:this.arrange,
             tag:this.tag,
             layers:this.layers,
-            otherAttrs:this.otherAttrs
-            // arrange:this.arrange
+            otherAttrs:this.otherAttrs,
             // onInitialize:this.onInitialize,
             // onMouseDown:this.onMouseDown,
             // onMouseUp:this.onMouseUp

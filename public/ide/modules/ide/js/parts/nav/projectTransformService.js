@@ -523,8 +523,10 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     });
                     generalWidget = new WidgetModel.models['Progress'](x, y, w, h, targetWidget.info, slices);
                     generalWidget = generalWidget.toObject();
+                    console.log('generalWidget progress',generalWidget);
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.mode = Number(rawWidget.info.progressModeId);
+                    generalWidget.arrange = targetWidget.info.arrange==='horizontal'?0:1 //0水平，1竖直
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue';
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr] || 0
