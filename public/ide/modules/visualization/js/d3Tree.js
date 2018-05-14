@@ -152,6 +152,8 @@ $(function(){
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
             })
+            .on("mouseover",toolTip.show)
+            .on("mouseout",toolTip.hide)
             .selectAll('tspan')
             .data(function(d){
                 let str = d.data.name;
@@ -174,8 +176,6 @@ $(function(){
             .text(function(d){
                 return d
             })
-            .on("mouseover",toolTip.show)
-            .on("mouseout",toolTip.hide);
 
         // 更新
         let nodeUpdate = nodeEnter.merge(node);
@@ -347,22 +347,22 @@ $(function(){
             let data = d.data||{};
             let str = ``;
             if(data.pages){
-                str += `<div>宽度:${data.initSize.width}</div><div>高度:${data.initSize.height}</div>`;
-                str += `<div>页数:${data.pages.length}</div>`;
+                str += `<div>宽度: ${data.initSize.width}</div><div>高度:${data.initSize.height}</div>`;
+                str += `<div>页数: ${data.pages.length}</div>`;
             }else{
-                str += `<div>tag:${data.tag||''}</div><div>宽度:${data.info&&data.info.width||''}</div><div>高度:${data.info&&data.info.height||''}</div>`;
+                str += `<div>tag: ${data.tag||''}</div><div>宽度:${data.info&&data.info.width||''}</div><div>高度:${data.info&&data.info.height||''}</div>`;
                 switch (data.type){
                     case 'MyPage':
-                        str += `<div>画布数:${data.layers.length}</div>`;
+                        str += `<div>画布数: ${data.layers.length}</div>`;
                         break;
                     case 'MyLayer':
-                        str += `<div>子画布数:${data.subLayers.length}</div>`;
+                        str += `<div>子画布数: ${data.subLayers.length}</div>`;
                         break;
                     case 'MySubLayer':
-                        str +=`<div>控件数:${data.widgets.length}</div>`;
+                        str +=`<div>控件数: ${data.widgets.length}</div>`;
                         break;
                     case 'MySwitch':
-                        str +=`<div>bindBit:${data.info.bindBit}</div>`;
+                        str +=`<div>bindBit: ${data.info.bindBit}</div>`;
                         break;
                     default:
                         break;
