@@ -6,7 +6,22 @@ var uglify = require('gulp-uglify');
 var pump = require('pump');
 var watch = require('gulp-watch');
 var path = require('path');
+var os = require('os');
+var lec = require('gulp-line-ending-corrector');
 var baseUrl = './public/ide/modules/ide/js/';
+
+
+console.log('os',os.platform());
+var eolc;
+
+switch (os.platform()){
+    case 'win32':
+        eolc = 'CRLF';
+        break;
+    default:
+        eolc = 'LF';
+        break;
+}
 
 gulp.task('compress', function (cb) {
     pump([
@@ -42,12 +57,14 @@ gulp.task('keepCompressing',function () {
     return gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js'],{base:baseUrl})
         .pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js']))
         .pipe(uglify())
+        .pipe(lec({eolc:eolc,encoding:'utf-8'}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
 
 gulp.task('transferNormalFiles',function () {
     return gulp.src([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl})
         .pipe(watch([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl}))
+        .pipe(lec({eolc:eolc,encoding:'utf-8'}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
 
