@@ -1072,7 +1072,7 @@
                           }
                        }
 
-                    }
+                   }
                    if(arr==0){
                      //水平
                      multiply(temp1,w)
@@ -1097,6 +1097,13 @@
              if(cur==1){
                 set('this.layers.2.x',temp1)
              }
+             
+
+             //reset oldValue
+             getTag(tTag)
+             set('this.oldValue',tTag)
+
+             
             }
           
         `
