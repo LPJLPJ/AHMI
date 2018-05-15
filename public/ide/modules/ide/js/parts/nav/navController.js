@@ -940,7 +940,31 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     postFun();
                 }
 
-            } else {
+            } else if(format == 'template'){
+                if (window.spinner) {
+                    window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
+                    showSpinner();
+                }
+                $http({
+                    method: 'POST',
+                    url: '/templates/new',
+                    //data:{currentProject:currentProject}
+                    data:{projectId:$scope.project.projectId}
+                })
+                .success(function (data, status, xhr) {
+                    window.spinner && window.spinner.hide();
+                    if (data == 'ok') {
+                        toastr.info('导出模板成功');
+                    } else {
+                        toastr.error('导出模板失败')
+                    }
+                })
+                .error(function (err, status, xhr) {
+                    window.spinner && window.spinner.hide();
+                    toastr.error('导出模板失败');
+                    console.log(err);
+                })
+            }else{
                 generateData(format);
                 if (window) {
                     if (window.spinner) {
@@ -1519,9 +1543,14 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         type: 'localCompatible',
         name: '本地(兼容)'
     }
+    var templateFormat = {
+        type:'template',
+        name:'模板'
+    }
     if (!window.local) {
         $scope.formats[2] = localFormat;
         $scope.formats[3] = localFormatCompatible
+        $scope.formats[4] = templateFormat
     }
     ;
     $scope.generateFormat = 'normal';

@@ -12,14 +12,14 @@ ideServices
         'TemplateProvider',
         'ViewService',
         'Type',
-        'ResourceService',function ($rootScope,$timeout,
+        'ResourceService','TagService',function ($rootScope,$timeout,
                                     CanvasService,
                                     GlobalService,
                                     Preference,
                                     TemplateProvider,
                                     ViewService,
                                     Type,
-                                    ResourceService) {
+                                    ResourceService,TagService) {
 
 
             var _self=this;
@@ -468,6 +468,72 @@ ideServices
                 });
                 return names
             };
+
+            function replaceActions(target,oldTagName,newTagName) {
+                if (target&&target.actions){
+                    target.actions.forEach(function (action) {
+
+                        replaceActionTag(action,oldTagName,newTagName)
+                    })
+                }
+            }
+
+            function replaceActionTag(action,oldTagName,newTagName) {
+                if (action&&action.commands&&action.commands.length){
+                    action.commands.forEach(function (cmd) {
+                        replaceCommandTag(cmd,oldTagName,newTagName)
+                    })
+                }
+            }
+
+            function replaceCommandTag(cmd,oldTagName,newTagName) {
+                for(var i=1;i<3;i++){
+                    if (cmd[i]){
+                        if (cmd[i].tag === oldTagName){
+                            cmd[i].tag = newTagName
+                        }
+                    }
+                }
+            }
+
+            /**
+             * 替换所有oldTag
+             * @param oldTag
+             * @param newTag
+             */
+            this.replaceAllRelatedTag = function (oldTag,newTag) {
+                var oldTagName,newTagName
+                if (typeof oldTag === 'object'){
+                    oldTagName = oldTag.name
+                    newTagName = newTag.name
+                }else{
+                    oldTagName = oldTag
+                    newTagName = newTag
+                }
+                console.log(oldTagName,newTagName)
+                _.forEach(project.pages,function(page){
+                    if(page.tag === oldTagName){
+                        page.tag = newTagName
+                    }
+                    replaceActions(page,oldTagName,newTagName)
+                    _.forEach(page.layers,function(layer){
+                        if(layer.tag=== oldTagName){
+                            layer.tag = newTagName
+                        }
+                        replaceActions(layer,oldTagName,newTagName)
+                        _.forEach(layer.subLayers,function(subLayer){
+                            replaceActions(subLayer,oldTagName,newTagName)
+                            _.forEach(subLayer.widgets,function(widget){
+                                if(widget.tag=== oldTagName){
+                                    widget.tag = newTagName
+                                }
+                                replaceActions(widget,oldTagName,newTagName)
+                            })
+                        })
+                    })
+                });
+                console.log(project.pages)
+            }
 
             /**
              * Page之间的切换
@@ -1956,6 +2022,10 @@ ideServices
                     }
                 }
                 //project=_operate;
+                TagService.syncCustomTags(project.customTags);
+                TagService.syncTimerTags(project.timerTags);
+                TagService.setTimerNum(project.timers);
+                TagService.syncTagClasses(project.tagClasses);
 
                 _cleanPageHashKey();
                 var pageNode=CanvasService.getPageNode();
@@ -4156,6 +4226,8 @@ ideServices
                 selectObj.level.actions=_actionObj;
                 _successCallback&&_successCallback();
             };
+
+
             this.ChangeAttributeTexList= function (_actionObj,_successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.texList=_actionObj;
