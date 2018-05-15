@@ -454,24 +454,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             $timeout(function () {
                 $scope.ide.loaded = true;
                 window.spinner && window.spinner.hide(true);
-                var intro = new SXIntro()
-                    .setIntro([{
-                        tooltip:'第一步',
-                        position:'bottom'
-                    },{
-                        tooltip:'第二步',
-                        position:'right'
-                    },{
-                        tooltip:'第三步',
-                        position:'right'
-                    },{
-                        tooltip:'第四步',
-                        position:'left'
-                    },{
-                        tooltip:'第五步',
-                        position:'left'
-                    }])
-                    .start()
             }, 200)
         }
 
@@ -717,6 +699,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 $scope.$broadcast('NavStatusChanged');
                 $scope.$broadcast('PageNodeChanged');
                 $scope.$broadcast('AttributeChanged');
+                $scope.$broadcast('syncTagSuccess')
             });
 
             $scope.$on('Redo', function (event, operate, callback) {

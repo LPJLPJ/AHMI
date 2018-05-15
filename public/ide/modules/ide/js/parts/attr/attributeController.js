@@ -2578,23 +2578,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
             var oldOperate = ProjectService.SaveCurrentOperate();
 
-            var option = {
-                dateTimeModeId: selectDateTimeModeId,
-                RTCModeId: selectRTCModeId
-            };
-            switch (selectObj.type) {
-                case Type.MyTexTime:
-                    ProjectService.ChangeAttributeTexTimeModeId(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-                case Type.MyDateTime:
-                    ProjectService.ChangeAttributeDateTimeModeId(option, function (oldOperate) {
-                        $scope.$emit('ChangeCurrentPage', oldOperate);
-                    });
-                    break;
-            }
+        var option={
+            dateTimeModeId:selectDateTimeModeId,
+            RTCModeId:selectRTCModeId
+        };
+        switch(selectObj.type){
+            case Type.MyTexTime:
+                ProjectService.ChangeAttributeTexTimeModeId(option, function () {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
+            case Type.MyDateTime:
+                ProjectService.ChangeAttributeDateTimeModeId(option,function () {
+                    $scope.$emit('ChangeCurrentPage',oldOperate);
+                });
+                break;
         }
+    }
 
         function changeGroupAlign() {
             var option = {

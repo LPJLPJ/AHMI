@@ -525,7 +525,9 @@
                     </div>
                 </a>
             </div>
-            <div class="my-tool-content-item" ng-show="component.nav.currentNav==5">
+            <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==5">
+                <a ng-click="startTip()" class="my-cmd-item" ><span class="iconfont icon">&#xe72f;</span><span
+                        class="caption">新手引导</span></a>
                 <a ng-click="" class="my-cmd-item" ng-class="" href="http://docs.graphichina.com"
                    target="_blank"><span class="iconfont icon">&#xe63d;</span><span
                         class="caption">文档</span></a>
@@ -3533,6 +3535,7 @@
 
                         </div>
                         <div class="modal-footer">
+                            <button class="btn btn-primary" type="button" ng-show="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
                             <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
                             <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                         </div>
