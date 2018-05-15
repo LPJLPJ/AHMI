@@ -3171,6 +3171,229 @@
             }
         `,
         onMouseUp: `
+            var(tHit,0)                                 //isHited
+            set(tHit,'this.otherAttrs.4')
+
+            if (tHit==1) {                              //isHited==1 此时鼠标被按下
+                var(tInnerX,0)                          //鼠标坐标x
+                set(tInnerX,'this.innerX')
+
+                var(tInnerY,0)                          //鼠标坐标y
+                set(tInnerY,'this.innerY')
+
+                var(tLastArea,0)                        //鼠标上一个区域
+                set(tLastArea,'this.otherAttrs.5') 
+
+                var(tOver,0)                            //鼠标上一个区域
+                set(tOver,'this.otherAttrs.6')      
+
+                var(tRotateX,0)                         //旋转中心坐标X
+                set(tRotateX,'this.otherAttrs.2')
+
+                var(tRotateY,0)                         //旋转中心坐标Y
+                set(tRotateY,'this.otherAttrs.3')
+
+                var(tX,0)                               //鼠标相对于旋转中心坐标X
+                set(tX,tInnerX)
+                minus(tX,tRotateX)
+
+                var(tY,0)                               //鼠标相对于旋转中心坐标Y
+                set(tY,tRotateY)
+                minus(tY,tInnerY)
+
+                var(tBaseAngle,0)                       //区域基角
+                var(tTanSymbol,0)                       //tan角的是否取余:不是真正取余角，取45-tTanAngle
+                var(tTan,0)                             //tan值
+                var(tTanAngle,0)                        //tan角
+
+                var(tRotateAngle,0)                     //旋转角
+
+                var(temp1,0)                            //临时变量
+                var(temp2,0)
+
+                                                        //划分区域
+                if(tX>0){
+                    if(tY>0){
+                        if(tY>=tX){
+                            if(tOver==1){
+                                if(tLastArea==8){
+                                     set(tOver,0)       //未溢出合法
+                                }
+                            }else{
+                                if(tLastArea==8){
+                                     set(tOver,1)       //溢出不合法
+                                }
+                            }
+                            set(tLastArea,1)            //1
+                            set(tBaseAngle,0)           //基角=0        
+                            set(tTan,tX)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tY)
+                            set(tTanSymbol,0)           //不取余
+
+                        }else{
+                            set(tLastArea,2)            //2
+                            set(tBaseAngle,45)          //基角=45
+                            set(tTan,tY)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tX)
+                            set(tTanSymbol,1)           //取余
+                        }
+                    }else{         
+                        set(temp1,tY)                   //取绝对值
+                        multiply(temp1,-1)
+
+                        if(tX>=temp1){
+                            set(tLastArea,3)            //3
+                            set(tBaseAngle,90)          //基角=90
+                            set(tTan,temp1)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tX)
+                            set(tTanSymbol,0)           //不取余
+
+                        }else{
+                            set(tLastArea,4)            //4
+                            set(tBaseAngle,135)         //基角=135
+                            set(tTan,tX)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp1)
+                            set(tTanSymbol,1)           //取余
+                        }
+                    }
+                }else{
+                    if(tY<0){
+                        set(temp1,tX)                   //取绝对值
+                        multiply(temp1,-1)
+                        set(temp2,tY)
+                        multiply(temp2,-1)
+
+                        if(temp2>=temp1){
+                            set(tLastArea,5)            //5
+                            set(tBaseAngle,180)         //基角=180
+                            set(tTan,temp1)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp2)
+                            set(tTanSymbol,0)           //不取余
+
+                        }else{
+                            set(tLastArea,6)            //6
+                            set(tBaseAngle,225)         //基角=225
+                            set(tTan,temp2)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp1)
+                            set(tTanSymbol,1)           //取余
+                        }
+                    }else{
+                        set(temp1,tX)                   //取绝对值
+                        multiply(temp1,-1)
+
+                        if(temp1>=tY){
+                            set(tLastArea,7)            //7
+                            set(tBaseAngle,270)         //基角=270
+                            set(tTan,tY)                //tan值
+                            multiply(tTan,10)
+                            divide(tTan,temp1)
+                            set(tTanSymbol,0)           //不取余
+
+                        }else{
+                            if(tOver==1){
+                                if(tLastArea==1){
+                                     set(tOver,0)       //未溢出合法
+                                }
+                            }else{
+                                if(tLastArea==1){
+                                     set(tOver,1)       //溢出不合法
+                                }
+                            }
+                            set(tLastArea,8)            //8
+                            set(tBaseAngle,315)         //基角=315
+                            set(tTan,temp1)             //tan值
+                            multiply(tTan,10)
+                            divide(tTan,tY)
+                            set(tTanSymbol,1)           //取余
+                        } 
+                    }
+                }   
+                                                        //判断是否溢出
+                if(tOver==0){
+                                                        //tan值查表，计算tanAngle
+                    if(tTan==0){
+                        set(tTanAngle,0)
+                    }else{
+                        if(tTan==1){
+                            set(tTanAngle,6)  
+                        }else{
+                            if(tTan==2){
+                                set(tTanAngle,12)  
+                            }else{
+                                if(tTan==3){
+                                    set(tTanAngle,17)  
+                                }else{
+                                    if(tTan==4){
+                                        set(tTanAngle,22)  
+                                    }else{
+                                        if(tTan==5){
+                                            set(tTanAngle,27)  
+                                        }else{
+                                            if(tTan==6){
+                                                set(tTanAngle,31)  
+                                            }else{
+                                                if(tTan==7){
+                                                    set(tTanAngle,35)  
+                                                }else{
+                                                    if(tTan==8){
+                                                        set(tTanAngle,39)  
+                                                    }else{
+                                                        if(tTan==9){
+                                                            set(tTanAngle,42)  
+                                                        }else{
+                                                            if(tTan==10){
+                                                                set(tTanAngle,45)  
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                                                          //取余
+                    if(tTanSymbol==1){
+                        set(temp1,45)
+                        minus(temp1,tTanAngle)
+                        set(tTanAngle,temp1)
+                    }
+
+                                                          //计算旋转角
+                    set(tRotateAngle,tBaseAngle)
+                    add(tRotateAngle,tTanAngle)
+                }else{                                    //溢出
+                                                          //溢出补满整圆，或清除整圆
+                    if(tLastArea==1){
+                        set(tRotateAngle,360)
+                    }
+                    if(tLastArea==8){
+                        set(tRotateAngle,0)
+                    }
+                }
+                                                          //计算tag值
+                set(temp1,tMaxValue) 
+                minus(temp1,tMinValue)
+                multiply(temp1,tRotateAngle)
+                divide(temp1,360)
+                add(temp1,tMinValue)
+
+                                                           //setTag
+                setTag(temp1)
+
+                set('this.otherAttrs.5',tLastArea)         //lastArea
+                set('this.otherAttrs.6',tOver)             //over
+
+            }
         `,
         onMouseDown: `
             var(curValue,0)                                        //tag值
