@@ -454,7 +454,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             $timeout(function () {
                 $scope.ide.loaded = true;
                 window.spinner && window.spinner.hide(true);
-                // intervalSave();
             }, 200)
         }
 
@@ -700,6 +699,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 $scope.$broadcast('NavStatusChanged');
                 $scope.$broadcast('PageNodeChanged');
                 $scope.$broadcast('AttributeChanged');
+                $scope.$broadcast('syncTagSuccess')
             });
 
             $scope.$on('Redo', function (event, operate, callback) {

@@ -1,17 +1,18 @@
 
-ide.controller('StageCtrl', ['$scope','$timeout','$interval',
-    'ProjectService',
-    'CanvasService',
-    'Preference',
-    'Type',
-    'KeydownService',
-    'OperateQueService','$uibModal',function ($scope,$timeout,$interval,
-                                      ProjectService,
-                                      CanvasService,
-                                      Preference,
-                                      Type,
-                                      KeydownService,
-                                      OperateQueService,$uibModal) {
+    ide.controller('StageCtrl', ['$scope','$timeout','$interval',
+        'ProjectService',
+        'CanvasService',
+        'Preference',
+        'Type',
+        'KeydownService',
+        'OperateQueService','TagService','$uibModal',function ($scope,$timeout,$interval,
+                                          ProjectService,
+                                          CanvasService,
+                                          Preference,
+                                          Type,
+                                          KeydownService,
+                                          OperateQueService,TagService,$uibModal) {
+
 
         initUserInterface();
         //edit by lixiang 初始化offCanvas
@@ -151,6 +152,14 @@ ide.controller('StageCtrl', ['$scope','$timeout','$interval',
             });
 
             $scope.$on('OperateQueChanged', function (event, operate, callback) {
+                // if (operate){
+                //     //oldOperate
+                //     console.log(operate)
+                //     TagService.syncCustomTags(operate.customTags);
+                //     TagService.syncTimerTags(operate.timerTags);
+                //     TagService.setTimerNum(operate.timers);
+                //     TagService.syncTagClasses(operate.tagClasses);
+                // }
                 renderAllCanvases(operate,callback);
             })
 
