@@ -3293,6 +3293,12 @@
         onMouseUp: `
             var(tHit,0)                                 //isHited
             set(tHit,'this.otherAttrs.4')
+            
+            var(tMinValue,0)                            //最小值
+            set(tMinValue,'this.minValue')
+            
+            var(tMaxValue,0)                            //最大值
+            set(tMaxValue,'this.maxValue')
 
             if (tHit==1) {                              //isHited==1 此时鼠标被按下
                 var(tInnerX,0)                          //鼠标坐标x
@@ -3610,6 +3616,12 @@
         onMouseMove: `
             var(tHit,0)                                 //isHited
             set(tHit,'this.otherAttrs.4')
+            
+            var(tMinValue,0)                            //最小值
+            set(tMinValue,'this.minValue')
+            
+            var(tMaxValue,0)                            //最大值
+            set(tMaxValue,'this.maxValue')
         
             if (tHit==1) {                              //isHited==1 此时鼠标被按下
                 var(tInnerX,0)                          //鼠标坐标x
