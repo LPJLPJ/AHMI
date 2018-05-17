@@ -3063,7 +3063,9 @@
                             if(tInnerX <=tEndX){
                                 if (tInnerY>=tSelectedStartY) {
                                     if (tInnerY<=tSelectedEndY) {          //在选择框里
-                                        if('this.layers.len.hidden'==1){   //不能展开被高亮的选择器
+                                        var(hiddenValue,0)
+                                        set(hiddenValue,'this.layers.len.hidden')
+                                        if(hiddenValue==1){   //不能展开被高亮的选择器
                                                                            //展开选项 
                                             set('this.layers.0.hidden',0)
                                             set('this.layers.1.hidden',0)
