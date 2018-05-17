@@ -6,9 +6,9 @@
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -367,6 +367,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -52006,10 +52010,9 @@ module.exports = React.createClass({
                     name: '高亮'
                 }]
             }]
-        };
 
-        //handle system widgets
-        var systemWidgetResources = [];
+            //handle system widgets
+        };var systemWidgetResources = [];
         this.systemWidgets = data.systemWidgets;
 
         this.systemWidgetPages = (data.systemWidgets || []).map(function (sw, i) {
@@ -52431,6 +52434,7 @@ module.exports = React.createClass({
                 widget.scope[param.value] = this.evalParam(widget, value);
                 break;
             case 'EXP':
+                console.log(param);
                 var refs = param.value.split('.');
                 var rLen = refs.length;
                 if (rLen < 2) {
@@ -52447,7 +52451,7 @@ module.exports = React.createClass({
                         var charCode = this.evalParam(widget, value);
                         upperRef[nextV] = this.charFromCode(charCode);
                     } else {
-                        // console.log('nextV ',nextV)
+                        console.log('nextV ', nextV, widget, upperRef);
                         upperRef[nextV] = this.evalParam(widget, value);
                     }
                 }
@@ -53004,9 +53008,8 @@ module.exports = React.createClass({
                     page.translate = {
                         x: -offcanvas.width,
                         y: 0
-                    };
-                    //
-                    page.animating = true;
+                        //
+                    };page.animating = true;
                     //
                     if (unloadPage) {
                         unloadPage.translate = null;
@@ -54165,12 +54168,12 @@ module.exports = React.createClass({
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
+                                // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
+                                // subCanvas.info.x += deltas.deltaX;
+                                // subCanvas.info.y += deltas.deltaY;
+                                // this.draw();
+                                // offctx.restore();
                             };
-                            // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
-                            // subCanvas.info.x += deltas.deltaX;
-                            // subCanvas.info.y += deltas.deltaY;
-                            // this.draw();
-                            // offctx.restore();
                         }.bind(this), function () {
                             // offctx.restore()
                             subCanvas.translate = null;
@@ -54204,12 +54207,12 @@ module.exports = React.createClass({
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
+                                // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
+                                // subCanvas.info.x += deltas.deltaX;
+                                // subCanvas.info.y += deltas.deltaY;
+                                // this.draw();
+                                // offctx.restore();
                             };
-                            // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
-                            // subCanvas.info.x += deltas.deltaX;
-                            // subCanvas.info.y += deltas.deltaY;
-                            // this.draw();
-                            // offctx.restore();
                         }.bind(this), function () {
                             // offctx.restore()
                             subCanvas.translate = null;
@@ -54391,10 +54394,9 @@ module.exports = React.createClass({
                             subCanvas.translate = {
                                 x: this.state.curValue.x,
                                 y: 0
-                            };
-                            // console.log(this.state.curValue.x)
+                                // console.log(this.state.curValue.x)
 
-                            self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, true, false);
+                            };self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, true, false);
                         };
                         swipeAnime.didStopCB = function () {
                             for (var i = 0; i < canvas.subCanvasList.length; i++) {
@@ -54436,10 +54438,9 @@ module.exports = React.createClass({
                             subCanvas.translate = {
                                 x: 0,
                                 y: this.state.curValue.y
-                            };
-                            // console.log(this.state.curValue.x)
+                                // console.log(this.state.curValue.x)
 
-                            self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, false, true);
+                            };self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, false, true);
                         };
                         swipeAnime.didStopCB = function () {
                             for (var i = 0; i < canvas.subCanvasList.length; i++) {
@@ -58339,10 +58340,9 @@ module.exports = React.createClass({
                 subCanvas.translate = {
                     x: this.state.curValue.x,
                     y: 0
-                };
-                // console.log(this.state.curValue.x)
+                    // console.log(this.state.curValue.x)
 
-                self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
+                };self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
             };
         } else {
             springLen = canvas.h;
@@ -58353,10 +58353,9 @@ module.exports = React.createClass({
                 subCanvas.translate = {
                     x: 0,
                     y: this.state.curValue.y
-                };
-                // console.log(this.state.curValue.x)
+                    // console.log(this.state.curValue.x)
 
-                self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
+                };self.syncSubCanvasOffsetForSwipe(canvas, canvas.curSubCanvasIdx, !vertical, vertical);
             };
         }
 

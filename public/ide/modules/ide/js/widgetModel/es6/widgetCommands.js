@@ -6007,15 +6007,21 @@
     WidgetCommands['TexTime'] = {
         'onInitialize': ` 
             //显示除高亮以外所有图层
+            var(tMaxHighLightNum,0)
+            set(tMaxHighLightNum,'this.maxHighLightNum') 
             var(tOffset,0)
             var(len,0)
             set(len,'this.layers.length')
-            minus(len,1)
+            if(tMaxHighLightNum > 0){
+                minus(len,1)
+                set('this.layers.len.hidden',1)
+            }
+           
             while(tOffset < len){
                 set('this.layers.tOffset.hidden',0)
                 add(tOffset,1)
             }
-            set('this.layers.tOffset.hidden',1)
+            
         `,
         onMouseUp:`
         `,
