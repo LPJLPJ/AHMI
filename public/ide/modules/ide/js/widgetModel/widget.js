@@ -37,6 +37,7 @@
         this.tag = 'defaultTag'
         this.type = 'general'
         this.mode = 0
+        this.arrange = 0
         this.otherAttrs = []
         if (!layers||!layers.length){
             this.layers= [new Layer(w,h)]
@@ -56,10 +57,10 @@
             highLightNum:0,
             maxHighLightNum:this.maxHighLightNum||0,
             mode:this.mode,
+            arrange:this.arrange,
             tag:this.tag,
             layers:this.layers,
-            otherAttrs:this.otherAttrs
-            // arrange:this.arrange
+            otherAttrs:this.otherAttrs,
             // onInitialize:this.onInitialize,
             // onMouseDown:this.onMouseDown,
             // onMouseUp:this.onMouseUp
@@ -713,6 +714,22 @@
     }
     Slide.prototype = Object.create(Widget.prototype);
     Slide.prototype.constructor = Slide;
+
+    //Animation
+    function Animation(x,y,w,h,info,slices){
+        var layers = [];
+        var colorElems;
+        for(var i=0;i<slices.length;i++){
+            layers[i] = new Layer(0,0,w,h);
+            colorElems = parseColor(slices[i].color);
+            layers[i].subLayers.color = new ColorSubLayer(colorElems);
+            layers[i].subLayers.image = new TextureSubLayer(slices[i].imgSrc);
+        }
+        this.subType = 'Slide';
+        Widget.call(this,x,y,w,h,layers);
+    }
+    Animation.prototype = Object.create(Widget.prototype);
+    Animation.prototype.constructor = Animation;
 
     //DateTime
     function DateTime(x,y,w,h,info,fontStyle,slices){
@@ -1733,6 +1750,7 @@
     WidgetModel.models.TexDatePicker = TexDatePicker;
     WidgetModel.models.TexTime = TexTime;
     WidgetModel.models.ColorBlock = ColorBlock;
+    WidgetModel.models.Animation = Animation;
     WidgetModel.Widget = Widget;
     WidgetModel.WidgetCommandParser = WidgetCommandParser;
 

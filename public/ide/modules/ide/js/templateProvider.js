@@ -309,8 +309,8 @@ ideServices
                     left: 0,
                     top: 0,
                     //宽高
-                    width:80,
-                    height: 40,
+                    width:100,
+                    height: 100,
 
                     //最大值
                     maxValue:100,

@@ -523,8 +523,10 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     });
                     generalWidget = new WidgetModel.models['Progress'](x, y, w, h, targetWidget.info, slices);
                     generalWidget = generalWidget.toObject();
+                    console.log('generalWidget progress',generalWidget);
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.mode = Number(rawWidget.info.progressModeId);
+                    generalWidget.arrange = targetWidget.info.arrange==='horizontal'?0:1 //0水平，1竖直
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue';
                     attrs.split(',').forEach(function (attr) {
                         generalWidget[attr] = info[attr] || 0
@@ -550,7 +552,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         generalWidget.otherAttrs[6] = colorElems.b;
                         generalWidget.otherAttrs[7] = colorElems.a;
                     } else if (generalWidget.mode == 3) {
-                        generalWidget.otherAttrs[0] = targetWidget.info.thresholdModeId;
+                        generalWidget.otherAttrs[0] = Number(targetWidget.info.thresholdModeId);
                         generalWidget.otherAttrs[1] = targetWidget.info.threshold1;
                         generalWidget.otherAttrs[2] = targetWidget.info.threshold2;
                         colorElems = parseColor(slices[1].color);
@@ -1007,6 +1009,15 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     }
                     generalWidget.otherAttrs[0] = baseLayerNum;//除去高亮，font layer的数量
                     generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
+                    break;
+
+                case 'MyAnimation':
+                    generalWidget = new WidgetModel.models['Animation'](x, y, w, h, targetWidget.info, _.cloneDeep(targetWidget.texList[0].slices));
+                    generalWidget = generalWidget.toObject();
+                    generalWidget.generalType = 'Slide';
+                    generalWidget.tag = _.cloneDeep(rawWidget.tag);
+                    generalWidget.subType = 'general';
+                    generalWidget.actions = targetWidget.actions;
                     break;
 
                 default:

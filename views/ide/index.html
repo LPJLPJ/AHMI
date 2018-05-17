@@ -37,6 +37,7 @@
     <script src="../../public/ide/lib/socket.io/socket.io.slim.js"></script>
     <script src="../../public/ide/lib/Font.min.js"></script>
     <script src="../../public/ide/lib/sxrender/SXRender.min.js"></script>
+    <script src="../../public/ide/lib/sxintro/SXIntro.bundle.js"></script>
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
@@ -182,7 +183,7 @@
      ng-class="{'my-left-show':leftShown,'my-left-hide':!leftShown,'my-right-show':rightShown,'my-right-hide':!rightShown}">
     <!--<div class="container-fluid" >-->
 
-    <div ng-controller="NavCtrl">
+    <div ng-controller="NavCtrl" data-step="1">
 
         <ul class="nav nav-tabs my-nav-tabs">
 
@@ -278,7 +279,7 @@
                 <!--<span class="iconfont icon">&#xe60d;</span><span class="caption">打开模板</span>-->
                 <!--</a>-->
                 <!--<a ng-click="component.tool.openCANPanel()" class="my-cmd-item" ng-class=""><span-->
-                        <!--class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>-->
+                <!--class="iconfont icon">&#xe651;</span><span class="caption">导入CAN</span>-->
                 <!--</a>-->
                 <a ng-click="component.tool.openPanel()" class="my-cmd-item" ng-class=""><span
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
@@ -307,7 +308,7 @@
                     <div class="modal-body dengModel-body">
                         <div class="modal-title form-group modelPart">{{message}}</div>
                         <!--<div class="modal-title form-group modelPart">-->
-                            <!--开启分享-->
+                        <!--开启分享-->
                         <!--</div>-->
                         <div ng-show="!loading">
                             <button class='btn btn-default' ng-show="shareInfo.own" ng-click="toggleShare()" ng-disabled="processing">{{shareInfo.shared?'取消分享':'开启分享'}}</button>
@@ -449,7 +450,7 @@
                         class="caption">粘贴</span></a>
 
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe623;</span><span-->
-                        <!--class="caption">格式</span></a>-->
+                <!--class="caption">格式</span></a>-->
                 <a ng-click="component.tool.selectAll()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe626;</span><span
                         class="caption">全选</span></a>
                 <a ng-controller="SearchCtl" ng-click="" class="my-cmd-item" ng-class="">
@@ -528,7 +529,9 @@
                     </div>
                 </a>
             </div>
-            <div class="my-tool-content-item" ng-show="component.nav.currentNav==5">
+            <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==5">
+                <a ng-click="startTip()" class="my-cmd-item" ><span class="iconfont icon">&#xe72f;</span><span
+                        class="caption">新手引导</span></a>
                 <a ng-click="" class="my-cmd-item" ng-class="" href="http://docs.graphichina.com"
                    target="_blank"><span class="iconfont icon">&#xe63d;</span><span
                         class="caption">文档</span></a>
@@ -539,7 +542,7 @@
     </div>
 
     <!--/** thumb colum **/-->
-    <div class="my-pages" ng-controller="ThumbCtrl" ng-class="{'my-tool-show':component.out.toolShow}">
+    <div class="my-pages" ng-controller="ThumbCtrl" ng-class="{'my-tool-show':component.out.toolShow}" data-step="2">
         <div class="my-add-page">
             <i class="iconfont" ng-click="component.addPage()">&#xe604;</i>
         </div>
@@ -562,7 +565,7 @@
             </ol>
         </div>
     </div>
-    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)">
+    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)" data-step="3">
 
         <div id="mask" ng-hide="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
             <img style="position: absolute;left: 0;top: 0;z-index: 100;float: left" width="100%" height="100%" ng-src="{{maskSrc}}"/>
@@ -615,7 +618,7 @@
     </div>
     <div class="my-attribute" ng-controller="AttrCtrl"
          ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'my-tool-show':component.out.toolShow}">
-        <div class="my-top-panel">
+        <div class="my-top-panel" data-step="4">
             <ul class="attribute-nav nav nav-tabs my-nav-tabs ">
 
                 <li role="presentation"
@@ -655,7 +658,7 @@
                                ng-blur="maskRestore()"
                                ng-keypress="enterMaskAttr($event,'top')"
                                type="number">
-                        </div>
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -670,7 +673,7 @@
                                ng-blur="maskRestore()"
                                ng-keypress="enterMaskAttr($event,'height')"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item lg" style="margin-top: 20px" ng-controller="ResourceCtrl">
                             <a href="javascript:;" class="my-upload" style="width: 100%;text-align: center">
@@ -787,13 +790,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="form-control my-attr-number-input form-control short-input "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="form-control my-attr-number-input form-control short-input "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -803,13 +806,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="form-control my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="form-control my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
 
 
                         <div class="my-attr-item lg">
@@ -833,13 +836,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">对齐</span>
@@ -872,14 +875,14 @@
                                 </option>
                             </select>
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">宽度</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.width"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterWidth($event)"
-                                   ng-disabled="component.subLayer.scrollHEnabled==='0'"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">宽度</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.width"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterWidth($event)"
+                               ng-disabled="component.subLayer.scrollHEnabled==='0'"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">垂直拓展</span>
                             <select style="margin-left: 0px" class="my-attr-number-input form-control short-input"
@@ -890,14 +893,14 @@
                                 </option>
                             </select>
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title ">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   ng-disabled="component.subLayer.scrollVEnabled==='0'"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title ">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               ng-disabled="component.subLayer.scrollVEnabled==='0'"
+                               type="number">
+                    </div>
                     </div>
                     <div ng-show="component.object.type=='MySlide'&&!myMask">
                         <div class="my-attr-item lg">
@@ -916,13 +919,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -938,7 +941,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -948,13 +951,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title ">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title ">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
 
                     </div>
 
@@ -975,13 +978,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="form-control my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="form-control my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -997,7 +1000,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1007,31 +1010,31 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">方向</span>-->
+                        <!--<span class="my-attr-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.button.arrangeModel"-->
-                                    <!--ng-change="component.button.enterArrange($event)">-->
-                                <!--<option value="horizontal">水平</option>-->
-                                <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
+                        <!--<select class="my-attr-number-input form-control" ng-model="component.button.arrangeModel"-->
+                        <!--ng-change="component.button.enterArrange($event)">-->
+                        <!--<option value="horizontal">水平</option>-->
+                        <!--<option value="vertical">竖直</option>-->
+                        <!--</select>-->
                         <!--</div>-->
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">模式</span>-->
-                            <!--<select class="form-control my-attr-number-input form-control"-->
-                                    <!--ng-model="component.button.buttonModeId"-->
-                                    <!--ng-change="component.button.enterButtonMode($event)">-->
-                                <!--<option ng-repeat="mode in component.button.buttonModes" value="{{mode.id}}">-->
-                                    <!--{{mode.name}}-->
-                                <!--</option>-->
-                            <!--</select>-->
+                        <!--<span class="my-attr-title">模式</span>-->
+                        <!--<select class="form-control my-attr-number-input form-control"-->
+                        <!--ng-model="component.button.buttonModeId"-->
+                        <!--ng-change="component.button.enterButtonMode($event)">-->
+                        <!--<option ng-repeat="mode in component.button.buttonModes" value="{{mode.id}}">-->
+                        <!--{{mode.name}}-->
+                        <!--</option>-->
+                        <!--</select>-->
                         <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">文本</span>
@@ -1119,13 +1122,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -1141,7 +1144,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1151,13 +1154,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="form-control my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="form-control my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">间距</span>
@@ -1167,13 +1170,13 @@
                                    ng-keypress="component.buttonGroup.enterInterval($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">个数</span>
-                            <input class="form-control my-attr-number-input form-control  short-input"
-                                   ng-model="component.object.level.info.count"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.buttonGroup.enterButtonCount($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">个数</span>
+                        <input class="form-control my-attr-number-input form-control  short-input"
+                               ng-model="component.object.level.info.count"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.buttonGroup.enterButtonCount($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">方向</span>
@@ -1215,13 +1218,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -1237,7 +1240,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1247,13 +1250,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1262,13 +1265,13 @@
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">最大值</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">当前值</span>
                             <input class="my-attr-number-input form-control"
@@ -1285,13 +1288,13 @@
                                    ng-keypress="component.enterMinAlert($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高警报</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.highAlarmValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxAlert($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高警报</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.highAlarmValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxAlert($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
                             <select class="my-attr-number-input form-control"
@@ -1363,7 +1366,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.progress.enterThresholdValue2($event)"
                                    type="number">
-                            </div>
+                        </div>
                         </div>
                     </div>
 
@@ -1385,13 +1388,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -1407,7 +1410,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1417,13 +1420,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1432,13 +1435,13 @@
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">最大值</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">低警报</span>
@@ -1448,21 +1451,21 @@
                                    ng-keypress="component.enterMinAlert($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高警报</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.highAlarmValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxAlert($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高警报</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.highAlarmValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxAlert($event)"
+                               type="number">
+                    </div>
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">波形颜色</span>-->
-                            <!--<input colorpicker="rgba"-->
-                                   <!--ng-model="component.object.level.info.oscColor"-->
-                                   <!--type="text"-->
-                                   <!--class="dengpage-input dengpage-color-input form-control"-->
-                                   <!--ng-blur="component.restore()"-->
-                                   <!--ng-keypress="component.oscilloscope.changeOscColor($event)"/>-->
+                        <!--<span class="my-attr-title">波形颜色</span>-->
+                        <!--<input colorpicker="rgba"-->
+                        <!--ng-model="component.object.level.info.oscColor"-->
+                        <!--type="text"-->
+                        <!--class="dengpage-input dengpage-color-input form-control"-->
+                        <!--ng-blur="component.restore()"-->
+                        <!--ng-keypress="component.oscilloscope.changeOscColor($event)"/>-->
                         <!--</div>-->
 
                         <div class="my-attr-item">
@@ -1473,12 +1476,12 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.oscilloscope.changeOscSpacing($event)"/>
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">线条颜色</span>
-                            <input colorpicker="rgba"
-                                   ng-model="component.object.level.info.lineColor"
-                                   type="text"
-                                   class="dengpage-input dengpage-color-input form-control short-input"/>
-                        </div>
+                        <span class="my-attr-title">线条颜色</span>
+                        <input colorpicker="rgba"
+                               ng-model="component.object.level.info.lineColor"
+                               type="text"
+                               class="dengpage-input dengpage-color-input form-control short-input"/>
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">网格</span>
                             <select class="my-attr-number-input form-control"
@@ -1514,13 +1517,13 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.oscilloscope.changeOscGridUnitX($event)"/>
                         </div><div class="my-attr-item ">
-                            <span class="my-attr-title">纵单位长</span>
-                            <input ng-model="component.object.level.info.gridUnitY"
-                                   type="number"
-                                   class="dengpage-input dengpage-color-input form-control short-input"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.oscilloscope.changeOscGridUnitY($event)"/>
-                        </div>
+                        <span class="my-attr-title">纵单位长</span>
+                        <input ng-model="component.object.level.info.gridUnitY"
+                               type="number"
+                               class="dengpage-input dengpage-color-input form-control short-input"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.oscilloscope.changeOscGridUnitY($event)"/>
+                    </div>
                     </div>
 
                     <!--Dashboard-->
@@ -1542,13 +1545,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -1564,7 +1567,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1574,13 +1577,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小角度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1589,13 +1592,13 @@
                                    ng-keypress="component.enterMinAngle($event)"
                                    type="number">
                         </div><div class="my-attr-item ">
-                            <span class="my-attr-title">最大角度</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxAngle"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxAngle($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大角度</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxAngle"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxAngle($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1610,7 +1613,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterMaxValue($event)"
                                type="number">
-                        </div>
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">终止遮罩</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1619,13 +1622,13 @@
                                    ng-keypress="component.dashboard.enterMaxCoverAngle($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">起始遮罩</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.minCoverAngle"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.dashboard.enterMinCoverAngle($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">起始遮罩</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.minCoverAngle"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.dashboard.enterMinCoverAngle($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item ">
                             <span class="my-attr-title">起始角度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1634,13 +1637,13 @@
                                    ng-keypress="component.dashboard.enterDashboardOffsetValue($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">当前值</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   type="number"
-                                   ng-model="component.object.level.info.value"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.dashboard.enterDashboardValue($event)">
-                        </div>
+                        <span class="my-attr-title">当前值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               type="number"
+                               ng-model="component.object.level.info.value"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.dashboard.enterDashboardValue($event)">
+                    </div>
                         <div class="my-attr-item ">
                             <span class="my-attr-title">低警报</span>
                             <input class="my-attr-number-input form-control  short-input"
@@ -1649,13 +1652,13 @@
                                    ng-keypress="component.enterMinAlert($event)"
                                    type="number">
                         </div><div class="my-attr-item ">
-                            <span class="my-attr-title">高警报</span>
-                            <input class="my-attr-number-input form-control  short-input"
-                                   ng-model="component.object.level.info.highAlarmValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxAlert($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高警报</span>
+                        <input class="my-attr-number-input form-control  short-input"
+                               ng-model="component.object.level.info.highAlarmValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxAlert($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">指针长度</span>
                             <input class="my-attr-number-input form-control"
@@ -1732,13 +1735,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -1754,7 +1757,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1765,14 +1768,14 @@
                                    type="number"
                                    disabled>
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number"
-                                   disabled>
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number"
+                               disabled>
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1781,13 +1784,13 @@
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
                         </div><div class="my-attr-item ">
-                            <span class="my-attr-title">最大值</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">低警报</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1796,13 +1799,13 @@
                                    ng-keypress="component.enterMinAlert($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高警报</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.highAlarmValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxAlert($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高警报</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.highAlarmValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxAlert($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">字符数</span>
@@ -1812,13 +1815,13 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">小数位数</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.decimalCount"
-                                   ng-keypress="component.num.changeDecimalCount($event)"
-                                   ng-blur="component.restore()"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">小数位数</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.decimalCount"
+                               ng-keypress="component.num.changeDecimalCount($event)"
+                               ng-blur="component.restore()"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">当前值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1827,12 +1830,12 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.num.enterNumValue($event)">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">字符间距</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   type="number"
-                                   ng-model="component.object.level.info.spacing"
-                                   ng-keypress="component.enterSpacing($event)">
-                        </div>
+                        <span class="my-attr-title">字符间距</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               type="number"
+                               ng-model="component.object.level.info.spacing"
+                               ng-keypress="component.enterSpacing($event)">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">开启动画</span>
                             <select class="my-attr-number-input form-control"
@@ -1883,21 +1886,21 @@
                             </select>
                         </div>
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">方向</span>-->
+                        <!--<span class="my-attr-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.num.arrangeModel"-->
-                                    <!--ng-change="component.num.enterArrange($event)">-->
-                                <!--<option value="horizontal">水平</option>-->
-                                <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
+                        <!--<select class="my-attr-number-input form-control" ng-model="component.num.arrangeModel"-->
+                        <!--ng-change="component.num.enterArrange($event)">-->
+                        <!--<option value="horizontal">水平</option>-->
+                        <!--<option value="vertical">竖直</option>-->
+                        <!--</select>-->
                         <!--</div>-->
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">数字值</span>-->
-                            <!--<input class="my-attr-number-input form-control"-->
-                                   <!--type="number"-->
-                                   <!--ng-model="component.object.level.info.numValue"-->
-                                   <!--ng-blur="component.restore()"-->
-                                   <!--ng-keypress="component.num.enterNumValue($event)">-->
+                        <!--<span class="my-attr-title">数字值</span>-->
+                        <!--<input class="my-attr-number-input form-control"-->
+                        <!--type="number"-->
+                        <!--ng-model="component.object.level.info.numValue"-->
+                        <!--ng-blur="component.restore()"-->
+                        <!--ng-keypress="component.num.enterNumValue($event)">-->
                         <!--</div>-->
 
                     </div>
@@ -1927,13 +1930,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -1949,7 +1952,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -1960,14 +1963,14 @@
                                    type="number"
                                    disabled>
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number"
-                                   disabled>
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number"
+                               disabled>
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">字符宽度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1976,13 +1979,13 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">字符高度</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.characterH"
-                                   ng-keypress="component.texNum.enterCharacterH($event)"
-                                   ng-blur="component.restore()"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">字符高度</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.characterH"
+                               ng-keypress="component.texNum.enterCharacterH($event)"
+                               ng-blur="component.restore()"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1991,13 +1994,13 @@
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
                         </div><div class="my-attr-item ">
-                            <span class="my-attr-title">最大值</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">低警报</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2006,13 +2009,13 @@
                                    ng-keypress="component.enterMinAlert($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高警报</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.highAlarmValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxAlert($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高警报</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.highAlarmValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxAlert($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">字符数</span>
@@ -2022,22 +2025,22 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">小数位数</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.decimalCount"
-                                   ng-keypress="component.texNum.changeDecimalCount($event)"
-                                   ng-blur="component.restore()"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">小数位数</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.decimalCount"
+                               ng-keypress="component.texNum.changeDecimalCount($event)"
+                               ng-blur="component.restore()"
+                               type="number">
+                    </div>
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">开启动画</span>-->
-                            <!--<select class="my-attr-number-input form-control"-->
-                                    <!--ng-model="component.texNum.enableAnimationModeId"-->
-                                    <!--ng-change="component.enterEnableAnimationMode($event)">-->
-                                <!--<option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">-->
-                                    <!--{{mode.name}}-->
-                                <!--</option>-->
-                            <!--</select>-->
+                        <!--<span class="my-attr-title">开启动画</span>-->
+                        <!--<select class="my-attr-number-input form-control"-->
+                        <!--ng-model="component.texNum.enableAnimationModeId"-->
+                        <!--ng-change="component.enterEnableAnimationMode($event)">-->
+                        <!--<option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">-->
+                        <!--{{mode.name}}-->
+                        <!--</option>-->
+                        <!--</select>-->
                         <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">开启动画</span>
@@ -2116,13 +2119,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2138,7 +2141,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2148,21 +2151,21 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">方向</span>-->
+                        <!--<span class="my-attr-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.textArea.arrangeModel"-->
-                                    <!--ng-change="component.textArea.enterArrange($event)">-->
-                                <!--<option value="horizontal">水平</option>-->
-                                <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
+                        <!--<select class="my-attr-number-input form-control" ng-model="component.textArea.arrangeModel"-->
+                        <!--ng-change="component.textArea.enterArrange($event)">-->
+                        <!--<option value="horizontal">水平</option>-->
+                        <!--<option value="vertical">竖直</option>-->
+                        <!--</select>-->
                         <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">文本</span>
@@ -2192,13 +2195,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2214,7 +2217,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2224,13 +2227,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">旋钮大小</span>
                             <input class="my-attr-number-input form-control"
@@ -2266,13 +2269,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2288,7 +2291,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2298,13 +2301,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
 
                     </div>
 
@@ -2325,13 +2328,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2347,7 +2350,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2357,13 +2360,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">文本</span>
                             <input type="text"
@@ -2398,13 +2401,13 @@
                                    ng-keypress="component.enterX($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">坐标Y</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.top"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterY($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2420,7 +2423,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2430,13 +2433,13 @@
                                    ng-keypress="component.enterWidth($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">高度</span>
-                            <input class="my-attr-number-input form-control short-input  "
-                                   ng-model="component.object.level.info.height"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小角度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2445,13 +2448,13 @@
                                    ng-keypress="component.enterMinValue($event)"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">最大角度</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大角度</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">初始角度</span>
                             <input type="number"
@@ -2485,7 +2488,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2501,7 +2504,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2521,28 +2524,28 @@
                                disabled>
                     </div>
                         <div class="my-attr-item lg">
-                        <span class="my-attr-title">字符间距</span>
-                        <input class="my-attr-number-input form-control"
-                               type="number"
-                               ng-model="component.object.level.info.spacing"
-                               ng-keypress="component.enterSpacing($event)">
-                    </div>
+                            <span class="my-attr-title">字符间距</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="number"
+                                   ng-model="component.object.level.info.spacing"
+                                   ng-keypress="component.enterSpacing($event)">
+                        </div>
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">方向</span>-->
+                        <!--<span class="my-attr-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.dateTime.arrangeModel"-->
-                                    <!--ng-change="component.dateTime.enterArrange($event)">-->
-                                <!--<option value="horizontal">水平</option>-->
-                                <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
+                        <!--<select class="my-attr-number-input form-control" ng-model="component.dateTime.arrangeModel"-->
+                        <!--ng-change="component.dateTime.enterArrange($event)">-->
+                        <!--<option value="horizontal">水平</option>-->
+                        <!--<option value="vertical">竖直</option>-->
+                        <!--</select>-->
                         <!--</div>-->
                         <!--<div class="my-attr-item lg">-->
-                            <!--<span class="my-attr-title">初始值</span>-->
-                            <!--<input type="number"-->
-                                   <!--class="my-attr-number-input form-control"-->
-                                   <!--ng-model="component.object.level.info.initValue"-->
-                                   <!--ng-blur="component.restore()"-->
-                                   <!--ng-keypress=""/>-->
+                        <!--<span class="my-attr-title">初始值</span>-->
+                        <!--<input type="number"-->
+                        <!--class="my-attr-number-input form-control"-->
+                        <!--ng-model="component.object.level.info.initValue"-->
+                        <!--ng-blur="component.restore()"-->
+                        <!--ng-keypress=""/>-->
                         <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">显示模式</span>
@@ -2590,7 +2593,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2606,7 +2609,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -2615,7 +2618,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterWidth($event)"
                                    type="number"
-                                    disabled>
+                                   disabled>
                         </div><div class="my-attr-item">
                         <span class="my-attr-title">高度</span>
                         <input class="my-attr-number-input form-control short-input  "
@@ -2623,7 +2626,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterHeight($event)"
                                type="number"
-                                disabled>
+                               disabled>
                     </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">字符宽度</span>
@@ -2783,13 +2786,13 @@
                                type="number">
                     </div>
                         <div class="my-attr-item lg">
-                        <span class="my-attr-title">当前元素</span>
-                        <input class="my-attr-number-input form-control"
-                               ng-model="component.object.level.info.curValue"
-                               ng-keypress="component.selector.enterCurValue($event)"
-                               ng-blur="component.restore()"
-                               type="number">
-                    </div>
+                            <span class="my-attr-title">当前元素</span>
+                            <input class="my-attr-number-input form-control"
+                                   ng-model="component.object.level.info.curValue"
+                                   ng-keypress="component.selector.enterCurValue($event)"
+                                   ng-blur="component.restore()"
+                                   type="number">
+                        </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">标题</span>
                             <input class="my-attr-number-input form-control"
@@ -2871,13 +2874,13 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div><div class="my-attr-item">
-                            <span class="my-attr-title">最大值</span>
-                            <input class="my-attr-number-input form-control short-input"
-                                   ng-model="component.object.level.info.maxValue"
-                                   ng-keypress="component.enterMaxValue($event)"
-                                   ng-blur="component.restore()"
-                                   type="number">
-                        </div>
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-keypress="component.enterMaxValue($event)"
+                               ng-blur="component.restore()"
+                               type="number">
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">当前值</span>
                             <input class="my-attr-number-input form-control"
@@ -2977,7 +2980,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -2993,7 +2996,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -3009,7 +3012,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterHeight($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class = "my-attr-item lg">
                             <span class="my-attr-title">视频源</span>
@@ -3021,12 +3024,12 @@
                         </div>
 
                         <!--<div class = "my-attr-item lg">-->
-                            <!--<span class="my-attr-title">比例</span>-->
-                            <!--<select class="form-control my-attr-number-input form-control" -->
-                                    <!--ng-model="component.video.scaleId"-->
-                                    <!--ng-change="component.video.changeVideoScale($event)">-->
-                                <!--<option ng-repeat="mode in component.video.scale" value="{{mode.id}}">{{mode.name}}</option>-->
-                            <!--</select>-->
+                        <!--<span class="my-attr-title">比例</span>-->
+                        <!--<select class="form-control my-attr-number-input form-control" -->
+                        <!--ng-model="component.video.scaleId"-->
+                        <!--ng-change="component.video.changeVideoScale($event)">-->
+                        <!--<option ng-repeat="mode in component.video.scale" value="{{mode.id}}">{{mode.name}}</option>-->
+                        <!--</select>-->
                         <!--</div>-->
                     </div>
 
@@ -3055,7 +3058,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -3071,7 +3074,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -3087,7 +3090,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterHeight($event)"
                                type="number">
-                        </div>
+                    </div>
                         <div class="my-attr-item">
                             <span class="my-attr-title">低警报</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -3102,7 +3105,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterMaxAlert($event)"
                                type="number">
-                        </div>
+                    </div>
 
                     </div>
 
@@ -3129,7 +3132,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -3145,7 +3148,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -3196,10 +3199,10 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">初始值</span>
                             <input type="number"
-                                    class="my-attr-number-input form-control"
-                                    ng-model="component.object.level.info.initValue"
-                                    ng-blur="component.restore()"
-                                    ng-keypress="component.slideBlock.enterInitValue($event)"/>
+                                   class="my-attr-number-input form-control"
+                                   ng-model="component.object.level.info.initValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.slideBlock.enterInitValue($event)"/>
                         </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">方向</span>
@@ -3235,7 +3238,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">绝对坐标X</span>
@@ -3251,7 +3254,7 @@
                                ng-blur="position.absoluteY=position.initAbsoluteY"
                                ng-keypress="component.enterAbsoluteY($event)"
                                type="number">
-                        </div>
+                    </div>
 
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
@@ -3267,7 +3270,7 @@
                                ng-blur="component.restore()"
                                ng-keypress="component.enterHeight($event)"
                                type="number">
-                        </div>
+                    </div>
                     </div>
 
                 </div>
@@ -3342,7 +3345,7 @@
                                 </tbody>
                             </table>
                             <!--<button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">-->
-                                <!--添加图片-->
+                            <!--添加图片-->
                             <!--</button>-->
                         </div>
 
@@ -3375,7 +3378,7 @@
                                     </option>
                                 </select>
                                 <input type="checkbox" ng-model="component.showRegValidTagsFlag" ng-click="component.showRegValidTags()" class=" my-tagSelect-input">
-                                    <span class="my-tagSelect-span-right">寄存器</span>
+                                <span class="my-tagSelect-span-right">寄存器</span>
                             </div>
                             <div >
                                 <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()"
@@ -3518,7 +3521,7 @@
                                         <td><i class="iconfont" ng-click="deleteCmd($index)">
                                             &#xe627;</i></td>
                                         <!--<td><img src="../../public/ide/modules/ide/img-web/icon_close.png"-->
-                                                 <!--ng-click="deleteCmd($index)"></td>-->
+                                        <!--ng-click="deleteCmd($index)"></td>-->
                                     </tr>
                                     </tbody>
                                 </table>
@@ -3751,44 +3754,44 @@
                 <div ng-controller="ResourceCtrl">
 
                     <div ng-show="component.top.showDel">
-                    <form ref='uploadForm' encType='multipart/form-data'>
-                        <a href="javascript:;" class="my-upload">
-                            <filereadform>
+                        <form ref='uploadForm' encType='multipart/form-data'>
+                            <a href="javascript:;" class="my-upload">
+                                <filereadform>
 
-                            </filereadform>
-                            上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
-                        </a>
-                        <button class="my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
-                        <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
-                        <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
-                    </form>
+                                </filereadform>
+                                上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
+                            </a>
+                            <button class="my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
+                            <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                            <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
+                        </form>
 
-                    <!--上传进度面板-->
-                    <table class="table" ng-show="component.top.uploadingArray.length">
-                        <thead>
-                        <tr>
-                            <td class="col-xs-2">文件名</td>
-                            <td class="col-xs-1">类型</td>
-                            <td class="col-xs-1">大小</td>
-                            <td class="col-xs-1">进度</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="file in component.top.uploadingArray">
-                            <td>{{file.name}}</td>
-                            <td>{{file.type}}</td>
-                            <td>{{file.size}}</td>
-                            <td>{{file.progress}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <!-- list of resources -->
-                    <!--total size-->
-                    <uib-progressbar type="info" class="progress-striped active" value="component.top.totalSize"
-                                     max="component.top.maxSize" >
-                        <span class="my-progressbar">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
-                    </uib-progressbar>
-                    <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
+                        <!--上传进度面板-->
+                        <table class="table" ng-show="component.top.uploadingArray.length">
+                            <thead>
+                            <tr>
+                                <td class="col-xs-2">文件名</td>
+                                <td class="col-xs-1">类型</td>
+                                <td class="col-xs-1">大小</td>
+                                <td class="col-xs-1">进度</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="file in component.top.uploadingArray">
+                                <td>{{file.name}}</td>
+                                <td>{{file.type}}</td>
+                                <td>{{file.size}}</td>
+                                <td>{{file.progress}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!-- list of resources -->
+                        <!--total size-->
+                        <uib-progressbar type="info" class="progress-striped active" value="component.top.totalSize"
+                                         max="component.top.maxSize" >
+                            <span class="my-progressbar">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
+                        </uib-progressbar>
+                        <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
                     </div>
                     <div ng-hide="component.top.showDel">
                         <div class="my-button-bar" >
@@ -3852,8 +3855,8 @@
                     <!--</div>-->
 
                     <!--<div class="text-right">-->
-                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
-                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                    <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
+                    <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
                     <!--</div>-->
 
                     <script type="text/ng-template" id="deletePanelModal.html">
@@ -3903,9 +3906,9 @@
                         <div class="addTag-container"  ng-show="component.timerTagShow==false">
                             <span>tags</span>
                             <!--<button type="button"-->
-                                    <!--ng-click=""-->
-                                    <!--class="btn btn-default"style="float: none">-->
-                                <!--批量操作-->
+                            <!--ng-click=""-->
+                            <!--class="btn btn-default"style="float: none">-->
+                            <!--批量操作-->
                             <!--</button>-->
 
                             <button type="button"
@@ -3914,8 +3917,8 @@
                                 添加新Tag
                             </button>
                             <button type="button"
-                                     ng-click="component.importTags()"
-                                     class="btn btn-default my-tag-button-import">导入tag
+                                    ng-click="component.importTags()"
+                                    class="btn btn-default my-tag-button-import">导入tag
                             </button>
                             <!--导入tags模板-->
                             <script type="text/ng-template" id="tagsImport.html">
@@ -3981,75 +3984,75 @@
                         </div>
 
                         <script type="text/ng-template" id="tagModal.html">
-                        <div class="modal-header">
-                            <h3 class="modal-title">Tag</h3>
-                        </div>
+                            <div class="modal-header">
+                                <h3 class="modal-title">Tag</h3>
+                            </div>
 
-                        <div class="modal-body">
-                            <form class="deng-tagModel">
-                                <fieldset>
-                                    <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
-                                    <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'"/>
-                                </fieldset>
-
-                                <fieldset>
-                                    <label for="register"
-                                           class="col-sm-4 tag-modal-label register-activate-label">启用寄存器</label>
-                                    <input type="checkbox"
-                                           ng-model="tag.register"
-                                           ng-true-value="true"
-                                           ng-false-value="false" id="register" class="col-sm-8 register-activate-box"/>
-                                </fieldset>
-                                <div class="register-option">
+                            <div class="modal-body">
+                                <form class="deng-tagModel">
                                     <fieldset>
-                                        <label for="indexOfRegister" class="col-sm-4 tag-modal-label">寄存器序号</label>
-                                        <input ng-disabled="!tag.register" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
-                                               ng-model="tag.indexOfRegister" class="col-sm-8" />
+                                        <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
+                                        <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'"/>
                                     </fieldset>
-                                    <!--<fieldset>-->
+
+                                    <fieldset>
+                                        <label for="register"
+                                               class="col-sm-4 tag-modal-label register-activate-label">启用寄存器</label>
+                                        <input type="checkbox"
+                                               ng-model="tag.register"
+                                               ng-true-value="true"
+                                               ng-false-value="false" id="register" class="col-sm-8 register-activate-box"/>
+                                    </fieldset>
+                                    <div class="register-option">
+                                        <fieldset>
+                                            <label for="indexOfRegister" class="col-sm-4 tag-modal-label">寄存器序号</label>
+                                            <input ng-disabled="!tag.register" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
+                                                   ng-model="tag.indexOfRegister" class="col-sm-8" />
+                                        </fieldset>
+                                        <!--<fieldset>-->
                                         <!--<label for="writeRegister" class="col-sm-4 tag-modal-label">写寄存器</label>-->
                                         <!--<input ng-disabled="!tag.register" id="writeRegister" type="radio"-->
-                                               <!--name="writeOrRead" ng-model="tag.writeOrRead" value="false"-->
-                                               <!--class="col-sm-8"/>-->
-                                    <!--</fieldset>-->
-                                    <!--<fieldset>-->
+                                        <!--name="writeOrRead" ng-model="tag.writeOrRead" value="false"-->
+                                        <!--class="col-sm-8"/>-->
+                                        <!--</fieldset>-->
+                                        <!--<fieldset>-->
                                         <!--<label for="readRegister" class="col-sm-4 tag-modal-label">读寄存器</label>-->
                                         <!--<input ng-disabled="!tag.register" id="readRegister" type="radio"-->
-                                               <!--name="writeOrRead" ng-model="tag.writeOrRead" value="true"-->
-                                               <!--class="col-sm-8"/>-->
-                                    <!--</fieldset>-->
-                                    <!--<fieldset>-->
+                                        <!--name="writeOrRead" ng-model="tag.writeOrRead" value="true"-->
+                                        <!--class="col-sm-8"/>-->
+                                        <!--</fieldset>-->
+                                        <!--<fieldset>-->
                                         <!--<label for="readRegister" class="col-sm-4 tag-modal-label">读写寄存器</label>-->
                                         <!--<input ng-disabled="!tag.register" id="readRegister" type="radio"-->
-                                               <!--name="writeOrRead" ng-model="tag.writeOrRead" value="readAndWrite"-->
-                                               <!--class="col-sm-8"/>-->
-                                    <!--</fieldset>-->
+                                        <!--name="writeOrRead" ng-model="tag.writeOrRead" value="readAndWrite"-->
+                                        <!--class="col-sm-8"/>-->
+                                        <!--</fieldset>-->
 
 
-                                </div>
+                                    </div>
 
-                                <!--<div class="input-group-btn">-->
-                                <!--<span class="glyphicon"-->
-                                <!--ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"-->
-                                <!--ng-click="collapse($event)">-->
-                                <!--</span>-->
-                                <!---->
-                                <!--</div>-->
+                                    <!--<div class="input-group-btn">-->
+                                    <!--<span class="glyphicon"-->
+                                    <!--ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"-->
+                                    <!--ng-click="collapse($event)">-->
+                                    <!--</span>-->
+                                    <!---->
+                                    <!--</div>-->
 
-                            </form>
+                                </form>
 
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
-                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
-                        </div>
-                    </script>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
+                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
                         <script type="text/ng-template" id="addToTagClassModal.html">
                             <div class="modal-header">
                                 <h3 class="modal-title">移动到标签</h3>
                             </div>
 
-                        <div class="modal-body my-tag-add-to-div">
+                            <div class="modal-body my-tag-add-to-div">
                                 <table class="listTable table table-hover">
                                     <tr ng-repeat="name in tagClassNames track by $index" ng-class="{'active':$index===curIndex}">
                                         <td class="my-tag-add-to-td" ng-click="indexSelected($index)">
@@ -4123,33 +4126,33 @@
                                     <td>名称
                                         <span class="iconfont" ng-click="component.sortByName()">
                                     &#xe6a5;</span>
-                                </td>
-                                <td>寄存器
-                                    <span class="iconfont" ng-click="component.sortByRegister()">
+                                    </td>
+                                    <td>寄存器
+                                        <span class="iconfont" ng-click="component.sortByRegister()">
                                         &#xe6a5;</span>
-                                </td>
-                                <td>启用</td>
+                                    </td>
+                                    <td>启用</td>
                                     <td>标签</td>
                                     <td>删除</td>
-                            </tr>
-                            <tr ng-repeat="tag in component.curTagClass.tagArray track by $index" class="tagTr"
-                                ng-class="{'selected':selected==$id}">
-                                <td ng-click="component.openPanel($index,'custom')">
-                                    <div class="tagName">{{tag.name}}</div>
-                                </td>
-                                <td><div class="tagReg">{{tag.indexOfRegister}}</div></td>
-                                <td><input type="checkbox"
-                                           class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
-                                           ng-change="component.regCheckboxClick(tag)"
-                                           ng-model="tag.register">
+                                </tr>
+                                <tr ng-repeat="tag in component.curTagClass.tagArray track by $index" class="tagTr"
+                                    ng-class="{'selected':selected==$id}">
+                                    <td ng-click="component.openPanel($index,'custom')">
+                                        <div class="tagName">{{tag.name}}</div>
+                                    </td>
+                                    <td><div class="tagReg">{{tag.indexOfRegister}}</div></td>
+                                    <td><input type="checkbox"
+                                               class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
+                                               ng-change="component.regCheckboxClick(tag)"
+                                               ng-model="tag.register">
                                     </td>
                                     <td><i class="iconfont" ng-click="component.addToTagClass(tag.name)">
                                         &#xe7c5;</i></td>
                                     <td><i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">
-                                    &#xe627;</i></td>
-                                <!--<td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"-->
-                                         <!--ng-click="component.deleteTag($index)"></td>-->
-                            </tr>
+                                        &#xe627;</i></td>
+                                    <!--<td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"-->
+                                    <!--ng-click="component.deleteTag($index)"></td>-->
+                                </tr>
                             </table>
                             <table class="listTable table table-hover" ng-show="component.timerTagShow==true">
                                 <tr class="">
@@ -4164,16 +4167,16 @@
                                     <td>启用</td>
                                 </tr>
                                 <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr"
-                                ng-class="{'selected':selected==$id}">
-                                <td ng-click="component.openPanel($index,'timer')">{{timerTags.name}}</td>
-                                <td><div class="tagReg">{{timerTags.indexOfRegister}}</div></td>
-                                <td><input type="checkbox"
-                                           class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
-                                           ng-click="component.regCheckboxClick(timerTags)"
-                                           ng-model="timerTags.register">
+                                    ng-class="{'selected':selected==$id}">
+                                    <td ng-click="component.openPanel($index,'timer')">{{timerTags.name}}</td>
+                                    <td><div class="tagReg">{{timerTags.indexOfRegister}}</div></td>
+                                    <td><input type="checkbox"
+                                               class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
+                                               ng-click="component.regCheckboxClick(timerTags)"
+                                               ng-model="timerTags.register">
                                     </td>
-                            </tr>
-                        </table>
+                                </tr>
+                            </table>
                         </div>
                     </div>
 
@@ -4234,13 +4237,13 @@
                                 <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
-                            <a class="my-cmd-item"
-                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold==='bold']"
-                               ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
-                            <a class="my-cmd-item"
-                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic==='italic']"
-                               ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
-                        </div>
+                        <a class="my-cmd-item"
+                           ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold==='bold']"
+                           ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
+                        <a class="my-cmd-item"
+                           ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic==='italic']"
+                           ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">字体大小</span>
                             <input class="form-control xiangPage-selected"
@@ -4269,13 +4272,13 @@
                                 <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
-                            <a class="my-cmd-item"
-                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']"
-                               ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
-                            <a class="my-cmd-item"
-                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']"
-                               ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
-                        </div>
+                        <a class="my-cmd-item"
+                           ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']"
+                           ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
+                        <a class="my-cmd-item"
+                           ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']"
+                           ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
+                    </div>
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">对齐方式</span>
@@ -4328,13 +4331,13 @@
                                     <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                                 </select>
                             </div><div class="my-attr-item xiangPage-fontStyle">
-                                <a class="my-cmd-item"
-                                   ng-class="{true:'active',false:'inactive'}[component.object.level.info.itemFont.fontBold=='bold']"
-                                   ng-click="component.selector.enterSelectorFontBold($event,'itemFont')"><span class="iconfont icon">&#xe618;</span></a>
-                                <a class="my-cmd-item"
-                                   ng-class="{true:'active',false:'inactive'}[component.object.level.info.itemFont.fontItalic=='italic']"
-                                   ng-click="component.selector.enterSelectorFontItalic($event,'itemFont')"><span class="iconfont icon">&#xe641;</span></a>
-                            </div>
+                            <a class="my-cmd-item"
+                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.itemFont.fontBold=='bold']"
+                               ng-click="component.selector.enterSelectorFontBold($event,'itemFont')"><span class="iconfont icon">&#xe618;</span></a>
+                            <a class="my-cmd-item"
+                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.itemFont.fontItalic=='italic']"
+                               ng-click="component.selector.enterSelectorFontItalic($event,'itemFont')"><span class="iconfont icon">&#xe641;</span></a>
+                        </div>
                             <div class="y-attr-item lg">
                                 <span class="my-attr-title xiangPage-title">字体大小</span>
                                 <input class="form-control xiangPage-selected "
@@ -4429,9 +4432,9 @@
                                 <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
                             </select>
                         </div><div class="my-attr-item xiangPage-fontStyle">
-                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']" ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
-                            <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']" ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
-                        </div>
+                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']" ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
+                        <a class="my-cmd-item" ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']" ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
+                    </div>
                         <div class="my-attr-item lg">
                             <span class="my-attr-title xiangPage-title">字体大小</span>
                             <input class="form-control xiangPage-selected"
@@ -4489,7 +4492,7 @@
         </div>
 
 
-        <div class="my-bottom-panel">
+        <div class="my-bottom-panel" data-step="5">
             <div class="my-panel-title"><span>图层</span></div>
             <div class="my-layers-panel">
 

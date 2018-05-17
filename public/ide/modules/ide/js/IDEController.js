@@ -32,15 +32,15 @@ console.log = (function (console) {
     }
 })(console);
 
-var logs=[];
-ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider','TimerService','UserTypeService','WidgetService','NavModalCANConfigService',
-    'socketIOService','MiddleWareService',function ($scope,$timeout,$http,$interval,
-                                    ProjectService,
-                                    GlobalService,
-                                    Preference,
-                                    ResourceService,
-                                    TagService,
-                                    TemplateProvider,TimerService,UserTypeService,WidgetService,NavModalCANConfigService,socketIOService,MiddleWareService) {
+var logs = [];
+ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'TimerService', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
+    'socketIOService', 'MiddleWareService', function ($scope, $timeout, $http, $interval,
+                                                      ProjectService,
+                                                      GlobalService,
+                                                      Preference,
+                                                      ResourceService,
+                                                      TagService,
+                                                      TemplateProvider, TimerService, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
 
         ideScope = $scope;
         $scope.ide = {
@@ -50,7 +50,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         var loadStep = 0;     //加载到了第几步,共8步
         var fs, path, __dirname;
 
-    var systemResourceList = []
+        var systemResourceList = []
 
         initUI();
 
@@ -275,137 +275,137 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                     initSocketIO(data.userId);
                 }
 
-        }
-        //change html title to name
-        var name = data&&data.name||'';
-        document.title = '工程编辑-'+name;
-        if (data.content){
-            var globalProject = JSON.parse(data.content);
-            console.log('globalProject',globalProject);
-            //add by lixiang in 12/12/21 如果是旧版本工程，则注入数据,数据进入中间件
-            timeStamp = Date.now();
-            MiddleWareService.useMiddleWare(globalProject);
-            console.log('time costs in inject Data:',Date.now()-timeStamp);
-
-
-            var resolution = data.resolution.split('*').map(function (r) {
-                return Number(r)
-            });
-            globalProject.name = data.name;
-            globalProject.author = data.author;
-            globalProject.initSize = {
-                width : resolution[0],
-                height :resolution[1]
             }
-            globalProject.currentSize = {
-                width : resolution[0],
-                height :resolution[1]
-            }
-            globalProject.maxSize = data.maxSize;
+            //change html title to name
+            var name = data && data.name || '';
+            document.title = '工程编辑-' + name;
+            if (data.content) {
+                var globalProject = JSON.parse(data.content);
+                console.log('globalProject', globalProject);
+                //add by lixiang in 12/12/21 如果是旧版本工程，则注入数据,数据进入中间件
+                timeStamp = Date.now();
+                MiddleWareService.useMiddleWare(globalProject);
+                console.log('time costs in inject Data:', Date.now() - timeStamp);
 
-            globalProject.projectId = id;
 
-                if(globalProject.mask){
+                var resolution = data.resolution.split('*').map(function (r) {
+                    return Number(r)
+                });
+                globalProject.name = data.name;
+                globalProject.author = data.author;
+                globalProject.initSize = {
+                    width: resolution[0],
+                    height: resolution[1]
+                }
+                globalProject.currentSize = {
+                    width: resolution[0],
+                    height: resolution[1]
+                }
+                globalProject.maxSize = data.maxSize;
+
+                globalProject.projectId = id;
+
+                if (globalProject.mask) {
 
                 }
-            window.globalResources = ResourceService.getGlobalResources()
+                window.globalResources = ResourceService.getGlobalResources()
 
-            cacheResources(globalProject.resourceList.concat(TemplateProvider.getDefaultResources()),function () {
-                TemplateProvider.setProjectSize(globalProject.currentSize);
-                syncServices(globalProject);
-                ProjectService.saveProjectFromGlobal(globalProject, function () {
-                    $scope.$broadcast('GlobalProjectReceived');
-                });
-            })
+                cacheResources(globalProject.resourceList.concat(TemplateProvider.getDefaultResources()), function () {
+                    TemplateProvider.setProjectSize(globalProject.currentSize);
+                    syncServices(globalProject);
+                    ProjectService.saveProjectFromGlobal(globalProject, function () {
+                        $scope.$broadcast('GlobalProjectReceived');
+                    });
+                })
 
 
-        }else{
-            globalProject = GlobalService.getBlankProject();
+            } else {
+                globalProject = GlobalService.getBlankProject();
+                globalProject.projectId = id;
+                //change resolution
+                //console.log(data);
+                var resolution = data.resolution.split('*').map(function (r) {
+                    return Number(r)
+                })
+                globalProject.initSize = {
+                    width: resolution[0],
+                    height: resolution[1]
+                }
+                globalProject.currentSize = {
+                    width: resolution[0],
+                    height: resolution[1]
+                }
+                globalProject.maxSize = data.maxSize;
+
+                cacheResources(TemplateProvider.getDefaultResources(), function () {
+                    TemplateProvider.setProjectSize(globalProject.currentSize);
+                    syncServices(globalProject);
+                    ProjectService.saveProjectFromGlobal(globalProject, function () {
+                        $scope.$broadcast('GlobalProjectReceived');
+                    });
+                })
+            }
+        }
+
+        function cacheResources(resourceList, cb) {
+
+            // console.log('resourceList',resourceList);
+            var count = resourceList.length;
+            var rLen = resourceList.length
+            // var globalResources = ResourceService.getGlobalResources();
+            // window.globalResources = globalResources;
+
+            var coutDown = function (e, resourceObj) {
+                if (e.type === 'error') {
+                    toastr.warning('资源加载失败: ' + resourceObj.name);
+                    resourceObj.complete = false;
+                } else {
+                    resourceObj.complete = true;
+                }
+                count = count - 1;
+                updateSpinner((rLen - count) / rLen);
+                if (count === 0) {
+                    cb && cb()
+                }
+            }.bind(this);
+            if (count > 0) {
+                // timeStamp = Date.now();
+                for (var i = 0; i < resourceList.length; i++) {
+                    var curRes = resourceList[i];
+                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+                }
+            } else {
+                // console.log(globalProject);
+                updateSpinner(100);
+                cb && cb()
+            }
+        }
+
+        function loadFromBlank(options, id) {
+            var globalProject = GlobalService.getBlankProject()
             globalProject.projectId = id;
             //change resolution
-            //console.log(data);
-            var resolution = data.resolution.split('*').map(function (r) {
+            var resolution = (options.resolution || '800*480').split('*').map(function (r) {
                 return Number(r)
             })
             globalProject.initSize = {
-                width : resolution[0],
-                height :resolution[1]
+                width: resolution[0],
+                height: resolution[1]
             }
             globalProject.currentSize = {
-                width : resolution[0],
-                height :resolution[1]
+                width: resolution[0],
+                height: resolution[1]
             }
-            globalProject.maxSize = data.maxSize;
+            globalProject.maxSize = options.maxSize || 100 * 1024 * 1024;
+            console.log('globalProject', globalProject);
 
-            cacheResources(TemplateProvider.getDefaultResources(),function () {
+            cacheResources(TemplateProvider.getDefaultResources(), function () {
                 TemplateProvider.setProjectSize(globalProject.currentSize);
                 syncServices(globalProject);
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
                     $scope.$broadcast('GlobalProjectReceived');
                 });
             })
-        }
-    }
-
-    function cacheResources(resourceList,cb) {
-
-        // console.log('resourceList',resourceList);
-        var count = resourceList.length;
-        var rLen = resourceList.length
-        // var globalResources = ResourceService.getGlobalResources();
-        // window.globalResources = globalResources;
-
-        var coutDown = function (e, resourceObj) {
-            if (e.type === 'error'){
-                toastr.warning('资源加载失败: ' + resourceObj.name);
-                resourceObj.complete = false;
-            } else {
-                resourceObj.complete = true;
-            }
-            count = count - 1;
-            updateSpinner((rLen-count)/rLen);
-            if (count===0){
-                cb && cb()
-            }
-        }.bind(this);
-        if (count>0){
-            // timeStamp = Date.now();
-            for (var i=0;i<resourceList.length;i++){
-                var curRes = resourceList[i];
-                ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-            }
-        }else{
-            // console.log(globalProject);
-            updateSpinner(100);
-            cb && cb()
-        }
-    }
-
-    function loadFromBlank(options,id) {
-        var globalProject = GlobalService.getBlankProject()
-        globalProject.projectId = id;
-        //change resolution
-        var resolution = (options.resolution||'800*480').split('*').map(function (r) {
-            return Number(r)
-        })
-        globalProject.initSize = {
-            width : resolution[0],
-            height :resolution[1]
-        }
-        globalProject.currentSize = {
-            width : resolution[0],
-            height :resolution[1]
-        }
-        globalProject.maxSize = options.maxSize||100*1024*1024;
-        console.log('globalProject',globalProject);
-
-        cacheResources(TemplateProvider.getDefaultResources(),function () {
-            TemplateProvider.setProjectSize(globalProject.currentSize);
-            syncServices(globalProject);
-            ProjectService.saveProjectFromGlobal(globalProject, function () {
-                $scope.$broadcast('GlobalProjectReceived');
-            });
-        })
 
 
         }
@@ -426,13 +426,13 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             ResourceService.setResourceUrl('/project/' + id + '/resources/');
             ResourceService.setMaskUrl('/project/' + id + '/mask/');
 
-        TemplateProvider.initDefaultResources()
+            TemplateProvider.initDefaultResources()
 
-        $http({
-            method:'GET',
-            url:baseUrl+'/project/'+id+'/content'+(window.location.search||'')
-        }).success(function (data) {
-            LoadWithTemplate(data,id);
+            $http({
+                method: 'GET',
+                url: baseUrl + '/project/' + id + '/content' + (window.location.search || '')
+            }).success(function (data) {
+                LoadWithTemplate(data, id);
 
             }).error(function (msg) {
                 toastr.warning('读取错误');
@@ -454,7 +454,6 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             $timeout(function () {
                 $scope.ide.loaded = true;
                 window.spinner && window.spinner.hide(true);
-                // intervalSave();
             }, 200)
         }
 
@@ -517,14 +516,14 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
         function receiveProject(pid) {
 
-        var globalProject={};
-        if (!pid){
-            $timeout(function () {
-                toastr.info('加载离线项目');
-                globalProject=GlobalService.getBlankProject();
-                // TemplateProvider.saveProjectFromGlobal(globalProject);
-                ProjectService.saveProjectFromGlobal(globalProject, function () {
-                    PID=pid;
+            var globalProject = {};
+            if (!pid) {
+                $timeout(function () {
+                    toastr.info('加载离线项目');
+                    globalProject = GlobalService.getBlankProject();
+                    // TemplateProvider.saveProjectFromGlobal(globalProject);
+                    ProjectService.saveProjectFromGlobal(globalProject, function () {
+                        PID = pid;
 
                         //TODO:初始化资源,tags
 
@@ -564,9 +563,9 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
 
                         if (globalProject) {
 
-                        // TemplateProvider.saveProjectFromGlobal(globalProject);
-                        ProjectService.saveProjectFromGlobal(globalProject, function () {
-                            PID = pid;
+                            // TemplateProvider.saveProjectFromGlobal(globalProject);
+                            ProjectService.saveProjectFromGlobal(globalProject, function () {
+                                PID = pid;
 
                                 //TODO:初始化资源,tags
 
@@ -700,6 +699,7 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
                 $scope.$broadcast('NavStatusChanged');
                 $scope.$broadcast('PageNodeChanged');
                 $scope.$broadcast('AttributeChanged');
+                $scope.$broadcast('syncTagSuccess')
             });
 
             $scope.$on('Redo', function (event, operate, callback) {
@@ -737,23 +737,23 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
         }
 
         //add by tang
-        $scope.$on('ChangeMaskStyle',function(event,data){
-            if(typeof data=='object'){
-                $scope.$broadcast('MaskStyle',data);
-            }else{
-                $scope.$broadcast('MaskView',data)
+        $scope.$on('ChangeMaskStyle', function (event, data) {
+            if (typeof data == 'object') {
+                $scope.$broadcast('MaskStyle', data);
+            } else {
+                $scope.$broadcast('MaskView', data)
             }
 
         });
-        $scope.$on('ChangeMaskAttr',function(event,data){
-            $scope.$broadcast('MaskAttr',data);
+        $scope.$on('ChangeMaskAttr', function (event, data) {
+            $scope.$broadcast('MaskAttr', data);
         });
-        $scope.$on('MaskSwitch',function(event,data){
-                $scope.$broadcast('MaskCtrl',data);
-                $scope.$broadcast('MaskView',data);
+        $scope.$on('MaskSwitch', function (event, data) {
+            $scope.$broadcast('MaskCtrl', data);
+            $scope.$broadcast('MaskView', data);
         });
-        $scope.$on('MaskUpdate',function(event,data){
-            $scope.$broadcast('ChangeMask',data)
+        $scope.$on('MaskUpdate', function (event, data) {
+            $scope.$broadcast('ChangeMask', data)
         });
 
 
@@ -794,17 +794,17 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             //},20*60*1000)
         }
 
-    function readCache() {
-        try{
-            console.log('读取缓存');
-            var pid=PID;
-            var project=JSON.parse(window.localStorage.getItem('projectCache'+pid));
-            var globalProject=project;
-            console.log(globalProject);
-            TemplateProvider.setProjectSize(globalProject.currentSize);
-            ProjectService.saveProjectFromGlobal(globalProject, function () {
-                syncServices(globalProject)
-                $scope.$broadcast('GlobalProjectReceived');
+        function readCache() {
+            try {
+                console.log('读取缓存');
+                var pid = PID;
+                var project = JSON.parse(window.localStorage.getItem('projectCache' + pid));
+                var globalProject = project;
+                console.log(globalProject);
+                TemplateProvider.setProjectSize(globalProject.currentSize);
+                ProjectService.saveProjectFromGlobal(globalProject, function () {
+                    syncServices(globalProject)
+                    $scope.$broadcast('GlobalProjectReceived');
 
                 });
             } catch (e) {
@@ -866,29 +866,28 @@ ide.controller('IDECtrl', [ '$scope','$timeout','$http','$interval', 'ProjectSer
             TemplateProvider.setDefaultWidget(template);
 
 
-
-        var templateList = template.templateResourcesList||[];
-        var totalNum = templateList.length;
-        var coutDown = function (e, resourceObj) {
-            if (e.type === 'error') {
-                toastr.warning('图片加载失败: ' + resourceObj.name);
-                resourceObj.complete = false;
+            var templateList = template.templateResourcesList || [];
+            var totalNum = templateList.length;
+            var coutDown = function (e, resourceObj) {
+                if (e.type === 'error') {
+                    toastr.warning('图片加载失败: ' + resourceObj.name);
+                    resourceObj.complete = false;
+                } else {
+                    resourceObj.complete = true;
+                }
+                totalNum--;
+                if (totalNum <= 0) {
+                    //cb
+                    cb && cb();
+                }
+            };
+            if (totalNum > 0) {
+                templateList.map(function (curRes, index) {
+                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+                });
             } else {
-                resourceObj.complete = true;
-            }
-            totalNum--;
-            if(totalNum<=0){
-                //cb
                 cb && cb();
             }
-        };
-        if(totalNum>0){
-            templateList.map(function(curRes,index){
-                ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-            });
-        }else{
-            cb && cb();
-        }
 
 
         }
