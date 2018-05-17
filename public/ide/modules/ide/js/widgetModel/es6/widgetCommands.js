@@ -2769,10 +2769,6 @@
                 add(offset,1)
             }
         `,
-        onMouseUp: `
-        `,
-        onMouseDown: `
-        `,
         onTagChange: `
             var(curItem,0)                            //curValue当前元素 = tag值
             getTag(curItem)
