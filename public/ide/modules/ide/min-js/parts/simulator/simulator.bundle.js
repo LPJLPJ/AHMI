@@ -52318,9 +52318,29 @@ module.exports = React.createClass({
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
         if (subLayer) {
-
-            this.drawTextByTempCanvas(ctx, curX, curY, slWidth, slHeight, subLayer.text, subLayer.fontStyle);
+            var self = this;
+            this.drawTextByTempCanvas(ctx, curX, curY, slWidth, slHeight, subLayer.text, self.transFont(subLayer.fontStyle));
         }
+    },
+    transFont: function transFont(widgetFont) {
+        // fontBold: "100"
+        //
+        // fontColor: "rgba(0,0,0,1)"
+        //
+        // fontFamily: "宋体"
+        //
+        // fontItalic: ""
+        //
+        // fontSize: 15
+        //
+        // fontUnderline: null
+        return {
+            "font-size": widgetFont.fontSize,
+            "font-family": widgetFont.fontFamily,
+            "font-weight": widgetFont.fontBold,
+            "font-color": widgetFont.fontColor,
+            "font-style": widgetFont.fontItalic ? 'italic' : ''
+        };
     },
     paintTextureSL: function paintTextureSL(curX, curY, slWidth, slHeight, subLayer, ctx) {
         // var slX = curX + subLayer.x;
