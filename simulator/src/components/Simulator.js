@@ -620,7 +620,6 @@ module.exports =   React.createClass({
                 widget.scope[param.value] = this.evalParam(widget,value)
                 break;
             case 'EXP':
-                console.log(param)
                 var refs = param.value.split('.');
                 var rLen = refs.length;
                 if (rLen<2) {

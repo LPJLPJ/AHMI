@@ -963,6 +963,9 @@
                 curDigitLayer.subLayers.image = new TextureSubLayer(textureList);
                 layers.push(curDigitLayer);
         }
+        if (valueObj.enableAnimation){
+            layers = layers.concat(_.cloneDeep(layers))
+        }
 
         this.subType = 'TexNum';
         Widget.call(this,x,y,w,h,layers);

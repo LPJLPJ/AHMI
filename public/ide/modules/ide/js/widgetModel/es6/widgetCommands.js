@@ -2497,9 +2497,16 @@
 
             // draw num
             //初始化变量
+            var(tTrueCurVal,0)
+            var(tTotalFrame,0)
+            set(tTotalFrame,'this.totalFrame')
 
             var(tCurVal,0)                       //当前值
             getTag(tCurVal)
+            if(tTotalFrame > 0){
+                set(tTrueCurVal,tCurVal)
+                set(tCurVal,'this.oldValue')
+            }
 
             var(tMaxVal,0)                       //最大值
             set(tMaxVal,'this.maxValue')
@@ -2749,6 +2756,29 @@
                     //i++
                     add(i,1)
                 }
+            }
+            if(tTotalFrame > 0){
+                if(tTrueCurVal>tMaxVal){
+                    //溢出最大值
+                    set(tTrueCurVal,tMaxVal)
+                   
+                }else{
+                    //溢出最小值
+                    if(tTrueCurVal<tMinVal){
+                        set(tTrueCurVal,tMinVal)
+                        
+                    }
+                }
+                var(tOldValue,0)
+                set(tOldValue,'this.oldValue')
+                set('this.startAnimationTag',tOldValue)
+                set('this.stopAnimationTag',tTrueCurVal)
+                checkalarm(0)
+                set('this.oldValue',tTrueCurVal)
+                startanimation(0)
+            }else{
+                checkalarm(0)
+                set('this.oldValue',tCurVal)
             }
         `
     };
