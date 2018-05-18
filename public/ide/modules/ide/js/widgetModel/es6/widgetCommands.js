@@ -2690,7 +2690,7 @@
                 //设置每一个字符的初始位置
                 set(xCoordinate,initPosX)
                 add(xCoordinate,tempValW)
-
+                set(i,0)
                 
                 //绘制逻辑              
                 while(i<layersCount){
@@ -2780,6 +2780,520 @@
                 checkalarm(0)
                 set('this.oldValue',tCurVal)
             }
+        `,
+        onAnimationFrame:`
+            //print('animation','aa')
+            var(tStartTag,0)
+            var(tStopTag,0)
+            set(tStartTag,'this.startAnimationTag')
+            set(tStopTag,'this.stopAnimationTag')
+            var(tTotalFrame,0)
+            set(tTotalFrame,'this.totalFrame')
+            var(tCurFrame,0)
+            set(tCurFrame,'this.nowFrame')
+            var(tYOffset,0)
+            var(tYOffset2,0)
+            var(tHeight,0)
+            set(tHeight,'this.info.height')
+            set(tYOffset,tHeight)
+            multiply(tYOffset,tCurFrame)
+            divide(tYOffset,tTotalFrame)
+            set(tYOffset2,tYOffset)
+            minus(tYOffset2,tHeight)
+            
+            //隐藏所有图层
+            var(offset,0)
+            var(len,0)
+            var(halfLen,0)
+            set(len,'this.layers.length')
+            set(halfLen,len)
+            divide(halfLen,2)
+            while(offset<len){
+                set('this.layers.offset.hidden',1)
+                if(offset < halfLen){
+                    set('this.layers.offset.y',tYOffset)
+                }else{
+                    set('this.layers.offset.y',tYOffset2)
+                }
+                add(offset,1)
+            }
+            // while(tIndex<tLaysLen){
+            //     set('this.layers.tIndex.subLayers.font.text',0)
+            //     if(tIndex < halfLayersLen){
+            //         set('this.layers.tIndex.y',tYOffset)
+            //     }else{
+            //         set('this.layers.tIndex.y',tYOffset2)
+            //     }
+            //     add(tIndex,1)
+            // }
+
+            // draw num
+            //初始化变量
+            var(tTrueCurVal,0)
+           
+
+            var(tCurVal,0)                       //当前值
+            
+            
+
+            var(tMaxVal,0)                       //最大值
+            set(tMaxVal,'this.maxValue')
+            
+            var(tMinVal,0)                       //最小值
+            set(tMinVal,'this.minValue')
+
+            var(hasFrontZero,0)                  //是否有前导零
+            set(hasFrontZero,'this.otherAttrs.1')
+
+            var(hasSymbol,0)                     //是否有符号
+            set(hasSymbol,'this.otherAttrs.2')
+
+            var(decimalCnt,0)                    //小数位数
+            set(decimalCnt,'this.otherAttrs.3')
+
+            var(numOfDigits,0)                   //字符数
+            set(numOfDigits,'this.otherAttrs.4')
+
+            var(overflow,0)                      //溢出模式，0不显示，1显示
+            set(overflow,'this.otherAttrs.5')
+
+            var(fontWidth,0)                     //字符图层宽度
+            set(fontWidth,'this.otherAttrs.6')
+
+            var(align,0)                         //对齐方式，0左，1中，2右
+            set(align,'this.otherAttrs.9')
+
+            var(widgetWidth,0)                   //控件宽度
+            set(widgetWidth,'this.otherAttrs.8')
+
+            var(symbolCnt,0)                     //要绘制的符号的个数
+            set(symbolCnt,0)
+
+            var(curValCnt,0)                     //要绘制的当前值数字的个数
+
+            var(allFontCnt,0)                    //要绘制的总字符的个数
+
+            var(initPosX,0)                      //绘制起始坐标
+
+            var(decimalIndex,0)                  //小数点的标识坐标，即在第几个图层位置绘制小数点
+
+            var(decimalZeroCnt,0)                //要补齐的小数点后的0的个数
+
+            var(frontZeroCnt,0)                  //要绘制的前导零的个数
+
+            var(needDraw,0)                      //是否需要绘制，在溢出不显示的情况下，不需要绘制。0不需要，1需要
+            set(needDraw,1)
+
+            var(isOverflow,0)                    //数字值是否溢出
+
+            var(tempValW,0)                      //总字符所占宽度
+
+            var(fontWidthHalf,0)                 //半个字符所占宽度
+
+            var(tempVal,0)                       //临时变量
+            
+            var(layersCount,0)                   //layer数
+            
+            var(index,0)                         //layer index
+            
+            var(curl,0)                          //当前字符
+            
+            var(i,0)                             //循环变量
+            
+      
+            //startTag
+            set(tCurVal, tStartTag)
+
+            //溢出处理
+            if(tCurVal>tMaxVal){
+                //溢出最大值
+                print('溢出最大值',tMaxVal)
+                set(tCurVal,tMaxVal)
+                set(isOverflow,1)
+            }else{
+                //溢出最小值
+                if(tCurVal<tMinVal){
+                    print('溢出最小值',tMinVal)
+                    set(tCurVal,tMinVal)
+                    set(isOverflow,1)
+                }
+            }
+            if(isOverflow==1){
+                //溢出
+                if(overflow==0){
+                    //溢出不显示
+                    set(needDraw,0)
+                }
+            }
+
+            //判断是否需要绘制
+            if(needDraw==1){
+                //符号&取绝对值
+                if(tCurVal<0){
+                    if(hasSymbol==1){
+                        set(symbolCnt,1)
+                    }
+                    multiply(tCurVal,-1)//取绝对值
+                }
+
+                //当前值位数
+                set(tempVal,tCurVal)
+                while(tempVal>0){
+                    add(curValCnt,1)
+                    divide(tempVal,10)
+                }
+                if(curValCnt==0){
+                    set(curValCnt,1) 
+                }
+
+                //前导零
+                if(hasFrontZero==1){
+                    set(tempVal,numOfDigits)
+                    minus(tempVal,curValCnt)
+                    set(frontZeroCnt,tempVal)
+                }
+
+                //总字符数=前导0/自动补0+数字位
+                set(allFontCnt,0)
+                add(allFontCnt,symbolCnt)
+                add(allFontCnt,frontZeroCnt)
+                add(allFontCnt,curValCnt)
+
+                //小数点位置
+                if(decimalCnt>0){
+                    add(allFontCnt,1)
+                    if(decimalCnt>=curValCnt){
+                        //小数位数大于等于字符位数，在非前导零模式下需要补零
+                        if(hasFrontZero==0){
+                            set(decimalZeroCnt,decimalCnt)//decimalZeroCnt：要补齐的小数点后的0的个数=小数位数-数字位数
+                            minus(decimalZeroCnt,curValCnt)
+                            add(decimalZeroCnt,1)//小数点前面的0
+                            add(allFontCnt,decimalZeroCnt)
+                        }
+                    }
+                }
+                //计算字符所占总宽度
+                set(tempVal,allFontCnt)
+                multiply(tempVal,fontWidth)
+                set(tempValW,tempVal)//tempValW:总字符所占宽度
+                set(fontWidthHalf,fontWidth)//fontWidthHalf:半个字符所占宽度
+                divide(fontWidthHalf,2)
+                if(decimalCnt>0){
+                    minus(tempValW,fontWidthHalf)
+                }
+
+                //计算起始坐标
+                if(widgetWidth>tempValW){
+                    if(align==0){
+                        //左对齐
+                        set(initPosX,0)
+                    }else{
+                        if(align==2){
+                            //右对齐
+                            set(initPosX,widgetWidth)
+                            minus(initPosX,tempValW)
+                        }else{
+                            //居中对齐
+                            set(initPosX,widgetWidth)
+                            minus(initPosX,tempValW)
+                            divide(initPosX,2)
+                        }
+                    }
+                }else{
+                    set(initPosX,0)
+                }                
+                
+                //layer数
+                set(layersCount,allFontCnt)
+
+                //绘制符号
+                if(symbolCnt==1){
+                    //有负号
+                    set('this.layers.0.subLayers.image.texture',12)
+                    set('this.layers.0.x',initPosX)
+                    set('this.layers.0.hidden',0)
+                    minus(layersCount,1)
+                    minus(allFontCnt,1)
+                }
+                
+                
+                //设置每一个字符的初始位置
+                set(xCoordinate,initPosX)
+                add(xCoordinate,tempValW)
+                
+                //print('start xc',xCoordinate)
+                
+                //绘制逻辑              
+                while(i<layersCount){
+                    if(i==decimalCnt){
+                        if(decimalCnt==0){
+                        }else{
+                           //畫小數點
+                            
+                           //xCoordinate-=fontWidth/2;
+                           set(tempVal,fontWidth)
+                           divide(tempVal,2)
+                           minus(xCoordinate,tempVal)
+                            
+                           //draw(index,xCoordinate)
+                           set('this.layers.1.hidden',0)
+                           set('this.layers.1.x',xCoordinate)
+                           set('this.layers.1.subLayers.image.texture',10)
+                           
+                           minus(layersCount,1)
+                        }
+                        set(decimalCnt,-1)
+                        minus(i,1)
+                    }else{
+                        //畫數字
+                        if(i<curValCnt){
+                            //畫real數字
+                            //curl=tCurVal-tCurVal/10*10
+                            set(tempVal,tCurVal)
+                            divide(tempVal,10)
+                            multiply(tempVal,10)
+                            set(curl,tCurVal)
+                            minus(curl,tempVal)
+                            
+                            //tCurVal=tCurVal/10
+                            divide(tCurVal,10)
+                            
+                            //index=allFontCnt-i
+                            set(index,allFontCnt)
+                            minus(index,i)
+                            
+                            //xCoordinate-=fontWidth
+                            minus(xCoordinate,fontWidth)
+                            
+                            //draw(index,xCoordinate)
+                            set('this.layers.index.hidden',0)
+                            set('this.layers.index.x',xCoordinate)
+                            set('this.layers.index.subLayers.image.texture',curl)
+                        }else{
+                            //畫零
+                            //xCoordinate-=fontWidth;
+                            minus(xCoordinate,fontWidth)
+                            
+                            //index=allFontCnt-i
+                            set(index,allFontCnt)
+                            minus(index,i)
+                            
+                            //draw(index,xCoordinate)
+                            set('this.layers.index.hidden',0)
+                            set('this.layers.index.x',xCoordinate)
+                            set('this.layers.index.subLayers.image.texture',0)
+                        }
+                    }
+                    //i++
+                    add(i,1)
+                }
+            }
+            
+            
+            //stopTag
+            set(tCurVal, tStopTag)
+            set(isOverflow,0)
+            set(needDraw,1)
+            set(curValCnt,0)
+            set(symbolCnt,0)
+            set(frontZeroCnt,0)
+            var(tFloatIndex,0)
+
+            //溢出处理
+            if(tCurVal>tMaxVal){
+                //溢出最大值
+                print('溢出最大值',tMaxVal)
+                set(tCurVal,tMaxVal)
+                set(isOverflow,1)
+            }else{
+                //溢出最小值
+                if(tCurVal<tMinVal){
+                    print('溢出最小值',tMinVal)
+                    set(tCurVal,tMinVal)
+                    set(isOverflow,1)
+                }
+            }
+            if(isOverflow==1){
+                //溢出
+                if(overflow==0){
+                    //溢出不显示
+                    set(needDraw,0)
+                }
+            }
+
+            //判断是否需要绘制
+            if(needDraw==1){
+                //符号&取绝对值
+                if(tCurVal<0){
+                    if(hasSymbol==1){
+                        set(symbolCnt,1)
+                    }
+                    multiply(tCurVal,-1)//取绝对值
+                }
+
+                //当前值位数
+                set(tempVal,tCurVal)
+                while(tempVal>0){
+                    add(curValCnt,1)
+                    divide(tempVal,10)
+                }
+                if(curValCnt==0){
+                    set(curValCnt,1) 
+                }
+
+                //前导零
+                if(hasFrontZero==1){
+                    set(tempVal,numOfDigits)
+                    minus(tempVal,curValCnt)
+                    set(frontZeroCnt,tempVal)
+                }
+
+                //总字符数=前导0/自动补0+数字位
+                set(allFontCnt,0)
+                add(allFontCnt,symbolCnt)
+                add(allFontCnt,frontZeroCnt)
+                add(allFontCnt,curValCnt)
+
+                //小数点位置
+                if(decimalCnt>0){
+                    add(allFontCnt,1)
+                    if(decimalCnt>=curValCnt){
+                        //小数位数大于等于字符位数，在非前导零模式下需要补零
+                        if(hasFrontZero==0){
+                            set(decimalZeroCnt,decimalCnt)//decimalZeroCnt：要补齐的小数点后的0的个数=小数位数-数字位数
+                            minus(decimalZeroCnt,curValCnt)
+                            add(decimalZeroCnt,1)//小数点前面的0
+                            add(allFontCnt,decimalZeroCnt)
+                        }
+                    }
+                }
+                //计算字符所占总宽度
+                set(tempVal,allFontCnt)
+                multiply(tempVal,fontWidth)
+                set(tempValW,tempVal)//tempValW:总字符所占宽度
+                set(fontWidthHalf,fontWidth)//fontWidthHalf:半个字符所占宽度
+                divide(fontWidthHalf,2)
+                if(decimalCnt>0){
+                    minus(tempValW,fontWidthHalf)
+                }
+
+                //计算起始坐标
+                set(initPosX,0)
+                if(widgetWidth>tempValW){
+                    if(align==0){
+                        //左对齐
+                        set(initPosX,0)
+                    }else{
+                        if(align==2){
+                            //右对齐
+                            set(initPosX,widgetWidth)
+                            minus(initPosX,tempValW)
+                        }else{
+                            //居中对齐
+                            set(initPosX,widgetWidth)
+                            minus(initPosX,tempValW)
+                            divide(initPosX,2)
+                        }
+                    }
+                }else{
+                    set(initPosX,0)
+                }                
+                
+                //layer数
+                set(layersCount,allFontCnt)
+
+                //绘制符号
+                if(symbolCnt==1){
+                    //有负号
+                    set(tFloatIndex,halfLen)
+                    set('this.layers.tFloatIndex.subLayers.image.texture',12)
+                    set('this.layers.tFloatIndex.x',initPosX)
+                    set('this.layers.tFloatIndex.hidden',0)
+                    minus(layersCount,1)
+                    minus(allFontCnt,1)
+                }
+                
+                
+                //设置每一个字符的初始位置
+                set(xCoordinate,initPosX)
+                add(xCoordinate,tempValW)
+                //print('stoptag xc',xCoordinate)
+                
+                //绘制逻辑 
+                //print(i,layersCount,'i layersCount')   
+                set(i,0)          
+                while(i<layersCount){
+                    if(i==decimalCnt){
+                        if(decimalCnt==0){
+                        }else{
+                           //畫小數點
+                            
+                           //xCoordinate-=fontWidth/2;
+                           set(tempVal,fontWidth)
+                           divide(tempVal,2)
+                           minus(xCoordinate,tempVal)
+                            
+                           //draw(index,xCoordinate)
+                           set(tFloatIndex,halfLen)
+                           add(tFloatIndex,1)
+                           set('this.layers.tFloatIndex.hidden',0)
+                           set('this.layers.tFloatIndex.x',xCoordinate)
+                           set('this.layers.tFloatIndex.subLayers.image.texture',10)
+                           
+                           minus(layersCount,1)
+                        }
+                        set(decimalCnt,-1)
+                        minus(i,1)
+                    }else{
+                        //畫數字
+                        if(i<curValCnt){
+                            //畫real數字
+                            //curl=tCurVal-tCurVal/10*10
+                            set(tempVal,tCurVal)
+                            divide(tempVal,10)
+                            multiply(tempVal,10)
+                            set(curl,tCurVal)
+                            minus(curl,tempVal)
+                            
+                            //tCurVal=tCurVal/10
+                            divide(tCurVal,10)
+                            
+                            //index=allFontCnt-i
+                            set(index,allFontCnt)
+                            minus(index,i)
+                            
+                            //xCoordinate-=fontWidth
+                            minus(xCoordinate,fontWidth)
+                            
+                            //draw(index,xCoordinate)
+                            set(tFloatIndex,halfLen)
+                            add(tFloatIndex,index)
+                            set('this.layers.tFloatIndex.hidden',0)
+                            set('this.layers.tFloatIndex.x',xCoordinate)
+                            set('this.layers.tFloatIndex.subLayers.image.texture',curl)
+                        }else{
+                            //畫零
+                            //xCoordinate-=fontWidth;
+                            minus(xCoordinate,fontWidth)
+                            
+                            //index=allFontCnt-i
+                            set(index,allFontCnt)
+                            minus(index,i)
+                            
+                            //draw(index,xCoordinate)
+                            set(tFloatIndex,halfLen)
+                            add(tFloatIndex,index)
+                            set('this.layers.tFloatIndex.hidden',0)
+                            set('this.layers.tFloatIndex.x',xCoordinate)
+                            set('this.layers.tFloatIndex.subLayers.image.texture',0)
+                        }
+                    }
+                    //i++
+                    add(i,1)
+                }
+                //print('curWidget','this')
+            }
+            
         `
     };
 
