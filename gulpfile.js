@@ -3,6 +3,7 @@
  */
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
+var plumber = require('gulp-plumber');
 var pump = require('pump');
 var watch = require('gulp-watch');
 var path = require('path');
@@ -14,8 +15,8 @@ var baseUrl = './public/ide/modules/ide/js/';
 
 
 console.log('os',os.platform());
+var NODE_ENV = process.env.NODE_ENV;
 var eolc;
-
 switch (os.platform()){
     case 'win32':
         eolc = 'CRLF';
@@ -24,6 +25,9 @@ switch (os.platform()){
         eolc = 'LF';
         break;
 }
+
+console.log('os',os.platform());
+console.log('ENV',NODE_ENV);
 
 gulp.task('compress', function (cb) {
     pump([
@@ -52,23 +56,36 @@ gulp.task('transNormalFiles',function (cb) {
         ],
         cb
     );
-})
+});
 
 
 gulp.task('keepCompressing',function () {
+    var src = gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js'],{base:baseUrl});
+
+    if(NODE_ENV!=='production'){
+        src = src.pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js'])).pipe(plumber());
+    }
+
+    return src.pipe(uglify())
     return gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}'],{base:baseUrl})
         .pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}']))
         .pipe(uglify())
         .pipe(lec({eolc:eolc,encoding:'utf-8'}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
-})
+
+});
 
 gulp.task('transferNormalFiles',function () {
-    return gulp.src([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl})
-        .pipe(watch([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl}))
-        .pipe(lec({eolc:eolc,encoding:'utf-8'}))
-        .pipe(gulp.dest('public/ide/modules/ide/min-js'))
-})
+    var src = gulp.src([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl});
+
+    if(NODE_ENV!=='production'){
+        src = src.pipe(watch([baseUrl+'parts/simulator/*.js',baseUrl+'projectService.js',baseUrl+'widgetService.js'],{base:baseUrl})).pipe(plumber());
+    }
+
+    return src.pipe(lec({eolc:eolc,encoding:'utf-8'}))
+        .pipe(gulp.dest('public/ide/modules/ide/min-js'));
+
+});
 
 
 gulp.task('transferAllFiles',function () {
