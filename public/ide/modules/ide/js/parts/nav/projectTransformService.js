@@ -800,7 +800,9 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                         default:
                             generalWidget.otherAttrs[9] = 1
                     }
-
+                    if (info.enableAnimation) {
+                        generalWidget['totalFrame'] = defaultDuration / 1000 * fps;
+                    }
                     generalWidget.generalType = 'TexNum';
                     generalWidget.tag = _.cloneDeep(rawWidget.tag);
                     generalWidget.subType = 'general';

@@ -963,6 +963,9 @@
                 curDigitLayer.subLayers.image = new TextureSubLayer(textureList);
                 layers.push(curDigitLayer);
         }
+        if (valueObj.enableAnimation){
+            layers = layers.concat(_.cloneDeep(layers))
+        }
 
         this.subType = 'TexNum';
         Widget.call(this,x,y,w,h,layers);
@@ -1325,6 +1328,7 @@
                 firstOpe=2;
                 opeSliceNum=10;
                 this.maxHighLightNum = 3;
+                break;
             case 1://
                 digitCount=4;
                 opeCount=1;
@@ -1363,7 +1367,7 @@
         //添加符号图层
         for (i=0;i<opeCount;i++){
             curLayer = new Layer((firstOpe+3*i)*charW,0,charW,charH,true);
-            curLayer .subLayers.image = new TextureSubLayer(texTimeSlices[opeSliceNum].imgSrc);
+            curLayer.subLayers.image = new TextureSubLayer(texTimeSlices[opeSliceNum].imgSrc);
             layers.push(curLayer);
         }
 
