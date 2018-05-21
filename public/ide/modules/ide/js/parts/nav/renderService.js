@@ -51,7 +51,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         var blob = dataURItoBlob(dataURI);
 
         var successHandler = function () {
-            console.log('save tex ok')
+            // console.log('save tex ok')
             scb && scb()
         }
 
@@ -207,6 +207,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         return array[array.length-1];
     }
 
+    function makeOutputFilenameFromId(id,index) {
+        var imgName = id.split('.').join('-');
+        var outputFilename = 'r-'+imgName +'-'+ index+'.png';
+        return outputFilename
+    }
+
 
     function renderer(images,customFonts) {
         this.images = images||{};
@@ -298,8 +304,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
 
                 //generate file
-                var imgName = widget.id.split('.').join('-');
-                var outputFilename = imgName +'-'+ index+'.png';
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ index+'.png';
+
+                var outputFilename = makeOutputFilenameFromId(widget.id,index)
 
                 // console.log('dstDir',dstDir,'outputFilename',outputFilename);
                 var outpath = path.join(dstDir,outputFilename);
@@ -391,9 +399,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
                 //output
-                var imgName = widget.id.split('.').join('-');
-                var outputFilename = imgName +'-'+ i+'.png';
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
                 var outpath = path.join(dstDir,outputFilename);
+
                 canvas.output(outpath,function (err) {
                     if (err){
                         totalSlices-=1;
@@ -466,8 +476,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
                 //output
-                var imgName = widget.id.split('.').join('-');
-                var outputFilename = imgName +'-'+ i+'.png';
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
                     if (err){
@@ -560,8 +571,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
 
                 //output
-                var imgName = widget.id.split('.').join('-');
-                var outputFilename = imgName +'-'+ i+'.png';
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
                     if (err){
@@ -628,8 +640,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
 
                 //output
-                var imgName = widget.id.split('.').join('-');
-                var outputFilename = imgName +'-'+ i+'.png';
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
                     if (err){
@@ -697,8 +710,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
 
                 //output
-                var imgName = widget.id.split('.').join('');
-                var outputFilename = imgName +'-'+ i+'.png';
+                // var imgName = widget.id.split('.').join('');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
                     if (err){
@@ -768,8 +782,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
                 }
                 //output
-                var imgName = widget.id.split('.').join('-');
-                var outputFilename = imgName +'-'+ i+'.png';
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
                 var outpath = path.join(dstDir,outputFilename);
                 canvas.output(outpath,function (err) {
                     if (err){
@@ -828,9 +843,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }
             renderingX.renderGrid(ctx,new Size(width,height),new Pos(),new Size(info.spacing,info.spacing),new Pos());
             //output
-            var imgName = widget.id.split('.').join('-');
-            var outputFilename = imgName +'-'+ 1+'.png';
-
+            // var imgName = widget.id.split('.').join('-');
+            // var outputFilename = imgName +'-'+ 1+'.png';
+            var outputFilename = makeOutputFilenameFromId(widget.id,1)
 
             var outpath = path.join(dstDir,outputFilename);
 
@@ -895,9 +910,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 renderingX.renderText(ctx,new Size(width,height),new Pos(),info.text,style,true,new Pos(0.5*width,0.5*height),this.customFonts);
             }
             //output
-            var imgName = widget.id.split('.').join('-');
-            var outputFilename = imgName +'-'+ 1+'.png';
-
+            // var imgName = widget.id.split('.').join('-');
+            // var outputFilename = imgName +'-'+ 1+'.png';
+            var outputFilename = makeOutputFilenameFromId(widget.id,1)
             var startTime = new Date();
 
             var outpath = path.join(dstDir,outputFilename);
@@ -911,7 +926,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     bgSlice.originSrc = bgSlice.imgSrc;
                     bgSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
                     var stopTime = new Date();
-                    console.log('Output stream costs: ',(stopTime-startTime)/1000.0+'s');
+                    // console.log('Output stream costs: ',(stopTime-startTime)/1000.0+'s');
                     cb && cb();
                 }
             }.bind(this))
@@ -1191,6 +1206,275 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
         }
     };
+
+
+    /**
+     * 检测生成大小
+     */
+    function SizeCalculator() {
+        this.totalSize = 0
+    }
+
+    SizeCalculator.prototype.convertTotalSize = function () {
+        return (this.totalSize )/1024 +'KB'
+    }
+    SizeCalculator.prototype.addSize = function (width,height,bytePerPixel) {
+        var curSize = Number(Number(width) * Number(height)) || 0
+        this.totalSize += curSize * (bytePerPixel||4)
+    }
+
+    SizeCalculator.prototype.calcButton = function (widget) {
+        var info = widget.info;
+        if (info ){
+            //font style
+
+            var slices = widget.texList[0].slices;
+            var totalSlices = slices.length;
+            slices.map(function (slice,index) {
+                this.addSize(widget.info.width,widget.info.height)
+
+            }.bind(this));
+
+        }
+    };
+
+
+    SizeCalculator.prototype.calcButtonGroup = function (widget) {
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var interval = info.interval;
+            var count = info.count;
+            var arrange = (info.arrange === 'horizontal');
+            if (arrange){
+                width = (width-(count-1)*interval)/count;
+            }else{
+                height = (height-(count-1)*interval)/count;
+            }
+
+            var texList = widget.texList;
+            var totalSlices = 2*count;
+
+            var slices = [];
+            for (var i=0;i<count;i++){
+                for (var j=0;j<2;j++){
+                    slices.push(texList[i].slices[j]);
+                }
+            }
+            if (texList[count]){
+                slices.push((texList[count].slices[0]));
+                totalSlices++;
+            }
+            slices.map(function (slice,i) {
+                this.addSize(width,height)
+            }.bind(this));
+
+        }
+
+    };
+
+    SizeCalculator.prototype.calcDashboard = function (widget) {
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+
+
+            var texList = widget.texList;
+            var totalSlices = texList.length;
+            texList.map(function (tex,i) {
+                var width = info.width;
+                var height = info.height;
+                if (i===1){
+                    //pointer
+                    width = height = info.pointerLength/Math.sqrt(2);
+                }
+
+                this.addSize(width,height)
+
+
+            }.bind(this));
+
+
+
+        }
+
+    };
+
+    SizeCalculator.prototype.calcSlide = function (widget) {
+        var info = widget.info;
+        if (!!info){
+            //font
+            var text = '';
+            v
+
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                this.addSize(width,height)
+            }.bind(this));
+
+        }
+
+    };
+
+    SizeCalculator.prototype.calcTexNum = function(widget){
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.characterW;
+            var height = info.characterH;
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                this.addSize(width,height)
+            }.bind(this));
+
+
+        }
+    };
+
+    SizeCalculator.prototype.calcTexTime = function(widget){
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.characterW;
+            var height = info.characterH;
+
+            // var slideTex = widget.texList[0];
+            var slideTex = _.cloneDeep(widget.texList[0]);
+            slideTex.slices.push(widget.texList[1].slices[0]);
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                this.addSize(width,height)
+            }.bind(this));
+
+        }
+    };
+
+    SizeCalculator.prototype.calcRotateImg = function (widget) {
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                this.addSize(width,height)
+            }.bind(this));
+
+        }
+
+    };
+
+    SizeCalculator.prototype.calcOscilloscope = function (widget) {
+        var info = widget.info;
+        var width = info.width;
+        var height = info.height;
+        if (info){
+            //draw bg
+            //draw grid
+            this.addSize(width,height)
+
+        }
+    };
+
+
+    SizeCalculator.prototype.calcTextArea = function (widget) {
+        var info = widget.info;
+        var width = info.width;
+        var height = info.height;
+        if (info){
+            this.addSize(width,height)
+
+
+
+        }
+
+    };
+
+    SizeCalculator.prototype.calcPage = function (page,width,height) {
+        if (page.backgroundImage){
+            this.addSize(width,height)
+        }
+    }
+
+    SizeCalculator.prototype.calcWidget = function (widget) {
+        switch (widget.subType){
+            case 'MyButton':
+            case 'MySwitch':
+                this.calcButton(widget);
+                break;
+            case 'MyButtonGroup':
+                this.calcButtonGroup(widget);
+                break;
+            case 'MySlide':
+                this.calcSlide(widget);
+                break;
+            case 'MyAnimation':
+                this.calcSlide(widget);
+                break;
+            case 'MyOscilloscope':
+                this.calcOscilloscope(widget);
+                break;
+            case 'MyTextArea':
+                this.calcTextArea(widget);
+                break;
+            case 'MyDashboard':
+                this.calcDashboard(widget);
+                break;
+            case 'MyRotateImg':
+                this.calcRotateImg(widget);
+                break;
+            case 'MyTexNum':
+                this.calcTexNum(widget);
+                break;
+            case 'MyTexTime':
+                this.calcTexTime(widget);
+                break;
+            default:
+                break;
+        }
+    };
+
+
+    this.calcProjectSize = function (dataStructure) {
+        var allWidgets = []
+        var curSizeCalulator = new SizeCalculator()
+        for (var i=0;i<dataStructure.pageList.length;i++){
+            var curPage = dataStructure.pageList[i];
+            curSizeCalulator.calcPage(curPage,dataStructure.size.width,dataStructure.size.height)
+            for (var j=0;j<curPage.canvasList.length;j++){
+                var curCanvas = curPage.canvasList[j];
+                for (var k=0;k<curCanvas.subCanvasList.length;k++){
+                    var curSubCanvas = curCanvas.subCanvasList[k];
+                    for (var l=0;l<curSubCanvas.widgetList.length;l++){
+                        allWidgets.push(curSubCanvas.widgetList[l])
+                        curSizeCalulator.calcWidget(curSubCanvas.widgetList[l]);
+                    }
+                }
+            }
+        }
+        var fontList =  FontGeneratorService.getFontCollections(allWidgets)
+        console.log(fontList)
+        for(var i=0;i<fontList.length;i++){
+            var curFont = fontList[i]
+            var curFontSize = curFont['font-size']||24
+            var width = 1.2*Math.sqrt(128)*curFontSize
+            curSizeCalulator.addSize(width,width,0.5)
+        }
+
+        return curSizeCalulator.convertTotalSize()
+    }
 
     if (local){
 
