@@ -97,6 +97,7 @@ gulp.task('transWidgetCommands',function () {
             .pipe(babel({
                 presets:['es2015']
             }))
+            .pipe(lec({eolc:eolc,encoding:'utf-8'}))
             .pipe(gulp.dest(baseUrl+'widgetModel/'))
 })
 
