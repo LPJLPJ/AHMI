@@ -27,7 +27,7 @@ switch (os.platform()){
 }
 
 console.log('os',os.platform());
-console.log('ENV',NODE_ENV);
+console.log('NODE_ENV',NODE_ENV);
 
 gulp.task('compress', function (cb) {
     pump([
@@ -60,16 +60,13 @@ gulp.task('transNormalFiles',function (cb) {
 
 
 gulp.task('keepCompressing',function () {
-    var src = gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js'],{base:baseUrl});
+    var src = gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}'],{base:baseUrl});
 
     if(NODE_ENV!=='production'){
-        src = src.pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js'])).pipe(plumber());
+        src = src.pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}'])).pipe(plumber());
     }
 
     return src.pipe(uglify())
-    return gulp.src([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}'],{base:baseUrl})
-        .pipe(watch([baseUrl+'**/*.js','!'+baseUrl+'parts/simulator/*.js','!'+baseUrl+'projectService.js','!'+baseUrl+'widgetService.js','!'+baseUrl+'widgetModel/{es6,es6/**}']))
-        .pipe(uglify())
         .pipe(lec({eolc:eolc,encoding:'utf-8'}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 
