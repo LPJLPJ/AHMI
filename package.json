@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cross-env NODE_ENV=production gulp build",
-    "start": "cross-env NODE_ENV=development gulp build",
+    "start:build": "cross-env NODE_ENV=development gulp build",
     "start:dev": "cross-env NODE_ENV=development gulp dev"
   },
   "author": "",
@@ -19,7 +19,6 @@
     "captchapng": "0.0.1",
     "connect-mongo": "^1.1.0",
     "cookie-parser": "^1.4.1",
-    "cross-env": "^5.1.5",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
@@ -46,6 +45,7 @@
     "yazl": "^2.4.1"
   },
   "devDependencies": {
+    "cross-env": "^5.1.5",
     "gulp-watch": "^4.3.11"
   }
 }
