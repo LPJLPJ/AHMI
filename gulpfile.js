@@ -63,7 +63,6 @@ gulp.task('keepCompressing', function () {
 
     if (NODE_ENV !== 'production') {
         src = src.pipe(watch([baseUrl + '**/*.js', '!' + baseUrl + 'parts/simulator/*.js', '!' + baseUrl + 'projectService.js', '!' + baseUrl + 'widgetService.js', '!' + baseUrl + 'widgetModel/{es6,es6/**}'])).pipe(plumber())
-            .pipe(lec({eolc: eolc, encoding: 'utf-8'}))
     }
 
     src = src.pipe(uglify());
