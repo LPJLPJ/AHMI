@@ -1,3 +1,7 @@
+/**
+ * created by lixiang
+ */
+
 ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
     'ProjectService',
     'Type', 'Preference',
