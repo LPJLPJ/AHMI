@@ -9,12 +9,15 @@ var watch = require('gulp-watch');
 var path = require('path');
 var babel = require('gulp-babel');
 var os = require('os');
-var lec = require('gulp-line-ending-corrector');
 var baseUrl = './public/ide/modules/ide/js/';
-
 
 console.log('os', os.platform());
 var NODE_ENV = process.env.NODE_ENV;
+
+if (NODE_ENV !== 'production') {
+    var lec = require('gulp-line-ending-corrector');
+}
+
 var eolc;
 switch (os.platform()) {
     case 'win32':
@@ -24,6 +27,7 @@ switch (os.platform()) {
         eolc = 'LF';
         break;
 }
+
 
 console.log('os', os.platform());
 console.log('NODE_ENV', NODE_ENV);
