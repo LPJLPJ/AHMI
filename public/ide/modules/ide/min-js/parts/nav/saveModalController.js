@@ -1,1 +1,0 @@
-ide.factory("saveProjectModal",["btfModal",function(e){return e({controller:"SaveModalCtrl",controllerAs:"modal",templateUrl:"saveProject.html"})}]).controller("SaveModalCtrl",["saveProjectModal",function(e){this.closeMe=e.deactivate}]);
