@@ -81,7 +81,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/actionService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/resourceService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/widgetService.js"></script>
-    <script src="../../public/ide/modules/ide/min-js/parts/attr/timerService.js"></script>
+    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/timerService.js"></script>-->
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/operationService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetService.js"></script>
@@ -104,7 +104,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/stage/stageController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/attrController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/attributeController.js"></script>
-    <script src="../../public/ide/modules/ide/min-js/parts/attr/timerController.js"></script>
+    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/timerController.js"></script>-->
     <script src="../../public/ide/modules/ide/min-js/parts/attr/ResourceCtrl.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/templateFileController.js"></script>
@@ -496,6 +496,20 @@
                         </a>
                     </div>
                 </div>
+                <script type="text/ng-template" id="introModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">新手引导</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">
+                            <select class="form-control dengModel-trigger" ng-model="mode" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">确认</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                    </div>
+                </script>
             </div>
             <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==4">
                 <a ng-click="component.tool.showLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe644;</span><span
