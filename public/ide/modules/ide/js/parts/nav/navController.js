@@ -973,6 +973,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     }
                     RenderSerive.renderProject(window.projectData, function () {
                         toastr.info('生成成功');
+                        console.log(RenderSerive.calcProjectSize(window.projectData))
                         window.spinner && window.spinner.hide();
                     }, function () {
                         toastr.info('生成失败');
