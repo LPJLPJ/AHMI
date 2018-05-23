@@ -5,8 +5,10 @@
   "main": "./views/login/personalProject.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cross-env NODE_ENV=production gulp build",
-    "start:build": "cross-env NODE_ENV=development gulp build",
+    "webpack":"cd simulator && webpack -p",
+    "build": "npm run webpack && cross-env  NODE_ENV=production gulp build",
+    "start:webpack":"wepack",
+    "start:build": "cross-env NODE_ENV=development  gulp build",
     "start:dev": "cross-env NODE_ENV=development gulp dev"
   },
   "author": "",

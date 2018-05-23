@@ -12,7 +12,7 @@ module.exports = {
         //login:"./src/js/login.js",
         //personal:"./src/js/personal.js",
         // test:"./src/js/test.js",
-        simulator: "./src/js/simulator.js",
+        simulator: path.join(__dirname,'src','js','simulator'),
         // simulator:"../public/ide/modules/ide/js/parts/simulator"
     },
     output: {
