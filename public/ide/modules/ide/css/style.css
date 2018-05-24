@@ -425,6 +425,11 @@ body{
     overflow-y: auto;
 }
 
+
+.my-panel-item-tools-wrapper{
+    margin:0.5em 0;
+}
+
 .my-attr-item{
     display: inline-block;
     width: 50%;

@@ -964,6 +964,13 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     toastr.error('导出模板失败');
                     console.log(err);
                 })
+            }else if(format == 'estimate'){
+                generateData();
+                toastr.success(RenderSerive.calcProjectSize(window.projectData),{
+                    timeOut: 0,
+                    extendedTimeOut: 0
+                })
+
             }else{
                 generateData(format);
                 if (window) {
@@ -973,7 +980,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     }
                     RenderSerive.renderProject(window.projectData, function () {
                         toastr.info('生成成功');
-                        console.log(RenderSerive.calcProjectSize(window.projectData))
                         window.spinner && window.spinner.hide();
                     }, function () {
                         toastr.info('生成失败');
@@ -1548,10 +1554,15 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         type:'template',
         name:'模板'
     }
+    var estimateFormat = {
+        type:'estimate',
+        name:'预估生成文件大小'
+    }
     if (!window.local) {
         $scope.formats[2] = localFormat;
         $scope.formats[3] = localFormatCompatible
         $scope.formats[4] = templateFormat
+        $scope.formats[5] = estimateFormat
     }
     ;
     $scope.generateFormat = 'normal';
