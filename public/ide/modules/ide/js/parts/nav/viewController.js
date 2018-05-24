@@ -114,6 +114,8 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
             modalInstance.result.then(function (result) {
                 if (result.type === 'intro') {
                     startIntro();
+                } else if (result.type === 'newplayer') {
+                    startLesson()
                 }
             }, function () {
 
@@ -143,6 +145,10 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                 .start()
         }
 
+        function startLesson() {
+
+        }
+
     }
 }]);
 
@@ -163,8 +169,8 @@ ide.controller('introModalCtl', ['$scope', '$uibModalInstance', 'ProjectService'
     $scope.ok = function () {
         if ($scope.mode === 'newPlayer') {
             var result = checkEmpty();
-            if (result) {
-                $uibModalInstance.close({type:$scope.mode});
+            if (true) {
+                $uibModalInstance.close({type: $scope.mode});
             } else {
                 toastr.error('为了保护您的工程，请使用一个新的空白工程进行新手教程');
             }
