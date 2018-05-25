@@ -114,7 +114,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
             modalInstance.result.then(function (result) {
                 if (result.type === 'intro') {
                     startIntro();
-                } else if (result.type === 'newplayer') {
+                } else if (result.type === 'newPlayer') {
                     startLesson()
                 }
             }, function () {
@@ -146,33 +146,82 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
         }
 
         function startLesson() {
+            var intro = new SXIntro(null, {flag: 'data-step-c1'})
+                .setIntro([{
+                    index: 1,
+                    tooltip: '<h4>添加画布</h4><p>你好~接下来让我们开始一个简单的DEMO工程</p> <p>1.请点击导航栏上的开始栏目</p><p>2.请点击开始栏目下的添加画布按钮</p>',
+                    position: 'bottom'
+                }, {
+                    index: 2,
+                    tooltip: '<h4>缩放并进入画布</h4><p>现在一个画布出现在了页面上</p> <p>1.拖住画布的右下角并将画布拉伸到与页面一样大</p><p>2.请双击，并进入到画布编辑界面</p>',
+                    position: 'right'
+                }, {
+                    index: 3,
+                    tooltip: '<h4>添加控件</h4><p>恭喜你进入画布编辑，现在可以添加控件了</p> <p>1.请点击导航栏上的开始栏目</p><p>2.点击添加控件按钮，并选择按钮控件和仪表盘控件</p>',
+                    position: 'bottom'
+                }, {
+                    index: 4,
+                    tooltip: '<h4>摆放控件</h4><p>画布上的控件可以随意拖动</p> <p>1.尝试鼠标选中并按住一个控件</p><p>2.将控件摆放到自己喜欢的位置</p>',
+                    position: 'right'
+                }, {
+                    index: 5,
+                    tooltip: '<h4>新建变量</h4><p>接下来，让我添加一个变量</p> <p>1.请点击属性栏上的变量栏目</p><p>2.点击添加新Tag</p><p>3.输入变量名称:速度</p>',
+                    position: 'bottom',
+                }, {
+                    index: 6,
+                    tooltip: '<h4>选中控件</h4><p>在层级栏，可以快速的选中某个控件</p> <p>1.请点击NewDashboard以选中仪表盘控件</p>',
+                    position: 'left',
+                },{
+                    index:7,
+                    tooltip:'<h4>绑定变量</h4><p>接下来，让我们为这个控件绑定‘速度’变量</p> <p>1.点击属性栏</p><p>2.点击属性栏,并向下滚动，找到‘变量’</p><p>3.点击变量选择器，选中‘速度’变量。此时仪表盘控件已与速度变量相绑定</p>',
+                    position:'left'
+                },{
+                    index:8,
+                    tooltip:'<h4>选中按钮控件</h4><p>这一次，我们选择按钮控件</p> <p>1.请点击NewDashboard以选中按钮控件</p>',
+                    position:'left'
+                },{
+                    index:9,
+                    tooltip:'<h4>为按钮控件设定‘动作’</h4><p>在‘动作’中，可以操作‘变量’</p> <p>1.点击属性栏，并向下滚动，找到‘动作列表’</p><p>2.点击‘action0’，出现配置模态框</p><p>3.触发条件选择‘释放’,点击添加指令</p><p>4.操作选择‘+’。操作数1勾选启用变量，并选择‘速度’变量。操作数2值填入1</p><p>5.点击保存</p>',
+                    position:'bottom'
+                },{
+                    index:10,
+                    tooltip:'<h4>仿真运行</h4><p>恭喜你已经完成了DEMO的设计，接下来可以模拟运行</p> <p>1.点击开始栏</p><p>2.点击运行按钮</p>',
+                    position:'bottom'
+                },{
+                    index:11,
+                    tooltip:'<h4>生成下载</h4><p>设计完成，可以生成配置包以供烧录至硬件系统</p> <p>1.点击文件栏</p><p>2.点击生成，会自动下载一个压缩包，选择默认，烧录到硬件系统上试试吧~。</p>',
+                    position:'bottom'
+                }
 
+                ])
+                .start()
         }
 
     }
 }]);
 
 
-ide.controller('introModalCtl', ['$scope', '$uibModalInstance', 'ProjectService', function ($scope, $uibModalInstance, ProjectService) {
-    $scope.mode = 'newPlayer';
+ide.controller('introModalCtl', ['$scope', '$uibModalInstance', 'ProjectService', 'TemplateProvider', function ($scope, $uibModalInstance, ProjectService, TemplateProvider) {
+    $scope.mode = 'intro';
 
     $scope.formats = [
         {
-            type: 'newPlayer',
-            name: '新手教程',
-        }, {
             type: 'intro',
             name: '模块介绍'
+        },
+        {
+            type: 'newPlayer',
+            name: '新手教程',
         }
     ];
 
     $scope.ok = function () {
         if ($scope.mode === 'newPlayer') {
-            var result = checkEmpty();
-            if (true) {
+            var result = check();
+            if (result) {
                 $uibModalInstance.close({type: $scope.mode});
             } else {
-                toastr.error('为了保护您的工程，请使用一个新的空白工程进行新手教程');
+                toastr.error('请创建一个空白默认模板工程，以启动新手教程');
             }
         } else {
             $uibModalInstance.close({type: $scope.mode});
@@ -186,15 +235,17 @@ ide.controller('introModalCtl', ['$scope', '$uibModalInstance', 'ProjectService'
     };
 
 
-    function checkEmpty() {
+    function check() {
         var target = {};
         var pages;
         var layers;
+        var templateId;
         ProjectService.getProjectCopyTo(target);
+        templateId = TemplateProvider.getTemplateId();
 
         pages = target.project.pages || [];
         layers = pages[0].layers || [];
-        if (pages.length !== 1 || layers.length !== 0) {
+        if (pages.length !== 1 || layers.length !== 0 || !templateId) {
             return false;
         } else {
             return true;
