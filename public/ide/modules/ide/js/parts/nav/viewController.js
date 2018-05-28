@@ -185,7 +185,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                     position:'bottom'
                 },{
                     index:10,
-                    tooltip:'<h4>仿真运行</h4><p>恭喜你已经完成了DEMO的设计，接下来可以模拟运行</p> <p>1.点击开始栏</p><p>2.点击运行按钮</p>',
+                    tooltip:'<h4>仿真运行</h4><p>恭喜你已经完成了DEMO的设计，接下来可以模拟运行</p> <p>1.点击开始栏</p><p>2.点击运行按钮，然后点击运行。会出现仿真页面，接着点击按钮会发现仪表盘指针随之改变。</p>',
                     position:'bottom'
                 },{
                     index:11,
@@ -218,7 +218,7 @@ ide.controller('introModalCtl', ['$scope', '$uibModalInstance', 'ProjectService'
     $scope.ok = function () {
         if ($scope.mode === 'newPlayer') {
             var result = check();
-            if (result) {
+            if (true) {
                 $uibModalInstance.close({type: $scope.mode});
             } else {
                 toastr.error('请创建一个空白默认模板工程，以启动新手教程');
