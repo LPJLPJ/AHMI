@@ -52334,13 +52334,17 @@ module.exports = React.createClass({
         // fontSize: 15
         //
         // fontUnderline: null
-        return {
-            "font-size": widgetFont.fontSize,
-            "font-family": widgetFont.fontFamily,
-            "font-weight": widgetFont.fontBold,
-            "font-color": widgetFont.fontColor,
-            "font-style": widgetFont.fontItalic ? 'italic' : ''
-        };
+        if (widgetFont['font-family'] && widgetFont['font-size'] !== undefined) {
+            return widgetFont;
+        } else {
+            return {
+                "font-size": widgetFont.fontSize,
+                "font-family": widgetFont.fontFamily,
+                "font-weight": widgetFont.fontBold,
+                "font-color": widgetFont.fontColor,
+                "font-style": widgetFont.fontItalic ? 'italic' : ''
+            };
+        }
     },
     paintTextureSL: function paintTextureSL(curX, curY, slWidth, slHeight, subLayer, ctx) {
         // var slX = curX + subLayer.x;

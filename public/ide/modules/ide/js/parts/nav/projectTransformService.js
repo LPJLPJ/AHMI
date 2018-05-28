@@ -729,6 +729,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                                 break;
                         }
                     }
+                    console.log(fontStyle)
                     generalWidget = new WidgetModel.models['Num'](x, y, w, h, info, fontStyle);
                     generalWidget = generalWidget.toObject();
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
