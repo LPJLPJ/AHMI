@@ -729,7 +729,6 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                                 break;
                         }
                     }
-                    console.log(fontStyle)
                     generalWidget = new WidgetModel.models['Num'](x, y, w, h, info, fontStyle);
                     generalWidget = generalWidget.toObject();
                     var attrs = 'minValue,maxValue,lowAlarmValue,highAlarmValue'
@@ -1291,7 +1290,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
 
     function transSubLayerBase(rawSubLayer){
         var targetSubLayer = {};
-        console.log(rawSubLayer)
+        // console.log(rawSubLayer)
         deepCopyAttributes(rawSubLayer,targetSubLayer,['id','name','info','url','type','selected','expand','current','tag','actions','zIndex','backgroundImage','backgroundColor']);
         var widgets = rawSubLayer.widgets;
         targetSubLayer.widgets = [];

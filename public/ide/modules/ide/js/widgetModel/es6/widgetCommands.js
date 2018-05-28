@@ -6658,6 +6658,13 @@
             var(tDigitCount,0)                    //数字个数
             set(tDigitCount,'this.otherAttrs.2')
             
+            var(tMode,0) //模式
+            set(tMode,'this.otherAttrs.3')
+            if(tMode == 1){
+                //时分模式
+                divide(tCurValue,256)
+            }
+            
             var(tempCurValue,0)                   //临时变量tempCurValue
             set(tempCurValue,tCurValue)            
 
@@ -6835,21 +6842,34 @@
                         divide(ttTag,16)
                         minus(xr,1)
                     }
-                    mod(ttTag,16)
-                    var(rawttTag,0)
-                    set(rawttTag,ttTag)
-                    minus(ttTag,1)
-                    if(ttTag<0){
-                        set(ttTag,-7)
+                    var(ttTagBeforeChange,0)
+                    set(ttTagBeforeChange,ttTag)
+                   
+                    mod(ttTagBeforeChange,256)
+                    var(tOverFlow,0)
+                    set(tOverFlow,0)
+                    //判断是否溢出
+                    if(ttTagBeforeChange <= 0){
+                        set(tOverFlow,1)
                     }
-                    while(txr>0){
-                        multiply(ttTag,16)
-                        multiply(rawttTag,16)
-                        minus(txr,1)
+                    if(tOverFlow==0){
+                        mod(ttTag,16)
+                        var(rawttTag,0)
+                        set(rawttTag,ttTag)
+                        minus(ttTag,1)
+                        if(ttTag<0){
+                            set(ttTag,-7)
+                        }
+                        while(txr>0){
+                            multiply(ttTag,16)
+                            multiply(rawttTag,16)
+                            minus(txr,1)
+                        }
+                        minus(ttTag,rawttTag)
+                        add(tTag,ttTag)
+                        setTag(tTag)
                     }
-                    minus(ttTag,rawttTag)
-                    add(tTag,ttTag)
-                    setTag(tTag)
+                    
                 }              
             }
         `,
@@ -6950,9 +6970,9 @@
                     set(tMode,'this.mode')
                     if(tMode==1){
                         if(tHighLightNum==1){
-                            set(xr,2)
+                            set(xr,4)
                         }else{
-                            set(xr,0)
+                            set(xr,2)
                         }
                     }else{
                         if(tHighLightNum==1){
@@ -6975,22 +6995,79 @@
                         divide(ttTag,16)
                         minus(xr,1)
                     }
-                    mod(ttTag,16)
-                    var(rawttTag,0)
-                    set(rawttTag,ttTag)
-                    add(ttTag,1)
-                    if(ttTag>=10){
-                        set(ttTag,16)
+                    var(ttTagBeforeChange,0)
+                    set(ttTagBeforeChange,ttTag)
+                   
+                    mod(ttTagBeforeChange,256)
+                    var(tOverFlow,0)
+                    set(tOverFlow,0)
+                    //判断是否溢出
+                    if(tMode == 0){
+                        //时分秒
+                        if(tHighLightNum == 1){
+                            //时
+                            if(ttTagBeforeChange >= 35){
+                                set(tOverFlow,1)
+                            }
+                        }else{
+                            if(ttTagBeforeChange >= 89){
+                                set(tOverFlow,1)
+                            }
+                        }
+                    }else{
+                        if(tMode == 1){
+                            //时分
+                            if(tHighLightNum == 1){
+                                //时
+                                if(ttTagBeforeChange >= 35){
+                                    set(tOverFlow,1)
+                                }
+                            }else{
+                                if(ttTagBeforeChange >= 89){
+                                    set(tOverFlow,1)
+                                }
+                            }
+                        }else{
+                            //年月日
+                            if(tHighLightNum == 1){
+                                //年
+                                // if(ttTagBeforeChange >= 35){
+                                //     set(tOverFlow,1)
+                                // }
+                            }else{
+                                if(tHighLightNum == 2){
+                                    //月
+                                    if(ttTagBeforeChange >= 18){
+                                        set(tOverFlow,1)
+                                    }
+                                }else{
+                                    if(ttTagBeforeChange >= 49){
+                                        set(tOverFlow,1)
+                                    }
+                                }
+                                
+                            }
+                        }
                     }
-                    while(txr>0){
-                        multiply(ttTag,16)
-                        multiply(rawttTag,16)
-                        minus(txr,1)
+                    if(tOverFlow == 0){
+                        mod(ttTag,16)
+                        var(rawttTag,0)
+                        set(rawttTag,ttTag)
+                        add(ttTag,1)
+                        if(ttTag>=10){
+                            set(ttTag,16)
+                        }
+                        while(txr>0){
+                            multiply(ttTag,16)
+                            multiply(rawttTag,16)
+                            minus(txr,1)
+                        }
+                        minus(ttTag,rawttTag)
+                        add(tTag,ttTag)
+                        //check value in limit
+                        setTag(tTag)
                     }
-                    minus(ttTag,rawttTag)
-                    add(tTag,ttTag)
-                    //check value in limit
-                    setTag(tTag)
+                    
                 }                
             }
         `,
