@@ -33,14 +33,14 @@ console.log = (function (console) {
 })(console);
 
 var logs = [];
-ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'TimerService', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
+ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
     'socketIOService', 'MiddleWareService', function ($scope, $timeout, $http, $interval,
                                                       ProjectService,
                                                       GlobalService,
                                                       Preference,
                                                       ResourceService,
                                                       TagService,
-                                                      TemplateProvider, TimerService, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
+                                                      TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
 
         ideScope = $scope;
         $scope.ide = {

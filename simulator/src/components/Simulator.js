@@ -624,6 +624,7 @@ module.exports =   React.createClass({
                 return '.'
             break;
             default:
+                console.log('unsupported code: '+code)
                 return code
         }
     },
