@@ -3260,7 +3260,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     bindBit: $scope.component.object.level.info.bindBit,
                 };
                 var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeBindBit(option, function (oldOperate) {
+                ProjectService.ChangeAttributeBindBit(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
                 })
             }
