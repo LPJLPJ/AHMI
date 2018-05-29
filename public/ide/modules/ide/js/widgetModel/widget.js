@@ -744,8 +744,10 @@
 
     //DateTime
     function DateTime(x,y,w,h,info,fontStyle,slices){
+
         var dateTimeModeId = Number(info.dateTimeModeId),
-            maxFontWidth = info.maxFontWidth,
+            //maxFontWidth = info.maxFontWidth,
+            maxFontWidth = fontStyle['font-size']||info.maxFontWidth
             sWidth = maxFontWidth,
             sHeight = h,
             highLight = !info.disableHighlight,
@@ -779,7 +781,7 @@
         var xCoordinate = (maxFontWidth * textNum > w) ? maxFontWidth/2 :(w-maxFontWidth*textNum)/2;//如果装不下字符串，从maxFontWidth处开始显示
         if(paddingRatio!==0)xCoordinate=paddingRatio*maxFontWidth;
 
-
+        console.log(xCoordinate,spacing,maxFontWidth)
         switch (dateTimeModeId){
             case 0:
                 //console.log('时分秒');
