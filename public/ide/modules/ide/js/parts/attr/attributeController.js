@@ -1,4 +1,3 @@
-
 ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
     'ProjectService',
     'Type', 'Preference',
@@ -30,8 +29,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 onAttributeChanged: onAttributeChanged,
                 transitionMode: AnimationService.getTransitionModes(),
                 transitionName: null,
-                timingFun:'',
-                timingFuns:['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'],
+                timingFun: '',
+                timingFuns: ['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'],
 
 
                 page: {
@@ -415,23 +414,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 switch ($scope.component.object.type) {
                     case Type.MyLayer:
                         //调整Layer的ShowSubLayer
-                        $scope.component.layer.selectModel=$scope.component.object.level.showSubLayer.id;
-                        if((typeof $scope.component.object.level.transition)!=='object'){
+                        $scope.component.layer.selectModel = $scope.component.object.level.showSubLayer.id;
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
                             ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                            $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
                         }
-                        $scope.component.transitionName=$scope.component.object.level.transition.name;
-                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
+                        $scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyPage:
                         //调整Page的背景图
-                        $scope.component.page.selectImage=$scope.component.object.level.backgroundImage;
-                        if((typeof $scope.component.object.level.transition)!=='object'){
+                        $scope.component.page.selectImage = $scope.component.object.level.backgroundImage;
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
                             ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                            $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
                         }
-                        $scope.component.transitionName=$scope.component.object.level.transition.name;
-                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
+                        $scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MySubLayer:
                         var scrollVEnabled = $scope.component.object.level.info.scrollVEnabled;
@@ -448,63 +447,63 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MyProgress:
                         //Progress的方向
-                        $scope.component.progress.arrangeModel=$scope.component.object.level.info.arrange;
+                        $scope.component.progress.arrangeModel = $scope.component.object.level.info.arrange;
                         //Progress的光标
                         $scope.component.progress.cursor = $scope.component.object.level.info.cursor;
-                        $scope.component.progress.progressModeId=$scope.component.object.level.info.progressModeId;
-                        if(!$scope.component.object.level.info.thresholdModeId){
-                            selectObject.level.info.thresholdModeId='1';
-                            selectObject.level.info.threshold1=null;
-                            selectObject.level.info.threshold2=null;
-                            $scope.component.progress.thresholdModeId='1';
-                        }else{
-                            $scope.component.progress.thresholdModeId=$scope.component.object.level.info.thresholdModeId;
+                        $scope.component.progress.progressModeId = $scope.component.object.level.info.progressModeId;
+                        if (!$scope.component.object.level.info.thresholdModeId) {
+                            selectObject.level.info.thresholdModeId = '1';
+                            selectObject.level.info.threshold1 = null;
+                            selectObject.level.info.threshold2 = null;
+                            $scope.component.progress.thresholdModeId = '1';
+                        } else {
+                            $scope.component.progress.thresholdModeId = $scope.component.object.level.info.thresholdModeId;
                         }
-                        if($scope.component.object.level.info.enableAnimation===undefined){
-                            selectObject.level.info.enableAnimation=false;
-                            $scope.component.progress.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation===false){
-                            $scope.component.progress.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation===true){
-                            $scope.component.progress.enableAnimationModeId='0'
-                        }
-                        //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition===undefined){
-                            selectObject.level.transition={};
-                            $scope.component.object.level.transition={};
+                        if ($scope.component.object.level.info.enableAnimation === undefined) {
+                            selectObject.level.info.enableAnimation = false;
+                            $scope.component.progress.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === false) {
+                            $scope.component.progress.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.progress.enableAnimationModeId = '0'
                         }
                         //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition.duration===undefined){
-                            selectObject.level.transition.duration=0;
-                            $scope.component.object.level.transition.duration=0;
+                        if ($scope.component.object.level.transition === undefined) {
+                            selectObject.level.transition = {};
+                            $scope.component.object.level.transition = {};
+                        }
+                        //added at 2017/12/5 by LH
+                        if ($scope.component.object.level.transition.duration === undefined) {
+                            selectObject.level.transition.duration = 0;
+                            $scope.component.object.level.transition.duration = 0;
                         }
                         break;
                     case Type.MyDashboard:
-                        $scope.component.dashboard.dashboardModeId=$scope.component.object.level.dashboardModeId;
-                        $scope.component.dashboard.clockwise=$scope.component.object.level.info.clockwise;
-                        if(!($scope.component.object.level.info.minCoverAngle||$scope.component.object.level.info.maxCoverAngle)){
-                            $scope.component.object.level.info.minCoverAngle=0;
-                            $scope.component.object.level.info.maxCoverAngle=0;
-                            selectObject.level.info.minCoverAngle=0;
-                            selectObject.level.info.maxCoverAngle=0;
+                        $scope.component.dashboard.dashboardModeId = $scope.component.object.level.dashboardModeId;
+                        $scope.component.dashboard.clockwise = $scope.component.object.level.info.clockwise;
+                        if (!($scope.component.object.level.info.minCoverAngle || $scope.component.object.level.info.maxCoverAngle)) {
+                            $scope.component.object.level.info.minCoverAngle = 0;
+                            $scope.component.object.level.info.maxCoverAngle = 0;
+                            selectObject.level.info.minCoverAngle = 0;
+                            selectObject.level.info.maxCoverAngle = 0;
                         }
-                        if($scope.component.object.level.info.enableAnimation===undefined){
-                            selectObject.level.info.enableAnimation=false;
-                            $scope.component.dashboard.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation===false){
-                            $scope.component.dashboard.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation===true){
-                            $scope.component.dashboard.enableAnimationModeId='0'
-                        }
-                        //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition===undefined){
-                            selectObject.level.transition={};
-                            $scope.component.object.level.transition={};
+                        if ($scope.component.object.level.info.enableAnimation === undefined) {
+                            selectObject.level.info.enableAnimation = false;
+                            $scope.component.dashboard.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === false) {
+                            $scope.component.dashboard.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.dashboard.enableAnimationModeId = '0'
                         }
                         //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition.duration===undefined){
-                            selectObject.level.transition.duration=0;
-                            $scope.component.object.level.transition.duration=0;
+                        if ($scope.component.object.level.transition === undefined) {
+                            selectObject.level.transition = {};
+                            $scope.component.object.level.transition = {};
+                        }
+                        //added at 2017/12/5 by LH
+                        if ($scope.component.object.level.transition.duration === undefined) {
+                            selectObject.level.transition.duration = 0;
+                            $scope.component.object.level.transition.duration = 0;
                         }
                         break;
                     case Type.MyTextArea:
@@ -523,103 +522,103 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MyButtonGroup:
                         $scope.component.buttonGroup.arrangeModel = $scope.component.object.level.info.arrange;
-                        if($scope.component.object.level.info.disableHighlight===undefined){
-                            selectObject.level.info.disableHighlight=false;
-                            $scope.component.button.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight===false){
-                            $scope.component.button.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight===true){
-                            $scope.component.button.highlightModeId='1';
+                        if ($scope.component.object.level.info.disableHighlight === undefined) {
+                            selectObject.level.info.disableHighlight = false;
+                            $scope.component.button.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight === false) {
+                            $scope.component.button.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight === true) {
+                            $scope.component.button.highlightModeId = '1';
                         }
                         break;
                     case Type.MyNum:
-                        $scope.component.num.numModeId=$scope.component.object.level.info.numModeId;
-                        $scope.component.num.symbolMode=$scope.component.object.level.info.symbolMode;
-                        $scope.component.num.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
-                        $scope.component.num.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
-                        $scope.component.num.arrangeModel=$scope.component.object.level.info.arrange;
-                        if((typeof $scope.component.object.level.transition)!='object'){
+                        $scope.component.num.numModeId = $scope.component.object.level.info.numModeId;
+                        $scope.component.num.symbolMode = $scope.component.object.level.info.symbolMode;
+                        $scope.component.num.frontZeroMode = $scope.component.object.level.info.frontZeroMode;
+                        $scope.component.num.overFlowStyle = $scope.component.object.level.info.overFlowStyle;
+                        $scope.component.num.arrangeModel = $scope.component.object.level.info.arrange;
+                        if ((typeof $scope.component.object.level.transition) != 'object') {
                             ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                            $scope.component.object.level.transition=_.cloneDeep($scope.defaultTransition);
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
                         }
-                        $scope.component.transitionName=$scope.component.object.level.transition.name;
-                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
-                        if($scope.component.object.level.info.enableAnimation===undefined){
-                            selectObject.level.info.enableAnimation=false;
-                            $scope.component.num.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation==false){
-                            $scope.component.num.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation==true){
-                            $scope.component.num.enableAnimationModeId='0'
-                        }
-                        //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition===undefined){
-                            selectObject.level.transition={};
-                            $scope.component.object.level.transition={};
+                        $scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
+                        if ($scope.component.object.level.info.enableAnimation === undefined) {
+                            selectObject.level.info.enableAnimation = false;
+                            $scope.component.num.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation == false) {
+                            $scope.component.num.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation == true) {
+                            $scope.component.num.enableAnimationModeId = '0'
                         }
                         //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition.duration===undefined){
-                            selectObject.level.transition.duration=0;
-                            $scope.component.object.level.transition.duration=0;
+                        if ($scope.component.object.level.transition === undefined) {
+                            selectObject.level.transition = {};
+                            $scope.component.object.level.transition = {};
+                        }
+                        //added at 2017/12/5 by LH
+                        if ($scope.component.object.level.transition.duration === undefined) {
+                            selectObject.level.transition.duration = 0;
+                            $scope.component.object.level.transition.duration = 0;
                         }
                         break;
                     case Type.MyTexNum:
-                        $scope.component.texNum.numModeId=$scope.component.object.level.info.numModeId;
-                        $scope.component.texNum.symbolMode=$scope.component.object.level.info.symbolMode;
-                        $scope.component.texNum.frontZeroMode=$scope.component.object.level.info.frontZeroMode;
-                        $scope.component.texNum.overFlowStyle=$scope.component.object.level.info.overFlowStyle;
-                        $scope.component.texNum.arrangeModel=$scope.component.object.level.info.arrange;
-                        $scope.component.transitionName=$scope.component.object.level.transition.name;
-                        $scope.component.timingFun=$scope.component.object.level.transition.timingFun;
-                        if($scope.component.object.level.info.enableAnimation==false){
-                            $scope.component.texNum.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation==true){
-                            $scope.component.texNum.enableAnimationModeId='0'
+                        $scope.component.texNum.numModeId = $scope.component.object.level.info.numModeId;
+                        $scope.component.texNum.symbolMode = $scope.component.object.level.info.symbolMode;
+                        $scope.component.texNum.frontZeroMode = $scope.component.object.level.info.frontZeroMode;
+                        $scope.component.texNum.overFlowStyle = $scope.component.object.level.info.overFlowStyle;
+                        $scope.component.texNum.arrangeModel = $scope.component.object.level.info.arrange;
+                        $scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
+                        if ($scope.component.object.level.info.enableAnimation == false) {
+                            $scope.component.texNum.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation == true) {
+                            $scope.component.texNum.enableAnimationModeId = '0'
                         }
                         //added at 2017/12/5 by LH
-                        if($scope.component.object.level.info.enableAnimation===undefined){
-                            selectObject.level.info.enableAnimation=false;
-                            $scope.component.texNum.enableAnimationModeId='1';
-                        }else if($scope.component.object.level.info.enableAnimation==false){
-                            $scope.component.texNum.enableAnimationModeId='1'
-                        }else if($scope.component.object.level.info.enableAnimation==true){
-                            $scope.component.texNum.enableAnimationModeId='0'
+                        if ($scope.component.object.level.info.enableAnimation === undefined) {
+                            selectObject.level.info.enableAnimation = false;
+                            $scope.component.texNum.enableAnimationModeId = '1';
+                        } else if ($scope.component.object.level.info.enableAnimation == false) {
+                            $scope.component.texNum.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation == true) {
+                            $scope.component.texNum.enableAnimationModeId = '0'
                         }
                         //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition===undefined){
-                            selectObject.level.transition={};
-                            $scope.component.object.level.transition={};
+                        if ($scope.component.object.level.transition === undefined) {
+                            selectObject.level.transition = {};
+                            $scope.component.object.level.transition = {};
                         }
                         //added at 2017/12/5 by LH
-                        if($scope.component.object.level.transition.duration===undefined){
-                            selectObject.level.transition.duration=0;
-                            $scope.component.object.level.transition.duration=0;
+                        if ($scope.component.object.level.transition.duration === undefined) {
+                            selectObject.level.transition.duration = 0;
+                            $scope.component.object.level.transition.duration = 0;
                         }
                         break;
                     case Type.MyDateTime:
-                        $scope.component.dateTime.arrangeModel=$scope.component.object.level.info.arrange;
-                        $scope.component.dateTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
+                        $scope.component.dateTime.arrangeModel = $scope.component.object.level.info.arrange;
+                        $scope.component.dateTime.dateTimeModeId = $scope.component.object.level.info.dateTimeModeId;
                         $scope.component.dateTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
-                        if($scope.component.object.level.info.disableHighlight==undefined){
-                            selectObject.level.info.disableHighlight=false;
-                            $scope.component.dateTime.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight==false){
-                            $scope.component.dateTime.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight==true){
-                            $scope.component.dateTime.highlightModeId='1';
+                        if ($scope.component.object.level.info.disableHighlight == undefined) {
+                            selectObject.level.info.disableHighlight = false;
+                            $scope.component.dateTime.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight == false) {
+                            $scope.component.dateTime.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight == true) {
+                            $scope.component.dateTime.highlightModeId = '1';
                         }
                         break;
                     case Type.MyTexTime:
-                        $scope.component.texTime.arrangeModel=$scope.component.object.level.info.arrange;/////////////////
-                        $scope.component.texTime.dateTimeModeId=$scope.component.object.level.info.dateTimeModeId;
+                        $scope.component.texTime.arrangeModel = $scope.component.object.level.info.arrange;/////////////////
+                        $scope.component.texTime.dateTimeModeId = $scope.component.object.level.info.dateTimeModeId;
                         $scope.component.texTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
-                        if($scope.component.object.level.info.disableHighlight==undefined){
-                            selectObject.level.info.disableHighlight=false;
-                            $scope.component.texTime.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight==false){
-                            $scope.component.texTime.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight==true){
-                            $scope.component.texTime.highlightModeId='1';
+                        if ($scope.component.object.level.info.disableHighlight == undefined) {
+                            selectObject.level.info.disableHighlight = false;
+                            $scope.component.texTime.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight == false) {
+                            $scope.component.texTime.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight == true) {
+                            $scope.component.texTime.highlightModeId = '1';
                         }
                         break;
                     case Type.MySelector:
@@ -637,23 +636,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MySlide:
                         //兼容旧的图层控件
-                        if(selectObject.level.info.fontFamily===undefined){
-                            selectObject.level.info.fontFamily="宋体";
-                            selectObject.level.info.fontSize=20;
-                            selectObject.level.info.fontColor='rgba(0,0,0,1)';
-                            selectObject.level.info.fontBold="100";
-                            selectObject.level.info.fontItalic='';
+                        if (selectObject.level.info.fontFamily === undefined) {
+                            selectObject.level.info.fontFamily = "宋体";
+                            selectObject.level.info.fontSize = 20;
+                            selectObject.level.info.fontColor = 'rgba(0,0,0,1)';
+                            selectObject.level.info.fontBold = "100";
+                            selectObject.level.info.fontItalic = '';
                         }
                         break;
                     case Type.MySwitch:
                         //兼容旧的开关控件
-                        if(selectObject.level.info.text===undefined){
-                            selectObject.level.info.text='';
-                            selectObject.level.info.fontFamily="宋体";
-                            selectObject.level.info.fontSize=20;
-                            selectObject.level.info.fontColor='rgba(0,0,0,1)';
-                            selectObject.level.info.fontBold="100";
-                            selectObject.level.info.fontItalic='';
+                        if (selectObject.level.info.text === undefined) {
+                            selectObject.level.info.text = '';
+                            selectObject.level.info.fontFamily = "宋体";
+                            selectObject.level.info.fontSize = 20;
+                            selectObject.level.info.fontColor = 'rgba(0,0,0,1)';
+                            selectObject.level.info.fontBold = "100";
+                            selectObject.level.info.fontItalic = '';
                         }
                         break;
                 }
@@ -668,6 +667,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function changeTransitionName() {
+            console.log('haha', $scope.component.transitionName);
             var option = {
                 name: $scope.component.transitionName
             };
@@ -680,6 +680,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             ProjectService.ChangeAttributeTransition(option);
 
         }
+
         function changeTimingFun() {
             var option = {
                 timingFun: $scope.component.timingFun
@@ -836,8 +837,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
 
                 ProjectService.ChangeAttributePosition(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                    var currentWidgetInfo=$scope.component.object.level.info;
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                    var currentWidgetInfo = $scope.component.object.level.info;
                     ProjectService.setAbsolutePosition(currentWidgetInfo);
                 })
 
@@ -1356,29 +1357,29 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * @private
          */
         function _changeTextAttr(option) {
-            var oldOperate=ProjectService.SaveCurrentOperate();
-            var selectObj=ProjectService.getCurrentSelectObject();
-            switch(selectObj.type){
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            var selectObj = ProjectService.getCurrentSelectObject();
+            switch (selectObj.type) {
                 case Type.MyTextArea:
                     ProjectService.ChangeAttributeTextContent(option, function () {
-                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
                     break;
                 case Type.MyDateTime:
                     ProjectService.ChangeAttributeDateTimeText(option, function () {
-                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
                     break;
                 case Type.MyNum:
-                    ProjectService.ChangeAttributeNumContent(option,function(){
-                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    ProjectService.ChangeAttributeNumContent(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
                     break;
                 case Type.MySwitch:
                 case Type.MySlide:
                 case Type.MyButton:
-                    ProjectService.ChangeAttributeFontStyle(option,function(){
-                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    ProjectService.ChangeAttributeFontStyle(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
                     break;
                 default:
@@ -3307,19 +3308,19 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
             var oldOperate = ProjectService.SaveCurrentOperate();
 
-            var option={
-                dateTimeModeId:selectDateTimeModeId,
-                RTCModeId:selectRTCModeId
+            var option = {
+                dateTimeModeId: selectDateTimeModeId,
+                RTCModeId: selectRTCModeId
             };
-            switch(selectObj.type){
+            switch (selectObj.type) {
                 case Type.MyTexTime:
                     ProjectService.ChangeAttributeTexTimeModeId(option, function () {
-                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
                     break;
                 case Type.MyDateTime:
-                    ProjectService.ChangeAttributeDateTimeModeId(option,function () {
-                        $scope.$emit('ChangeCurrentPage',oldOperate);
+                    ProjectService.ChangeAttributeDateTimeModeId(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
                     break;
             }
@@ -3399,89 +3400,90 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * 模具框
          * add by tang
          */
-        function initMask(){
-            $scope.maskAttr=ProjectService.initMaskAttr();
+        function initMask() {
+            $scope.maskAttr = ProjectService.initMaskAttr();
         }
 
-        $scope.maskRestore=initMask;
+        $scope.maskRestore = initMask;
 
         setMaskAttr();
-        function setMaskAttr(){
-            $scope.$on('MaskStyle',function(event,data){
-                $scope.maskAttr=_.cloneDeep(data);
+
+        function setMaskAttr() {
+            $scope.$on('MaskStyle', function (event, data) {
+                $scope.maskAttr = _.cloneDeep(data);
                 ProjectService.saveMaskInfo($scope.maskAttr);
             });
 
-            $scope.$on('MaskView',function(event,data){
-                $scope.myMask=data;
+            $scope.$on('MaskView', function (event, data) {
+                $scope.myMask = data;
             });
         }
 
-        $scope.enterMaskAttr=function(event,n){
-            var option=null;
-            var _mask=$scope.maskAttr;
-            if(event.keyCode==13){
-                switch(n)
-                {
+        $scope.enterMaskAttr = function (event, n) {
+            var option = null;
+            var _mask = $scope.maskAttr;
+            if (event.keyCode == 13) {
+                switch (n) {
                     case 'name':
-                        var name=$scope.maskAttr.name;
-                        if(name.match(/\S/)&&name.length<10){
-                            $scope.maskAttr.name=name.replace(/(^\s*)|(\s*$)/g, "");
-                            option=_mask;
+                        var name = $scope.maskAttr.name;
+                        if (name.match(/\S/) && name.length < 10) {
+                            $scope.maskAttr.name = name.replace(/(^\s*)|(\s*$)/g, "");
+                            option = _mask;
                             toastr.info('修改成功');
-                        }else{
+                        } else {
                             toastr.warning('不能为空或长度超范围');
                             initMask();
                             return false;
                         }
                         break;
                     case 'left':
-                        var posX=Number($scope.maskAttr.left);
-                        if(-2000<posX&&posX<2000){
-                            option=_mask;
+                        var posX = Number($scope.maskAttr.left);
+                        if (-2000 < posX && posX < 2000) {
+                            option = _mask;
                             toastr.info('修改成功');
-                        }else{
+                        } else {
                             toastr.warning('超出范围');
                             initMask();
                             return false;
                         }
                         break;
                     case 'top':
-                        var posY=Number($scope.maskAttr.top);
-                        if(-2000<posY&&posY<2000){
-                            option=_mask;
+                        var posY = Number($scope.maskAttr.top);
+                        if (-2000 < posY && posY < 2000) {
+                            option = _mask;
                             toastr.info('修改成功');
-                        }else{
+                        } else {
                             toastr.warning('超出范围');
                             initMask();
                             return false
                         }
                         break;
                     case 'width':
-                        var width=Number($scope.maskAttr.width);
-                        if(-2000<width&&width<2000){
-                            option=_mask;
+                        var width = Number($scope.maskAttr.width);
+                        if (-2000 < width && width < 2000) {
+                            option = _mask;
                             toastr.info('修改成功');
-                        }else{
+                        } else {
                             toastr.warning('超出范围');
                             initMask();
                             return false
                         }
                         break;
                     case 'height':
-                        var height=Number($scope.maskAttr.height);
-                        if(-2000<height&&height<2000){
-                            option=_mask;
+                        var height = Number($scope.maskAttr.height);
+                        if (-2000 < height && height < 2000) {
+                            option = _mask;
                             toastr.info('修改成功');
-                        }else{
+                        } else {
                             toastr.warning('超出范围');
                             initMask();
                             return false
                         }
                         break;
                 }
-                $scope.$emit('ChangeMaskAttr',option);
-            }else{
+                $scope.$emit('ChangeMaskAttr', option);
+            } else {
                 return false;
             }
-        }}]);
+        }
+    }]);
