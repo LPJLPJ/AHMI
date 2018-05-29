@@ -134,6 +134,15 @@
         return result
     }
 
+    function getFontStyle(info) {
+        var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+        var fontStyle = {}
+        styleElems.split(',').forEach(function (elem) {
+            fontStyle[elem] = info[elem]
+        });
+        return fontStyle
+    }
+
     function Button(x,y,w,h,text,fontStyle,slices,highLight) {
         var layerUp = new Layer(0,0,w,h);
         // var textureList = (slices||[]).map(function (s) {
@@ -703,11 +712,13 @@
     function Slide(x,y,w,h,info,slices){
         var layers = [];
         var colorElems;
+        var fontStyle = getFontStyle(info)
         for(var i=0;i<slices.length;i++){
             layers[i] = new Layer(0,0,w,h);
             colorElems = parseColor(slices[i].color);
             layers[i].subLayers.color = new ColorSubLayer(colorElems);
             layers[i].subLayers.image = new TextureSubLayer(slices[i].imgSrc);
+            layers[i].subLayers.font = new FontSubLayer(slices[i].text,fontStyle);
         }
         this.subType = 'Slide';
         Widget.call(this,x,y,w,h,layers);

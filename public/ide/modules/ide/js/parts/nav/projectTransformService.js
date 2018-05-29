@@ -416,6 +416,15 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         return targetSubLayer;
     }
 
+    function getFontStyle(info) {
+        var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+        var fontStyle = {}
+        styleElems.split(',').forEach(function (elem) {
+            fontStyle[elem] = info[elem]
+        });
+        return fontStyle
+    }
+
     /**
      * 转换控件数据
      */
