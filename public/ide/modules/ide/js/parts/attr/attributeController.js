@@ -525,11 +525,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         $scope.component.buttonGroup.arrangeModel = $scope.component.object.level.info.arrange;
                         if($scope.component.object.level.info.disableHighlight===undefined){
                             selectObject.level.info.disableHighlight=false;
-                            $scope.component.button.highlightModeId='0';
+                            $scope.component.buttonGroup.highlightModeId='0';
                         }else if($scope.component.object.level.info.disableHighlight===false){
-                            $scope.component.button.highlightModeId='0';
+                            $scope.component.buttonGroup.highlightModeId='0';
                         }else if($scope.component.object.level.info.disableHighlight===true){
-                            $scope.component.button.highlightModeId='1';
+                            $scope.component.buttonGroup.highlightModeId='1';
                         }
                         break;
                     case Type.MyNum:
@@ -1401,6 +1401,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             } else if (selectObj.type == Type.MySelector) {
                 selectHighlightMode = $scope.component.selector.highlightModeId;
             }
+            console.log(selectHighlightMode)
             var option = {
                 highlightMode: selectHighlightMode
             };
