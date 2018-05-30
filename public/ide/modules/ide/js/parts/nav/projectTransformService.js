@@ -416,6 +416,15 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         return targetSubLayer;
     }
 
+    function getFontStyle(info) {
+        var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
+        var fontStyle = {}
+        styleElems.split(',').forEach(function (elem) {
+            fontStyle[elem] = info[elem]
+        });
+        return fontStyle
+    }
+
     /**
      * 转换控件数据
      */
@@ -954,6 +963,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     generalWidget.otherAttrs[1] = 0;//此位置代表了是否按下ok键，按下为1，否则为0
                     generalWidget.otherAttrs[2] = digitCount;//数字个数
                     generalWidget.otherAttrs[3] = Number(info['dateTimeModeId']);//模式
+                    console.log(generalWidget.otherAttrs[3])
                     generalWidget.otherAttrs[4] = Number(info['characterW']);//单个字符宽度
 
                     generalWidget.generalType = 'TexTime';

@@ -522,13 +522,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MyButtonGroup:
                         $scope.component.buttonGroup.arrangeModel = $scope.component.object.level.info.arrange;
-                        if ($scope.component.object.level.info.disableHighlight === undefined) {
-                            selectObject.level.info.disableHighlight = false;
-                            $scope.component.button.highlightModeId = '0';
-                        } else if ($scope.component.object.level.info.disableHighlight === false) {
-                            $scope.component.button.highlightModeId = '0';
-                        } else if ($scope.component.object.level.info.disableHighlight === true) {
-                            $scope.component.button.highlightModeId = '1';
+                        if($scope.component.object.level.info.disableHighlight===undefined){
+                            selectObject.level.info.disableHighlight=false;
+                            $scope.component.buttonGroup.highlightModeId='0';
+                        }else if($scope.component.object.level.info.disableHighlight===false){
+                            $scope.component.buttonGroup.highlightModeId='0';
+                        }else if($scope.component.object.level.info.disableHighlight===true){
+                            $scope.component.buttonGroup.highlightModeId='1';
                         }
                         break;
                     case Type.MyNum:
@@ -667,7 +667,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function changeTransitionName() {
-            console.log('haha', $scope.component.transitionName);
             var option = {
                 name: $scope.component.transitionName
             };

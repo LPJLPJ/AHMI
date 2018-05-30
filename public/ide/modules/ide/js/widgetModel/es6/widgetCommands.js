@@ -6749,7 +6749,8 @@
             var(offset,0)                                     //highlight图层位置
             set(offset,'this.layers.length')
             minus(offset,1)
-            
+            var(tMode,0)
+            set(tMode,'this.otherAttrs.3')
             if(tMaxHighLightNum>0){                         
                 if(okFlag==0){                                  
                     //隐藏高亮层                
@@ -6759,8 +6760,7 @@
                     var(tHighLightNum,0)
                     set(tHighLightNum,'this.highLightNum')
                     
-                    var(tMode,0)
-                    set(tMode,'this.otherAttrs.3')
+                    
                     
                     var(tCharW,o)
                     set(tCharW,'this.otherAttrs.4')
@@ -6826,13 +6826,13 @@
                 }else{
                     var(tHighLightNum,0)
                     var(tTag,0)
-                    var(tMode,0)
+                    
                     var(xr,0)
                     var(minusNum,0)
                     set(minusNum,1)
                     set(tHighLightNum,'this.highLightNum')
                     getTag(tTag)
-                    set(tMode,'this.mode')
+                    
                     if(tMode==1){
                         if(tHighLightNum==1){
                             set(xr,2)
@@ -6899,6 +6899,8 @@
             var(offset,0)                                     //highlight图层位置
             set(offset,'this.layers.length')
             minus(offset,1)
+            var(tMode,0)
+            set(tMode,'this.otherAttrs.3')
             
             if(tMaxHighLightNum>0){                         
                 if(okFlag==0){                                  
@@ -6909,8 +6911,7 @@
                     var(tHighLightNum,0)
                     set(tHighLightNum,'this.highLightNum')
                     
-                    var(tMode,0)
-                    set(tMode,'this.otherAttrs.3')
+                    
                     
                     var(tCharW,o)
                     set(tCharW,'this.otherAttrs.4')
@@ -6977,13 +6978,13 @@
                     //change num in ok mode
                     var(tHighLightNum,0)
                     var(tTag,0)
-                    var(tMode,0)
+                    
                     var(xr,0)
                     var(addNum,0)
                     set(addNum,1)
                     set(tHighLightNum,'this.highLightNum')
                     getTag(tTag)
-                    set(tMode,'this.mode')
+                    
                     if(tMode==1){
                         if(tHighLightNum==1){
                             set(xr,4)
@@ -7018,6 +7019,7 @@
                     var(tOverFlow,0)
                     set(tOverFlow,0)
                     //判断是否溢出
+                   
                     if(tMode == 0){
                         //时分秒
                         if(tHighLightNum == 1){
@@ -7045,6 +7047,7 @@
                             }
                         }else{
                             //年月日
+                           
                             if(tHighLightNum == 1){
                                 //年
                                 // if(ttTagBeforeChange >= 35){
