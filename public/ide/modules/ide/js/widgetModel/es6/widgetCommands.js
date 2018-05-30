@@ -3449,6 +3449,10 @@
             
         `,
         onMouseUp: `
+            var(len,0)                                       //图层总数
+            set(len,'this.layers.length')
+            minus(len,1)
+            
             var(curValue,0)                                 //tag值
             getTag(curValue) 
 
@@ -3515,7 +3519,7 @@
             set(okFlag,'this.otherAttrs.10')
             var(isMoved,0)
             set(isMoved,'this.otherAttrs.14')                             //isMoved 
-
+            
             if(isMoved==0){                                               //isMoved==0，没有被拖拽过
                 if(okFlag==1){
                     if (tInnerX>=tStartX) {
@@ -3607,14 +3611,26 @@
                             if(tInnerX <=tEndX){
                                 if (tInnerY>=tSelectedStartY) {
                                     if (tInnerY<=tSelectedEndY) {          //在选择框里
-                                        var(hiddenValue,0)
-                                        set(hiddenValue,'this.layers.len.hidden')
-                                        if(hiddenValue==1){   //不能展开被高亮的选择器
-                                                                           //展开选项 
+                                        var(tMaxHighLightNum,0)                          //控件内高亮块数,用于判断是否启用高亮
+                                        set(tMaxHighLightNum,'this.maxHighLightNum')
+                                        
+                                        if(tMaxHighLightNum>0){
+                                            //启用高亮
+                                            var(hiddenValue,0)
+                                            set(hiddenValue,'this.layers.len.hidden')
+                                            if(hiddenValue==1){   //不能展开被高亮的选择器
+                                                                               //展开选项 
+                                                set('this.layers.0.hidden',0)
+                                                set('this.layers.1.hidden',0)
+                                                set('this.otherAttrs.13',1)
+                                            }
+                                        }else{
                                             set('this.layers.0.hidden',0)
                                             set('this.layers.1.hidden',0)
                                             set('this.otherAttrs.13',1)
                                         }
+                                        
+                                       
                                     }
                                 }
                             }
