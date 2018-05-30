@@ -522,13 +522,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MyButtonGroup:
                         $scope.component.buttonGroup.arrangeModel = $scope.component.object.level.info.arrange;
-                        if($scope.component.object.level.info.disableHighlight===undefined){
-                            selectObject.level.info.disableHighlight=false;
-                            $scope.component.buttonGroup.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight===false){
-                            $scope.component.buttonGroup.highlightModeId='0';
-                        }else if($scope.component.object.level.info.disableHighlight===true){
-                            $scope.component.buttonGroup.highlightModeId='1';
+                        if ($scope.component.object.level.info.disableHighlight === undefined) {
+                            selectObject.level.info.disableHighlight = false;
+                            $scope.component.buttonGroup.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight === false) {
+                            $scope.component.buttonGroup.highlightModeId = '0';
+                        } else if ($scope.component.object.level.info.disableHighlight === true) {
+                            $scope.component.buttonGroup.highlightModeId = '1';
                         }
                         break;
                     case Type.MyNum:
@@ -1400,6 +1400,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectHighlightMode = $scope.component.texTime.highlightModeId;
             } else if (selectObj.type == Type.MySelector) {
                 selectHighlightMode = $scope.component.selector.highlightModeId;
+            } else if (selectObj.type == Type.MyRotaryKnob) {
+                selectHighlightMode = $scope.component.rotaryKnob.highlightModeId;
             }
             var option = {
                 highlightMode: selectHighlightMode
@@ -2897,12 +2899,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             if (e.keyCode == 13) {
                 //判断输入是否合法
                 var cur = Number($scope.component.object.level.info.itemCount);
+                var showCnt = Number($scope.component.object.level.info.itemShowCount);
                 if (!_.isInteger(cur)) {
                     toastr.warning('输入不合法');
                     restore();
                     return;
                 }
-                if (cur <= 0 || cur > 100) {
+                if (cur <= 0 || cur > 100 || cur < showCnt) {
                     toastr.warning('超出范围');
                     restore();
                     return;

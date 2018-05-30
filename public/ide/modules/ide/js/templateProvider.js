@@ -318,6 +318,7 @@ ideServices
                     minValue:0,
                     //当前值
                     curValue:0,
+                    disableHighlight:false
                 },
                 texList:[{
                     currentSliceIdx:0,
