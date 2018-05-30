@@ -3735,8 +3735,48 @@ ideServices
                 }
                 if(_option.fontName){
                     selectObj.level.info.fontName=_option.fontName;
+                    arg.fontName=_option.fontName;
                 }
-
+                if(_option.itemFontFontSize){
+                    selectObj.level.info.itemFont.fontSize = _option.itemFontFontSize;
+                    arg.itemFontFontSize=_option.itemFontFontSize;
+                }
+                if(_option.itemFontFontFamily){
+                    selectObj.level.info.itemFont.fontFamily = _option.itemFontFontFamily;
+                    arg.itemFontFontFamily = _option.itemFontFontFamily;
+                }
+                if(_option.itemFontFontBold){
+                    selectObj.level.info.itemFont.fontBold = _option.itemFontFontBold;
+                    arg.itemFontFontBold = _option.itemFontFontBold;
+                }
+                if(_option.hasOwnProperty('itemFontFontItalic')){
+                    selectObj.level.info.itemFont.fontItalic = _option.itemFontFontItalic;
+                    arg.itemFontFontItalic = _option.itemFontFontItalic;
+                }
+                if(_option.itemFontFontColor){
+                    selectObj.level.info.selectorFont.fontColor = _option.itemFontFontColor;
+                    arg.itemFontFontColor = _option.itemFontFontColor;
+                }
+                if(_option.selectorFontFontSize){
+                    selectObj.level.info.selectorFont.fontSize = _option.selectorFontFontSize;
+                    arg.selectorFontFontSize=_option.selectorFontFontSize;
+                }
+                if(_option.selectorFontFontFamily){
+                    selectObj.level.info.selectorFont.fontFamily = _option.selectorFontFontFamily;
+                    arg.selectorFontFontFamily = _option.selectorFontFontFamily
+                }
+                if(_option.selectorFontFontBold){
+                    selectObj.level.info.selectorFont.fontBold = _option.selectorFontFontBold;
+                    arg.selectorFontFontBold = _option.selectorFontFontBold;
+                }
+                if(_option.hasOwnProperty('selectorFontFontItalic')){
+                    selectObj.level.info.selectorFont.fontItalic = _option.selectorFontFontItalic;
+                    arg.selectorFontFontItalic = _option.selectorFontFontItalic;
+                }
+                if(_option.selectorFontFontColor){
+                    selectObj.level.info.selectorFont.fontColor = _option.selectorFontFontColor;
+                    arg.selectorFontFontColor = _option.selectorFontFontColor;
+                }
                 selectObj.target.fire('changeFontStyle',arg);
             };
             //改变控件初始值

@@ -4077,7 +4077,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 self.selectorFontString=self.selectorFont.fontItalic+" "+self.selectorFont.fontBold+" "+self.selectorFont.fontSize+"px"+" "+'"'+self.selectorFont.fontFamily+'"';
                 self.titleFontString=self.titleFont.fontItalic+" "+self.titleFont.fontBold+" "+self.titleFont.fontSize+"px"+" "+'"'+self.titleFont.fontFamily+'"';
 
-                console.log("self",self)
                 var subLayerNode = CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();

@@ -1377,6 +1377,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 case Type.MySwitch:
                 case Type.MySlide:
                 case Type.MyButton:
+                case Type.MySelector:
                     ProjectService.ChangeAttributeFontStyle(option, function () {
                         $scope.$emit('ChangeCurrentPage', oldOperate);
                     });

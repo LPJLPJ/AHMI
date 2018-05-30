@@ -1063,6 +1063,7 @@
         //标题层
         if(selectorTitle){
             var curLayer = new Layer(0,h/2-selectorHeight/2,selectorWidth,selectorHeight,true);
+            console.log('titleFont',titleFont);
             curLayer.subLayers.font = new FontSubLayer(selectorTitle,titleFont);
             layers.push(curLayer);
         }
