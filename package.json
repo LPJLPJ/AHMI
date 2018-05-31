@@ -5,7 +5,7 @@
   "main": "./views/login/personalProject.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:webpack": "cd simulator && webpack -p",
+    "build:webpack": "webpack -p",
     "build": "npm run build:webpack && cross-env  NODE_ENV=production gulp build",
     "start:webpack": "cd simulator && webpack",
     "start:build": "cross-env NODE_ENV=development  gulp build",
