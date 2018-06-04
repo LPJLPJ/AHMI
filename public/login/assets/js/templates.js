@@ -69,7 +69,7 @@ $(function () {
     function makeTemplateSelectorOptions(id,title,resolution) {
         var basicOptions = '<option value="">---</option>' +
             '<option value="defaultTemplate">默认模板</option>' +
-            '<option value="collectTemplate">收藏模板</option>'
+            '<option value="collectedTemplate">收藏模板</option>'
         return  basicOptions+'<option value="'+id+'">'+(title+" -- "+resolution)+'</option>'
     }
 
