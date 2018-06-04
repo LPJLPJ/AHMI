@@ -81,7 +81,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/actionService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/resourceService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/widgetService.js"></script>
-    <script src="../../public/ide/modules/ide/min-js/parts/attr/timerService.js"></script>
+    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/timerService.js"></script>-->
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/operationService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetService.js"></script>
@@ -104,7 +104,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/stage/stageController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/attrController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/attributeController.js"></script>
-    <script src="../../public/ide/modules/ide/min-js/parts/attr/timerController.js"></script>
+    <!--<script src="../../public/ide/modules/ide/min-js/parts/attr/timerController.js"></script>-->
     <script src="../../public/ide/modules/ide/min-js/parts/attr/ResourceCtrl.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/projectFileController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/templateFileController.js"></script>
@@ -179,7 +179,7 @@
      ng-class="{'my-left-show':leftShown,'my-left-hide':!leftShown,'my-right-show':rightShown,'my-right-hide':!rightShown}">
     <!--<div class="container-fluid" >-->
 
-    <div ng-controller="NavCtrl" data-step="1">
+    <div ng-controller="NavCtrl" data-step="1" data-step-c1="1-3-10-11">
 
         <ul class="nav nav-tabs my-nav-tabs">
 
@@ -496,6 +496,20 @@
                         </a>
                     </div>
                 </div>
+                <script type="text/ng-template" id="introModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">新手引导</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">
+                            <select class="form-control dengModel-trigger" ng-model="mode" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">确认</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                    </div>
+                </script>
             </div>
             <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==4">
                 <a ng-click="component.tool.showLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe644;</span><span
@@ -561,7 +575,7 @@
             </ol>
         </div>
     </div>
-    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)" data-step="3">
+    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)" data-step="3" data-step-c1="2-4">
 
         <div id="mask" ng-hide="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
             <img style="position: absolute;left: 0;top: 0;z-index: 100;float: left" width="100%" height="100%" ng-src="{{maskSrc}}"/>
@@ -608,7 +622,7 @@
     </div>
     <div class="my-attribute" ng-controller="AttrCtrl"
          ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'my-tool-show':component.out.toolShow}">
-        <div class="my-top-panel" data-step="4">
+        <div class="my-top-panel" data-step="4" data-step-c1="5-7-9">
             <ul class="attribute-nav nav nav-tabs my-nav-tabs ">
 
                 <li role="presentation"
@@ -3881,7 +3895,7 @@
         </div>
 
 
-        <div class="my-bottom-panel" data-step="5">
+        <div class="my-bottom-panel" data-step="5" data-step-c1="6-8">
             <div class="my-panel-title"><span>图层</span></div>
             <div class="my-layers-panel">
 

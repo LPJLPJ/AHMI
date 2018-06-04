@@ -580,7 +580,7 @@ body{
     min-height:660px;
     height:100%;
     width:100%;
-    z-index: 999;
+    z-index: 1000000;
     top:0;
     bottom:0;
     overflow: auto;
@@ -738,4 +738,11 @@ body{
     /*早期浏览器*/
      user-select: text;
 
+}
+
+/*.modal-dialog {*/
+    /*z-index: 100000000;!important;*/
+/*}*/
+.modal-content {
+    z-index:100000000 ;
 }

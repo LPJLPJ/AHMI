@@ -939,6 +939,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             return;
         }
         $scope.component.selectedTag = selectObject.level.tag;
+        $scope.selectedTagObj.tagName = selectObject.level.tag;
     }
 
     //重新读取选中对象信息，用于控制是否在属性栏显示tag选择框
