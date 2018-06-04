@@ -27,6 +27,14 @@ TemplateRoute.saveNewTemplate = function (req, res) {
                             var newTemplate
                             if (template){
                                 newTemplate = template
+                                template.name = project.name
+                                template.author = project.author
+                                template.resolution = project.resolution
+                                template.type = project.type
+                                template.ideVersion = project.ideVersion
+                                template.supportTouch = project.supportTouch
+                                template.thumbnail = project.thumbnail
+                                template.content = project.content
                             }else{
                                 newTemplate = new TemplateModel({
                                     name:project.name,
