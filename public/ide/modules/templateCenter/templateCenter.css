@@ -6,6 +6,32 @@
     padding:2em;
     /*text-align:center;*/
     /*display:inline-block;*/
+    border-top:1px solid grey;
+}
+
+.template-tools-wrapper{
+    margin-left:1em;
+    margin-right:1em;
+    margin-bottom: 1em;
+}
+
+.template-tools-filters-wrapper{
+    display:inline-block;
+    float:left;
+}
+
+.template-tools-search-wrapper{
+    display: inline-block;
+    float:right;
+}
+
+.template-tools-search{
+    /*border-radius: 2px;*/
+}
+
+.filter-highlight{
+    background-color: rgba(3,57,100,1);
+    color:white;
 }
 
 .template-panel-wrapper{

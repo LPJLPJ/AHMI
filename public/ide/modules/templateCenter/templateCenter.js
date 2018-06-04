@@ -4,8 +4,45 @@ $(function () {
     var userTemplateIds = []
     var collectBtnStr = '<button class="btn btn-default template-btn-collect pull-right" >收藏</button>'
     var unCollectBtnStr = '<button class="btn btn-default template-btn-uncollect pull-right" >取消收藏</button>'
+    var $filterNew = $('.template-tools-filter-new')
+    var $filterPopulate  = $('.template-tools-filter-populate')
+    var $search = $('.template-tools-search')
 
+    var selectedFilter = null
+    var searchKey = ''
     init()
+
+
+    function selectFilter(f) {
+        var hightClassName = 'filter-highlight'
+        switch (f){
+            case 'new':
+                selectedFilter = f
+                $filterNew.addClass(hightClassName)
+                $filterPopulate.removeClass(hightClassName)
+                break;
+            case 'populate':
+                selectedFilter = f
+                $filterNew.removeClass(hightClassName)
+                $filterPopulate.addClass(hightClassName)
+                break;
+            default:
+                selectedFilter = null
+                $filterNew.removeClass(hightClassName)
+                $filterPopulate.removeClass(hightClassName)
+        }
+
+        loadTemplateLists()
+
+    }
+
+    function search() {
+        searchKey = $search.val().trim()
+        loadTemplateLists()
+    }
+
+
+
 
     registerAction()
 
@@ -30,13 +67,30 @@ $(function () {
                 })
             }
         })
+
+
+        //filter
+        //new
+        $filterNew.on('click',function (e) {
+            selectFilter('new')
+        })
+        //populate
+        $filterPopulate.on('click',function (e) {
+            selectFilter('populate')
+        })
+
+        $search.on('keydown',function (e) {
+            if(e.keyCode === 13){
+                search()
+            }
+        })
     }
 
 
     function init() {
         loadUserTemplates(function (_userTemplateIds) {
             userTemplateIds = _userTemplateIds
-            loadTemplateLists()
+            selectFilter('new')
         })
     }
 
@@ -58,9 +112,13 @@ $(function () {
 
     function loadTemplateLists() {
         //load template lists
+        var templateListUrl = '/templates/center'
+        if (selectedFilter){
+            templateListUrl +='?filter='+selectedFilter+(searchKey?('&key='+searchKey):'')
+        }
         $.ajax({
             type:'get',
-            url:'/templates/center',
+            url:templateListUrl,
             success:function (data) {
                 console.log(data)
                 data = JSON.parse(data)||[]
@@ -119,7 +177,7 @@ $(function () {
         return '<div class="template-panel-wrapper col-md-3" >'+'<div class="template-panel" data-id="'+template._id+'">' +
                     '<div class="template-thumbnail-wrapper">' +
                         '<div class="template-thumbnail-container">' +
-                            '<img class="template-thumbnail" src="'+template.thumbnail+'">'+
+                            '<img class="template-thumbnail" src="'+(template.thumbnail||'../../public/login/assets/img/pro_1.png')+'">'+
                             '<div class="template-info"><div class="template-info-title">'+template.name+'</div><div class="template-info-size">'+template.resolution+'</div></div>'+
                         '</div>'+
 

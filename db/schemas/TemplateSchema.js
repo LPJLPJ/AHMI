@@ -19,7 +19,7 @@ var TemplateSchema = new mongoose.Schema({
     lastModifiedTime:{type:Date,default:Date.now}
 })
 
-TemplateSchema.index({createTime:-1});
+TemplateSchema.index({createTime:-1,collected:-1});
 
 TemplateSchema.pre('save',function(next){
     if (this.isNew){
@@ -50,10 +50,19 @@ TemplateSchema.statics = {
             .limit(limit)
             .exec(cb)
     },
-    fetchInfoBatch:function(from,limit,cb){
-        return this
-            .find({},{content:0})
-            .sort({'createTime':-1})
+    fetchInfoBatch:function(from,limit,filter,key,cb){
+        var flag
+        if (key){
+            flag = this.find({$or:[{name:{$regex:key,$options:'i'}},{author:{$regex:key,$options:'i'}},{type:{$regex:key,$options:'i'}}]},{content:0})
+        }else{
+            flag = this.find({},{content:0})
+        }
+        if (filter === 'new'){
+            flag = flag.sort({'createTime':-1})
+        }else if(filter === 'populate'){
+            flag = flag.sort({'collected':-1})
+        }
+        return flag
             .skip(from)
             .limit(limit)
             .exec(cb)
@@ -89,7 +98,17 @@ TemplateSchema.statics = {
         return this
             .remove({_id:_projectId})
             .exec(cb)
-    }
+    },
+    incById:function (templateId,cb) {
+        return this
+            .update({_id:templateId},{$inc: { collected: 1 }})
+            .exec(cb)
+    },
+    decById:function (templateId,cb) {
+        return this
+            .update({_id:templateId},{$inc: { collected: -1 }})
+            .exec(cb)
+    },
 
 }
 

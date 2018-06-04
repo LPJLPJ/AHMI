@@ -105,7 +105,7 @@ $(function () {
                     '<i class="template-btn-delete iconfont">&#xe607;</i>'+
                     '<div class="template-thumbnail-wrapper">' +
                         '<div class="template-thumbnail-container">' +
-                            '<img class="template-thumbnail" src="'+template.thumbnail+'">'+
+                            '<img class="template-thumbnail" src="'+(template.thumbnail||'../../public/login/assets/img/pro_1.png')+'">'+
                             '<div class="template-info"><div class="template-info-title">'+template.name+'</div><div class="template-info-size">'+template.resolution+'</div></div>'+
                         '</div>'+
                     '</div>' +

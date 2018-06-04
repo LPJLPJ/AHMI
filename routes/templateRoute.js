@@ -91,7 +91,7 @@ TemplateRoute.saveNewTemplate = function (req, res) {
 }
 
 TemplateRoute.getTemplatesForCenter = function (req, res) {
-    TemplateModel.fetchInfoBatch(0,10,function (err, templates) {
+    TemplateModel.fetchInfoBatch(0,10,req.query.filter,req.query.key,function (err, templates) {
         if (err){
             errHandler(res,500,JSON.stringify(err))
         }else{
@@ -142,6 +142,8 @@ TemplateRoute.collectTemplate = function (req, res) {
                     user.save(function (err) {
                         if (err) {return errHandler(res,500,JSON.stringify(err))}
                         res.end('ok')
+                        //inc collected
+                        TemplateModel.incById(templateId)
                     })
                 }else{
                     res.end('ok')
@@ -172,6 +174,7 @@ TemplateRoute.uncollectTemplate = function (req, res) {
                     user.save(function (err) {
                         if (err) {return errHandler(res,500,JSON.stringify(err))}
                         res.end('ok')
+                        TemplateModel.decById(templateId)
                     })
                 }else{
                     res.end('ok')
