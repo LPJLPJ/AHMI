@@ -176,26 +176,24 @@ $(function(){
                 dotLineY.hide();
                 coordNum.hide();
                 showCoord=false;
-            })
+            });
 
 
 
-            //按R弹出自定义，S隐藏显示，C清空
-            $(window).keyup(function(e){
-                var line=$('div.line'),r=82,s=83,c=57,key= e.keyCode;
-                if(key===r&&$('.ruler').css('display')==='block'){
-                    $("#rulerModal").modal();
-                }
-                if(key===s&&line.length>0){
-                    if(line.css('display')==='block'){
-                        line.hide();
-                    }else{
-                        line.show();
+            //按alt+R弹出自定义生成line，alt+C清空line
+            $(window).keydown(function(e){
+                var line=$('div.line'),display=$(".ruler").css('display');
+                var r=82,c=67,key= e.keyCode,altKey = e.altKey;
+                if(display=='block'){
+                    if(altKey&&key===r){
+                        $("#rulerModal").modal();
+                    }
+
+                    if(altKey&&key===c&&line.length>0){
+                        line.remove();
                     }
                 }
-                if(key===c&&line.length>0){
-                    line.remove();
-                }
+
             });
             $("#rulerOk").click(function(){
                 var msg="超出设置范围",
@@ -257,18 +255,19 @@ $(function(){
                 }
             });
 
-                $('.runProject').click(function(){
-                    if(rulerSwitch){
-                        $('.ruler').hide();
-                        $('.line').hide();
-                    }
-                });
-                $('.offProject').click(function(){
-                    if(rulerSwitch){
-                        $('.ruler').show();
-                        $('.line').show();
-                    }
-                })
+            //运行状态下隐藏
+            $('.runProject').click(function(){
+                if(rulerSwitch){
+                    $('.ruler').hide();
+                    $('.line').hide();
+                }
+            });
+            $('.offProject').click(function(){
+                if(rulerSwitch){
+                    $('.ruler').show();
+                    $('.line').show();
+                }
+            })
         };
         $.ruler();
 
@@ -279,6 +278,7 @@ $(function(){
             _mask.append(maskWrap);
             var _maskCoor=$("div .maskCoor");
 
+            //绘制样式
             var maskParams=[
                 {left:'-8px',top:'-8px',cursor:'nw-resize'},
                 {top:'-8px',left:'calc(50% - 8px)',cursor:'s-resize'},
@@ -468,11 +468,13 @@ $(function(){
             maskDrag(_mask,$("#mask_B"),'b');
             maskDrag(_mask,$("#mask_RB"),'rb');
 
+            //点击模具框容器进入选中状态
             _mask.on('click',function(e){
                 e.stopPropagation();
                 $(this).children().show();
             });
 
+            //点击容器外部取消选中状态
             _wrap.on('click',function(){
                 _mask.children().not("img").hide();
             });

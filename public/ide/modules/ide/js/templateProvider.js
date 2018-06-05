@@ -951,6 +951,29 @@ ideServices
         }
         this.getTemplateId = function(){
             return templateId;
+        };
+
+        //matteTemplate  add by tang
+        this.getDefaultMatte=function(){
+            var pageNode=CanvasService.getPageNode();
+            var info={
+                width:pageNode.getWidth()/pageNode.getZoom(),
+                height:pageNode.getHeight()/pageNode.getZoom(),
+                left: 0,
+                top: 0,
+                backgroundColor:'rgba(0,0,0,0)',
+                backgroundImg:"",
+                opacity:0,
+                originX: 'center',
+                originY: 'center'
+            };
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                type:'MyMatte',
+                matteOn:false,
+                info:info
+            }
         }
 
     }]);

@@ -612,6 +612,9 @@
 .my-but-right{
     float: right;
 }
+.my-but-left{
+    float: left;
+}
 .texRow:hover{ background-color:#f5f5f5;}
 
 .my-tagSelect-main-span{
@@ -772,4 +775,117 @@
 }
 .my-tag-edit-td-width{
     width: 60%;
+}
+/*蒙板*/
+.my-matte{
+    margin-bottom: 10px;
+}
+.my-matte-wrap{
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    vertical-align: middle;
+    margin-top: 5px;
+}
+.my-matte-title{
+    text-align: center;
+    display: inline-block;
+    width: 50px;
+    margin: 0;
+}
+.my-matte-input,.my-matte-color{
+    width: calc(100% - 60px)!important;
+    height: 28px;
+    display: inline!important;
+}
+.my-matte-range{
+    width: calc(100% - 60px)!important;
+    height: 20px;
+    display: inline!important;
+    outline: none;
+    cursor: pointer;
+}
+.my-matte-color{
+    text-align: center;
+    cursor: pointer;
+}
+.my-matte-switch{
+    float: right;
+    margin-right: calc(100% - 120px);
+    line-height: normal;
+    width: 70px;
+    height: 20px;
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.matte-switch-container{
+    width: 105px;
+    margin-left: -35px;
+    transition: all linear 0.2s;
+}
+.matte-switch-container span{
+    width: 35px;
+    height: 20px;
+    float: left;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.matte-switch-container span:first-of-type{
+    background-image: linear-gradient(to bottom, #2f96b4, #5bc0de);
+}
+.matte-switch-container span:nth-of-type(2){
+    background-image: linear-gradient(to bottom, #ffffff, #ffffff);
+}
+.matte-switch-container span:last-of-type{
+    background-image: linear-gradient(to bottom, #bd362f, #ee5f5b);
+}
+.matte-switch-on{
+    margin-left: 0;
+}
+
+/*批量选择*/
+.batch-select-table thead{
+    background-color: #eeeeee;
+}
+.batch-select-img{
+    width: 40px;
+    height: 40px;
+}
+.batch-select-table tbody tr:hover{
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+.batch-select-wrap{
+    height: 500px!important;
+    overflow-y: scroll;
+}
+.batch-select-table tbody tr td{
+    vertical-align: middle!important;
+}
+.batch-select-table thead tr th,.batch-select-table tbody tr td:not(:nth-of-type(2)){
+    text-align: center;
+}
+.batch-select-table tbody tr td:nth-of-type(2){
+    overflow: hidden!important;
+}
+
+/*拉伸*/
+.pullingWrap{
+    width: 100%;
+}
+.pullingWidth .pullingHeight{
+    width: 50%;
+    float: left;
+}
+.pullingWidth input,.pullingHeight input,.customResolutionWrap input{
+    width: 20%;
+    border-radius: 5px;
+    outline: none;
 }
