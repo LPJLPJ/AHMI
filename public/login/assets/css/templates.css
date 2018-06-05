@@ -40,6 +40,10 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.template-option-info-title{
+    overflow: hidden;
+}
+
 .template-option-thumbnail{
     width:100%;
     border-radius:5px;
