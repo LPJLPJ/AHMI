@@ -322,7 +322,6 @@ ideServices.service('TagService', [function () {
     };
 
 
-    //edit by lx
     /**
      * 同步从服务器获取的tags，用于导入tag功能
      * @param newTags 获取到的tag
@@ -348,7 +347,6 @@ ideServices.service('TagService', [function () {
                 allTags.push(curTag);
             }
 
-            curTagClass.tagArray.push(curTag);
         }
 
         cb&&cb();
