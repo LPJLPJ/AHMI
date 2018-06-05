@@ -19,7 +19,7 @@ var lg = (function () {
         };
     }else{
         return function () {
-            
+
         }
     }
 }());
@@ -541,7 +541,7 @@ module.exports =   React.createClass({
             //generate load trigger
 
             options.reLinkWidgets = true;
-            
+
 
             switch (method){
                 case 'MOVE_LR':
@@ -811,6 +811,7 @@ module.exports =   React.createClass({
 
                         if (targetTag.value < timer['SysTmr_' + num + '_Stop']||targetTag.value > timer['SysTmr_' + num + '_Start']) {
                             //clear timer
+                            targetTag.value = (targetTag.value < timer['SysTmr_' + num + '_Stop'])?timer['SysTmr_' + num + '_Stop']:timer['SysTmr_' + num + '_Start'];
                             if (loop){
                                 this.setTagByTag(targetTag, startValue)
                                 this.draw();
@@ -829,11 +830,12 @@ module.exports =   React.createClass({
                     if (targetTag&&targetTag.name != '') {
                         curValue = Number(targetTag.value)||0;
                         curValue += timer['SysTmr_' + num + '_Step'];
-                        this.setTagByTag(targetTag,curValue)
+                        this.setTagByTag(targetTag,curValue);
                         if (targetTag.value > timer['SysTmr_' + num + '_Stop']||targetTag.value < timer['SysTmr_' + num + '_Start']) {
                             //clear timer
+                            targetTag.value = (targetTag.value > timer['SysTmr_' + num + '_Stop'])?timer['SysTmr_' + num + '_Stop']:timer['SysTmr_' + num + '_Start'];
                             if (loop){
-                                this.setTagByTag(targetTag, startValue)
+                                this.setTagByTag(targetTag, startValue);
                                 this.draw();
                             }else{
                                 clearInterval(timer.timerID);
@@ -1208,7 +1210,7 @@ module.exports =   React.createClass({
             // subCanvas.info.w = w;
             // subCanvas.info.h = h;
             //generate load trigger
-            
+
             //transition animation
             var moveX = w;
             var moveY = 0;
@@ -3286,7 +3288,7 @@ module.exports =   React.createClass({
         tempCtx.font=font;
         // console.log('curWidth',curWidth,'tempcanvas.width',tempcanvas.width);
         // tempCtx.strokeStyle="#000";/*设置边框*/
-        // tempCtx.lineWidth=1;/*边框的宽度*/ 
+        // tempCtx.lineWidth=1;/*边框的宽度*/
         // tempCtx.strokeRect(0,0,curWidth,curHeight);
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染每个字符的起始位置
@@ -3698,7 +3700,7 @@ module.exports =   React.createClass({
 
 
 
-            
+
            //draw bg
             var bgSlice = widget.texList[0].slices[0];
             this.drawBg(curX,curY,width,height,bgSlice.imgSrc,bgSlice.color);
@@ -3865,24 +3867,24 @@ module.exports =   React.createClass({
     },
     handleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
         //handle action
-        
+
         if (curValue <= lowAlarm && widget.oldValue!==undefined && widget.oldValue > lowAlarm) {
-            
+
             this.handleTargetAction(widget, 'EnterLowAlarm');
         }
 
         if (curValue > lowAlarm && widget.oldValue!==undefined && widget.oldValue <= lowAlarm) {
             //leave low alarm
-            
+
             this.handleTargetAction(widget, 'LeaveLowAlarm');
 
-        } 
+        }
         if (curValue >= highAlarm && widget.oldValue!==undefined && widget.oldValue < highAlarm) {
             //enter high alarm
-            
+
 
             this.handleTargetAction(widget, 'EnterHighAlarm');
-        } 
+        }
         if (curValue < highAlarm && widget.oldValue!==undefined && widget.oldValue >= highAlarm) {
             //leave high alarm
             this.handleTargetAction(widget, 'LeaveHighAlarm');
@@ -3892,25 +3894,25 @@ module.exports =   React.createClass({
     shouldHandleAlarmAction: function (curValue, widget, lowAlarm, highAlarm) {
         //handle action
         var alarms = []
-        
-        
+
+
         if (curValue <= lowAlarm && widget.oldValue!==undefined && widget.oldValue > lowAlarm) {
             alarms.push('EnterLowAlarm')
         }
         if (curValue > lowAlarm && widget.oldValue!==undefined && widget.oldValue <= lowAlarm) {
             //leave low alarm
-            
+
             alarms.push('LeaveLowAlarm')
 
         }
         if (curValue >= highAlarm && widget.oldValue!==undefined && widget.oldValue < highAlarm) {
             //enter high alarm
             alarms.push('EnterHighAlarm')
-        } 
+        }
         if (curValue < highAlarm && widget.oldValue!==undefined && widget.oldValue >= highAlarm) {
             //leave high alarm
             alarms.push('LeaveHighAlarm')
-        } 
+        }
         return alarms
     },
     drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice,transXratio,transYratio,type,minCoverAngle,maxCoverAngle) {
@@ -3942,7 +3944,7 @@ module.exports =   React.createClass({
         //draw color
         offctx.fillStyle = texSlice.color;
         offctx.fillRect(0,0,elemWidth,elemHeight);
-        
+
         var image = this.getImageName(texSlice.imgSrc);
         if (image && image != '') {
             var imageList = this.state.imageList;
@@ -4835,7 +4837,7 @@ module.exports =   React.createClass({
                 this.handleTargetAction(target,type[j])
             }
         }
-        
+
     },
     findTagByName: function (tag) {
         var tagList = this.state.tagList;
@@ -4877,7 +4879,7 @@ module.exports =   React.createClass({
     },
     setTagByTag: function (tag, value) {
         if (tag) {
-            tag.value = value
+            tag.value = value;
             this.setState({tag: tag})
         }
     },
@@ -5411,7 +5413,7 @@ module.exports =   React.createClass({
                             <option value='1.5'>150%</option>
                             <option value='2'>200%</option>
                         </select>
-                        
+
                     </div>
                     <div className='simulator-tools tools-fps'>
                         <span className='btn btn-default'>{this.state.fps}</span>
