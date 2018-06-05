@@ -279,6 +279,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     {id: '0', name: '启用动画'},
                     {id: '1', name: '关闭动画'}
                 ],
+            //蒙板图 tang
+            matte:{
+                matteBgi:null,
+                matteOpacity:10,
+                matteColor:'选择颜色',
+                matteOn:false,
+                matteSwitch:matteSwitch,
+                enterMatteOpacity:enterMatteOpacity,
+                enterMatteBgi:enterMatteBgi
+            },
                 enterName: enterName,
                 enterColor: enterColor,
                 enterFontText: enterFontText,
@@ -345,6 +355,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterFontStyle(op);
             });
 
+            //matte add by tang
+            $scope.$on('ChangeMatteAttr',function(event){
+                onMatteChanged();
+            })
+
         }
 
         function updateImageList() {
@@ -386,6 +401,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
                         }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
+
+                        //matte add tang
+                        if($scope.component.object.level.matte){
+                            $scope.component.matte.matteOn=$scope.component.object.level.matte.matteOn;
+                        }else{
+                            $scope.component.matte.matteOn=false;
+                        }
+
                         break;
                     case Type.MyGroup:
                         //让Group无法旋转和放大
@@ -598,6 +621,29 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                 }
 
+            })
+        }
+
+        /**
+         * matte变化时的响应
+         * @author tang
+         */
+        function onMatteChanged(){
+            //console.log('matte');
+            var selectObject = ProjectService.getCurrentSelectObject();
+            $timeout(function(){
+                $scope.component.object = _.cloneDeep(selectObject);
+                if($scope.component.object.level.matte){
+                    $scope.component.matte.matteOn=$scope.component.object.level.matte.matteOn;
+                    $scope.component.matte.matteBgi=$scope.component.object.level.matte.info.backgroundImg;
+                    $scope.component.matte.matteOpacity=$scope.component.object.level.matte.info.opacity;
+                    $scope.component.matte.matteColor=$scope.component.object.level.matte.info.backgroundColor;
+                }else{
+                    $scope.component.matte.matteOn=false;
+                    $scope.component.matte.matteBgi="";
+                    $scope.component.matte.matteOpacity=0;
+                    $scope.component.matte.matteColor="选择颜色";
+                }
             })
         }
 
@@ -922,7 +968,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     $scope.$emit('ChangeCurrentPage', oldOperate);
                 })
             }
+            //蒙板背景色 add by tang
+            if(op.name=='component.matte.matteColor'){
+                var matteColor=op.value;
+                ProjectService.changeMatteBgc(matteColor);
+            }
         }
+
 
         /**
          * 更改文本内容
@@ -2727,5 +2779,36 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             } else {
                 return false;
             }
+        };
+
+        /**
+         * 蒙板
+         * @author tang
+         */
+
+        ProjectService.setScope($scope);
+        function matteSwitch(){
+            $scope.component.matte.matteOn=!$scope.component.matte.matteOn;
+            if($scope.component.matte.matteOn){
+               if($scope.component.object.level.matte){
+                   $scope.component.object.level.matte.matteOn=true;
+                   var matteData=$scope.component.object.level.matte;
+                   ProjectService.addMatte(matteData);
+               }else{
+                   ProjectService.addMatte();
+               }
+            }else if(!$scope.component.matte.matteOn&&$scope.component.object.level.matte){
+                ProjectService.offMatte();
+            }
         }
-    }]);
+
+        function enterMatteOpacity(){
+            var selectOpacity=$scope.component.matte.matteOpacity;
+            ProjectService.changeMatteOpacity(selectOpacity);
+        }
+
+        function enterMatteBgi(){
+            var selectImg=$scope.component.matte.matteBgi;
+            ProjectService.changeMatteBgi(selectImg);
+        }
+}]);

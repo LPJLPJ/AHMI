@@ -247,6 +247,65 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MyLayer.async = true;
 
+    //myMatte 蒙板 add by tang
+    fabric.MyMatte = fabric.util.createClass(fabric.Object,{
+        type:'MyMatte',
+        initialize:function (options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.selectable=false;
+            this.opacity/=100;
+            this.loadImg(options.backgroundImg);
+
+            this.on("changeOpacity",function(op){
+                this.opacity=op/100;
+                var pageNode=CanvasService.getPageNode();
+                pageNode.renderAll();
+            });
+
+            this.on("changeBgi",function(img){
+                this.loadImg(img);
+                var pageNode=CanvasService.getPageNode();
+                pageNode.renderAll();
+            });
+
+            this.on('changeBgc',function(co){
+                this.backgroundColor=co;
+                var pageNode=CanvasService.getPageNode();
+                pageNode.renderAll();
+            })
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                ctx.globalAlpha=this.opacity;
+                ctx.beginPath();
+                ctx.drawImage(this.matteImg,-(this.width / 2),-(this.height / 2),this.width,this.height);
+                ctx.fillStyle =this.backgroundColor;
+                ctx.fillRect(-(this.width / 2), -(this.height / 2), this.width, this.height);
+                ctx.closePath();
+            }catch (err) {
+                console.log('渲染错误',err)
+            }
+        }
+    });
+    fabric.MyMatte.prototype.loadImg=function(imgSrc){
+        var img=new Image();
+        img.onload=(function () {
+
+        }).bind(this);
+        img.src=imgSrc;
+        this.matteImg=img;
+    };
+    fabric.MyMatte.fromLevel=function(callback,option){
+        var matte=new fabric.MyMatte(option);
+        callback&&callback(matte);
+    };
+
 
     //progress
     fabric.MyProgress = fabric.util.createClass(fabric.Object, {

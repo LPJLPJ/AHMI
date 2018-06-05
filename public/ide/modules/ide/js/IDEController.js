@@ -752,7 +752,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
         }
 
-        //add by tang
+        //mask  add by tang
         $scope.$on('ChangeMaskStyle',function(event,data){
             if(typeof data=='object'){
                 $scope.$broadcast('MaskStyle',data);
@@ -770,6 +770,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         });
         $scope.$on('MaskUpdate',function(event,data){
             $scope.$broadcast('ChangeMask',data)
+        });
+
+        //matte  add by tang
+        $scope.$on('ChangeMatte',function(event){
+            $scope.$broadcast('ChangeMatteAttr');
+            $scope.$broadcast('PageNodeChanged');
         });
 
 

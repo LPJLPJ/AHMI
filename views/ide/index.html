@@ -244,17 +244,36 @@
                                             <option value="custom">自定义:{{saveAsWidth}} * {{saveAsHeight}}</option>
                                         </select>
                                     </div>
-                                    <div ng-show="selectCustomResolution=='custom'">
+                                    <div ng-show="selectCustomResolution=='custom'" class="customResolutionWrap">
                                         <div class="form-group">
-                                            <span class="control-label">自定义宽度：</span>
-                                            <input type="number" class="col-lg-2 form-control" placeholder="1~1920" ng-model="saveAsWidth" min="0" max="1920"/>
+                                            <span>自定义宽度：</span>
+                                            <input type="number" placeholder="1~1920" ng-model="saveAsWidth" min="0" max="1920"/>
                                         </div>
                                         <div class="form-group">
-                                            <span class="control-label">自定义高度：</span>
-                                            <input type="number" class="col-lg-2 form-control" placeholder="1~1920" ng-model="saveAsHeight" min="0" max="1920"/>
+                                            <span>自定义高度：</span>
+                                            <input type="number" placeholder="1~1920" ng-model="saveAsHeight" min="0" max="1920"/>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!--控件拉伸 tang-->
+                                <div class="form-group projectScale">
+                                    <label class="control-label">图层、控件尺寸拉伸：</label>
+                                    <input type="checkbox" ng-model="isPulling"/>
+                                </div>
+                                <div ng-show="isPulling" class="pullingWrap">
+                                    <div class="form-group pullingWidth">
+                                        <span>宽度比例：</span>
+                                        <span>1&nbsp;&nbsp;:</span>
+                                        <input type="number" class="form-group" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
+                                    </div>
+                                    <div class="form-group pullingHeight">
+                                        <span>高度比例：</span>
+                                        <span>1&nbsp;&nbsp;:</span>
+                                        <input type="number" class="form-group" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
+                                    </div>
+                                </div>
+
                             </form>
                         </div>
                     </div>
@@ -524,7 +543,7 @@
                     <span class="iconfont icon">&#xe65d;</span><span class="caption"></span>
                 </a>
                 <a class="my-cmd-item" id="maskIcon" ng-click="component.tool.maskSwitch()">
-                    <span class="iconfont icon">&#xe661;</span><span class="caption"></span>
+                    <span class="iconfont icon">&#xe663;</span><span class="caption"></span>
                 </a>
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
@@ -734,6 +753,35 @@
                                 <option ng-repeat="image in component.images track by $index" value="{{image.src}}">{{image.name}}
                                 </option>
                             </select>
+                        </div>
+
+                        <!--蒙板 tang-->
+                        <div class="my-matte lg">
+                            <span class="my-attr-title dengPage-title" style="width: 100%">蒙板</span>
+                            <div class="my-matte-switch" ng-click="component.matte.matteSwitch()">
+                                <div class="matte-switch-container" ng-class="{'matte-switch-on':component.matte.matteOn}">
+                                    <span>on</span>
+                                    <span></span>
+                                    <span>off</span>
+                                </div>
+                            </div>
+                            <div class="my-matte-wrap" ng-show="component.matte.matteOn">
+                                <div>
+                                    <span class="my-matte-title">蒙板图</span>
+                                    <select class="my-matte-input form-control"
+                                                ng-model="component.matte.matteBgi" ng-change="component.matte.enterMatteBgi()">
+                                            <option ng-repeat="image in component.images track by $index" value="{{image.src}}">{{image.name}}</option>
+                                    </select>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span class="my-matte-title">透明度</span>
+                                    <input type="range" ng-model="component.matte.matteOpacity" ng-change="component.matte.enterMatteOpacity()" class="my-matte-range"/>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span class="my-matte-title">滤镜层</span>
+                                    <input type="text" colorpicker="rgba" ng-model="component.matte.matteColor" class="my-matte-color form-control"/>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -2963,7 +3011,7 @@
                                     </td>
                                     <!--image-->
                                     <td><select class="form-control" ng-model="slice.imgSrc"
-                                                ng-options="image.src as image.name for image in images "
+                                                ng-options="image.src as image.name for image in images"
                                                 ng-change="disableColorInput(slice)" ng-disabled="disableEditImg">
                                         <!--<option value="">-&#45;&#45;</option>-->
                                     </select></td>
@@ -2989,7 +3037,13 @@
                         <div class="modal-footer my-row-left">
                             <span>
                                 <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">
-                                    添加图片
+                                    向下插入
+                                </button>
+                                <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlicePrev()">
+                                    向上插入
+                                </button>
+                                <button type="button" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
+                                    批量插入
                                 </button>
                             </span>
                             <span  class="my-but-right">
@@ -3001,6 +3055,42 @@
                     </script>
 
                 </div>
+
+                <!--开机动画批量插入 by tang-->
+                <script type="text/ng-template" id="batchSelectorModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">批量选择</h3>
+                        <span>说明：批量选择完成后将会按照文件名“例如：<span style="color: red">图片名(1)</span>”中的“()”里面的数字从小到大按顺序排列，请按示例样式命名文件。</span>
+                    </div>
+                    <div class="modal-body batch-select-wrap">
+                        <table class="table table-bordered batch-select-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-2">操作</th>
+                                    <th class="col-xs-7">名称</th>
+                                    <th class="col-xs-3">预览图</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="img in imgResources" ng-click="selectResource($index)">
+                                    <td><input type="checkbox" ng-model="batchSelectArr[$index]" ng-click="stopProp($event)"/></td>
+                                    <td>{{img.name}}</td>
+                                    <td><img class="batch-select-img" ng-src="{{img.src}}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="my-but-left">
+                            <button class="btn btn-success" ng-click="selectAll()">全选</button>
+                            <button class="btn btn-success" ng-click="invertSelect()">反选</button>
+                        </span>
+                        <span class="my-but-right">
+                            <button class="btn btn-primary" type="button" ng-click="add()">添加</button>
+                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        </span>
+                    </div>
+                </script>
 
                 <!--tag控制-->
                 <script type="text/ng-template" id="tagSelect.html">
@@ -3030,7 +3120,7 @@
                     </div>
                 </script>
 
-                <div ng-show="component.showTagPanel"  class="my-attr-item lg deng-bgTags" ng-controller='TagSelectCtl'>
+                <div ng-show="component.showTagPanel&&!myMask"  class="my-attr-item lg deng-bgTags" ng-controller='TagSelectCtl'>
                     <span class="my-tagSelect-main-span">变量</span>
                     <tag-select bind="selectedTagObj" action-function="component.selectedTagFun()"></tag-select>
                 </div>
@@ -3914,53 +4004,55 @@
                 </div>
 
 
-                <div class="my-toggle-area" ng-show="component.bottom.page.expand" style="padding-left: 20px;">
-                    <div ng-repeat="layer in component.bottom.page.layers track by $index">
-                        <div class="my-levels-line">
-                            <div class="my-levels-title" ng-class="{true:'selected'}[layer.selected]">
-                                <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="layer.expand">&#xe722;</i>
-                                <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="!layer.expand">&#xe721;</i>
+                <div class="my-toggle-area" ng-show="component.bottom.page.expand" style="padding-left: 20px;" ui-tree="myLayerTree" data-drag-delay="200" data-drag-enabled="true">
+                    <div ui-tree-nodes="component.bottom.page.layers" ng-model="component.bottom.page.layers">
+                        <div ng-repeat="layer in component.bottom.page.layers" ui-tree-node>
+                            <div class="my-levels-line" ui-tree-handle>
+                                <div class="my-levels-title" ng-class="{true:'selected'}[layer.selected]">
+                                    <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="layer.expand">&#xe722;</i>
+                                    <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="!layer.expand">&#xe721;</i>
                                 <span class="my-object-label"
                                       ng-class="{true:'selected'}[layer.selected]"
                                       ng-click="component.bottom.selectLayer(layer)">{{layer.name}}</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="my-toggle-area" ng-show="layer.expand" style="padding-left: 20px">
-                            <div ng-repeat="subLayer in layer.subLayers track by $index">
-                                <div class="my-levels-line">
-                                    <div class="my-levels-title" ng-class="{true:'selected'}[subLayer.selected]">
-                                        <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
-                                           ng-show="subLayer.expand">&#xe722;</i>
-                                        <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
-                                           ng-show="!subLayer.expand">&#xe721;</i>
+                            <div class="my-toggle-area" ng-show="layer.expand" style="padding-left: 20px" ui-tree-nodes ng-model="layer.subLayers">
+                                <div ng-repeat="subLayer in layer.subLayers" ui-tree-node>
+                                    <div class="my-levels-line" ui-tree-handle>
+                                        <div class="my-levels-title" ng-class="{true:'selected'}[subLayer.selected]">
+                                            <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
+                                               ng-show="subLayer.expand">&#xe722;</i>
+                                            <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
+                                               ng-show="!subLayer.expand">&#xe721;</i>
                                         <span class="my-object-label"
                                               ng-class="{true:'selected'}[subLayer.selected]"
                                               ng-click="component.bottom.selectSubLayer(layer,subLayer)">{{subLayer.name}}</span>
+                                        </div>
                                     </div>
-                                </div>
 
 
-                                <div class="my-toggle-area" ng-show="subLayer.expand" style="padding-left: 20px">
-                                    <div ng-repeat="widget in subLayer.widgets">
-                                        <div class="my-levels-line">
-                                            <div class="my-levels-title" ng-class="{true:'selected'}[widget.selected]">
+                                    <div class="my-toggle-area" ng-show="subLayer.expand" style="padding-left: 20px" ui-tree-nodes ng-model="subLayer.widgets">
+                                        <div ng-repeat="widget in subLayer.widgets" ui-tree-node>
+                                            <div class="my-levels-line" ui-tree-handle>
+                                                <div class="my-levels-title" ng-class="{true:'selected'}[widget.selected]">
                                                 <span class="my-object-label"
                                                       ng-class="{true:'selected'}[widget.selected]"
                                                       ng-click="component.bottom.selectWidget(layer,subLayer,widget)">{{widget.name}}
                                                 </span>
 
+                                                </div>
                                             </div>
-                                        </div>
 
+                                        </div>
                                     </div>
+
                                 </div>
 
                             </div>
 
+
                         </div>
-
-
                     </div>
 
                 </div>

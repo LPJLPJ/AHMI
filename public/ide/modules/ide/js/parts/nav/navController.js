@@ -295,6 +295,17 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 function () {
                     var curScope = {};
                     ProjectService.getProjectCopyTo(curScope);
+
+                    //保存时设置matte的开启状态为false   add by tang
+                    _setMatteOff(curScope.project.pages);
+                    function _setMatteOff(pages){
+                        pages.map(function(page,index){
+                            if(page.matte){
+                                page.matte.matteOn=false;
+                            }
+                        })
+                    }
+
                     // curScope.project = ProjectTransformService.transDateFileBase(curScope.project);//+
                     if (compatible) {
                         generateProJson(curScope.project, function (newProject) {
@@ -1704,6 +1715,12 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
     $scope.saveAsAuthor = "";
     $scope.saveAsResolution = "";
     $scope.selectCustomResolution = "1280*480";
+    $scope.isScale=false;
+    $scope.isPulling=false;
+    $scope.pullingRatio={
+        widthRatio:1,
+        heightRatio:1
+    };
 
     $scope.ok = function () {
         var data = "";
@@ -1729,7 +1746,19 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
                     toastr.error('分辨率范围有误');
                     return;
                 }
-            } else {
+            }  else if($scope.isPulling){//控件拉伸 tang
+                if(checkPulling()){
+                    data={
+                        saveAsName: $scope.saveAsName,
+                        saveAsAuthor: $scope.saveAsAuthor,
+                        pullingRatio: $scope.pullingRatio
+                    }
+                }else{
+                    toastr.error('比例范围0-10');
+                    return;
+                }
+
+            }else {
                 data = {
                     saveAsName: $scope.saveAsName,
                     saveAsAuthor: $scope.saveAsAuthor
@@ -1771,6 +1800,16 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
             resolution = $scope.selectCustomResolution;
         }
         return resolution;
+    }
+
+    function checkPulling(){ //tang
+        var width=$scope.pullingRatio.widthRatio;
+        var height=$scope.pullingRatio.heightRatio;
+        if(width&&height){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 
