@@ -146,6 +146,7 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
                 //edit timer tag
                 TagService.editTimerTagByIndex($scope.selectedIdx, newTag, function () {
                     readTagsInfo();
+                    addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
             }
         }, function (newTag) {

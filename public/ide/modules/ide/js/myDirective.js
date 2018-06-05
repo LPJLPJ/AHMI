@@ -60,12 +60,13 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         $scope.component.curTagArray = $scope.component.curTagClass.tagArray;
     }
     function syncTagClasses(){
-        console.log('syncTagClasses');
-        console.log('$scope',$scope)
+        // console.log('syncTagClasses');
         $scope.component.tagClasses = TagService.getAllTagClasses();
         $scope.component.curTagClassName=$scope.component.curTagClass.name;
         changeCurTagClass();
         $scope.component.curTagArray= $scope.component.curTagClass.tagArray;
+        // console.log('$scope',$scope.component.curTagClass);
+
     }
 
     //返回tagName在tagClass的index
@@ -107,10 +108,10 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         if($scope.component.showRegValidTagsFlag===true){
             for(var i=0;i<$scope.component.curTagClass.tagArray.length;i++){
                 tag=$scope.component.curTagClass.tagArray[i];
-                console.log('tag',tag)
+                // console.log('tag',tag)
                 if(tag.register===true){
                     tagArray.push(tag);
-                    console.log('tagArray',tagArray)
+                    // console.log('tagArray',tagArray)
                 }
             }
             $scope.component.curTagArray=tagArray;

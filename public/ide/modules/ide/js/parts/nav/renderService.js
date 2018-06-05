@@ -340,7 +340,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
     };
 
-
     renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
         if (!!info){
@@ -863,7 +862,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             cb&&cb();
         }
     };
-
 
     renderer.prototype.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
