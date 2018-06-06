@@ -518,12 +518,15 @@
     padding-left: 0;
 }
 .deng-tagModel .col-sm-8{
-    height: 28px;
     margin-bottom: 10px;
+    height:28px;
+    font-size: 12px;
 }
 
 .deng-tagModel .register-activate-box{
     margin-top: 0px;
+    margin-bottom:10px;
+    height: 28px;
 }
 .deng-bg-table {
     max-height: 534px;

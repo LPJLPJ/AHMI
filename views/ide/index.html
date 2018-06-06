@@ -3590,13 +3590,13 @@
                                         <input type="checkbox"
                                                ng-model="tag.register"
                                                ng-true-value="true"
-                                               ng-false-value="false" id="register" class="col-sm-8 register-activate-box"/>
+                                               ng-false-value="false" id="register" class="col-sm-1 register-activate-box"/>
                                     </fieldset>
                                     <div class="register-option">
                                         <fieldset>
                                             <label for="indexOfRegister" class="col-sm-4 tag-modal-label">寄存器序号</label>
                                             <input ng-disabled="!tag.register" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
-                                                   ng-model="tag.indexOfRegister" class="col-sm-8" />
+                                                   ng-model="tag.indexOfRegister" class="form-control col-sm-8" />
                                         </fieldset>
                                     </div>
                                 </form>
