@@ -3720,36 +3720,33 @@
                         <div class="listTable-container"uib-collapse="status.collapsed">
                             <table class="listTable table table-hover"ng-show="component.timerTagShow==false">
                                 <tr class="">
-                                    <td>名称
-                                        <span class="iconfont" ng-click="component.sortByName()">
-                                    &#xe6a5;</span>
-                                </td>
-                                <td>寄存器
-                                    <span class="iconfont" ng-click="component.sortByRegister()">
-                                        &#xe6a5;</span>
-                                </td>
-                                <td>启用</td>
+                                    <td>名称</td>
+                                    <td>寄存器</td>
+                                    <td>启用</td>
                                     <td>标签</td>
                                     <td>删除</td>
-                            </tr>
-                            <tr ng-repeat="tag in component.curTagClass.tagArray track by $index" class="tagTr"
-                                ng-class="{'selected':selected==$id}">
-                                <td ng-click="component.openPanel($index,'custom')">
-                                    <div class="tagName">{{tag.name}}</div>
-                                </td>
-                                <td><div class="tagReg">{{tag.indexOfRegister}}</div></td>
-                                <td><input type="checkbox"
-                                           class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
-                                           ng-change="component.regCheckboxClick(tag)"
-                                           ng-model="tag.register">
+                                </tr>
+                                <tr ng-repeat="tag in component.curTagClass.tagArray track by $index" class="tagTr"
+                                    ng-class="{'selected':selected==$id}">
+                                    <td ng-click="component.openPanel($index,'custom')">
+                                        <div class="tagName">{{tag.name}}</div>
                                     </td>
-                                    <td><i class="iconfont" ng-click="component.addToTagClass(tag.name)">
-                                        &#xe7c5;</i></td>
-                                    <td><i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">
-                                    &#xe627;</i></td>
-                                <!--<td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"-->
-                                         <!--ng-click="component.deleteTag($index)"></td>-->
-                            </tr>
+                                    <td>
+                                        <div class="tagReg">{{tag.indexOfRegister}}</div>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox"
+                                               class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
+                                               ng-change="component.regCheckboxClick(tag)"
+                                               ng-model="tag.register">
+                                    </td>
+                                    <td>
+                                        <i class="iconfont" ng-click="component.addToTagClass(tag.name)">&#xe7c5;</i>
+                                    </td>
+                                    <td>
+                                        <i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">&#xe627;</i>
+                                    </td>
+                                </tr>
                             </table>
                             <table class="listTable table table-hover" ng-show="component.timerTagShow==true">
                                 <tr class="">
