@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService', 'Type', '$uibModal', function ($rootScope,$scope, TagService, ProjectService, Type, $uibModal) {
+ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal', function ($rootScope, $scope, TagService, ProjectService, Type, $uibModal) {
     $scope.selectedIdx = -1;
     $scope.animationsEnabled = true;
     $scope.component = {
@@ -36,7 +36,7 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
         editTagClass: editTagClass,
         changeCurTagClass: changeCurTagClass,
         addToTagClass: addToTagClass,
-        regCheckboxClick:regCheckboxClick,
+        regCheckboxClick: regCheckboxClick,
 
         importTags: importTags
     };
@@ -69,16 +69,16 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
         } else {
             type = 'custom';
         }
-        if(type !=='timer'){
-            if(index!=-1){
-                var tagName=$scope.component.curTagClass.tagArray[index].name;
-                $scope.selectedIdx = IndexInTagClass(tagName,$scope.component.tagClasses[0]);
-                index=$scope.selectedIdx;
-            }else{
-                $scope.selectedIdx =index;
+        if (type !== 'timer') {
+            if (index != -1) {
+                var tagName = $scope.component.curTagClass.tagArray[index].name;
+                $scope.selectedIdx = IndexInTagClass(tagName, $scope.component.tagClasses[0]);
+                index = $scope.selectedIdx;
+            } else {
+                $scope.selectedIdx = index;
             }
         }
-        $scope.selectedIdx =index;
+        $scope.selectedIdx = index;
         $scope.selectedType = type;
 
         var targetTag;
@@ -130,16 +130,14 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
                     var oldOperate = ProjectService.SaveCurrentOperate();
                     var oldTag = TagService.getTagByIndex(index);
                     ProjectService.replaceAllRelatedTag(oldTag, newTag)
-                    $scope.$emit('ChangeCurrentPage',oldOperate)
+                    $scope.$emit('ChangeCurrentPage', oldOperate)
                 }
-
 
 
                 TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
                     readTagsInfo();
                 }.bind(this));
-                editTagInTagClass(tagName,newTag,$scope.component.curTagClass);
-
+                editTagInTagClass(tagName, newTag, $scope.component.curTagClass);
 
 
             } else if ($scope.selectedType == 'timer') {
@@ -270,7 +268,7 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
                 $scope.$scopeCtl = $scope;
                 $scope.$scopeCtl.curTagClassNewName = null;   //改名后的新名字在有效性验证前存放在这里
                 $scope.someTagClassRenaming = false;          //标志位，如果有标签正在改名，会限制其他标签的操作
-                $scope.addTagClass = false;                   //标志位，如果正在添加新标签，会显示新标签命名框
+                $scope.addTagClassFlag = false;                   //标志位，如果正在添加新标签，会显示新标签命名框
                 //添加新标签
                 $scope.addTagClass = function () {
                     $scope.addTagClassFlag = true;
@@ -293,7 +291,7 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
                 //命名
                 $scope.enterName = function (index) {
                     if (isNameStandard($scope.$scopeCtl.curTagClassNewName) == true) {
-                        if (index) {
+                        if (index !== undefined) {
                             var curTagClass = $scope.tagClassesManage[index];
                             curTagClass.name = $scope.$scopeCtl.curTagClassNewName;
                             curTagClass.renamed = true;
@@ -314,13 +312,14 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
                     }
                     return;
                 };
-                //删除
-                $scope.delete = function (index) {
 
-                };
                 //关闭
                 $scope.close = function () {
                     $uibModalInstance.close($scope.tagClassesManage);
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
                 };
 
                 //命名验证
@@ -391,7 +390,7 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
     }
 
     function noDuplication(tag, tags) {
-        if(tag.type==='custom'){
+        if (tag.type === 'custom') {
             for (var i = 0; i < tags.length; i++) {
                 if (tag.name == tags[i].name) {
                     toastr.error('重复的tag名称');
@@ -641,34 +640,38 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
         syncTagClassTagArray($scope.component.curTagClass);
 
     }
+
     //返回tagName在tagClass的index
-    function IndexInTagClass(tagName,tagClass){
-        for(var i=0;i<tagClass.tagArray.length;i++){
-            if(tagName===tagClass.tagArray[i].name){
+    function IndexInTagClass(tagName, tagClass) {
+        for (var i = 0; i < tagClass.tagArray.length; i++) {
+            if (tagName === tagClass.tagArray[i].name) {
                 return i;
             }
         }
         return -1;
     }
+
     //更新某个tagclass中的某个tag
-    function editTagInTagClass(tagName,newTag,tagClass){
-        var index=IndexInTagClass(tagName,tagClass);
-        tagClass.tagArray[index]=newTag;
+    function editTagInTagClass(tagName, newTag, tagClass) {
+        var index = IndexInTagClass(tagName, tagClass);
+        tagClass.tagArray[index] = newTag;
     }
+
     //同步标签的tagArray
-    function syncTagClassTagArray(tagClass){
-        for(var i=0;i<tagClass.tagArray.length;i++){
-            for(var j=0;j<$scope.component.allTags.length;j++){
-                if(tagClass.tagArray[i].name===$scope.component.allTags[j].name){
-                    tagClass.tagArray[i]=$scope.component.allTags[j];
+    function syncTagClassTagArray(tagClass) {
+        for (var i = 0; i < tagClass.tagArray.length; i++) {
+            for (var j = 0; j < $scope.component.allTags.length; j++) {
+                if (tagClass.tagArray[i].name === $scope.component.allTags[j].name) {
+                    tagClass.tagArray[i] = $scope.component.allTags[j];
                 }
             }
         }
     }
+
     //regCheckboxClick
-    function regCheckboxClick(tag){
-        if($scope.component.curTagClassName!==$scope.component.tagClasses[0].name){
-            var index=IndexInTagClass(tag.name,$scope.component.tagClasses[0]);
+    function regCheckboxClick(tag) {
+        if ($scope.component.curTagClassName !== $scope.component.tagClasses[0].name) {
+            var index = IndexInTagClass(tag.name, $scope.component.tagClasses[0]);
             TagService.editTagByIndex(index, tag, function () {
                 readTagsInfo();
             });
@@ -851,7 +854,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
                     }
                 }
 
-                if (shouldForceEdit){
+                if (shouldForceEdit) {
                     //forceEdit
                     console.log('force')
                     $scope.tag.force = 'force'
