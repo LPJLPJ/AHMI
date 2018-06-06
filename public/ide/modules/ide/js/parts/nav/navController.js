@@ -59,6 +59,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         }
 
         function initUserInterface() {
+            $scope.animationsEnabled=true;
             $scope.component = {
                 nav: {
                     currentNav: 0,
