@@ -363,8 +363,8 @@
 }
 
 .deng-attr-item .listTable-container{
-    max-height: 280px;
-    overflow-y: auto;
+    /*max-height: 280px;*/
+    /*overflow-y: auto;*/
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -372,9 +372,8 @@
 }
 .deng-attr-item .listTable{
     width: 100%;
-    /*border: 0px solid;*/
-    /*border-color: lightgrey;*/
     margin-bottom: 0;
+    font-size: 12px;
 }
 .deng-attr-item .listTable >tbody>tr{
     /*border: 1px solid;*/
