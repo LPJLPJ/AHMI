@@ -46,10 +46,14 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     });
 
     //导入tags事件
-    $scope.$on('syncTagSuccess', function (data) {
-        console.log('syncTagSuccess')
+    $scope.$on('syncTagSuccess', function (event, data) {
+        console.log('syncTagSuccess', data);
+        data = data || [];
+        data.map(function (item) {
+            addTagToTagClass(item, $scope.component.curTagClassName);
+        });
+
         readTagsInfo();
-        readTagClassesInfo();
     });
 
 
@@ -120,7 +124,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 //new tag
                 TagService.setUniqueTags(newTag, noDuplication, function () {
                     readTagsInfo();
-                    //如果添加了一个新的tag，同事将其添加到当前标签里
+                    //如果添加了一个新的tag，同时将其添加到当前标签里
                     addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
             } else if ($scope.selectedType == 'custom') {
@@ -753,7 +757,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                         return;
                     }
                     TagService.syncTagFromRemote(data, curTagClass, $scope.overlay, function () {
-                        $scope.$emit('syncTagSuccess');
+                        $scope.$emit('syncTagSuccess', data);
                         $uibModalInstance.close();
                     });
                 }
