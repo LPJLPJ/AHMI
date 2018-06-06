@@ -3,6 +3,7 @@
  */
 ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService', 'Type', '$uibModal', function ($rootScope,$scope, TagService, ProjectService, Type, $uibModal) {
     $scope.selectedIdx = -1;
+    $scope.animationsEnabled = true;
     $scope.component = {
         allCustomTags: null,
         allTimerTags: null,
@@ -126,7 +127,6 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
                 //edit custom tag
 
                 if (newTag.force === 'force') {
-                    //modify all relatedTag
                     var oldOperate = ProjectService.SaveCurrentOperate();
                     var oldTag = TagService.getTagByIndex(index);
                     ProjectService.replaceAllRelatedTag(oldTag, newTag)
@@ -680,7 +680,7 @@ ide.controller('TagCtrl', ['$rootScope','$scope', 'TagService', 'ProjectService'
      */
     function importTags() {
         var modalInstance = $uibModal.open({
-            animation: true,
+            animation: $scope.animationsEnabled,
             templateUrl: 'tagsImport.html',
             scope: $scope,//指定父scope
             size: 'md',
