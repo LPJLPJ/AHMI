@@ -4877,7 +4877,7 @@ module.exports =   React.createClass({
     setTagByName: function (name, value) {
         var tag = this.findTagByName(name)
         if (tag) {
-            tag.value = value
+            this.setTagByType(tag,value)
             this.setState({tag: tag})
         }
     },
@@ -4914,16 +4914,14 @@ module.exports =   React.createClass({
     setTagByType:function (tag,_value) {
         if(tag){
             switch (tag.valueType){
-                case 0:
-                    //num
-                    tag.value = _value
-                    break;
                 case 1:
                     //str
                      tag.value = this.convertStrToUint8Array(_value,tag.encoding).slice(0,32)
                     break;
                 default:
-                    console.log('tag type unsupported')
+                    //num
+                    tag.value = Number(_value)||0
+
             }
         }
     },
@@ -4932,7 +4930,7 @@ module.exports =   React.createClass({
             switch (tag.valueType){
                 case 0:
                     //num
-                    return tag.value
+                    return Number(tag.value)||0
                 case 1:
                     //str
                     return this.convertUint8ArrayToStr(tag.value,tag.encoding)
@@ -4943,7 +4941,7 @@ module.exports =   React.createClass({
     },
     setTagByTag: function (tag, value) {
         if (tag) {
-            tag.value = value
+            this.setTagByType(tag,value)
             this.setState({tag: tag})
         }
     },

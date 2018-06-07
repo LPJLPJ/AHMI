@@ -19826,6 +19826,12 @@
 	    totalResourceNum: 0,
 	    fps: 0
 	};
+
+	var supportedEncodings = {
+	    ascii: 'ascii',
+	    'utf-8': 'utf-8'
+	};
+
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
@@ -22771,8 +22777,8 @@
 	                initXPos = 0;
 	                break;
 	            case 'right':
-					curWidth -= paddingX * 2;
-					initXPos = widthOfNumStr > curWidth ? 0 : curWidth - (widthOfNumStr);
+	                curWidth -= paddingX * 2;
+	                initXPos = widthOfNumStr > curWidth ? 0 : curWidth - widthOfNumStr;
 	                break;
 	            case 'center':
 	            default:
@@ -24262,13 +24268,70 @@
 	    setTagByName: function (name, value) {
 	        var tag = this.findTagByName(name);
 	        if (tag) {
-	            tag.value = value;
+	            this.setTagByType(tag, value);
 	            this.setState({ tag: tag });
+	        }
+	    },
+	    convertStrToUint8Array: function (str, encoding) {
+	        encoding = encoding || supportedEncodings.ascii;
+	        var uint8array;
+	        switch (encoding) {
+	            case supportedEncodings.ascii:
+	                uint8array = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true }).encode(str);
+	                break;
+	            case supportedEncodings['utf-8']:
+	                uint8array = new TextEncoder().encode(str);
+	                break;
+	            default:
+	                console.log('unsupported encoding');
+	        }
+	        return uint8array;
+	    },
+	    convertUint8ArrayToStr: function (buf, encoding) {
+	        encoding = encoding || supportedEncodings.ascii;
+	        var str = '';
+	        switch (encoding) {
+	            case supportedEncodings.ascii:
+	            case supportedEncodings['utf-8']:
+	                str = new TextDecoder(encoding).decode(buf);
+	                break;
+
+	            default:
+	                console.log('unsupported encoding');
+	        }
+	        return str;
+	    },
+	    setTagByType: function (tag, _value) {
+	        if (tag) {
+	            switch (tag.valueType) {
+	                case 1:
+	                    //str
+	                    tag.value = this.convertStrToUint8Array(_value, tag.encoding).slice(0, 32);
+	                    break;
+	                default:
+	                    //num
+	                    tag.value = Number(_value) || 0;
+
+	            }
+	        }
+	    },
+	    getTagTrueValue: function (tag) {
+	        if (tag) {
+	            switch (tag.valueType) {
+	                case 0:
+	                    //num
+	                    return Number(tag.value) || 0;
+	                case 1:
+	                    //str
+	                    return this.convertUint8ArrayToStr(tag.value, tag.encoding);
+	                default:
+	                    console.log('tag type unsupported');
+	            }
 	        }
 	    },
 	    setTagByTag: function (tag, value) {
 	        if (tag) {
-	            tag.value = value;
+	            this.setTagByType(tag, value);
 	            this.setState({ tag: tag });
 	        }
 	    },
