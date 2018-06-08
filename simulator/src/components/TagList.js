@@ -93,7 +93,7 @@ module.exports = React.createClass({
     },
     render: function () {
         var tdDefaultStyle = {
-            'vertical-align':'middle'
+            'verticalAlign':'middle'
         }
         return (
             <div className='tag-table-wrapper'>

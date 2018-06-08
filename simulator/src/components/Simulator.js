@@ -4920,6 +4920,12 @@ module.exports =   React.createClass({
             this.setState({tag: tag})
         }
     },
+    setTagByTagRawValue:function (tag, rawValue) {
+        if (tag) {
+            tag.value = rawValue
+            this.setState({tag: tag})
+        }
+    },
     timerFlag: function (param) {
         if (param&&param.tag){
             if (param.tag.search(/SysTmr_(\d+)_\w+/) != -1) {
@@ -5389,7 +5395,7 @@ module.exports =   React.createClass({
                 if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
                     //read
                     updatedTagNames.push(tag.name);
-                    this.setTagByTag(tag, register.value);
+                    this.setTagByTagRawValue(tag, register.value);
                 }
             }
             //update

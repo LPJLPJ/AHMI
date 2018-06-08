@@ -51927,7 +51927,7 @@
 	    },
 	    render: function () {
 	        var tdDefaultStyle = {
-	            'vertical-align': 'middle'
+	            'verticalAlign': 'middle'
 	        };
 	        return React.createElement(
 	            'div',
@@ -52062,13 +52062,21 @@
 	 * Created by ChangeCheng on 16/8/24.
 	 */
 	var React = __webpack_require__(1);
+	var StringConverter = __webpack_require__(164);
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
 	    getInitialState: function () {
 	        return {
-	            registers: []
+	            registers: [],
+	            inputing: -1
 	        };
+	    },
+	    handleValueInputFocus: function (registerKey) {
+	        this.setState({ inputing: registerKey });
+	    },
+	    handleValueInputBlur: function () {
+	        this.setState({ inputing: -1 });
 	    },
 	    handleValueInputChange: function (key, e) {
 	        // this.props.handleRegisterChange(key, Number(e.target.value));
@@ -52082,12 +52090,28 @@
 	    handleInputKeyRelease: function (key, e) {
 	        if (e.keyCode == 13) {
 	            //enter
-	            this.props.handleRegisterChange(key, Number(e.target.value) || 0);
+	            var registers = this.state.registers;
+	            if (registers[key].inputType == 1) {
+	                //string
+	                this.props.handleRegisterChange(key, StringConverter.convertStrToUint8Array(e.target.value).slice(0, 32) || 0);
+	            } else {
+	                //num
+	                this.props.handleRegisterChange(key, Number(e.target.value) || 0);
+	            }
+
 	            e.target.blur();
 	        }
 	    },
+	    handleRegisterInputTypeChange: function (registerKey, e) {
+	        var registers = this.state.registers;
+	        registers[registerKey].inputType = e.target.value;
+	        this.setState({ registers: registers });
+	    },
 	    render: function () {
 	        // console.log('curRegisters',this.props.registers);
+	        var tdDefaultStyle = {
+	            'verticalAlign': 'middle'
+	        };
 	        return React.createElement(
 	            'div',
 	            { className: 'tag-table-wrapper' },
@@ -52117,20 +52141,47 @@
 	                    { className: 'tag-table-body' },
 	                    Object.keys(this.props.registers).map(function (registerKey, index) {
 	                        var register = this.props.registers[registerKey];
+	                        var curValue;
+	                        if (this.state.inputing != -1) {
+	                            curValue = register.value;
+	                        } else {
+	                            if (register.inputType == 1) {
+	                                curValue = StringConverter.convertUint8ArrayToStr(register.value);
+	                            } else {
+	                                curValue = register.value;
+	                            }
+	                        }
+
 	                        return React.createElement(
 	                            'tr',
 	                            { key: index, className: 'tag-table-row' },
 	                            React.createElement(
 	                                'td',
-	                                { className: 'tag-table-col' },
+	                                { className: 'tag-table-col', style: tdDefaultStyle },
 	                                ' ',
 	                                registerKey
 	                            ),
 	                            React.createElement(
 	                                'td',
-	                                { className: 'tag-table-col' },
-	                                React.createElement('input', { className: 'value', name: registerKey, type: 'text',
-	                                    value: register.value,
+	                                { className: 'tag-table-col', style: tdDefaultStyle },
+	                                React.createElement(
+	                                    'select',
+	                                    { onChange: this.handleRegisterInputTypeChange.bind(this, registerKey), value: register.inputType || 0 },
+	                                    React.createElement(
+	                                        'option',
+	                                        { value: 0 },
+	                                        '\u6570\u503C'
+	                                    ),
+	                                    React.createElement(
+	                                        'option',
+	                                        { value: 1 },
+	                                        '\u5B57\u7B26'
+	                                    )
+	                                ),
+	                                React.createElement('input', { className: 'value form-control', name: registerKey, type: 'text',
+	                                    value: curValue,
+	                                    onFocus: this.handleValueInputFocus.bind(this, registerKey),
+	                                    onBlur: this.handleValueInputBlur,
 	                                    onChange: this.handleValueInputChange.bind(this, registerKey),
 	                                    onKeyUp: this.handleInputKeyRelease.bind(this, registerKey) })
 	                            )
