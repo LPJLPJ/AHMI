@@ -26,6 +26,9 @@ module.exports = React.createClass({
     },
     render: function () {
         // console.log('curRegisters',this.props.registers);
+        var tdDefaultStyle = {
+            'vertical-align':'middle'
+        }
         return (
             <div className='tag-table-wrapper'>
                 <table className='tag-table table table-responsive'>
@@ -43,9 +46,9 @@ module.exports = React.createClass({
                             var register = this.props.registers[registerKey];
                             return (
                                 <tr key={index} className='tag-table-row'>
-                                    <td className='tag-table-col'> {registerKey}</td>
-                                    <td className='tag-table-col'>
-                                        <input className='value' name={registerKey} type='text'
+                                    <td className='tag-table-col' style={tdDefaultStyle}> {registerKey}</td>
+                                    <td className='tag-table-col' style={tdDefaultStyle}>
+                                        <input className='value form-control' name={registerKey} type='text'
                                                value={register.value}
                                                onChange={this.handleValueInputChange.bind(this, registerKey)}
                                                onKeyUp={this.handleInputKeyRelease.bind(this,registerKey)} />

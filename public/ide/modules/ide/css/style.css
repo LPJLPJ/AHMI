@@ -596,9 +596,8 @@ body{
 }
 
 .tag-table-wrapper>table>tbody>tr>td>input{
-    width: 60px;
+    /*width: 60px;*/
 }
-
 .setting-wrapper{
     background-color:white;
 }

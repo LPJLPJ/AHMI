@@ -10,7 +10,7 @@ var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
 var math = require('mathjs');
-
+var StringConverter = require('./StringConverter')
 var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev'){
@@ -55,10 +55,6 @@ var defaultSimulator = {
     fps:0
 }
 
-var supportedEncodings = {
-    ascii:'ascii',
-    'utf-8':'utf-8'
-}
 
 module.exports =   React.createClass({
     getInitialState: function () {
@@ -123,8 +119,17 @@ module.exports =   React.createClass({
         // this.state.tagList = data.tagList
         // this.setState({tagList: data.tagList})
         // this.state.tagList = data.tagList;
+        data.tagList.push({
+            name:'stringTest',
+            valueType:1,
+            value:StringConverter.convertStrToUint8Array('hello').slice(0,32),
+            register:true,
+            indexOfRegister:3,
+            type:'custom'
+        })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
+
         console.log('tagList loaded', data.tagList,this.state.tagList);
         //initialize registers
         this.registers = {};
@@ -4881,42 +4886,12 @@ module.exports =   React.createClass({
             this.setState({tag: tag})
         }
     },
-    convertStrToUint8Array:function (str,encoding) {
-        encoding = encoding||supportedEncodings.ascii
-        var uint8array
-        switch (encoding){
-            case supportedEncodings.ascii:
-                 uint8array = new TextEncoder(encoding,{ NONSTANDARD_allowLegacyEncoding: true }).encode(str);
-                break;
-            case supportedEncodings['utf-8']:
-                uint8array = new TextEncoder().encode(str);
-                break;
-            default:
-                console.log('unsupported encoding')
-        }
-        return uint8array
-
-    },
-    convertUint8ArrayToStr:function (buf,encoding) {
-        encoding = encoding||supportedEncodings.ascii
-        var str = ''
-        switch (encoding){
-            case supportedEncodings.ascii:
-            case supportedEncodings['utf-8']:
-                str = new TextDecoder(encoding).decode(buf);
-                break;
-
-            default:
-                console.log('unsupported encoding')
-        }
-        return str
-    },
     setTagByType:function (tag,_value) {
         if(tag){
             switch (tag.valueType){
                 case 1:
                     //str
-                     tag.value = this.convertStrToUint8Array(_value,tag.encoding).slice(0,32)
+                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding).slice(0,32)
                     break;
                 default:
                     //num
@@ -4933,7 +4908,7 @@ module.exports =   React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return this.convertUint8ArrayToStr(tag.value,tag.encoding)
+                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding)
                 default:
                     console.log('tag type unsupported')
             }
