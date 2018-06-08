@@ -489,7 +489,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
                         curSlice.originSrc = curSlice.imgSrc;
-                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+
+                        if (i===1){
+                            //pointer
+
+                        }else{
+                            curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        }
                         totalSlices-=1;
                         if (totalSlices<=0){
                             cb && cb();
