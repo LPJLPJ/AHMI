@@ -1306,7 +1306,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         if (!!info){
             //font
             var text = '';
-            v
 
             //trans each slide
             var width = info.width;
