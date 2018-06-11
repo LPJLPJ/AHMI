@@ -207,9 +207,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         return array[array.length-1];
     }
 
-    function makeOutputFilenameFromId(id,index) {
+    function makeOutputFilenameFromId(id,index,type) {
+        type = type||'png'
         var imgName = id.split('.').join('-');
-        var outputFilename = 'r-'+imgName +'-'+ index+'.png';
+        var outputFilename = 'r-'+imgName +'-'+ index+'.'+type;
         return outputFilename
     }
 
@@ -282,33 +283,37 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
             }
             renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+            //generate file
+            // var imgName = widget.id.split('.').join('-');
+            // var outputFilename = imgName +'-'+ index+'.png';
+
+            var outputFilename = makeOutputFilenameFromId(page.id,0,'jpg')
+
+            // console.log('dstDir',dstDir,'outputFilename',outputFilename);
+            var outpath = path.join(dstDir,outputFilename);
+            _canvas.output(outpath,function (err) {
+                if(err){
+                    cb&&cb(err)
+                }else{
+                    //this.trackedRes.push(new ResTrack(img,page.backgroundColor,null,outputFilename,width,height,page))
+
+                    page.backgroundImage = path.join(imgUrlPrefix||'',outputFilename);
+
+
+                    cb && cb()
+                }
+
+
+            }.bind(this));
+
+            ctx.restore();
+
+        }else{
+            cb && cb()
         }
 
 
-        //generate file
-        // var imgName = widget.id.split('.').join('-');
-        // var outputFilename = imgName +'-'+ index+'.png';
 
-        var outputFilename = makeOutputFilenameFromId(page.id,0)
-
-        // console.log('dstDir',dstDir,'outputFilename',outputFilename);
-        var outpath = path.join(dstDir,outputFilename);
-        _canvas.output(outpath,function (err) {
-            if(err){
-                cb&&cb(err)
-            }else{
-                this.trackedRes.push(new ResTrack(img,page.backgroundColor,null,outputFilename,width,height,page))
-
-                page.backgroundImage = path.join(imgUrlPrefix||'',outputFilename);
-
-
-                cb && cb()
-            }
-
-
-        }.bind(this));
-
-        ctx.restore();
     }
 
     renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
@@ -1120,8 +1125,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         var ResourceUrl = ResourceService.getResourceUrl();
         var DataFileUrl = path.join(ResourceUrl,'data.json');
         var allWidgets = [];
+        var allPageList = []
         for (var i=0;i<dataStructure.pageList.length;i++){
             var curPage = dataStructure.pageList[i];
+            allPageList.push(curPage)
             for (var j=0;j<curPage.canvasList.length;j++){
                 var curCanvas = curPage.canvasList[j];
                 for (var k=0;k<curCanvas.subCanvasList.length;k++){
@@ -1133,11 +1140,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }
         }
         var fontList =  FontGeneratorService.getFontCollections(allWidgets),
-            totalNum = allWidgets.length+fontList.length,
+            totalNum = allPageList.length+allWidgets.length+fontList.length,
             m = 0,
             curWidget = null,
             curFont = null;
-
+            curRenderPage = null;
         if (totalNum>0){
             var okFlag = true;
             var cb = function (err) {
@@ -1201,6 +1208,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             if (local){
                 Renderer = new renderer();
                 var ViewUrl = path.join(global.__dirname,path.dirname(window.location.pathname));
+                if(allPageList.length){
+                    for(m=0;m<allPageList.length;m++){
+                        curRenderPage = allPageList[m]
+                        Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,ViewUrl,ResourceUrl,ResourceUrl,cb)
+                    }
+                }
                 if(fontList.length!==0){
                     for(m=0;m<fontList.length;m++){
                         curFont = fontList[m];
@@ -1213,6 +1226,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
             }else{
                 Renderer = new renderer(prepareCachedRes());
+                if(allPageList.length){
+                    for(m=0;m<allPageList.length;m++){
+                        curRenderPage = allPageList[m]
+                        Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,'/',ResourceUrl,ResourceUrl,cb)
+                    }
+                }
                 //生成不同种类的字符列表
                 if(fontList.length!==0){
                     for(m=0;m<fontList.length;m++){
