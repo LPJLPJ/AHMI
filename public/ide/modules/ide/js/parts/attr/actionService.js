@@ -21,7 +21,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
     var tLeaveHighAlarm = new Trigger('离开高警报','LeaveHighAlarm');
     var tEnter = new Trigger('进入','Enter');
     var tLeave = new Trigger('离开','Leave');
-
+    var tTagChange = new Trigger('Tag改变','TagChange')
 
 
 
@@ -65,7 +65,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyNum:
             case Type.MySlideBlock:
             case Type.MyTexNum:
-                triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm];
+                triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm,tTagChange];
                 break;
             default:
                 triggers = [tEnter,tLeave]

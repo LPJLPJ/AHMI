@@ -1419,6 +1419,19 @@ module.exports =   React.createClass({
             var cb = function () {
             }
 
+            //handle onTagChange
+            var oldValue = widget.oldValue
+            var curTagValue = this.getValueByTagName(widget.tag)
+            // console.log(widget.name,oldValue,curTagValue)
+            if(curTagValue!==undefined && curTagValue!==null){
+                //has value
+                if (curTagValue!==oldValue){
+                    //tag change
+                    this.handleTargetAction(widget,'TagChange')
+                }
+
+            }
+
 
             switch (subType) {
                 case 'MySlide':
