@@ -249,6 +249,67 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     renderer.prototype.addImage = function (imageUrl, image) {
         this.images[imageUrl] = image;
     };
+    
+    
+    //render page background
+    
+    renderer.prototype.renderPage = function (width,height,page,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var _canvas = new Canvas(width,height);
+        var ctx = _canvas.getContext('2d');
+        var img =page.backgroundImage;
+        ctx.clearRect(0,0,width,height);
+        ctx.save();
+        //color
+        if(page.backgroundColor){
+            renderingX.renderColor(ctx,new Size(width,height),new Pos(),page.backgroundColor);
+        }
+
+        var imgUrl;
+        if (img !== ''){
+            //draw image
+            imgUrl = path.join(srcRootDir,img);
+            var targetImageObj = this.getTargetImage(imgUrl);
+            if (!targetImageObj){
+                //not added to images
+                var imgObj = new Image();
+                try{
+                    imgObj.src = loadImageSync(imgUrl);
+                    this.addImage(imgUrl,imgObj);
+                    targetImageObj = imgObj;
+                }catch (err){
+                    targetImageObj = null;
+                }
+
+            }
+            renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+        }
+
+
+        //generate file
+        // var imgName = widget.id.split('.').join('-');
+        // var outputFilename = imgName +'-'+ index+'.png';
+
+        var outputFilename = makeOutputFilenameFromId(page.id,0)
+
+        // console.log('dstDir',dstDir,'outputFilename',outputFilename);
+        var outpath = path.join(dstDir,outputFilename);
+        _canvas.output(outpath,function (err) {
+            if(err){
+                cb&&cb(err)
+            }else{
+                this.trackedRes.push(new ResTrack(img,page.backgroundColor,null,outputFilename,width,height,page))
+
+                page.backgroundImage = path.join(imgUrlPrefix||'',outputFilename);
+
+
+                cb && cb()
+            }
+
+
+        }.bind(this));
+
+        ctx.restore();
+    }
 
     renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
