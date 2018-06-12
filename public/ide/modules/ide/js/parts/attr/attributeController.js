@@ -88,6 +88,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 dashboard: {
                     dashboardModeId: '0',
+                    backgroundModeId: '0',
                     clockwise: '1',
                     dashboardModes: [
                         {id: '0', name: '简单模式'},
@@ -99,11 +100,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         {wise: '0', name: '逆时针'}
                         // {wise:'2',name:'双向'}
                     ],
+                    backgroundModes: [
+                        {id: '0', name: '不启用'},
+                        {id: '1', name: '启用'}
+                    ],
                     enableAnimationModeId: '0',
                     enterDashboardMode: enterDashboardMode,
                     enterDashboardClockwise: enterDashboardClockwise,
                     enterDashboardValue: enterDashboardValue,
                     enterDashboardOffsetValue: enterDashboardOffsetValue,
+                    enterBackgroundMode: enterBackgroundMode,
                     enterPointerLength: enterPointerLength,
                     enterMinCoverAngle: enterMinCoverAngle,
                     enterMaxCoverAngle: enterMaxCoverAngle
@@ -279,16 +285,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     {id: '0', name: '启用动画'},
                     {id: '1', name: '关闭动画'}
                 ],
-            //蒙板图 tang
-            matte:{
-                matteBgi:null,
-                matteOpacity:10,
-                matteColor:'选择颜色',
-                matteOn:false,
-                matteSwitch:matteSwitch,
-                enterMatteOpacity:enterMatteOpacity,
-                enterMatteBgi:enterMatteBgi
-            },
+                //蒙板图 tang
+                matte: {
+                    matteBgi: null,
+                    matteOpacity: 10,
+                    matteColor: '选择颜色',
+                    matteOn: false,
+                    matteSwitch: matteSwitch,
+                    enterMatteOpacity: enterMatteOpacity,
+                    enterMatteBgi: enterMatteBgi
+                },
                 enterName: enterName,
                 enterColor: enterColor,
                 enterFontText: enterFontText,
@@ -349,14 +355,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 restore();
             });
 
-            //edit by lixiang
             $scope.$on('changeFontFamily', function (e, op) {
-                //console.log(op);
                 enterFontStyle(op);
             });
 
             //matte add by tang
-            $scope.$on('ChangeMatteAttr',function(event){
+            $scope.$on('ChangeMatteAttr', function (event) {
                 onMatteChanged();
             })
 
@@ -403,10 +407,10 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
 
                         //matte add tang
-                        if($scope.component.object.level.matte){
-                            $scope.component.matte.matteOn=$scope.component.object.level.matte.matteOn;
-                        }else{
-                            $scope.component.matte.matteOn=false;
+                        if ($scope.component.object.level.matte) {
+                            $scope.component.matte.matteOn = $scope.component.object.level.matte.matteOn;
+                        } else {
+                            $scope.component.matte.matteOn = false;
                         }
 
                         break;
@@ -476,6 +480,10 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         if ($scope.component.object.level.transition.duration === undefined) {
                             selectObject.level.transition.duration = 0;
                             $scope.component.object.level.transition.duration = 0;
+                        }
+                        if ($scope.component.object.level.backgroundModeId === undefined) {
+                            selectObject.level.backgroundModeId = '0';
+                            $scope.component.object.level.backgroundModeId = '0';
                         }
                         break;
                     case Type.MyTextArea:
@@ -628,21 +636,21 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * matte变化时的响应
          * @author tang
          */
-        function onMatteChanged(){
+        function onMatteChanged() {
             //console.log('matte');
             var selectObject = ProjectService.getCurrentSelectObject();
-            $timeout(function(){
+            $timeout(function () {
                 $scope.component.object = _.cloneDeep(selectObject);
-                if($scope.component.object.level.matte){
-                    $scope.component.matte.matteOn=$scope.component.object.level.matte.matteOn;
-                    $scope.component.matte.matteBgi=$scope.component.object.level.matte.info.backgroundImg;
-                    $scope.component.matte.matteOpacity=$scope.component.object.level.matte.info.opacity;
-                    $scope.component.matte.matteColor=$scope.component.object.level.matte.info.backgroundColor;
-                }else{
-                    $scope.component.matte.matteOn=false;
-                    $scope.component.matte.matteBgi="";
-                    $scope.component.matte.matteOpacity=0;
-                    $scope.component.matte.matteColor="选择颜色";
+                if ($scope.component.object.level.matte) {
+                    $scope.component.matte.matteOn = $scope.component.object.level.matte.matteOn;
+                    $scope.component.matte.matteBgi = $scope.component.object.level.matte.info.backgroundImg;
+                    $scope.component.matte.matteOpacity = $scope.component.object.level.matte.info.opacity;
+                    $scope.component.matte.matteColor = $scope.component.object.level.matte.info.backgroundColor;
+                } else {
+                    $scope.component.matte.matteOn = false;
+                    $scope.component.matte.matteBgi = "";
+                    $scope.component.matte.matteOpacity = 0;
+                    $scope.component.matte.matteColor = "选择颜色";
                 }
             })
         }
@@ -969,8 +977,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 })
             }
             //蒙板背景色 add by tang
-            if(op.name=='component.matte.matteColor'){
-                var matteColor=op.value;
+            if (op.name == 'component.matte.matteColor') {
+                var matteColor = op.value;
                 ProjectService.changeMatteBgc(matteColor);
             }
         }
@@ -1499,6 +1507,18 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 })
 
             }
+        }
+
+        function enterBackgroundMode() {
+            var selectedBackgroundModeId = $scope.component.dashboard.backgroundModeId;
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            var option = {
+                backgroundModeId: selectedBackgroundModeId,
+            };
+            ProjectService.ChangeAttributeBackgroundModeId(option,function(){
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
         }
 
         function enterDashboardValue(e) {
@@ -2630,23 +2650,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
             var oldOperate = ProjectService.SaveCurrentOperate();
 
-        var option={
-            dateTimeModeId:selectDateTimeModeId,
-            RTCModeId:selectRTCModeId
-        };
-        switch(selectObj.type){
-            case Type.MyTexTime:
-                ProjectService.ChangeAttributeTexTimeModeId(option, function () {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                });
-                break;
-            case Type.MyDateTime:
-                ProjectService.ChangeAttributeDateTimeModeId(option,function () {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                });
-                break;
+            var option = {
+                dateTimeModeId: selectDateTimeModeId,
+                RTCModeId: selectRTCModeId
+            };
+            switch (selectObj.type) {
+                case Type.MyTexTime:
+                    ProjectService.ChangeAttributeTexTimeModeId(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyDateTime:
+                    ProjectService.ChangeAttributeDateTimeModeId(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+            }
         }
-    }
 
         function changeGroupAlign() {
             var option = {
@@ -2787,28 +2807,29 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          */
 
         ProjectService.setScope($scope);
-        function matteSwitch(){
-            $scope.component.matte.matteOn=!$scope.component.matte.matteOn;
-            if($scope.component.matte.matteOn){
-               if($scope.component.object.level.matte){
-                   $scope.component.object.level.matte.matteOn=true;
-                   var matteData=$scope.component.object.level.matte;
-                   ProjectService.addMatte(matteData);
-               }else{
-                   ProjectService.addMatte();
-               }
-            }else if(!$scope.component.matte.matteOn&&$scope.component.object.level.matte){
+
+        function matteSwitch() {
+            $scope.component.matte.matteOn = !$scope.component.matte.matteOn;
+            if ($scope.component.matte.matteOn) {
+                if ($scope.component.object.level.matte) {
+                    $scope.component.object.level.matte.matteOn = true;
+                    var matteData = $scope.component.object.level.matte;
+                    ProjectService.addMatte(matteData);
+                } else {
+                    ProjectService.addMatte();
+                }
+            } else if (!$scope.component.matte.matteOn && $scope.component.object.level.matte) {
                 ProjectService.offMatte();
             }
         }
 
-        function enterMatteOpacity(){
-            var selectOpacity=$scope.component.matte.matteOpacity;
+        function enterMatteOpacity() {
+            var selectOpacity = $scope.component.matte.matteOpacity;
             ProjectService.changeMatteOpacity(selectOpacity);
         }
 
-        function enterMatteBgi(){
-            var selectImg=$scope.component.matte.matteBgi;
+        function enterMatteBgi() {
+            var selectImg = $scope.component.matte.matteBgi;
             ProjectService.changeMatteBgi(selectImg);
         }
-}]);
+    }]);

@@ -21825,7 +21825,8 @@
 	            threshold2 = widget.info.threshold2;
 	        if (thresholdModeId == '2') {
 	            var color3 = widget.texList[3].slices[0].color;
-	        };
+	        }
+	        ;
 	        var drawColor = 'rgba(0,0,0,1)';
 	        if (thresholdModeId == '1') {
 	            if (progressValue < threshold1) {
@@ -22973,8 +22974,10 @@
 	            var clockwise = widget.info.clockwise; // == '1' ? 1 : -1;
 	            var pointerLength = widget.info.pointerLength;
 	            var pointerWidth, pointerHeight;
-	            pointerWidth = pointerLength / Math.sqrt(2);
-	            pointerHeight = pointerLength / Math.sqrt(2);
+	            // pointerWidth = pointerLength / Math.sqrt(2);
+	            // pointerHeight = pointerLength / Math.sqrt(2);
+	            pointerWidth = widget.info.pointerImgWidth;
+	            pointerHeight = widget.info.pointerImgHeight;
 
 	            //console.log('curDashboardTagValue',curDashboardTagValue,'curArc',curArc);
 	            //if (curArc > maxArc) {
@@ -22992,7 +22995,9 @@
 	                    //simple mode
 	                    //background
 	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    if (widget.backgroundModeId === '0') {
+	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    }
 	                    //draw pointer
 	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    //draw circle
@@ -23002,7 +23007,9 @@
 	                    // complex mode
 	                    //background
 	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    if (widget.backgroundModeId === '0') {
+	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    }
 	                    //draw light strip
 	                    var lightStripTex = widget.texList[2].slices[0];
 	                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
@@ -23021,7 +23028,9 @@
 	                    //simple mode
 	                    //background
 	                    var bgTex = widget.texList[0].slices[0];
-	                    this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    if (widget.backgroundModeId === '0') {
+	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                    }
 	                    //draw pointer
 	                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    //draw circle
@@ -23032,7 +23041,9 @@
 	                    //background
 	                    if (curArc >= 0) {
 	                        var bgTex = widget.texList[0].slices[0];
-	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        if (widget.backgroundModeId === '0') {
+	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        }
 	                        //draw light strip
 	                        var lightStripTex = widget.texList[2].slices[0];
 	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
@@ -23041,7 +23052,9 @@
 	                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
 	                    } else if (curArc < 0) {
 	                        var bgTex = widget.texList[0].slices[0];
-	                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        if (widget.backgroundModeId === '0') {
+	                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+	                        }
 	                        //draw light strip
 	                        var lightStripTex = widget.texList[2].slices[0];
 	                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
@@ -23552,7 +23565,10 @@
 	                        //     curCanvasRealPoint=this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
 	                        // }
 	                        if (canvasList[i].transform) {
-	                            curCanvasRealPoint = this.invertPointFromTransform({ x: x, y: y }, { x: canvasList[i].x, y: canvasList[i].y }, canvasList[i].transform);
+	                            curCanvasRealPoint = this.invertPointFromTransform({ x: x, y: y }, {
+	                                x: canvasList[i].x,
+	                                y: canvasList[i].y
+	                            }, canvasList[i].transform);
 	                        }
 	                        // this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvasList[i].x,y:canvasList[i].y},canvasList[i].translate,canvasList[i].scale);
 	                        if (this.inRect(curCanvasRealPoint.x, curCanvasRealPoint.y, canvasList[i])) {
@@ -23579,7 +23595,10 @@
 	                    //     curCanvasRealPoint = this.recoverTargetPointFromTransformation({x:x,y:y},{x:canvas.x,y:canvas.y},canvas.translate,canvas.scale);
 	                    // }
 	                    if (canvas.transform) {
-	                        curCanvasRealPoint = this.invertPointFromTransform({ x: x, y: y }, { x: canvas.x, y: canvas.y }, canvas.transform);
+	                        curCanvasRealPoint = this.invertPointFromTransform({ x: x, y: y }, {
+	                            x: canvas.x,
+	                            y: canvas.y
+	                        }, canvas.transform);
 	                    }
 	                    //canvas.subCanvasList[canvas.curSubCanvasIdx];
 	                    if (canvas.subCanvasList && canvas.subCanvasList.length) {
@@ -23600,7 +23619,10 @@
 	                                //     curWidgetRealPoint = this.recoverTargetPointFromTransformation({x:curWidgetRealPoint.x,y:curWidgetRealPoint.y},{x:widget.info.left,y:widget.info.top},widget.translate,widget.scale);
 	                                // }
 	                                if (widget.transform) {
-	                                    curWidgetRealPoint = this.invertPointFromTransform({ x: curWidgetRealPoint.x, y: curWidgetRealPoint.y }, { x: widget.info.left, y: widget.info.top }, widget.transform);
+	                                    curWidgetRealPoint = this.invertPointFromTransform({
+	                                        x: curWidgetRealPoint.x,
+	                                        y: curWidgetRealPoint.y
+	                                    }, { x: widget.info.left, y: widget.info.top }, widget.transform);
 	                                }
 	                                if (this.inRect(curWidgetRealPoint.x, curWidgetRealPoint.y, widget, 'widget')) {
 	                                    targets.push(widget);
@@ -24838,7 +24860,8 @@
 	            ),
 	            React.createElement(
 	                'div',
-	                { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseMove: this.handleMove, onMouseUp: this.handleRelease },
+	                { className: 'canvas-wrapper col-md-9', onMouseDown: this.handlePress, onMouseMove: this.handleMove,
+	                    onMouseUp: this.handleRelease },
 	                React.createElement('canvas', { ref: 'canvas', className: 'simulator-canvas' }),
 	                React.createElement('canvas', { ref: 'offcanvas', hidden: true, className: 'simulator-offcanvas' }),
 	                React.createElement('canvas', { ref: 'tempcanvas', hidden: true, className: 'simulator-tempcanvas' })
@@ -24865,7 +24888,8 @@
 	                    { className: 'phical-keyboard-wrapper', style: { margin: '1em' } },
 	                    React.createElement(
 	                        'button',
-	                        { className: 'btn btn-default', onClick: this.handleMoveNext.bind(null, 'left') },
+	                        { className: 'btn btn-default',
+	                            onClick: this.handleMoveNext.bind(null, 'left') },
 	                        ' < '
 	                    ),
 	                    React.createElement(
@@ -24876,12 +24900,14 @@
 	                    ),
 	                    React.createElement(
 	                        'button',
-	                        { className: 'btn btn-default', onClick: this.handleMoveNext.bind(null, 'right') },
+	                        { className: 'btn btn-default',
+	                            onClick: this.handleMoveNext.bind(null, 'right') },
 	                        ' > '
 	                    )
 	                ),
 	                React.createElement(TagList, { tagList: _.cloneDeep(this.state.tagList), updateTag: this.updateTag }),
-	                React.createElement(RegisterList, { registers: this.state.registers || {}, handleRegisterChange: this.handleRegisterChange })
+	                React.createElement(RegisterList, { registers: this.state.registers || {},
+	                    handleRegisterChange: this.handleRegisterChange })
 	            )
 	        );
 	    }
