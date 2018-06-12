@@ -77,6 +77,16 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
                         });
                         break;
+                    case 'Cmd-X':
+                    case 'Ctrl-X':
+                        NavService.DoCopy(function(){
+                            $scope.$emit('DoCopy');
+                            var oldOperate = ProjectService.SaveCurrentOperate();
+                            NavService.DoDelete(function () {
+                                $scope.$emit('ChangeCurrentPage', oldOperate);
+                            })
+                        });
+                        break;
                     case 'Cmd-V':
                     case 'Ctrl-V':
                         var oldOperate=ProjectService.SaveCurrentOperate();

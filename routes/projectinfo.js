@@ -1116,7 +1116,7 @@ projectRoute.generateLocalProject = function(req, res){
                 //check and change resource url
                 var transformSrc = function(key,value){
                     //console.log('key');
-                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'){
+                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'||key=='backgroundImg'){
                         if(typeof(value)=='string'&&value!=''){
                             try{
                                 if(value.indexOf('http')==-1){
