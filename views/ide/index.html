@@ -3568,7 +3568,7 @@
                         </script>
                         <script type="text/ng-template" id="tagModal.html">
                             <div class="modal-header">
-                                <h3 class="modal-title">Tag</h3>
+                                <h3 class="modal-title">变量</h3>
                             </div>
 
                             <div class="modal-body">
@@ -3585,6 +3585,21 @@
                                                ng-model="tag.register"
                                                ng-true-value="true"
                                                ng-false-value="false" id="register" class="col-sm-1 register-activate-box"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <label class="col-sm-4 tag-modal-label">
+                                            变量类型
+                                        </label>
+                                        <div class="radio" class="col-sm-8">
+                                            <label>
+                                                <input type="radio" value="0" name="valueType" ng-model="tag.valueType" >
+                                                数字
+                                            </label>
+                                            <label>
+                                                <input type="radio" value="1" name="valueType" ng-model="tag.valueType" >
+                                                字符串
+                                            </label>
+                                        </div>
                                     </fieldset>
                                     <div class="register-option">
                                         <fieldset>

@@ -779,6 +779,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
  */
 ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 'ProjectService', 'tag', 'type', 'index', function ($scope, $uibModalInstance, TagService, ProjectService, tag, type, index) {
 
+    $scope.option1 = 1;
     $scope.tag = tag;
     $scope.type = type;
     $scope.showForceEditBtn = false;

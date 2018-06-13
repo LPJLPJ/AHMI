@@ -513,13 +513,16 @@
 }
 
 .deng-tagModel .tag-modal-label{
-    font-size: 12px;
+    font-size: 13px;
     width: 100%;
     padding-left: 0;
 }
 .deng-tagModel .col-sm-8{
     margin-bottom: 10px;
     height:28px;
+    font-size: 12px;
+}
+.deng-tagModel .radio{
     font-size: 12px;
 }
 
