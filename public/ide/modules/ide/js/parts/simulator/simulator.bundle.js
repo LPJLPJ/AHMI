@@ -20268,12 +20268,13 @@
 	            return null;
 	        }
 	    },
+	    //get num value
 	    getValueByTagName: function (name, defaultValue) {
 	        var curTag = this.findTagByName(name);
 	        if (curTag && curTag.value != undefined) {
-	            return Number(curTag.value);
+	            return this.getTagTrueValue(curTag.value);
 	        } else if (defaultValue) {
-	            return Number(defaultValue);
+	            return defaultValue;
 	        } else {
 	            return null;
 	        }
@@ -24353,7 +24354,7 @@
 	        } else {
 	            if (param) {
 	                if (param.tag) {
-	                    value = Number(this.getValueByTagName(param.tag));
+	                    value = this.getValueByTagName(param.tag);
 	                } else {
 	                    value = Number(param.value);
 	                }
@@ -24363,6 +24364,23 @@
 	        }
 	        // console.log(value,param,(typeof param));
 	        return value;
+	    },
+	    getParamType: function (param) {
+	        //0: num 1:tagNum 2:tagStr
+	        if (typeof param === 'number') {
+	            return 0;
+	        } else {
+	            if (param.tag) {
+	                var tag = this.findTagByName(param.tag);
+	                if (tag.valueType == 1) {
+	                    return 2;
+	                } else {
+	                    return 1;
+	                }
+	            } else {
+	                return 0;
+	            }
+	        }
 	    },
 	    process: function (cmds, index) {
 	        var cmdsLength = cmds.length;
@@ -24430,7 +24448,14 @@
 	                var targetTag = this.findTagByName(param1.tag);
 
 	                if (targetTag) {
-	                    var nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
+	                    var nextValue;
+	                    if (targetTag.valueType == 1) {
+	                        //tagStr
+	                        nextValue = '' + this.getTagTrueValue(targetTag.value) + this.getParamValue(param2);
+	                    } else {
+	                        //tagNum
+	                        nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
+	                    }
 	                    this.setTagByTag(targetTag, nextValue);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
@@ -24544,7 +24569,7 @@
 
 	                if (targetTag) {
 	                    // targetTag.value = parseInt(param2);
-	                    this.setTagByTag(targetTag, Number(this.getParamValue(param2)));
+	                    this.setTagByTag(targetTag, this.getParamValue(param2));
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
 	                    });
@@ -24552,18 +24577,18 @@
 	                break;
 	            //compare
 	            case 'EQ':
-	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
-	                var secondValue = Number(this.getParamValue(param2));
-	                if (firstValue == secondValue) {
+	                var firstValue = this.getParamValue(param1);
+	                var secondValue = this.getParamValue(param2);
+	                if (typeof firstValue === typeof secondValue && firstValue == secondValue) {
 	                    nextStep.step = 2;
 	                } else {
 	                    nextStep.step = 1;
 	                }
 	                break;
 	            case 'NEQ':
-	                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
-	                var secondValue = Number(this.getParamValue(param2));
-	                if (firstValue != secondValue) {
+	                var firstValue = this.getParamValue(param1);
+	                var secondValue = this.getParamValue(param2);
+	                if (typeof firstValue !== typeof secondValue || firstValue != secondValue) {
 	                    nextStep.step = 2;
 	                } else {
 	                    nextStep.step = 1;
@@ -24741,6 +24766,44 @@
 	                    }
 	                });
 	                break;
+	            case 'GET_STR_LEN':
+	                var targetTag = this.findTagByName(param1.tag);
+	                var param2Tag = this.findTagByName(param2.tag);
+	                if (targetTag && param2Tag && param2.valueType == 1) {
+	                    // targetTag.value = parseInt(param2);
+	                    this.setTagByTag(targetTag, param2Tag.value.length);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                };
+	            case 'DELETE_STR_FROM_TAIL':
+	                var targetTag = this.findTagByName(param1.tag);
+	                var deleteLen = Number(this.getParamValue(param2));
+	                if (targetTag && targetTag.valueType == 1) {
+	                    // targetTag.value = parseInt(param2);
+	                    var oldLen = targetTag.value.length;
+	                    var newLen = oldLen - deleteLen;
+	                    newLen = newLen < 0 ? 0 : newLen;
+	                    this.setTagByTagRawValue(targetTag.value.slice(0, newLen));
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                };
+	                break;
+	            case 'DELETE_STR_FROM_HEAD':
+	                var targetTag = this.findTagByName(param1.tag);
+	                var deleteLen = Number(this.getParamValue(param2));
+	                if (targetTag && targetTag.valueType == 1) {
+	                    // targetTag.value = parseInt(param2);
+	                    newLen = newLen < 0 ? 0 : newLen;
+	                    this.setTagByTagRawValue(targetTag.value.slice(deleteLen));
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                };
+	                break;
+	            default:
+	                console.log('unsupported cmd: ', op);
 
 	        }
 	        //handle timer
