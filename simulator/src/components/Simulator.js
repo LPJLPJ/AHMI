@@ -5385,7 +5385,8 @@ module.exports =   React.createClass({
                 var param2Tag = this.findTagByName(param2.tag);
                 if (targetTag&&param2Tag&&param2.valueType ==1) {
                     // targetTag.value = parseInt(param2);
-                    this.setTagByTag(targetTag, param2Tag.value.length)
+                    var param2Str = this.getParamValue(param2)
+                    this.setTagByTag(targetTag, param2Str.length)
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
@@ -5395,10 +5396,11 @@ module.exports =   React.createClass({
                 var deleteLen = Number(this.getParamValue(param2))
                 if (targetTag&&targetTag.valueType==1) {
                     // targetTag.value = parseInt(param2);
-                    var oldLen = targetTag.value.length
+                    var targetStr = this.getParamValue(param1)
+                    var oldLen = targetStr.length
                     var newLen = oldLen - deleteLen
                     newLen = newLen<0?0:newLen
-                    this.setTagByTagRawValue(targetTag.value.slice(0,newLen))
+                    this.setTagByName(param1.tag,targetStr.slice(0,newLen))
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
@@ -5409,8 +5411,9 @@ module.exports =   React.createClass({
                 var deleteLen = Number(this.getParamValue(param2))
                 if (targetTag&&targetTag.valueType==1) {
                     // targetTag.value = parseInt(param2);
+                    var targetStr = this.getParamValue(param1)
                     newLen = newLen<0?0:newLen
-                    this.setTagByTagRawValue(targetTag.value.slice(deleteLen))
+                    this.setTagByTag(targetTag,targetStr.slice(deleteLen))
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
