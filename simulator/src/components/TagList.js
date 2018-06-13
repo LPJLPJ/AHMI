@@ -122,10 +122,10 @@ module.exports = React.createClass({
                                 }
                                 return (
                                     <tr key={index} className='tag-table-row'>
-                                        <td className='tag-table-col' style={tdDefaultStyle}> {tag.name}</td>
+                                        <td className={'tag-table-col '+(tag.valueType==1?'tag-string':'tag-num')} style={tdDefaultStyle}> {tag.name}</td>
                                         <td className='tag-table-col' style={tdDefaultStyle}> {tag.indexOfRegister}</td>
                                         <td className='tag-table-col' style={tdDefaultStyle}>
-                                            <input className='value form-control' name={tag.name} type='text' disabled={disabled}
+                                            <input className={'value form-control '} name={tag.name} type='text' disabled={disabled}
                                                    value={curValue}
                                                    onFocus={this.handleValueInputFocus}
                                                    onBlur={this.handleValueInputBlur}
