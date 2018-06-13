@@ -1629,20 +1629,30 @@
                                    ng-keypress="component.enterMaxAlert($event)"
                                    type="number">
                         </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">指针长度</span>
-                            <input class="my-attr-number-input form-control"
-                                   ng-model="component.object.level.info.pointerLength"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.dashboard.enterPointerLength($event)"
-                                   type="number">
-                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">指针长度</span>-->
+                            <!--<input class="my-attr-number-input form-control"-->
+                                   <!--ng-model="component.object.level.info.pointerLength"-->
+                                   <!--ng-blur="component.restore()"-->
+                                   <!--ng-keypress="component.dashboard.enterPointerLength($event)"-->
+                                   <!--type="number">-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
                             <select class="my-attr-number-input form-control"
                                     ng-model="component.dashboard.dashboardModeId"
                                     ng-change="component.dashboard.enterDashboardMode($event)">
                                 <option ng-repeat="mode in component.dashboard.dashboardModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">无背景模式</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.dashboard.backgroundModeId"
+                                    ng-change="component.dashboard.enterBackgroundMode($event)">
+                                <option ng-repeat="mode in component.dashboard.backgroundModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>
                             </select>

@@ -3942,90 +3942,21 @@ ideServices
                         break;
                     default :break;
                 }
-                // if(getCurrentSubLayer()){
-                //     var currentSubLayer=getCurrentSubLayer();
-                //     currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                // }else {
-                //     currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
-                // }
                 _self.ReleaseObject({});
                 subLayerNode.renderAll();
                 pageNode.renderAll();
                 _successCallback && _successCallback(currentOperate);
 
-            }
+            };
 
             //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
             this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
                 var templateId = TemplateProvider.getTemplateId();
                 var selectObj = _self.getCurrentSelectObject();
+                var level = selectObj.level;
                 selectObj.level.dashboardModeId = _option.dashboardModeId;
-                if(selectObj.level.dashboardModeId=='0')
-                {
-                    selectObj.level.texList=[
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘背景',
-                            slices:[{
-                                color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
-                                name:'仪表盘背景'
-                            }]
-                        },
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘指针',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
-                                name:'仪表盘指针'
-                            }]
-                        }
-                    ]
-                }else if(selectObj.level.dashboardModeId=='1'){
-                    selectObj.level.texList=[
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘背景',
-                            slices:[{
-                                color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
-                                name:'仪表盘背景'
-                            }]
-                        },
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘指针',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
-                                name:'仪表盘指针'
-                            }]
-                        },
-                        {
-                            currentSliceIdx:0,
-                            name:'光带效果',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
-                                name:'光带效果'
-                            }]
+                level.texList = TemplateProvider.getDashboardTex(level.dashboardModeId,level.backgroundModeId);
 
-                        }
-                    ]
-                }else if(selectObj.level.dashboardModeId=='2'){
-                    selectObj.level.texList=[
-                        {
-                            currentSliceIdx:0,
-                            name:'光带效果',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
-                                name:'光带效果'
-                            }]
-                        }
-                    ];
-                }
                 //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
                 var level = _.cloneDeep(selectObj.level);
                 arg={
@@ -4036,6 +3967,21 @@ ideServices
                 };
                 selectObj.target.fire('changeDashboardMode',arg);
             };
+
+            this.ChangeAttributeBackgroundModeId = function(_option,_successCallback){
+                var selectObj = _self.getCurrentSelectObject();
+                var level = selectObj.level;
+                if(_option.backgroundModeId===level.backgroundModeId){
+                    return;
+                }
+                selectObj.level.backgroundModeId = _option.backgroundModeId;
+                var arg = {
+                    backgroundModeId:_option.backgroundModeId,
+                    callback:_successCallback,
+                };
+                selectObj.target.fire('changeBackgroundMode',arg)
+            };
+
             this.changeVideoSource=function(_option,_successCallback){
                 var VideoSource = _option.source;
                 var selectObj= _self.getCurrentSelectObject();
@@ -4098,7 +4044,6 @@ ideServices
 
             };
             this.ChangeAttributeButtonCount= function (_option, _successCallback) {
-                //console.log(_successCallback);
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.info.count=_option.count;
                 checkTexList(selectObj.level,selectObj.level.info.count, function () {
@@ -4268,11 +4213,25 @@ ideServices
 
             this.ChangeAttributeTexList= function (_actionObj,_successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
-                selectObj.level.texList=_actionObj;
-                var arg={
-                    level:selectObj.level,
-                    callback:_successCallback
+                var level = selectObj.level;
+                level.texList=_actionObj;
+                switch(level.type){
+                    case Type.MyDashboard:
+                        var info = level.info;
+                        var texList = level.texList;
+                        if(level.dashboardModeId!=='2'&&!!texList[1].slices[0].imgSrc){
+                            var img = ResourceService.getResourceFromCache(texList[1].slices[0].imgSrc);
+                            info.pointerImgWidth = img.width;
+                            info.pointerImgHeight = img.height;
+                        }
+                        break;
+                    default:
+                        break;
                 }
+                var arg={
+                    level:level,
+                    callback:_successCallback
+                };
                 selectObj.target.fire('changeTex',arg);
             };
 
