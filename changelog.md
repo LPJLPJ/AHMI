@@ -243,3 +243,11 @@ fix:
     2. animation bug  fix
 update:
     1. new draw font logic
+
+1.10.3
+add:
+    1.dashboard add no-background mode
+    2.middleWareService to process project data
+fix:
+update:
+    1.pointer of dashboard support rect image and not render in generate
