@@ -513,13 +513,16 @@
 }
 
 .deng-tagModel .tag-modal-label{
-    font-size: 12px;
+    font-size: 13px;
     width: 100%;
     padding-left: 0;
 }
 .deng-tagModel .col-sm-8{
     margin-bottom: 10px;
     height:28px;
+    font-size: 12px;
+}
+.deng-tagModel .radio{
     font-size: 12px;
 }
 
@@ -778,6 +781,49 @@
     width: 60%;
 }
 /*蒙板*/
+.switch-button{
+    margin:0 auto;
+    position: relative;
+    background: #008CEE;
+    width: 38px;
+    height: 20px;
+    cursor: pointer;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+    -webkit-transition:background-color 0.5s ease-in-out 0s;
+    -moz-transition:background-color 0.5s ease-in-out 0s;
+    transition:background-color 0.5s ease-in-out 0s;
+    -webkit-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    -moz-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+}
+.switch-button .switch-flag{
+    display: block;
+    position: absolute;
+    width:20px;
+    height: 20px;
+    left:18px;
+    background: #fff;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+    -webkit-transition:left 0.2s ease-in-out 0s;
+    -moz-transition:left 0.2s ease-in-out 0s;
+    transition: left 0.2s ease-in-out 0s;
+    -webkit-box-shadow:1px 0 1px 1px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:1px 0 1px 1px rgba(0,0,0,0.3);
+    box-shadow: 1px 0 1px 1px rgba(0,0,0,0.3);
+}
+.switch-button-close{
+    background:#eee;
+}
+.switch-button-close .switch-flag{
+    left:0px;
+}
+
+
+
 .my-matte{
     margin-bottom: 10px;
 }
@@ -815,40 +861,9 @@
     float: right;
     margin-right: calc(100% - 120px);
     line-height: normal;
-    width: 70px;
+    width: 38px;
     height: 20px;
-    border: 1px solid;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    border-radius: 5px;
-    overflow: hidden;
     cursor: pointer;
-}
-.matte-switch-container{
-    width: 105px;
-    margin-left: -35px;
-    transition: all linear 0.2s;
-}
-.matte-switch-container span{
-    width: 35px;
-    height: 20px;
-    float: left;
-    color: white;
-    text-align: center;
-    line-height: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-.matte-switch-container span:first-of-type{
-    background-image: linear-gradient(to bottom, #2f96b4, #5bc0de);
-}
-.matte-switch-container span:nth-of-type(2){
-    background-image: linear-gradient(to bottom, #ffffff, #ffffff);
-}
-.matte-switch-container span:last-of-type{
-    background-image: linear-gradient(to bottom, #bd362f, #ee5f5b);
-}
-.matte-switch-on{
-    margin-left: 0;
 }
 
 /*批量选择*/
@@ -881,12 +896,17 @@
 .pullingWrap{
     width: 100%;
 }
-.pullingWidth .pullingHeight{
-    width: 50%;
-    float: left;
+
+.pullingWrap input,.customResolutionWrap input{
+    width: 20%!important;
 }
-.pullingWidth input,.pullingHeight input,.customResolutionWrap input{
-    width: 20%;
-    border-radius: 5px;
-    outline: none;
+
+.pullingWrap label,.customResolutionWrap label{
+    line-height: 32px;
+    padding-right: 0;
+}
+
+.layer-preview{
+    float: right;
+    margin-right: 20px;
 }

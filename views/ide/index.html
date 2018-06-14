@@ -93,6 +93,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/userType.js"></script>
     <script src="../../public/ide/modules/ide/min-js/socketIOService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/middleWareService.js"></script>
 
 
     <!--controllers-->
@@ -118,6 +119,8 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>
     <!--<script src="../../public/ide/modules/ide/js/parts/attr/SortableController.js"></script>-->
+    <script type="text/javascript" src="../../public/ide/modules/ide/min-js/myDirective.js"></script>
+
 
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
     <!--directive-->
@@ -245,13 +248,13 @@
                                         </select>
                                     </div>
                                     <div ng-show="selectCustomResolution=='custom'" class="customResolutionWrap">
-                                        <div class="form-group">
-                                            <span>自定义宽度：</span>
-                                            <input type="number" placeholder="1~1920" ng-model="saveAsWidth" min="0" max="1920"/>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2">自定义宽度：</label>
+                                            <input type="number" placeholder="1~1920" class="form-control col-sm-4" ng-model="saveAsWidth" min="0" max="1920"/>
                                         </div>
-                                        <div class="form-group">
-                                            <span>自定义高度：</span>
-                                            <input type="number" placeholder="1~1920" ng-model="saveAsHeight" min="0" max="1920"/>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2">自定义高度：</label>
+                                            <input type="number" placeholder="1~1920" class="form-control col-sm-4" ng-model="saveAsHeight" min="0" max="1920"/>
                                         </div>
                                     </div>
                                 </div>
@@ -262,15 +265,13 @@
                                     <input type="checkbox" ng-model="isPulling"/>
                                 </div>
                                 <div ng-show="isPulling" class="pullingWrap">
-                                    <div class="form-group pullingWidth">
-                                        <span>宽度比例：</span>
-                                        <span>1&nbsp;&nbsp;:</span>
-                                        <input type="number" class="form-group" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
+                                    <div class="form-group row">
+                                        <label for="pullingWidth" class="col-sm-2">宽度比例 1:</label>
+                                        <input type="number" class="form-control col-sm-4" id="pullingWidth" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
                                     </div>
-                                    <div class="form-group pullingHeight">
-                                        <span>高度比例：</span>
-                                        <span>1&nbsp;&nbsp;:</span>
-                                        <input type="number" class="form-group" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
+                                    <div class="form-group row">
+                                        <label for="pullingHeight" class="col-sm-2">宽度比例 1:</label>
+                                        <input type="number" class="form-control col-sm-4" id="pullingHeight" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
                                     </div>
                                 </div>
 
@@ -759,11 +760,7 @@
                         <div class="my-matte lg">
                             <span class="my-attr-title dengPage-title" style="width: 100%">蒙板</span>
                             <div class="my-matte-switch" ng-click="component.matte.matteSwitch()">
-                                <div class="matte-switch-container" ng-class="{'matte-switch-on':component.matte.matteOn}">
-                                    <span>on</span>
-                                    <span></span>
-                                    <span>off</span>
-                                </div>
+                                <div id='btn' class="switch-button" ng-class="{'switch-button-close':!component.matte.matteOn}"><span class="switch-flag"></span></div>
                             </div>
                             <div class="my-matte-wrap" ng-show="component.matte.matteOn">
                                 <div>
@@ -1635,20 +1632,30 @@
                                    ng-keypress="component.enterMaxAlert($event)"
                                    type="number">
                         </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">指针长度</span>
-                            <input class="my-attr-number-input form-control"
-                                   ng-model="component.object.level.info.pointerLength"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.dashboard.enterPointerLength($event)"
-                                   type="number">
-                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">指针长度</span>-->
+                            <!--<input class="my-attr-number-input form-control"-->
+                                   <!--ng-model="component.object.level.info.pointerLength"-->
+                                   <!--ng-blur="component.restore()"-->
+                                   <!--ng-keypress="component.dashboard.enterPointerLength($event)"-->
+                                   <!--type="number">-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
                             <select class="my-attr-number-input form-control"
                                     ng-model="component.dashboard.dashboardModeId"
                                     ng-change="component.dashboard.enterDashboardMode($event)">
                                 <option ng-repeat="mode in component.dashboard.dashboardModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">无背景模式</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.dashboard.backgroundModeId"
+                                    ng-change="component.dashboard.enterBackgroundMode($event)">
+                                <option ng-repeat="mode in component.dashboard.backgroundModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>
                             </select>
@@ -3574,7 +3581,7 @@
                         </script>
                         <script type="text/ng-template" id="tagModal.html">
                             <div class="modal-header">
-                                <h3 class="modal-title">Tag</h3>
+                                <h3 class="modal-title">变量</h3>
                             </div>
 
                             <div class="modal-body">
@@ -3591,6 +3598,21 @@
                                                ng-model="tag.register"
                                                ng-true-value="true"
                                                ng-false-value="false" id="register" class="col-sm-1 register-activate-box"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <label class="col-sm-4 tag-modal-label">
+                                            变量类型
+                                        </label>
+                                        <div class="radio" class="col-sm-8">
+                                            <label>
+                                                <input type="radio" value="0" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
+                                                数字
+                                            </label>
+                                            <label>
+                                                <input type="radio" value="1" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
+                                                字符串
+                                            </label>
+                                        </div>
                                     </fieldset>
                                     <div class="register-option">
                                         <fieldset>
@@ -3966,7 +3988,7 @@
 
 
                 <div class="my-toggle-area" ng-show="component.bottom.page.expand" style="padding-left: 20px;" ui-tree="myLayerTree" data-drag-delay="200" data-drag-enabled="true">
-                    <div ui-tree-nodes="component.bottom.page.layers" ng-model="component.bottom.page.layers">
+                    <div ui-tree-nodes ng-model="component.bottom.page.layers">
                         <div ng-repeat="layer in component.bottom.page.layers" ui-tree-node>
                             <div class="my-levels-line" ui-tree-handle>
                                 <div class="my-levels-title" ng-class="{true:'selected'}[layer.selected]">
@@ -4033,6 +4055,5 @@
 <!--<script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
 <script type="text/javascript" src="../../public/general/js/versionTag.js"></script>
-<script type="text/javascript" src="../../public/ide/modules/ide/js/myDirective.js"></script>
 </body>
 </html>

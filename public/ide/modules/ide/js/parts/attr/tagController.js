@@ -816,6 +816,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
  */
 ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 'ProjectService', 'tag', 'type', 'index', function ($scope, $uibModalInstance, TagService, ProjectService, tag, type, index) {
 
+    $scope.option1 = 1;
     $scope.tag = tag;
     $scope.type = type;
     $scope.showForceEditBtn = false;
@@ -858,6 +859,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
                 toastr.error('SysTmr_数字_t 为定时器保留名称');
                 return;
             }
+            $scope.tag.valueType = parseInt($scope.tag.valueType,10);
             $uibModalInstance.close($scope.tag);
         }
     };
