@@ -12,7 +12,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         var checkTagTypeIsStr = function(tagName){
             var result = false;
             for(var i=0,il=tagList.length;i<il;i++){
-                if(tagName===tagList[i].name&&(tagList[i].valueType==='1')){
+                if(tagName===tagList[i].name&&(tagList[i].valueType===1)){
                     result = true;
                     return;
                 }

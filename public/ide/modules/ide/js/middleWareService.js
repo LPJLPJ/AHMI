@@ -254,8 +254,10 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
+        var tags, timers;
 
         project = arguments[0];
+        console.log('haha',project);
 
         pages = project.pages || [];
         pages.forEach(function (page) {
@@ -278,6 +280,22 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 layers.showSubLayer = subLayers[0];
             })
         });
+
+        tags = project.customTags;
+        tags.forEach(function (tag) {
+            if (tag.valueType === undefined) {
+                tag.valueType = 0;
+            }
+        });
+
+        timers = project.customTags;
+        timers.forEach(function (timer) {
+            if (timer.valueType === undefined) {
+                timer.valueType = 0;
+            }
+        });
+
+        console.log('keke',project);
     }
 
     //检查工程版本是否过时
