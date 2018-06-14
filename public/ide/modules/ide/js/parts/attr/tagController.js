@@ -550,6 +550,37 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         readTagsInfo();
     }
 
+    //get sysTmr number
+    function getTimerTagNum(tag) {
+        var m = tag.match(/SysTmr_([0-9]+)_t/)
+        if(m && m[1]){
+            return Number(m[1])
+        }else{
+            return null
+        }
+    }
+    //check timer used
+    function canTimerNumChange(targetNum) {
+        var requiredTagNames = ProjectService.getRequiredTagNames();
+        var usedTmrs = requiredTagNames.map(function (t) {
+            return getTimerTagNum(t)
+        }).filter(function (t) {
+            return t!==null
+        })
+        var maxNum = -1
+        for(var i=0;i<usedTmrs.length;i++){
+            if(usedTmrs[i]>maxNum){
+                maxNum = usedTmrs[i]
+            }
+        }
+        if(targetNum < maxNum+1){
+            toastr.warning('该定时器已经被使用');
+            return false
+        }else{
+            return true
+        }
+    }
+
     function addTimerNum() {
         $scope.component.timerNum++;
         //模拟input标签enter输入
@@ -559,11 +590,14 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     }
 
     function minusTimerNum() {
-        $scope.component.timerNum--;
-        //模拟input标签enter输入
-        var ev = {};
-        ev.keyCode = 13;
-        setTimerNum(ev);
+        if (canTimerNumChange($scope.component.timerNum-1)){
+            $scope.component.timerNum--;
+            //模拟input标签enter输入
+            var ev = {};
+            ev.keyCode = 13;
+            setTimerNum(ev);
+        }
+
     }
 
     function setTimerNum(ev) {
@@ -582,8 +616,11 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             $scope.component.timerNum = initNum;
             return;
         }
-        TagService.setTimerNum($scope.component.timerNum);
-        TagService.setTimerTags($scope.component.timerNum);
+        if (canTimerNumChange($scope.component.timerNum)){
+            TagService.setTimerNum($scope.component.timerNum);
+            TagService.setTimerTags($scope.component.timerNum);
+        }
+
     }
 
     function restoreTimerNum() {
