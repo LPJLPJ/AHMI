@@ -178,10 +178,18 @@ ideServices.service('TagService', [function () {
 
     //设置Timer的tags
     this.setTimerTags = function (num) {
-        timerTags.length = 0;//先清空timerTags
-        for (var i = 0; i < num; i++) {
-            timerTags[i] = {name: "", register: false, indexOfRegister: null, value: 0};
-            timerTags[i].name = "SysTmr_" + i + "_t";
+        var curLength = timerTags.length;
+        if(num<0){
+            return;
+        }
+        if(num>curLength){
+            for(var i=curLength,il=num;i<il;i++){
+                timerTags.push(new Tag("SysTmr_" + i + "_t", false, null, 'true', 0, 'timer', 'forbidden'));
+            }
+        }else if(num<curLength){
+            timerTags.splice(num,curLength-num);
+        }else{
+            return;
         }
     };
 
