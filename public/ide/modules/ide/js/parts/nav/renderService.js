@@ -207,9 +207,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         return array[array.length-1];
     }
 
-    function makeOutputFilenameFromId(id,index) {
+    function makeOutputFilenameFromId(id,index,type) {
+        type = type||'png'
         var imgName = id.split('.').join('-');
-        var outputFilename = 'r-'+imgName +'-'+ index+'.png';
+        var outputFilename = 'r-'+imgName +'-'+ index+'.'+type;
         return outputFilename
     }
 
@@ -249,6 +250,71 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     renderer.prototype.addImage = function (imageUrl, image) {
         this.images[imageUrl] = image;
     };
+    
+    
+    //render page background
+    
+    renderer.prototype.renderPage = function (width,height,page,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var _canvas = new Canvas(width,height);
+        var ctx = _canvas.getContext('2d');
+        var img =page.backgroundImage;
+        ctx.clearRect(0,0,width,height);
+        ctx.save();
+        //color
+        if(page.backgroundColor){
+            renderingX.renderColor(ctx,new Size(width,height),new Pos(),page.backgroundColor);
+        }
+
+        var imgUrl;
+        if (img !== ''){
+            //draw image
+            imgUrl = path.join(srcRootDir,img);
+            var targetImageObj = this.getTargetImage(imgUrl);
+            if (!targetImageObj){
+                //not added to images
+                var imgObj = new Image();
+                try{
+                    imgObj.src = loadImageSync(imgUrl);
+                    this.addImage(imgUrl,imgObj);
+                    targetImageObj = imgObj;
+                }catch (err){
+                    targetImageObj = null;
+                }
+
+            }
+            renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+            //generate file
+            // var imgName = widget.id.split('.').join('-');
+            // var outputFilename = imgName +'-'+ index+'.png';
+
+            var outputFilename = makeOutputFilenameFromId(page.id,0,'jpg')
+
+            // console.log('dstDir',dstDir,'outputFilename',outputFilename);
+            var outpath = path.join(dstDir,outputFilename);
+            _canvas.output(outpath,function (err) {
+                if(err){
+                    cb&&cb(err)
+                }else{
+                    //this.trackedRes.push(new ResTrack(img,page.backgroundColor,null,outputFilename,width,height,page))
+
+                    page.backgroundImage = path.join(imgUrlPrefix||'',outputFilename);
+
+
+                    cb && cb()
+                }
+
+
+            }.bind(this));
+
+            ctx.restore();
+
+        }else{
+            cb && cb()
+        }
+
+
+
+    }
 
     renderer.prototype.renderButton = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
@@ -339,7 +405,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             cb&&cb();
         }
     };
-
 
     renderer.prototype.renderButtonGroup = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
@@ -490,7 +555,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                         this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
                         curSlice.originSrc = curSlice.imgSrc;
-                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+
+                        if (i===1){
+                            //pointer
+
+                        }else{
+                            curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        }
                         totalSlices-=1;
                         if (totalSlices<=0){
                             cb && cb();
@@ -812,6 +883,198 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
     };
 
+    renderer.prototype.renderProgress = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        //progressModeId
+        var info = widget.info;
+        if (!!info){
+
+
+
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+            var totalSlices
+            var slices
+            if(info.progressModeId == '0'){
+                slices = widget.texList.map(function (t) {
+                    return t.slices[0]
+                })
+            }else{
+                slices = [widget.texList[0].slices[0]]
+            }
+            totalSlices = slices.length
+            slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slice
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+
+                //output
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices===0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    }
+
+    renderer.prototype.renderSlideBlock = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        //progressModeId
+        var info = widget.info;
+        if (!!info){
+
+
+
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+            var totalSlices
+            var slices
+            slices = widget.texList.map(function (t) {
+                return t.slices[0]
+            })
+            totalSlices = slices.length
+            slices.map(function (slice,i) {
+                var curSlice = slice
+                var imgObj
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+
+                }
+                var tWidth,tHeight
+                tWidth = targetImageObj&&targetImageObj.width||0
+                tHeight = targetImageObj&&targetImageObj.height||0
+                var canvas,ctx
+                if(i==1){
+                    canvas = new Canvas(tWidth,tHeight);
+                    ctx = canvas.getContext('2d');
+                    ctx.clearRect(0,0,tWidth,tHeight);
+
+                }else{
+                    canvas = new Canvas(width,height);
+                    ctx = canvas.getContext('2d');
+                    ctx.clearRect(0,0,width,height);
+                }
+
+
+
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+
+                ctx.save();
+
+                if(i==0){
+                    //render color
+                    renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                }
+
+                //render image;
+                if (targetImageObj){
+                    if (i==1){
+                        renderingX.renderImage(ctx,new Size(tWidth,tHeight),new Pos(),targetImageObj,new Pos(),new Size(tWidth,tHeight));
+                    }else{
+                        renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                    }
+
+                }
+
+
+                //output
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
+                var outpath = path.join(dstDir,outputFilename);
+                if (i==1&&!targetImageObj){
+                    //no output
+                    totalSlices -= 1;
+                    if (totalSlices===0){
+                        cb && cb();
+                    }
+                }else{
+                    canvas.output(outpath,function (err) {
+                        if (err){
+                            cb && cb(err);
+                        }else{
+                            this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                            // console.log(_.cloneDeep(this.trackedRes))
+                            //write widget
+                            curSlice.originSrc = curSlice.imgSrc;
+                            curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                            //if last trigger cb
+                            totalSlices -= 1;
+                            if (totalSlices===0){
+                                cb && cb();
+                            }
+                        }
+                    }.bind(this));
+                }
+
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    }
+
     renderer.prototype.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
         var width = info.width;
@@ -863,7 +1126,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             cb&&cb();
         }
     };
-
 
     renderer.prototype.renderTextArea = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
@@ -971,6 +1233,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             case 'MyTexTime':
                 this.renderTexTime(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
+            case 'MyProgress':
+                this.renderProgress(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MySlideBlock':
+                this.renderSlideBlock(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
             default:
                 cb&&cb();
         }
@@ -1061,8 +1329,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         var ResourceUrl = ResourceService.getResourceUrl();
         var DataFileUrl = path.join(ResourceUrl,'data.json');
         var allWidgets = [];
+        var allPageList = []
         for (var i=0;i<dataStructure.pageList.length;i++){
             var curPage = dataStructure.pageList[i];
+            allPageList.push(curPage)
             for (var j=0;j<curPage.canvasList.length;j++){
                 var curCanvas = curPage.canvasList[j];
                 for (var k=0;k<curCanvas.subCanvasList.length;k++){
@@ -1074,11 +1344,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }
         }
         var fontList =  FontGeneratorService.getFontCollections(allWidgets),
-            totalNum = allWidgets.length+fontList.length,
+            totalNum = allPageList.length+allWidgets.length+fontList.length,
             m = 0,
             curWidget = null,
             curFont = null;
-
+            curRenderPage = null;
         if (totalNum>0){
             var okFlag = true;
             var cb = function (err) {
@@ -1142,6 +1412,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             if (local){
                 Renderer = new renderer();
                 var ViewUrl = path.join(global.__dirname,path.dirname(window.location.pathname));
+                if(allPageList.length){
+                    for(m=0;m<allPageList.length;m++){
+                        curRenderPage = allPageList[m]
+                        Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,ViewUrl,ResourceUrl,ResourceUrl,cb)
+                    }
+                }
                 if(fontList.length!==0){
                     for(m=0;m<fontList.length;m++){
                         curFont = fontList[m];
@@ -1154,6 +1430,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
             }else{
                 Renderer = new renderer(prepareCachedRes());
+                if(allPageList.length){
+                    for(m=0;m<allPageList.length;m++){
+                        curRenderPage = allPageList[m]
+                        Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,'/',ResourceUrl,ResourceUrl,cb)
+                    }
+                }
                 //生成不同种类的字符列表
                 if(fontList.length!==0){
                     for(m=0;m<fontList.length;m++){
@@ -1308,7 +1590,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         if (!!info){
             //font
             var text = '';
-            v
 
             //trans each slide
             var width = info.width;

@@ -35,7 +35,7 @@ ideServices.
     };
 
     this.getCopyStatus= function () {
-        return (ProjectService.getCurrentSelectObject().type!=Type.MyPage&&ProjectService.getCurrentSelectObject().type!=Type.MySubLayer)
+        return (ProjectService.getCurrentSelectObject().type!=Type.MyPage)
     };
 
     this.getPasteStatus= function () {
@@ -51,7 +51,10 @@ ideServices.
             ProjectService.CopyLayer(selectObject.level, function () {
                 //$scope.$emit('DoCopy');
                 _callback&&_callback();
-
+            })
+        }else if(selectObject.type==Type.MySubLayer){
+            ProjectService.CopySubLayer(selectObject.level, function () {
+                _callback&&_callback();
             })
         }else if (selectObject.type==Type.MyGroup&&selectObject.mode==0){
             ProjectService.CopyLayerGroup(selectObject.target, function () {

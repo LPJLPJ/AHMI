@@ -121,7 +121,9 @@ ideServices
                     value:45,
                     offsetValue:0,
                     pointerLength:185,
-                    enableAnimation:false
+                    enableAnimation:false,
+                    pointerImgWidth:0,
+                    pointerImgHeight:0
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -249,7 +251,6 @@ ideServices
 
         };
 
-
         this.getDefaultLayer = function () {
             var pageNode=CanvasService.getPageNode();
             var info = {
@@ -349,7 +350,7 @@ ideServices
                 }]
 
             }
-        }
+        };
 
 
         this.getDefaultButton= function () {
@@ -369,6 +370,7 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultKnob=function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -394,6 +396,7 @@ ideServices
 
             }
         };
+
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -494,7 +497,7 @@ ideServices
                     }]
                 }]
             }
-        }
+        };
 
         this.getDefaultButtonTex= function () {
             return{
@@ -510,7 +513,7 @@ ideServices
                     name:'按下后'
                 }]
             }
-        }
+        };
 
         this.getDefaultProgress= function () {
             var info = _.cloneDeep(defaultProgress.info);
@@ -526,11 +529,10 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:texList
-
+                texList:texList,
+                transition:_.cloneDeep(defaultTransition)
             }
         };
-
 
         this.getDefaultDashboard= function () {
             var info = _.cloneDeep(defaultDashboard.info);
@@ -539,13 +541,14 @@ ideServices
                 id: Math.random().toString(36).substr(2),
                 info: info,
                 dashboardModeId:'0',//0-简单模式，1-复杂模式,2-精简模式
+                backgroundModeId:'0', //0-不启用无背景模式 //1-启用无背景模式
                 name: 'NewDashboard',
                 type: Type.MyDashboard,
                 expand:true,
                 url:'',
                 zIndex:0,
                 texList:texList,
-
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 
@@ -725,6 +728,7 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultRotateImg=function(){
             var info = _.cloneDeep(defaultRotateImage.info);
             var texList=_.cloneDeep(defaultRotateImage.texList);
@@ -791,6 +795,7 @@ ideServices
 
             }
         };
+
         this.getDefaultTexTime=function(){
             var info={
                 characterW:30,
@@ -866,6 +871,7 @@ ideServices
                 zIndex:0
             }
         };
+
         this.getDefaultSlideBlock = function(){
             var info = _.cloneDeep(defaultSlideBlock.info);
             var texList = _.cloneDeep(defaultSlideBlock.texList);
@@ -880,6 +886,7 @@ ideServices
                 texList:texList
             }
         };
+
         this.getDefaultVideo = function(){
             var info = {
                 width:215,height:110,
@@ -907,6 +914,7 @@ ideServices
 
             }
         };
+
         this.getDefaultAnimation = function(){
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
@@ -934,8 +942,7 @@ ideServices
                 }]
 
             }
-        }
-
+        };
 
         function _getRandomColor(){
             var r = _.random(64, 255);
@@ -944,13 +951,74 @@ ideServices
             return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
         }
 
-
         var templateId=null;
         this.setTemplateId = function(id){
             templateId=id;
-        }
+        };
         this.getTemplateId = function(){
             return templateId;
+        };
+
+        //matteTemplate  add by tang
+        this.getDefaultMatte=function(){
+            var pageNode=CanvasService.getPageNode();
+            var info={
+                width:pageNode.getWidth()/pageNode.getZoom(),
+                height:pageNode.getHeight()/pageNode.getZoom(),
+                left: 0,
+                top: 0,
+                backgroundColor:'rgba(0,0,0,0)',
+                backgroundImg:"",
+                opacity:0,
+                originX: 'center',
+                originY: 'center'
+            };
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                type:'MyMatte',
+                matteOn:false,
+                info:info
+            }
+        };
+
+
+        //获取仪表盘的背景纹理
+        this.getBackgroundSlice = function(){
+            return defaultDashboard.texList[0];
+        };
+
+        // 用于切换仪表盘模式，返回不同的texList
+        this.getDashboardTex = function(mode){
+            var background = _.cloneDeep(defaultDashboard.texList[0]);
+            var pointer = _.cloneDeep(defaultDashboard.texList[1]);
+            var lightband = {
+                currentSliceIdx:0,
+                name:'光带效果',
+                slices:[{
+                    color:'rgba(0,0,0,0)',
+                    imgSrc:'',
+                    name:'光带效果'
+                }]
+            };
+
+            var tex = [];
+            switch (mode){
+                case '0':
+                    tex.push(background,pointer);
+                    break;
+                case '1':
+                    tex.push(background,pointer,lightband);
+                    break;
+                case '2':
+                    tex.push(lightband);
+                    break;
+                default:
+                    tex.push(background,pointer);
+                    break;
+
+            }
+            return tex
         }
 
     }]);

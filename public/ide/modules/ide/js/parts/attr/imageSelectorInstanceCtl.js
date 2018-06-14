@@ -1,7 +1,7 @@
 /**
  * Created by Zzen1sS on 24/3/2016
  */
-ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService) {
+ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$uibModal,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService) {
 
 
     $scope.images = ResourceService.getAllImagesAndTemplates();
@@ -105,6 +105,16 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         $scope.tex.slices.splice($scope.curIndex+1,0,TexService.getDefaultSlice());
     };
 
+    //向上一行插入 tang
+    $scope.addSlicePrev=function(){
+        if($scope.curIndex==0){
+            $scope.tex.slices.unshift(TexService.getDefaultSlice());
+        }else{
+            $scope.tex.slices.splice($scope.curIndex,0,TexService.getDefaultSlice());
+        }
+        $scope.curIndex+=1;
+    };
+
     $scope.removeSlice = function (index) {
         if($scope.tex.slices.length==1){
             toastr.warning('至少有一张纹理');
@@ -131,6 +141,109 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$timeout', '$uibModalInsta
         }else{
             slice.color=_getRandomColor();
         }
+    };
+
+    //开机动画批量插入 add by tang
+    $scope.batchSelect=function(){
+        var imgResources=ResourceService.getAllImagesAndTemplates();
+        var selectImgs=[];
+
+        var modalInstance = $uibModal.open({
+            templateUrl: 'batchSelectorModal.html',
+            controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
+                $scope.batchSelectArr=[];
+                $scope.selectAll=function(){//全选
+                    for(var i=0;i<imgResources.length;i++){
+                        $scope.batchSelectArr[i]=true;
+                    }
+                };
+                $scope.invertSelect=function(){//反选
+                    for(var i=0;i<imgResources.length;i++){
+                        if($scope.batchSelectArr[i]==null){
+                            $scope.batchSelectArr[i]=true;
+                        }else{
+                            $scope.batchSelectArr[i]=!$scope.batchSelectArr[i];
+                        }
+                    }
+                };
+                $scope.selectResource=function(i){//点击tr选择
+                    if($scope.batchSelectArr[i]==null){
+                        $scope.batchSelectArr[i]=true;
+                    }else{
+                        $scope.batchSelectArr[i]=!$scope.batchSelectArr[i];
+                    }
+                };
+                $scope.stopProp=function(e){//阻止点击冒泡
+                    e.stopPropagation();
+                };
+
+                $scope.imgResources=imgResources;
+
+                $scope.add=function(){//添加
+                    var images;
+                    for(var i=0;i<imgResources.length;i++){
+                        if($scope.batchSelectArr[i]){
+                            selectImgs.push(imgResources[i]);
+                        }
+                    }
+                    if(checkImg(selectImgs)){
+                        images=selectImgs.sort(numSort);
+                        $uibModalInstance.close(images);
+                    }else{
+                        alert("队列中含有不符合格式的命名文件");
+                        $uibModalInstance.close();
+                    }
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.close();
+                };
+
+                function numSort(a,b){
+                    var x= a.name,y= b.name;
+                    var reg=/[^\(\)]+(?=\))/g;
+                    var i1= parseInt(x.match(reg));
+                    var i2= parseInt(y.match(reg));
+                    return i1-i2;
+                }
+
+                function checkImg(imgs){
+                    for(var i=0;i<imgs.length;i++){
+                        var imgName=imgs[i].name;
+                        if(!imgName.match(/[^\(\)]+(?=\))/g)){
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+        }],
+            resolve: {
+                /*selectImg:function(){
+                    return imgResources;
+                }*/
+            }
+        });
+
+        modalInstance.result.then(function (imgs) {
+            if(imgs){//插入图片
+                if(imgs.length){
+                    for(var i=0;i<imgs.length;i++){
+                        var defaultSlice={
+                            name:'defaultSlice',
+                            imgSrc:imgs[i].src,
+                            color:'rgba(0,0,0,0)'
+                        };
+                        $scope.tex.slices.push(defaultSlice);
+                    }
+                }else{
+                    alert("未选择图片");
+                    return;
+                }
+            }
+        }, function () {
+            $uibModalInstance.dismiss('cancel');
+        });
+
     };
 
 

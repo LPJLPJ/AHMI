@@ -46,7 +46,7 @@
     spinnerDOM.style.right = 0
     spinnerDOM.style.bottom = 0
     spinnerDOM.style.top = 0
-    spinnerDOM.style.zIndex = 9999
+    spinnerDOM.style.zIndex = 99999999;
     spinnerDOM.style.background = '#1c2B4B'
 
     document.body.appendChild(spinnerDOM)

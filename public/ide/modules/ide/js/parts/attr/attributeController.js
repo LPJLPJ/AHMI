@@ -88,6 +88,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 dashboard: {
                     dashboardModeId: '0',
+                    backgroundModeId: '0',
                     clockwise: '1',
                     dashboardModes: [
                         {id: '0', name: '简单模式'},
@@ -99,11 +100,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         {wise: '0', name: '逆时针'}
                         // {wise:'2',name:'双向'}
                     ],
+                    backgroundModes: [
+                        {id: '0', name: '不启用'},
+                        {id: '1', name: '启用'}
+                    ],
                     enableAnimationModeId: '0',
                     enterDashboardMode: enterDashboardMode,
                     enterDashboardClockwise: enterDashboardClockwise,
                     enterDashboardValue: enterDashboardValue,
                     enterDashboardOffsetValue: enterDashboardOffsetValue,
+                    enterBackgroundMode: enterBackgroundMode,
                     enterPointerLength: enterPointerLength,
                     enterMinCoverAngle: enterMinCoverAngle,
                     enterMaxCoverAngle: enterMaxCoverAngle
@@ -279,6 +285,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     {id: '0', name: '启用动画'},
                     {id: '1', name: '关闭动画'}
                 ],
+                //蒙板图 tang
+                matte: {
+                    matteBgi: null,
+                    matteOpacity: 10,
+                    matteColor: '选择颜色',
+                    matteOn: false,
+                    matteSwitch: matteSwitch,
+                    enterMatteOpacity: enterMatteOpacity,
+                    enterMatteBgi: enterMatteBgi
+                },
                 enterName: enterName,
                 enterColor: enterColor,
                 enterFontText: enterFontText,
@@ -339,11 +355,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 restore();
             });
 
-            //edit by lixiang
             $scope.$on('changeFontFamily', function (e, op) {
-                //console.log(op);
                 enterFontStyle(op);
             });
+
+            //matte add by tang
+            $scope.$on('ChangeMatteAttr', function (event) {
+                onMatteChanged();
+            })
 
         }
 
@@ -372,20 +391,28 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     case Type.MyLayer:
                         //调整Layer的ShowSubLayer
                         $scope.component.layer.selectModel = $scope.component.object.level.showSubLayer.id;
-                        if ((typeof $scope.component.object.level.transition) !== 'object') {
-                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
-                        }
+                        // if ((typeof $scope.component.object.level.transition) !== 'object') {
+                        //     ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                        //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        // }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
                         break;
                     case Type.MyPage:
                         //调整Page的背景图
                         $scope.component.page.selectImage = $scope.component.object.level.backgroundImage;
-                        if ((typeof $scope.component.object.level.transition) !== 'object') {
-                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
-                        }
+                        // if ((typeof $scope.component.object.level.transition) !== 'object') {
+                        //     ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                        //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        // }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
+
+                        //matte add tang
+                        if ($scope.component.object.level.matte) {
+                            $scope.component.matte.matteOn = $scope.component.object.level.matte.matteOn;
+                        } else {
+                            $scope.component.matte.matteOn = false;
+                        }
+
                         break;
                     case Type.MyGroup:
                         //让Group无法旋转和放大
@@ -408,24 +435,25 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         } else {
                             $scope.component.progress.thresholdModeId = $scope.component.object.level.info.thresholdModeId;
                         }
-                        if ($scope.component.object.level.info.enableAnimation === undefined) {
-                            selectObject.level.info.enableAnimation = false;
-                            $scope.component.progress.enableAnimationModeId = '1'
-                        } else if ($scope.component.object.level.info.enableAnimation === false) {
+                        // if ($scope.component.object.level.info.enableAnimation === undefined) {
+                        //     selectObject.level.info.enableAnimation = false;
+                        //     $scope.component.progress.enableAnimationModeId = '1'
+                        // } else
+                        if ($scope.component.object.level.info.enableAnimation === false) {
                             $scope.component.progress.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation === true) {
                             $scope.component.progress.enableAnimationModeId = '0'
                         }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition === undefined) {
-                            selectObject.level.transition = {};
-                            $scope.component.object.level.transition = {};
-                        }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition.duration === undefined) {
-                            selectObject.level.transition.duration = 0;
-                            $scope.component.object.level.transition.duration = 0;
-                        }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition === undefined) {
+                        //     selectObject.level.transition = {};
+                        //     $scope.component.object.level.transition = {};
+                        // }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition.duration === undefined) {
+                        //     selectObject.level.transition.duration = 0;
+                        //     $scope.component.object.level.transition.duration = 0;
+                        // }
                         break;
                     case Type.MyDashboard:
                         $scope.component.dashboard.dashboardModeId = $scope.component.object.level.dashboardModeId;
@@ -436,24 +464,33 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             selectObject.level.info.minCoverAngle = 0;
                             selectObject.level.info.maxCoverAngle = 0;
                         }
-                        if ($scope.component.object.level.info.enableAnimation === undefined) {
-                            selectObject.level.info.enableAnimation = false;
-                            $scope.component.dashboard.enableAnimationModeId = '1'
-                        } else if ($scope.component.object.level.info.enableAnimation === false) {
+                        // if ($scope.component.object.level.info.enableAnimation === undefined) {
+                        //     selectObject.level.info.enableAnimation = false;
+                        //     $scope.component.dashboard.enableAnimationModeId = '1'
+                        // } else
+
+                        if ($scope.component.object.level.info.enableAnimation === false) {
                             $scope.component.dashboard.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation === true) {
                             $scope.component.dashboard.enableAnimationModeId = '0'
                         }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition === undefined) {
-                            selectObject.level.transition = {};
-                            $scope.component.object.level.transition = {};
-                        }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition.duration === undefined) {
-                            selectObject.level.transition.duration = 0;
-                            $scope.component.object.level.transition.duration = 0;
-                        }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition === undefined) {
+                        //     selectObject.level.transition = {};
+                        //     $scope.component.object.level.transition = {};
+                        // }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition.duration === undefined) {
+                        //     selectObject.level.transition.duration = 0;
+                        //     $scope.component.object.level.transition.duration = 0;
+                        // }
+
+                        // selectObject.level.backgroundModeId = $scope.component.object.level.backgroundModeId;
+                        $scope.component.dashboard.backgroundModeId =  $scope.component.object.level.backgroundModeId;
+                        // if ($scope.component.object.level.backgroundModeId === undefined) {
+                        //     selectObject.level.backgroundModeId = '0';
+                        //     $scope.component.object.level.backgroundModeId = '0';
+                        // }
                         break;
                     case Type.MyTextArea:
                         $scope.component.textArea.arrangeModel = $scope.component.object.level.info.arrange;
@@ -461,10 +498,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     case Type.MyButton:
                         $scope.component.button.buttonModeId = $scope.component.object.level.buttonModeId;
                         $scope.component.button.arrangeModel = $scope.component.object.level.info.arrange;
-                        if ($scope.component.object.level.info.disableHighlight === undefined) {
-                            selectObject.level.info.disableHighlight = false;
-                            $scope.component.button.highlightModeId = '0';
-                        } else if ($scope.component.object.level.info.disableHighlight === false) {
+                        // if ($scope.component.object.level.info.disableHighlight === undefined) {
+                        //     selectObject.level.info.disableHighlight = false;
+                        //     $scope.component.button.highlightModeId = '0';
+                        // } else
+                        if ($scope.component.object.level.info.disableHighlight === false) {
                             $scope.component.button.highlightModeId = '0';
                         } else if ($scope.component.object.level.info.disableHighlight === true) {
                             $scope.component.button.highlightModeId = '1';
@@ -472,10 +510,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MyButtonGroup:
                         $scope.component.buttonGroup.arrangeModel = $scope.component.object.level.info.arrange;
-                        if ($scope.component.object.level.info.disableHighlight === undefined) {
-                            selectObject.level.info.disableHighlight = false;
-                            $scope.component.buttonGroup.highlightModeId = '0';
-                        } else if ($scope.component.object.level.info.disableHighlight === false) {
+                        // if ($scope.component.object.level.info.disableHighlight === undefined) {
+                        //     selectObject.level.info.disableHighlight = false;
+                        //     $scope.component.buttonGroup.highlightModeId = '0';
+                        // } else
+                        if ($scope.component.object.level.info.disableHighlight === false) {
                             $scope.component.buttonGroup.highlightModeId = '0';
                         } else if ($scope.component.object.level.info.disableHighlight === true) {
                             $scope.component.buttonGroup.highlightModeId = '1';
@@ -492,24 +531,25 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
                         }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
-                        if ($scope.component.object.level.info.enableAnimation === undefined) {
-                            selectObject.level.info.enableAnimation = false;
-                            $scope.component.num.enableAnimationModeId = '1'
-                        } else if ($scope.component.object.level.info.enableAnimation == false) {
+                        // if ($scope.component.object.level.info.enableAnimation === undefined) {
+                        //     selectObject.level.info.enableAnimation = false;
+                        //     $scope.component.num.enableAnimationModeId = '1'
+                        // } else
+                        if ($scope.component.object.level.info.enableAnimation == false) {
                             $scope.component.num.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation == true) {
                             $scope.component.num.enableAnimationModeId = '0'
                         }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition === undefined) {
-                            selectObject.level.transition = {};
-                            $scope.component.object.level.transition = {};
-                        }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition.duration === undefined) {
-                            selectObject.level.transition.duration = 0;
-                            $scope.component.object.level.transition.duration = 0;
-                        }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition === undefined) {
+                        //     selectObject.level.transition = {};
+                        //     $scope.component.object.level.transition = {};
+                        // }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition.duration === undefined) {
+                        //     selectObject.level.transition.duration = 0;
+                        //     $scope.component.object.level.transition.duration = 0;
+                        // }
                         break;
                     case Type.MyTexNum:
                         $scope.component.texNum.numModeId = $scope.component.object.level.info.numModeId;
@@ -524,33 +564,35 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.texNum.enableAnimationModeId = '0'
                         }
                         //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.info.enableAnimation === undefined) {
-                            selectObject.level.info.enableAnimation = false;
-                            $scope.component.texNum.enableAnimationModeId = '1';
-                        } else if ($scope.component.object.level.info.enableAnimation == false) {
+                        // if ($scope.component.object.level.info.enableAnimation === undefined) {
+                        //     selectObject.level.info.enableAnimation = false;
+                        //     $scope.component.texNum.enableAnimationModeId = '1';
+                        // } else
+                        if ($scope.component.object.level.info.enableAnimation == false) {
                             $scope.component.texNum.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation == true) {
                             $scope.component.texNum.enableAnimationModeId = '0'
                         }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition === undefined) {
-                            selectObject.level.transition = {};
-                            $scope.component.object.level.transition = {};
-                        }
-                        //added at 2017/12/5 by LH
-                        if ($scope.component.object.level.transition.duration === undefined) {
-                            selectObject.level.transition.duration = 0;
-                            $scope.component.object.level.transition.duration = 0;
-                        }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition === undefined) {
+                        //     selectObject.level.transition = {};
+                        //     $scope.component.object.level.transition = {};
+                        // }
+                        // //added at 2017/12/5 by LH
+                        // if ($scope.component.object.level.transition.duration === undefined) {
+                        //     selectObject.level.transition.duration = 0;
+                        //     $scope.component.object.level.transition.duration = 0;
+                        // }
                         break;
                     case Type.MyDateTime:
                         $scope.component.dateTime.arrangeModel = $scope.component.object.level.info.arrange;
                         $scope.component.dateTime.dateTimeModeId = $scope.component.object.level.info.dateTimeModeId;
                         $scope.component.dateTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
-                        if ($scope.component.object.level.info.disableHighlight == undefined) {
-                            selectObject.level.info.disableHighlight = false;
-                            $scope.component.dateTime.highlightModeId = '0';
-                        } else if ($scope.component.object.level.info.disableHighlight == false) {
+                        // if ($scope.component.object.level.info.disableHighlight == undefined) {
+                        //     selectObject.level.info.disableHighlight = false;
+                        //     $scope.component.dateTime.highlightModeId = '0';
+                        // } else
+                        if ($scope.component.object.level.info.disableHighlight == false) {
                             $scope.component.dateTime.highlightModeId = '0';
                         } else if ($scope.component.object.level.info.disableHighlight == true) {
                             $scope.component.dateTime.highlightModeId = '1';
@@ -560,10 +602,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         $scope.component.texTime.arrangeModel = $scope.component.object.level.info.arrange;/////////////////
                         $scope.component.texTime.dateTimeModeId = $scope.component.object.level.info.dateTimeModeId;
                         $scope.component.texTime.RTCModeId = $scope.component.object.level.info.RTCModeId;
-                        if ($scope.component.object.level.info.disableHighlight == undefined) {
-                            selectObject.level.info.disableHighlight = false;
-                            $scope.component.texTime.highlightModeId = '0';
-                        } else if ($scope.component.object.level.info.disableHighlight == false) {
+                        // if ($scope.component.object.level.info.disableHighlight == undefined) {
+                        //     selectObject.level.info.disableHighlight = false;
+                        //     $scope.component.texTime.highlightModeId = '0';
+                        // } else
+                        if ($scope.component.object.level.info.disableHighlight == false) {
                             $scope.component.texTime.highlightModeId = '0';
                         } else if ($scope.component.object.level.info.disableHighlight == true) {
                             $scope.component.texTime.highlightModeId = '1';
@@ -576,28 +619,51 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         $scope.component.video.sourceId = $scope.component.object.level.info.source;
                         break;
                     case Type.MySlide:
-                        //兼容旧的图层控件
-                        if (selectObject.level.info.fontFamily === undefined) {
-                            selectObject.level.info.fontFamily = "宋体";
-                            selectObject.level.info.fontSize = 20;
-                            selectObject.level.info.fontColor = 'rgba(0,0,0,1)';
-                            selectObject.level.info.fontBold = "100";
-                            selectObject.level.info.fontItalic = '';
-                        }
+                        // //兼容旧的图层控件
+                        // if (selectObject.level.info.fontFamily === undefined) {
+                        //     selectObject.level.info.fontFamily = "宋体";
+                        //     selectObject.level.info.fontSize = 20;
+                        //     selectObject.level.info.fontColor = 'rgba(0,0,0,1)';
+                        //     selectObject.level.info.fontBold = "100";
+                        //     selectObject.level.info.fontItalic = '';
+                        // }
                         break;
                     case Type.MySwitch:
-                        //兼容旧的开关控件
-                        if (selectObject.level.info.text === undefined) {
-                            selectObject.level.info.text = '';
-                            selectObject.level.info.fontFamily = "宋体";
-                            selectObject.level.info.fontSize = 20;
-                            selectObject.level.info.fontColor = 'rgba(0,0,0,1)';
-                            selectObject.level.info.fontBold = "100";
-                            selectObject.level.info.fontItalic = '';
-                        }
+                        // //兼容旧的开关控件
+                        // if (selectObject.level.info.text === undefined) {
+                        //     selectObject.level.info.text = '';
+                        //     selectObject.level.info.fontFamily = "宋体";
+                        //     selectObject.level.info.fontSize = 20;
+                        //     selectObject.level.info.fontColor = 'rgba(0,0,0,1)';
+                        //     selectObject.level.info.fontBold = "100";
+                        //     selectObject.level.info.fontItalic = '';
+                        // }
                         break;
                 }
 
+            })
+        }
+
+        /**
+         * matte变化时的响应
+         * @author tang
+         */
+        function onMatteChanged() {
+            //console.log('matte');
+            var selectObject = ProjectService.getCurrentSelectObject();
+            $timeout(function () {
+                $scope.component.object = _.cloneDeep(selectObject);
+                if ($scope.component.object.level.matte) {
+                    $scope.component.matte.matteOn = $scope.component.object.level.matte.matteOn;
+                    $scope.component.matte.matteBgi = $scope.component.object.level.matte.info.backgroundImg;
+                    $scope.component.matte.matteOpacity = $scope.component.object.level.matte.info.opacity;
+                    $scope.component.matte.matteColor = $scope.component.object.level.matte.info.backgroundColor;
+                } else {
+                    $scope.component.matte.matteOn = false;
+                    $scope.component.matte.matteBgi = "";
+                    $scope.component.matte.matteOpacity = 0;
+                    $scope.component.matte.matteColor = "选择颜色";
+                }
             })
         }
 
@@ -922,7 +988,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     $scope.$emit('ChangeCurrentPage', oldOperate);
                 })
             }
+            //蒙板背景色 add by tang
+            if (op.name == 'component.matte.matteColor') {
+                var matteColor = op.value;
+                ProjectService.changeMatteBgc(matteColor);
+            }
         }
+
 
         /**
          * 更改文本内容
@@ -1447,6 +1519,18 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 })
 
             }
+        }
+
+        function enterBackgroundMode() {
+            var selectedBackgroundModeId = $scope.component.dashboard.backgroundModeId;
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            var option = {
+                backgroundModeId: selectedBackgroundModeId,
+            };
+            ProjectService.ChangeAttributeBackgroundModeId(option,function(){
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
         }
 
         function enterDashboardValue(e) {
@@ -2578,23 +2662,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
             var oldOperate = ProjectService.SaveCurrentOperate();
 
-        var option={
-            dateTimeModeId:selectDateTimeModeId,
-            RTCModeId:selectRTCModeId
-        };
-        switch(selectObj.type){
-            case Type.MyTexTime:
-                ProjectService.ChangeAttributeTexTimeModeId(option, function () {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                });
-                break;
-            case Type.MyDateTime:
-                ProjectService.ChangeAttributeDateTimeModeId(option,function () {
-                    $scope.$emit('ChangeCurrentPage',oldOperate);
-                });
-                break;
+            var option = {
+                dateTimeModeId: selectDateTimeModeId,
+                RTCModeId: selectRTCModeId
+            };
+            switch (selectObj.type) {
+                case Type.MyTexTime:
+                    ProjectService.ChangeAttributeTexTimeModeId(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyDateTime:
+                    ProjectService.ChangeAttributeDateTimeModeId(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+            }
         }
-    }
 
         function changeGroupAlign() {
             var option = {
@@ -2727,5 +2811,37 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             } else {
                 return false;
             }
+        };
+
+        /**
+         * 蒙板
+         * @author tang
+         */
+
+        ProjectService.setScope($scope);
+
+        function matteSwitch() {
+            $scope.component.matte.matteOn = !$scope.component.matte.matteOn;
+            if ($scope.component.matte.matteOn) {
+                if ($scope.component.object.level.matte) {
+                    $scope.component.object.level.matte.matteOn = true;
+                    var matteData = $scope.component.object.level.matte;
+                    ProjectService.addMatte(matteData);
+                } else {
+                    ProjectService.addMatte();
+                }
+            } else if (!$scope.component.matte.matteOn && $scope.component.object.level.matte) {
+                ProjectService.offMatte();
+            }
+        }
+
+        function enterMatteOpacity() {
+            var selectOpacity = $scope.component.matte.matteOpacity;
+            ProjectService.changeMatteOpacity(selectOpacity);
+        }
+
+        function enterMatteBgi() {
+            var selectImg = $scope.component.matte.matteBgi;
+            ProjectService.changeMatteBgi(selectImg);
         }
     }]);

@@ -224,8 +224,9 @@ body{
     background-color: #D2D2D2;
 }
 
-
-.my-page-tree
+.angular-ui-tree-empty{
+    display: none!important;
+}
 .my-current-thumb{
     border: 2px solid #4084f6;
 }
@@ -425,11 +426,6 @@ body{
     overflow-y: auto;
 }
 
-
-.my-panel-item-tools-wrapper{
-    margin:0.5em 0;
-}
-
 .my-attr-item{
     display: inline-block;
     width: 50%;
@@ -553,7 +549,7 @@ body{
     display: inline-block;
     padding: 2px 10px;
     white-space: nowrap;
-
+    cursor: pointer!important;
 }
 .my-levels-title.selected{
     color: #1C2B4B;
@@ -562,7 +558,8 @@ body{
     border-radius: 10px;
 }
 .my-object-label{
-    cursor: pointer;
+    cursor: pointer!important;
+    font-weight: normal!important;
 }
 .my-object-label.selected{
     color: #1C2B4B;

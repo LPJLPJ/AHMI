@@ -34,13 +34,13 @@ console.log = (function (console) {
 
 var logs = [];
 ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
-    'socketIOService', function ($scope, $timeout, $http, $interval,
-                                 ProjectService,
-                                 GlobalService,
-                                 Preference,
-                                 ResourceService,
-                                 TagService,
-                                 TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService) {
+    'socketIOService', 'MiddleWareService', function ($scope, $timeout, $http, $interval,
+                                                      ProjectService,
+                                                      GlobalService,
+                                                      Preference,
+                                                      ResourceService,
+                                                      TagService,
+                                                      TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
 
         ideScope = $scope;
         $scope.ide = {
@@ -301,6 +301,11 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             if (data.content) {
                 //var globalProject = GlobalService.getBlankProject()
                 var globalProject = JSON.parse(data.content);
+                timeStamp = Date.now();
+                MiddleWareService.useMiddleWare(globalProject);
+                console.log('time costs in inject Data:', Date.now() - timeStamp);
+
+
                 var resolution = data.resolution.split('*').map(function (r) {
                     return Number(r)
                 });
@@ -752,24 +757,30 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
         }
 
-        //add by tang
-        $scope.$on('ChangeMaskStyle',function(event,data){
-            if(typeof data=='object'){
-                $scope.$broadcast('MaskStyle',data);
-            }else{
-                $scope.$broadcast('MaskView',data)
+        //mask  add by tang
+        $scope.$on('ChangeMaskStyle', function (event, data) {
+            if (typeof data == 'object') {
+                $scope.$broadcast('MaskStyle', data);
+            } else {
+                $scope.$broadcast('MaskView', data)
             }
 
         });
-        $scope.$on('ChangeMaskAttr',function(event,data){
-            $scope.$broadcast('MaskAttr',data);
+        $scope.$on('ChangeMaskAttr', function (event, data) {
+            $scope.$broadcast('MaskAttr', data);
         });
-        $scope.$on('MaskSwitch',function(event,data){
-                $scope.$broadcast('MaskCtrl',data);
-                $scope.$broadcast('MaskView',data);
+        $scope.$on('MaskSwitch', function (event, data) {
+            $scope.$broadcast('MaskCtrl', data);
+            $scope.$broadcast('MaskView', data);
         });
-        $scope.$on('MaskUpdate',function(event,data){
-            $scope.$broadcast('ChangeMask',data)
+        $scope.$on('MaskUpdate', function (event, data) {
+            $scope.$broadcast('ChangeMask', data)
+        });
+
+        //matte  add by tang
+        $scope.$on('ChangeMatte', function (event) {
+            $scope.$broadcast('ChangeMatteAttr');
+            $scope.$broadcast('PageNodeChanged');
         });
 
 

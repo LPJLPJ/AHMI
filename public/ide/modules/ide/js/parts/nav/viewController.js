@@ -177,7 +177,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                     position:'left'
                 },{
                     index:8,
-                    tooltip:'<h4>选中按钮控件</h4><p>这一次，我们选择按钮控件</p> <p>1.请点击NewDashboard以选中按钮控件</p>',
+                    tooltip:'<h4>选中按钮控件</h4><p>这一次，我们选择按钮控件</p> <p>1.请点击NewButton以选中按钮控件</p>',
                     position:'left'
                 },{
                     index:9,
@@ -189,7 +189,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                     position:'bottom'
                 },{
                     index:11,
-                    tooltip:'<h4>生成下载</h4><p>设计完成，可以生成配置包以供烧录至硬件系统</p> <p>1.点击文件栏</p><p>2.点击生成，会自动下载一个压缩包，选择默认，烧录到硬件系统上试试吧~。</p>',
+                    tooltip:'<h4>生成下载</h4><p>设计完成，可以生成配置包以供烧录至硬件系统</p> <p>1.点击文件栏</p><p>2.点击保存按钮，提示保存生成</p><p>3.点击生成，会自动下载一个压缩包，选择默认，烧录到硬件系统上试试吧~。</p>',
                     position:'bottom'
                 }
 
@@ -218,10 +218,10 @@ ide.controller('introModalCtl', ['$scope', '$uibModalInstance', 'ProjectService'
     $scope.ok = function () {
         if ($scope.mode === 'newPlayer') {
             var result = check();
-            if (true) {
+            if (result) {
                 $uibModalInstance.close({type: $scope.mode});
             } else {
-                toastr.error('请创建一个空白默认模板工程，以启动新手教程');
+                toastr.error('请创建一个空白模板工程，并在创建时选中启用模板，以启动新手教程');
             }
         } else {
             $uibModalInstance.close({type: $scope.mode});

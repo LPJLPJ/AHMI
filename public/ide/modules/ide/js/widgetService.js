@@ -247,6 +247,65 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MyLayer.async = true;
 
+    //myMatte 蒙板 add by tang
+    fabric.MyMatte = fabric.util.createClass(fabric.Object,{
+        type:'MyMatte',
+        initialize:function (options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.selectable=false;
+            this.opacity/=100;
+            this.loadImg(options.backgroundImg);
+
+            this.on("changeOpacity",function(op){
+                this.opacity=op/100;
+                var pageNode=CanvasService.getPageNode();
+                pageNode.renderAll();
+            });
+
+            this.on("changeBgi",function(img){
+                this.loadImg(img);
+                var pageNode=CanvasService.getPageNode();
+                pageNode.renderAll();
+            });
+
+            this.on('changeBgc',function(co){
+                this.backgroundColor=co;
+                var pageNode=CanvasService.getPageNode();
+                pageNode.renderAll();
+            })
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                ctx.globalAlpha=this.opacity;
+                ctx.beginPath();
+                ctx.drawImage(this.matteImg,-(this.width / 2),-(this.height / 2),this.width,this.height);
+                ctx.fillStyle =this.backgroundColor;
+                ctx.fillRect(-(this.width / 2), -(this.height / 2), this.width, this.height);
+                ctx.closePath();
+            }catch (err) {
+                console.log('渲染错误',err)
+            }
+        }
+    });
+    fabric.MyMatte.prototype.loadImg=function(imgSrc){
+        var img=new Image();
+        img.onload=(function () {
+
+        }).bind(this);
+        img.src=imgSrc;
+        this.matteImg=img;
+    };
+    fabric.MyMatte.fromLevel=function(callback,option){
+        var matte=new fabric.MyMatte(option);
+        callback&&callback(matte);
+    };
+
 
     //progress
     fabric.MyProgress = fabric.util.createClass(fabric.Object, {
@@ -871,6 +930,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.pointerLength = level.info.pointerLength;
             this.clockwise=level.info.clockwise;
             this.dashboardModeId=level.dashboardModeId;
+            this.backgroundModeId = level.backgroundModeId||'0';
             if(level.info.hasOwnProperty('minCoverAngle')){
                 this.minCoverAngle=level.info.minCoverAngle;
             }
@@ -909,8 +969,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
             }
 
-            //this.on('mouseup',function(arg){
-            //});
             this.on('changeDashboardOffsetValue', function (arg) {
                 if(arg.offsetValue||arg.offsetValue==0){
                     self.offsetValue=arg.offsetValue;
@@ -949,7 +1007,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
 
             //changeDashboardPointerLength
-
             this.on('changeDashboardPointerLength', function (arg) {
                 self.pointerLength=arg.pointerLength;
                 self.scaleX = arg.scaleX;
@@ -1041,37 +1098,44 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeBackgroundMode',function(arg){
+                var _callback = arg.callback;
+                self.backgroundModeId = arg.backgroundModeId;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
-                //console.log('dashboard self',this);
                 var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value-this.minValue);
                 var taoValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
-                ctx.fillStyle=this.backgroundColor;
+                ctx.fillStyle=this.backgroundModeId==='0'?this.backgroundColor:"rgba(0,0,0,0)";
                 ctx.fillRect(
                     -this.width / 2,
                     -this.height / 2,
                     this.width,
                     this.height
                 );
-                if (this.backgroundImageElement){
+                if (this.backgroundImageElement&&this.backgroundModeId==='0'){
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
                 if(this.lightBandImageElement){
                     //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
                     var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY,newValue);
-                    var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY);
-                    var nowangle=translateAngle(taoValue,this.scaleX,this.scaleY);
-                    var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY);
+                    var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY,null);
+                    var nowangle=translateAngle(taoValue,this.scaleX,this.scaleY,null);
+                    var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY,null);
                     ctx.save();
                     ctx.beginPath();
                     ctx.moveTo(0,0);
                     var radius=calculateRadius(this.dashboardModeId,this.width,this.height);
-                    //console.log('radius,width,height',radius,this.width,this.height);
-                    //ctx.moveTo(0,0);
+
                     //如果是逆时针，则反方向旋转
                     if(this.clockwise=='0'){
                         minAngle=-minAngle+Math.PI/2;
@@ -1157,7 +1221,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         pointerImgWidth,
                         pointerImgHeight
                     );
-                    ctx.drawImage(this.pointerImageElement, 0, 0,pointerImgWidth,pointerImgHeight);
+
+                    ctx.drawImage(this.pointerImageElement, 0, 0,this.pointerImageElement.width/this.scaleX,this.pointerImageElement.height/this.scaleY);
+
                     ctx.restore();
                 }
                 //将图片超出canvas的部分裁剪

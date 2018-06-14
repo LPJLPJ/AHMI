@@ -48,7 +48,12 @@ ideServices.service('OperationService',[function () {
         ['WRITE_DATA_MODBUS', 'w_modbus'],
         ['READ_DATA_CAN', 'r_can'],
         ['WRITE_DATA_CAN', 'w_can'],
-        ['ANIMATE','animate']
+        ['ANIMATE','animate'],
+        ['SETSTR','setstr'],
+        ['CONCAT','concat'],
+        ['DELSTRFROMTAIL','del_str_from_tail'],
+        ['DELSTRFROMHEAD','del_str_from_head'],
+        ['GETSTRLEN','get_str_length'],
     ];
 
     for (var i=0;i<opsRaw.length;i++ ){
