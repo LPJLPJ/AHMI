@@ -589,9 +589,16 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                             var cursorImg = ResourceService.getResourceFromCache(imgSrc);
                             generalWidget.layers[2].width = cursorImg.width;
                             generalWidget.layers[2].height = cursorImg.height;
-                            rawH = generalWidget.layers[0].height;
-                            yTemp = parseInt((rawH - cursorImg.height) / 2);
-                            generalWidget.layers[2].y = yTemp;
+                            if(generalWidget.arrange == 0){
+                                var rawH = generalWidget.layers[0].height;
+                                var yTemp = parseInt((rawH - cursorImg.height) / 2);
+                                generalWidget.layers[2].y = yTemp;
+                            }else{
+                                var rawW = generalWidget.layers[0].width;
+                                var xTemp = parseInt((rawW-cursorImg.width)/2);
+                                generalWidget.layers[2].x = xTemp
+                            }
+
                         }
                     }
 
