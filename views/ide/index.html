@@ -3592,11 +3592,11 @@
                                         </label>
                                         <div class="radio" class="col-sm-8">
                                             <label>
-                                                <input type="radio" value="0" name="valueType" ng-model="tag.valueType" >
+                                                <input type="radio" value="0" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
                                                 数字
                                             </label>
                                             <label>
-                                                <input type="radio" value="1" name="valueType" ng-model="tag.valueType" >
+                                                <input type="radio" value="1" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
                                                 字符串
                                             </label>
                                         </div>

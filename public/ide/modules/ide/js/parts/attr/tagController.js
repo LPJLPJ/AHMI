@@ -822,6 +822,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
                 toastr.error('SysTmr_数字_t 为定时器保留名称');
                 return;
             }
+            $scope.tag.valueType = parseInt($scope.tag.valueType,10);
             $uibModalInstance.close($scope.tag);
         }
     };
