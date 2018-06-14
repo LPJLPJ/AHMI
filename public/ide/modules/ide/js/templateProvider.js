@@ -266,6 +266,7 @@ ideServices
             return {
                 url: subLayer.backgroundImage,
                 id: Math.random().toString(36).substr(2),
+                backgroundImage:'',
                 info: info,
                 subLayers: [subLayer],
                 name: 'NewCanvas',
