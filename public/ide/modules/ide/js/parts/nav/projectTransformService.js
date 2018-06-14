@@ -8,6 +8,17 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         // actionCompiler
         var reg = new RegExp("^[0-9]*$");
 
+        //检查一个tag的valueType是否为字符串
+        var checkTagTypeIsStr = function(tagName){
+            var result = false;
+            for(var i=0,il=tagList.length;i<il;i++){
+                if(tagName===tagList[i].name&&(tagList[i].valueType==='1')){
+                    result = true;
+                    return;
+                }
+            }
+        };
+
         cmds.forEach(function(cmd){
             cmd.forEach(function(op){
                 if(op.hasOwnProperty('value')){
@@ -34,6 +45,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     function transDataFile(rawProject){
         var targetProject = {};
+        tagList = rawProject.customTags;
         targetProject.version = rawProject.version;
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
