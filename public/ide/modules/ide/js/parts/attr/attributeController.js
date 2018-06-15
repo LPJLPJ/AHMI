@@ -655,6 +655,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             selectObject.level.info.fontItalic = '';
                         }
                         break;
+                    case Type.MyRotaryKnob:
+                        if(selectObject.level.info.disableHighlight){
+                            $scope.component.rotaryKnob.highlightModeId = '1';
+                        }else{
+                            $scope.component.rotaryKnob.highlightModeId = '0';
+                        }
+                        break;
                 }
 
             })

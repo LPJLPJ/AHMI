@@ -4500,7 +4500,7 @@
             set(len,'this.layers.length')
             minus(len,1)
                                                              //判断是否启用高亮
-            if (tMaxHighLightNum>0) {
+            if (23>0) {
                 if(okFlag==0){                               //控件间高亮选择
                     var(tHighLightNum,0)
                     set(tHighLightNum,'this.highLightNum')

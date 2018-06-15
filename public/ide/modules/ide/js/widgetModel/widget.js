@@ -1126,8 +1126,8 @@
         layers.push(curLayer);
 
         //高亮层
-        // this.enableHighLight = !(valueObj.disableHighlight);
-        this.enableHighLight = true;
+        this.enableHighLight = !(this.disableHighlight);
+        // this.enableHighLight = true;
         if(this.enableHighLight){
             curLayer = new Layer(0,0,w,h,true);
             if(sliceHighlight.imgSrc){
